@@ -1,0 +1,258 @@
+<Window x:Class="LlmInspector.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="clr-namespace:LlmInspector.Views"
+        Title="Logical Orchestrator Inspector"
+        Height="780"
+        Width="1320"
+        MinHeight="620"
+        MinWidth="1040"
+        Background="{StaticResource BrushBackground}"
+        Foreground="{StaticResource BrushTextPrimary}"
+        FontFamily="{StaticResource FontMono}"
+        WindowStartupLocation="CenterScreen">
+    <Grid Background="{StaticResource BrushBackground}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="188" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" MinWidth="260" />
+                <ColumnDefinition Width="4" />
+                <ColumnDefinition Width="5*" MinWidth="380" />
+                <ColumnDefinition Width="4" />
+                <ColumnDefinition Width="4*" MinWidth="320" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    Style="{StaticResource InspectorPanel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
+                               Style="{StaticResource PanelHeader}"
+                               Text="TOPOLOGY" />
+                    <views:TopologyViewport Grid.Row="1" />
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="1"
+                          Style="{StaticResource VerticalSplitter}" />
+
+            <Border Grid.Column="2"
+                    Style="{StaticResource InspectorPanel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
+                               Style="{StaticResource PanelHeader}"
+                               Text="TRACE" />
+                    <views:TraceTreePanel Grid.Row="1" />
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="3"
+                          Style="{StaticResource VerticalSplitter}" />
+
+            <Border Grid.Column="4"
+                    Style="{StaticResource InspectorPanel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="32" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
+                               Style="{StaticResource PanelHeader}"
+                               Text="INSPECTOR" />
+                    <views:StationInspector Grid.Row="1"
+                                            DataContext="{Binding SelectedStation}" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1"
+                Background="{StaticResource BrushSurface}"
+                BorderBrush="{StaticResource BrushBorder}"
+                BorderThickness="0,1,0,0"
+                Padding="12,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="44" />
+                    <RowDefinition Height="44" />
+                    <RowDefinition Height="44" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="140" />
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="92" />
+                        <ColumnDefinition Width="92" />
+                        <ColumnDefinition Width="220" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="TYPE" />
+                        <ComboBox Style="{StaticResource CommandComboBox}"
+                                  ItemsSource="{Binding CommandTypes}"
+                                  SelectedItem="{Binding SelectedCommandType, Mode=TwoWay}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="ID" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding CommandId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="NAME" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding CommandName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="PURPOSE" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding CommandPurpose, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <Button Grid.Column="4"
+                            Style="{StaticResource CommandButton}"
+                            Command="{Binding RunCommand}"
+                            Content="RUN" />
+
+                    <Button Grid.Column="5"
+                            Style="{StaticResource StopButton}"
+                            Command="{Binding StopCommand}"
+                            Content="STOP" />
+
+                    <TextBlock Grid.Column="6"
+                               Style="{StaticResource FlagStatusText}"
+                               Text="{Binding CommandStatus}" />
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="PARENT DOMAIN" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding ParentDomainId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="PARENT PHASE" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding ParentPhaseId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="FROM KIND" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding FromTopologyKind, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="FROM ID" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding FromTopologyId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="4">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="AUDIT REASON" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding Reason, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="150" />
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="220" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="TO KIND" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding ToTopologyKind, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="TO ID" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding ToTopologyId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="PREDICATES" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding PredicateIdsText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="CONSTRAINTS" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding ConstraintIdsText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="4">
+                        <TextBlock Style="{StaticResource CommandFieldLabel}"
+                                   Text="SOURCES" />
+                        <TextBox Style="{StaticResource CommandTextBox}"
+                                 Text="{Binding SourceIdsText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </Grid>
+
+                <Border Grid.Row="3"
+                        Background="{StaticResource BrushPanelInner}"
+                        BorderBrush="{StaticResource BrushBorderSoft}"
+                        BorderThickness="1"
+                        Padding="8,4">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Disabled">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource FlagStatusText}"
+                                       Text="{Binding AppliedFlagsText}"
+                                       TextAlignment="Left" />
+                            <TextBlock Style="{StaticResource FlagStatusText}"
+                                       Text="{Binding RunBudgetText}"
+                                       TextAlignment="Right"
+                                       Margin="24,0,0,0" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

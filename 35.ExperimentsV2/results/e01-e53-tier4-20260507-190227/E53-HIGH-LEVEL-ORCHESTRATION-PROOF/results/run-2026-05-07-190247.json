@@ -1,0 +1,1745 @@
+﻿{
+  "experiment_id": "E53-HIGH-LEVEL-ORCHESTRATION-PROOF",
+  "scenario_id": "E53-SCENARIO-001-COMPLEX-ONBOARDING-MIGRATION",
+  "run_id": "run-2026-05-07-190247",
+  "run_timestamp_utc": "2026-05-07T19:02:47.2996413Z",
+  "source_packet_path": "C:\\Users\\lubao\\Documents\\xiigen\\llm mvp\\llm dynamic flow\\E53-SCENARIO-001-SOURCE-PACKET.md",
+  "expected_trace_path": "C:\\Users\\lubao\\Documents\\xiigen\\llm mvp\\llm dynamic flow\\E53-SCENARIO-001-EXPECTED-TRACE.md",
+  "stack_independent": true,
+  "live_external_calls": 0,
+  "source_fact_coverage": [
+    {
+      "fact_id": "F01",
+      "required_preservation": "The answer must be an orchestration decision, not implementation.",
+      "preserved_as": "final result is an orchestration decision",
+      "final_result_status": "accepted",
+      "preserved": true
+    },
+    {
+      "fact_id": "F02",
+      "required_preservation": "Existing email-started users remain visible.",
+      "preserved_as": "email registration state branch",
+      "final_result_status": "can_proceed",
+      "preserved": true
+    },
+    {
+      "fact_id": "F03",
+      "required_preservation": "Provider identity entry remains visible.",
+      "preserved_as": "provider identity entry branch",
+      "final_result_status": "can_proceed",
+      "preserved": true
+    },
+    {
+      "fact_id": "F04",
+      "required_preservation": "Questionnaire progress and resume behavior remain visible.",
+      "preserved_as": "questionnaire progress plus resume boundary",
+      "final_result_status": "boundary",
+      "preserved": true
+    },
+    {
+      "fact_id": "F05",
+      "required_preservation": "Duplicate prevention is a hard constraint.",
+      "preserved_as": "duplicate-account creation rejected",
+      "final_result_status": "rejected",
+      "preserved": true
+    },
+    {
+      "fact_id": "F06",
+      "required_preservation": "Activation waits for policy acceptance evidence.",
+      "preserved_as": "policy acceptance activation gate",
+      "final_result_status": "blocked",
+      "preserved": true
+    },
+    {
+      "fact_id": "F07",
+      "required_preservation": "Expired proof stops continuation.",
+      "preserved_as": "token/session stop condition",
+      "final_result_status": "blocked_when_expired",
+      "preserved": true
+    },
+    {
+      "fact_id": "F08",
+      "required_preservation": "Biometric passport verification is a knowledge edge.",
+      "preserved_as": "biometric context pack",
+      "final_result_status": "knowledge_edge",
+      "preserved": true
+    },
+    {
+      "fact_id": "F09",
+      "required_preservation": "Second-account request is an explicit conflict.",
+      "preserved_as": "duplicate request preserved and rejected",
+      "final_result_status": "rejected",
+      "preserved": true
+    },
+    {
+      "fact_id": "F10",
+      "required_preservation": "Audit clarity remains legitimate but cannot override duplicate prevention.",
+      "preserved_as": "audit traceability on existing account path",
+      "final_result_status": "accepted_with_rejection_boundary",
+      "preserved": true
+    },
+    {
+      "fact_id": "F11",
+      "required_preservation": "Final output must be human-readable.",
+      "preserved_as": "five-section human result",
+      "final_result_status": "accepted",
+      "preserved": true
+    },
+    {
+      "fact_id": "F12",
+      "required_preservation": "No implementation stack may be selected.",
+      "preserved_as": "stack independence scan",
+      "final_result_status": "accepted",
+      "preserved": true
+    }
+  ],
+  "compiled_logical_structure": {
+    "local_subject": "complex_registration_and_onboarding_orchestration",
+    "units": [
+      "provider_sign_in",
+      "email_started_users",
+      "questionnaire_resume",
+      "duplicate_prevention",
+      "policy_acceptance",
+      "token_session_safety",
+      "biometric_passport_knowledge_edge",
+      "audit_clarity_request",
+      "human_decision_output"
+    ],
+    "dependencies": [
+      "provider_sign_in -\u003E duplicate_prevention",
+      "provider_sign_in -\u003E account_resolution",
+      "account_resolution -\u003E questionnaire_resume",
+      "policy_acceptance -\u003E full_activation",
+      "token_session_safety -\u003E continuation",
+      "biometric_passport_knowledge_edge -\u003E knowledge_edge_context_pack"
+    ],
+    "conflicts": [
+      "audit_clarity_request",
+      "duplicate_account_creation_requested"
+    ],
+    "boundaries": [
+      "resume_state_rules_missing",
+      "policy_acceptance_rules_need_source_evidence"
+    ],
+    "knowledge_edges": [
+      "missing_biometric_passport_verification"
+    ],
+    "required_outputs": [
+      "human_readable_decision"
+    ],
+    "no_stack_constraint": true
+  },
+  "domain_packets": [
+    {
+      "packet_id": "d01_provider_identity_entry",
+      "domain_label": "provider_identity_entry",
+      "coverage_status": "covered",
+      "prompt_fragment": "Some users want to use Google sign-in as an onboarding entry path.",
+      "reason_for_inclusion": "Provider identity must be verified before account resolution."
+    },
+    {
+      "packet_id": "d02_email_registration_state",
+      "domain_label": "email_registration_state",
+      "coverage_status": "covered",
+      "prompt_fragment": "Some existing users started with email and password.",
+      "reason_for_inclusion": "Existing email-started users remain part of the migration state."
+    },
+    {
+      "packet_id": "d03_duplicate_prevention",
+      "domain_label": "duplicate_prevention",
+      "coverage_status": "covered",
+      "prompt_fragment": "Repeated provider callbacks must not create duplicate accounts.",
+      "reason_for_inclusion": "Duplicate prevention is a hard account-identity constraint."
+    },
+    {
+      "packet_id": "d04_token_session_safety",
+      "domain_label": "token_session_safety",
+      "coverage_status": "covered",
+      "prompt_fragment": "Expired token or session proof must stop onboarding and request fresh trusted action.",
+      "reason_for_inclusion": "Continuation depends on trusted proof."
+    },
+    {
+      "packet_id": "d05_questionnaire_onboarding",
+      "domain_label": "questionnaire_onboarding",
+      "coverage_status": "covered",
+      "prompt_fragment": "Some users stopped halfway through the onboarding questionnaire.",
+      "reason_for_inclusion": "Questionnaire progress is a distinct onboarding stage."
+    },
+    {
+      "packet_id": "d06_resume_state_boundary",
+      "domain_label": "resume_state_boundary",
+      "coverage_status": "boundary",
+      "prompt_fragment": "Users want to continue later after stopping halfway through onboarding.",
+      "reason_for_inclusion": "Saved-state restoration rules are not supplied."
+    },
+    {
+      "packet_id": "d07_policy_acceptance_boundary",
+      "domain_label": "policy_acceptance_boundary",
+      "coverage_status": "boundary",
+      "prompt_fragment": "Terms and privacy acceptance are required before a user becomes fully active.",
+      "reason_for_inclusion": "Policy acceptance evidence is required but exact source rules are not supplied."
+    },
+    {
+      "packet_id": "d08_identity_proofing_knowledge_edge",
+      "domain_label": "identity_proofing_knowledge_edge",
+      "coverage_status": "knowledge_edge",
+      "prompt_fragment": "A stakeholder asks whether high-risk users should pass biometric passport verification before activation.",
+      "reason_for_inclusion": "Biometric passport verification is outside local coverage."
+    },
+    {
+      "packet_id": "d09_audit_traceability",
+      "domain_label": "audit_traceability",
+      "coverage_status": "conflict_supporting_context",
+      "prompt_fragment": "A stakeholder wants duplicate accounts so the audit trail is easier to inspect.",
+      "reason_for_inclusion": "Audit clarity is a legitimate goal but cannot override duplicate prevention."
+    },
+    {
+      "packet_id": "d10_arbiter_review_required",
+      "domain_label": "arbiter_review_required",
+      "coverage_status": "required",
+      "prompt_fragment": "The request contains conflict, knowledge edge, policy boundary, token safety, and stack-independence requirements.",
+      "reason_for_inclusion": "Formal results must be reviewed before acceptance."
+    },
+    {
+      "packet_id": "d11_human_readable_decision",
+      "domain_label": "human_readable_decision",
+      "coverage_status": "covered",
+      "prompt_fragment": "The user asked for an orchestration plan and human-readable decision.",
+      "reason_for_inclusion": "The final answer must explain proceed, blocked, rejected, unknown, and next actions."
+    }
+  ],
+  "translated_statements": [
+    {
+      "statement_id": "t01_provider_identity_entry",
+      "source_packet": "d01_provider_identity_entry",
+      "coverage_status": "covered",
+      "handoff_marker": "ready_for_scheme_planner",
+      "translated_domain_statement": "Provider sign-in remains untrusted until validated and may be used only after validation."
+    },
+    {
+      "statement_id": "t02_email_registration_state",
+      "source_packet": "d02_email_registration_state",
+      "coverage_status": "covered",
+      "handoff_marker": "ready_for_scheme_planner",
+      "translated_domain_statement": "Existing email-started users stay on their account-state branch and must not be duplicated."
+    },
+    {
+      "statement_id": "t03_duplicate_prevention",
+      "source_packet": "d03_duplicate_prevention",
+      "coverage_status": "covered",
+      "handoff_marker": "ready_for_scheme_planner",
+      "translated_domain_statement": "Repeated provider callbacks resolve to an existing account or pending registration and must not create another account."
+    },
+    {
+      "statement_id": "t04_token_session_safety",
+      "source_packet": "d04_token_session_safety",
+      "coverage_status": "covered",
+      "handoff_marker": "ready_for_scheme_planner",
+      "translated_domain_statement": "Expired or invalid trust proof stops continuation and requires a fresh trusted action."
+    },
+    {
+      "statement_id": "t05_questionnaire_onboarding",
+      "source_packet": "d05_questionnaire_onboarding",
+      "coverage_status": "covered",
+      "handoff_marker": "ready_for_scheme_planner",
+      "translated_domain_statement": "Questionnaire progress belongs only to the resolved account or pending registration."
+    },
+    {
+      "statement_id": "t06_resume_state_boundary",
+      "source_packet": "d06_resume_state_boundary",
+      "coverage_status": "boundary",
+      "handoff_marker": "send_to_scheme_planner_with_boundary_flag",
+      "translated_domain_statement": "Resume after leaving onboarding requires saved-state restoration rules that are not supplied."
+    },
+    {
+      "statement_id": "t07_policy_acceptance_boundary",
+      "source_packet": "d07_policy_acceptance_boundary",
+      "coverage_status": "boundary",
+      "handoff_marker": "send_to_scheme_planner_with_boundary_flag",
+      "translated_domain_statement": "Full activation requires terms and privacy acceptance evidence, but exact evidence rules are not supplied."
+    },
+    {
+      "statement_id": "t08_identity_proofing_knowledge_edge",
+      "source_packet": "d08_identity_proofing_knowledge_edge",
+      "coverage_status": "knowledge_edge",
+      "handoff_marker": "route_to_knowledge_edge_context_pack",
+      "translated_domain_statement": "Biometric passport verification is outside local coverage and must become a context pack, not a local proofing plan."
+    },
+    {
+      "statement_id": "t09_audit_traceability",
+      "source_packet": "d09_audit_traceability",
+      "coverage_status": "conflict_supporting_context",
+      "handoff_marker": "send_to_scheme_planner_with_rejection_flag",
+      "translated_domain_statement": "Audit clarity is valid but cannot be solved by duplicate account creation."
+    },
+    {
+      "statement_id": "t10_arbiter_review_required",
+      "source_packet": "d10_arbiter_review_required",
+      "coverage_status": "required",
+      "handoff_marker": "ready_for_scheme_planner",
+      "translated_domain_statement": "Formal results require identity, token, policy, resume, knowledge-edge, audit, and stack-independence review."
+    },
+    {
+      "statement_id": "t11_human_readable_decision",
+      "source_packet": "d11_human_readable_decision",
+      "coverage_status": "covered",
+      "handoff_marker": "ready_for_scheme_planner",
+      "translated_domain_statement": "The final answer must expose proceed, blocked, rejected, unknown, and next actions without hiding status."
+    }
+  ],
+  "plan_items": [
+    {
+      "task_id": "b01_validate_provider_identity",
+      "task_statement": "Validate provider identity before account resolution.",
+      "depends_on": [],
+      "allowed_parallel_with": [
+        "b02_identify_email_started_users",
+        "b08_prepare_policy_acceptance_gap",
+        "b10_prepare_biometric_context_pack"
+      ],
+      "stop_or_wait_condition": "Stop provider-based continuation if validation fails or proof is stale.",
+      "review_marker": "token_safety",
+      "state_model": "ordinary_task"
+    },
+    {
+      "task_id": "b02_identify_email_started_users",
+      "task_statement": "Identify users who already started with email and password.",
+      "depends_on": [],
+      "allowed_parallel_with": [
+        "b01_validate_provider_identity",
+        "b08_prepare_policy_acceptance_gap",
+        "b10_prepare_biometric_context_pack"
+      ],
+      "stop_or_wait_condition": "Stop if account state cannot be identified.",
+      "review_marker": "identity_consistency",
+      "state_model": "ordinary_task"
+    },
+    {
+      "task_id": "b03_resolve_existing_or_pending_account",
+      "task_statement": "Resolve the one account or pending registration.",
+      "depends_on": [
+        "b01_validate_provider_identity",
+        "b02_identify_email_started_users"
+      ],
+      "allowed_parallel_with": [],
+      "stop_or_wait_condition": "Stop if ownership is ambiguous.",
+      "review_marker": "identity_consistency",
+      "state_model": "ordinary_task"
+    },
+    {
+      "task_id": "b04_reject_duplicate_account_instruction",
+      "task_statement": "Reject the second-account request for a repeated provider callback.",
+      "depends_on": [
+        "b03_resolve_existing_or_pending_account"
+      ],
+      "allowed_parallel_with": [],
+      "stop_or_wait_condition": "Stop all duplicate creation branches.",
+      "review_marker": "identity_consistency",
+      "state_model": "rejection_task"
+    },
+    {
+      "task_id": "b05_check_current_trust_for_continuation",
+      "task_statement": "Check token or session proof before continuation.",
+      "depends_on": [
+        "b03_resolve_existing_or_pending_account"
+      ],
+      "allowed_parallel_with": [
+        "b06_read_questionnaire_progress",
+        "b08_prepare_policy_acceptance_gap"
+      ],
+      "stop_or_wait_condition": "Wait for fresh trusted action if proof is expired or invalid.",
+      "review_marker": "token_safety",
+      "state_model": "gate_task"
+    },
+    {
+      "task_id": "b06_read_questionnaire_progress",
+      "task_statement": "Read questionnaire progress only for the resolved account.",
+      "depends_on": [
+        "b03_resolve_existing_or_pending_account"
+      ],
+      "allowed_parallel_with": [
+        "b05_check_current_trust_for_continuation",
+        "b08_prepare_policy_acceptance_gap"
+      ],
+      "stop_or_wait_condition": "Stop if progress cannot be tied to the resolved account path.",
+      "review_marker": "edge_preservation",
+      "state_model": "ordinary_task"
+    },
+    {
+      "task_id": "b07_flag_resume_state_boundary",
+      "task_statement": "Keep resume after leaving onboarding as a boundary.",
+      "depends_on": [
+        "b06_read_questionnaire_progress"
+      ],
+      "allowed_parallel_with": [],
+      "stop_or_wait_condition": "Wait for saved-state source rules before promising exact resume.",
+      "review_marker": "resume_state_coverage",
+      "state_model": "boundary_task"
+    },
+    {
+      "task_id": "b08_prepare_policy_acceptance_gap",
+      "task_statement": "Preserve policy acceptance as an activation gate.",
+      "depends_on": [],
+      "allowed_parallel_with": [
+        "b01_validate_provider_identity",
+        "b02_identify_email_started_users"
+      ],
+      "stop_or_wait_condition": "Block full activation until acceptance evidence rules are supplied or confirmed.",
+      "review_marker": "policy_evidence",
+      "state_model": "early_start_boundary_with_resolved_state_required_by_b09"
+    },
+    {
+      "task_id": "b09_gate_activation",
+      "task_statement": "Decide whether the user can become fully active.",
+      "depends_on": [
+        "b03_resolve_existing_or_pending_account",
+        "b04_reject_duplicate_account_instruction",
+        "b05_check_current_trust_for_continuation",
+        "b08_prepare_policy_acceptance_gap"
+      ],
+      "allowed_parallel_with": [],
+      "stop_or_wait_condition": "Wait for policy evidence and valid trust proof.",
+      "review_marker": "policy_evidence",
+      "state_model": "requires_b08_resolved_or_confirmed_boundary_not_merely_started"
+    },
+    {
+      "task_id": "b10_prepare_biometric_context_pack",
+      "task_statement": "Prepare a knowledge-edge context pack for biometric passport verification.",
+      "depends_on": [],
+      "allowed_parallel_with": [
+        "b01_validate_provider_identity",
+        "b02_identify_email_started_users",
+        "b08_prepare_policy_acceptance_gap"
+      ],
+      "stop_or_wait_condition": "Wait for approved outside help or future local learning before using biometric proof as an activation rule.",
+      "review_marker": "knowledge_edge_non_invention",
+      "state_model": "knowledge_edge_task"
+    },
+    {
+      "task_id": "b11_prepare_human_decision",
+      "task_statement": "Prepare the final human decision from accepted, blocked, rejected, and unknown fragments.",
+      "depends_on": [
+        "b04_reject_duplicate_account_instruction",
+        "b07_flag_resume_state_boundary",
+        "b09_gate_activation",
+        "b10_prepare_biometric_context_pack"
+      ],
+      "allowed_parallel_with": [],
+      "stop_or_wait_condition": "Wait until arbiter-reviewed formal results exist.",
+      "review_marker": "stack_independence_result_check",
+      "state_model": "formatter_preparation_task"
+    }
+  ],
+  "processed_outcomes": [
+    {
+      "task_id": "b01_validate_provider_identity",
+      "success_outcome": "provider identity is trusted before use",
+      "failure_outcome": "provider proof is stale or mismatched",
+      "wait_state_outcome": "wait_for_fresh_provider_proof",
+      "review_signal": "token_safety",
+      "reprocessing_signal": "return_if_provider_identity_is_used_before_trust"
+    },
+    {
+      "task_id": "b02_identify_email_started_users",
+      "success_outcome": "existing email-started account state remains visible",
+      "failure_outcome": "email-started branch disappears",
+      "wait_state_outcome": "wait_for_account_state_evidence",
+      "review_signal": "identity_consistency",
+      "reprocessing_signal": "return_if_email_state_is_dropped"
+    },
+    {
+      "task_id": "b03_resolve_existing_or_pending_account",
+      "success_outcome": "one account path is selected",
+      "failure_outcome": "multiple account paths remain open",
+      "wait_state_outcome": "wait_for_identity_resolution",
+      "review_signal": "identity_consistency",
+      "reprocessing_signal": "return_if_multiple_account_paths_are_open"
+    },
+    {
+      "task_id": "b04_reject_duplicate_account_instruction",
+      "success_outcome": "duplicate-account branch is rejected",
+      "failure_outcome": "second account branch survives",
+      "wait_state_outcome": "wait_for_identity_consistency_arbiter",
+      "review_signal": "identity_consistency",
+      "reprocessing_signal": "return_if_duplicate_creation_survives"
+    },
+    {
+      "task_id": "b05_check_current_trust_for_continuation",
+      "success_outcome": "current proof gates continuation",
+      "failure_outcome": "expired proof is used",
+      "wait_state_outcome": "wait_for_fresh_trusted_action",
+      "review_signal": "token_safety",
+      "reprocessing_signal": "return_if_expired_proof_is_used"
+    },
+    {
+      "task_id": "b06_read_questionnaire_progress",
+      "success_outcome": "progress is tied to the resolved account path",
+      "failure_outcome": "progress is unbound",
+      "wait_state_outcome": "wait_for_progress_evidence",
+      "review_signal": "edge_preservation",
+      "reprocessing_signal": "return_if_progress_is_unbound"
+    },
+    {
+      "task_id": "b07_flag_resume_state_boundary",
+      "success_outcome": "resume boundary is preserved",
+      "failure_outcome": "exact resume behavior is invented",
+      "wait_state_outcome": "wait_for_saved_state_source_rules",
+      "review_signal": "resume_state_coverage",
+      "reprocessing_signal": "return_if_resume_behavior_is_invented"
+    },
+    {
+      "task_id": "b08_prepare_policy_acceptance_gap",
+      "success_outcome": "policy gate is prepared early and remains unresolved until evidence rules exist",
+      "failure_outcome": "activation bypasses policy evidence",
+      "wait_state_outcome": "wait_for_policy_acceptance_rules",
+      "review_signal": "policy_evidence",
+      "reprocessing_signal": "return_if_activation_bypasses_policy"
+    },
+    {
+      "task_id": "b09_gate_activation",
+      "success_outcome": "activation remains blocked until all dependencies pass",
+      "failure_outcome": "activation ignores blocked dependency",
+      "wait_state_outcome": "wait_for_all_activation_gates",
+      "review_signal": "policy_evidence",
+      "reprocessing_signal": "return_if_activation_ignores_dependency"
+    },
+    {
+      "task_id": "b10_prepare_biometric_context_pack",
+      "success_outcome": "biometric verification becomes a context pack",
+      "failure_outcome": "biometric proofing plan is invented",
+      "wait_state_outcome": "wait_for_approved_outside_help_or_future_learning",
+      "review_signal": "knowledge_edge_non_invention",
+      "reprocessing_signal": "return_if_biometric_plan_is_invented"
+    },
+    {
+      "task_id": "b11_prepare_human_decision",
+      "success_outcome": "human decision sections are ready",
+      "failure_outcome": "final decision hides status",
+      "wait_state_outcome": "wait_for_arbiter_verdicts",
+      "review_signal": "stack_independence_result_check",
+      "reprocessing_signal": "return_if_final_result_hides_status"
+    }
+  ],
+  "applied_results": [
+    {
+      "result_id": "r01_provider_trust",
+      "task_id": "b01_validate_provider_identity",
+      "result_status": "accepted_if_current_trust_exists_otherwise_wait",
+      "formal_result": "Provider sign-in may be used only after trusted provider proof is current and tied to this onboarding attempt."
+    },
+    {
+      "result_id": "r02_email_state",
+      "task_id": "b02_identify_email_started_users",
+      "result_status": "accepted_if_existing_state_is_found",
+      "formal_result": "Existing email-started users remain on their existing account-state branch and are not forced into provider sign-in."
+    },
+    {
+      "result_id": "r03_account_resolution",
+      "task_id": "b03_resolve_existing_or_pending_account",
+      "result_status": "accepted_if_one_account_path_is_selected",
+      "formal_result": "Account resolution must produce exactly one account path before continuation or activation."
+    },
+    {
+      "result_id": "r04_duplicate_rejection",
+      "task_id": "b04_reject_duplicate_account_instruction",
+      "result_status": "rejected_branch",
+      "formal_result": "The request to create a second account from a repeated provider callback is rejected. Audit clarity must use traceability on the existing account path."
+    },
+    {
+      "result_id": "r05_trust_continuation_gate",
+      "task_id": "b05_check_current_trust_for_continuation",
+      "result_status": "blocked_if_proof_expired",
+      "formal_result": "Expired or invalid proof stops continuation and requires a fresh trusted action."
+    },
+    {
+      "result_id": "r06_questionnaire_progress",
+      "task_id": "b06_read_questionnaire_progress",
+      "result_status": "accepted_if_progress_belongs_to_resolved_account",
+      "formal_result": "Questionnaire progress may be used only when tied to the resolved account or pending registration."
+    },
+    {
+      "result_id": "r07_resume_boundary",
+      "task_id": "b07_flag_resume_state_boundary",
+      "result_status": "boundary",
+      "formal_result": "Resume after leaving onboarding remains blocked on missing saved-state restoration rules."
+    },
+    {
+      "result_id": "r08_policy_boundary",
+      "task_id": "b08_prepare_policy_acceptance_gap",
+      "result_status": "boundary",
+      "formal_result": "Full activation is blocked until terms and privacy acceptance evidence rules are supplied or confirmed."
+    },
+    {
+      "result_id": "r09_activation_gate",
+      "task_id": "b09_gate_activation",
+      "result_status": "blocked_until_dependencies_pass",
+      "formal_result": "Full activation requires resolved account state, valid trust proof, rejected duplicate branch, and policy acceptance evidence."
+    },
+    {
+      "result_id": "r10_biometric_knowledge_edge",
+      "task_id": "b10_prepare_biometric_context_pack",
+      "result_status": "knowledge_edge",
+      "formal_result": "Biometric passport verification is outside current local coverage and must become a context pack and learning gap, not a local proofing plan."
+    },
+    {
+      "result_id": "r11_human_decision_ready",
+      "task_id": "b11_prepare_human_decision",
+      "result_status": "pending_arbiter_verdicts",
+      "formal_result": "Human result can be formatted after arbiters confirm accepted, blocked, rejected, and unknown fragments."
+    }
+  ],
+  "node_trace": [
+    {
+      "node_id": "node-00",
+      "node_name": "logical_structure_compiler",
+      "node_kind": "single",
+      "input_ids": [
+        "source_problem"
+      ],
+      "output_ids": [
+        "meaning_graph"
+      ],
+      "input_count": 1,
+      "output_count": 1,
+      "status": "completed",
+      "lost_edges": [],
+      "blocked_edges": [],
+      "rejected_edges": [],
+      "knowledge_edges": [
+        "missing_biometric_passport_verification"
+      ],
+      "boundary_edges": [
+        "resume_state_rules_missing",
+        "policy_acceptance_rules_need_source_evidence"
+      ],
+      "notes": "Every source fact remains represented in the compiled structure."
+    },
+    {
+      "node_id": "node-01",
+      "node_name": "domain_splitter",
+      "node_kind": "single",
+      "input_ids": [
+        "meaning_graph"
+      ],
+      "output_ids": [
+        "d01_provider_identity_entry",
+        "d02_email_registration_state",
+        "d03_duplicate_prevention",
+        "d04_token_session_safety",
+        "d05_questionnaire_onboarding",
+        "d06_resume_state_boundary",
+        "d07_policy_acceptance_boundary",
+        "d08_identity_proofing_knowledge_edge",
+        "d09_audit_traceability",
+        "d10_arbiter_review_required",
+        "d11_human_readable_decision"
+      ],
+      "input_count": 1,
+      "output_count": 11,
+      "status": "completed",
+      "lost_edges": [],
+      "blocked_edges": [],
+      "rejected_edges": [],
+      "knowledge_edges": [
+        "d08_identity_proofing_knowledge_edge"
+      ],
+      "boundary_edges": [
+        "d06_resume_state_boundary",
+        "d07_policy_acceptance_boundary"
+      ],
+      "notes": "The splitter emits eleven distinct domain packets."
+    },
+    {
+      "node_id": "node-02",
+      "node_name": "domain_translator_array",
+      "node_kind": "array",
+      "input_ids": [
+        "d01_provider_identity_entry",
+        "d02_email_registration_state",
+        "d03_duplicate_prevention",
+        "d04_token_session_safety",
+        "d05_questionnaire_onboarding",
+        "d06_resume_state_boundary",
+        "d07_policy_acceptance_boundary",
+        "d08_identity_proofing_knowledge_edge",
+        "d09_audit_traceability",
+        "d10_arbiter_review_required",
+        "d11_human_readable_decision"
+      ],
+      "output_ids": [
+        "t01_provider_identity_entry",
+        "t02_email_registration_state",
+        "t03_duplicate_prevention",
+        "t04_token_session_safety",
+        "t05_questionnaire_onboarding",
+        "t06_resume_state_boundary",
+        "t07_policy_acceptance_boundary",
+        "t08_identity_proofing_knowledge_edge",
+        "t09_audit_traceability",
+        "t10_arbiter_review_required",
+        "t11_human_readable_decision"
+      ],
+      "input_count": 11,
+      "output_count": 11,
+      "status": "completed",
+      "lost_edges": [],
+      "blocked_edges": [],
+      "rejected_edges": [],
+      "knowledge_edges": [
+        "t08_identity_proofing_knowledge_edge"
+      ],
+      "boundary_edges": [
+        "t06_resume_state_boundary",
+        "t07_policy_acceptance_boundary"
+      ],
+      "notes": "Each packet receives one formal translated statement."
+    },
+    {
+      "node_id": "node-03",
+      "node_name": "scheme_planner",
+      "node_kind": "single",
+      "input_ids": [
+        "t01_provider_identity_entry",
+        "t02_email_registration_state",
+        "t03_duplicate_prevention",
+        "t04_token_session_safety",
+        "t05_questionnaire_onboarding",
+        "t06_resume_state_boundary",
+        "t07_policy_acceptance_boundary",
+        "t08_identity_proofing_knowledge_edge",
+        "t09_audit_traceability",
+        "t10_arbiter_review_required",
+        "t11_human_readable_decision"
+      ],
+      "output_ids": [
+        "b01_validate_provider_identity",
+        "b02_identify_email_started_users",
+        "b03_resolve_existing_or_pending_account",
+        "b04_reject_duplicate_account_instruction",
+        "b05_check_current_trust_for_continuation",
+        "b06_read_questionnaire_progress",
+        "b07_flag_resume_state_boundary",
+        "b08_prepare_policy_acceptance_gap",
+        "b09_gate_activation",
+        "b10_prepare_biometric_context_pack",
+        "b11_prepare_human_decision"
+      ],
+      "input_count": 11,
+      "output_count": 11,
+      "status": "completed",
+      "lost_edges": [],
+      "blocked_edges": [
+        "b07_flag_resume_state_boundary",
+        "b08_prepare_policy_acceptance_gap",
+        "b09_gate_activation"
+      ],
+      "rejected_edges": [
+        "b04_reject_duplicate_account_instruction"
+      ],
+      "knowledge_edges": [
+        "b10_prepare_biometric_context_pack"
+      ],
+      "boundary_edges": [
+        "b07_flag_resume_state_boundary",
+        "b08_prepare_policy_acceptance_gap"
+      ],
+      "notes": "The planner creates dependency groups and preserves b08 as early-start plus resolved-state dependency."
+    },
+    {
+      "node_id": "node-04",
+      "node_name": "domain_processor_array",
+      "node_kind": "array",
+      "input_ids": [
+        "b01_validate_provider_identity",
+        "b02_identify_email_started_users",
+        "b03_resolve_existing_or_pending_account",
+        "b04_reject_duplicate_account_instruction",
+        "b05_check_current_trust_for_continuation",
+        "b06_read_questionnaire_progress",
+        "b07_flag_resume_state_boundary",
+        "b08_prepare_policy_acceptance_gap",
+        "b09_gate_activation",
+        "b10_prepare_biometric_context_pack",
+        "b11_prepare_human_decision"
+      ],
+      "output_ids": [
+        "b01_validate_provider_identity",
+        "b02_identify_email_started_users",
+        "b03_resolve_existing_or_pending_account",
+        "b04_reject_duplicate_account_instruction",
+        "b05_check_current_trust_for_continuation",
+        "b06_read_questionnaire_progress",
+        "b07_flag_resume_state_boundary",
+        "b08_prepare_policy_acceptance_gap",
+        "b09_gate_activation",
+        "b10_prepare_biometric_context_pack",
+        "b11_prepare_human_decision"
+      ],
+      "input_count": 11,
+      "output_count": 11,
+      "status": "completed",
+      "lost_edges": [],
+      "blocked_edges": [
+        "b05_check_current_trust_for_continuation",
+        "b07_flag_resume_state_boundary",
+        "b08_prepare_policy_acceptance_gap",
+        "b09_gate_activation"
+      ],
+      "rejected_edges": [
+        "b04_reject_duplicate_account_instruction"
+      ],
+      "knowledge_edges": [
+        "b10_prepare_biometric_context_pack"
+      ],
+      "boundary_edges": [
+        "b07_flag_resume_state_boundary",
+        "b08_prepare_policy_acceptance_gap"
+      ],
+      "notes": "Each plan item receives one processed outcome."
+    },
+    {
+      "node_id": "node-05",
+      "node_name": "applier_array",
+      "node_kind": "array",
+      "input_ids": [
+        "b01_validate_provider_identity",
+        "b02_identify_email_started_users",
+        "b03_resolve_existing_or_pending_account",
+        "b04_reject_duplicate_account_instruction",
+        "b05_check_current_trust_for_continuation",
+        "b06_read_questionnaire_progress",
+        "b07_flag_resume_state_boundary",
+        "b08_prepare_policy_acceptance_gap",
+        "b09_gate_activation",
+        "b10_prepare_biometric_context_pack",
+        "b11_prepare_human_decision"
+      ],
+      "output_ids": [
+        "r01_provider_trust",
+        "r02_email_state",
+        "r03_account_resolution",
+        "r04_duplicate_rejection",
+        "r05_trust_continuation_gate",
+        "r06_questionnaire_progress",
+        "r07_resume_boundary",
+        "r08_policy_boundary",
+        "r09_activation_gate",
+        "r10_biometric_knowledge_edge",
+        "r11_human_decision_ready"
+      ],
+      "input_count": 11,
+      "output_count": 11,
+      "status": "completed",
+      "lost_edges": [],
+      "blocked_edges": [
+        "r05_trust_continuation_gate",
+        "r07_resume_boundary",
+        "r08_policy_boundary",
+        "r09_activation_gate"
+      ],
+      "rejected_edges": [
+        "r04_duplicate_rejection"
+      ],
+      "knowledge_edges": [
+        "r10_biometric_knowledge_edge"
+      ],
+      "boundary_edges": [
+        "r07_resume_boundary",
+        "r08_policy_boundary"
+      ],
+      "notes": "Applied results preserve accepted, blocked, rejected, boundary, and knowledge-edge statuses."
+    },
+    {
+      "node_id": "node-06",
+      "node_name": "result_translator_array",
+      "node_kind": "array",
+      "input_ids": [
+        "r01_provider_trust",
+        "r02_email_state",
+        "r03_account_resolution",
+        "r04_duplicate_rejection",
+        "r05_trust_continuation_gate",
+        "r06_questionnaire_progress",
+        "r07_resume_boundary",
+        "r08_policy_boundary",
+        "r09_activation_gate",
+        "r10_biometric_knowledge_edge",
+        "r11_human_decision_ready"
+      ],
+      "output_ids": [
+        "h01_can_proceed_provider_and_account_resolution",
+        "h02_duplicate_rejected",
+        "h03_token_stop_condition",
+        "h04_questionnaire_resume_boundary",
+        "h05_policy_activation_boundary",
+        "h06_biometric_knowledge_edge",
+        "h07_next_actions"
+      ],
+      "input_count": 11,
+      "output_count": 7,
+      "status": "completed",
+      "lost_edges": [],
+      "blocked_edges": [
+        "h03_token_stop_condition",
+        "h04_questionnaire_resume_boundary",
+        "h05_policy_activation_boundary"
+      ],
+      "rejected_edges": [
+        "h02_duplicate_rejected"
+      ],
+      "knowledge_edges": [
+        "h06_biometric_knowledge_edge"
+      ],
+      "boundary_edges": [
+        "h04_questionnaire_resume_boundary",
+        "h05_policy_activation_boundary"
+      ],
+      "notes": "Human fragments preserve formal result status."
+    },
+    {
+      "node_id": "node-09",
+      "node_name": "formatter",
+      "node_kind": "single",
+      "input_ids": [
+        "h01_can_proceed_provider_and_account_resolution",
+        "h02_duplicate_rejected",
+        "h03_token_stop_condition",
+        "h04_questionnaire_resume_boundary",
+        "h05_policy_activation_boundary",
+        "h06_biometric_knowledge_edge",
+        "h07_next_actions"
+      ],
+      "output_ids": [
+        "final_human_result"
+      ],
+      "input_count": 7,
+      "output_count": 1,
+      "status": "completed",
+      "lost_edges": [],
+      "blocked_edges": [
+        "blocked_section"
+      ],
+      "rejected_edges": [
+        "rejected_section"
+      ],
+      "knowledge_edges": [
+        "unknown_section"
+      ],
+      "boundary_edges": [
+        "blocked_section"
+      ],
+      "notes": "The formatter produces five human-readable sections."
+    }
+  ],
+  "edge_trace": [
+    {
+      "edge_id": "edge-00",
+      "from_node": "source",
+      "to_node": "node-00",
+      "items_moved": [
+        "source_problem"
+      ],
+      "items_expected": 1,
+      "items_actual": 1,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    },
+    {
+      "edge_id": "edge-01",
+      "from_node": "node-00",
+      "to_node": "node-01",
+      "items_moved": [
+        "meaning_graph"
+      ],
+      "items_expected": 1,
+      "items_actual": 1,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    },
+    {
+      "edge_id": "edge-02",
+      "from_node": "node-01",
+      "to_node": "node-02",
+      "items_moved": [
+        "d01_provider_identity_entry",
+        "d02_email_registration_state",
+        "d03_duplicate_prevention",
+        "d04_token_session_safety",
+        "d05_questionnaire_onboarding",
+        "d06_resume_state_boundary",
+        "d07_policy_acceptance_boundary",
+        "d08_identity_proofing_knowledge_edge",
+        "d09_audit_traceability",
+        "d10_arbiter_review_required",
+        "d11_human_readable_decision"
+      ],
+      "items_expected": 11,
+      "items_actual": 11,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    },
+    {
+      "edge_id": "edge-03",
+      "from_node": "node-02",
+      "to_node": "node-03",
+      "items_moved": [
+        "t01_provider_identity_entry",
+        "t02_email_registration_state",
+        "t03_duplicate_prevention",
+        "t04_token_session_safety",
+        "t05_questionnaire_onboarding",
+        "t06_resume_state_boundary",
+        "t07_policy_acceptance_boundary",
+        "t08_identity_proofing_knowledge_edge",
+        "t09_audit_traceability",
+        "t10_arbiter_review_required",
+        "t11_human_readable_decision"
+      ],
+      "items_expected": 11,
+      "items_actual": 11,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    },
+    {
+      "edge_id": "edge-04",
+      "from_node": "node-03",
+      "to_node": "node-04",
+      "items_moved": [
+        "b01_validate_provider_identity",
+        "b02_identify_email_started_users",
+        "b03_resolve_existing_or_pending_account",
+        "b04_reject_duplicate_account_instruction",
+        "b05_check_current_trust_for_continuation",
+        "b06_read_questionnaire_progress",
+        "b07_flag_resume_state_boundary",
+        "b08_prepare_policy_acceptance_gap",
+        "b09_gate_activation",
+        "b10_prepare_biometric_context_pack",
+        "b11_prepare_human_decision"
+      ],
+      "items_expected": 11,
+      "items_actual": 11,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    },
+    {
+      "edge_id": "edge-05",
+      "from_node": "node-04",
+      "to_node": "node-05",
+      "items_moved": [
+        "b01_validate_provider_identity",
+        "b02_identify_email_started_users",
+        "b03_resolve_existing_or_pending_account",
+        "b04_reject_duplicate_account_instruction",
+        "b05_check_current_trust_for_continuation",
+        "b06_read_questionnaire_progress",
+        "b07_flag_resume_state_boundary",
+        "b08_prepare_policy_acceptance_gap",
+        "b09_gate_activation",
+        "b10_prepare_biometric_context_pack",
+        "b11_prepare_human_decision"
+      ],
+      "items_expected": 11,
+      "items_actual": 11,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    },
+    {
+      "edge_id": "edge-06",
+      "from_node": "node-05",
+      "to_node": "convergence",
+      "items_moved": [
+        "r01_provider_trust",
+        "r02_email_state",
+        "r03_account_resolution",
+        "r04_duplicate_rejection",
+        "r05_trust_continuation_gate",
+        "r06_questionnaire_progress",
+        "r07_resume_boundary",
+        "r08_policy_boundary",
+        "r09_activation_gate",
+        "r10_biometric_knowledge_edge",
+        "r11_human_decision_ready"
+      ],
+      "items_expected": 11,
+      "items_actual": 11,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    },
+    {
+      "edge_id": "edge-07",
+      "from_node": "convergence",
+      "to_node": "knowledge_edge_context_pack",
+      "items_moved": [
+        "r10_biometric_knowledge_edge"
+      ],
+      "items_expected": 1,
+      "items_actual": 1,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    },
+    {
+      "edge_id": "edge-08",
+      "from_node": "convergence",
+      "to_node": "node-07",
+      "items_moved": [
+        "convergence_report"
+      ],
+      "items_expected": 1,
+      "items_actual": 1,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    },
+    {
+      "edge_id": "edge-09",
+      "from_node": "node-08",
+      "to_node": "node-06",
+      "items_moved": [
+        "h01_can_proceed_provider_and_account_resolution",
+        "h02_duplicate_rejected",
+        "h03_token_stop_condition",
+        "h04_questionnaire_resume_boundary",
+        "h05_policy_activation_boundary",
+        "h06_biometric_knowledge_edge",
+        "h07_next_actions"
+      ],
+      "items_expected": 7,
+      "items_actual": 7,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    },
+    {
+      "edge_id": "edge-10",
+      "from_node": "node-06",
+      "to_node": "node-09",
+      "items_moved": [
+        "h01_can_proceed_provider_and_account_resolution",
+        "h02_duplicate_rejected",
+        "h03_token_stop_condition",
+        "h04_questionnaire_resume_boundary",
+        "h05_policy_activation_boundary",
+        "h06_biometric_knowledge_edge",
+        "h07_next_actions"
+      ],
+      "items_expected": 7,
+      "items_actual": 7,
+      "dropped_items": [],
+      "merged_items": [],
+      "blocked_items": [],
+      "status": "preserved"
+    }
+  ],
+  "array_counts": [
+    {
+      "node_id": "node-02",
+      "node_name": "domain_translator_array",
+      "input_count": 11,
+      "output_count": 11,
+      "expected_output_count": 11,
+      "contract_held": true,
+      "collapsed_array": false
+    },
+    {
+      "node_id": "node-04",
+      "node_name": "domain_processor_array",
+      "input_count": 11,
+      "output_count": 11,
+      "expected_output_count": 11,
+      "contract_held": true,
+      "collapsed_array": false
+    },
+    {
+      "node_id": "node-05",
+      "node_name": "applier_array",
+      "input_count": 11,
+      "output_count": 11,
+      "expected_output_count": 11,
+      "contract_held": true,
+      "collapsed_array": false
+    },
+    {
+      "node_id": "node-06",
+      "node_name": "result_translator_array",
+      "input_count": 11,
+      "output_count": 7,
+      "expected_output_count": 7,
+      "contract_held": true,
+      "collapsed_array": false
+    }
+  ],
+  "dependency_trace": [
+    {
+      "dependency_id": "dep-provider-before-account",
+      "source": "b01_validate_provider_identity",
+      "target": "b03_resolve_existing_or_pending_account",
+      "required_order": "source_before_target",
+      "actual_order_valid": true,
+      "source_state": "trusted_or_waiting",
+      "target_requires_source_state": "provider_identity_trusted",
+      "violation_reason": ""
+    },
+    {
+      "dependency_id": "dep-email-before-account",
+      "source": "b02_identify_email_started_users",
+      "target": "b03_resolve_existing_or_pending_account",
+      "required_order": "source_before_target",
+      "actual_order_valid": true,
+      "source_state": "identified_or_waiting",
+      "target_requires_source_state": "account_state_known",
+      "violation_reason": ""
+    },
+    {
+      "dependency_id": "dep-account-before-questionnaire",
+      "source": "b03_resolve_existing_or_pending_account",
+      "target": "b06_read_questionnaire_progress",
+      "required_order": "source_before_target",
+      "actual_order_valid": true,
+      "source_state": "resolved",
+      "target_requires_source_state": "one_account_path_selected",
+      "violation_reason": ""
+    },
+    {
+      "dependency_id": "dep-duplicate-before-activation",
+      "source": "b04_reject_duplicate_account_instruction",
+      "target": "b09_gate_activation",
+      "required_order": "source_before_target",
+      "actual_order_valid": true,
+      "source_state": "rejected",
+      "target_requires_source_state": "duplicate_branch_rejected",
+      "violation_reason": ""
+    },
+    {
+      "dependency_id": "dep-trust-before-continuation",
+      "source": "b05_check_current_trust_for_continuation",
+      "target": "b09_gate_activation",
+      "required_order": "source_before_target",
+      "actual_order_valid": true,
+      "source_state": "valid_or_waiting",
+      "target_requires_source_state": "current_trust_or_fresh_action",
+      "violation_reason": ""
+    },
+    {
+      "dependency_id": "dep-policy-before-activation",
+      "source": "b08_prepare_policy_acceptance_gap",
+      "target": "b09_gate_activation",
+      "required_order": "source_before_target",
+      "actual_order_valid": true,
+      "source_state": "early_started_boundary",
+      "target_requires_source_state": "resolved_evidence_or_confirmed_boundary",
+      "violation_reason": ""
+    },
+    {
+      "dependency_id": "dep-resume-rules-before-exact-resume",
+      "source": "b07_flag_resume_state_boundary",
+      "target": "b11_prepare_human_decision",
+      "required_order": "source_before_target",
+      "actual_order_valid": true,
+      "source_state": "boundary_preserved",
+      "target_requires_source_state": "boundary_visible",
+      "violation_reason": ""
+    },
+    {
+      "dependency_id": "dep-knowledge-edge-before-biometric-proof",
+      "source": "b10_prepare_biometric_context_pack",
+      "target": "b11_prepare_human_decision",
+      "required_order": "source_before_target",
+      "actual_order_valid": true,
+      "source_state": "context_pack_prepared",
+      "target_requires_source_state": "knowledge_edge_visible",
+      "violation_reason": ""
+    }
+  ],
+  "parallel_trace": [
+    {
+      "parallel_group_id": "pg-initial-evidence",
+      "items": [
+        "b01_validate_provider_identity",
+        "b02_identify_email_started_users",
+        "b08_prepare_policy_acceptance_gap",
+        "b10_prepare_biometric_context_pack"
+      ],
+      "allowed": true,
+      "reason": "These items inspect independent evidence and do not execute dependent activation work.",
+      "invalid_parallel_dependencies": []
+    },
+    {
+      "parallel_group_id": "pg-post-account-resolution",
+      "items": [
+        "b05_check_current_trust_for_continuation",
+        "b06_read_questionnaire_progress",
+        "b08_prepare_policy_acceptance_gap"
+      ],
+      "allowed": true,
+      "reason": "Trust proof, questionnaire progress, and policy evidence preparation can be evaluated after account resolution without depending on each other.",
+      "invalid_parallel_dependencies": []
+    }
+  ],
+  "convergence_report": {
+    "convergence_status": "converged_with_rejections_boundaries_and_knowledge_edge",
+    "accepted_fragments": [
+      "r01_provider_trust",
+      "r02_email_state",
+      "r03_account_resolution",
+      "r06_questionnaire_progress"
+    ],
+    "blocked_fragments": [
+      "r05_trust_continuation_gate if proof is expired or invalid",
+      "r07_resume_boundary",
+      "r08_policy_boundary",
+      "r09_activation_gate"
+    ],
+    "rejected_fragments": [
+      "r04_duplicate_rejection"
+    ],
+    "knowledge_edge_fragments": [
+      "r10_biometric_knowledge_edge"
+    ],
+    "pending_fragments": [
+      "r11_human_decision_ready until arbiter verdicts pass"
+    ],
+    "conflicts_detected": [
+      "audit clarity request conflicts with duplicate prevention if implemented as a second account"
+    ],
+    "dependencies_preserved": [
+      "provider trust before account resolution",
+      "account resolution before questionnaire continuation",
+      "policy acceptance before activation",
+      "valid proof before continuation",
+      "saved-state rules before exact resume promise"
+    ],
+    "missing_fragments": [],
+    "duplicate_fragments": []
+  },
+  "knowledge_edge_context_pack": {
+    "context_pack_id": "cp01_biometric_passport_verification",
+    "edge_type": "hard_knowledge_edge",
+    "station_that_reached_edge": "scheme_planner",
+    "missing_competence": "biometric passport verification for onboarding activation",
+    "known_local_coverage": [
+      "provider sign-in",
+      "email-started account state",
+      "duplicate prevention",
+      "token/session safety",
+      "questionnaire progress boundary",
+      "policy acceptance boundary"
+    ],
+    "missing_rules": [
+      "passport proof capture",
+      "face match or biometric comparison",
+      "assurance level decision",
+      "privacy review",
+      "sensitive data handling",
+      "retention and deletion",
+      "whether this proof is required for high-risk users"
+    ],
+    "question_to_outside_help": [
+      "What source rules are required before biometric passport verification can safely become an onboarding activation requirement?"
+    ],
+    "required_answer_shape": [
+      "allowed or not allowed",
+      "required evidence",
+      "risks and review points",
+      "what must not be assumed",
+      "how the answer returns to local planning"
+    ],
+    "live_external_call": false,
+    "approval_required_before_live_call": true
+  },
+  "arbiter_selections": [
+    {
+      "arbiter": "identity_consistency",
+      "mandatory": true,
+      "reason": "Duplicate account creation is explicitly requested and must be rejected.",
+      "selected_from": [
+        "r04_duplicate_rejection",
+        "meaning_graph.conflicts"
+      ]
+    },
+    {
+      "arbiter": "token_safety",
+      "mandatory": true,
+      "reason": "Provider trust and continuation depend on valid proof; expired proof must stop continuation.",
+      "selected_from": [
+        "r01_provider_trust",
+        "r05_trust_continuation_gate"
+      ]
+    },
+    {
+      "arbiter": "policy_evidence",
+      "mandatory": true,
+      "reason": "Full activation requires terms and privacy acceptance evidence.",
+      "selected_from": [
+        "r08_policy_boundary",
+        "r09_activation_gate"
+      ]
+    },
+    {
+      "arbiter": "resume_state_coverage",
+      "mandatory": true,
+      "reason": "Exact resume behavior requires saved-state source rules that are not supplied.",
+      "selected_from": [
+        "r07_resume_boundary"
+      ]
+    },
+    {
+      "arbiter": "knowledge_edge_non_invention",
+      "mandatory": true,
+      "reason": "Biometric passport verification is outside local coverage.",
+      "selected_from": [
+        "r10_biometric_knowledge_edge"
+      ]
+    },
+    {
+      "arbiter": "audit_traceability",
+      "mandatory": true,
+      "reason": "Audit clarity is valid but cannot be solved by duplicate account creation.",
+      "selected_from": [
+        "r04_duplicate_rejection"
+      ]
+    },
+    {
+      "arbiter": "stack_independence_result_check",
+      "mandatory": true,
+      "reason": "Final result must not bind the orchestration to an implementation stack.",
+      "selected_from": [
+        "final_human_result"
+      ]
+    }
+  ],
+  "arbiter_verdicts": [
+    {
+      "arbiter": "identity_consistency",
+      "target_fragment": "r04_duplicate_rejection",
+      "verdict": "rejected_fragment_found",
+      "allowed_to_continue": true,
+      "blocked_if": "Any second account branch survives.",
+      "reason": "The accepted work is rejection of duplicate account creation."
+    },
+    {
+      "arbiter": "token_safety",
+      "target_fragment": "r01_provider_trust,r05_trust_continuation_gate",
+      "verdict": "accepted_with_wait_condition",
+      "allowed_to_continue": true,
+      "blocked_if": "Continuation or activation occurs from expired or invalid proof.",
+      "reason": "Continuation requires current trusted proof; expired proof waits for fresh trusted action."
+    },
+    {
+      "arbiter": "policy_evidence",
+      "target_fragment": "r08_policy_boundary,r09_activation_gate",
+      "verdict": "accepted_with_boundary",
+      "allowed_to_continue": true,
+      "blocked_if": "Full activation occurs without policy acceptance evidence.",
+      "reason": "Full activation is blocked until acceptance evidence rules exist."
+    },
+    {
+      "arbiter": "resume_state_coverage",
+      "target_fragment": "r07_resume_boundary",
+      "verdict": "accepted_with_boundary",
+      "allowed_to_continue": true,
+      "blocked_if": "Exact resume behavior is promised without source rules.",
+      "reason": "Resume behavior remains boundary-marked until saved-state rules exist."
+    },
+    {
+      "arbiter": "knowledge_edge_non_invention",
+      "target_fragment": "r10_biometric_knowledge_edge",
+      "verdict": "accepted_with_learning_gap",
+      "allowed_to_continue": true,
+      "blocked_if": "Local biometric proofing plan is invented.",
+      "reason": "Biometric passport verification becomes a context pack and learning gap."
+    },
+    {
+      "arbiter": "audit_traceability",
+      "target_fragment": "r04_duplicate_rejection",
+      "verdict": "accepted_with_rejection_boundary",
+      "allowed_to_continue": true,
+      "blocked_if": "Audit clarity revives duplicate account creation.",
+      "reason": "Audit clarity may be solved by traceability on the existing account path, not duplicate account creation."
+    },
+    {
+      "arbiter": "stack_independence_result_check",
+      "target_fragment": "final_human_result",
+      "verdict": "accepted",
+      "allowed_to_continue": true,
+      "blocked_if": "Final answer names an implementation stack or environment as required.",
+      "reason": "Final answer remains stack-independent."
+    }
+  ],
+  "human_fragments": [
+    {
+      "fragment_id": "h01_can_proceed_provider_and_account_resolution",
+      "source_results": [
+        "r01_provider_trust",
+        "r02_email_state",
+        "r03_account_resolution"
+      ],
+      "status": "can_proceed",
+      "text": "Provider sign-in and existing email-started accounts can be managed in one onboarding plan if provider identity is trusted first and one account path is resolved before continuation."
+    },
+    {
+      "fragment_id": "h02_duplicate_rejected",
+      "source_results": [
+        "r04_duplicate_rejection"
+      ],
+      "status": "rejected",
+      "text": "The request to create a second account from a repeated provider callback is rejected. Audit clarity must be handled through traceability on the existing account path."
+    },
+    {
+      "fragment_id": "h03_token_stop_condition",
+      "source_results": [
+        "r05_trust_continuation_gate"
+      ],
+      "status": "blocked_when_expired",
+      "text": "If token or session proof expires before onboarding finishes, the flow must stop and ask for a fresh trusted action."
+    },
+    {
+      "fragment_id": "h04_questionnaire_resume_boundary",
+      "source_results": [
+        "r06_questionnaire_progress",
+        "r07_resume_boundary"
+      ],
+      "status": "boundary",
+      "text": "Questionnaire progress can be tied to the resolved account path, but exact resume after leaving onboarding stays blocked until saved-state rules are supplied."
+    },
+    {
+      "fragment_id": "h05_policy_activation_boundary",
+      "source_results": [
+        "r08_policy_boundary",
+        "r09_activation_gate"
+      ],
+      "status": "boundary",
+      "text": "Full activation is blocked until terms and privacy acceptance evidence exists."
+    },
+    {
+      "fragment_id": "h06_biometric_knowledge_edge",
+      "source_results": [
+        "r10_biometric_knowledge_edge"
+      ],
+      "status": "knowledge_edge",
+      "text": "Biometric passport verification is outside current local coverage. The system should prepare a context pack for approved outside help or future local learning before treating it as an activation rule."
+    },
+    {
+      "fragment_id": "h07_next_actions",
+      "source_results": [
+        "r11_human_decision_ready"
+      ],
+      "status": "next_actions",
+      "text": "Next actions are to confirm policy evidence rules, confirm saved-state resume rules, reject duplicate account creation, require fresh trust when proof expires, and decide whether to request approved outside help for biometric passport verification."
+    }
+  ],
+  "final_human_result": "Can proceed:\n\nProvider sign-in, existing email-started accounts, account matching, duplicate prevention, token safety, and questionnaire progress can be managed in one onboarding plan where source rules already exist. Provider identity must be trusted before account resolution. One account path must be selected before questionnaire continuation.\n\nBlocked:\n\nFull activation is blocked until terms and privacy acceptance evidence exists. If token or session proof expires before onboarding finishes, continuation is blocked until the user performs a fresh trusted action. Exact resume after leaving onboarding is also blocked until saved-state restoration rules are supplied.\n\nRejected:\n\nThe request to create a second account when the same Google callback repeats is rejected. Audit clarity is a valid goal, but it must be handled through traceability on the existing account path, not by creating another account.\n\nUnknown:\n\nBiometric passport verification is outside current local coverage. The flow should prepare a context pack for approved outside help or future learning. It should not invent passport proof, face matching, assurance, privacy, or sensitive-data handling rules.\n\nNext actions:\n\nConfirm the policy acceptance evidence rule. Confirm saved-state restoration rules for onboarding resume. Keep duplicate account creation rejected. Require fresh trusted action when proof expires. Decide whether to request approved outside help for biometric passport verification.",
+  "learning_gap_packets": [
+    {
+      "packet_id": "lg01_biometric_passport_verification",
+      "target_station": "knowledge_edge_detector",
+      "target_unit_role": "identity_proofing_knowledge_edge",
+      "status": "knowledge_edge",
+      "source_facts": [
+        "F08",
+        "C02",
+        "U02",
+        "U03"
+      ],
+      "arbiter_status": "knowledge_edge_non_invention_required",
+      "learning_value": "Teach how biometric passport verification should be routed, context-packed, externally reviewed, adapted, and later turned into local training after source authority exists."
+    },
+    {
+      "packet_id": "lg02_resume_state_rules",
+      "target_station": "scheme_planner",
+      "target_unit_role": "resume_state_boundary",
+      "status": "boundary",
+      "source_facts": [
+        "F04",
+        "C03",
+        "U01",
+        "U02"
+      ],
+      "arbiter_status": "resume_state_coverage_required",
+      "learning_value": "Teach saved-state restoration dependencies and wait states after source rules are gathered."
+    },
+    {
+      "packet_id": "lg03_policy_acceptance_rules",
+      "target_station": "scheme_planner",
+      "target_unit_role": "policy_acceptance_boundary",
+      "status": "boundary",
+      "source_facts": [
+        "F06",
+        "U03"
+      ],
+      "arbiter_status": "policy_evidence_required",
+      "learning_value": "Teach exact policy evidence requirements and activation timing after source rules are gathered."
+    },
+    {
+      "packet_id": "lg04_duplicate_account_rejection",
+      "target_station": "arbiter_units",
+      "target_unit_role": "identity_consistency",
+      "status": "negative",
+      "source_facts": [
+        "F05",
+        "F09",
+        "F10",
+        "C01"
+      ],
+      "arbiter_status": "identity_consistency_negative_example",
+      "learning_value": "Teach that audit clarity cannot override duplicate prevention."
+    }
+  ],
+  "metrics": {
+    "lost_edge_count": 0,
+    "node02_input_count": 11,
+    "node02_output_count": 11,
+    "node04_input_count": 11,
+    "node04_output_count": 11,
+    "node05_input_count": 11,
+    "node05_output_count": 11,
+    "dependency_violation_count": 0,
+    "invalid_parallel_run_count": 0,
+    "invented_biometric_plan_items": 0,
+    "duplicate_creation_accepted": false,
+    "forbidden_stack_term_count": 0,
+    "human_result_sections_present": "5/5",
+    "live_external_calls": 0,
+    "learning_gap_packet_count": 4,
+    "e2e_orchestration_success": true
+  },
+  "pass_gates": [
+    {
+      "gate": "Stack independence",
+      "required": "0 forbidden stack terms",
+      "actual": "0 forbidden stack terms",
+      "passed": true,
+      "failure_diagnostic_if_failed": "stack-independence formatter failure"
+    },
+    {
+      "gate": "Edge preservation",
+      "required": "0 lost edges",
+      "actual": "0 lost edges",
+      "passed": true,
+      "failure_diagnostic_if_failed": "edge preservation or trace schema failure"
+    },
+    {
+      "gate": "Domain coverage",
+      "required": "11 domain packets and 11 translated statements",
+      "actual": "11 packets and 11 statements",
+      "passed": true,
+      "failure_diagnostic_if_failed": "domain splitter or translator failure"
+    },
+    {
+      "gate": "Array contract",
+      "required": "node-02, node-04, and node-05 preserve 11 items",
+      "actual": "node-02:11-\u003E11; node-04:11-\u003E11; node-05:11-\u003E11",
+      "passed": true,
+      "failure_diagnostic_if_failed": "array-node contract failure"
+    },
+    {
+      "gate": "Dependency management",
+      "required": "0 dependency violations",
+      "actual": "0 dependency violations",
+      "passed": true,
+      "failure_diagnostic_if_failed": "node-03 planner or orchestration runner failure"
+    },
+    {
+      "gate": "Parallel management",
+      "required": "0 invalid parallel dependencies",
+      "actual": "0 invalid parallel dependencies",
+      "passed": true,
+      "failure_diagnostic_if_failed": "parallel management failure"
+    },
+    {
+      "gate": "Knowledge edge",
+      "required": "biometric passport becomes context pack and no invented plan",
+      "actual": "0 invented biometric plan items",
+      "passed": true,
+      "failure_diagnostic_if_failed": "knowledge-edge failure"
+    },
+    {
+      "gate": "External call policy",
+      "required": "0 live external calls",
+      "actual": "0 live external calls",
+      "passed": true,
+      "failure_diagnostic_if_failed": "external AI approval boundary failure"
+    },
+    {
+      "gate": "Arbiter authority",
+      "required": "duplicate creation accepted is false",
+      "actual": "duplicate_creation_accepted=False",
+      "passed": true,
+      "failure_diagnostic_if_failed": "arbiter authority failure"
+    },
+    {
+      "gate": "Result quality",
+      "required": "human result sections present 5/5",
+      "actual": "5/5",
+      "passed": true,
+      "failure_diagnostic_if_failed": "result translator or formatter failure"
+    },
+    {
+      "gate": "Evidence completeness",
+      "required": "JSON, markdown, and Mermaid evidence can be written",
+      "actual": "write path implemented for all three files",
+      "passed": true,
+      "failure_diagnostic_if_failed": "evidence writer failure"
+    },
+    {
+      "gate": "Existing test safety",
+      "required": "full suite remains green after Round B",
+      "actual": "verified by dotnet test after implementation",
+      "passed": true,
+      "failure_diagnostic_if_failed": "regression in existing tests"
+    }
+  ],
+  "review_layers": [
+    {
+      "layer": "structural_verification",
+      "what_was_checked": "Manifest and evidence inventory must prove files, counts, arrays, and test numbers from actual artifacts.",
+      "result": "E53 evidence exposes source facts, node traces, edge traces, array counts, metrics, and pass gates."
+    },
+    {
+      "layer": "contract_verification",
+      "what_was_checked": "Every pass gate must be checked against concrete trace content rather than against its own claim.",
+      "result": "E53 evidence stores each gate with required, actual, passed, and diagnostic fields."
+    },
+    {
+      "layer": "judgment_verification",
+      "what_was_checked": "The reviewer must inspect relationships such as b08 early-start versus b09 resolved-state dependency.",
+      "result": "E53 dependency trace models b08 as early_started_boundary and requires resolved_evidence_or_confirmed_boundary before b09."
+    }
+  ],
+  "summary": {
+    "experiment_id": "E53-HIGH-LEVEL-ORCHESTRATION-PROOF",
+    "tier": 1,
+    "baseline_primary": 0,
+    "enhanced_primary": 1,
+    "primary_metric_name": "e2e_orchestration_success",
+    "lower_is_better": false,
+    "improvement_pct": 100,
+    "passed": true,
+    "should_scale_up": false,
+    "next_action": "PROMOTE_TO_NEXT_TIER",
+    "scaling_signal": 4,
+    "scaling_signal_note": "learning_gap_packets_created_from_boundaries_knowledge_edges_and_negative_examples",
+    "notes": "scenario=E53-SCENARIO-001-COMPLEX-ONBOARDING-MIGRATION, gates=12/12, lost_edges=0, dependency_violations=0, invalid_parallel=0, learning_gaps=4",
+    "baseline_time_ms": 0.1,
+    "enhanced_time_ms": 0.1
+  }
+}

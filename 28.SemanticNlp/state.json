@@ -1,0 +1,114 @@
+{
+  "project": "28.SemanticNlp",
+  "description": "Semantic tokenization beyond BPE: FrameNet, SRL, WordNet, AMR, Universal Dependencies. Group tokens by meaning instead of morphology.",
+  "genie_dna": {
+    "operation_result_envelope": true,
+    "base_service": true,
+    "fabric_first": true,
+    "idempotent_operations": true,
+    "no_typed_model_classes_leaked": true,
+    "standard_event_envelope": true,
+    "single_dispatcher": true,
+    "save_before_dispatch": true
+  },
+  "sub_projects": [
+    {
+      "id": 28,
+      "name": "FrameNet",
+      "status": "complete",
+      "files": [
+        "Algorithms/FrameNet.cs"
+      ],
+      "components": {
+        "FrameNetLexicon":      "two-way frame ↔ word index, default Attack/Commerce_buy/Motion/Statement/Communication frames",
+        "FrameDetector":        "vote-based frame selection from token list",
+        "FrameElementFiller":   "positional role assignment (Attacker/Victim, Buyer/Goods, Theme/Goal, ...)",
+        "FrameNetAnnotator":    "tokenize → detect → fill",
+        "FrameNetService":      "BaseService + ISemanticAnnotator with idempotency and event emission"
+      },
+      "fabric_interfaces": ["ISemanticLexicon", "ISemanticStorage", "ISemanticEventLogger", "ISemanticAnnotator"],
+      "test_coverage": "8 tests: Attack/Commerce_buy detection, role assignment, unknown words, empty input, idempotency, save-before-dispatch, missing frame error"
+    },
+    {
+      "id": 29,
+      "name": "SRL",
+      "status": "complete",
+      "files": [
+        "Algorithms/Srl.cs"
+      ],
+      "components": {
+        "PredicateFinder":  "verb dictionary + suffix heuristics for predicate identification",
+        "ArgumentLabeler":  "positional + marker-keyword labelling for A0/A1/AM-LOC/AM-TMP/AM-MNR",
+        "SrlAnnotator":     "tokenize → find predicate → label arguments",
+        "SrlService":       "BaseService + ISemanticAnnotator"
+      },
+      "test_coverage": "4 tests: predicate location, agent/theme/manner roles, no-verb sentence, empty input"
+    },
+    {
+      "id": 30,
+      "name": "WordNet",
+      "status": "complete",
+      "files": [
+        "Algorithms/WordNet.cs"
+      ],
+      "components": {
+        "SynsetDatabase":   "synset id ↔ word reverse index, default mammal hierarchy + attack/purchase synsets",
+        "SynsetNavigator":  "hypernym chain walker + Wu-Palmer similarity",
+        "WordNetAnnotator": "first-sense synset id attached to each token",
+        "WordNetService":   "BaseService + ISemanticAnnotator"
+      },
+      "test_coverage": "5 tests: synset lookup, hypernym chain, Wu-Palmer ordering (dog/wolf > dog/cat), unknown-word failure, annotator output"
+    },
+    {
+      "id": 31,
+      "name": "AMR",
+      "status": "complete",
+      "files": [
+        "Algorithms/Amr.cs"
+      ],
+      "components": {
+        "AmrPenmanParser":     "recursive-descent parser for nested (var / concept :role value) Penman syntax",
+        "AmrPenmanSerializer": "graph → Penman string with cycle protection",
+        "SimpleAmrBuilder":    "first verb becomes root, ARG0 = pre-verb noun, ARG1 = post-verb noun",
+        "AmrAnnotator":        "build → serialize → emit per-token annotations",
+        "AmrService":          "BaseService + ISemanticAnnotator"
+      },
+      "test_coverage": "5 tests: nested parsing, empty input failure, round-trip parse↔serialize, builder root selection, annotator output"
+    },
+    {
+      "id": 32,
+      "name": "UniversalDependencies",
+      "status": "complete",
+      "files": [
+        "Algorithms/UniversalDependencies.cs"
+      ],
+      "components": {
+        "ConlluParser":                    "tab-separated CoNLL-U parser, recovers # text = comment",
+        "DependencyTreeNavigator":         "GetChildren / GetHead / GetRoot helpers",
+        "RuleBasedParser":                 "rule-based root/nsubj/obj/det assignment",
+        "UniversalDependenciesAnnotator":  "wraps RuleBasedParser into SemanticAnnotation",
+        "UniversalDependenciesService":    "BaseService + ISemanticAnnotator"
+      },
+      "test_coverage": "4 tests: CoNLL-U parsing, rule-based nsubj/obj/root, navigator children/head, annotator output"
+    }
+  ],
+  "shared_core": {
+    "OperationResult":    "Core/Core.cs",
+    "BaseService":        "Core/Core.cs",
+    "StandardEvent":      "Core/Core.cs",
+    "IdempotencyStore":   "Core/Core.cs",
+    "SemanticToken":      "Core/Types.cs",
+    "SemanticAnnotation": "Core/Types.cs",
+    "ISemanticLexicon":   "Fabric/Interfaces.cs",
+    "ISemanticStorage":   "Fabric/Interfaces.cs",
+    "ISemanticEventLogger": "Fabric/Interfaces.cs",
+    "ISemanticAnnotator": "Fabric/Interfaces.cs",
+    "InMemorySemanticStorage": "Fabric/InMemoryStorage.cs",
+    "InMemorySemanticEventLogger": "Fabric/InMemoryStorage.cs",
+    "InMemoryTextSource": "Fabric/InMemoryStorage.cs",
+    "SemanticNlpDispatcher": "Dispatcher/SemanticNlpDispatcher.cs"
+  },
+  "tests": "Tests/SemanticNlpTests.cs (29 tests, 3 dispatcher integration)",
+  "gate_a": "passed — full suite 450/450 tests on 2026-04-30",
+  "last_updated": "2026-04-30"
+}

@@ -1,0 +1,454 @@
+<Window x:Class="SmartSkillsDomain.Dashboard.ApiDashboardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Xiigen API Dashboard"
+        Height="820"
+        Width="1360"
+        MinHeight="680"
+        MinWidth="1120"
+        WindowStartupLocation="CenterScreen"
+        Background="#F3F6F8"
+        Foreground="#1D2730"
+        FontFamily="Segoe UI"
+        AutomationProperties.Name="Xiigen API Dashboard"
+        AutomationProperties.HelpText="Dashboard for testing Xiigen extension API calls from a human-readable desktop screen.">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+        <Style x:Key="PanelShell" TargetType="Border">
+            <Setter Property="Background" Value="#FCFDFE" />
+            <Setter Property="BorderBrush" Value="#CBD6DF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="12" />
+        </Style>
+
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#52606D" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+
+        <Style x:Key="PanelTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#16232E" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <Style x:Key="CommandButton" TargetType="Button">
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Padding" Value="12,5" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+
+        <Style x:Key="ToggleCommand" TargetType="ToggleButton">
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Padding" Value="12,5" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+
+        <Style x:Key="DataTextBox" TargetType="TextBox">
+            <Setter Property="BorderBrush" Value="#B9C6D0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="AcceptsReturn" Value="True" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16"
+          KeyboardNavigation.TabNavigation="Continue">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="32" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock FontSize="20"
+                           FontWeight="SemiBold"
+                           Text="Xiigen API Dashboard" />
+                <TextBlock Foreground="#52606D"
+                           Text="{Binding EvidenceScopeText}" />
+            </StackPanel>
+
+            <TextBlock Grid.Column="1"
+                       VerticalAlignment="Center"
+                       Foreground="#52606D"
+                       Text="{Binding StatusText}" />
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="320" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="420" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    x:Name="ApiListPanel"
+                    Style="{StaticResource PanelShell}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Style="{StaticResource PanelTitle}"
+                               Text="Available API methods" />
+                    <ListBox x:Name="ApiListBox"
+                             Grid.Row="1"
+                             ItemsSource="{Binding ApiRows}"
+                             SelectedItem="{Binding SelectedApi, Mode=TwoWay}"
+                             BorderBrush="#B9C6D0"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             TabIndex="0"
+                             AutomationProperties.Name="Available API methods"
+                             AutomationProperties.HelpText="Choose the Xiigen API method to test. Each item shows a human name and current status."
+                             ToolTip="Choose the Xiigen API method to test.">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="2,6">
+                                    <TextBlock FontWeight="SemiBold"
+                                               TextWrapping="Wrap"
+                                               Text="{Binding HumanName}" />
+                                    <TextBlock FontSize="12"
+                                               Foreground="#52606D"
+                                               TextWrapping="Wrap"
+                                               Text="{Binding Status}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          Background="#D6E0E8" />
+
+            <Border Grid.Column="2"
+                    x:Name="ApiDetailsPanel"
+                    Style="{StaticResource PanelShell}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="102" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="128" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0">
+                        <TextBlock x:Name="SelectedApiNameTextBlock"
+                                   Style="{StaticResource PanelTitle}"
+                                   Text="{Binding SelectedApiName}" />
+                        <TextBlock x:Name="SelectedApiDescriptionTextBlock"
+                                   Foreground="#52606D"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding SelectedApiDescription}" />
+                        <TextBlock x:Name="SelectedApiInputDescriptionTextBlock"
+                                   Margin="0,8,0,0"
+                                   Foreground="#52606D"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding SelectedInputDescription}" />
+                        <TextBlock x:Name="SelectedApiOutputPreviewTextBlock"
+                                   Margin="0,4,0,0"
+                                   Foreground="#52606D"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding SelectedOutputPreview}" />
+                        <TextBlock x:Name="SelectedSafetyBoundaryTextBlock"
+                                   Margin="0,4,0,0"
+                                   Foreground="#725300"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding SelectedSafetyBoundaryNote}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1"
+                                Margin="0,12,0,4">
+                        <TextBlock Style="{StaticResource SectionLabel}"
+                                   Text="Fixture examples" />
+                        <ListBox x:Name="FixtureExampleListBox"
+                                 Height="86"
+                                 ItemsSource="{Binding SelectedFixtureExamples}"
+                                 SelectedItem="{Binding SelectedFixture, Mode=TwoWay}"
+                                 BorderBrush="#B9C6D0"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 AutomationProperties.Name="Semantic-quality fixture examples"
+                                 AutomationProperties.HelpText="Choose a test-only fixture preview from P36/P37 rows. It does not run model eval or prove semantic quality."
+                                 ToolTip="Choose a fixture preview for this API.">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="2,5">
+                                        <TextBlock FontWeight="SemiBold"
+                                                   TextWrapping="Wrap"
+                                                   Text="{Binding HumanName}" />
+                                        <TextBlock FontSize="12"
+                                                   Foreground="#52606D"
+                                                   TextWrapping="Wrap"
+                                                   Text="{Binding EvidenceScope}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <TextBlock Style="{StaticResource SectionLabel}"
+                                   Margin="0,8,0,6"
+                                   Text="Expected fixture result" />
+                        <TextBox x:Name="FixtureExpectedResultTextBox"
+                                 Style="{StaticResource DataTextBox}"
+                                 Height="82"
+                                 IsReadOnly="True"
+                                 Text="{Binding SelectedFixtureExpectedResult, Mode=OneWay}"
+                                 AutomationProperties.Name="Expected fixture result"
+                                 AutomationProperties.HelpText="Shows the expected fields for the selected fixture preview without claiming model execution."
+                                 ToolTip="Expected fixture fields; this is not a model-quality result." />
+                        <TextBlock Style="{StaticResource SectionLabel}"
+                                   Margin="0,8,0,6"
+                                   Text="Example input" />
+                        <TextBox x:Name="ExampleTextBox"
+                                 Style="{StaticResource DataTextBox}"
+                                 Height="72"
+                                 IsReadOnly="True"
+                                 Text="{Binding SelectedExampleText, Mode=OneWay}"
+                                 AutomationProperties.Name="Example input for the selected API"
+                                 AutomationProperties.HelpText="Shows a realistic input that can be copied into the request text box."
+                                 ToolTip="Example text that can be copied into the input field." />
+                    </StackPanel>
+
+                    <Button x:Name="UseExampleButton"
+                            Grid.Row="2"
+                            Style="{StaticResource CommandButton}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Command="{Binding UseExampleCommand}"
+                            Content="Use example"
+                            TabIndex="1"
+                            AutomationProperties.Name="Use example"
+                            AutomationProperties.HelpText="Copies the example input into the request text field."
+                            ToolTip="Copy the example into the request input." />
+
+                    <TextBlock Grid.Row="3"
+                               Style="{StaticResource SectionLabel}"
+                               Text="Input to send" />
+
+                    <TextBox x:Name="InputTextBox"
+                             Grid.Row="4"
+                             Style="{StaticResource DataTextBox}"
+                             Text="{Binding InputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             TabIndex="2"
+                             AutomationProperties.Name="Request text input"
+                             AutomationProperties.HelpText="Type the prompt, structured task, skill list, or refs that should be sent to Xiigen core."
+                             ToolTip="Type the text or refs that will be sent to Xiigen core." />
+
+                    <StackPanel Grid.Row="5"
+                                Orientation="Horizontal"
+                                Margin="0,12,0,8">
+                        <Button x:Name="RunButton"
+                                Style="{StaticResource CommandButton}"
+                                Command="{Binding RunCommand}"
+                                Content="Run API"
+                                TabIndex="3"
+                                AutomationProperties.Name="Run selected API"
+                                AutomationProperties.HelpText="Sends the selected API and request text to Xiigen core through the dashboard boundary."
+                                ToolTip="Run the selected API through the dashboard-to-core path." />
+                        <ToggleButton x:Name="RawJsonToggle"
+                                      Style="{StaticResource ToggleCommand}"
+                                      IsChecked="{Binding IsRawJsonRequested, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      Content="Show raw JSON"
+                                      TabIndex="4"
+                                      AutomationProperties.Name="Show raw JSON"
+                                      AutomationProperties.HelpText="Shows the raw Xiigen response for debugging; this is dashboard evidence, not host runtime proof."
+                                      ToolTip="Show or hide the raw Xiigen response." />
+                        <ToggleButton x:Name="DebugToggle"
+                                      Style="{StaticResource ToggleCommand}"
+                                      IsChecked="{Binding IsDebugRequested, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      Content="Debug trace"
+                                      TabIndex="5"
+                                      AutomationProperties.Name="Request debug trace"
+                                      AutomationProperties.HelpText="Requests a redacted Xiigen input and output trace when the core marks it safe to display."
+                                      ToolTip="Request a safe redacted debug trace." />
+                        <Button x:Name="CopyResultButton"
+                                Style="{StaticResource CommandButton}"
+                                Command="{Binding CopyResultCommand}"
+                                Content="Prepare result copy text"
+                                TabIndex="6"
+                                AutomationProperties.Name="Prepare result copy text"
+                                AutomationProperties.HelpText="Prepares the human result text in dashboard state for a copy adapter; it does not claim clipboard automation."
+                                ToolTip="Prepare displayed result text for copy adapters." />
+                        <Button x:Name="ExportHistoryButton"
+                                Style="{StaticResource CommandButton}"
+                                Command="{Binding ExportHistoryCommand}"
+                                Content="Prepare safe history text"
+                                TabIndex="7"
+                                AutomationProperties.Name="Prepare safe history text"
+                                AutomationProperties.HelpText="Prepares method, status, prompt hash, and evidence scope text without raw prompt text; it does not claim file export automation."
+                                ToolTip="Prepare safe history text without raw private prompt text." />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="6">
+                        <TextBlock Style="{StaticResource SectionLabel}"
+                                   Text="Safe history" />
+                        <ListBox x:Name="HistoryListBox"
+                                 Height="96"
+                                 ItemsSource="{Binding History}"
+                                 BorderBrush="#B9C6D0"
+                                 TabIndex="8"
+                                 AutomationProperties.Name="Safe run history"
+                                 AutomationProperties.HelpText="Shows recent dashboard runs using prompt hashes and evidence scope instead of raw prompt text."
+                                 ToolTip="Safe run history uses prompt hashes, not raw prompt text.">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Width="155"
+                                                   Text="{Binding HumanName}" />
+                                        <TextBlock Width="110"
+                                                   Foreground="#52606D"
+                                                   Text="{Binding Status}" />
+                                        <TextBlock Foreground="#52606D"
+                                                   Text="{Binding PromptSha256}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="3"
+                          HorizontalAlignment="Stretch"
+                          Background="#D6E0E8" />
+
+            <Border Grid.Column="4"
+                    x:Name="ResultPanel"
+                    Style="{StaticResource PanelShell}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="110" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="120" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="120" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Style="{StaticResource PanelTitle}"
+                               Text="Result" />
+
+                    <TextBox x:Name="HumanResultTextBox"
+                             Grid.Row="1"
+                             Style="{StaticResource DataTextBox}"
+                             FontFamily="Consolas"
+                             FontSize="13"
+                             IsReadOnly="True"
+                             Text="{Binding HumanResultText, Mode=OneWay}"
+                             AutomationProperties.Name="Human-readable result"
+                             AutomationProperties.HelpText="Shows the chat-safe Xiigen response for the selected API."
+                             ToolTip="Human-readable result from Xiigen core." />
+
+                    <StackPanel x:Name="ErrorPanel"
+                                Grid.Row="2"
+                                Margin="0,10,0,4"
+                                Visibility="{Binding HasVisibleError, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Style="{StaticResource SectionLabel}"
+                                   Foreground="#9A2D2D"
+                                   Text="Errors" />
+                        <TextBlock x:Name="ErrorTextBlock"
+                                   Foreground="#9A2D2D"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding VisibleErrorText}"
+                                   AutomationProperties.Name="Visible error message"
+                                   AutomationProperties.HelpText="Shows validation or core errors in the dashboard instead of hiding failed runs." />
+                    </StackPanel>
+
+                    <StackPanel x:Name="WarningsPanel"
+                                Grid.Row="3"
+                                Visibility="{Binding HasWarnings, Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Style="{StaticResource SectionLabel}"
+                                   Text="Warnings" />
+                        <ItemsControl x:Name="WarningsItemsControl"
+                                      ItemsSource="{Binding Result.Warnings}"
+                                      AutomationProperties.Name="Core warnings"
+                                      AutomationProperties.HelpText="Shows warnings from Xiigen core; these may include proof-boundary warnings.">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Foreground="#725300"
+                                               TextWrapping="Wrap"
+                                               Text="{Binding}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="4"
+                               Style="{StaticResource SectionLabel}"
+                               Text="Evidence boundary" />
+
+                    <ItemsControl x:Name="BoundaryItemsControl"
+                                  Grid.Row="5"
+                                  ItemsSource="{Binding Result.BoundaryFlags}"
+                                  AutomationProperties.Name="Evidence boundary"
+                                  AutomationProperties.HelpText="Shows what this dashboard run proves and what it does not prove.">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock TextWrapping="Wrap"
+                                           Text="{Binding DisplayText}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Grid.Row="6"
+                               Style="{StaticResource SectionLabel}"
+                               Text="Raw response / debug trace" />
+
+                    <Grid Grid.Row="7">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="RawJsonTextBox"
+                                 Grid.Column="0"
+                                 Style="{StaticResource DataTextBox}"
+                                 FontFamily="Consolas"
+                                 FontSize="12"
+                                 IsReadOnly="True"
+                                 Text="{Binding RawJsonText, Mode=OneWay}"
+                                 AutomationProperties.Name="Raw response JSON"
+                                 AutomationProperties.HelpText="Shows raw response details only when requested; unsafe debug traces are suppressed."
+                                 ToolTip="Raw response details for debugging." />
+                        <TextBox x:Name="DebugTraceTextBox"
+                                 Grid.Column="2"
+                                 Style="{StaticResource DataTextBox}"
+                                 FontFamily="Consolas"
+                                 FontSize="12"
+                                 IsReadOnly="True"
+                                 Text="{Binding DebugTraceText, Mode=OneWay}"
+                                 AutomationProperties.Name="Redacted debug trace"
+                                 AutomationProperties.HelpText="Shows safe redacted Xiigen input/output trace or a suppression reason."
+                                 ToolTip="Safe redacted debug trace or suppression reason." />
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <TextBlock Grid.Row="2"
+                   VerticalAlignment="Bottom"
+                   Foreground="#52606D"
+                   Text="{Binding FooterStatusText}" />
+    </Grid>
+</Window>

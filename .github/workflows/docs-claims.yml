@@ -1,0 +1,36 @@
+# -----------------------------------------------------------------------------
+# docs-claims.yml
+#
+# NOTE: This is the repository's FIRST GitHub Actions workflow. Merely committing
+# this file does NOT enable CI. Turning GitHub Actions ON for the repository is a
+# deliberate maintainer decision, to be made together with the AGPL license flip
+# and publication. Until Actions is enabled by the maintainer, this file is inert.
+#
+# Scope is intentionally narrow: it runs ONLY the documentation-claims verifier
+# (tools/verify-docs-claims.ps1). It does NOT build the solution and does NOT run
+# the xUnit test suite. Adding build/test CI is a separate, later decision.
+# -----------------------------------------------------------------------------
+name: docs-claims
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-docs-claims:
+    name: Verify documentation claims (docs only, no build/tests)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # pwsh is preinstalled on GitHub-hosted ubuntu-latest runners. The script
+      # is PowerShell 5.1 compatible and uses filesystem-only checks (no network),
+      # so it runs identically under pwsh on Linux and Windows PowerShell.
+      - name: Run documentation-claims verifier
+        shell: pwsh
+        run: ./tools/verify-docs-claims.ps1

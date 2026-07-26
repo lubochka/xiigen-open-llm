@@ -1,0 +1,111 @@
+{
+  "project": "24.Compression",
+  "description": "Pure C# implementations of major compression algorithm families: LZ, Entropy, BWT, and Specialized codecs.",
+  "genie_dna": {
+    "operation_result_envelope": true,
+    "base_service": true,
+    "fabric_first": true,
+    "idempotent_operations": true,
+    "no_typed_model_classes_leaked": true,
+    "standard_event_envelope": true
+  },
+  "sub_projects": [
+    {
+      "id": 24,
+      "name": "LZ Family",
+      "status": "complete",
+      "files": [
+        "Families/01-LzFamily/LzPrimitives.cs",
+        "Families/01-LzFamily/SnappyCompressor.cs",
+        "Families/01-LzFamily/LzavCompressor.cs",
+        "Families/01-LzFamily/Lz4Compressor.cs",
+        "Families/01-LzFamily/ZstandardCompressor.cs"
+      ],
+      "algorithms": {
+        "LzMatchFinder": "Sliding-window best-match finder shared by all LZ variants",
+        "SnappyCompressor": "Google Snappy — hash-table LZ77, variable-length integer encoding",
+        "LzavCompressor": "LZAV — chained hash table, chain-length limited to 16",
+        "Lz4Compressor": "LZ4 — token-based format, 4-byte header, nibble match lengths",
+        "ZstandardCompressor": "Zstandard-style — LZ77 tokenization + Huffman literal coding"
+      },
+      "fabric_interfaces": ["ICompressor"],
+      "test_coverage": "unit + e2e round-trip"
+    },
+    {
+      "id": 25,
+      "name": "Entropy Coding",
+      "status": "complete",
+      "files": [
+        "Families/02-EntropyCoding/SymbolStatistics.cs",
+        "Families/02-EntropyCoding/HuffmanTree.cs",
+        "Families/02-EntropyCoding/HuffmanCompressor.cs",
+        "Families/02-EntropyCoding/DeflateCompressor.cs",
+        "Families/02-EntropyCoding/RansCompressor.cs"
+      ],
+      "algorithms": {
+        "SymbolStatistics": "Frequency counting, Shannon entropy, compressed-size estimation",
+        "HuffmanTree": "Greedy Huffman tree builder with canonical code assignment",
+        "HuffmanCompressor": "Bit-packed Huffman codec with 256-byte length-table header",
+        "DeflateCompressor": "Wraps System.IO.Compression.DeflateStream for correctness",
+        "RansCompressor": "Range ANS — power-of-2 normalized frequencies, reverse encode"
+      },
+      "fabric_interfaces": ["ICompressor"],
+      "test_coverage": "unit + e2e round-trip"
+    },
+    {
+      "id": 26,
+      "name": "BWT Family",
+      "status": "complete",
+      "files": [
+        "Families/03-BwtFamily/BurrowsWheelerTransform.cs",
+        "Families/03-BwtFamily/MoveToFrontTransform.cs",
+        "Families/03-BwtFamily/RunLengthEncoder.cs",
+        "Families/03-BwtFamily/Bzip2StyleCompressor.cs"
+      ],
+      "algorithms": {
+        "BurrowsWheelerTransform": "Full suffix-sort BWT with Forward/Inverse static methods",
+        "MoveToFrontTransform": "256-symbol MTF list, Forward/Inverse static methods",
+        "RunLengthEncoder": "RLE for MTF output — (value, count) byte pairs, capped at 255",
+        "Bzip2StyleCompressor": "bzip2-style pipeline: BWT → MTF → RLE → Huffman, block-based"
+      },
+      "fabric_interfaces": ["ICompressor"],
+      "test_coverage": "unit + e2e round-trip"
+    },
+    {
+      "id": 27,
+      "name": "Specialized Codecs",
+      "status": "complete",
+      "files": [
+        "Families/04-Specialized/BrotliContextModel.cs",
+        "Families/04-Specialized/BrotliStaticDictionary.cs",
+        "Families/04-Specialized/BrotliCompressor.cs",
+        "Families/04-Specialized/LzmaRangeCoder.cs",
+        "Families/04-Specialized/LzmaMarkovModel.cs",
+        "Families/04-Specialized/LzmaCompressor.cs",
+        "Families/04-Specialized/OpenZlStructureAnalyzer.cs",
+        "Families/04-Specialized/OpenZlCompressor.cs"
+      ],
+      "algorithms": {
+        "BrotliContextModel": "Second-order context model — 256^3 frequency table",
+        "BrotliStaticDictionary": "Static dictionary of common English/HTML/JS phrases",
+        "BrotliCompressor": "Wraps System.IO.Compression.BrotliStream + exposes context model",
+        "LzmaRangeCoder": "Arithmetic range coder — 11-bit adaptive probability, LSB flush",
+        "LzmaMarkovModel": "Context-dependent Markov probability tables for LZMA literals/lengths",
+        "LzmaCompressor": "LZMA — range coder + Markov model + LZ77 match finding",
+        "OpenZlStructureAnalyzer": "CSV/JSON structure detector — column entropy analysis",
+        "OpenZlCompressor": "Columnar rearrangement for tabular data before entropy coding"
+      },
+      "fabric_interfaces": ["ICompressor"],
+      "test_coverage": "unit + e2e round-trip"
+    }
+  ],
+  "shared_core": {
+    "OperationResult": "Core/Core.cs",
+    "ICompressor": "Fabric/Interfaces.cs",
+    "ICompressionStorage": "Fabric/Interfaces.cs",
+    "ICompressionBenchmark": "Fabric/Interfaces.cs",
+    "CompressionOptions": "Core/Types.cs",
+    "CompressionResult": "Core/Types.cs"
+  },
+  "last_updated": "2026-04-30"
+}
