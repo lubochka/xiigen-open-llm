@@ -1,0 +1,446 @@
+# Work Left with Estimation — 2026-07-27
+> Пометка 14.08.26: упоминания ветки `DpoImplementation` в этом файле — historical; ветка-канон = `codex/dpo-implementation` (см. 14.08.26WorkLeft-05-branch-reconciliation-codex-dpo-implementation.md).
+
+**What this report is.** This is the remaining-work estimate for the DPO-implementation project (the self-building "learning dynamic graph" that is meant to construct its own preference-training pairs and train itself on them). It is derived from the status audit in `report status of development 27.7.26.md` (Findings 1–43), which mapped, against the live code at git commit `0f221ac89cff57af4205d342ead51213425c0c45` (branch `DpoImplementation`, working tree clean), what is finished and what is not.
+
+**Scope — CODE ONLY (bucket 1).** By explicit instruction, this report covers only the unfinished *code* — the started-but-incomplete pieces and the concrete work to finish each. It deliberately does NOT cover the training part (enumerating training sources/examples and testing them locally with the open model Qwen3.5-9B); that "training bucket" is deferred until the code fixes are lined up, and will be its own separate report. Wherever finishing a code piece crosses into the not-yet-started training work, the entry marks that boundary and stops.
+
+**What each entry provides (per unfinished-code item):**
+1. **The problem** — in plain human language, with the exact `file:line` evidence (every code identifier translated on first use).
+2. **The fix** — the concrete code change that finishes the piece (what it must become).
+3. **A POSITIVE example and a NEGATIVE example** — in the spirit of preference training (the good "chosen" behaviour/output the fix must produce, and the plausible-but-wrong "rejected" behaviour the fix must prevent).
+4. **Tests that should PASS and tests that should FAIL** — the concrete checks that prove the fix, framed as which assertions must go green and which must go red, confirmable without running any training.
+5. **Effort estimate** — a plain size for the code work, with the deferred-training boundary called out separately where it applies.
+
+**Method.** One architect (Fable) designs the estimation task-fronts; then executors (Opus) run one at a time, each appending exactly one entry below, verified on disk by the orchestrator. Read-only against the audited repo; the code tree stays clean at `0f221ac89`. Every entry is written in plain human language with all machine shortcodes translated.
+
+---
+
+### WL-01 — The live routing decision is made by a hand-written formula, and two components wear false "trained" names: build the cutover seam and strip the masks
+
+**1. The problem**
+
+Every file and line below was re-read at the audited commit 0f221ac89 (branch DpoImplementation) and confirmed exact there. "Routing" means deciding which downstream worker — the project calls each one a "sub-phase producer", a component that handles one narrow slice of a development job such as "design tokens" or "API contract" — should handle an incoming request. The project's plan says that decision must be made by a LEARNED mechanism: a component whose behaviour is shaped by training on chosen-versus-rejected examples. In four places a fixed, hand-written algorithm sits where that learned mechanism is supposed to be, and in three of those places the component's NAME hides it.
+
+Place 1 — the live one that matters most. There is a scorer whose full name is "deterministic sub-phase baseline scorer" (the file `21.AgentInfrastructure\Logical\DeterministicSubPhaseBaselineScorer.cs`). Its name is honest — it openly calls itself a deterministic baseline. What it does: for each candidate worker it computes one fixed weighted blend of four sub-scores. On the ordinary path (no extra context supplied) the blend is `predicate-match x 0.55 + exact-mention x 0.25 + word-overlap x 0.20 + hybrid x 0.02` (line 135); when a context packet is present it uses a five-way `0.50 / 0.20 / 0.15 / 0.05 / 0.10` blend instead (line 136). The blend is gated by a hand-authored dictionary of "anchor words" — a fixed table mapping each sub-phase identifier (for example "3.3") to a handful of keywords like "api", "endpoint", "schema" (lines 24-57) — and by a hand-set "relevance floor" that throws away weak candidates (line 93). None of these weights or words comes from any training run; they are literals a person typed.
+
+That blend is the LAST computation before the real routing decision on the live product path, because the router that actually runs in production — the "multi sub-phase router" (the file `MultiSubPhaseRouterUnit.cs`) — calls the baseline scorer at line 110, turns each scored candidate into a decision tagged with the role "baseline candidate generator" at line 116, and then emits those very decisions as its final result (lines 180-227). So the honest-named baseline IS the decision.
+
+The learned component that is SUPPOSED to hold this authority is the "edge authority unit" — the trained component that should have the final say over which downstream worker a fork in the graph routes to. It is a content-empty scaffold: searching the production code for a class literally named "EdgeAuthorityUnit" finds none. (The surrounding edge-authority plumbing — contracts, probes, input builders, resolvers — exists, but the trained unit that would hold the decision has no trained content.) Crucially, the router actively REFUSES to let any learned authority be smuggled in through its fallback path: at lines 392-400, if the fallback single-route router returns any authority role other than "baseline candidate generator", the router deliberately fails with the internal error code `SINGLE_ROUTER_AUTHORITY_ROLE_INVALID` (its own comment reads "Never normalize or launder learned, blank, or unknown authority through the baseline fallback"). So on this path the deterministic blend is BOTH the baseline AND the final decision-maker — the name is honest, but there is an authority gap: no learned mechanism is allowed to hold the decision.
+
+Place 2 — a false "trained" name. Inside a project literally named "TrainableRouter" there is a scorer whose real name is "keyword unit scorer" (the file `26.TrainableRouter\Training\KeywordUnitScorer.cs`, lines 43-56). It is a keyword counter: it counts how many of a worker's stored keywords appear in the request text (line 48), then adds a hand-set bonus of +20.0 if the request's domain hint matches the worker's domain (line 49), a hand-set +2.0 if a direction keyword matches (line 52), and computes confidence from a hand-set formula `0.20 + hits x 0.12 + ...` (line 55). The wrapper flow "trainable routing flow" (the file `TrainableRoutingFlow.cs`, method that answers a route request, lines 35-65) takes this scorer's top-ranked worker as the decision (the top pick is chosen at line 44). None of 20.0, 2.0, or 0.12 comes from training — they are literals. This flow is only ever built by the router's own training and bootstrap helper runners, never by the main orchestrator, so it is not the live product path — but the "Trainable" name is a mask over a hand-set keyword counter.
+
+Place 3 — a second false "trained" name. A lookup unit called "transformer-embedding nearest-neighbour logical unit" (the file `18.CapabilityTraining\LlmIngredientLogicalUnits.cs`, lines 134-176) answers a request by finding the closest memorized example and returning that example's stored answer verbatim (the return of `example.Output` at line 168), after fusing three similarity scores with fixed coefficients `vector x 0.45 + lexical x 0.35 + pattern x 0.20` (line 203). The trained embedder only decides WHICH stored example ranks first; the answer itself is retrieval, not generation. Yet this unit is registered with the flag "is learned = true" as a "generated capability" (in the file `DefaultLogicalCapabilityTrainer.cs`, at line 340). The learned stamp hides that the answer is a memorized template returned as-is.
+
+Place 4 — a naming mask in an experiment file, off the production path. In `35.ExperimentsV2\Experiments\E53HighLevelOrchestrationProof.cs` there are ten small helper classes named like "Flow01Node01 Trained Domain Splitter" (line 391) and "Flow01Node00 Trained Logical Compiler" (line 461). Their "learned" content is a hand-typed literal table: for example, an array of eleven hardcoded rows the code names "LearnedRules" (lines 394-407), and the "split" step merely filters those hardcoded rows by which signals are present (lines 416-419). The "Trained"/"Learned" names are a mask over hand-written rule tables. This file lives in a proof / experiment harness, not on any production decision path — so it is a naming-honesty defect only.
+
+**2. The fix** (the concrete code work — the "cutover plumbing")
+
+(i) Add a cutover seam in the multi sub-phase router. The router must be changed so its final sub-phase decision can be routed THROUGH a learned edge authority once one is trained and supplied. Concretely: the router should accept an optional learned-authority component; when one is present, the deterministic blend must become a candidate-FEEDER — it produces the shortlist of scored candidates and hands them INTO the learned authority, which then makes the final choice — instead of the blend's output BEING the emitted decision. On that primary (learned) path the emitted authority role must no longer be "baseline candidate generator"; it must carry the learned authority's own role. When no learned authority is supplied, the router keeps today's honest baseline behaviour. (The existing fallback guard at lines 392-400 stays — it correctly refuses to launder a learned role through the baseline single-route fallback; the new seam is a separate, explicit learned path, not a loosening of that guard.)
+
+(ii) Demote the keyword unit scorer to an explicitly labelled baseline candidate-generator. Its name and its emitted role must both say "baseline" (candidate generator), so the hand-set constants (the +20.0 domain bonus and the rest) stop being presented as a trained scorer inside a project named "Trainable". It becomes an honest baseline feeder, not a decision-maker wearing a trained name.
+
+(iii) Remove the "is learned = true" stamp from the nearest-neighbour retrieval unit's registration (at `DefaultLogicalCapabilityTrainer.cs:340`), or re-register it under an honest retrieval role. Its registration must stop claiming the answer is learned when the answer is a memorized example returned verbatim.
+
+(iv) Rename the experiment file's "Trained..." / "Learned..." classes and fields to honest names (for example "HandAuthoredRule..." instead of "Trained...", and "HandAuthoredRules" instead of "LearnedRules"), so the experiment stops calling hand-typed literal tables "trained".
+
+**3. Positive and negative example (in the spirit of preference training)**
+
+Take a concrete request: a prompt whose text is "Design the REST API endpoints and OpenAPI schema for the checkout service." The anchor-word table maps sub-phase "3.3" to the keywords {api, endpoint, contract, schema, request, response, openapi}, so the baseline blend scores sub-phase 3.3 highly.
+
+GOOD ("chosen") behaviour the fix must produce: with a trained edge authority present, the multi sub-phase router emits a decision for sub-phase 3.3 whose authority role is the LEARNED authority's role, and the baseline blend's numeric score for 3.3 appears only as candidate evidence attached to that decision — the learned authority made the final call, and the blend merely proposed the shortlist.
+
+BAD ("rejected") behaviour the fix must make impossible: the same request gets its final route straight from the arithmetic `predicate x 0.55 + mention x 0.25 + overlap x 0.20 + hybrid x 0.02`, and the emitted decision is stamped "baseline candidate generator" as the final answer with no learned authority in the loop (this is exactly today's behaviour). A second rejected behaviour: for a request like "Fix the failing login bug", the keyword counter adds its hand-set +20.0 domain bonus, that pushes one worker to the top, and the "trainable routing flow" returns that worker as the decision — while the enclosing project is named "TrainableRouter" and nothing was trained.
+
+**4. Tests that should PASS and tests that should FAIL** (all confirmable without running any training)
+
+PASS after the fix:
+- A new test that builds the multi sub-phase router with a STUB learned edge authority (a hand-written fake that always returns one fixed learned role), sends one request, and asserts the emitted decision's authority role equals the stub's learned role and is NOT "baseline candidate generator".
+- A test asserting the nearest-neighbour retrieval unit's registration descriptor no longer reports "is learned = true" (or reports an explicit retrieval role instead).
+- A source-scan assertion that no class named "Trained..." in `E53HighLevelOrchestrationProof.cs` holds a hand-typed rule table (the arrays are renamed to "HandAuthored...").
+
+FAIL after the fix (these are RED because they pin today's wrong behaviour and must be updated when the fix lands):
+- The existing tests `Tests\DeterministicSubPhaseBaselineScorerTests.cs:71` and `:300`, which assert `candidate.AuthorityRole == "baseline_candidate_generator"` as the emitted authority — they pin the baseline role as the final answer on the primary path and must change once the learned path emits the learned role.
+- The existing test `Tests\DefaultLogicalCapabilityTrainerTests.cs:66`, which asserts the registered unit's descriptor reports "is learned = true" — red once the retrieval unit's stamp is removed. And the existing test `Tests\KnnLogicalUnitTests.cs`, which registers the lookup unit with "is learned = true" (line 103) and at line 54 asserts the returned answer equals the stored example's output verbatim (the string "SECURITY") — the "verbatim retrieval under a learned label" assumption must change.
+
+**5. Effort estimate** — MEDIUM, roughly 12-20 hours, code only. Rationale: the bulk is the cutover seam in the one production router plus a small optional-dependency interface for the learned authority; the three demotions/renames (the keyword scorer's label, the retrieval unit's learned stamp, the experiment classes' names) are mechanical but touch several call sites and their existing pinning tests, which must be re-pointed at the new honest behaviour.
+**BOUNDARY — TRAINING WORK, DEFERRED.** Training the edge authority unit on the chosen/rejected routing pairs, and choosing its confidence thresholds, is the deferred training bucket — nothing beyond this boundary is estimated in this entry.
+
+---
+
+### WL-02 — The LoRA correction layers are built and then thrown away: make the model's answer path actually run through them
+
+**1. The problem.**
+
+LoRA (Low-Rank Adaptation) is the cheap way to teach a large model: you freeze the model's original weights so they never change, then bolt on small extra "correction" matrices called adapters, and during teaching you train only those adapters. When the model later answers a question, each layer is supposed to compute its normal output PLUS the adapter's learned correction. If that correction is never added while the model computes an answer, everything the adapters learned is silently discarded — the model answers exactly as if LoRA had never happened. In this codebase the adapters are built but never stand in the answer path, so all teaching would be thrown away. Every line below was re-read at commit `0f221ac89cff57af4205d342ead51213425c0c45`.
+
+The adapter factory — the helper that is supposed to prepare a model for LoRA teaching — is `LoraApplicator` in `10.LoRA/LoraApplicator.cs`. Its own header comment (`:11–14`), written in Russian, ends with the sentence "Forward pass базовой модели не меняется; адаптеры применяются снаружи" — literally "the base model's forward pass is not changed; the adapters are applied from the outside" ("forward pass" is the computation that turns input text into the model's next-word scores). That comment is a written admission that the glue is missing and is expected to be added by some outside caller that, as shown below, does not exist.
+
+`LoraApplicator.Apply` (`:17–45`) does three things: it freezes every base weight so none can be trained (`:20–21`, `RequiresGrad = false`); it walks each transformer block's attention sub-layer and, by reflection, only READS out each internal linear projection (helper `GetNamedLinears`, `:48–59`, where `field.GetValue(parent)` at `:57` reads a field but writes nothing back); and for each projection whose name matches the config it builds a new `LoraLinear` adapter and adds it to a list (`:40`). It then returns that list (`:44`, `return adapters;`) — a detached collection of wrappers with no connection to the running model. Nothing is ever written back into the attention layer, and nothing is registered on the model.
+
+The adapter object itself, `LoraLinear` in `10.LoRA/LoraLinear.cs`, holds the only trainable weights in the whole scheme: two matrices named `lora_a` and `lora_b` (registered at `:47–48`), where `lora_b` starts as all zeros so the correction starts at zero. Its `Forward` method (`:52–63`) computes the correct intended math — the base layer's output plus the scaled low-rank correction (`:63`, `TensorOps.Add(baseOut, lora)`). But it has a latent defect even if it were wired in: its dropout call hard-codes `training: true` (`:57`, `_dropout.Forward(x, training: true)`). Dropout is a teaching-time noise trick that randomly zeroes part of the input to prevent over-fitting; it MUST be off when the model answers, or every answer gets random noise injected and becomes non-deterministic and degraded. Because that flag is a hard-coded constant instead of "on while teaching, off while answering", this adapter would corrupt answers if it were ever used at answer time (harmless today only because it is never called).
+
+The answer path never touches an adapter. `LlmModel.Forward` (`03.TransformerModel/LlmModel.cs:47–54`) runs token embedding, then a loop that calls `block.Forward(x)` over each block (`:50–51`), then a final norm and output projection. Each `TransformerBlock.Forward` (`03.TransformerModel/TransformerBlock.cs:40–46`) calls its own private attention field directly (`:43`, `_attn.Forward(...)`). That attention layer, `CausalSelfAttention` (`03.TransformerModel/Layers/CausalSelfAttention.cs`), holds its four projections as `private readonly Linear _qProj/_kProj/_vProj/_oProj` (`:17–20`) — "private readonly" meaning nothing outside the class can replace them — and its `Forward` calls those fields directly (`:53–55` for the query/key/value projections and `:75` for the output projection). Because the fields are private and read-only, and because `LoraApplicator` only reads them, no line anywhere in the answer path ever calls a `LoraLinear`. The `Attention` property (`TransformerBlock.cs:25`, commented "public access for LoraApplicator") exists only so the factory can READ the projections, not replace them.
+
+The preference trainer is affected the same way. `DpoTrainer` (`11.DPO/DpoTrainer.cs`) is the step that teaches the model from "chosen vs rejected" answer pairs (DPO = Direct Preference Optimization). It scores the model in `LogProbs` (`:242`, `model.Forward(ids)`) and computes gradients in `BackwardLogProbs` (`:279`, `model.Forward(ids)`) — both through the same frozen-base `model.Forward`. Since that forward never routes through an adapter, and since `Apply` froze every base weight and never registered the adapters onto the model, the optimizer neither trains nor uses the adapters at any point.
+
+Both production callers build the adapters and drop them. In `18.CapabilityTraining/LlmIngredientLogicalUnits.cs`, line `:344` calls `var adapters = LoraApplicator.Apply(...)` under a comment claiming it makes "the teaching path include the adapter tier," but the list is used for exactly one thing — its element count is copied into a report field (`:393`, `adapters.Count` into the result record). It is never handed to the trainer or the model. In `18.CapabilityTraining/TeachingRegistryPersistence.cs`, line `:322` calls `LoraApplicator.Apply(model, ...)` and discards the return value outright, then reads embeddings through the same base-only forward path.
+
+**2. The fix.**
+
+Make the four attention projections swappable and wire the adapters into the live model. Concretely:
+
+- In `CausalSelfAttention` (`03.TransformerModel/Layers/CausalSelfAttention.cs:17–20`), stop declaring the four projections as `private readonly`. Give them a settable slot, or add a small method like `ReplaceProjection(name, module)` that overwrites `_qProj` / `_kProj` / `_vProj` / `_oProj` with a replacement. Because `LoraLinear.Forward` returns the same shape as `Linear.Forward`, the existing `Forward` (`:53–55`, `:75`) then automatically computes base + correction with no other change.
+- In `LoraApplicator.Apply` (`10.LoRA/LoraApplicator.cs`), after building each `LoraLinear` (`:40`), write it back into the matching attention slot AND register the adapter as a sub-module of the model, so its two trainable matrices `lora_a` and `lora_b` appear in `model.Parameters()`. Today `Apply` only reads the projection field (`:57`) and returns a detached list (`:44`); it must instead install the adapter and attach its parameters to the model's parameter tree.
+- In `LoraLinear.Forward` (`10.LoRA/LoraLinear.cs:57`), replace the hard-coded `training: true` with a real teach/answer flag threaded through the forward path, so dropout is on while teaching and off while answering.
+- Stop dropping the adapters in both callers. `LlmIngredientLogicalUnits.cs:344` must let the adapter parameters actually reach the trainer/optimizer instead of only copying `adapters.Count` at `:393`; `TeachingRegistryPersistence.cs:322` must keep and use the installed adapters instead of discarding the return value.
+
+**3. Positive and negative example (preference-training spirit).**
+
+GOOD — the "chosen" behaviour the fix must produce: build a model, call `LoraApplicator.Apply` to install the adapters, then manually set one adapter's second matrix (`lora_b`) to a non-zero value (bypassing any training). Run the same input through the model twice. The model's next-word scores now DIFFER from the pre-adapter model's scores — proof the correction is actually being added in the answer path — and two repeated answer-mode calls produce identical scores — proof dropout is off when answering.
+
+BAD — the "rejected" behaviour the fix must forbid (this is exactly what happens today): call `Apply`, set `lora_b` non-zero, and the model's output is bit-for-bit identical to a model where LoRA never happened, because the answer path never runs through the adapter. Equally rejected: a training report that proudly announces "adapter count: 4" while the training step updates zero adapter weights — which is precisely the `adapters.Count` report field at `LlmIngredientLogicalUnits.cs:393` over a training loop that touches only frozen base weights.
+
+**4. Tests that should PASS / FAIL.**
+
+All of these are single-forward-pass checks — no training run is involved.
+
+PASS after the fix:
+- Build a model, `Apply`, set an adapter's `lora_b` to non-zero, and assert `model.Forward(sameInput)` yields DIFFERENT next-word scores than the same model before the adapter existed (or with `lora_b` = 0). Today the scores are identical, proving the adapter is ignored.
+- Assert `model.Parameters()` contains the adapter matrices (`lora_a`, `lora_b`) after `Apply`. Today they are absent because the adapters are detached from the model.
+- Assert answer-mode `Forward` is deterministic: a fixed input gives identical output across repeated calls (dropout off). Today this cannot even be expressed because dropout is hard-wired on.
+
+These new assertions belong in the existing LoRA suite `Tests/LoraTests.cs` (which today covers only the adapter in isolation — e.g. `LoraLinear_NonZeroLoraB_ChangesOutput` tests `LoraLinear.Forward` by itself, not through the model), reinforced by `Tests/TransformerModelTests.cs` (which owns the `LlmModel_Forward…` model-level checks).
+
+FAIL after the fix — any test pinning today's broken behaviour, which must be re-pointed at the honest behaviour:
+- Any test asserting identical model logits after installing a non-zero adapter.
+- `Tests/LoraTests.cs` → `LoraApplicator_Apply_FreezesAllBaseParams` currently asserts that EVERY parameter in `model.Parameters()` is frozen after `Apply`. Once the adapter matrices are registered on the model, `lora_a`/`lora_b` must be trainable, so this test's "all parameters frozen" claim becomes false and must be narrowed to "all BASE parameters frozen, adapter parameters trainable."
+- Any test in `Tests/DpoTrainerTests.cs` or `Tests/CapabilityTrainingSeparationTests.cs` / `Tests/TeachingRegistryPersistenceTests.cs` that pins the current "adapters counted but never in the parameter list / never in the forward path" behaviour must be re-pointed.
+
+**5. Effort estimate.**
+
+MEDIUM, ~6–10 hours, CODE ONLY. Rationale: the wiring itself is small (swap four projection slots, register two matrices, thread one boolean flag), but it touches the attention layer's field declarations, the adapter factory, both callers, and several existing pinning tests that assert today's broken behaviour and must be corrected in the same change.
+
+**BOUNDARY — TRAINING WORK, DEFERRED.** Proving that the now-wired adapters actually improve the model's answers — an actual DPO/LoRA teaching run — is deferred training work. Nothing beyond this boundary is estimated in this entry. STOP.
+
+---
+
+### WL-03 — The incremental trainer reports "trained" without training anything: build its four-step body and forbid success without a real file
+
+**1. The problem.**
+
+The "incremental trainer" (`14.ContinuousLearning/Training/IncrementalTrainer.cs`) is the service meant to run one small extra-training pass over newly accumulated examples for a single domain (for example "CODE_Q", the code-question domain) and save the result as a LoRA adapter file — LoRA being the technique that freezes the big base model and trains only a tiny pair of extra matrices. Its one method, `TrainAsync` (the method that is supposed to do the training run; lines 43-58), is a hollow pipe. It checks its inputs — an empty domain name returns a failure carrying the code `EMPTY_DOMAIN` (lines 48-49; the return type `OperationResult<string>` is this repo's success-or-failure wrapper that carries either a value or an error code), and zero examples returns `EMPTY_EXAMPLES` (lines 50-51). Then it composes a path string like `adapters/CODE_Q.lora` (line 55), awaits an already-finished empty operation that does nothing (`await Task.CompletedTask`, line 56), and returns success with the path to a file that was never written (line 57). No model is loaded, no weights change, no adapter is produced, nothing is saved.
+
+The header comment (lines 11-21) promises a four-step contract — (1) apply LoRA adapters to a live model, (2) one next-word-prediction pass per training example, (3) one preference step per preferred-answer/rejected-answer pair, (4) save the `.lora` file — and then defers all of it with a comment (lines 19-20) that points at `16.AutonomousLearning.DataPipeline` "where a live TransformerModel.LlmModel is constructed" (LlmModel being the actual from-scratch neural network). That pointer is FALSE, confirmed two ways at this HEAD: there is no `DataPipeline` folder anywhere (a directory search returns nothing), and no file under `16.AutonomousLearning` constructs the model (a grep for `new LlmModel` under that folder returns zero non-test hits).
+
+The fake success travels far and is recorded as real. The replay-buffer wrapper (`16.AutonomousLearning/Training/AutonomousTrainer.cs`; a replay buffer re-mixes old examples with new ones to avoid forgetting) calls the hollow trainer (line 66) and, because it reports success, advances its buffer "ONLY on successful training" (lines 72-75) on the strength of a no-op. The nightly cycle (`16.AutonomousLearning/Pipeline/AutonomousLearningPipeline.cs`) takes the fake path (line 125), wraps it in a `ModelAdapter` record (the record standing for "one trained adapter file") stamped with a real wall-clock "trained at" timestamp (lines 131-135), passes a promotion gate (lines 142-145), and registers it (line 147). The registry never checks the file exists — `DomainModelRegistry.Register` (`14.ContinuousLearning/Registry/DomainModelRegistry.cs:33-39`) only null-checks the record, then stores it. The one gate that could object is the accuracy check, but its interface `IAccuracyEvaluator` (the accuracy-measuring contract) has NO production implementation at all — the only implementer is a scripted test double, `SequentialAccuracyAL` (`Tests/AutonomousLearningTests.cs:590`), that just hands back pre-set numbers in sequence. Net: a no-op becomes a registered, timestamped "trained" adapter pointing at nothing.
+
+The building blocks for a real body already exist elsewhere: the adapter factory `LoraApplicator.Apply` (`10.LoRA/LoraApplicator.cs:17`) freezes the base model and returns the trainable adapter layers; the preference step `DpoTrainer.Step` (`11.DPO/DpoTrainer.cs:38`) runs one preferred-vs-rejected update; the whole-model saver `LlmModel.SaveCheckpoint` (`03.TransformerModel/LlmModel.cs:66`) writes the full network to disk. The one missing block is Step 4's adapter-weight serializer: the two learned matrices inside an adapter layer are private with no getter (`private readonly Parameter _loraA` / `_loraB`, `10.LoRA/LoraLinear.cs:18-19`), and a repo-wide search finds no code anywhere that writes an actual `.lora` weight file.
+
+**2. The fix.**
+
+Give `TrainAsync` a real body that fulfils its own four-step contract, all as glue over existing primitives:
+
+- Construct or inject the neural network (`LlmModel`): the trainer holds no model and never builds one today. Add it as a constructor dependency, or build it from a config using the same `new LlmModel(config)` used on other production paths.
+- Call the adapter factory: `LoraApplicator.Apply(model, DefaultConfig)` — the config is already present on the class (rank 8 / alpha 16, lines 25-31) — to freeze the base and get back the trainable adapter layers.
+- Write the per-example next-word-prediction training loop over the adapter parameters only: for each training example, tokenize its prompt and response, run the model forward, compute the standard next-word (cross-entropy) loss, run backward, and step the optimizer over the adapter layers' parameters — the same forward → backward → optimizer-step machinery the sibling preference trainer already uses.
+- Convert the currently-ignored preference pairs into a batch and call the preference trainer's step: today the `dpoPairs` argument (a list of preferred-answer/rejected-answer examples) is silently dropped. Instead tokenize each pair into the tokenized form the preference trainer consumes (`DpoBatch`) and call `DpoTrainer.Step` (or its many-batch variant `StepMany`).
+- ADD the missing adapter-weight serializer: give the adapter layer (`LoraLinear`) public read access to its two matrices, or a save method on it, that writes the `{domain}.lora` file. No such capability exists today.
+- Add a post-condition so the method can NEVER return success unless the file exists on disk: after writing, verify the file is present and non-empty at the returned path and return failure otherwise — write-then-verify.
+- Rewrite the false header comment (lines 19-20) so it no longer points at a non-existent `DataPipeline` that builds no model.
+
+Honesty ripple: once success requires a real file on disk, every downstream consumer becomes honest with no further change. The replay-buffer wrapper only advances on a real adapter; the nightly cycle only stamps and registers a `ModelAdapter` that corresponds to a real file; and the registry — which trusts the trainer's success — can no longer hold a "trained at" record pointing at nothing.
+
+**3. Positive and negative example (preference-training spirit).**
+
+GOOD — the "chosen" behaviour the fix must produce: calling the trainer for domain "CODE_Q" with one example produces a non-empty `adapters/CODE_Q.lora` file on disk, and ONLY THEN reports success with that path.
+
+BAD — the "rejected" behaviour the fix must make impossible (this is exactly what happens today): the trainer returns success plus a path, no file exists at that path, and ten minutes later the registry holds an officially "trained at 2026-07-28T…" adapter record pointing at nothing.
+
+**4. Tests that should PASS / FAIL.**
+
+All of these are single-step checks — no training run is involved; one forward pass, one preference step, and one save are enough.
+
+PASS after the fix:
+- A one-example call leaves a non-empty `.lora` file at the returned path (assert the file exists and its length is greater than zero). This new test belongs in `Tests/ContinuousLearningTests.cs`, alongside the existing incremental-trainer block — its `IncrementalTrainer_EmptyExamples_ReturnsFailure` (line 220) and `IncrementalTrainer_UsesLoraApplicator_NotCustomGradients` (line 245) stay green.
+- A call whose write is blocked (for example a read-only or non-writable adapter directory) returns failure, not success.
+- The preference-pairs argument is consumed — it reaches the preference trainer rather than being silently dropped (assert via a spy/fake preference trainer, or that a preference checkpoint or metric was produced).
+
+FAIL after the fix — any test that pins today's behaviour:
+- Success with no file on disk.
+- Success with the `dpoPairs` argument ignored.
+
+Honest note: no such pinning test exists on the real class today. Every success-path test substitutes a stub, `StubIncrementalTrainerAL` (`Tests/AutonomousLearningTests.cs:663`), so the hollow success is currently untested; the only real-class test today is the empty-examples failure guard (`Tests/ContinuousLearningTests.cs:220`), which survives. The FAIL set is therefore the guard tests one adds to lock the fix in, plus retiring the scripted accuracy double (`SequentialAccuracyAL`, `Tests/AutonomousLearningTests.cs:590`) in favour of a gate that actually reads the adapter file.
+
+**5. Effort estimate.**
+
+MEDIUM, ~10–16 hours, CODE ONLY. Rationale: model construction, the adapter-factory call, and the preference-step wiring are thin glue over existing primitives, but the per-example next-word-prediction loss loop and the brand-new adapter-weight serializer (the adapter has no serialization at all today) are net-new code and dominate the estimate.
+
+**BOUNDARY — TRAINING WORK, DEFERRED.** Actually fine-tuning on real accumulated examples — driving the loss down over real steps to produce a genuinely better adapter — is deferred training work. Nothing beyond this boundary is estimated in this entry. STOP.
+
+---
+
+### WL-04 — A finished from-scratch training loop that nothing ever starts: write the ignition key and connect two dead knobs
+
+**1. The problem.**
+
+Every file and line below was re-read at the audited commit 0f221ac89 (branch DpoImplementation) and confirmed exact there. Identifiers are translated to plain English at first use.
+
+"Pre-training" is the first and largest teaching stage of a language model: you feed it a mountain of raw text, cut it into batches, ask the still-ignorant model to predict the next word, measure how wrong it was (the "loss"), work out which direction each internal weight should move to be less wrong (the "gradients"), nudge the weights with an optimizer (the algorithm that turns gradients into weight changes), and every so often save a "checkpoint" (a snapshot of the weights to disk). The folder `04.TrainingLoop` holds a complete, hand-written version of exactly this — a class named "Trainer" (`04.TrainingLoop\Trainer.cs:24`). It is finished, correct code that nothing ever starts.
+
+The proof of deadness: a whole-repo search (excluding the build outputs `bin`/`obj`, the stale worktree copies, and treating the `Tests` folder as test-only) for anyone writing `new Trainer(` matches zero lines. No production file and no test constructs it. The class exists; nobody ignites it.
+
+What the dead loop already does correctly — this is real gradient code, not a stub:
+- The constructor `Trainer(TrainingConfig cfg)` (Trainer.cs:30) builds the learning-rate schedule — the plan for how fast the model learns over time, a warm-up ramp then a cosine fade — inside itself (line 33).
+- The loop `TrainAsync(model, optimizer, loader, ...)` (Trainer.cs:36) creates the checkpoint folder (line 39), then runs while the step counter is below the configured total (line 41). Each step pulls a batch (line 49), runs the forward pass to get the model's raw next-word scores or "logits" (line 56), computes the cross-entropy loss (line 57), and back-propagates with hand-written gradient math (line 61).
+- That gradient math (`Trainer.cs:97-130`) is textbook-correct, not a placeholder: it takes the softmax of each row and sets the gradient to "softmax minus one-hot" (lines 121-126) — the exact derivative of cross-entropy with respect to the logits — then pushes it through the network (line 129).
+- It then clips the gradient to stop it exploding (line 65), reads the current learning rate from the schedule (line 67), takes one optimizer step (line 68), and zeroes the gradients (line 69).
+- It saves the checkpoint (lines 75-76) BEFORE it advances the step counter `_globalStep++` (line 78) — the repo's "write the record before you move on" rule.
+
+So the loop is whole and coherent. The single thing wrong with it is that no one calls it.
+
+Every ingredient a starter needs already exists and compiles:
+- The model — a from-scratch decoder-only transformer named "LlmModel" (`03.TransformerModel\LlmModel.cs:28`), constructed on real production paths elsewhere in the repo (for example `18.CapabilityTraining\DefaultLogicalCapabilityTrainer.cs`, `42.ProjectWikiDomain\ProjectWikiDpoMetricRunner.cs`, and an experiments runner's `Program.cs`).
+- The batch loader — "DataLoader" (`02.DatasetPipeline\DataLoader.cs:22`), which streams training batches from disk. Two honest caveats: nothing ever constructs it either (a repo-wide `new DataLoader(` matches zero lines), and it needs a folder that already holds tokenized data files on disk — it throws immediately if the folder has none (lines 27-28).
+- The optimizer — "AdamW", Adam with decoupled weight decay (`04.TrainingLoop\Optimizers\AdamW.cs:30`). Unlike the pre-training path, this one IS built in production — but only by the preference trainer at `11.DPO\DpoTrainer.cs:32`.
+- The settings record — "TrainingConfig", every hyperparameter in one place with every field defaulted (`04.TrainingLoop\TrainingConfig.cs:11-24`). A repo-wide `new TrainingConfig(` matches zero lines, so it is never instantiated; but because every field has a default it is ready to use as-is.
+- The learning-rate schedule — already built inside the Trainer constructor itself (line 33).
+
+Two "dead knobs" to state precisely and honestly:
+- Dead knob 1 — the config's weight-decay value. "Weight decay" is a small pull that shrinks weights every step to discourage over-fitting. The config sets it to 0.1 (`TrainingConfig.cs:21`). That value is never handed to any optimizer: a repo-wide search for the config's `WeightDecay` property being read finds only its own definition (line 21) and an unrelated test method's name (`AdamWTests.cs:52`) — no code passes it anywhere. This is a WIRING gap, not broken arithmetic: the decay MATH inside the optimizer is live and unit-tested — `AdamW.cs:73` applies `w *= 1 - lr * weightDecay` every step, and `Tests\AdamWTests.cs:52-60` starts a weight at 10 with a zero gradient and proves it shrinks below 10.
+- Dead knob 2 — the optimizer's learning-rate constructor argument. AdamW's constructor takes a learning-rate argument (`AdamW.cs:30`) that is never stored in any field (the only fields are the two momentum coefficients, the weight decay, and the epsilon). It is harmless today because every step is handed an explicit rate from the schedule — but a caller who writes `new AdamW(lr: 3e-4)` expecting the optimizer to remember that rate would be silently wrong.
+
+The proof the wiring pattern works is the living twin one level over: the preference trainer "DpoTrainer" (`11.DPO\DpoTrainer.cs:28-36`) builds an LlmModel, an AdamW (line 32), and a checkpoint directory, then drives the same forward → hand-written backward → optimizer-step → zero-gradients loop shape (lines 38-62) — on a real production path (it is constructed in `18.CapabilityTraining`, `42.ProjectWikiDomain`, and an experiments runner's `Program.cs`). The pre-training starter is structurally simpler than this twin; only it is absent.
+
+**2. The fix.**
+
+Add ONE new production (non-test) entry point — a single glue file — that news up the ingredients and starts the loop. It must:
+1. build the settings record: `var cfg = new TrainingConfig { CheckpointDir = ..., TotalSteps = ..., BatchSize = ..., SeqLen = ..., ... };`
+2. build the model: `var model = new LlmModel(modelConfig);`
+3. build the optimizer PASSING the config's weight decay — `var optimizer = new AdamW(weightDecay: cfg.WeightDecay, ...);` — which simultaneously closes dead knob 1, because now the configured 0.1 actually reaches the optimizer instead of sitting inert;
+4. build the batch loader over a folder of tokenized data files: `var loader = new DataLoader(dataDir, cfg.BatchSize, cfg.SeqLen);`
+5. start the loop: `await new Trainer(cfg).TrainAsync(model, optimizer, loader);`
+
+And separately close dead knob 2: either store the optimizer constructor's learning-rate argument in a field and use it as the default rate when a step is not handed an explicit one, or remove the argument entirely — so no caller can pass `lr:` and be silently ignored. The living twin at `DpoTrainer.cs:28-36` proves this exact construct-and-drive pattern already works on a production path.
+
+**3. Positive and negative example (preference-training spirit).**
+
+GOOD — the "chosen" behaviour the fix must produce: one smoke iteration of the loop over a tiny synthetic batch (a hand-built handful of token ids, no real dataset) changes at least one model weight and writes a checkpoint file into the configured checkpoint folder; and because the config's weight decay is now wired through, the optimizer provably decays weights by the configured 0.1 — a weight of 10 with a zero gradient shrinks (exactly what the existing decay test at `AdamWTests.cs:52-60` already demonstrates for the optimizer in isolation).
+
+BAD — the "rejected" behaviour the fix must make impossible: a developer "configures" weight decay 0.1 in the settings record and the optimizer silently uses a hard-coded value instead (today the one production optimizer, at `DpoTrainer.cs:32`, hard-codes `weightDecay: 0.01f` and ignores any config); or a developer writes `new AdamW(lr: 3e-4)` and the learning rate is silently discarded because the constructor never stores it.
+
+**4. Tests that should PASS / FAIL.** No real training run — one forward, one backward, one optimizer step, and one save are enough.
+
+PASS after the fix:
+- A repo-wide search for `new Trainer(` finds a caller on a production (non-test) path. Today it finds nothing — that is the proof of deadness.
+- A one-iteration smoke test — a tiny model and a tiny synthetic batch — asserts that at least one model parameter changed after the step AND that a checkpoint file appeared in the configured folder.
+- A test (or a source scan for the config's `WeightDecay` being read outside `TrainingConfig.cs`) shows the configured weight-decay value demonstrably reaching the optimizer's constructor.
+- The existing decay-math test `Tests\AdamWTests.cs:52` stays green (the fix does not touch the optimizer's arithmetic).
+
+FAIL after the fix — any assertion that pins today's deadness, and which must be retired when the fix lands:
+- Any assertion that zero `Trainer` constructions exist, or that zero `TrainingConfig` instantiations exist.
+- Any assertion that the config's weight-decay value is read nowhere outside its own definition.
+
+**5. Effort estimate.** SMALL, roughly 3-6 hours, CODE ONLY. Rationale: this is the smallest of the wiring entries — five constructor calls plus one await in a single new glue file, one two-line change to remember-or-remove the optimizer's learning-rate argument, and one smoke test, all over parts that already exist and compile.
+**BOUNDARY — TRAINING WORK, DEFERRED.** Producing and placing the tokenized training data files on disk, and actually running the pre-training to drive the loss down and emit real checkpoints, is deferred training work; nothing beyond this boundary is estimated here. STOP.
+
+---
+
+### WL-05 — The self-measuring graph engine is never built by any running process: add the production socket and switch on the two measurement doors that need no training
+
+**1. The problem.**
+
+XIIGen ships a "dynamic graph machine" — a self-improving graph engine that is supposed to (a) route a piece of work through a graph of nodes, (b) fan one task out into several parallel subtasks and merge their results back, and (c) force every quality number the system produces through eleven mandatory "measurement doors" (a measurement door is a contract gate that a number must pass before it is allowed to count). All of that machinery is finished, compiles, and is covered by tests. None of it is ever built or driven by a running server. It is a museum exhibit: complete, polished, behind glass, connected to nothing.
+
+Three things are true at this exact commit, each re-read line by line:
+
+- The single place in the whole codebase that assembles the machine is one factory method — the "assemble an honestly-untrained machine" method (`CreateHonestUntrained`, `15.OrchestratorModel/Logical/DynamicGraphMachineCompositionFactory.cs:39`). It composes the runtime once and, only if every node is provably untrained (no learned checkpoint, no "final authority" claim, no runtime quality boast), wraps it in the top-level machine object (`new DynamicGraphMachine(...)`, :128–129). A whole-repo search (excluding build output and worktree copies, and treating the `Tests/` folder as tests) shows this method's only callers are the factory itself and one test file, and the machine object is constructed at exactly that one line and nowhere else. So even the machine's honest "I am not switched on yet" refusals can never leave a running server, because nothing running ever builds the object that would speak them.
+
+- The production-facing doorway into the fan-out chain is a pair of public methods on the orchestrator assistant (the object that would drive a request through the graph): the "run the factory-selected target" method (`RunFactorySelectedTargetExecutionAsync`, `15.OrchestratorModel/Logical/LogicalOrchestratorAssistant.cs:471`) and its already-admitted sibling (`RunFactoryAdmittedSelectedTargetExecutionAsync`, :505). A whole-repo search shows the only references to either are the assistant that defines them, one in-slice adapter, and tests — no live request path. The assistant's one genuinely-live method (the ordinary "run a user request" method `RunAsync`, :530) deliberately routes through the legacy/adaptive orchestrator and never calls the fan-out pair. And in the default way the assistant is built, the two graph injection points are left empty: the topology-source argument defaults to null (:126) and the default of the two adaptive-orchestrator constructions passes no node-output source (:422–442), so the dynamic-graph branch stays inert even if the assistant were alive.
+
+- All eleven measurement doors sit behind one coordinator object (`DynamicGraphMeasurementCoordinator`, `21.AgentInfrastructure/Logical/DynamicGraphMeasurementCoordinator.cs`; its own summary at line 11 says it "composes target admission with numeric measurement"). A whole-repo search for any call into that coordinator matches only tests and one standalone developer tool. No server, no routing unit, no business domain reaches in. Meanwhile the only live server in the product — the design-conversion model server (`25.ModelServer/DesignConversion/DesignConversionModelServerApi.cs`), which runs each job through a design-conversion improvement loop (`coordinator.RunAsync`, `44.DesignConversionDomain/DesignConversionThinClientJobRuntime.cs:90`, where that coordinator is a design-conversion object, not the graph) — never names the assistant at all: the assistant type appears zero times anywhere under the model-server or design-conversion-domain folders.
+
+The three seams where the wiring is missing, in order:
+- Seam 1 — construction: no live host ever CONSTRUCTS the machine (or the assistant) with real graph sources. The one assembler (`DynamicGraphMachineCompositionFactory.cs:39`) has no production caller.
+- Seam 2 — per-request drive: no per-request call ever DRIVES the fan-out run method (`LogicalOrchestratorAssistant.cs:471`). The live "run a user request" method (:530) routes around it.
+- Seam 3 — ownership: no host OWNS seams 1 and 2. The only live server (`DesignConversionModelServerApi.cs`) bypasses the whole slice.
+
+Of the eleven doors, exactly two can be exercised with pure code today — untrained-honesty (door 1, `BindL2UntrainedHonesty`, `DynamicGraphMeasurementCoordinator.cs:78`), which measures the ABSENCE of training by confirming the runtime honestly reported "not ready", and run-speed (door 5, `MeasureRunSpeed`, :301), which is pure wall-clock timing of a finished run. The other nine each need an artifact that only a training run creates (a trained subject, a held-out data split, or a learned edge authority) and stay behind the deferred-training line.
+
+**2. The fix.**
+
+Add ONE production caller that owns all three seams, placed either inside the existing design-conversion model server's request path or in a new small orchestration endpoint. It must:
+1. once at startup (seam 1): build the honestly-untrained machine by calling the assemble method (`DynamicGraphMachineCompositionFactory.CreateHonestUntrained(storage, profile, adapter)`, `DynamicGraphMachineCompositionFactory.cs:39`) with a real bootstrap profile (real node definitions and edge bindings), OR build the assistant directly (`LogicalOrchestratorAssistant.CreateDefaultCore`, `LogicalOrchestratorAssistant.cs:137/149`) while passing a real topology source and node-output source into the two injection points that are null today (:126, :422–442);
+2. per request (seam 2): drive the fan-out run method (`LogicalOrchestratorAssistant.RunFactorySelectedTargetExecutionAsync`, :471) so one task actually fans out into subtasks and merges back;
+3. own both (seam 3): host the above inside the live request path so real traffic flows through it.
+
+Then wire the two pure-code doors so they fire on that real traffic:
+- untrained-honesty (door 1, `BindL2UntrainedHonesty`, `DynamicGraphMeasurementCoordinator.cs:78`): call it at the moment an untrained baseline node runs, recording "honestly untrained — no fake quality claim";
+- run-speed (door 5, `MeasureRunSpeed`, :301): call it on run completion, recording the real elapsed milliseconds.
+
+No training artifacts are required for any of the above.
+
+**3. Positive and negative example (preference-training spirit).**
+
+GOOD — the "chosen" behaviour the fix must produce: a real request reaches the live server; the server constructs the honestly-untrained graph machine and drives the fan-out run to a result; AND the untrained-honesty door records "honestly untrained, no fake quality claim" while the run-speed door records the real elapsed milliseconds of that run. The graph slice is now plugged in and measuring real traffic.
+
+BAD — the "rejected" behaviour the fix must make impossible (this is today's state): the entire graph engine, with all eleven quality doors, exists only as a museum piece; a production request completes with zero graph involvement and zero measurements taken, while the test suite gives the false impression that the machinery is exercised.
+
+**4. Tests that should PASS / FAIL.** No training run is involved.
+
+PASS after the fix:
+- A whole-repo search finds a non-test caller of the assemble method (`CreateHonestUntrained`) — today only the factory and one test file match.
+- A whole-repo search finds a non-test caller of the fan-out run method (`RunFactorySelectedTargetExecutionAsync`) — today only the assistant, one in-slice adapter, and tests match.
+- An integration test driven through the live server's endpoint proves the two pure-code doors (`BindL2UntrainedHonesty` and `MeasureRunSpeed`) are reached from a real request path.
+- The assistant type (`LogicalOrchestratorAssistant`) appears at least once under the live server's folder (`25.ModelServer`) — today it appears zero times there.
+
+FAIL after the fix — any assertion that pins today's isolation and must be retired when the fix lands:
+- Any assertion that the machine is constructed nowhere outside the factory and tests.
+- Any assertion that the assistant type is referenced zero times under the live server folder.
+
+**5. Effort estimate.** MEDIUM, roughly 6–12 hours, CODE ONLY. Rationale: the diff is modest (one construction site, one per-request call, two door calls), but adding a brand-new call seam into a live server's request path is design-sensitive — it touches how requests are routed and how the machine's lifetime is owned, which needs care beyond the line count.
+**BOUNDARY — TRAINING WORK, DEFERRED.** The nine remaining doors — ablation, held-out accuracy, novelty, training-speed, edge-authority-control, composite edge-quality, edge-authority-selection-quality, edge-identity, and edge-order — each need a trained subject, a held-out split, or a learned edge authority, none of which exist until a training run is performed. They remain blocked; nothing is estimated for them here beyond noting the block. STOP.
+
+---
+
+### WL-06 — The quality gate that can never receive its numbers, the promotion handoff that can never finish, and the thrice-copied 0.03 preference margin
+
+**1. The problem.**
+
+The design-conversion domain — the subsystem in `44.DesignConversionDomain` that turns a design mock-up (a Figma or Canva frame) into HTML/CSS code — is the most training-disciplined corner of this repository, yet three of its finishing steps ("tails") are left unwired. Every identifier below is translated on first use.
+
+*Tail 1 — the measurement gate can never receive its numbers.* A "measurement gate" is the checkpoint that is supposed to demand, before a trained result counts, that "the trained thing scored well on held-out examples (test examples deliberately kept away from training) and stayed inside its runtime, cost, and memory budgets." The gate's evaluator only runs when the training request carries a numbers-object called a `MeasurementGateRequest` (the request that carries the thresholds — the required score, the maximum runtime in milliseconds, the maximum cost in US dollars, the maximum peak RAM in megabytes — plus the real held-out metrics). But that field is OPTIONAL and defaults to null on the production training options: `DesignConversionMeasurementGateRequest? MeasurementGateRequest = null` (`DesignConversionTrainingPipeline.cs:21`). The training gate runs the evaluator only when the field is non-null: `options.MeasurementGateRequest is null ? null : _measurementGate.Evaluate(...)` (`DesignConversionTrainingMeasurementGate.cs:391–393`). And every construction of that request, or of its thresholds record `DesignConversionMeasurementGateThresholds` (`DesignConversionMeasurementGate.cs:32–36`), anywhere in the tree lives in Tests — a repo-wide grep of `new DesignConversionMeasurementGateRequest` / `new DesignConversionMeasurementGateThresholds` matches only test files (nine of them); the single non-test match is the `= null` default itself. So in the running product the gate is permanently FAIL-CLOSED (blocks whenever in doubt), never satisfied — because nobody ever hands it numbers.
+
+Be precise about the honesty here: the four `false` flags at `DesignConversionMeasurementGate.cs:214–218` are NOT an "always pass" switch. They are the honest "no thresholds were supplied, so fail for missing thresholds" branch — reached only inside `if (thresholds is null)`, which first records the failure reason `MEASUREMENT_GATE_THRESHOLDS_REQUIRED` (:211–213). When real numbers ARE supplied, the same method (`ValidateThresholds`) turns each flag on by numeric validity — a valid score in 0..1, a positive runtime budget, a non-negative cost budget, a positive RAM budget (:221–238). Because the gate never passes on the product path, `readyForTraining` stays false (it requires the gate to pass, `DesignConversionTrainingMeasurementGate.cs:415–421`), and downstream promotion is blocked.
+
+*Tail 2 — the promotion handoff can never finish.* The "promotion handoff" is the step that ships a promoted, trained result (a "checkpoint" — a saved file of the model's state) to the model server that will serve it. This handoff IS called in production: `JsonlDesignConversionLocalArtifactDb` constructs and invokes the publisher `new DesignConversionPromotionPublisher(publicationUploader).PublishAsync(...)` at `DesignConversionLocalArtifactDb.cs:3028`, behind a real model-server HTTP endpoint. But it can never COMPLETE, for two reasons. First, the default uploader is a local no-op: `publicationUploader = _promotionUploader ?? new LocalOnlyTrainingIntakePromotionUploader()` (`DesignConversionLocalArtifactDb.cs:3027`), and that local uploader writes a receipt and explicitly attempts NO upload — it returns `UploadAttempted = false` with the evidence tag `EXTERNAL_CLOUD_UPLOAD_NOT_ATTEMPTED` (:7752–7776). The real network uploader (`DesignConversionModelServerPromotionHttpUploader`) is wired only when the host is configured with a `PromotionHttpUploaderOptions` record (`DesignConversionModelServerAspNetHostStartup.cs:1250–1259`), and every construction of that options record lives in Tests. Second, even with a real uploader, the unpassable Tail-1 gate rejects first: when the measurement gate did not pass, `PublishAsync` replaces the decision with Reject and never reaches the uploader (`DesignConversionPromotion.cs:245–260`).
+
+*Tail 3 — the thrice-copied 0.03 preference margin.* A "preference margin" is the number saying how much more the model must prefer the good ("chosen") answer over the bad ("rejected") one. Three hard-coded `0.03` literals sit in the translation machine (`27.TranslationDomain/TranslationMachine.cs`): `RewardMargin: 0.03` (:75), a ternary `? 0.03` (:130), and `_trainingHistory.Count > 0 ? 0.03 : 0.0` (:192). Meanwhile the central preference trainer — the DPO (Direct Preference Optimization) trainer at `11.DPO/DpoTrainer.cs` — owns NO minimum-margin constant at all: its two public constants at :19–20 are merely checkpoint file-name helpers (`PolicyCheckpointFilePrefix`, `PolicyCheckpointFileExtension`), its `Beta` at :18 is a private KL-penalty coefficient (a different hyper-parameter), and its real margins are COMPUTED at run time (`float margin = chosenReward - rejectedReward`, :51/:70, averaged as `marginSum / count` at :127/:173). So the same magic 0.03 is copy-pasted in three places with no shared source of truth.
+
+**2. The fix.** Three concrete, code-only changes (the threshold NUMBERS themselves are out of scope — see section 5).
+
+(i) *Make the measurement-gate request a REQUIRED, configuration-sourced input on the production training/promotion path.* Change the production path so that `MeasurementGateRequest` is populated from a configuration document — the thresholds (required score, max runtime ms, max cost USD, max peak RAM MB) read from a config record — rather than left null at `DesignConversionTrainingPipeline.cs:21`. With the request supplied, `DesignConversionTrainingMeasurementGate.cs:391–393` stops resolving `measurementResult` to null on the product path and the evaluator actually runs; `ValidateThresholds` then takes its populated branch (`DesignConversionMeasurementGate.cs:221–238`) and turns the four validity flags on by real numeric validity. The four `false` fallbacks at :214–218 stay exactly as they are — they remain the honest "no thresholds" branch. (What number goes in the config document is deferred — section 5.)
+
+(ii) *Wire a real uploader from host configuration on the production promotion path.* Supply the `PromotionHttpUploaderOptions` record OUTSIDE Tests so the host constructs the real network uploader `DesignConversionModelServerPromotionHttpUploader` (`DesignConversionModelServerAspNetHostStartup.cs:1250–1259`) and hands it to the artifact DB as `_promotionUploader`, instead of falling through to the `LocalOnlyTrainingIntakePromotionUploader` no-op at `DesignConversionLocalArtifactDb.cs:3027` / `:7752–7776`. Once Tail-1's gate can pass, `PublishAsync` no longer short-circuits to Reject at `DesignConversionPromotion.cs:245–260` and reaches the real uploader.
+
+(iii) *Add ONE canonical constant and point all three literals at it.* Add `public const double MinimumPreferenceMargin = 0.03;` to `DpoTrainer` (`11.DPO/DpoTrainer.cs`), alongside its existing public constants at :19–20. Type it `double` (not `float` like `Beta`) so it feeds the double-typed `RewardMargin` fields directly with no precision-losing cast (`00.Core/LearningMachineContracts.cs:58` and `:103`). Then replace the literals at `TranslationMachine.cs:75`, `:130`, `:192` with `DpoTrainer.MinimumPreferenceMargin`. No new project reference is needed — `27.TranslationDomain/27.TranslationDomain.csproj:7` already references `..\11.DPO\DPO.csproj` — so this is one `using DPO;` directive plus three one-token replacements.
+
+**3. Positive and negative example (preference-training spirit).**
+
+GOOD — the "chosen" answer the fix should make normal: a production training run receives a thresholds object from configuration; the measurement gate evaluates REAL held-out numbers and its verdict — pass OR fail — is a genuine verdict earned against real data; when it passes, the publisher reaches the real network uploader and the promoted checkpoint actually ships to the model server; and the translation machine's reported preference margin traces back to one named constant (`DpoTrainer.MinimumPreferenceMargin`).
+
+BAD — the "rejected" answer the fix must make impossible: a measurement gate that "fails" forever solely because nobody ever handed it numbers — a permanently-blocked pipeline that is indistinguishable, from the outside, from a strict one that fails on merit; a "promotion" whose upload step is a receipt-writing no-op that never leaves the machine; and the same magic 0.03 copy-pasted in three sites, free to drift apart independently.
+
+**4. Tests that should PASS / FAIL** (no training runs required for any of these).
+
+PASS after the fix:
+- A repo-wide grep (excluding bin, obj, worktrees, Tests) finds a NON-test construction of `DesignConversionMeasurementGateRequest` and/or `DesignConversionMeasurementGateThresholds`.
+- On the product path, the gate call at `DesignConversionTrainingMeasurementGate.cs:391–393` no longer resolves `measurementResult` to null.
+- A non-test construction of `DesignConversionModelServerPromotionHttpUploaderOptions` exists (a configured real uploader).
+- A grep of `27.TranslationDomain/TranslationMachine.cs` for `0.03` returns ZERO hits, the three sites read `DpoTrainer.MinimumPreferenceMargin`, and `11.DPO/DpoTrainer.cs` declares exactly one such public constant.
+
+FAIL after the fix (these must no longer hold):
+- Any assertion that pins the null `MeasurementGateRequest` default as the production behaviour.
+- Any assertion that pins the `LocalOnlyTrainingIntakePromotionUploader` no-op as the ONLY production uploader.
+
+**5. Effort estimate.** MEDIUM — roughly 6–10 hours of CODE work. Rationale: the config plumbing dominates (threading a configuration-sourced `MeasurementGateRequest` through the production training/promotion path, plus wiring the HTTP-uploader options from host configuration); the margin single-sourcing — one constant, one using-directive, three replacements — is trivial.
+
+**BOUNDARY — TRAINING WORK, DEFERRED.** The actual threshold NUMBERS (what held-out score, runtime, cost, and RAM budget count as "good enough") and the real held-out metrics that make the gate genuinely pass require measurement runs on real training. They are DEFERRED; do NOT invent numbers. STOP at this line for anything requiring measured data.
+
+---
+
+### WL-07 — Four training rows born from a forbidden closed model claim "no external AI was used": mark them for rebuild and make the guard distrust the name
+
+**1. The problem.**
+
+The folder `training-data/orchestration-reasoning/` holds preference-training examples — DPO (Direct Preference Optimization) pairs, each a "chosen" good answer set against a "rejected" bad one — for the orchestration-reasoning skill. Four of its source rows are named after, and openly credit, a closed AI model that the project's legal policy forbids as an authoring source. A "closed model" here means Claude / Sonnet, a hosted model whose output the policy bans from becoming training data. The four rows are `or01u-sonnet-clinerules-001`, `or01u-sonnet-cursorrules-001`, `or01u-sonnet-gitattributes-001`, and `or01u-sonnet-gitignore-001`. Three of them — clinerules, gitignore, gitattributes — are carried as the live common-leg payload rows (`orchestration-reasoning-dpo-trainer-payloads.jsonl:1`, `:2`, `:3`); the fourth, cursorrules, is held one step back as an excluded adaptive candidate (`orchestration-reasoning-common-corpus-manifest.json:25`). Each row names its own origin as a source family literally called "sonnet-local-analyzes" — analysis notes a Sonnet model produced — in both its `source_ref` field and its `project_adapter_refs` list (`orchestration-reasoning-dpo-trainer-payloads.jsonl:1`, which reads `"source_ref":"sonnet-local-analyzes:.clinerules-analysis.md"` and `"project_adapter_refs":["source_family:sonnet-local-analyzes", …]`).
+
+Yet every one of those rows also carries the flag `"external_ai_used":false` (`orchestration-reasoning-dpo-trainer-payloads.jsonl:1`), and so does every manifest in the folder (`orchestration-reasoning-dpo-trainer-payloads-manifest.json:22`; `orchestration-reasoning-dpo-pairs-manifest.json:36`). The row's own label therefore contradicts its own name: the source is literally called "sonnet", yet the row asserts no external AI was used.
+
+Nothing in the folder marks these rows for rebuild or quarantine. A grep of `training-data/orchestration-reasoning/` for "rebuild", "contaminat", or "quarantin" returns zero matches. Instead the manifests carry a `status` field whose value is an accepting one — "PASS" (`orchestration-reasoning-common-corpus-manifest.json:5`) or "PASS_PENDING_PARENT_REVIEW" (`orchestration-reasoning-dpo-pairs-manifest.json:5`; `orchestration-reasoning-dpo-trainer-payloads-manifest.json:5`) — the opposite of a quarantine-for-rebuild mark. So the count of rows marked for rebuild is zero while the count found is four.
+
+The code that consumes this corpus — the orchestration-reasoning trainer at `43.SmartSkillsDomain/OrchestrationReasoningTrainer.cs`, whose entry point `MaterializeAsync(payloadPath, manifestPath)` (`:34`) reads a payload file and its manifest — has exactly one guard against forbidden-model authorship, and it is a self-declaration check. At the manifest level it rejects only when the manifest's own `external_ai_used` flag reads true: `if (RequiredBool(manifest, "external_ai_used")) return …Fail(…"ORCHESTRATION_REASONING_TRAINER_EXTERNAL_AI_REJECTED")` (`OrchestrationReasoningTrainer.cs:63–64`). At the row level it likewise rejects a single row only when that same flag reads true, folded into a combined condition (`OrchestrationReasoningTrainer.cs:151`). Because the sonnet rows and manifests all declare `external_ai_used:false`, neither guard fires. The one guard built to stop closed-model authorship trusts the row's self-declaration and never looks at the row's name — so a row whose name and source family both shout "sonnet" sails straight through.
+
+One mitigating fact, stated plainly so it is not mistaken for a fix: none of the four rows is currently promoted to train-ready. A grep shows no `"dpo_train_ready":true` and no `"training_started":true` anywhere in the folder; every row and manifest carries `dpo_train_ready:false` and `training_started:false` (`orchestration-reasoning-dpo-trainer-payloads.jsonl:1`; `orchestration-reasoning-dpo-pairs-manifest.json:31–32`). So nothing contaminated is feeding a live training run at this commit. But that "not yet promoted" state is a general holding state applied to every row in these files, clean non-sonnet rows included — it is not the rebuild marking the policy requires, and it does not make the marked-equals-found count (0 == 4) pass.
+
+**2. The fix.** Two concrete, code-and-data-marking changes (rebuilding the rows' actual content is out of scope — see section 5).
+
+(i) *Data-hygiene marking.* Add an explicit rebuild/quarantine marking to the four sonnet rows and to each manifest that carries them — for example a `"status":"REBUILD_REQUIRED_CONTAMINATED_SOURCE"` field on each of the four source rows, and a matching top-level marking replacing or annotating the accepting `status` values at `orchestration-reasoning-common-corpus-manifest.json:5`, `orchestration-reasoning-dpo-pairs-manifest.json:5`, and `orchestration-reasoning-dpo-trainer-payloads-manifest.json:5`. With four rows marked, the policy's marked-equals-found count gate reads 4 == 4 and passes; today it reads 0 == 4 and fails. This is a hygiene MARK only — it records the defect; it does not author any replacement content.
+
+(ii) *Guard hardening in the consuming trainer.* Add a source-name cross-check to `OrchestrationReasoningTrainer` so that a row or manifest whose identifier or source family names a closed model — case-insensitive "sonnet" or "claude" appearing in `pair_id` / `source_row_id` / `source_ref` / `project_adapter_refs`, or in the manifest's `included_*_row_ids` and `source_refs` — is REJECTED regardless of its self-declared `external_ai_used:false`, with a new, distinct error code such as `ORCHESTRATION_REASONING_TRAINER_CONTAMINATED_SOURCE_REJECTED`. Add the manifest-level check alongside the existing self-declaration guard at `OrchestrationReasoningTrainer.cs:63–64`, and the row-level check alongside the row guard at `:151`. The guard must distrust a self-declaration that contradicts the source's own name: when the name says "sonnet" and the flag says "no external AI", the name wins and the payload is refused.
+
+**3. Positive and negative example (preference-training spirit).**
+
+GOOD — the "chosen" behaviour the fix should make normal: the trainer is handed the payload file containing row `or01u-sonnet-clinerules-001` and refuses it outright with an explicit contaminated-source error that names the offending row — the closed-model name in the source is treated as disqualifying on its own, before any train-ready question is even reached.
+
+BAD — the "rejected" behaviour the fix must make impossible (this is today's behaviour): the same row passes BOTH guard checks — the manifest guard at `OrchestrationReasoningTrainer.cs:63–64` and the row guard at `:151` — purely because it politely claims `external_ai_used:false`, and the ONLY thing standing between a Sonnet-authored row and a training run is the accidental "nothing is train-ready yet" holding state (`dpo_train_ready:false`), not any deliberate quarantine.
+
+**4. Tests that should PASS / FAIL** (no training runs required for any of these).
+
+PASS after the fix:
+- A unit test that feeds the trainer a synthetic manifest-plus-row whose source is named "sonnet-…" while carrying `external_ai_used:false` asserts that `MaterializeAsync` fails with the new contaminated-source error code (`ORCHESTRATION_REASONING_TRAINER_CONTAMINATED_SOURCE_REJECTED`).
+- A folder-level count assertion over `training-data/orchestration-reasoning/` asserting that the number of rows marked for rebuild equals the number of sonnet-named source rows found: 4 == 4.
+
+FAIL after the fix (these must no longer hold):
+- Any test that asserts today's acceptance of a false-flagged sonnet row — that a row named `or01u-sonnet-*` carrying `external_ai_used:false` is materialized successfully.
+- The current 0 == 4 state of the marked-equals-found gate (zero rows marked while four are found).
+
+**5. Effort estimate.** SMALL — roughly 2–4 hours of CODE-and-data-marking work. Rationale: one new cross-check helper plus two call sites in a single trainer file, and a `status` marking added to four rows and three manifests — no new subsystem, no schema redesign, no training machinery touched.
+
+**BOUNDARY — TRAINING WORK, DEFERRED.** Actually REBUILDING the four rows' chosen/rejected content from a legally-clean (non-closed-model) source is training-data production, not code: it is DEFERRED and nothing is estimated for it here. This entry stops at MARKING the rows for rebuild and hardening the guard. STOP at this line for anything that would author replacement training content.
+
+---
+
+### WL-08 — Every domain writes its passport under one shared file name and the loader lets the last one silently win: add the collision guard, domain scoping, and corrupt-file survival
+
+**1. The problem.** Every trained capability writes a "manifest" — the passport file (a small JSON document) describing one trained checkpoint: which model file, which tokenizer, which domain (subject area), which unit identifier (the string that names one taught capability), and which training settings rebuild it. ALL capabilities write that passport under ONE shared file name, `generated_capability_manifest.json` — the constant `GeneratedCapabilityManifestFileName` at `18.CapabilityTraining\TeachingRegistryPersistence.cs:18` — each dropped into its own per-(run, domain, sub-phase) sub-folder. The on-disk layout is `{root}/{run}/{domain}/{sub-phase}/generated_capability_manifest.json`, built at `18.CapabilityTraining\DefaultLogicalCapabilityTrainer.cs:269` (the checkpoint directory) and `:275` (the passport path).
+
+On first use the trainer fills its in-memory index once — "hydration", the method `EnsureManifestCacheHydrated` — by walking the WHOLE checkpoint folder tree and grabbing every file that carries that one name at any depth (`Directory.GetFiles(..., SearchOption.AllDirectories)` at `:586`, where `SearchOption.AllDirectories` means search by file name through every sub-folder, any depth), then filing each passport into a dictionary keyed by the unit identifier. The filing is a blind overwrite — `_manifestCacheByUnitId[manifest.UnitId] = manifest;` at `:591` — with no duplicate check, no domain filter at load time, and no defined order: the .NET file-listing API follows the filesystem's own enumeration, which the code never sorts, so which duplicate wins is undefined. There is also no per-file error handling — the read-and-parse at `:588-589` (`File.ReadAllText` then `JsonSerializer.Deserialize`) sits in no try/catch, so one corrupt or schema-mismatched JSON throws a parse error that propagates straight out and aborts the WHOLE hydration; and because the "already hydrated" flag is set at `:582` BEFORE the loop, a throw leaves a partially filled index permanently flagged complete — the early-return at the top of the method never re-attempts it.
+
+Collisions are real on two ordinary paths. The unit identifier is assembled as `role + sanitized-domain + sanitized-sub-phase + sanitized-run` (`:270`), so (a) a same-run re-teach of the same domain + sub-phase produces the identical unit id AND the identical folder, clobbering both the file on disk and the index slot; and (b) the `Sanitize` helper (`:921-926`) lowercases a label and turns every non-letter / non-digit character into a hyphen (collapsing runs of hyphens), so genuinely different labels — "Legal EU", "legal-eu", "legal/eu" — all collapse into the one slug "legal-eu", and two distinct domains then silently overwrite each other on disk AND in the index. The replay reader `FindReplayManifests` (`:596-611`) does filter by domain, but only at query time — the `DomainTag == requested-domain` filter at `:602`, reading from the already-polluted shared index — so it cannot recover a passport the overwrite already destroyed. The same by-name-everywhere sweep recurs once more in the experiments runner (`experiments-v2\XIIGEN-DOCS-BATCH-COMPARISON\runner\XiigenDocsBatchComparisonRunner\Program.cs:723`), inside `BuildLoraAudit` — evidence that the pattern repeats, not production code.
+
+**2. The fix.** Four concrete changes:
+
+(i) *Duplicate-id guard.* Replace the blind indexer write `_manifestCacheByUnitId[manifest.UnitId] = manifest;` (`:591`) with an explicit check — `TryAdd` / `ContainsKey` — that, on a second passport carrying an already-seen unit id, either REFUSES (records a named conflict result and does not guess a winner) or resolves the winner loudly and deterministically (for example newest `CreatedAtUtc`, with the loser recorded). Never silent last-one-wins.
+
+(ii) *Domain scoping at LOAD time.* Restrict the recursive sweep to the domain's own sub-tree — the folder layout `{root}/{run}/{domain}/{sub-phase}` already encodes the domain, so the loader can search under the domain's own folder instead of the whole root — OR check the passport's own domain tag (`manifest.DomainTag`) right after parsing and drop any foreign-domain file before it can enter the index. Equivalently, give the passport a domain-scoped file NAME (embed the sanitized domain in the file name) so the by-name sweep can no longer cross domains at its root.
+
+(iii) *Defined corrupt-file behaviour.* Wrap each file's read-and-parse (`:588-589`) in a per-file try/catch: on a bad file, skip it with a recorded note and keep loading the rest; and set the "hydrated" flag only after a clean pass — never leave `_manifestCacheHydrated = true` (`:582`) cementing a partial or failed hydration.
+
+(iv) *Deterministic ordering.* Sort the file list (for example by `CreatedAtUtc` then unit id) before the fill loop so any surviving winner is defined rather than filesystem-order-dependent. This is MOOT if duplicates are refused outright under (i) — stated so explicitly.
+
+**3. Positive and negative example (preference-training spirit).** GOOD "chosen" (the behaviour to train toward): two passports carrying the SAME unit identifier under two different sub-folders → hydration reports a NAMED conflict (which unit id, which two files) and REFUSES to guess a winner, instead of silently keeping whichever the filesystem happened to list last. A corrupt passport dropped anywhere under the root → the OTHER passports still load, the bad file is skipped with a recorded skip note, and the index is NOT flagged hydrated on a failed pass. BAD "rejected" (today's behaviour, which must become impossible): domain "Legal EU"'s passport silently REPLACES domain "legal/eu"'s passport because both sanitize to "legal-eu" (`:921-926`) — same slug, same unit id (`:270`), same file — and the losing domain's replay history simply vanishes from the index, unrecoverable even though the replay reader filters by domain (`:602`); and one corrupt or schema-mismatched file kills the entire index build (the throw at `:588-589`) while the code has already sworn hydration succeeded (the flag set at `:582`), so a retry never repairs it.
+
+**4. Tests that should PASS / FAIL** (no training runs required for any of these). PASS after the fix: a test that drops two passports with the SAME unit id under two sub-folders asserts a conflict result (a rejection, or a deterministically-named winner with the loser recorded) rather than a single silent survivor; a test that places a foreign-domain passport under the checkpoint root asserts it NEVER enters the target domain's cache (nor its replay set); a test that drops malformed JSON under the root asserts the good passports still load AND a skip note is recorded for the bad file, rather than an aborted hydration. FAIL after the fix (these must no longer hold): any assertion that pins today's silent last-one-wins overwrite — a duplicate unit id yielding one silent survivor; any assertion that pins the abort-and-cement-partial-cache behaviour — one corrupt file throwing out of hydration while the index stays flagged complete.
+
+**5. Effort estimate.** SMALL — roughly 3–5 hours of pure code work. Rationale: four localized changes in one trainer file (a dictionary-write policy, a domain filter or a domain-scoped search, a per-file try/catch, and an optional deterministic sort), plus a handful of unit tests over synthetic on-disk passports — no schema redesign, no new subsystem, no training machinery touched. **This item has NO deferred-training boundary — the entire fix is code** (file listing, JSON parsing, dictionary-key policy, and folder / file naming and scoping); nothing needs to STOP for data or a training run.
+
+---
+
+### WL-09 — The code's two honest self-confessions: an episode memory that forgets on restart, and a hardware monitor that exists only as a test stub
+
+**1. The problem.** Two spots in the code openly admit, in their own comments, that they are unfinished — and both sit at the far edge of the system, away from any preference-training maths.
+
+*(a) The episode memory that forgets on restart.* The orchestrator (the component that breaks a big task into sub-tasks and coordinates the work) keeps a diary of its past runs so it can look back at similar tasks. That diary is `InMemoryEpisodeMemory` — "episode memory held only in the running program's working memory" (`15.OrchestratorModel/Core/InMemoryEpisodeMemory.cs:13`). It genuinely works: `Store` (save a task and how it was broken down, `:28`) and `Recall` (find past tasks whose text contains a search word, `:43`) both do their job, keeping entries in a plain in-memory list (`:16-17`). The catch is that the list lives only inside the running process, so every entry vanishes the moment the program restarts. The code says so itself: "Stub implementation — real persistence comes with 14.ContinuousLearning" (`InMemoryEpisodeMemory.cs:11`) and, on the contract it fulfils, "InMemoryEpisodeMemory is a stub until 14.ContinuousLearning" (`15.OrchestratorModel/Core/Interfaces.cs:53`). A "stub" is a stand-in that fills the slot but does not do the durable job; a store that survives a restart still has to be written.
+
+*(b) The hardware monitor that exists only as a test stand-in.* The autonomous-learning scheduler is allowed to start a training cycle only when the machine is quiet enough — low CPU load, the user away from the keyboard, on mains power, enough free disk. To know that, it must read the machine's live hardware state. That reading is promised by the contract `ISystemMonitor` — "system monitor" (`16.AutonomousLearning/Core/Interfaces.cs:33`), whose single method `Sample` (`:36`) returns a `SystemStatus` snapshot of CPU percentage, minutes since the last key or mouse event, whether it is charging, battery percentage and free disk (`:12-17`). Its own comment confesses: "Real implementation reads OS metrics; test stub returns configured values" (`:32`). A tree-wide search — excluding build output (`bin`, `obj`) and the worktree copies, and treating the `Tests\` folder as test-only — confirms the ONLY thing that implements this contract is a scripted test double, `StubSystemMonitorAL` (`Tests/AutonomousLearningTests.cs:552`), which merely hands back a fixed snapshot it was given in its constructor (`:558-562`) without ever asking the operating system. The pipeline that consumes the monitor (`16.AutonomousLearning/Pipeline/AutonomousLearningPipeline.cs:30, 51`) is only a user of the contract, not a real implementer. The real operating-system-metrics reader does not exist.
+
+Both are pure code and peripheral: neither calculates any training loss. The first only feeds the orchestrator's recall of past runs; the second only decides WHEN a learning cycle may begin.
+
+**2. The fix.** Two independent pieces of code, each implementing an already-defined contract so nothing around them has to change:
+
+(i) *A persistence-backed episode store.* Write a new class that fulfils the same `IEpisodeMemory` contract (`Store` + `Recall`) but keeps its entries on disk or in a database — reusing the persistence layer the codebase already has (`ISessionStorage`, the same storage abstraction this class already takes as its first constructor argument at `InMemoryEpisodeMemory.cs:23`) — so that an episode saved before a restart is still there afterwards. When it lands, the two "stub until 14.ContinuousLearning" comments (`InMemoryEpisodeMemory.cs:11`, `Interfaces.cs:53`) are deleted.
+
+(ii) *A production system monitor.* Write a real class implementing `ISystemMonitor.Sample` that actually reads the five live numbers from the operating system — CPU load (sampled over a short interval), idle time since the last input event, charging state, battery level and free disk on the training volume — replacing the "test stub returns configured values" clause (`Interfaces.cs:32`) with a class that queries the machine.
+
+**3. Positive and negative example (preference-training spirit).** GOOD "chosen" (the behaviour to steer toward): save an episode through one store instance, discard that instance, construct a FRESH store instance over the same on-disk storage, and `Recall` returns the saved episode — memory survives the object's lifetime; and the monitor's two back-to-back samples show live, changing hardware numbers (CPU load and idle minutes differ from one reading to the next). BAD "rejected" (today's behaviour, which must become impossible): a process restart silently wipes the entire episode diary while the orchestrator still believes it remembers its past runs; and an "idle detector" that, if wired into production, would only ever see the same pre-scripted constants, because the sole implementer is a test double that echoes a fixed snapshot.
+
+**4. Tests that should PASS / FAIL.** No training run is involved in any of these. PASS after the fix: a survival test — save an episode, build a fresh store over the same storage, assert `Recall` returns it; a repo-wide search that now finds a production (non-test) class implementing `ISystemMonitor`, not only `StubSystemMonitorAL` in `Tests\`; and a sampling test asserting the monitor returns live values that differ between two calls, rather than the scripted constants a stub echoes. FAIL after the fix: honestly, nothing in the current test suite pins the wrong behaviour, so there is no red assertion to point at — the "red" side here is the disappearance of the two written confessions. A search for the "stub until 14.ContinuousLearning" comments (`InMemoryEpisodeMemory.cs:11`, `Interfaces.cs:53`) and the "test stub returns configured values" comment (`16.AutonomousLearning/Core/Interfaces.cs:32`) must return zero hits once the real implementations exist.
+
+**5. Effort estimate.**
+- *(i) Episode-memory persistence* — **SMALL, ~4–6 hours.** The contract has only two methods and the persistence abstraction it needs (`ISessionStorage`) is already injected; the only real work is serialising the task-and-decomposition entries, carrying the eviction rule across restarts, and adding the fresh-instance survival test.
+- *(ii) Real system monitor* — **MEDIUM, ~6–10 hours.** Five distinct hardware readings, several needing operating-system-specific plumbing (input-idle time and battery/charging state via platform calls, CPU load sampled over an interval, free disk from the drive), plus cross-platform care and a live-values test.
+
+**These two items have NO deferred-training boundary — both are pure code.** They must not be confused with Finding 43's bucket-(b) items — the training-data provider (`ITrainingDataProvider`), the accuracy evaluator (`IAccuracyEvaluator`), and the placeholder training provenance in the trainable router — which sit behind the deferred-training line and are deliberately NOT estimated in this entry.
+
+---
