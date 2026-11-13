@@ -1,0 +1,130 @@
+$items = @(
+    "TestResults/",
+    "Tests/TestResults/",
+    "docs/plans/DOCUMENT-STATE-REGISTER-2026-05-07-v10.md",
+    "docs/plans/DOCUMENT-STATE-REGISTER-2026-05-08-v11.md",
+    "docs/plans/DOCUMENT-STATE-REGISTER-2026-05-14-v12.md",
+    "docs/plans/IMPLEMENTATION-DOCUMENTATION-v8.md",
+    "docs/plans/IMPLEMENTATION-DOCUMENTATION-v9.md",
+    "docs/plans/Small model.drawio",
+    "docs/plans/WHAT-TO-DO-WHAT-NOT-TO-DO-v14.md",
+    "docs/plans/XIIGEN-LOCAL-WIKI-CURRENT-IMPLEMENTATION-v1.md",
+    "docs/plans/design conversion server/",
+    "docs/plans/documentation learning/",
+    "docs/plans/dpo legal build/",
+    "docs/plans/evidence/",
+    "docs/plans/extension development/",
+    "docs/plans/extensions/",
+    "docs/plans/external-sources-extracted/",
+    "docs/plans/external-sources-training-sets 2/",
+    "docs/plans/external-sources-training-sets/",
+    "docs/plans/external-sources/",
+    "docs/plans/first llm extensions/",
+    "docs/plans/flow-01-training-sets-v1/",
+    "docs/plans/intelrnal learn/",
+    "docs/plans/internal-sources-extracted/",
+    "docs/plans/language translate learning/",
+    "docs/plans/latest claude code session.txt",
+    "docs/plans/learning-sets/",
+    "docs/plans/llm dynamic flow/",
+    "docs/plans/llm-graphrag-dotnet-plan v2.md",
+    "docs/plans/llm-graphrag-dotnet-plan.md",
+    "docs/plans/llm_solution_e2e_parity.html",
+    "docs/plans/local wiki learning/",
+    "docs/plans/localwikis/",
+    "docs/plans/orchestrator implementation/",
+    "docs/plans/orchestrator teaching plan/",
+    "docs/plans/plan the learning set/",
+    "docs/plans/replanning-possible-diffs/",
+    "docs/plans/searchengine-dotnet-plan.md",
+    "docs/plans/session-package-extracted/",
+    "docs/plans/skills loading as an ai extension/",
+    "docs/plans/teaching-ledger/",
+    "docs/plans/tensorcore-dotnet-plan.md",
+    "docs/plans/test hypothesys.zip",
+    "docs/plans/test hypothesys/",
+    "docs/plans/train-ready-v2/",
+    "docs/plans/uml-00-tensorcore.pdf",
+    "docs/plans/uml-01-11-llm-graphrag.pdf",
+    "docs/plans/uml-12-searchengine.pdf",
+    "docs/plans/uml-13-codeoptimizer.pdf",
+    "docs/plans/uml-14-20-ml-algorithms.pdf",
+    "docs/plans/uml-21-agent-infrastructure.pdf",
+    "docs/plans/uml-22-agent-algorithms.pdf",
+    "docs/plans/uml-23-oss-equivalents.pdf",
+    "docs/plans/uml-df-24-27-compression.pdf",
+    "docs/plans/uml-df-28-30-matrix.pdf",
+    "docs/plans/uml-df-28-32-semantic-nlp.pdf",
+    "docs/plans/uml-full-solution.pdf",
+    "docs/plans/user-local-adaptive-intake-schema-v1.md",
+    "docs/plans/visual studio & visual studio code continue/",
+    "docs/plans/\320\237\320\265\321\200\320\265\320\273\320\276\320\274\320\275\321\213\320\271 \320\274\320\276\320\274\320\265\320\275\321\202 \320\274\321\213\321\210\320\273\320\265\320\275\320\270\321\217.txt",
+    "docs/plans/\320\275\320\276\320\262\321\213\320\271 \320\264\320\276\320\274\320\265\320\271\320\275/",
+    "docs/plans/\320\276\320\261\321\203\321\207\320\265\320\275\320\270\320\265 \321\217\320\267\321\213\320\272\321\203/",
+    "docs/projects/",
+    "docs/skills/",
+    "experiments-v2/",
+    "experiments/",
+    "learning-sets/",
+    "models/",
+    "qa-results/",
+    "tools/",
+    "training-artifacts/",
+    "training-data/"
+)
+
+function Invoke-GitWithTimeout {
+    param (
+        [string]$Arguments,
+        [int]$TimeoutSeconds = 4
+    )
+    $retry = $true
+    while ($retry) {
+        Write-Host "Executing: git $Arguments" -ForegroundColor Cyan
+        
+        $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+        $pinfo.FileName = "git"
+        $pinfo.Arguments = $Arguments
+        $pinfo.UseShellExecute = $false
+        $pinfo.RedirectStandardOutput = $true
+        $pinfo.RedirectStandardError = $true
+        $pinfo.CreateNoWindow = $true
+        
+        $process = New-Object System.Diagnostics.Process
+        $process.StartInfo = $pinfo
+        $process.Start() | Out-Null
+        
+        # Wait for the specified timeout
+        $completed = $process.WaitForExit($TimeoutSeconds * 1000)
+        
+        if ($completed) {
+            $output = $process.StandardOutput.ReadToEnd()
+            $err = $process.StandardError.ReadToEnd()
+            if ($output) { Write-Host $output }
+            if ($err -match "fatal|error") { Write-Host $err -ForegroundColor Red }
+            $retry = $false
+        } else {
+            Write-Host "Process hanging (> $TimeoutSeconds sec). Killing and retrying immediately..." -ForegroundColor Yellow
+            $process.Kill()
+            Start-Sleep -Milliseconds 500
+        }
+    }
+}
+
+foreach ($item in $items) {
+    # Clean up any rogue quotes from Git status output
+    $cleanItem = $item.Trim().Trim('"')
+    
+    # Append wildcard ONLY for folders
+    $addPath = $cleanItem
+    if ($addPath.EndsWith("/")) {
+        $addPath = "$addPath*"
+    }
+
+    Write-Host "`n--- Processing: $cleanItem ---" -ForegroundColor Green
+    
+    Invoke-GitWithTimeout -Arguments "reset"
+    Invoke-GitWithTimeout -Arguments "add `"$addPath`""
+    Invoke-GitWithTimeout -Arguments "commit -m `"add $cleanItem`" --no-verify"
+    Invoke-GitWithTimeout -Arguments "push --no-verify"
+}
