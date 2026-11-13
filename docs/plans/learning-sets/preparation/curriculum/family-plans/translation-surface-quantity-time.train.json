@@ -1,0 +1,3211 @@
+{
+  "schema_version": "xiigen.family-plan.v1",
+  "purpose": "Teacher-only shared scenario plan for three new translation microtopics. Freeze one common scenario per family across all six directions before Chinese-model generation; train only.",
+  "created_on": "2026-10-25",
+  "source_baseline": {
+    "repository": "lubochka/xiigen-planning",
+    "branch": "llm_plan3",
+    "commit": "642bc13f661c20225f0ddd36f614ef3d51cd684b"
+  },
+  "status": "AUTHORING_MATERIAL_ONLY_NOT_GENERATED_DPO",
+  "roles": {
+    "generator": "External open Chinese model selected in Kiro",
+    "selection": "CODEX with Astra 6 ultracode",
+    "quality_assessment": "CODEX with Astra 6 ultracode; separate future assignment"
+  },
+  "counts": {
+    "objectives": 3,
+    "families_per_objective": 10,
+    "families": 30,
+    "language_versions": 90,
+    "direction_assignments": 180,
+    "generated_dpo_rows": 0
+  },
+  "teacher_only_contract": "Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+  "no_extra_gates": "No checksum, fixed model alias, independent review or production CI is required for CREATE_ONLY generation. Preserve honest provenance and family/split links.",
+  "current_stage": "Only source preparation and later candidate creation. No review, acceptance, export, Student training or production changes.",
+  "families": [
+    {
+      "family_id": "v3-tr07-repeat-001",
+      "origin_family_id": "v3-tr07-repeat-001",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr07-repeat-001",
+        "lex:en:bread",
+        "lex:ru:хлеб",
+        "lex:he:לחם"
+      ],
+      "topics": [
+        "TR07"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR07-REPEAT"
+      ],
+      "scenario": "Пекарь режет хлеб. В повторённой букве повреждается только слово о хлебе.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Пекарь режет хлеб. В повторённой букве повреждается только слово о хлебе.",
+        "invariant_facts": {
+          "agent": "baker",
+          "action": "slice",
+          "theme": "bread",
+          "time": "present_ongoing"
+        }
+      },
+      "canonical_scenario_ru": "Пекарь режет хлеб. В повторённой букве повреждается только слово о хлебе.",
+      "source_text_by_language": {
+        "en": "The baker is slicing breead.",
+        "ru": "Пекарь режет хллеб.",
+        "he": "האופה פורס לחחם."
+      },
+      "invariant_facts": {
+        "agent": "baker",
+        "action": "slice",
+        "theme": "bread",
+        "time": "present_ongoing"
+      },
+      "scenario_rule": "Используй замороженную ниже операцию повторения для source-языка; не выбирай другую букву и не добавляй второй дефект. Canonical и raw связываются одной lexical family. Заменённый в rejected другой предмет в эту lexical family не включается. Позиционное распределение общих примеров карточки уступает этому точному назначению. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "canonical_source_text_by_language": {
+        "en": "The baker is slicing bread.",
+        "ru": "Пекарь режет хлеб.",
+        "he": "האופה פורס לחם."
+      },
+      "mutation_by_language": {
+        "en": {
+          "canonical_token": "bread",
+          "raw_token": "breead",
+          "kind": "repeat_one_codepoint",
+          "index": 2,
+          "inserted_index": 3,
+          "character": "e",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "ru": {
+          "canonical_token": "хлеб",
+          "raw_token": "хллеб",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "л",
+          "canonical_codepoints": 4,
+          "raw_codepoints": 5,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "he": {
+          "canonical_token": "לחם",
+          "raw_token": "לחחם",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "ח",
+          "canonical_codepoints": 3,
+          "raw_codepoints": 4,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        }
+      },
+      "lexical_family_ids_by_language": {
+        "en": [
+          "lex:en:bread"
+        ],
+        "ru": [
+          "lex:ru:хлеб"
+        ],
+        "he": [
+          "lex:he:לחם"
+        ]
+      }
+    },
+    {
+      "family_id": "v3-tr07-repeat-002",
+      "origin_family_id": "v3-tr07-repeat-002",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr07-repeat-002",
+        "lex:en:key",
+        "lex:ru:ключ",
+        "lex:he:מפתח"
+      ],
+      "topics": [
+        "TR07"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR07-REPEAT"
+      ],
+      "scenario": "Лена потеряла ключ в автобусе. Повреждается только слово о ключе.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Лена потеряла ключ в автобусе. Повреждается только слово о ключе.",
+        "invariant_facts": {
+          "agent": "Lena",
+          "action": "lose",
+          "theme": "key",
+          "location": "bus",
+          "time": "past"
+        }
+      },
+      "canonical_scenario_ru": "Лена потеряла ключ в автобусе. Повреждается только слово о ключе.",
+      "source_text_by_language": {
+        "en": "Lena lost the keey on the bus.",
+        "ru": "Лена потеряла кллюч в автобусе.",
+        "he": "לנה איבדה את הממפתח באוטובוס."
+      },
+      "invariant_facts": {
+        "agent": "Lena",
+        "action": "lose",
+        "theme": "key",
+        "location": "bus",
+        "time": "past"
+      },
+      "scenario_rule": "Используй замороженную ниже операцию повторения для source-языка; не выбирай другую букву и не добавляй второй дефект. Canonical и raw связываются одной lexical family. Заменённый в rejected другой предмет в эту lexical family не включается. Позиционное распределение общих примеров карточки уступает этому точному назначению. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "canonical_source_text_by_language": {
+        "en": "Lena lost the key on the bus.",
+        "ru": "Лена потеряла ключ в автобусе.",
+        "he": "לנה איבדה את המפתח באוטובוס."
+      },
+      "mutation_by_language": {
+        "en": {
+          "canonical_token": "key",
+          "raw_token": "keey",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "e",
+          "canonical_codepoints": 3,
+          "raw_codepoints": 4,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "ru": {
+          "canonical_token": "ключ",
+          "raw_token": "кллюч",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "л",
+          "canonical_codepoints": 4,
+          "raw_codepoints": 5,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "he": {
+          "canonical_token": "המפתח",
+          "raw_token": "הממפתח",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "מ",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        }
+      },
+      "lexical_family_ids_by_language": {
+        "en": [
+          "lex:en:key"
+        ],
+        "ru": [
+          "lex:ru:ключ"
+        ],
+        "he": [
+          "lex:he:מפתח"
+        ]
+      }
+    },
+    {
+      "family_id": "v3-tr07-repeat-003",
+      "origin_family_id": "v3-tr07-repeat-003",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr07-repeat-003",
+        "lex:en:apple",
+        "lex:ru:яблоко",
+        "lex:he:תפוח"
+      ],
+      "topics": [
+        "TR07"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR07-REPEAT"
+      ],
+      "scenario": "Яблоко упало с дерева. Повреждается только слово о яблоке.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Яблоко упало с дерева. Повреждается только слово о яблоке.",
+        "invariant_facts": {
+          "theme": "apple",
+          "action": "fall",
+          "origin": "tree",
+          "time": "past"
+        }
+      },
+      "canonical_scenario_ru": "Яблоко упало с дерева. Повреждается только слово о яблоке.",
+      "source_text_by_language": {
+        "en": "The aapple fell from the tree.",
+        "ru": "Ябблоко упало с дерева.",
+        "he": "התפפוח נפל מהעץ."
+      },
+      "invariant_facts": {
+        "theme": "apple",
+        "action": "fall",
+        "origin": "tree",
+        "time": "past"
+      },
+      "scenario_rule": "Используй замороженную ниже операцию повторения для source-языка; не выбирай другую букву и не добавляй второй дефект. Canonical и raw связываются одной lexical family. Заменённый в rejected другой предмет в эту lexical family не включается. Позиционное распределение общих примеров карточки уступает этому точному назначению. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "canonical_source_text_by_language": {
+        "en": "The apple fell from the tree.",
+        "ru": "Яблоко упало с дерева.",
+        "he": "התפוח נפל מהעץ."
+      },
+      "mutation_by_language": {
+        "en": {
+          "canonical_token": "apple",
+          "raw_token": "aapple",
+          "kind": "repeat_one_codepoint",
+          "index": 0,
+          "inserted_index": 1,
+          "character": "a",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "ru": {
+          "canonical_token": "Яблоко",
+          "raw_token": "Ябблоко",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "б",
+          "canonical_codepoints": 6,
+          "raw_codepoints": 7,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "he": {
+          "canonical_token": "התפוח",
+          "raw_token": "התפפוח",
+          "kind": "repeat_one_codepoint",
+          "index": 2,
+          "inserted_index": 3,
+          "character": "פ",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        }
+      },
+      "lexical_family_ids_by_language": {
+        "en": [
+          "lex:en:apple"
+        ],
+        "ru": [
+          "lex:ru:яблоко"
+        ],
+        "he": [
+          "lex:he:תפוח"
+        ]
+      }
+    },
+    {
+      "family_id": "v3-tr07-repeat-004",
+      "origin_family_id": "v3-tr07-repeat-004",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr07-repeat-004",
+        "lex:en:train",
+        "lex:ru:поезд",
+        "lex:he:רכבת"
+      ],
+      "topics": [
+        "TR07"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR07-REPEAT"
+      ],
+      "scenario": "Поезд остановился у моста. Повреждается только слово о поезде.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Поезд остановился у моста. Повреждается только слово о поезде.",
+        "invariant_facts": {
+          "theme": "train",
+          "action": "stop",
+          "location": "near_bridge",
+          "time": "past"
+        }
+      },
+      "canonical_scenario_ru": "Поезд остановился у моста. Повреждается только слово о поезде.",
+      "source_text_by_language": {
+        "en": "The traiin stopped near the bridge.",
+        "ru": "Поеззд остановился у моста.",
+        "he": "הרככבת עצרה ליד הגשר."
+      },
+      "invariant_facts": {
+        "theme": "train",
+        "action": "stop",
+        "location": "near_bridge",
+        "time": "past"
+      },
+      "scenario_rule": "Используй замороженную ниже операцию повторения для source-языка; не выбирай другую букву и не добавляй второй дефект. Canonical и raw связываются одной lexical family. Заменённый в rejected другой предмет в эту lexical family не включается. Позиционное распределение общих примеров карточки уступает этому точному назначению. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "canonical_source_text_by_language": {
+        "en": "The train stopped near the bridge.",
+        "ru": "Поезд остановился у моста.",
+        "he": "הרכבת עצרה ליד הגשר."
+      },
+      "mutation_by_language": {
+        "en": {
+          "canonical_token": "train",
+          "raw_token": "traiin",
+          "kind": "repeat_one_codepoint",
+          "index": 3,
+          "inserted_index": 4,
+          "character": "i",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "ru": {
+          "canonical_token": "Поезд",
+          "raw_token": "Поеззд",
+          "kind": "repeat_one_codepoint",
+          "index": 3,
+          "inserted_index": 4,
+          "character": "з",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "he": {
+          "canonical_token": "הרכבת",
+          "raw_token": "הרככבת",
+          "kind": "repeat_one_codepoint",
+          "index": 2,
+          "inserted_index": 3,
+          "character": "כ",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        }
+      },
+      "lexical_family_ids_by_language": {
+        "en": [
+          "lex:en:train"
+        ],
+        "ru": [
+          "lex:ru:поезд"
+        ],
+        "he": [
+          "lex:he:רכבת"
+        ]
+      }
+    },
+    {
+      "family_id": "v3-tr07-repeat-005",
+      "origin_family_id": "v3-tr07-repeat-005",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr07-repeat-005",
+        "lex:en:spoon",
+        "lex:ru:ложка",
+        "lex:he:כף"
+      ],
+      "topics": [
+        "TR07"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR07-REPEAT"
+      ],
+      "scenario": "Амир помыл ложку после обеда. Повреждается словоформа ложку, а не словарная форма ложка.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Амир помыл ложку после обеда. Повреждается словоформа ложку, а не словарная форма ложка.",
+        "invariant_facts": {
+          "agent": "Amir",
+          "action": "wash",
+          "theme": "spoon",
+          "time_anchor": "after_lunch",
+          "time": "past"
+        }
+      },
+      "canonical_scenario_ru": "Амир помыл ложку после обеда. Повреждается словоформа ложку, а не словарная форма ложка.",
+      "source_text_by_language": {
+        "en": "Amir washed the sppoon after lunch.",
+        "ru": "Амир помыл ложжку после обеда.",
+        "he": "אמיר שטף את הככף אחרי ארוחת הצהריים."
+      },
+      "invariant_facts": {
+        "agent": "Amir",
+        "action": "wash",
+        "theme": "spoon",
+        "time_anchor": "after_lunch",
+        "time": "past"
+      },
+      "scenario_rule": "Используй замороженную ниже операцию повторения для source-языка; не выбирай другую букву и не добавляй второй дефект. Canonical и raw связываются одной lexical family. Заменённый в rejected другой предмет в эту lexical family не включается. Позиционное распределение общих примеров карточки уступает этому точному назначению. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "canonical_source_text_by_language": {
+        "en": "Amir washed the spoon after lunch.",
+        "ru": "Амир помыл ложку после обеда.",
+        "he": "אמיר שטף את הכף אחרי ארוחת הצהריים."
+      },
+      "mutation_by_language": {
+        "en": {
+          "canonical_token": "spoon",
+          "raw_token": "sppoon",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "p",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "ru": {
+          "canonical_token": "ложку",
+          "raw_token": "ложжку",
+          "kind": "repeat_one_codepoint",
+          "index": 2,
+          "inserted_index": 3,
+          "character": "ж",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "he": {
+          "canonical_token": "הכף",
+          "raw_token": "הככף",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "כ",
+          "canonical_codepoints": 3,
+          "raw_codepoints": 4,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        }
+      },
+      "lexical_family_ids_by_language": {
+        "en": [
+          "lex:en:spoon"
+        ],
+        "ru": [
+          "lex:ru:ложка"
+        ],
+        "he": [
+          "lex:he:כף"
+        ]
+      }
+    },
+    {
+      "family_id": "v3-tr07-repeat-006",
+      "origin_family_id": "v3-tr07-repeat-006",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr07-repeat-006",
+        "lex:en:map",
+        "lex:ru:карта",
+        "lex:he:מפה"
+      ],
+      "topics": [
+        "TR07"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR07-REPEAT"
+      ],
+      "scenario": "Гид развернул карту. Повреждается словоформа карту, а не словарная форма карта.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Гид развернул карту. Повреждается словоформа карту, а не словарная форма карта.",
+        "invariant_facts": {
+          "agent": "guide",
+          "action": "unfold",
+          "theme": "map",
+          "time": "past"
+        }
+      },
+      "canonical_scenario_ru": "Гид развернул карту. Повреждается словоформа карту, а не словарная форма карта.",
+      "source_text_by_language": {
+        "en": "The guide unfolded the mapp.",
+        "ru": "Гид развернул картуу.",
+        "he": "המדריך פרש את המפהה."
+      },
+      "invariant_facts": {
+        "agent": "guide",
+        "action": "unfold",
+        "theme": "map",
+        "time": "past"
+      },
+      "scenario_rule": "Используй замороженную ниже операцию повторения для source-языка; не выбирай другую букву и не добавляй второй дефект. Canonical и raw связываются одной lexical family. Заменённый в rejected другой предмет в эту lexical family не включается. Позиционное распределение общих примеров карточки уступает этому точному назначению. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "canonical_source_text_by_language": {
+        "en": "The guide unfolded the map.",
+        "ru": "Гид развернул карту.",
+        "he": "המדריך פרש את המפה."
+      },
+      "mutation_by_language": {
+        "en": {
+          "canonical_token": "map",
+          "raw_token": "mapp",
+          "kind": "repeat_one_codepoint",
+          "index": 2,
+          "inserted_index": 3,
+          "character": "p",
+          "canonical_codepoints": 3,
+          "raw_codepoints": 4,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "ru": {
+          "canonical_token": "карту",
+          "raw_token": "картуу",
+          "kind": "repeat_one_codepoint",
+          "index": 4,
+          "inserted_index": 5,
+          "character": "у",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "he": {
+          "canonical_token": "המפה",
+          "raw_token": "המפהה",
+          "kind": "repeat_one_codepoint",
+          "index": 3,
+          "inserted_index": 4,
+          "character": "ה",
+          "canonical_codepoints": 4,
+          "raw_codepoints": 5,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        }
+      },
+      "lexical_family_ids_by_language": {
+        "en": [
+          "lex:en:map"
+        ],
+        "ru": [
+          "lex:ru:карта"
+        ],
+        "he": [
+          "lex:he:מפה"
+        ]
+      }
+    },
+    {
+      "family_id": "v3-tr07-repeat-007",
+      "origin_family_id": "v3-tr07-repeat-007",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr07-repeat-007",
+        "lex:en:phone",
+        "lex:ru:телефон",
+        "lex:he:טלפון"
+      ],
+      "topics": [
+        "TR07"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR07-REPEAT"
+      ],
+      "scenario": "Телефон зазвонил в полдень. Повреждается только слово о телефоне.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Телефон зазвонил в полдень. Повреждается только слово о телефоне.",
+        "invariant_facts": {
+          "theme": "phone",
+          "action": "ring",
+          "time_anchor": "noon",
+          "time": "past"
+        }
+      },
+      "canonical_scenario_ru": "Телефон зазвонил в полдень. Повреждается только слово о телефоне.",
+      "source_text_by_language": {
+        "en": "The phhone rang at noon.",
+        "ru": "Теллефон зазвонил в полдень.",
+        "he": "הטללפון צלצל בצהריים."
+      },
+      "invariant_facts": {
+        "theme": "phone",
+        "action": "ring",
+        "time_anchor": "noon",
+        "time": "past"
+      },
+      "scenario_rule": "Используй замороженную ниже операцию повторения для source-языка; не выбирай другую букву и не добавляй второй дефект. Canonical и raw связываются одной lexical family. Заменённый в rejected другой предмет в эту lexical family не включается. Позиционное распределение общих примеров карточки уступает этому точному назначению. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "canonical_source_text_by_language": {
+        "en": "The phone rang at noon.",
+        "ru": "Телефон зазвонил в полдень.",
+        "he": "הטלפון צלצל בצהריים."
+      },
+      "mutation_by_language": {
+        "en": {
+          "canonical_token": "phone",
+          "raw_token": "phhone",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "h",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "ru": {
+          "canonical_token": "Телефон",
+          "raw_token": "Теллефон",
+          "kind": "repeat_one_codepoint",
+          "index": 2,
+          "inserted_index": 3,
+          "character": "л",
+          "canonical_codepoints": 7,
+          "raw_codepoints": 8,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "he": {
+          "canonical_token": "הטלפון",
+          "raw_token": "הטללפון",
+          "kind": "repeat_one_codepoint",
+          "index": 2,
+          "inserted_index": 3,
+          "character": "ל",
+          "canonical_codepoints": 6,
+          "raw_codepoints": 7,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        }
+      },
+      "lexical_family_ids_by_language": {
+        "en": [
+          "lex:en:phone"
+        ],
+        "ru": [
+          "lex:ru:телефон"
+        ],
+        "he": [
+          "lex:he:טלפון"
+        ]
+      }
+    },
+    {
+      "family_id": "v3-tr07-repeat-008",
+      "origin_family_id": "v3-tr07-repeat-008",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr07-repeat-008",
+        "lex:en:cup",
+        "lex:ru:чашка",
+        "lex:he:ספל"
+      ],
+      "topics": [
+        "TR07"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR07-REPEAT"
+      ],
+      "scenario": "Кот опрокинул чашку. Повреждается только слово о чашке.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Кот опрокинул чашку. Повреждается только слово о чашке.",
+        "invariant_facts": {
+          "agent": "cat",
+          "action": "overturn",
+          "theme": "cup",
+          "time": "past"
+        }
+      },
+      "canonical_scenario_ru": "Кот опрокинул чашку. Повреждается только слово о чашке.",
+      "source_text_by_language": {
+        "en": "The cat overturned the cuup.",
+        "ru": "Кот опрокинул ччашку.",
+        "he": "החתול הפך את הסספל."
+      },
+      "invariant_facts": {
+        "agent": "cat",
+        "action": "overturn",
+        "theme": "cup",
+        "time": "past"
+      },
+      "scenario_rule": "Используй замороженную ниже операцию повторения для source-языка; не выбирай другую букву и не добавляй второй дефект. Canonical и raw связываются одной lexical family. Заменённый в rejected другой предмет в эту lexical family не включается. Позиционное распределение общих примеров карточки уступает этому точному назначению. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "canonical_source_text_by_language": {
+        "en": "The cat overturned the cup.",
+        "ru": "Кот опрокинул чашку.",
+        "he": "החתול הפך את הספל."
+      },
+      "mutation_by_language": {
+        "en": {
+          "canonical_token": "cup",
+          "raw_token": "cuup",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "u",
+          "canonical_codepoints": 3,
+          "raw_codepoints": 4,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "ru": {
+          "canonical_token": "чашку",
+          "raw_token": "ччашку",
+          "kind": "repeat_one_codepoint",
+          "index": 0,
+          "inserted_index": 1,
+          "character": "ч",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "he": {
+          "canonical_token": "הספל",
+          "raw_token": "הסספל",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "ס",
+          "canonical_codepoints": 4,
+          "raw_codepoints": 5,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        }
+      },
+      "lexical_family_ids_by_language": {
+        "en": [
+          "lex:en:cup"
+        ],
+        "ru": [
+          "lex:ru:чашка"
+        ],
+        "he": [
+          "lex:he:ספל"
+        ]
+      }
+    },
+    {
+      "family_id": "v3-tr07-repeat-009",
+      "origin_family_id": "v3-tr07-repeat-009",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr07-repeat-009",
+        "lex:en:bag",
+        "lex:ru:сумка",
+        "lex:he:תיק"
+      ],
+      "topics": [
+        "TR07"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR07-REPEAT"
+      ],
+      "scenario": "Мира отнесла сумку наверх. Повреждается только слово о сумке.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Мира отнесла сумку наверх. Повреждается только слово о сумке.",
+        "invariant_facts": {
+          "agent": "Mira",
+          "action": "carry",
+          "theme": "bag",
+          "destination": "upstairs",
+          "time": "past"
+        }
+      },
+      "canonical_scenario_ru": "Мира отнесла сумку наверх. Повреждается только слово о сумке.",
+      "source_text_by_language": {
+        "en": "Mira carried the baag upstairs.",
+        "ru": "Мира отнесла суумку наверх.",
+        "he": "מירה נשאה את התתיק למעלה."
+      },
+      "invariant_facts": {
+        "agent": "Mira",
+        "action": "carry",
+        "theme": "bag",
+        "destination": "upstairs",
+        "time": "past"
+      },
+      "scenario_rule": "Используй замороженную ниже операцию повторения для source-языка; не выбирай другую букву и не добавляй второй дефект. Canonical и raw связываются одной lexical family. Заменённый в rejected другой предмет в эту lexical family не включается. Позиционное распределение общих примеров карточки уступает этому точному назначению. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "canonical_source_text_by_language": {
+        "en": "Mira carried the bag upstairs.",
+        "ru": "Мира отнесла сумку наверх.",
+        "he": "מירה נשאה את התיק למעלה."
+      },
+      "mutation_by_language": {
+        "en": {
+          "canonical_token": "bag",
+          "raw_token": "baag",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "a",
+          "canonical_codepoints": 3,
+          "raw_codepoints": 4,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "ru": {
+          "canonical_token": "сумку",
+          "raw_token": "суумку",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "у",
+          "canonical_codepoints": 5,
+          "raw_codepoints": 6,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "he": {
+          "canonical_token": "התיק",
+          "raw_token": "התתיק",
+          "kind": "repeat_one_codepoint",
+          "index": 1,
+          "inserted_index": 2,
+          "character": "ת",
+          "canonical_codepoints": 4,
+          "raw_codepoints": 5,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        }
+      },
+      "lexical_family_ids_by_language": {
+        "en": [
+          "lex:en:bag"
+        ],
+        "ru": [
+          "lex:ru:сумка"
+        ],
+        "he": [
+          "lex:he:תיק"
+        ]
+      }
+    },
+    {
+      "family_id": "v3-tr07-repeat-010",
+      "origin_family_id": "v3-tr07-repeat-010",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr07-repeat-010",
+        "lex:en:pencil",
+        "lex:ru:карандаш",
+        "lex:he:עיפרון"
+      ],
+      "topics": [
+        "TR07"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR07-REPEAT"
+      ],
+      "scenario": "Ноа заточила карандаш. Повреждается только слово о карандаше.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Ноа заточила карандаш. Повреждается только слово о карандаше.",
+        "invariant_facts": {
+          "agent": "Noa",
+          "action": "sharpen",
+          "theme": "pencil",
+          "time": "past"
+        }
+      },
+      "canonical_scenario_ru": "Ноа заточила карандаш. Повреждается только слово о карандаше.",
+      "source_text_by_language": {
+        "en": "Noa sharpened the pencill.",
+        "ru": "Ноа заточила карандашш.",
+        "he": "נועה חידדה את העיפפרון."
+      },
+      "invariant_facts": {
+        "agent": "Noa",
+        "action": "sharpen",
+        "theme": "pencil",
+        "time": "past"
+      },
+      "scenario_rule": "Используй замороженную ниже операцию повторения для source-языка; не выбирай другую букву и не добавляй второй дефект. Canonical и raw связываются одной lexical family. Заменённый в rejected другой предмет в эту lexical family не включается. Позиционное распределение общих примеров карточки уступает этому точному назначению. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "canonical_source_text_by_language": {
+        "en": "Noa sharpened the pencil.",
+        "ru": "Ноа заточила карандаш.",
+        "he": "נועה חידדה את העיפרון."
+      },
+      "mutation_by_language": {
+        "en": {
+          "canonical_token": "pencil",
+          "raw_token": "pencill",
+          "kind": "repeat_one_codepoint",
+          "index": 5,
+          "inserted_index": 6,
+          "character": "l",
+          "canonical_codepoints": 6,
+          "raw_codepoints": 7,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "ru": {
+          "canonical_token": "карандаш",
+          "raw_token": "карандашш",
+          "kind": "repeat_one_codepoint",
+          "index": 7,
+          "inserted_index": 8,
+          "character": "ш",
+          "canonical_codepoints": 8,
+          "raw_codepoints": 9,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        },
+        "he": {
+          "canonical_token": "העיפרון",
+          "raw_token": "העיפפרון",
+          "kind": "repeat_one_codepoint",
+          "index": 3,
+          "inserted_index": 4,
+          "character": "פ",
+          "canonical_codepoints": 7,
+          "raw_codepoints": 8,
+          "inverse_check": "remove inserted_index; exact canonical token must return"
+        }
+      },
+      "lexical_family_ids_by_language": {
+        "en": [
+          "lex:en:pencil"
+        ],
+        "ru": [
+          "lex:ru:карандаш"
+        ],
+        "he": [
+          "lex:he:עיפרון"
+        ]
+      }
+    },
+    {
+      "family_id": "v3-tr06-number-unit-001",
+      "origin_family_id": "v3-tr06-number-unit-001",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr06-number-unit-001"
+      ],
+      "topics": [
+        "TR06"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR06-NUMBER-UNIT"
+      ],
+      "scenario": "Посылка весит 4 kg; ошибка в единице, число остаётся 4.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Посылка весит 4 kg; ошибка в единице, число остаётся 4.",
+        "invariant_facts": {
+          "theme": "parcel",
+          "property": "mass",
+          "measurement": {
+            "value_literal": "4",
+            "unit_literal": "kg"
+          }
+        }
+      },
+      "canonical_scenario_ru": "Посылка весит 4 kg; ошибка в единице, число остаётся 4.",
+      "source_text_by_language": {
+        "en": "The parcel weighs 4 kg.",
+        "ru": "Посылка весит 4 kg.",
+        "he": "החבילה שוקלת 4 kg."
+      },
+      "invariant_facts": {
+        "theme": "parcel",
+        "property": "mass",
+        "measurement": {
+          "value_literal": "4",
+          "unit_literal": "kg"
+        }
+      },
+      "scenario_rule": "В learner instruction явно потребуй сохранить цифры и обозначение единицы буквально, без конверсии и локализации. Используй назначенный rejected_component; меняется только одна часть величины. Остальные факты и правильная грамматика сохраняются. Одно измерение в строке. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "measurement": {
+        "value_literal": "4",
+        "unit_literal": "kg"
+      },
+      "rejected_component": {
+        "kind": "unit",
+        "replacement_value_literal": "4",
+        "replacement_unit_literal": "g"
+      }
+    },
+    {
+      "family_id": "v3-tr06-number-unit-002",
+      "origin_family_id": "v3-tr06-number-unit-002",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr06-number-unit-002"
+      ],
+      "topics": [
+        "TR06"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR06-NUMBER-UNIT"
+      ],
+      "scenario": "Столяр отрезал доску длиной 72 cm; ошибка в числе, единица остаётся cm.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Столяр отрезал доску длиной 72 cm; ошибка в числе, единица остаётся cm.",
+        "invariant_facts": {
+          "agent": "carpenter",
+          "action": "cut",
+          "theme": "board",
+          "property": "length",
+          "measurement": {
+            "value_literal": "72",
+            "unit_literal": "cm"
+          }
+        }
+      },
+      "canonical_scenario_ru": "Столяр отрезал доску длиной 72 cm; ошибка в числе, единица остаётся cm.",
+      "source_text_by_language": {
+        "en": "The carpenter cut a board to a length of 72 cm.",
+        "ru": "Столяр отрезал доску длиной 72 cm.",
+        "he": "הנגר חתך קרש באורך 72 cm."
+      },
+      "invariant_facts": {
+        "agent": "carpenter",
+        "action": "cut",
+        "theme": "board",
+        "property": "length",
+        "measurement": {
+          "value_literal": "72",
+          "unit_literal": "cm"
+        }
+      },
+      "scenario_rule": "В learner instruction явно потребуй сохранить цифры и обозначение единицы буквально, без конверсии и локализации. Используй назначенный rejected_component; меняется только одна часть величины. Остальные факты и правильная грамматика сохраняются. Одно измерение в строке. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "measurement": {
+        "value_literal": "72",
+        "unit_literal": "cm"
+      },
+      "rejected_component": {
+        "kind": "number",
+        "replacement_value_literal": "27",
+        "replacement_unit_literal": "cm"
+      }
+    },
+    {
+      "family_id": "v3-tr06-number-unit-003",
+      "origin_family_id": "v3-tr06-number-unit-003",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr06-number-unit-003"
+      ],
+      "topics": [
+        "TR06"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR06-NUMBER-UNIT"
+      ],
+      "scenario": "Этот забег длится 12 min; ошибка в единице, число остаётся 12.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Этот забег длится 12 min; ошибка в единице, число остаётся 12.",
+        "invariant_facts": {
+          "theme": "this_run",
+          "property": "duration",
+          "measurement": {
+            "value_literal": "12",
+            "unit_literal": "min"
+          }
+        }
+      },
+      "canonical_scenario_ru": "Этот забег длится 12 min; ошибка в единице, число остаётся 12.",
+      "source_text_by_language": {
+        "en": "This run lasts 12 min.",
+        "ru": "Этот забег длится 12 min.",
+        "he": "הריצה הזאת נמשכת 12 min."
+      },
+      "invariant_facts": {
+        "theme": "this_run",
+        "property": "duration",
+        "measurement": {
+          "value_literal": "12",
+          "unit_literal": "min"
+        }
+      },
+      "scenario_rule": "В learner instruction явно потребуй сохранить цифры и обозначение единицы буквально, без конверсии и локализации. Используй назначенный rejected_component; меняется только одна часть величины. Остальные факты и правильная грамматика сохраняются. Одно измерение в строке. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "measurement": {
+        "value_literal": "12",
+        "unit_literal": "min"
+      },
+      "rejected_component": {
+        "kind": "unit",
+        "replacement_value_literal": "12",
+        "replacement_unit_literal": "s"
+      }
+    },
+    {
+      "family_id": "v3-tr06-number-unit-004",
+      "origin_family_id": "v3-tr06-number-unit-004",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr06-number-unit-004"
+      ],
+      "topics": [
+        "TR06"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR06-NUMBER-UNIT"
+      ],
+      "scenario": "В кувшине 2 L воды; ошибка в числе, единица остаётся L.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "В кувшине 2 L воды; ошибка в числе, единица остаётся L.",
+        "invariant_facts": {
+          "container": "jug",
+          "substance": "water",
+          "property": "volume",
+          "measurement": {
+            "value_literal": "2",
+            "unit_literal": "L"
+          }
+        }
+      },
+      "canonical_scenario_ru": "В кувшине 2 L воды; ошибка в числе, единица остаётся L.",
+      "source_text_by_language": {
+        "en": "The jug contains 2 L of water.",
+        "ru": "В кувшине 2 L воды.",
+        "he": "בקנקן יש 2 L מים."
+      },
+      "invariant_facts": {
+        "container": "jug",
+        "substance": "water",
+        "property": "volume",
+        "measurement": {
+          "value_literal": "2",
+          "unit_literal": "L"
+        }
+      },
+      "scenario_rule": "В learner instruction явно потребуй сохранить цифры и обозначение единицы буквально, без конверсии и локализации. Используй назначенный rejected_component; меняется только одна часть величины. Остальные факты и правильная грамматика сохраняются. Одно измерение в строке. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "measurement": {
+        "value_literal": "2",
+        "unit_literal": "L"
+      },
+      "rejected_component": {
+        "kind": "number",
+        "replacement_value_literal": "3",
+        "replacement_unit_literal": "L"
+      }
+    },
+    {
+      "family_id": "v3-tr06-number-unit-005",
+      "origin_family_id": "v3-tr06-number-unit-005",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr06-number-unit-005"
+      ],
+      "topics": [
+        "TR06"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR06-NUMBER-UNIT"
+      ],
+      "scenario": "На упаковке указана масса 250 g; ошибка в единице, число остаётся 250.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "На упаковке указана масса 250 g; ошибка в единице, число остаётся 250.",
+        "invariant_facts": {
+          "theme": "package_label",
+          "action": "state_measurement",
+          "property": "mass",
+          "measurement": {
+            "value_literal": "250",
+            "unit_literal": "g"
+          }
+        }
+      },
+      "canonical_scenario_ru": "На упаковке указана масса 250 g; ошибка в единице, число остаётся 250.",
+      "source_text_by_language": {
+        "en": "The package label states a mass of 250 g.",
+        "ru": "На этикетке упаковки указана масса 250 g.",
+        "he": "על תווית האריזה מצוין משקל של 250 g."
+      },
+      "invariant_facts": {
+        "theme": "package_label",
+        "action": "state_measurement",
+        "property": "mass",
+        "measurement": {
+          "value_literal": "250",
+          "unit_literal": "g"
+        }
+      },
+      "scenario_rule": "В learner instruction явно потребуй сохранить цифры и обозначение единицы буквально, без конверсии и локализации. Используй назначенный rejected_component; меняется только одна часть величины. Остальные факты и правильная грамматика сохраняются. Одно измерение в строке. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "measurement": {
+        "value_literal": "250",
+        "unit_literal": "g"
+      },
+      "rejected_component": {
+        "kind": "unit",
+        "replacement_value_literal": "250",
+        "replacement_unit_literal": "kg"
+      }
+    },
+    {
+      "family_id": "v3-tr06-number-unit-006",
+      "origin_family_id": "v3-tr06-number-unit-006",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr06-number-unit-006"
+      ],
+      "topics": [
+        "TR06"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR06-NUMBER-UNIT"
+      ],
+      "scenario": "Лифт ждёт 9 s перед закрытием двери; ошибка в числе, единица остаётся s.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Лифт ждёт 9 s перед закрытием двери; ошибка в числе, единица остаётся s.",
+        "invariant_facts": {
+          "agent": "lift",
+          "action": "wait",
+          "property": "delay",
+          "subsequent_action": "close_door",
+          "measurement": {
+            "value_literal": "9",
+            "unit_literal": "s"
+          }
+        }
+      },
+      "canonical_scenario_ru": "Лифт ждёт 9 s перед закрытием двери; ошибка в числе, единица остаётся s.",
+      "source_text_by_language": {
+        "en": "The lift waits 9 s before closing the door.",
+        "ru": "Лифт ждёт 9 s перед закрытием двери.",
+        "he": "המעלית ממתינה 9 s לפני סגירת הדלת."
+      },
+      "invariant_facts": {
+        "agent": "lift",
+        "action": "wait",
+        "property": "delay",
+        "subsequent_action": "close_door",
+        "measurement": {
+          "value_literal": "9",
+          "unit_literal": "s"
+        }
+      },
+      "scenario_rule": "В learner instruction явно потребуй сохранить цифры и обозначение единицы буквально, без конверсии и локализации. Используй назначенный rejected_component; меняется только одна часть величины. Остальные факты и правильная грамматика сохраняются. Одно измерение в строке. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "measurement": {
+        "value_literal": "9",
+        "unit_literal": "s"
+      },
+      "rejected_component": {
+        "kind": "number",
+        "replacement_value_literal": "19",
+        "replacement_unit_literal": "s"
+      }
+    },
+    {
+      "family_id": "v3-tr06-number-unit-007",
+      "origin_family_id": "v3-tr06-number-unit-007",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr06-number-unit-007"
+      ],
+      "topics": [
+        "TR06"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR06-NUMBER-UNIT"
+      ],
+      "scenario": "Монтажник отметил отрезок длиной 600 mm; ошибка в единице, число остаётся 600.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Монтажник отметил отрезок длиной 600 mm; ошибка в единице, число остаётся 600.",
+        "invariant_facts": {
+          "agent": "installer",
+          "action": "mark",
+          "theme": "segment",
+          "property": "length",
+          "measurement": {
+            "value_literal": "600",
+            "unit_literal": "mm"
+          }
+        }
+      },
+      "canonical_scenario_ru": "Монтажник отметил отрезок длиной 600 mm; ошибка в единице, число остаётся 600.",
+      "source_text_by_language": {
+        "en": "The installer marked a 600 mm segment.",
+        "ru": "Монтажник отметил отрезок длиной 600 mm.",
+        "he": "המתקין סימן קטע באורך 600 mm."
+      },
+      "invariant_facts": {
+        "agent": "installer",
+        "action": "mark",
+        "theme": "segment",
+        "property": "length",
+        "measurement": {
+          "value_literal": "600",
+          "unit_literal": "mm"
+        }
+      },
+      "scenario_rule": "В learner instruction явно потребуй сохранить цифры и обозначение единицы буквально, без конверсии и локализации. Используй назначенный rejected_component; меняется только одна часть величины. Остальные факты и правильная грамматика сохраняются. Одно измерение в строке. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "measurement": {
+        "value_literal": "600",
+        "unit_literal": "mm"
+      },
+      "rejected_component": {
+        "kind": "unit",
+        "replacement_value_literal": "600",
+        "replacement_unit_literal": "cm"
+      }
+    },
+    {
+      "family_id": "v3-tr06-number-unit-008",
+      "origin_family_id": "v3-tr06-number-unit-008",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr06-number-unit-008"
+      ],
+      "topics": [
+        "TR06"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR06-NUMBER-UNIT"
+      ],
+      "scenario": "Инструкция требует налить 40 mL воды в цилиндр; ошибка в числе, единица остаётся mL.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Инструкция требует налить 40 mL воды в цилиндр; ошибка в числе, единица остаётся mL.",
+        "invariant_facts": {
+          "speech_act": "instruction",
+          "action": "pour",
+          "substance": "water",
+          "destination": "cylinder",
+          "property": "volume",
+          "measurement": {
+            "value_literal": "40",
+            "unit_literal": "mL"
+          }
+        }
+      },
+      "canonical_scenario_ru": "Инструкция требует налить 40 mL воды в цилиндр; ошибка в числе, единица остаётся mL.",
+      "source_text_by_language": {
+        "en": "Pour 40 mL of water into the cylinder.",
+        "ru": "Налейте 40 mL воды в цилиндр.",
+        "he": "יש למזוג 40 mL מים לגליל."
+      },
+      "invariant_facts": {
+        "speech_act": "instruction",
+        "action": "pour",
+        "substance": "water",
+        "destination": "cylinder",
+        "property": "volume",
+        "measurement": {
+          "value_literal": "40",
+          "unit_literal": "mL"
+        }
+      },
+      "scenario_rule": "В learner instruction явно потребуй сохранить цифры и обозначение единицы буквально, без конверсии и локализации. Используй назначенный rejected_component; меняется только одна часть величины. Остальные факты и правильная грамматика сохраняются. Одно измерение в строке. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "measurement": {
+        "value_literal": "40",
+        "unit_literal": "mL"
+      },
+      "rejected_component": {
+        "kind": "number",
+        "replacement_value_literal": "400",
+        "replacement_unit_literal": "mL"
+      }
+    },
+    {
+      "family_id": "v3-tr06-number-unit-009",
+      "origin_family_id": "v3-tr06-number-unit-009",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr06-number-unit-009"
+      ],
+      "topics": [
+        "TR06"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR06-NUMBER-UNIT"
+      ],
+      "scenario": "Максимальная нагрузка ящика указана как 20 kg; ошибка в единице, число остаётся 20.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Максимальная нагрузка ящика указана как 20 kg; ошибка в единице, число остаётся 20.",
+        "invariant_facts": {
+          "theme": "crate",
+          "property": "maximum_load",
+          "bound": "maximum",
+          "measurement": {
+            "value_literal": "20",
+            "unit_literal": "kg"
+          }
+        }
+      },
+      "canonical_scenario_ru": "Максимальная нагрузка ящика указана как 20 kg; ошибка в единице, число остаётся 20.",
+      "source_text_by_language": {
+        "en": "The crate has a maximum load of 20 kg.",
+        "ru": "Максимальная нагрузка ящика — 20 kg.",
+        "he": "העומס המרבי של הארגז הוא 20 kg."
+      },
+      "invariant_facts": {
+        "theme": "crate",
+        "property": "maximum_load",
+        "bound": "maximum",
+        "measurement": {
+          "value_literal": "20",
+          "unit_literal": "kg"
+        }
+      },
+      "scenario_rule": "В learner instruction явно потребуй сохранить цифры и обозначение единицы буквально, без конверсии и локализации. Используй назначенный rejected_component; меняется только одна часть величины. Остальные факты и правильная грамматика сохраняются. Одно измерение в строке. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "measurement": {
+        "value_literal": "20",
+        "unit_literal": "kg"
+      },
+      "rejected_component": {
+        "kind": "unit",
+        "replacement_value_literal": "20",
+        "replacement_unit_literal": "g"
+      }
+    },
+    {
+      "family_id": "v3-tr06-number-unit-010",
+      "origin_family_id": "v3-tr06-number-unit-010",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr06-number-unit-010"
+      ],
+      "topics": [
+        "TR06"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR06-NUMBER-UNIT"
+      ],
+      "scenario": "Ширина отверстия равна 18 mm; ошибка в числе, единица остаётся mm.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Ширина отверстия равна 18 mm; ошибка в числе, единица остаётся mm.",
+        "invariant_facts": {
+          "theme": "opening",
+          "property": "width",
+          "measurement": {
+            "value_literal": "18",
+            "unit_literal": "mm"
+          }
+        }
+      },
+      "canonical_scenario_ru": "Ширина отверстия равна 18 mm; ошибка в числе, единица остаётся mm.",
+      "source_text_by_language": {
+        "en": "The opening is 18 mm wide.",
+        "ru": "Ширина отверстия — 18 mm.",
+        "he": "רוחב הפתח הוא 18 mm."
+      },
+      "invariant_facts": {
+        "theme": "opening",
+        "property": "width",
+        "measurement": {
+          "value_literal": "18",
+          "unit_literal": "mm"
+        }
+      },
+      "scenario_rule": "В learner instruction явно потребуй сохранить цифры и обозначение единицы буквально, без конверсии и локализации. Используй назначенный rejected_component; меняется только одна часть величины. Остальные факты и правильная грамматика сохраняются. Одно измерение в строке. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "measurement": {
+        "value_literal": "18",
+        "unit_literal": "mm"
+      },
+      "rejected_component": {
+        "kind": "number",
+        "replacement_value_literal": "81",
+        "replacement_unit_literal": "mm"
+      }
+    },
+    {
+      "family_id": "v3-tr03-event-order-001",
+      "origin_family_id": "v3-tr03-event-order-001",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr03-event-order-001"
+      ],
+      "topics": [
+        "TR03"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR03-EVENT-ORDER"
+      ],
+      "scenario": "Нина прикрепила файл, затем отправила email. Исходная фраза начинается с позднего события в придаточной части.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Нина прикрепила файл, затем отправила email. Исходная фраза начинается с позднего события в придаточной части.",
+        "invariant_facts": {
+          "agent": "Nina",
+          "objects": [
+            "file",
+            "email"
+          ],
+          "event_order": [
+            "attach_file",
+            "send_email"
+          ]
+        }
+      },
+      "canonical_scenario_ru": "Нина прикрепила файл, затем отправила email. Исходная фраза начинается с позднего события в придаточной части.",
+      "source_text_by_language": {
+        "en": "Before Nina sent the email, she attached the file.",
+        "ru": "Перед тем как отправить письмо, Нина прикрепила файл.",
+        "he": "לפני שנינה שלחה את האימייל, היא צירפה את הקובץ."
+      },
+      "invariant_facts": {
+        "agent": "Nina",
+        "objects": [
+          "file",
+          "email"
+        ],
+        "event_order": [
+          "attach_file",
+          "send_email"
+        ]
+      },
+      "scenario_rule": "Составь chosen с исходным порядком двух событий. В rejected обрати только временную связь before/after, до/после, לפני/אחרי; не меняй участников, действия, отрицание или завершённость. Не заменяй противоположную связь простым переносом придаточной части. Факт earlier/later выводится из исходной строки, а не добавляется отдельной подсказкой ученику. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "event_order": [
+        "attach_file",
+        "send_email"
+      ],
+      "rejected_event_order": [
+        "send_email",
+        "attach_file"
+      ],
+      "source_connector": "before",
+      "expected_rejected_connector": "after"
+    },
+    {
+      "family_id": "v3-tr03-event-order-002",
+      "origin_family_id": "v3-tr03-event-order-002",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr03-event-order-002"
+      ],
+      "topics": [
+        "TR03"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR03-EVENT-ORDER"
+      ],
+      "scenario": "Омер вымыл руки, затем нарезал огурец.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Омер вымыл руки, затем нарезал огурец.",
+        "invariant_facts": {
+          "agent": "Omer",
+          "objects": [
+            "hands",
+            "cucumber"
+          ],
+          "event_order": [
+            "wash_hands",
+            "slice_cucumber"
+          ]
+        }
+      },
+      "canonical_scenario_ru": "Омер вымыл руки, затем нарезал огурец.",
+      "source_text_by_language": {
+        "en": "After Omer washed his hands, he sliced the cucumber.",
+        "ru": "После того как Омер вымыл руки, он нарезал огурец.",
+        "he": "אחרי שעומר שטף את ידיו, הוא חתך את המלפפון."
+      },
+      "invariant_facts": {
+        "agent": "Omer",
+        "objects": [
+          "hands",
+          "cucumber"
+        ],
+        "event_order": [
+          "wash_hands",
+          "slice_cucumber"
+        ]
+      },
+      "scenario_rule": "Составь chosen с исходным порядком двух событий. В rejected обрати только временную связь before/after, до/после, לפני/אחרי; не меняй участников, действия, отрицание или завершённость. Не заменяй противоположную связь простым переносом придаточной части. Факт earlier/later выводится из исходной строки, а не добавляется отдельной подсказкой ученику. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "event_order": [
+        "wash_hands",
+        "slice_cucumber"
+      ],
+      "rejected_event_order": [
+        "slice_cucumber",
+        "wash_hands"
+      ],
+      "source_connector": "after",
+      "expected_rejected_connector": "before"
+    },
+    {
+      "family_id": "v3-tr03-event-order-003",
+      "origin_family_id": "v3-tr03-event-order-003",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr03-event-order-003"
+      ],
+      "topics": [
+        "TR03"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR03-EVENT-ORDER"
+      ],
+      "scenario": "Светофор стал зелёным, затем автобус тронулся.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Светофор стал зелёным, затем автобус тронулся.",
+        "invariant_facts": {
+          "agents": [
+            "traffic_light",
+            "bus"
+          ],
+          "event_order": [
+            "traffic_light_turn_green",
+            "bus_start_moving"
+          ]
+        }
+      },
+      "canonical_scenario_ru": "Светофор стал зелёным, затем автобус тронулся.",
+      "source_text_by_language": {
+        "en": "The traffic light turned green before the bus moved.",
+        "ru": "Светофор стал зелёным до того, как автобус тронулся.",
+        "he": "האור ברמזור התחלף לירוק לפני שהאוטובוס התחיל לנסוע."
+      },
+      "invariant_facts": {
+        "agents": [
+          "traffic_light",
+          "bus"
+        ],
+        "event_order": [
+          "traffic_light_turn_green",
+          "bus_start_moving"
+        ]
+      },
+      "scenario_rule": "Составь chosen с исходным порядком двух событий. В rejected обрати только временную связь before/after, до/после, לפני/אחרי; не меняй участников, действия, отрицание или завершённость. Не заменяй противоположную связь простым переносом придаточной части. Факт earlier/later выводится из исходной строки, а не добавляется отдельной подсказкой ученику. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "event_order": [
+        "traffic_light_turn_green",
+        "bus_start_moving"
+      ],
+      "rejected_event_order": [
+        "bus_start_moving",
+        "traffic_light_turn_green"
+      ],
+      "source_connector": "before",
+      "expected_rejected_connector": "after"
+    },
+    {
+      "family_id": "v3-tr03-event-order-004",
+      "origin_family_id": "v3-tr03-event-order-004",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr03-event-order-004"
+      ],
+      "topics": [
+        "TR03"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR03-EVENT-ORDER"
+      ],
+      "scenario": "Дождь прекратился, затем Лея открыла палатку.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Дождь прекратился, затем Лея открыла палатку.",
+        "invariant_facts": {
+          "agents": [
+            "rain",
+            "Lea"
+          ],
+          "object": "tent",
+          "event_order": [
+            "rain_stop",
+            "Lea_open_tent"
+          ]
+        }
+      },
+      "canonical_scenario_ru": "Дождь прекратился, затем Лея открыла палатку.",
+      "source_text_by_language": {
+        "en": "After the rain stopped, Lea opened the tent.",
+        "ru": "После того как дождь прекратился, Лея открыла палатку.",
+        "he": "אחרי שהגשם פסק, לאה פתחה את האוהל."
+      },
+      "invariant_facts": {
+        "agents": [
+          "rain",
+          "Lea"
+        ],
+        "object": "tent",
+        "event_order": [
+          "rain_stop",
+          "Lea_open_tent"
+        ]
+      },
+      "scenario_rule": "Составь chosen с исходным порядком двух событий. В rejected обрати только временную связь before/after, до/после, לפני/אחרי; не меняй участников, действия, отрицание или завершённость. Не заменяй противоположную связь простым переносом придаточной части. Факт earlier/later выводится из исходной строки, а не добавляется отдельной подсказкой ученику. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "event_order": [
+        "rain_stop",
+        "Lea_open_tent"
+      ],
+      "rejected_event_order": [
+        "Lea_open_tent",
+        "rain_stop"
+      ],
+      "source_connector": "after",
+      "expected_rejected_connector": "before"
+    },
+    {
+      "family_id": "v3-tr03-event-order-005",
+      "origin_family_id": "v3-tr03-event-order-005",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr03-event-order-005"
+      ],
+      "topics": [
+        "TR03"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR03-EVENT-ORDER"
+      ],
+      "scenario": "Давид исправил заголовок, затем напечатал страницу. Исходная фраза начинается с позднего события в придаточной части.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Давид исправил заголовок, затем напечатал страницу. Исходная фраза начинается с позднего события в придаточной части.",
+        "invariant_facts": {
+          "agent": "David",
+          "objects": [
+            "title",
+            "page"
+          ],
+          "event_order": [
+            "correct_title",
+            "print_page"
+          ]
+        }
+      },
+      "canonical_scenario_ru": "Давид исправил заголовок, затем напечатал страницу. Исходная фраза начинается с позднего события в придаточной части.",
+      "source_text_by_language": {
+        "en": "Before David printed the page, he corrected the title.",
+        "ru": "Перед тем как напечатать страницу, Давид исправил заголовок.",
+        "he": "לפני שדוד הדפיס את הדף, הוא תיקן את הכותרת."
+      },
+      "invariant_facts": {
+        "agent": "David",
+        "objects": [
+          "title",
+          "page"
+        ],
+        "event_order": [
+          "correct_title",
+          "print_page"
+        ]
+      },
+      "scenario_rule": "Составь chosen с исходным порядком двух событий. В rejected обрати только временную связь before/after, до/после, לפני/אחרי; не меняй участников, действия, отрицание или завершённость. Не заменяй противоположную связь простым переносом придаточной части. Факт earlier/later выводится из исходной строки, а не добавляется отдельной подсказкой ученику. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "event_order": [
+        "correct_title",
+        "print_page"
+      ],
+      "rejected_event_order": [
+        "print_page",
+        "correct_title"
+      ],
+      "source_connector": "before",
+      "expected_rejected_connector": "after"
+    },
+    {
+      "family_id": "v3-tr03-event-order-006",
+      "origin_family_id": "v3-tr03-event-order-006",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr03-event-order-006"
+      ],
+      "topics": [
+        "TR03"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR03-EVENT-ORDER"
+      ],
+      "scenario": "Рина прочитала последнюю главу, затем вернула книгу. Главное предложение называет более позднее событие первым.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Рина прочитала последнюю главу, затем вернула книгу. Главное предложение называет более позднее событие первым.",
+        "invariant_facts": {
+          "agent": "Rina",
+          "objects": [
+            "final_chapter",
+            "book"
+          ],
+          "event_order": [
+            "read_final_chapter",
+            "return_book"
+          ]
+        }
+      },
+      "canonical_scenario_ru": "Рина прочитала последнюю главу, затем вернула книгу. Главное предложение называет более позднее событие первым.",
+      "source_text_by_language": {
+        "en": "Rina returned the book after she read the final chapter.",
+        "ru": "Рина вернула книгу после того, как прочитала последнюю главу.",
+        "he": "רינה החזירה את הספר אחרי שקראה את הפרק האחרון."
+      },
+      "invariant_facts": {
+        "agent": "Rina",
+        "objects": [
+          "final_chapter",
+          "book"
+        ],
+        "event_order": [
+          "read_final_chapter",
+          "return_book"
+        ]
+      },
+      "scenario_rule": "Составь chosen с исходным порядком двух событий. В rejected обрати только временную связь before/after, до/после, לפני/אחרי; не меняй участников, действия, отрицание или завершённость. Не заменяй противоположную связь простым переносом придаточной части. Факт earlier/later выводится из исходной строки, а не добавляется отдельной подсказкой ученику. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "event_order": [
+        "read_final_chapter",
+        "return_book"
+      ],
+      "rejected_event_order": [
+        "return_book",
+        "read_final_chapter"
+      ],
+      "source_connector": "after",
+      "expected_rejected_connector": "before"
+    },
+    {
+      "family_id": "v3-tr03-event-order-007",
+      "origin_family_id": "v3-tr03-event-order-007",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr03-event-order-007"
+      ],
+      "topics": [
+        "TR03"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR03-EVENT-ORDER"
+      ],
+      "scenario": "Курьер позвонил в звонок, затем оставил посылку.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Курьер позвонил в звонок, затем оставил посылку.",
+        "invariant_facts": {
+          "agent": "courier",
+          "objects": [
+            "bell",
+            "parcel"
+          ],
+          "event_order": [
+            "ring_bell",
+            "leave_parcel"
+          ]
+        }
+      },
+      "canonical_scenario_ru": "Курьер позвонил в звонок, затем оставил посылку.",
+      "source_text_by_language": {
+        "en": "The courier rang the bell before he left the parcel.",
+        "ru": "Курьер позвонил в звонок до того, как оставил посылку.",
+        "he": "השליח צלצל בפעמון לפני שהשאיר את החבילה."
+      },
+      "invariant_facts": {
+        "agent": "courier",
+        "objects": [
+          "bell",
+          "parcel"
+        ],
+        "event_order": [
+          "ring_bell",
+          "leave_parcel"
+        ]
+      },
+      "scenario_rule": "Составь chosen с исходным порядком двух событий. В rejected обрати только временную связь before/after, до/после, לפני/אחרי; не меняй участников, действия, отрицание или завершённость. Не заменяй противоположную связь простым переносом придаточной части. Факт earlier/later выводится из исходной строки, а не добавляется отдельной подсказкой ученику. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "event_order": [
+        "ring_bell",
+        "leave_parcel"
+      ],
+      "rejected_event_order": [
+        "leave_parcel",
+        "ring_bell"
+      ],
+      "source_connector": "before",
+      "expected_rejected_connector": "after"
+    },
+    {
+      "family_id": "v3-tr03-event-order-008",
+      "origin_family_id": "v3-tr03-event-order-008",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr03-event-order-008"
+      ],
+      "topics": [
+        "TR03"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR03-EVENT-ORDER"
+      ],
+      "scenario": "Компьютер перезагрузился, затем открылся текстовый редактор.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Компьютер перезагрузился, затем открылся текстовый редактор.",
+        "invariant_facts": {
+          "agents": [
+            "computer",
+            "text_editor"
+          ],
+          "event_order": [
+            "computer_restart",
+            "text_editor_open"
+          ]
+        }
+      },
+      "canonical_scenario_ru": "Компьютер перезагрузился, затем открылся текстовый редактор.",
+      "source_text_by_language": {
+        "en": "After the computer restarted, the text editor opened.",
+        "ru": "После того как компьютер перезагрузился, текстовый редактор открылся.",
+        "he": "אחרי שהמחשב הופעל מחדש, עורך הטקסט נפתח."
+      },
+      "invariant_facts": {
+        "agents": [
+          "computer",
+          "text_editor"
+        ],
+        "event_order": [
+          "computer_restart",
+          "text_editor_open"
+        ]
+      },
+      "scenario_rule": "Составь chosen с исходным порядком двух событий. В rejected обрати только временную связь before/after, до/после, לפני/אחרי; не меняй участников, действия, отрицание или завершённость. Не заменяй противоположную связь простым переносом придаточной части. Факт earlier/later выводится из исходной строки, а не добавляется отдельной подсказкой ученику. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "event_order": [
+        "computer_restart",
+        "text_editor_open"
+      ],
+      "rejected_event_order": [
+        "text_editor_open",
+        "computer_restart"
+      ],
+      "source_connector": "after",
+      "expected_rejected_connector": "before"
+    },
+    {
+      "family_id": "v3-tr03-event-order-009",
+      "origin_family_id": "v3-tr03-event-order-009",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr03-event-order-009"
+      ],
+      "topics": [
+        "TR03"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR03-EVENT-ORDER"
+      ],
+      "scenario": "Сара закрыла чемодан, затем надела пальто. Исходная фраза начинается с позднего события в придаточной части.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Сара закрыла чемодан, затем надела пальто. Исходная фраза начинается с позднего события в придаточной части.",
+        "invariant_facts": {
+          "agent": "Sara",
+          "objects": [
+            "suitcase",
+            "coat"
+          ],
+          "event_order": [
+            "close_suitcase",
+            "put_on_coat"
+          ]
+        }
+      },
+      "canonical_scenario_ru": "Сара закрыла чемодан, затем надела пальто. Исходная фраза начинается с позднего события в придаточной части.",
+      "source_text_by_language": {
+        "en": "Before Sara put on the coat, she closed the suitcase.",
+        "ru": "Перед тем как надеть пальто, Сара закрыла чемодан.",
+        "he": "לפני ששרה לבשה את המעיל, היא סגרה את המזוודה."
+      },
+      "invariant_facts": {
+        "agent": "Sara",
+        "objects": [
+          "suitcase",
+          "coat"
+        ],
+        "event_order": [
+          "close_suitcase",
+          "put_on_coat"
+        ]
+      },
+      "scenario_rule": "Составь chosen с исходным порядком двух событий. В rejected обрати только временную связь before/after, до/после, לפני/אחרי; не меняй участников, действия, отрицание или завершённость. Не заменяй противоположную связь простым переносом придаточной части. Факт earlier/later выводится из исходной строки, а не добавляется отдельной подсказкой ученику. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "event_order": [
+        "close_suitcase",
+        "put_on_coat"
+      ],
+      "rejected_event_order": [
+        "put_on_coat",
+        "close_suitcase"
+      ],
+      "source_connector": "before",
+      "expected_rejected_connector": "after"
+    },
+    {
+      "family_id": "v3-tr03-event-order-010",
+      "origin_family_id": "v3-tr03-event-order-010",
+      "split": "train",
+      "leakage_group_ids": [
+        "scenario:v3-tr03-event-order-010"
+      ],
+      "topics": [
+        "TR03"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "objective_ids": [
+        "TR03-EVENT-ORDER"
+      ],
+      "scenario": "Охранник поднял шлагбаум, затем команда вошла во двор. Главное предложение называет более позднее событие первым.",
+      "scenario_contract": {
+        "canonical_scenario_ru": "Охранник поднял шлагбаум, затем команда вошла во двор. Главное предложение называет более позднее событие первым.",
+        "invariant_facts": {
+          "agents": [
+            "guard",
+            "team"
+          ],
+          "objects": [
+            "barrier",
+            "yard"
+          ],
+          "event_order": [
+            "guard_raise_barrier",
+            "team_enter_yard"
+          ]
+        }
+      },
+      "canonical_scenario_ru": "Охранник поднял шлагбаум, затем команда вошла во двор. Главное предложение называет более позднее событие первым.",
+      "source_text_by_language": {
+        "en": "The team entered the yard after the guard raised the barrier.",
+        "ru": "Команда вошла во двор после того, как охранник поднял шлагбаум.",
+        "he": "הקבוצה נכנסה לחצר אחרי שהשומר הרים את המחסום."
+      },
+      "invariant_facts": {
+        "agents": [
+          "guard",
+          "team"
+        ],
+        "objects": [
+          "barrier",
+          "yard"
+        ],
+        "event_order": [
+          "guard_raise_barrier",
+          "team_enter_yard"
+        ]
+      },
+      "scenario_rule": "Составь chosen с исходным порядком двух событий. В rejected обрати только временную связь before/after, до/после, לפני/אחרי; не меняй участников, действия, отрицание или завершённость. Не заменяй противоположную связь простым переносом придаточной части. Факт earlier/later выводится из исходной строки, а не добавляется отдельной подсказкой ученику. Это пакет исходных материалов для автора, не learner prompt. Для профиля source-target возьми только source_text_by_language[source] в learner-visible исходную строку. Переводы других языков, canonical-состояние, инварианты, ожидаемая последовательность, индексы исправления и авторские подсказки остаются teacher-only metadata. Не помещай target-текст, правильный ответ или его отдельный разбор в prompt ученика. Полный chosen и rejected составляет внешняя китайская модель по карточке; этот план не является готовыми DPO и не подтверждает модельный вызов или review.",
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "provenance": {
+        "kind": "authored_simulation_scenario_plan",
+        "generator_model": "not_a_kiro_generation_run",
+        "quality_assessment": "not_run",
+        "training": "not_run"
+      },
+      "material_role": "teacher_only_shared_scenario",
+      "learner_input_projection": [
+        "profile source language",
+        "profile target language",
+        "objective learner instruction",
+        "source_text_by_language[source]"
+      ],
+      "not_for_learner_input": [
+        "source_text_by_language[target]",
+        "all unselected language versions",
+        "canonical_source_text_by_language",
+        "canonical_scenario_ru",
+        "invariant_facts",
+        "mutation_by_language",
+        "rejected_component",
+        "event_order",
+        "rationale",
+        "family_id"
+      ],
+      "generation_status": "SOURCE_PLAN_ONLY_NOT_DPO",
+      "split_rule": "Все шесть направлений и будущие производные этого сюжета остаются в train. Эта опубликованная TRAIN-заготовка не становится скрытым DEV/EXAM.",
+      "event_order": [
+        "guard_raise_barrier",
+        "team_enter_yard"
+      ],
+      "rejected_event_order": [
+        "team_enter_yard",
+        "guard_raise_barrier"
+      ],
+      "source_connector": "after",
+      "expected_rejected_connector": "before"
+    }
+  ]
+}

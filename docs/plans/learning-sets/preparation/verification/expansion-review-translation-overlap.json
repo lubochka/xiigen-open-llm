@@ -1,0 +1,206 @@
+{
+  "review_id": "bounded-remote54-vs-translation84-and-role-contract",
+  "scope": "Read-only semantic scenario/lineage comparison of 54 concurrently added translation references against 84 new local curriculum references; plus read-only inspection of current role/review documents and latest remote CLI implementation. Only this report is written. No model, runtime, or training calls.",
+  "files_read": [
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/domains/translation/reference-examples-v2.jsonl",
+      "sha256": "a5a152298aa6ac395437a105146f7433bfc7a077161738a7454e6dcee92e01a1"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/curriculum/translation.json",
+      "sha256": "5507df7d17a75daf0bc3a939dc88275f5a96d751a349bdf7dbaffce1cec37da1"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/10-CODEX-AND-CHINESE-ROLES.md",
+      "sha256": "0332e027cae182abee95f5f81718fad863d8a385b97c5941e001b42aeac59d64"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/prompts/REVIEW-PROMPT-RU.md",
+      "sha256": "c288fff3b864863d6b1ed6ed882446ae6c52237445da50d71eee6918184554c8"
+    },
+    {
+      "path": "work/latest_plan/llm mvp/learning-sets/preparation/tools/sets.py",
+      "sha256": "a5fecb846faede76a958a1aa5663299536027403d1201e1bad79224c825c98ce"
+    }
+  ],
+  "comparison": {
+    "remote_rows": 54,
+    "remote_family_groups": 18,
+    "remote_family_multiplicity": {
+      "3": 18
+    },
+    "local_rows": 84,
+    "local_family_groups": 14,
+    "exact_prompt_overlap": [],
+    "exact_chosen_overlap": [],
+    "exact_rejected_overlap": [],
+    "specific_same_or_renamed_scenario_matches": [],
+    "lineage_change_required_from_this_comparison": false,
+    "bounded_verdict_ru": "В сопоставленных 18 новых remote-сценариях и 14 группах наших 84 строк конкретных одинаковых или просто переименованных сценариев не обнаружено. Это не доказательство отсутствия всех скрытых перефразирований во всём репозитории.",
+    "evidence_not_to_overgroup": [
+      {
+        "remote_ids": [
+          "TR-EN-ORDER-01.ru-en.REF02.P01",
+          "TR-RU-ORDER-01.en-ru.REF02.P01",
+          "TR-HE-ORDER-01.en-he.REF02.P01"
+        ],
+        "remote_family": "sim:translation:logic-v2:read-letter-before-lock-drawer",
+        "local_objective": "TR03-COMPLETION",
+        "local_reference_suffix": "REF02",
+        "local_family": "TR03-reference-family-03",
+        "reason_ru": "Remote проверяет порядок двух событий чтение→запирание ящика. Наш сценарий проверяет, окончено ли чтение к полудню. Общие письмо/чтение не делают их переименованием одного сценария."
+      },
+      {
+        "remote_ids": [
+          "TR-EN-SCOPE-01.ru-en.REF03.P01",
+          "TR-RU-SCOPE-01.en-ru.REF03.P01",
+          "TR-HE-SCOPE-01.en-he.REF03.P01"
+        ],
+        "remote_family": "sim:translation:logic-v2:only-dana-read-letter",
+        "local_objective": "TR01-NEGATION-SCOPE",
+        "reason_ru": "Фокус only на участнике/объекте и отрицание сообщения/вложенной отправки — разные факты и разные сценарии, несмотря на общий класс scope."
+      },
+      {
+        "remote_family": "sim:translation:logic-v2:child-already-asleep-nurse-arrives",
+        "local_family": "TR03-reference-family-05",
+        "reason_ru": "Засыпание ребёнка до прихода медсестры и завершение отчёта к полудню используют родственную временную конструкцию, но не являются одним сценарием с переименованными участниками: различаются событие, граница и контраст."
+      }
+    ],
+    "remote_existing_lineage_ru": "Все54 remote-строки уже имеют18 общих family/origin/leakage групп, по3 target-domain варианта каждой. Разные направления здесь уже не объявлены новыми семьями."
+  },
+  "exact_role_requirements": {
+    "evidence": {
+      "roles_lines": [
+        3,
+        14
+      ],
+      "sequence_lines": [
+        29,
+        34
+      ],
+      "receipt_lines": [
+        38,
+        42
+      ]
+    },
+    "selection": {
+      "actor": "CODEX",
+      "required_profile": "astra 6 ultracode",
+      "output": "selection.json",
+      "inputs": [
+        "selection.prompt.md",
+        "request.json",
+        "assigned card",
+        "pinned source slices"
+      ]
+    },
+    "generation": {
+      "actor": "actually selected external open Chinese model in Kiro",
+      "output": "draft.jsonl",
+      "identity": "record observed model/selector, never impersonate CODEX selection/reviewer"
+    },
+    "review": {
+      "actor": "CODEX",
+      "required_profile": "astra 6 ultracode",
+      "outputs": [
+        "review.jsonl",
+        "review.receipt.json"
+      ],
+      "blind_access": "Read A/B+visible facts; do not expose key, chosen/rejected labels or rationale before decision."
+    },
+    "training": {
+      "actor": "designated Student/Unit",
+      "status": "NOT_RUN",
+      "separate_from_generator": true
+    },
+    "inheritance_conflict_to_resolve_ru": "Правило «помощники наследуют текущую модель Kiro» в новых карточках должно относиться к генерации кандидатов, а не отменять отдельные selection/review роли CODEX."
+  },
+  "exact_cli_requirements": {
+    "source_path": "work/latest_plan/llm mvp/learning-sets/preparation/tools/sets.py",
+    "argparse_lines": [
+      621,
+      622
+    ],
+    "acceptance_validate_additional_flags": [
+      "--blind",
+      "--selection",
+      "--review-receipt"
+    ],
+    "acceptance_command_template": "python tools/sets.py validate --input <run>/draft.jsonl --request <run>/request.json --review <run>/review.jsonl --key <run>/blind.key.json --blind <run>/blind.jsonl --selection <run>/selection.json --review-receipt <run>/review.receipt.json",
+    "blind_optional_flag": "--allow-reference (only explicit reference inspection; does not make references training-ready)",
+    "prepare_created_files": [
+      "selection.template.json",
+      "selection.prompt.md"
+    ],
+    "prepare_evidence_lines": [
+      365,
+      367
+    ],
+    "blind_created_files_when_request_present": [
+      "blind.review-receipt.template.json",
+      "blind.review.prompt.md"
+    ],
+    "blind_evidence_lines": [
+      488,
+      492
+    ],
+    "receipt_schema": "xiigen.codex-authority.v1",
+    "selection_decision": "SELECTED",
+    "review_decision": "REVIEW_COMPLETED",
+    "receipt_required_fields": [
+      "actor",
+      "required_profile",
+      "observed_profile",
+      "observed_model",
+      "evidence_scope",
+      "profile_verified",
+      "evidence_ref",
+      "request_sha256"
+    ],
+    "review_additional_hash_fields": [
+      "input_sha256",
+      "blind_sha256",
+      "review_sha256"
+    ],
+    "evidence_scope": "declared_evidence_only",
+    "identity_limits_ru": "PENDING/null/false шаблон не принимается. Поля профиля/модели и evidence_ref отражают реальное наблюдение/журнал. Валидатор проверяет заявление и байтовые связи; он не аутентифицирует провайдера и не доказывает сам вызов модели.",
+    "observed_integration_conflict_ru": "В момент чтения deliverable/tools/sets.py ещё имел старый argparse без3 новых flags; latest_plan/tools/sets.py содержит их. Root сообщил, что агент docs_code_pack уже сливает актуальную реализацию без ослабления authority. Требуется использовать объединённый актуальный файл, не старую копию.",
+    "conflict_status": "root_owned_merge_in_progress_not_modified_by_reviewer"
+  },
+  "review_flags_and_evidence": {
+    "review_prompt_lines": [
+      22,
+      43
+    ],
+    "mandatory_boolean_checks": [
+      "semantic",
+      "sufficient_context",
+      "single_error",
+      "version",
+      "family",
+      "needs_oracle",
+      "needs_language_review"
+    ],
+    "winner_values": [
+      "A",
+      "B",
+      "tie"
+    ],
+    "underdetermined_or_two_valid": "valid=false with concrete reason; never silently prefer style",
+    "translation_evidence": "evidence.language_review with passed pointer {path,sha256}; real completed artifact bound to blind_input_sha256 and all relevant pair_id",
+    "language_uncertainty": "needs_language_review=true until resolved; same Chinese generator is not independent language review",
+    "artifact_required_fields": [
+      "status=completed",
+      "scope=DATA_REVIEW_NOT_LEARNING",
+      "blind_input_sha256",
+      "method",
+      "reviewer",
+      "rows[pair_id].status",
+      "rows[pair_id].reason"
+    ],
+    "code": "evidence.oracle verification_mode=execution required; actual A/B behavioral runs with same inputs/version and raw artifact hashes",
+    "docs": "execution when preference concerns executable behavior/API/SQL/Angular; source_grounded only nonexecutable pinned source_contract fact with exact local excerpt SHA/lines",
+    "not_run": "Candidate/reference preparation remains permitted; unperformed review/oracle/training must not be claimed complete."
+  },
+  "overall": "NO_SPECIFIC_CROSS_PACK_LINEAGE_MATCH_FOUND; APPLY_CURRENT_ROLE_AND_CLI_CONTRACT_DURING_INTEGRATION"
+}

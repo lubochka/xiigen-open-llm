@@ -1,0 +1,307 @@
+{
+  "schema_version": "xiigen-rag-authoring-references/v1",
+  "scope": "20 public synthetic teaching contrasts; not generated candidates and not additional quotas",
+  "sources_commit": "4e2bc6bed7c23a855c3685f558e1742a73c231b0",
+  "examples": [
+    {
+      "example_id": "RAG-OR-008-DEMO-01",
+      "source_ids": [
+        "RAG-OR-008"
+      ],
+      "domain": "or.automation",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-or-008.authoring-demonstrations",
+      "scenario_id": "RAG-OR-008-DEMO-01",
+      "prompt": "Учебная симуляция. WORKS: обработчик запущен, ошибок нет и выход совпадает с требуемым. SILENT_FAILURE: ошибок нет, но выход неверен. Требуется count=3. Обработчик запущен, вернул success=true и count=0, исключений нет. Верни только JSON с полем verdict.",
+      "chosen": "{\"verdict\":\"SILENT_FAILURE\"}",
+      "rejected": "{\"verdict\":\"WORKS\"}",
+      "self_check_en": "The expected count is 3 and the observed count is 0. Compare output values before reading the success flag."
+    },
+    {
+      "example_id": "RAG-OR-008-DEMO-02",
+      "source_ids": [
+        "RAG-OR-008"
+      ],
+      "domain": "or.automation",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-or-008.authoring-demonstrations",
+      "scenario_id": "RAG-OR-008-DEMO-02",
+      "prompt": "Учебная симуляция. BREAKS: этот шаг запущен и прервался ошибкой. NOT_RUN: шаг не вызывался из-за отказа зависимости. Шаг A завершился ошибкой; планировщик не вызывал B. Классифицируй только B. Верни JSON verdict.",
+      "chosen": "{\"verdict\":\"NOT_RUN\"}",
+      "rejected": "{\"verdict\":\"BREAKS\"}",
+      "self_check_en": "The question is about B. B was never called, so it cannot have thrown its own runtime error."
+    },
+    {
+      "example_id": "RAG-OR-008-DEMO-03",
+      "source_ids": [
+        "RAG-OR-008"
+      ],
+      "domain": "or.qa",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-or-008.authoring-demonstrations",
+      "scenario_id": "RAG-OR-008-DEMO-03",
+      "prompt": "Учебная симуляция. WORKS означает, что все требуемые выходы правильны; PARTIAL — часть правильна, часть неверна. Требовались summary=A и route=B. Один запущенный шаг выдал summary=A и route=C без исключений. Верни JSON verdict по заданному словарю.",
+      "chosen": "{\"verdict\":\"PARTIAL\"}",
+      "rejected": "{\"verdict\":\"WORKS\"}",
+      "self_check_en": "One of two outputs matches, the other does not. Do not count the matching field as proof for the whole step."
+    },
+    {
+      "example_id": "RAG-OR-008-DEMO-04",
+      "source_ids": [
+        "RAG-OR-008"
+      ],
+      "domain": "or.qa",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-or-008.authoring-demonstrations",
+      "scenario_id": "RAG-OR-008-DEMO-04",
+      "prompt": "Учебная симуляция. WORKS: шаг исполнен и выход полностью совпал с ожидаемым. NOT_RUN: шаг не вызывался. В показанной трассе вызван handler H с input=7; expected=14; actual=14; ошибок нет. Верни JSON verdict только для этого шага.",
+      "chosen": "{\"verdict\":\"WORKS\"}",
+      "rejected": "{\"verdict\":\"NOT_RUN\"}",
+      "self_check_en": "An actual call and matching output are present. Do not always select a negative status merely because this is a QA task."
+    },
+    {
+      "example_id": "RAG-OR-009-DEMO-01",
+      "source_ids": [
+        "RAG-OR-009"
+      ],
+      "domain": "or.architecture",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-or-009.authoring-demonstrations",
+      "scenario_id": "RAG-OR-009-DEMO-01",
+      "prompt": "Учебный контракт записи: SENT — отправленный вход; RECEIVED — полученный ответ; DECIDED — выбранный вариант; CHANGED — применённое изменение. Записано: SENT=\"два шага\", RECEIVED=\"предложено три шага\", DECIDED=\"отклонить\", CHANGED=[]. Какое поле отвечает на вопрос «что фактически изменено»? Верни JSON field.",
+      "chosen": "{\"field\":\"CHANGED\"}",
+      "rejected": "{\"field\":\"RECEIVED\"}",
+      "self_check_en": "A received proposal is not an applied change. Select the field whose definition says applied."
+    },
+    {
+      "example_id": "RAG-OR-009-DEMO-02",
+      "source_ids": [
+        "RAG-OR-009"
+      ],
+      "domain": "or.architecture",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-or-009.authoring-demonstrations",
+      "scenario_id": "RAG-OR-009-DEMO-02",
+      "prompt": "Учебный контракт: CHANGED содержит только подтверждённые применённые изменения. Цикл предложил добавить узел N; решение ещё не принято, запись в граф не вызывалась. Верни JSON changed в виде массива имён новых узлов.",
+      "chosen": "{\"changed\":[]}",
+      "rejected": "{\"changed\":[\"N\"]}",
+      "self_check_en": "The proposal exists, but no graph write is shown. Empty changes do not prove that the model call never ran."
+    },
+    {
+      "example_id": "RAG-OR-009-DEMO-03",
+      "source_ids": [
+        "RAG-OR-009"
+      ],
+      "domain": "or.ux",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-or-009.authoring-demonstrations",
+      "scenario_id": "RAG-OR-009-DEMO-03",
+      "prompt": "Учебная политика панели: tenant_admin видит только DECIDED и CHANGED; SENT и RECEIVED доступны platform_admin. Текущая роль tenant_admin. Требуется перечень разрешённых полей в JSON fields, в порядке DECIDED затем CHANGED.",
+      "chosen": "{\"fields\":[\"DECIDED\",\"CHANGED\"]}",
+      "rejected": "{\"fields\":[\"DECIDED\",\"CHANGED\",\"SENT\"]}",
+      "self_check_en": "The role has exactly two allowed fields in the visible policy. Do not add SENT because it could help debugging."
+    },
+    {
+      "example_id": "RAG-OR-009-DEMO-04",
+      "source_ids": [
+        "RAG-OR-009"
+      ],
+      "domain": "or.ux",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-or-009.authoring-demonstrations",
+      "scenario_id": "RAG-OR-009-DEMO-04",
+      "prompt": "Учебная политика панели: platform_admin видит SENT, RECEIVED, DECIDED, CHANGED; tenant_admin видит DECIDED, CHANGED. Текущая роль platform_admin. Запрошено только поле SENT. Верни JSON allow с boolean.",
+      "chosen": "{\"allow\":true}",
+      "rejected": "{\"allow\":false}",
+      "self_check_en": "This role is explicitly allowed to see SENT. Include the opposite case so the lesson is not always-hide."
+    },
+    {
+      "example_id": "RAG-DC-002-DEMO-01",
+      "source_ids": [
+        "RAG-DC-002"
+      ],
+      "domain": "or.server",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-002.authoring-demonstrations",
+      "scenario_id": "RAG-DC-002-DEMO-01",
+      "prompt": "Учебный контракт: снимок для фоновой задачи создаётся только из trusted_context; payload не определяет tenant. trusted_context.tenantId=\"T1\", payload.tenantId=\"T2\". Остальные поля одинаковы. Верни JSON tenantId для снимка.",
+      "chosen": "{\"tenantId\":\"T1\"}",
+      "rejected": "{\"tenantId\":\"T2\"}",
+      "self_check_en": "Use the explicitly trusted context. The body field is not authority for the tenant."
+    },
+    {
+      "example_id": "RAG-DC-002-DEMO-02",
+      "source_ids": [
+        "RAG-DC-002"
+      ],
+      "domain": "docs.csharp",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-002.authoring-demonstrations",
+      "scenario_id": "RAG-DC-002-DEMO-02",
+      "prompt": "Симуляция .NET: immutable snapshot S сохранён при tenant=T1. Runner.RunAsync(S, work) устанавливает S только на время work и затем восстанавливает предыдущий контекст. К моменту запуска глобальная переменная latestTenant стала T2; runner её не читает. Какой tenant видит work? Верни только T1 или T2.",
+      "chosen": "T1",
+      "rejected": "T2",
+      "self_check_en": "The prompt defines the runner to use the captured immutable snapshot, not a mutable latest value."
+    },
+    {
+      "example_id": "RAG-DC-002-DEMO-03",
+      "source_ids": [
+        "RAG-DC-002"
+      ],
+      "domain": "code.csharp",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-002.authoring-demonstrations",
+      "scenario_id": "RAG-DC-002-DEMO-03",
+      "prompt": "Авторская симуляция C# 10. Поля класса: string ambient; Task WorkAsync(); Task RunInSnapshotAsync(string snapshot, Func<Task> work). RunInSnapshotAsync устанавливает переданный snapshot на время work и восстанавливает старый контекст в finally. Напиши только полный метод Task ExecuteAsync(string captured), который исполняет WorkAsync с уже переданным captured. Не читай ambient.",
+      "chosen": "public Task ExecuteAsync(string captured) => RunInSnapshotAsync(captured, WorkAsync);",
+      "rejected": "public Task ExecuteAsync(string captured) => RunInSnapshotAsync(ambient, WorkAsync);",
+      "self_check_en": "The method passes exactly the captured parameter. The rejected implementation substitutes a mutable field."
+    },
+    {
+      "example_id": "RAG-DC-002-DEMO-04",
+      "source_ids": [
+        "RAG-DC-002"
+      ],
+      "domain": "docs.csharp",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-002.authoring-demonstrations",
+      "scenario_id": "RAG-DC-002-DEMO-04",
+      "prompt": "Авторская симуляция C# 10. Полный метод: async Task Run(string next) { var old = current; try { current = next; await Work(); } finally { current = old; } } current до вызова равно \"T0\". Вызван Run(\"T1\"). Work бросает исключение, которое здесь не подавляется. Какие current и исход будут после выхода из Run? Верни JSON current и outcome; outcome принимает success или error.",
+      "chosen": "{\"current\":\"T0\",\"outcome\":\"error\"}",
+      "rejected": "{\"current\":\"T1\",\"outcome\":\"error\"}",
+      "self_check_en": "The finally block runs on the exception path and restores old. This is an explicit simulation of the shown variable, not a general AsyncLocal claim."
+    },
+    {
+      "example_id": "RAG-DC-003-DEMO-01",
+      "source_ids": [
+        "RAG-DC-003"
+      ],
+      "domain": "or.automation",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-003.authoring-demonstrations",
+      "scenario_id": "RAG-DC-003-DEMO-01",
+      "prompt": "Учебная политика очереди: unknown_type и malformed_data → error_queue без retry; transient_registry_failure → retry. Наблюдаемая причина unknown_type. Верни JSON action; допустимы retry и error_queue.",
+      "chosen": "{\"action\":\"error_queue\"}",
+      "rejected": "{\"action\":\"retry\"}",
+      "self_check_en": "Match the observed failure to the explicit policy; retry cannot make an unknown type valid under this contract."
+    },
+    {
+      "example_id": "RAG-DC-003-DEMO-02",
+      "source_ids": [
+        "RAG-DC-003"
+      ],
+      "domain": "or.automation",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-003.authoring-demonstrations",
+      "scenario_id": "RAG-DC-003-DEMO-02",
+      "prompt": "Учебная политика очереди: unknown_type и malformed_data → error_queue без retry; transient_registry_failure → retry. Наблюдаемая причина transient_registry_failure. Верни JSON action; допустимы retry и error_queue.",
+      "chosen": "{\"action\":\"retry\"}",
+      "rejected": "{\"action\":\"error_queue\"}",
+      "self_check_en": "The failure is transient and has a separate retry rule. This is the opposite control to the unknown-type case."
+    },
+    {
+      "example_id": "RAG-DC-003-DEMO-03",
+      "source_ids": [
+        "RAG-DC-003"
+      ],
+      "domain": "or.server",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-003.authoring-demonstrations",
+      "scenario_id": "RAG-DC-003-DEMO-03",
+      "prompt": "Учебная политика: schema_version_mismatch допускает retry только при descriptorTemporarilyUnavailable=true; иначе error_queue. Причина schema_version_mismatch; descriptorTemporarilyUnavailable=false. Верни JSON action.",
+      "chosen": "{\"action\":\"error_queue\"}",
+      "rejected": "{\"action\":\"retry\"}",
+      "self_check_en": "Check the boolean condition as well as the error label. A mismatch alone does not satisfy the retry exception."
+    },
+    {
+      "example_id": "RAG-DC-003-DEMO-04",
+      "source_ids": [
+        "RAG-DC-003"
+      ],
+      "domain": "docs.csharp",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-003.authoring-demonstrations",
+      "scenario_id": "RAG-DC-003-DEMO-04",
+      "prompt": "Учебная спецификация consumer: сначала Validate(envelope), затем Resolve(envelope.Type, schemaVersion), затем Parse(envelope.Data), затем Handle(payload). Resolve вернул unknown_type; контракт требует сразу error_queue без Parse и Handle. Какие вызовы после Resolve допустимы? Верни JSON calls.",
+      "chosen": "{\"calls\":[\"error_queue\"]}",
+      "rejected": "{\"calls\":[\"Parse\",\"Handle\",\"error_queue\"]}",
+      "self_check_en": "The failure contract stops parsing and business handling. Do not continue normal processing before reporting the same failure."
+    },
+    {
+      "example_id": "RAG-DC-004-DEMO-01",
+      "source_ids": [
+        "RAG-DC-004"
+      ],
+      "domain": "or.database",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-004.authoring-demonstrations",
+      "scenario_id": "RAG-DC-004-DEMO-01",
+      "prompt": "Учебный контракт: дубликат определяется точным равенством тройки tenant, operation, key. Успешная A=(T1,Save,K7). Новая B=(T1,Save,K7). Верни JSON duplicate с boolean.",
+      "chosen": "{\"duplicate\":true}",
+      "rejected": "{\"duplicate\":false}",
+      "self_check_en": "All three components are equal, including the operation. The prior operation is explicitly successful."
+    },
+    {
+      "example_id": "RAG-DC-004-DEMO-02",
+      "source_ids": [
+        "RAG-DC-004"
+      ],
+      "domain": "or.database",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-004.authoring-demonstrations",
+      "scenario_id": "RAG-DC-004-DEMO-02",
+      "prompt": "Учебный контракт: дубликат определяется точным равенством тройки tenant, operation, key. Успешная A=(T1,Save,K7). Новая B=(T2,Save,K7). Верни JSON duplicate с boolean.",
+      "chosen": "{\"duplicate\":false}",
+      "rejected": "{\"duplicate\":true}",
+      "self_check_en": "Only two of three components match. Identical key strings in different tenant scopes are not the same operation."
+    },
+    {
+      "example_id": "RAG-DC-004-DEMO-03",
+      "source_ids": [
+        "RAG-DC-004"
+      ],
+      "domain": "or.server",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-004.authoring-demonstrations",
+      "scenario_id": "RAG-DC-004-DEMO-03",
+      "prompt": "Учебный контракт outbox: state_persist → outbox_append → queue_publish. Подтверждён только state_persist=success; outbox_append ещё не вызывался. Выбери следующий шаг из outbox_append или queue_publish. Верни JSON next.",
+      "chosen": "{\"next\":\"outbox_append\"}",
+      "rejected": "{\"next\":\"queue_publish\"}",
+      "self_check_en": "The required durable outbox step is still missing. The lesson is ordering, not proof of atomicity across separate writes."
+    },
+    {
+      "example_id": "RAG-DC-004-DEMO-04",
+      "source_ids": [
+        "RAG-DC-004"
+      ],
+      "domain": "docs.csharp",
+      "record_role": "public_synthetic_authoring_reference",
+      "split": "REFERENCE",
+      "origin_family_id": "public.rag-dc-004.authoring-demonstrations",
+      "scenario_id": "RAG-DC-004-DEMO-04",
+      "prompt": "Учебная симуляция: dispatcher взял lease, брокер подтвердил publish, процесс упал до MarkPublished. После истечения lease запись pending для следующего worker. У брокера нет дедупликации. Разрешает ли этот сценарий повторную доставку? Верни JSON duplicate_possible с boolean.",
+      "chosen": "{\"duplicate_possible\":true}",
+      "rejected": "{\"duplicate_possible\":false}",
+      "self_check_en": "The durable sent marker is absent and the next worker can publish again. A lease alone does not establish exactly-once delivery."
+    }
+  ]
+}

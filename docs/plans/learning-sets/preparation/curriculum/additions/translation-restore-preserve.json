@@ -1,0 +1,848 @@
+{
+  "objective_id": "TR08-RESTORE-OR-PRESERVE",
+  "topic_id": "TR08",
+  "title_ru": "Восстановить неверную раскладку или сохранить буквальный идентификатор по видимому контексту",
+  "domain_ids": [
+    "tr.en",
+    "tr.ru",
+    "tr.he"
+  ],
+  "profiles": [
+    "ru-en",
+    "en-ru",
+    "ru-he",
+    "he-ru",
+    "en-he",
+    "he-en"
+  ],
+  "source_refs": [
+    "RAG-024",
+    "RAG-023"
+  ],
+  "learning_goal_ru": "При одинаковом raw token различать исправление случайной раскладки обычного слова и точное сохранение идентификатора по роли фрагмента в видимом условии.",
+  "prerequisites": [
+    "TR08",
+    "TR09"
+  ],
+  "generation_prompt_ru": "Подготовь контрфактические DPO-пары для одного направления перевода: одно и то же значение поля, набранное буквами другой раскладки, в одном видимом контексте является ошибочно набранным обычным словом, а в другом — точным буквальным идентификатором. В обеих строках оставь неизменными raw token, исходную фразу, карту клавиш, формат ответа и все факты кроме роли значения. Контекст роли обязателен прямо в learner prompt. Не раскрывай canonical_source, ответ, family ID или rationale в prompt. Для каждого назначенного family_id сделай две строки: metadata.span_treatment=restore и preserve. Вторая меняет предпочтение: chosen первой становится rejected второй и наоборот, если перевод окружающего текста неизменен. В каждом из шести новых сценарных семейств первой партии используй свою лексему и свой самодостаточный контекст; повторный пример с другим ID или именем не считается независимым сценарием. Используй только domains/translation/layout-fixture-v1.json, только поддержанные unshifted code points. В каждый learner prompt вставь полную таблицу соответствия выбранных двух раскладок из fixture, а не только её имя и не только символы текущего ответа. В restore/preserve контрфактуалах карта одинакова. Raw получи механически из canonical, затем проверь обратное преобразование и точные code-point границы raw внутри исходной строки. Для ru-source допустимо en-qwerty→ru-ycuken, для he-source en-qwerty→he-fixture, для en-source ru-ycuken→en-qwerty или he-fixture→en-qwerty. Сохрани ordinary canonical/typo/wrong-layout в одной лексической семье. Буквальный идентификатор не объединяй с лексемой по совпадению символов; контрфактическая пара всё равно имеет один scenario family и split. Первый batch12: шесть restore и шесть preserve, связанные попарно; не додумывай дополнительные темы и профили. Другой естественный перевод, синоним или допустимый порядок слов не является rejected. Неоднозначное намерение без заданного типа не размечай силой — отправь в пересмотр/назначенную TR10-тему. Не делай все restore-случаи латиницей, а preserve кириллицей: внутри каждой семьи raw совпадает. Разнообразь формулировки видимого контекста и окружающего текста между семьями; не обучай угадывать метку по одному шаблонному слову. Пиши draft.jsonl в назначенный output_directory; независимый предметный review не заменяется self-review генератора.\n\nОдин request задаёт одну микроцель, один профиль и один split. Используй текущую выбранную китайскую модель Kiro без override; помощники наследуют её. Имя модели записывай только из фактических метаданных. Отчёт и rationale — по-русски, ответы — на языке назначения с сохранением буквальных идентификаторов. Нет обязательных checksum, подписей, полного production CI, фиксированного имени модели, процента coverage или cross-model gate. Сохраняются необходимые проверки смысла пары, источника, состава и независимости учебных/экзаменационных семей. Прочитай 02-DATA-CONTRACT.md, 04-QUALITY-AND-SPLITS.md, 07-CONFLICTS-AND-REQUIREMENTS.md, эту карточку и RAG-024/RAG-023. Текущая фаза — подготовка DPO; не запускай обучение и не меняй production по собственной инициативе. При следующем ID немедленно переключись: запрещено продолжать предыдущую задачу, дописывать её отчёт, чинить её код или повторять запуск. При STOP прекрати действия немедленно. Старые эксперименты, строки и результаты сохраняй; новый run/revision идёт рядом. Если позднее отдельно выполняется разрешённое обучение, восстанови квалифицированный B1 по 05; один живой процесс продолжай через его handle и штатный bounded wait до terminal, не заканчивай ход вместо ожидания, не дублируй запуски и не делай частый polling. Любое измеренное улучшение полезной метрики при валидном обучении — успех по этой метрике/домену; другие изменения, включая ухудшения, показываются рядом. 0 правильных до и после не доказывает обучение; margin/loss и скорость подготовки это не заменяют.",
+  "response_contract_ru": "Только перевод исходной строки на язык назначения; обычное слово восстановить и перевести, буквальный идентификатор сохранить точно. Не переводить контекст и не добавлять объяснение.",
+  "scenario_axes": [
+    {
+      "axis": "span_treatment",
+      "values": [
+        "restore",
+        "preserve"
+      ]
+    },
+    {
+      "axis": "carrier",
+      "values": [
+        "field_value",
+        "short_sentence",
+        "quoted_value"
+      ]
+    },
+    {
+      "axis": "restoration_map",
+      "values": [
+        "source_ru_en_to_ru",
+        "source_he_en_to_he",
+        "source_en_ru_to_en",
+        "source_en_he_to_en"
+      ]
+    }
+  ],
+  "forbidden_mixing": [
+    "Смешивание нескольких направлений перевода или objective в одном request.",
+    "Объявление каждого смешанного алфавита ошибкой и автоматическое исправление всех строк.",
+    "Объединение буквального ID с лексемой только по совпадающему raw.",
+    "Скрытое намерение: роль значения есть только в metadata, но отсутствует в learner prompt.",
+    "Одновременная опечатка, другая карта, изменение пола/роли/смысла окружающего предложения.",
+    "Разделение restore/preserve, обратных переводов и повторных форм одной семьи между TRAIN/DEV/EXAM.",
+    "Перенос публичных reference и их производных в запечатанный экзамен."
+  ],
+  "review_requirements": {
+    "kind": "bilingual_review",
+    "checks": [
+      "Проверить предпочтение вслепую относительно rationale: обе стороны естественны; одна нарушает видимый тип значения.",
+      "В каждой семье одинаковы raw, исходная строка и карта; изменяется только контекст типа значения, а предпочтение ответа меняется.",
+      "Для каждой семьи есть ровно одна restore и одна preserve; batch12 содержит шесть семейств, а не двенадцать независимых.",
+      "Проверить raw→canonical→raw по fixture и точное извлечение raw по Unicode code-point span.",
+      "Проверить наличие полной выбранной карты прямо в learner prompt; файл fixture и metadata недоступны Student после проекции prompt/chosen/rejected.",
+      "В preserve проверить точное сохранение raw по code points; чужой алфавит внутри буквального ID не считается ошибкой языка ответа.",
+      "Сверить lexical family для восстановленной лексемы, запрет её слияния с literal ID и общую scenario lineage контрфактуалов.",
+      "Не объявлять другой корректный перевод/синоним ложным отрицанием; спорную пару исправить или отложить.",
+      "Общие смысловые сценарии шести направлений и всех вариантов получают один split; новые имена не дают независимость.",
+      "Проверять механизм обучения по learner-visible prompt; наличие metadata.span_treatment или lexical_family_ids само по себе не доказывает потребление их kNN/LoRA."
+    ]
+  },
+  "examples": [
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.ru-en.REF01",
+      "profile_id": "ru-en",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «русский» на язык «английский» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка en-qwerty, предполагаемая ru-ycuken. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"q\": \"й\", \"w\": \"ц\", \"e\": \"у\", \"r\": \"к\", \"t\": \"е\", \"y\": \"н\", \"u\": \"г\", \"i\": \"ш\", \"o\": \"щ\", \"p\": \"з\", \"[\": \"х\", \"]\": \"ъ\", \"a\": \"ф\", \"s\": \"ы\", \"d\": \"в\", \"f\": \"а\", \"g\": \"п\", \"h\": \"р\", \"j\": \"о\", \"k\": \"л\", \"l\": \"д\", \";\": \"ж\", \"'\": \"э\", \"z\": \"я\", \"x\": \"ч\", \"c\": \"с\", \"v\": \"м\", \"b\": \"и\", \"n\": \"т\", \"m\": \"ь\", \",\": \"б\", \".\": \"ю\", \"/\": \".\"} Контекст значения: Значение поля — обычное слово о документе для проезда, который пассажир предъявляет контролёру. Пользователь сообщил, что случайно набрал именно значение в неверной раскладке; это не код и не идентификатор.\nИсходная строка: Значение: ,bktn",
+      "chosen": "Value: ticket",
+      "rejected": "Value: ,bktn",
+      "error_tag": "missed_layout_restoration",
+      "rationale": "Видимый контекст объявляет случайную ошибку раскладки в обычном слове. Восстановление по указанной карте даёт слово о проездном документе; его непереведённая последовательность клавиш не передаёт смысл.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "en",
+        "language_pair": {
+          "source": "ru",
+          "target": "en"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "Значение: ,bktn",
+        "raw_token": ",bktn",
+        "source_span_codepoints": [
+          10,
+          15
+        ],
+        "canonical_source": "Значение: билет",
+        "layout_from": "en-qwerty",
+        "layout_to": "ru-ycuken",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "билет",
+        "span_treatment": "restore",
+        "correction_required": true,
+        "lexical_family_ids": [
+          "lex:ru:билет"
+        ],
+        "exact_identifiers": [],
+        "do_not_merge": [],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.ru-en.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.ru-en.REF02"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.ru-en.REF02",
+      "profile_id": "ru-en",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «русский» на язык «английский» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка en-qwerty, предполагаемая ru-ycuken. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"q\": \"й\", \"w\": \"ц\", \"e\": \"у\", \"r\": \"к\", \"t\": \"е\", \"y\": \"н\", \"u\": \"г\", \"i\": \"ш\", \"o\": \"щ\", \"p\": \"з\", \"[\": \"х\", \"]\": \"ъ\", \"a\": \"ф\", \"s\": \"ы\", \"d\": \"в\", \"f\": \"а\", \"g\": \"п\", \"h\": \"р\", \"j\": \"о\", \"k\": \"л\", \"l\": \"д\", \";\": \"ж\", \"'\": \"э\", \"z\": \"я\", \"x\": \"ч\", \"c\": \"с\", \"v\": \"м\", \"b\": \"и\", \"n\": \"т\", \"m\": \"ь\", \",\": \"б\", \".\": \"ю\", \"/\": \".\"} Контекст значения: Значение поля — буквальный идентификатор записи. Опечатки в нём нет; все его символы значимы, алиасов нет. Совпадение с последовательностью клавиш обычного слова не меняет идентификатор.\nИсходная строка: Значение: ,bktn",
+      "chosen": "Value: ,bktn",
+      "rejected": "Value: ticket",
+      "error_tag": "false_layout_restoration_of_identifier",
+      "rationale": "Видимый контекст задаёт точный идентификатор без ошибки. Перевод названия поля допустим, но замена буквального значения обычным словом создаёт другой идентификатор.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "en",
+        "language_pair": {
+          "source": "ru",
+          "target": "en"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "Значение: ,bktn",
+        "raw_token": ",bktn",
+        "source_span_codepoints": [
+          10,
+          15
+        ],
+        "canonical_source": "Значение: ,bktn",
+        "layout_from": "en-qwerty",
+        "layout_to": "ru-ycuken",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "билет",
+        "span_treatment": "preserve",
+        "correction_required": false,
+        "lexical_family_ids": [],
+        "exact_identifiers": [
+          ",bktn"
+        ],
+        "do_not_merge": [
+          "lex:ru:билет"
+        ],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.ru-en.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.ru-en.REF01"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.en-ru.REF01",
+      "profile_id": "en-ru",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «английский» на язык «русский» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка ru-ycuken, предполагаемая en-qwerty. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"й\": \"q\", \"ц\": \"w\", \"у\": \"e\", \"к\": \"r\", \"е\": \"t\", \"н\": \"y\", \"г\": \"u\", \"ш\": \"i\", \"щ\": \"o\", \"з\": \"p\", \"х\": \"[\", \"ъ\": \"]\", \"ф\": \"a\", \"ы\": \"s\", \"в\": \"d\", \"а\": \"f\", \"п\": \"g\", \"р\": \"h\", \"о\": \"j\", \"л\": \"k\", \"д\": \"l\", \"ж\": \";\", \"э\": \"'\", \"я\": \"z\", \"ч\": \"x\", \"с\": \"c\", \"м\": \"v\", \"и\": \"b\", \"т\": \"n\", \"ь\": \"m\", \"б\": \",\", \"ю\": \".\", \".\": \"/\"} Контекст значения: Значение поля — обычное слово о документе для проезда, который пассажир предъявляет контролёру. Пользователь сообщил, что случайно набрал именно значение в неверной раскладке; это не код и не идентификатор.\nИсходная строка: Value: ешслуе",
+      "chosen": "Значение: билет",
+      "rejected": "Значение: ешслуе",
+      "error_tag": "missed_layout_restoration",
+      "rationale": "Видимый контекст объявляет случайную ошибку раскладки в обычном слове. Восстановление по указанной карте даёт слово о проездном документе; его непереведённая последовательность клавиш не передаёт смысл.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "ru",
+        "language_pair": {
+          "source": "en",
+          "target": "ru"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "Value: ешслуе",
+        "raw_token": "ешслуе",
+        "source_span_codepoints": [
+          7,
+          13
+        ],
+        "canonical_source": "Value: ticket",
+        "layout_from": "ru-ycuken",
+        "layout_to": "en-qwerty",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "ticket",
+        "span_treatment": "restore",
+        "correction_required": true,
+        "lexical_family_ids": [
+          "lex:en:ticket"
+        ],
+        "exact_identifiers": [],
+        "do_not_merge": [],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.en-ru.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.en-ru.REF02"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.en-ru.REF02",
+      "profile_id": "en-ru",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «английский» на язык «русский» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка ru-ycuken, предполагаемая en-qwerty. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"й\": \"q\", \"ц\": \"w\", \"у\": \"e\", \"к\": \"r\", \"е\": \"t\", \"н\": \"y\", \"г\": \"u\", \"ш\": \"i\", \"щ\": \"o\", \"з\": \"p\", \"х\": \"[\", \"ъ\": \"]\", \"ф\": \"a\", \"ы\": \"s\", \"в\": \"d\", \"а\": \"f\", \"п\": \"g\", \"р\": \"h\", \"о\": \"j\", \"л\": \"k\", \"д\": \"l\", \"ж\": \";\", \"э\": \"'\", \"я\": \"z\", \"ч\": \"x\", \"с\": \"c\", \"м\": \"v\", \"и\": \"b\", \"т\": \"n\", \"ь\": \"m\", \"б\": \",\", \"ю\": \".\", \".\": \"/\"} Контекст значения: Значение поля — буквальный идентификатор записи. Опечатки в нём нет; все его символы значимы, алиасов нет. Совпадение с последовательностью клавиш обычного слова не меняет идентификатор.\nИсходная строка: Value: ешслуе",
+      "chosen": "Значение: ешслуе",
+      "rejected": "Значение: билет",
+      "error_tag": "false_layout_restoration_of_identifier",
+      "rationale": "Видимый контекст задаёт точный идентификатор без ошибки. Перевод названия поля допустим, но замена буквального значения обычным словом создаёт другой идентификатор.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "ru",
+        "language_pair": {
+          "source": "en",
+          "target": "ru"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "Value: ешслуе",
+        "raw_token": "ешслуе",
+        "source_span_codepoints": [
+          7,
+          13
+        ],
+        "canonical_source": "Value: ешслуе",
+        "layout_from": "ru-ycuken",
+        "layout_to": "en-qwerty",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "ticket",
+        "span_treatment": "preserve",
+        "correction_required": false,
+        "lexical_family_ids": [],
+        "exact_identifiers": [
+          "ешслуе"
+        ],
+        "do_not_merge": [
+          "lex:en:ticket"
+        ],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.en-ru.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.en-ru.REF01"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.ru-he.REF01",
+      "profile_id": "ru-he",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «русский» на язык «иврит» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка en-qwerty, предполагаемая ru-ycuken. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"q\": \"й\", \"w\": \"ц\", \"e\": \"у\", \"r\": \"к\", \"t\": \"е\", \"y\": \"н\", \"u\": \"г\", \"i\": \"ш\", \"o\": \"щ\", \"p\": \"з\", \"[\": \"х\", \"]\": \"ъ\", \"a\": \"ф\", \"s\": \"ы\", \"d\": \"в\", \"f\": \"а\", \"g\": \"п\", \"h\": \"р\", \"j\": \"о\", \"k\": \"л\", \"l\": \"д\", \";\": \"ж\", \"'\": \"э\", \"z\": \"я\", \"x\": \"ч\", \"c\": \"с\", \"v\": \"м\", \"b\": \"и\", \"n\": \"т\", \"m\": \"ь\", \",\": \"б\", \".\": \"ю\", \"/\": \".\"} Контекст значения: Значение поля — обычное слово о документе для проезда, который пассажир предъявляет контролёру. Пользователь сообщил, что случайно набрал именно значение в неверной раскладке; это не код и не идентификатор.\nИсходная строка: Значение: ,bktn",
+      "chosen": "ערך: כרטיס",
+      "rejected": "ערך: ,bktn",
+      "error_tag": "missed_layout_restoration",
+      "rationale": "Видимый контекст объявляет случайную ошибку раскладки в обычном слове. Восстановление по указанной карте даёт слово о проездном документе; его непереведённая последовательность клавиш не передаёт смысл.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "he",
+        "language_pair": {
+          "source": "ru",
+          "target": "he"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "Значение: ,bktn",
+        "raw_token": ",bktn",
+        "source_span_codepoints": [
+          10,
+          15
+        ],
+        "canonical_source": "Значение: билет",
+        "layout_from": "en-qwerty",
+        "layout_to": "ru-ycuken",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "билет",
+        "span_treatment": "restore",
+        "correction_required": true,
+        "lexical_family_ids": [
+          "lex:ru:билет"
+        ],
+        "exact_identifiers": [],
+        "do_not_merge": [],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.ru-he.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.ru-he.REF02"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.ru-he.REF02",
+      "profile_id": "ru-he",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «русский» на язык «иврит» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка en-qwerty, предполагаемая ru-ycuken. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"q\": \"й\", \"w\": \"ц\", \"e\": \"у\", \"r\": \"к\", \"t\": \"е\", \"y\": \"н\", \"u\": \"г\", \"i\": \"ш\", \"o\": \"щ\", \"p\": \"з\", \"[\": \"х\", \"]\": \"ъ\", \"a\": \"ф\", \"s\": \"ы\", \"d\": \"в\", \"f\": \"а\", \"g\": \"п\", \"h\": \"р\", \"j\": \"о\", \"k\": \"л\", \"l\": \"д\", \";\": \"ж\", \"'\": \"э\", \"z\": \"я\", \"x\": \"ч\", \"c\": \"с\", \"v\": \"м\", \"b\": \"и\", \"n\": \"т\", \"m\": \"ь\", \",\": \"б\", \".\": \"ю\", \"/\": \".\"} Контекст значения: Значение поля — буквальный идентификатор записи. Опечатки в нём нет; все его символы значимы, алиасов нет. Совпадение с последовательностью клавиш обычного слова не меняет идентификатор.\nИсходная строка: Значение: ,bktn",
+      "chosen": "ערך: ,bktn",
+      "rejected": "ערך: כרטיס",
+      "error_tag": "false_layout_restoration_of_identifier",
+      "rationale": "Видимый контекст задаёт точный идентификатор без ошибки. Перевод названия поля допустим, но замена буквального значения обычным словом создаёт другой идентификатор.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "he",
+        "language_pair": {
+          "source": "ru",
+          "target": "he"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "Значение: ,bktn",
+        "raw_token": ",bktn",
+        "source_span_codepoints": [
+          10,
+          15
+        ],
+        "canonical_source": "Значение: ,bktn",
+        "layout_from": "en-qwerty",
+        "layout_to": "ru-ycuken",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "билет",
+        "span_treatment": "preserve",
+        "correction_required": false,
+        "lexical_family_ids": [],
+        "exact_identifiers": [
+          ",bktn"
+        ],
+        "do_not_merge": [
+          "lex:ru:билет"
+        ],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.ru-he.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.ru-he.REF01"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.he-ru.REF01",
+      "profile_id": "he-ru",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «иврит» на язык «русский» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка en-qwerty, предполагаемая he-fixture. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"q\": \"/\", \"w\": \"'\", \"e\": \"ק\", \"r\": \"ר\", \"t\": \"א\", \"y\": \"ט\", \"u\": \"ו\", \"i\": \"ן\", \"o\": \"ם\", \"p\": \"פ\", \"[\": \"]\", \"]\": \"[\", \"a\": \"ש\", \"s\": \"ד\", \"d\": \"ג\", \"f\": \"כ\", \"g\": \"ע\", \"h\": \"י\", \"j\": \"ח\", \"k\": \"ל\", \"l\": \"ך\", \";\": \"ף\", \"'\": \",\", \"z\": \"ז\", \"x\": \"ס\", \"c\": \"ב\", \"v\": \"ה\", \"b\": \"נ\", \"n\": \"מ\", \"m\": \"צ\", \",\": \"ת\", \".\": \"ץ\", \"/\": \".\"} Контекст значения: Значение поля — обычное слово о документе для проезда, который пассажир предъявляет контролёру. Пользователь сообщил, что случайно набрал именно значение в неверной раскладке; это не код и не идентификатор.\nИсходная строка: ערך: fryhx",
+      "chosen": "Значение: билет",
+      "rejected": "Значение: fryhx",
+      "error_tag": "missed_layout_restoration",
+      "rationale": "Видимый контекст объявляет случайную ошибку раскладки в обычном слове. Восстановление по указанной карте даёт слово о проездном документе; его непереведённая последовательность клавиш не передаёт смысл.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "ru",
+        "language_pair": {
+          "source": "he",
+          "target": "ru"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "ערך: fryhx",
+        "raw_token": "fryhx",
+        "source_span_codepoints": [
+          5,
+          10
+        ],
+        "canonical_source": "ערך: כרטיס",
+        "layout_from": "en-qwerty",
+        "layout_to": "he-fixture",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "כרטיס",
+        "span_treatment": "restore",
+        "correction_required": true,
+        "lexical_family_ids": [
+          "lex:he:כרטיס"
+        ],
+        "exact_identifiers": [],
+        "do_not_merge": [],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.he-ru.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.he-ru.REF02"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.he-ru.REF02",
+      "profile_id": "he-ru",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «иврит» на язык «русский» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка en-qwerty, предполагаемая he-fixture. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"q\": \"/\", \"w\": \"'\", \"e\": \"ק\", \"r\": \"ר\", \"t\": \"א\", \"y\": \"ט\", \"u\": \"ו\", \"i\": \"ן\", \"o\": \"ם\", \"p\": \"פ\", \"[\": \"]\", \"]\": \"[\", \"a\": \"ש\", \"s\": \"ד\", \"d\": \"ג\", \"f\": \"כ\", \"g\": \"ע\", \"h\": \"י\", \"j\": \"ח\", \"k\": \"ל\", \"l\": \"ך\", \";\": \"ף\", \"'\": \",\", \"z\": \"ז\", \"x\": \"ס\", \"c\": \"ב\", \"v\": \"ה\", \"b\": \"נ\", \"n\": \"מ\", \"m\": \"צ\", \",\": \"ת\", \".\": \"ץ\", \"/\": \".\"} Контекст значения: Значение поля — буквальный идентификатор записи. Опечатки в нём нет; все его символы значимы, алиасов нет. Совпадение с последовательностью клавиш обычного слова не меняет идентификатор.\nИсходная строка: ערך: fryhx",
+      "chosen": "Значение: fryhx",
+      "rejected": "Значение: билет",
+      "error_tag": "false_layout_restoration_of_identifier",
+      "rationale": "Видимый контекст задаёт точный идентификатор без ошибки. Перевод названия поля допустим, но замена буквального значения обычным словом создаёт другой идентификатор.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "ru",
+        "language_pair": {
+          "source": "he",
+          "target": "ru"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "ערך: fryhx",
+        "raw_token": "fryhx",
+        "source_span_codepoints": [
+          5,
+          10
+        ],
+        "canonical_source": "ערך: fryhx",
+        "layout_from": "en-qwerty",
+        "layout_to": "he-fixture",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "כרטיס",
+        "span_treatment": "preserve",
+        "correction_required": false,
+        "lexical_family_ids": [],
+        "exact_identifiers": [
+          "fryhx"
+        ],
+        "do_not_merge": [
+          "lex:he:כרטיס"
+        ],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.he-ru.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.he-ru.REF01"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.en-he.REF01",
+      "profile_id": "en-he",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «английский» на язык «иврит» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка he-fixture, предполагаемая en-qwerty. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"/\": \"q\", \"'\": \"w\", \"ק\": \"e\", \"ר\": \"r\", \"א\": \"t\", \"ט\": \"y\", \"ו\": \"u\", \"ן\": \"i\", \"ם\": \"o\", \"פ\": \"p\", \"]\": \"[\", \"[\": \"]\", \"ש\": \"a\", \"ד\": \"s\", \"ג\": \"d\", \"כ\": \"f\", \"ע\": \"g\", \"י\": \"h\", \"ח\": \"j\", \"ל\": \"k\", \"ך\": \"l\", \"ף\": \";\", \",\": \"'\", \"ז\": \"z\", \"ס\": \"x\", \"ב\": \"c\", \"ה\": \"v\", \"נ\": \"b\", \"מ\": \"n\", \"צ\": \"m\", \"ת\": \",\", \"ץ\": \".\", \".\": \"/\"} Контекст значения: Значение поля — обычное слово о документе для проезда, который пассажир предъявляет контролёру. Пользователь сообщил, что случайно набрал именно значение в неверной раскладке; это не код и не идентификатор.\nИсходная строка: Value: אןבלקא",
+      "chosen": "ערך: כרטיס",
+      "rejected": "ערך: אןבלקא",
+      "error_tag": "missed_layout_restoration",
+      "rationale": "Видимый контекст объявляет случайную ошибку раскладки в обычном слове. Восстановление по указанной карте даёт слово о проездном документе; его непереведённая последовательность клавиш не передаёт смысл.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "he",
+        "language_pair": {
+          "source": "en",
+          "target": "he"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "Value: אןבלקא",
+        "raw_token": "אןבלקא",
+        "source_span_codepoints": [
+          7,
+          13
+        ],
+        "canonical_source": "Value: ticket",
+        "layout_from": "he-fixture",
+        "layout_to": "en-qwerty",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "ticket",
+        "span_treatment": "restore",
+        "correction_required": true,
+        "lexical_family_ids": [
+          "lex:en:ticket"
+        ],
+        "exact_identifiers": [],
+        "do_not_merge": [],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.en-he.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.en-he.REF02"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.en-he.REF02",
+      "profile_id": "en-he",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «английский» на язык «иврит» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка he-fixture, предполагаемая en-qwerty. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"/\": \"q\", \"'\": \"w\", \"ק\": \"e\", \"ר\": \"r\", \"א\": \"t\", \"ט\": \"y\", \"ו\": \"u\", \"ן\": \"i\", \"ם\": \"o\", \"פ\": \"p\", \"]\": \"[\", \"[\": \"]\", \"ש\": \"a\", \"ד\": \"s\", \"ג\": \"d\", \"כ\": \"f\", \"ע\": \"g\", \"י\": \"h\", \"ח\": \"j\", \"ל\": \"k\", \"ך\": \"l\", \"ף\": \";\", \",\": \"'\", \"ז\": \"z\", \"ס\": \"x\", \"ב\": \"c\", \"ה\": \"v\", \"נ\": \"b\", \"מ\": \"n\", \"צ\": \"m\", \"ת\": \",\", \"ץ\": \".\", \".\": \"/\"} Контекст значения: Значение поля — буквальный идентификатор записи. Опечатки в нём нет; все его символы значимы, алиасов нет. Совпадение с последовательностью клавиш обычного слова не меняет идентификатор.\nИсходная строка: Value: אןבלקא",
+      "chosen": "ערך: אןבלקא",
+      "rejected": "ערך: כרטיס",
+      "error_tag": "false_layout_restoration_of_identifier",
+      "rationale": "Видимый контекст задаёт точный идентификатор без ошибки. Перевод названия поля допустим, но замена буквального значения обычным словом создаёт другой идентификатор.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "he",
+        "language_pair": {
+          "source": "en",
+          "target": "he"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "Value: אןבלקא",
+        "raw_token": "אןבלקא",
+        "source_span_codepoints": [
+          7,
+          13
+        ],
+        "canonical_source": "Value: אןבלקא",
+        "layout_from": "he-fixture",
+        "layout_to": "en-qwerty",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "ticket",
+        "span_treatment": "preserve",
+        "correction_required": false,
+        "lexical_family_ids": [],
+        "exact_identifiers": [
+          "אןבלקא"
+        ],
+        "do_not_merge": [
+          "lex:en:ticket"
+        ],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.en-he.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.en-he.REF01"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.he-en.REF01",
+      "profile_id": "he-en",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «иврит» на язык «английский» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка en-qwerty, предполагаемая he-fixture. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"q\": \"/\", \"w\": \"'\", \"e\": \"ק\", \"r\": \"ר\", \"t\": \"א\", \"y\": \"ט\", \"u\": \"ו\", \"i\": \"ן\", \"o\": \"ם\", \"p\": \"פ\", \"[\": \"]\", \"]\": \"[\", \"a\": \"ש\", \"s\": \"ד\", \"d\": \"ג\", \"f\": \"כ\", \"g\": \"ע\", \"h\": \"י\", \"j\": \"ח\", \"k\": \"ל\", \"l\": \"ך\", \";\": \"ף\", \"'\": \",\", \"z\": \"ז\", \"x\": \"ס\", \"c\": \"ב\", \"v\": \"ה\", \"b\": \"נ\", \"n\": \"מ\", \"m\": \"צ\", \",\": \"ת\", \".\": \"ץ\", \"/\": \".\"} Контекст значения: Значение поля — обычное слово о документе для проезда, который пассажир предъявляет контролёру. Пользователь сообщил, что случайно набрал именно значение в неверной раскладке; это не код и не идентификатор.\nИсходная строка: ערך: fryhx",
+      "chosen": "Value: ticket",
+      "rejected": "Value: fryhx",
+      "error_tag": "missed_layout_restoration",
+      "rationale": "Видимый контекст объявляет случайную ошибку раскладки в обычном слове. Восстановление по указанной карте даёт слово о проездном документе; его непереведённая последовательность клавиш не передаёт смысл.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "en",
+        "language_pair": {
+          "source": "he",
+          "target": "en"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "ערך: fryhx",
+        "raw_token": "fryhx",
+        "source_span_codepoints": [
+          5,
+          10
+        ],
+        "canonical_source": "ערך: כרטיס",
+        "layout_from": "en-qwerty",
+        "layout_to": "he-fixture",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "כרטיס",
+        "span_treatment": "restore",
+        "correction_required": true,
+        "lexical_family_ids": [
+          "lex:he:כרטיס"
+        ],
+        "exact_identifiers": [],
+        "do_not_merge": [],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.he-en.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.he-en.REF02"
+      }
+    },
+    {
+      "example_id": "TR08-RESTORE-OR-PRESERVE.he-en.REF02",
+      "profile_id": "he-en",
+      "family_id": "v2-ref.translation.ticket-on-table",
+      "prompt": "Переведи с языка «иврит» на язык «английский» только исходную строку ниже. Сохрани структуру «название поля: значение»; не добавляй объяснение. Буквальные идентификаторы сохраняются точно; обычное слово со случайной ошибкой раскладки восстанавливается и переводится. Для этого примера доступна карта layout-fixture-v1: фактическая раскладка en-qwerty, предполагаемая he-fixture. Наличие карты само по себе не доказывает, что значение ошибочно. Полная карта для этого случая: каждый ключ JSON — символ фактической раскладки, значение — символ предполагаемой; применяется посимвольно, остальные символы остаются на месте. {\"q\": \"/\", \"w\": \"'\", \"e\": \"ק\", \"r\": \"ר\", \"t\": \"א\", \"y\": \"ט\", \"u\": \"ו\", \"i\": \"ן\", \"o\": \"ם\", \"p\": \"פ\", \"[\": \"]\", \"]\": \"[\", \"a\": \"ש\", \"s\": \"ד\", \"d\": \"ג\", \"f\": \"כ\", \"g\": \"ע\", \"h\": \"י\", \"j\": \"ח\", \"k\": \"ל\", \"l\": \"ך\", \";\": \"ף\", \"'\": \",\", \"z\": \"ז\", \"x\": \"ס\", \"c\": \"ב\", \"v\": \"ה\", \"b\": \"נ\", \"n\": \"מ\", \"m\": \"צ\", \",\": \"ת\", \".\": \"ץ\", \"/\": \".\"} Контекст значения: Значение поля — буквальный идентификатор записи. Опечатки в нём нет; все его символы значимы, алиасов нет. Совпадение с последовательностью клавиш обычного слова не меняет идентификатор.\nИсходная строка: ערך: fryhx",
+      "chosen": "Value: fryhx",
+      "rejected": "Value: ticket",
+      "error_tag": "false_layout_restoration_of_identifier",
+      "rationale": "Видимый контекст задаёт точный идентификатор без ошибки. Перевод названия поля допустим, но замена буквального значения обычным словом создаёт другой идентификатор.",
+      "counterexample": "Та же исходная строка с противоположным явно заданным типом значения требует другого ответа. Если тип не указан и оба чтения правдоподобны, это TR10-CONDITIONAL, не угадывание здесь.",
+      "source_refs": [
+        "RAG-024",
+        "RAG-023"
+      ],
+      "metadata": {
+        "response_language": "en",
+        "language_pair": {
+          "source": "he",
+          "target": "en"
+        },
+        "reference_only": true,
+        "split": "reference",
+        "simulation": true,
+        "training_allowed": false,
+        "review_status": "semantic_review_required",
+        "measured_training_result": false,
+        "source_role": "methodology_not_translation_gold",
+        "generator_model": "reference_authoring_not_a_kiro_run",
+        "origin_family_id": "v2-ref.translation.ticket-on-table",
+        "leakage_group_ids": [
+          "source:v2-ref.translation.ticket-on-table",
+          "surface-context:v2-ref.translation.ticket-on-table"
+        ],
+        "learning_objective_id": "TR08-RESTORE-OR-PRESERVE",
+        "source_raw": "ערך: fryhx",
+        "raw_token": "fryhx",
+        "source_span_codepoints": [
+          5,
+          10
+        ],
+        "canonical_source": "ערך: fryhx",
+        "layout_from": "en-qwerty",
+        "layout_to": "he-fixture",
+        "map_id": "layout-fixture-v1",
+        "layout_applies_to": "raw_token_only",
+        "layout_validation": "fixture_mapping_checked",
+        "learner_map_visible": true,
+        "decoded_if_transformed": "כרטיס",
+        "span_treatment": "preserve",
+        "correction_required": false,
+        "lexical_family_ids": [],
+        "exact_identifiers": [
+          "fryhx"
+        ],
+        "do_not_merge": [
+          "lex:he:כרטיס"
+        ],
+        "response_contract": "translate_label_then_contextual_span",
+        "derived_from": [
+          "TR08-LAYOUT.he-en.REF01"
+        ],
+        "contrast_pair_id": "TR08-RESTORE-OR-PRESERVE.he-en.REF01"
+      }
+    }
+  ],
+  "generation_batch_size": 12,
+  "pilot_train_pairs": 120,
+  "pilot_dev_pairs": 24,
+  "pilot_exam_pairs": 24,
+  "pairs_per_family": 2,
+  "family_class_field": "span_treatment",
+  "family_class_values": [
+    "restore",
+    "preserve"
+  ],
+  "family_class_description_ru": "Одна restore и одна preserve строка с одинаковым raw и противоположным видимым типом значения."
+}

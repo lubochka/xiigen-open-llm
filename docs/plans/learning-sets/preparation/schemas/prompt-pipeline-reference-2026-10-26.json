@@ -1,0 +1,750 @@
+{
+  "schema_version": "xiigen.prompt-pipeline.reference.v1",
+  "contract_kind": "REFERENCE_BUNDLE_NOT_NATIVE_RUNTIME_IMPLEMENTATION",
+  "created_on": "2026-10-26",
+  "status": "REFERENCE_ONLY_NOT_GENERATED_NOT_TRAINED",
+  "mode": "CREATE_ONLY_REFERENCE_AUTHORING",
+  "scenario_count": 4,
+  "source_refs": [
+    "RAG-014",
+    "RAG-015",
+    "RAG-027",
+    "RAG-031",
+    "RAG-PROMPT-003",
+    "RAG-PROMPT-004"
+  ],
+  "source_policy": "Project-derived original simulations. Historical sources provide task boundaries, not verified external-license or training claims.",
+  "global_constraint_rule_en": "D22 text remains an exact contiguous substring. Noncontiguous shared constraints need not be copied into every span; D23 always receives the FULL original prompt in addition to the selected span, assigned domain and available prior results. Never turn a shared constraint into a new requested action.",
+  "d22_output_json_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "segments",
+      "clarify"
+    ],
+    "properties": {
+      "segments": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "text",
+            "domain_id",
+            "depends_on"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^s[1-9][0-9]*$"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "domain_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "depends_on": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          }
+        }
+      },
+      "clarify": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "segment_id",
+            "missing"
+          ],
+          "properties": {
+            "segment_id": {
+              "type": "string"
+            },
+            "missing": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  },
+  "d23_input_json_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "full_original_prompt",
+      "selected_segment",
+      "assigned_domain_id",
+      "available_prior_results"
+    ],
+    "properties": {
+      "full_original_prompt": {
+        "type": "string",
+        "minLength": 1
+      },
+      "selected_segment": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "text",
+          "domain_id",
+          "depends_on"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^s[1-9][0-9]*$"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "domain_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        }
+      },
+      "assigned_domain_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "available_prior_results": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "required": [
+            "domain_id",
+            "output",
+            "status"
+          ],
+          "properties": {
+            "domain_id": {
+              "type": "string"
+            },
+            "output": {
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "OBSERVED",
+                "REFERENCE_EXPECTATION_NOT_OBSERVED"
+              ]
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "d23_output_json_schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "domain_id",
+      "task",
+      "missing"
+    ],
+    "properties": {
+      "domain_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "task": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "missing": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uniqueItems": true
+      }
+    },
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "task": {
+              "type": "null"
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "missing": {
+              "minItems": 1
+            }
+          }
+        },
+        "else": {
+          "properties": {
+            "task": {
+              "minLength": 1
+            },
+            "missing": {
+              "maxItems": 0
+            }
+          }
+        }
+      }
+    ]
+  },
+  "semantic_checks_en": [
+    "Every D22 text occurs verbatim in the original prompt. Check coverage of actions separately from constraint propagation.",
+    "Dependencies refer only to existing required predecessors; chronological text order alone creates no dependency.",
+    "The assigned domain in D23 matches the selected segment. Null-domain segments must be clarified before compilation.",
+    "D23 must retain all applicable global and local constraints, including negation and requested answer language.",
+    "Missing prior output produces task=null and a concrete missing entry. A worker does not fabricate a predecessor result.",
+    "The structured reference can provide an expected prior output for teaching, but it remains explicitly NOT_OBSERVED.",
+    "Each subject answer is an expected teaching target, not evidence that a tool, native route or training cycle ran."
+  ],
+  "family_policy": {
+    "split": "reference",
+    "training_allowed": false,
+    "counts_toward_quota": false,
+    "closed_exam_allowed": false,
+    "all_stages_share_origin_family_id": true,
+    "descendant_rule": "Carry this origin through segmentation, compilation, code/documentation and translation derivatives; relabeling does not create an independent family."
+  },
+  "runtime_boundary": {
+    "core_native_integration": "NOT_IMPLEMENTED_BY_THIS_PACKAGE",
+    "chinese_generation": "NOT_RUN",
+    "student_training": "NOT_RUN",
+    "end_to_end_runtime": "NOT_RUN"
+  },
+  "scenarios": [
+    {
+      "scenario_id": "PIPE26-01",
+      "title_ru": "Общее «не менять код» действует на обе части",
+      "origin_family_id": "ref.pipeline26.shared-constraints",
+      "full_original_prompt": "Общее правило для обоих пунктов: только объясняй, не меняй код; отвечай по-русски. Среда C# 10/.NET 6: string Label(string? s)=>s??\"-\"; nullable enabled. Для SQL Server 2019 таблица T(v int NULL) содержит [NULL,0,0]. Объясни результаты Label(null) и Label(\"\"). Отдельно объясни результат SELECT COUNT(v) AS n FROM T.",
+      "catalog": {
+        "docs.csharp": "объяснить C#",
+        "docs.sql": "объяснить SQL",
+        "code.csharp": "написать C#",
+        "code.sql": "написать SQL"
+      },
+      "d22_chosen": {
+        "segments": [
+          {
+            "id": "s1",
+            "text": "Объясни результаты Label(null) и Label(\"\").",
+            "domain_id": "docs.csharp",
+            "depends_on": []
+          },
+          {
+            "id": "s2",
+            "text": "Отдельно объясни результат SELECT COUNT(v) AS n FROM T.",
+            "domain_id": "docs.sql",
+            "depends_on": []
+          }
+        ],
+        "clarify": []
+      },
+      "stages": [
+        {
+          "stage_id": "s1.compile",
+          "learner_domain_id": "prompt.task-compilation",
+          "origin_family_id": "ref.pipeline26.shared-constraints",
+          "split": "reference",
+          "input": {
+            "full_original_prompt": "Общее правило для обоих пунктов: только объясняй, не меняй код; отвечай по-русски. Среда C# 10/.NET 6: string Label(string? s)=>s??\"-\"; nullable enabled. Для SQL Server 2019 таблица T(v int NULL) содержит [NULL,0,0]. Объясни результаты Label(null) и Label(\"\"). Отдельно объясни результат SELECT COUNT(v) AS n FROM T.",
+            "selected_segment": {
+              "id": "s1",
+              "text": "Объясни результаты Label(null) и Label(\"\").",
+              "domain_id": "docs.csharp",
+              "depends_on": []
+            },
+            "assigned_domain_id": "docs.csharp",
+            "available_prior_results": {}
+          },
+          "chosen": {
+            "domain_id": "docs.csharp",
+            "task": "По-русски объясни результаты Label(null) и Label(\"\") для C# 10/.NET 6: string Label(string? s)=>s??\"-\";, nullable enabled. Только объяснение; код не менять.",
+            "missing": []
+          },
+          "observable_criterion_ru": "В коротком задании сохранены исходник, оба входа, русский язык и общий запрет изменения кода.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN"
+        },
+        {
+          "stage_id": "s1.subject",
+          "learner_domain_id": "docs.csharp",
+          "origin_family_id": "ref.pipeline26.shared-constraints",
+          "split": "reference",
+          "input": {
+            "task_from": "s1.compile"
+          },
+          "chosen": "Label(null) возвращает \"-\", Label(\"\") возвращает \"\". Оператор ?? заменяет только null; пустая строка сохраняется.",
+          "observable_criterion_ru": "Ответ объясняет видимый метод и не предлагает новый код.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN"
+        },
+        {
+          "stage_id": "s2.compile",
+          "learner_domain_id": "prompt.task-compilation",
+          "origin_family_id": "ref.pipeline26.shared-constraints",
+          "split": "reference",
+          "input": {
+            "full_original_prompt": "Общее правило для обоих пунктов: только объясняй, не меняй код; отвечай по-русски. Среда C# 10/.NET 6: string Label(string? s)=>s??\"-\"; nullable enabled. Для SQL Server 2019 таблица T(v int NULL) содержит [NULL,0,0]. Объясни результаты Label(null) и Label(\"\"). Отдельно объясни результат SELECT COUNT(v) AS n FROM T.",
+            "selected_segment": {
+              "id": "s2",
+              "text": "Отдельно объясни результат SELECT COUNT(v) AS n FROM T.",
+              "domain_id": "docs.sql",
+              "depends_on": []
+            },
+            "assigned_domain_id": "docs.sql",
+            "available_prior_results": {}
+          },
+          "chosen": {
+            "domain_id": "docs.sql",
+            "task": "По-русски объясни SELECT COUNT(v) AS n FROM T для SQL Server 2019, T(v int NULL)=[NULL,0,0]. Назови число строк и n. Только объяснение; SQL не менять.",
+            "missing": []
+          },
+          "observable_criterion_ru": "Показаны схема и строки T, хотя они находятся вне выбранного короткого фрагмента; общий запрет сохранён.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN"
+        },
+        {
+          "stage_id": "s2.subject",
+          "learner_domain_id": "docs.sql",
+          "origin_family_id": "ref.pipeline26.shared-constraints",
+          "split": "reference",
+          "input": {
+            "task_from": "s2.compile"
+          },
+          "chosen": "Одна строка результата: n=2. COUNT(v) пропускает NULL и учитывает оба значения 0.",
+          "observable_criterion_ru": "Оба нуля учитываются, SQL не переписывается и не запускается.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN"
+        }
+      ],
+      "failure_example_ru": "Передать в D23 только «Отдельно объясни результат SELECT COUNT(v) AS n FROM T». Тогда теряются общие ограничения, схема и сами строки T.",
+      "simple_check_en": "For every compiled task, compare its constraints with the FULL original prompt, not just the selected substring. Global constraints are not extra tasks.",
+      "atomic_router_result": {
+        "action": "clarify",
+        "domain_id": null
+      },
+      "atomic_router_note_ru": "Два независимых предметных действия: прежний or.routing по своему атомарному контракту просит уточнение; новый D22 сохраняет обе части.",
+      "d22_input": {
+        "full_original_prompt": "Общее правило для обоих пунктов: только объясняй, не меняй код; отвечай по-русски. Среда C# 10/.NET 6: string Label(string? s)=>s??\"-\"; nullable enabled. Для SQL Server 2019 таблица T(v int NULL) содержит [NULL,0,0]. Объясни результаты Label(null) и Label(\"\"). Отдельно объясни результат SELECT COUNT(v) AS n FROM T.",
+        "visible_catalog": {
+          "docs.csharp": "объяснить C#",
+          "docs.sql": "объяснить SQL",
+          "code.csharp": "написать C#",
+          "code.sql": "написать SQL"
+        },
+        "instruction_ru": "Верни segments/clarify по контракту D22. Текст сегментов дословный; общие условия сохраняются в полном оригинале для D23. Предметные команды не выполнять."
+      }
+    },
+    {
+      "scenario_id": "PIPE26-02",
+      "title_ru": "Написать → объяснить → перевести без выдуманных результатов",
+      "origin_family_id": "ref.pipeline26.write-explain-translate",
+      "full_original_prompt": "Среда: SQL Server 2019; таблица T(v int NULL) содержит [NULL,0,0]. SQL не запускай. Напиши один SELECT, считающий строки с v не NULL, с единственным полем n. Затем объясни полученный запрос одним предложением по-русски с результатом для T. Затем переведи это объяснение на английский; ответ переводчика — только перевод.",
+      "catalog": {
+        "code.sql": "написать SQL",
+        "docs.sql": "объяснить SQL",
+        "tr.en": "перевести на английский"
+      },
+      "d22_chosen": {
+        "segments": [
+          {
+            "id": "s1",
+            "text": "Напиши один SELECT, считающий строки с v не NULL, с единственным полем n.",
+            "domain_id": "code.sql",
+            "depends_on": []
+          },
+          {
+            "id": "s2",
+            "text": "Затем объясни полученный запрос одним предложением по-русски с результатом для T.",
+            "domain_id": "docs.sql",
+            "depends_on": [
+              "s1"
+            ]
+          },
+          {
+            "id": "s3",
+            "text": "Затем переведи это объяснение на английский; ответ переводчика — только перевод.",
+            "domain_id": "tr.en",
+            "depends_on": [
+              "s2"
+            ]
+          }
+        ],
+        "clarify": []
+      },
+      "stages": [
+        {
+          "stage_id": "s1.compile",
+          "learner_domain_id": "prompt.task-compilation",
+          "origin_family_id": "ref.pipeline26.write-explain-translate",
+          "split": "reference",
+          "input": {
+            "full_original_prompt": "Среда: SQL Server 2019; таблица T(v int NULL) содержит [NULL,0,0]. SQL не запускай. Напиши один SELECT, считающий строки с v не NULL, с единственным полем n. Затем объясни полученный запрос одним предложением по-русски с результатом для T. Затем переведи это объяснение на английский; ответ переводчика — только перевод.",
+            "selected_segment": {
+              "id": "s1",
+              "text": "Напиши один SELECT, считающий строки с v не NULL, с единственным полем n.",
+              "domain_id": "code.sql",
+              "depends_on": []
+            },
+            "assigned_domain_id": "code.sql",
+            "available_prior_results": {}
+          },
+          "chosen": {
+            "domain_id": "code.sql",
+            "task": "SQL Server 2019: напиши только один SELECT с единственным полем n — числом строк T(v int NULL), где v не NULL; повторения учитываются. T=[NULL,0,0]. SQL не запускать.",
+            "missing": []
+          },
+          "observable_criterion_ru": "Задание требует написать SELECT, а не исполнить его; NULL и повторения определены видимыми данными.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN"
+        },
+        {
+          "stage_id": "s1.subject",
+          "learner_domain_id": "code.sql",
+          "origin_family_id": "ref.pipeline26.write-explain-translate",
+          "split": "reference",
+          "input": {
+            "task_from": "s1.compile"
+          },
+          "chosen": "SELECT COUNT(v) AS n FROM T;",
+          "observable_criterion_ru": "Ожидаемый SQL сохраняет COUNT(v), одно поле n и отсутствие UPDATE/DELETE/DDL; это эталон, не результат реального выполнения.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN"
+        },
+        {
+          "stage_id": "s2.compile.before-prior",
+          "learner_domain_id": "prompt.task-compilation",
+          "origin_family_id": "ref.pipeline26.write-explain-translate",
+          "split": "reference",
+          "input": {
+            "full_original_prompt": "Среда: SQL Server 2019; таблица T(v int NULL) содержит [NULL,0,0]. SQL не запускай. Напиши один SELECT, считающий строки с v не NULL, с единственным полем n. Затем объясни полученный запрос одним предложением по-русски с результатом для T. Затем переведи это объяснение на английский; ответ переводчика — только перевод.",
+            "selected_segment": {
+              "id": "s2",
+              "text": "Затем объясни полученный запрос одним предложением по-русски с результатом для T.",
+              "domain_id": "docs.sql",
+              "depends_on": [
+                "s1"
+              ]
+            },
+            "assigned_domain_id": "docs.sql",
+            "available_prior_results": {}
+          },
+          "chosen": {
+            "domain_id": "docs.sql",
+            "task": null,
+            "missing": [
+              "результат s1: фактически созданный SELECT"
+            ]
+          },
+          "observable_criterion_ru": "Пока s1 не дал текст SQL, D23 явно показывает зависимость. Он не подставляет удобный предположительный запрос.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN",
+          "input_variant": "REQUIRED_PREDECESSOR_OUTPUT_ABSENT"
+        },
+        {
+          "stage_id": "s2.compile.with-reference-prior",
+          "learner_domain_id": "prompt.task-compilation",
+          "origin_family_id": "ref.pipeline26.write-explain-translate",
+          "split": "reference",
+          "input": {
+            "full_original_prompt": "Среда: SQL Server 2019; таблица T(v int NULL) содержит [NULL,0,0]. SQL не запускай. Напиши один SELECT, считающий строки с v не NULL, с единственным полем n. Затем объясни полученный запрос одним предложением по-русски с результатом для T. Затем переведи это объяснение на английский; ответ переводчика — только перевод.",
+            "selected_segment": {
+              "id": "s2",
+              "text": "Затем объясни полученный запрос одним предложением по-русски с результатом для T.",
+              "domain_id": "docs.sql",
+              "depends_on": [
+                "s1"
+              ]
+            },
+            "assigned_domain_id": "docs.sql",
+            "available_prior_results": {
+              "s1": {
+                "domain_id": "code.sql",
+                "output": "SELECT COUNT(v) AS n FROM T;",
+                "status": "REFERENCE_EXPECTATION_NOT_OBSERVED"
+              }
+            }
+          },
+          "chosen": {
+            "domain_id": "docs.sql",
+            "task": "Одним предложением по-русски объясни SELECT COUNT(v) AS n FROM T; для SQL Server 2019, T(v int NULL)=[NULL,0,0], с точным результатом. SQL не запускать и не заменять.",
+            "missing": []
+          },
+          "observable_criterion_ru": "Вход содержит точный текст предшественника. В этом reference он явно помечен ожидаемым, а не наблюдённым.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN",
+          "input_variant": "EXPECTED_PREDECESSOR_OUTPUT_EXPLICITLY_SUPPLIED_AS_REFERENCE"
+        },
+        {
+          "stage_id": "s2.subject",
+          "learner_domain_id": "docs.sql",
+          "origin_family_id": "ref.pipeline26.write-explain-translate",
+          "split": "reference",
+          "input": {
+            "task_from": "s2.compile.with-reference-prior"
+          },
+          "chosen": "Запрос возвращает одну строку n=2, учитывая оба значения 0 и исключая NULL.",
+          "observable_criterion_ru": "Точное объяснение: одна строка n=2; две нулевые величины считаются, NULL исключён.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN"
+        },
+        {
+          "stage_id": "s3.compile.before-prior",
+          "learner_domain_id": "prompt.task-compilation",
+          "origin_family_id": "ref.pipeline26.write-explain-translate",
+          "split": "reference",
+          "input": {
+            "full_original_prompt": "Среда: SQL Server 2019; таблица T(v int NULL) содержит [NULL,0,0]. SQL не запускай. Напиши один SELECT, считающий строки с v не NULL, с единственным полем n. Затем объясни полученный запрос одним предложением по-русски с результатом для T. Затем переведи это объяснение на английский; ответ переводчика — только перевод.",
+            "selected_segment": {
+              "id": "s3",
+              "text": "Затем переведи это объяснение на английский; ответ переводчика — только перевод.",
+              "domain_id": "tr.en",
+              "depends_on": [
+                "s2"
+              ]
+            },
+            "assigned_domain_id": "tr.en",
+            "available_prior_results": {
+              "s1": {
+                "domain_id": "code.sql",
+                "output": "SELECT COUNT(v) AS n FROM T;",
+                "status": "REFERENCE_EXPECTATION_NOT_OBSERVED"
+              }
+            }
+          },
+          "chosen": {
+            "domain_id": "tr.en",
+            "task": null,
+            "missing": [
+              "результат s2: русский текст объяснения"
+            ]
+          },
+          "observable_criterion_ru": "SQL из s1 не заменяет русский текст s2. Переводчик не получает выдуманное объяснение.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN",
+          "input_variant": "REQUIRED_PREDECESSOR_OUTPUT_ABSENT"
+        },
+        {
+          "stage_id": "s3.compile.with-reference-prior",
+          "learner_domain_id": "prompt.task-compilation",
+          "origin_family_id": "ref.pipeline26.write-explain-translate",
+          "split": "reference",
+          "input": {
+            "full_original_prompt": "Среда: SQL Server 2019; таблица T(v int NULL) содержит [NULL,0,0]. SQL не запускай. Напиши один SELECT, считающий строки с v не NULL, с единственным полем n. Затем объясни полученный запрос одним предложением по-русски с результатом для T. Затем переведи это объяснение на английский; ответ переводчика — только перевод.",
+            "selected_segment": {
+              "id": "s3",
+              "text": "Затем переведи это объяснение на английский; ответ переводчика — только перевод.",
+              "domain_id": "tr.en",
+              "depends_on": [
+                "s2"
+              ]
+            },
+            "assigned_domain_id": "tr.en",
+            "available_prior_results": {
+              "s2": {
+                "domain_id": "docs.sql",
+                "output": "Запрос возвращает одну строку n=2, учитывая оба значения 0 и исключая NULL.",
+                "status": "REFERENCE_EXPECTATION_NOT_OBSERVED"
+              }
+            }
+          },
+          "chosen": {
+            "domain_id": "tr.en",
+            "task": "Переведи на английский: «Запрос возвращает одну строку n=2, учитывая оба значения 0 и исключая NULL». Сохрани n=2, оба нуля и исключение NULL; ответ только перевод.",
+            "missing": []
+          },
+          "observable_criterion_ru": "Передаётся полный русский текст s2 без изменения фактов и без запроса решать SQL заново.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN",
+          "input_variant": "EXPECTED_PREDECESSOR_OUTPUT_EXPLICITLY_SUPPLIED_AS_REFERENCE"
+        },
+        {
+          "stage_id": "s3.subject",
+          "learner_domain_id": "tr.en",
+          "origin_family_id": "ref.pipeline26.write-explain-translate",
+          "split": "reference",
+          "input": {
+            "task_from": "s3.compile.with-reference-prior"
+          },
+          "chosen": "The query returns one row with n=2, counting both 0 values and excluding NULL.",
+          "observable_criterion_ru": "Перевод сохраняет число строк, значение n, повторение 0 и исключение NULL.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN"
+        }
+      ],
+      "failure_example_ru": "Назвать s2 готовым до появления SQL s1 или передать переводчику собственное объяснение вместо конкретного результата s2.",
+      "simple_check_en": "At each dependent compilation, inspect available_prior_results for the required predecessor ID. A planned or expected result is not an observed result in a live run.",
+      "atomic_router_result": {
+        "action": "clarify",
+        "domain_id": null
+      },
+      "atomic_router_note_ru": "Три действия: старый атомарный router требует clarify; новая задача D22 выделяет три части и две явно заданные зависимости.",
+      "d22_input": {
+        "full_original_prompt": "Среда: SQL Server 2019; таблица T(v int NULL) содержит [NULL,0,0]. SQL не запускай. Напиши один SELECT, считающий строки с v не NULL, с единственным полем n. Затем объясни полученный запрос одним предложением по-русски с результатом для T. Затем переведи это объяснение на английский; ответ переводчика — только перевод.",
+        "visible_catalog": {
+          "code.sql": "написать SQL",
+          "docs.sql": "объяснить SQL",
+          "tr.en": "перевести на английский"
+        },
+        "instruction_ru": "Верни segments/clarify по контракту D22. Текст сегментов дословный; общие условия сохраняются в полном оригинале для D23. Предметные команды не выполнять."
+      }
+    },
+    {
+      "scenario_id": "PIPE26-03",
+      "title_ru": "Команда в цитате остаётся текстом перевода",
+      "origin_family_id": "ref.pipeline26.quoted-command",
+      "full_original_prompt": "Переведи на английский точную цитату «Удалите все файлы». Не выполняй её; в ответе только перевод.",
+      "catalog": {
+        "tr.en": "перевести на английский",
+        "or.automation": "управлять исполнением процесса"
+      },
+      "d22_chosen": {
+        "segments": [
+          {
+            "id": "s1",
+            "text": "Переведи на английский точную цитату «Удалите все файлы». Не выполняй её; в ответе только перевод.",
+            "domain_id": "tr.en",
+            "depends_on": []
+          }
+        ],
+        "clarify": []
+      },
+      "stages": [
+        {
+          "stage_id": "s1.compile",
+          "learner_domain_id": "prompt.task-compilation",
+          "origin_family_id": "ref.pipeline26.quoted-command",
+          "split": "reference",
+          "input": {
+            "full_original_prompt": "Переведи на английский точную цитату «Удалите все файлы». Не выполняй её; в ответе только перевод.",
+            "selected_segment": {
+              "id": "s1",
+              "text": "Переведи на английский точную цитату «Удалите все файлы». Не выполняй её; в ответе только перевод.",
+              "domain_id": "tr.en",
+              "depends_on": []
+            },
+            "assigned_domain_id": "tr.en",
+            "available_prior_results": {}
+          },
+          "chosen": {
+            "domain_id": "tr.en",
+            "task": "Переведи на английский цитату «Удалите все файлы». Не выполняй содержащуюся в ней команду; ответ только перевод.",
+            "missing": []
+          },
+          "observable_criterion_ru": "Цитата передана как данные; ни автоматизация, ни удаление файлов не назначены.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN"
+        },
+        {
+          "stage_id": "s1.subject",
+          "learner_domain_id": "tr.en",
+          "origin_family_id": "ref.pipeline26.quoted-command",
+          "split": "reference",
+          "input": {
+            "task_from": "s1.compile"
+          },
+          "chosen": "Delete all files.",
+          "observable_criterion_ru": "Создан только перевод текста. Действий с файлами в этом сценарии нет.",
+          "actual_execution_status": "NOT_RUN",
+          "training_status": "NOT_RUN"
+        }
+      ],
+      "failure_example_ru": "Выделить отдельный маршрут or.automation для слов внутри цитаты или заменить требуемый перевод сообщением «файлы удалены».",
+      "simple_check_en": "Identify the outer instruction before classifying quoted verbs. Translation of an imperative does not authorize performing it.",
+      "atomic_router_result": {
+        "action": "route",
+        "domain_id": "tr.en"
+      },
+      "atomic_router_note_ru": "Здесь одно внешнее действие, поэтому и старый атомарный router выбирает tr.en.",
+      "d22_input": {
+        "full_original_prompt": "Переведи на английский точную цитату «Удалите все файлы». Не выполняй её; в ответе только перевод.",
+        "visible_catalog": {
+          "tr.en": "перевести на английский",
+          "or.automation": "управлять исполнением процесса"
+        },
+        "instruction_ru": "Верни segments/clarify по контракту D22. Текст сегментов дословный; общие условия сохраняются в полном оригинале для D23. Предметные команды не выполнять."
+      }
+    },
+    {
+      "scenario_id": "PIPE26-04",
+      "title_ru": "Неуказанный целевой язык требует вопроса",
+      "origin_family_id": "ref.pipeline26.ambiguous-target",
+      "full_original_prompt": "Переведи «שלום».",
+      "catalog": {
+        "tr.en": "перевести на английский",
+        "tr.ru": "перевести на русский",
+        "tr.he": "перевести на иврит"
+      },
+      "d22_chosen": {
+        "segments": [
+          {
+            "id": "s1",
+            "text": "Переведи «שלום».",
+            "domain_id": null,
+            "depends_on": []
+          }
+        ],
+        "clarify": [
+          {
+            "segment_id": "s1",
+            "missing": "целевой язык перевода"
+          }
+        ]
+      },
+      "stages": [],
+      "blocked_stage": "D23: предметный домен ещё не выбран",
+      "clarification_question_ru": "На какой язык перевести «שלום»?",
+      "subject_expected_output": null,
+      "observable_criterion_ru": "Сохранить исходную часть; не выбирать tr.ru по языку интерфейса и не создавать предметный ответ до уточнения языка.",
+      "failure_example_ru": "Угадать английский как язык по умолчанию, пометить маршрут подтверждённым и выдать Hello.",
+      "simple_check_en": "List the supported target languages and inspect the user text. None is selected; the source script identifies the source language, not the requested target.",
+      "atomic_router_result": {
+        "action": "clarify",
+        "domain_id": null
+      },
+      "atomic_router_note_ru": "Оба маршрутизатора сохраняют неоднозначность. Это точное незавершённое входное условие, не фиктивный успех.",
+      "d22_input": {
+        "full_original_prompt": "Переведи «שלום».",
+        "visible_catalog": {
+          "tr.en": "перевести на английский",
+          "tr.ru": "перевести на русский",
+          "tr.he": "перевести на иврит"
+        },
+        "instruction_ru": "Верни segments/clarify по контракту D22. Текст сегментов дословный; общие условия сохраняются в полном оригинале для D23. Предметные команды не выполнять."
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+# Git LFS — learning-set training data (added 2026-07-31, per Luba's directive).
+#
+# Scope: THIS folder + its subfolders ONLY. Small config/fixture JSONs elsewhere in
+# the repo are unaffected (this is a folder-scoped .gitattributes, mirroring the
+# repo's existing in-folder LFS pattern under "internal learnin 2/...").
+#
+# Guarantee: the dataset lives at the DIRECT, visible path
+#   llm mvp/learning-sets/<name>.json
+# Its bytes are stored via LFS — a committed pointer at that direct path + the blob
+# pushed to GitHub LFS. Never gitignored, never left only in a hidden/uncommitted place.
+*.json  filter=lfs diff=lfs merge=lfs -text
+# Safety net: batch training data is often JSONL, and this repo already LFS-tracks
+# .jsonl elsewhere. Delete the next line if you want strictly .json under LFS here.
+*.jsonl filter=lfs diff=lfs merge=lfs -text

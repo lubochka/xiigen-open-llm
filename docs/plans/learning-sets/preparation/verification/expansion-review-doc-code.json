@@ -1,0 +1,175 @@
+{
+  "review_kind": "bounded_independent_semantic_review",
+  "date": "2026-10-25",
+  "reviewer": "orchestration_pack",
+  "scope": "agent_work/docs_code_pack/doc-code-additions.json and 12 cards; no other staging changed",
+  "reviewed_json_sha256": "dcf95495c97f9092e15ce97bcb8cc97627fbd4b807e0eb0eda2bdcd4b2da718b",
+  "runtime_status": "NOT_RUN",
+  "training_status": "NOT_RUN",
+  "overall": "DOCUMENT_CORRECTIONS_RESOLVED_RUNTIME_PENDING",
+  "findings": [
+    {
+      "id": "DOC-CODE-REVIEW-01",
+      "severity": "medium",
+      "pair_ids": [
+        "DOC-CS-CANCEL.REF.03",
+        "DOC-CS-CANCEL.REF.04"
+      ],
+      "field": "chosen and rejected; mirrored card text",
+      "finding": "Prompt asks for passed token, call count and wrapper return, but REF.03 only describes token selection; REF.04 does not explicitly state true-branch call count and same-Task return. The chosen answer therefore omits an explicit requested component.",
+      "suggested_correction": {
+        "DOC-CS-CANCEL.REF.03": {
+          "chosen": "read вызывается один раз с request; возвращается тот же Task<int>. global не используется; связанный token не создаётся.",
+          "rejected": "read вызывается один раз с global; возвращается тот же Task<int>. request не используется; связанный token не создаётся."
+        },
+        "DOC-CS-CANCEL.REF.04": {
+          "chosen": "При enabled=true read вызывается ровно один раз с исходным ct и возвращается тот же Task<int>. При false read не вызывается и возвращается успешно завершённый Task со значением 0, в том числе при отменённом ct.",
+          "rejected": "При enabled=true read вызывается ровно один раз с CancellationToken.None и возвращается тот же Task<int>. При false read не вызывается и возвращается успешно завершённый Task со значением 0, в том числе при отменённом ct."
+        }
+      },
+      "verification": "Check all requested fields now appear and only token choice remains the discriminating error; no runtime result claimed.",
+      "resolution_status": "addressed_in_repaired_documents_not_runtime_verified"
+    },
+    {
+      "id": "DOC-CODE-REVIEW-02",
+      "severity": "medium",
+      "pair_ids": [
+        "DOC-CS-AWAIT.REF.01",
+        "DOC-CS-AWAIT.REF.02",
+        "DOC-CS-AWAIT.REF.03",
+        "DOC-CS-AWAIT.REF.04",
+        "CODE-CS-AWAIT.REF.01",
+        "CODE-CS-AWAIT.REF.02",
+        "CODE-CS-AWAIT.REF.03",
+        "CODE-CS-AWAIT.REF.04"
+      ],
+      "field": "prompt shared preamble, generation prompt and oracle fixture constraints",
+      "finding": "The prompt permits an unspecified faulted Task while the text describes preservation of the original success/fault/cancel outcome. A faulted dependency whose exception is OperationCanceledException is a concrete missing boundary: awaiting it in an async wrapper can produce a canceled wrapper, so an unrestricted promise to preserve fault status is too broad. The supplied oracle examples use ordinary errors, but that restriction currently appears in metadata rather than in the learner-visible contract.",
+      "suggested_correction": "Add to every relevant visible prompt and the generator instruction: 'В этой задаче fault означает FormatException или InvalidOperationException; отмена представлена Task со статусом Canceled. Faulted Task с OperationCanceledException в данный профиль не входит.' Keep typed-catch scenarios explicit about which error is being measured. Alternatively add an explicitly scoped separate objective for exception-versus-task-status semantics; do not silently change this objective.",
+      "verification": "Content restriction makes the described path/outcome contract match the intended ordinary-error fixtures. Native verification still NOT_RUN.",
+      "resolution_status": "addressed_in_repaired_documents_not_runtime_verified"
+    },
+    {
+      "id": "DOC-CODE-REVIEW-03",
+      "severity": "medium",
+      "pair_ids": [
+        "DOC-NG-LATEST.REF.01",
+        "DOC-NG-LATEST.REF.02",
+        "DOC-NG-LATEST.REF.03",
+        "DOC-NG-LATEST.REF.04",
+        "CODE-NG-LATEST.REF.01",
+        "CODE-NG-LATEST.REF.02",
+        "CODE-NG-LATEST.REF.03",
+        "CODE-NG-LATEST.REF.04",
+        "DOC-NG-RECOVERY.REF.01",
+        "DOC-NG-RECOVERY.REF.02",
+        "DOC-NG-RECOVERY.REF.03",
+        "DOC-NG-RECOVERY.REF.04",
+        "CODE-NG-RECOVERY.REF.01",
+        "CODE-NG-RECOVERY.REF.02",
+        "CODE-NG-RECOVERY.REF.03",
+        "CODE-NG-RECOVERY.REF.04"
+      ],
+      "field": "four RxJS cards, oracle command and module resolution",
+      "finding": "The command invokes verify.cjs under C:/x/lsets/.../oracle and tells the implementer to use RxJS 7.8.0 from an existing pinned cache, but no cache path or module-resolution binding is supplied. Having RxJS in the code repository cache does not make require('rxjs') resolve from this separate run directory. This leaves a concrete tool/path decision to the executor.",
+      "suggested_correction": "Specify a single observed dependency-root input and an exact resolver in the future harness. For example, require an absolute XIIGEN_RXJS_PACKAGE_JSON path and use node:module.createRequire on that path for rxjs and rxjs/testing; read package version from the same file, require 7.8.0, and write ORACLE_PENDING when absent. Include the environment-variable binding in the command contract; do not guess a cache directory or install latest.",
+      "verification": "Resolve both rxjs and rxjs/testing from the same version-checked root before the actual oracle. No dependency installation or execution was performed in this review.",
+      "resolution_status": "addressed_in_repaired_documents_not_runtime_verified"
+    },
+    {
+      "id": "DOC-CODE-REVIEW-04",
+      "severity": "low",
+      "pair_ids": [
+        "DOC-CS-CANCEL.REF.01",
+        "DOC-CS-CANCEL.REF.02",
+        "DOC-CS-CANCEL.REF.03",
+        "DOC-CS-CANCEL.REF.04",
+        "CODE-CS-CANCEL.REF.01",
+        "CODE-CS-CANCEL.REF.02",
+        "CODE-CS-CANCEL.REF.03",
+        "CODE-CS-CANCEL.REF.04",
+        "DOC-CS-AWAIT.REF.01",
+        "DOC-CS-AWAIT.REF.02",
+        "DOC-CS-AWAIT.REF.03",
+        "DOC-CS-AWAIT.REF.04",
+        "CODE-CS-AWAIT.REF.01",
+        "CODE-CS-AWAIT.REF.02",
+        "CODE-CS-AWAIT.REF.03",
+        "CODE-CS-AWAIT.REF.04"
+      ],
+      "field": "four .NET cards, future Program.cs result path",
+      "finding": "The documented cwd is the preparation directory, while dotnet run --project does not itself set the process cwd to the project directory. The sentence 'Program writes oracle/results.json' is therefore ambiguous and can place results outside the run folder.",
+      "suggested_correction": "Give Program.cs an explicit absolute --out argument after the dotnet run '--' delimiter, pointing to this run's oracle/results.json, and require the harness to use that argument. Alternatively state an explicit Set-Location to the exact run folder for the oracle command and restore the prior location afterwards.",
+      "verification": "Result artifact must resolve to the declared run folder and include pair_id; actual oracle remains NOT_RUN.",
+      "resolution_status": "addressed_in_repaired_documents_not_runtime_verified"
+    },
+    {
+      "id": "DOC-CODE-REVIEW-05",
+      "severity": "pedagogical_note",
+      "pair_ids": [
+        "CODE-NG-LATEST.REF.01",
+        "CODE-NG-LATEST.REF.02",
+        "CODE-NG-LATEST.REF.03",
+        "CODE-NG-LATEST.REF.04"
+      ],
+      "field": "learning goal and interpretation of any later measured gain",
+      "finding": "All four chosen code answers are identical and every prompt explicitly says to use switchMap. The examples are valid for constructing the named operator expression, but a learner can answer without interpreting the different timelines. Improvement here does not alone establish learned choice of cancellation semantics.",
+      "suggested_correction": "Either state that the objective measures construction of the already-selected operator and use the DOC-NG-LATEST traces for behavioral understanding, or remove the explicit operator-name answer cue in newly generated selection examples and require a semantic behavior oracle. Do not count simple renamed copies as independent scenario families.",
+      "verification": "Scope the eventual learning claim to the actual trained skill; no automatic rejection of these syntactically valid reference examples is required.",
+      "resolution_status": "addressed_in_repaired_documents_not_runtime_verified"
+    }
+  ],
+  "observations_without_found_error": [
+    {
+      "area": "SQL LEFT JOIN",
+      "pair_ids": [
+        "DOC-SQL-LEFT.REF.01",
+        "DOC-SQL-LEFT.REF.02",
+        "DOC-SQL-LEFT.REF.03",
+        "DOC-SQL-LEFT.REF.04",
+        "CODE-SQL-LEFT.REF.01",
+        "CODE-SQL-LEFT.REF.02",
+        "CODE-SQL-LEFT.REF.03",
+        "CODE-SQL-LEFT.REF.04"
+      ],
+      "observation": "By bounded logical inspection, shown ON/derived-table predicates preserve null-extended parents and the listed ordered rows/multiplicity are consistent; rejected WHERE versions remove exactly those parents. This is not SQL Server execution evidence."
+    },
+    {
+      "area": "SQL guarded UPDATE",
+      "observation": "Shortage, equality, nonpositive quantity and absent-ID cases have consistent rowcounts and final values under the explicit no-trigger/no-concurrency fixtures. The pack correctly avoids claiming transaction-wide rollback or concurrency performance."
+    },
+    {
+      "area": "RxJS virtual traces",
+      "observation": "Shown switchMap values, retention of already emitted values, completion after the last inner and inner-versus-outer catchError traces are internally consistent on the stated schedules. Empty emissions are correctly treated as one oracle case, not a 0-to-0 learning result."
+    },
+    {
+      "area": "source lineage",
+      "observation": "DOC/CODE counterparts share family IDs and all new groups carry links to old reference families in derived_from/leakage_group_ids. LEFT-JOIN .01 and .02 share a family. The audit explicitly avoids claiming 23 independent sources. No false-independence claim was found in the inspected material."
+    },
+    {
+      "area": "prepare commands",
+      "observation": "Omitting --rag-root in these cards is currently feasible because the inspected sets.py parser defaults it to C:/x/xp-rag/llm mvp/learning-sets/preparation. No guessed custom training runner is introduced."
+    }
+  ],
+  "not_claimed": [
+    "all pairs runtime-tested",
+    "48 semantic PASS results",
+    "30 review passes",
+    "trained-model quality",
+    "new measured improvements",
+    "external source verification"
+  ],
+  "recheck": {
+    "reviewed_json_sha256": "a9f8a9969096746ff065bc6dd02968ecb0b1b611220556a9f424791a8e62fbf3",
+    "bounded_scope": "Only named five findings and mirrored JSON/cards; no native execution",
+    "runtime_status": "NOT_RUN",
+    "training_status": "NOT_RUN",
+    "resolution": {
+      "DOC-CODE-REVIEW-01": "Exact call count and same Task identity added to both targets.",
+      "DOC-CODE-REVIEW-02": "Learner-visible completion modes restricted to explicit ordinary exception fixtures and true canceled Tasks; faulted OperationCanceledException excluded.",
+      "DOC-CODE-REVIEW-03": "Explicit observed absolute RxJS package path plus createRequire and version guard specified; missing input remains pending, no configured environment claimed.",
+      "DOC-CODE-REVIEW-04": "Absolute --out argument specified after dotnet run separator; no relative-cwd output ambiguity in harness contract.",
+      "DOC-CODE-REVIEW-05": "CODE goal explicitly scoped to composition of named switchMap; independent operator-selection gain no longer implied."
+    }
+  }
+}

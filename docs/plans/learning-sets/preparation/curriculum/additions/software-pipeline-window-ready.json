@@ -1,0 +1,2746 @@
+{
+  "schema_version": "xiigen.curriculum.addition.v1",
+  "created_on": "2026-10-25",
+  "status": "REFERENCE_ONLY_NOT_GENERATED_NOT_TRAINED",
+  "scope_ru": "Шесть узких предметных заданий: C# pipeline/decimal, SQL window/rank, Angular config docs/code. 48 авторских reference-пар. Семейные связи с исходными parent references сохранены; 48 строк не объявляются 48 независимыми семьями. Китайская генерация, oracle, review и Student не запускались.",
+  "allocation": {
+    "kind": "planned_not_generated",
+    "first_batch_pairs_per_objective": 10,
+    "pilot_train_pairs_per_objective": 100,
+    "pilot_dev_pairs_per_objective": 20,
+    "pilot_exam_pairs_per_objective": 20,
+    "new_parent_target_train_pairs": 1000,
+    "note_ru": "Квоты прежних родителей перераспределяются между дочерними целями; не удваивать budget parent+child. Новый CODE-NG-05 добавляет 1000 плановых TRAIN-пар. Пилоты входят в TRAIN; DEV/EXAM планируются отдельно."
+  },
+  "parent_topic_definition": {
+    "id": "CODE-NG-05",
+    "title": "Ожидание runtime config по явному контракту",
+    "domain_ids": [
+      "code.angular"
+    ],
+    "profiles": [
+      "base"
+    ],
+    "card": "domains/coding/CODE-NG-05.md",
+    "source_refs": [
+      "RAG-027",
+      "RAG-028",
+      "RAG-037"
+    ],
+    "prereqs": [],
+    "target_pairs_per_profile": 1000,
+    "target_split": "train"
+  },
+  "suggested_first_runs": {
+    "DOC-CS-PIPELINE/base": "S701",
+    "CODE-CS-ROUND-STAGE/base": "S702",
+    "DOC-SQL-WINDOW-FRAME/base": "S703",
+    "CODE-SQL-RANK-TIE/base": "S704",
+    "DOC-NG-CONFIG-READY/base": "S705",
+    "CODE-NG-CONFIG-READY/base": "S706"
+  },
+  "objectives": [
+    {
+      "objective_id": "DOC-CS-PIPELINE",
+      "topic_id": "DOC-CS-03",
+      "title_ru": "Описать next, короткое завершение и порядок эффектов конвейера",
+      "domain_ids": [
+        "docs.csharp"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-028",
+        "RAG-029"
+      ],
+      "learning_goal_ru": "Восстановить наблюдаемую последовательность конкретного конвейера по видимым await/return/throw; не приписывать ему скрытый ASP.NET lifecycle.",
+      "prerequisites": [
+        "Прочитать готовый request, одну назначенную карточку и вложенные RAG-выдержки.",
+        "Использовать назначенный family-plan; TRAIN не получает скрытые DEV/EXAM."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Создавай маленькие C#-симуляции middleware-подобного конвейера. Используй полностью показанные локальные функции с Func<Task> next, явные await, один список trace и ровно одну точку запуска. Назови это изолированной симуляцией: без WebApplication, реального HTTP-запроса или Startup нельзя заявлять запуск ASP.NET Core host. Проверяй одну границу: код после await вызывается только после успешного завершения next; ветка без next не запускает внутренний обработчик; возврат из внутреннего обработчика не равен возврату из внешнего; finally предшествует внешнему catch. Для pending дай управляемый TaskCompletionSource и точные точки снимка. Не спрашивай о скрытой БД, auth, сети, потоках или зависимостях.\n\nПРОСТАЯ САМОПРОВЕРКА:\n1. Нарисуй стек вызовов по конкретным вызовам next; к отсутствующему next не добавляй внутренние шаги.\n2. Добавляй trace в точном порядке. Для await останови внешнюю функцию до завершения внутренней.\n3. Return завершает только текущую функцию; throw пропускает обычные операторы, пока не встретится соответствующий catch.\n4. Для каждой finally сначала добавь её эффекты, затем переходи к внешнему catch.\n5. Сравни списки chosen/rejected: одна пропущенная, добавленная либо переставленная причинная группа; не скрытый второй дефект.\n\nРаботай по одному готовому request.json: один topic_id, objective_id, domain_id, profile_id и split. В каждом prompt повтори среду, полный видимый код/данные, точку наблюдения и форму ответа: metadata не попадает в строгую проекцию prompt/chosen/rejected. Создай полный chosen и близкий rejected с одним основным содержательным дефектом, одинакового формата. Не заменяй rejected синтаксической ошибкой, шуткой, заведомо коротким ответом или другой правильной реализацией. Объяснение проверки, source_refs и error_tag записывай вне ответов.\nСначала выпиши маленькую таблицу состояния либо результата по условию, затем сравни с ней обе альтернативы. Это самопроверка автора кандидатов, не независимая оценка качества и не измерение обучения. Если по указанному входу ответы одинаковы, измени различающий вход в пределах задания; не придумывай победу. Смена имени или чисел сама по себе не создаёт независимую семью. Производные, обратные и DOC/CODE-варианты конкретного случая наследуют общий origin/leakage group и split. Публичные reference не являются закрытым EXAM.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они дают методику и исходную тематику. Новые фрагменты являются авторскими симуляциями; runtime/oracle сейчас NOT_RUN. Не объявляй новую симуляцию извлечённым production-кодом, измеренным результатом или китайской генерацией.\nРоль человека при выборе материала выполняет CODEX с Astra 6 ultracode; оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт chosen/rejected. Сейчас CREATE_ONLY: назначение уже дано карточкой/request. Не запускай новые selection/review/oracle/accept/export/Student/production CI и не задерживай следующую партию ради них. Модель — фактически текущая выбранная в Kiro, без override; неизвестное имя/session запиши unknown. Checksum, подписи, profile receipts и независимый review не нужны для создания.\nКорень наборов C:/Users/lubao/Documents/xiigen/llm mvp/learning-sets; подготовка находится в preparation внутри него. Возьми абсолютные входные и выходные пути из request.paths, не ищи runner в llm_mvp_core. После записи реальных JSONL-строк выполни одну готовую команду finish, получи структурный DRAFT_CREATED и перейди к next_stream_id полной execution-queue.json. PREPARED без draft не считается созданием. Старые данные/попытки не удалять; существующий run продолжать через resume.\nПри прямом NEXT/новом ID немедленно перейти к нему: запрещено продолжать предыдущую задачу, её отчёт или исправления. STOP прекращает действия сразу. Живой процесс ждать штатным wait/resume по единственному handle до terminal в том же ходе; не запускать дубликаты, не делать частый polling и не завершать ход словом «жду». Отчёт по-русски: тема, созданные строки/семьи, точный файл, фактическая модель, структурный статус, следующий ID. Нельзя приписывать вызов Astra текущей модели.",
+      "response_contract_ru": "Русский ответ: точный trace или две явно названные точки состояния и короткое объяснение видимого control-flow; не переписывать код.",
+      "scenario_axes": [
+        {
+          "axis": "выход внутреннего звена",
+          "values": [
+            "успех",
+            "нет next",
+            "условный return",
+            "исключение",
+            "pending"
+          ]
+        },
+        {
+          "axis": "наблюдение",
+          "values": [
+            "trace",
+            "снимок до completion",
+            "после завершения",
+            "catch/finally"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения в той же партии.",
+        "Смешение языковых версий, SQL-диалектов либо AngularJS/Angular.",
+        "Изменение production и запуск приёмки/обучения вместо создания.",
+        "Объявление ожидаемого результата наблюдавшимся."
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology/topic evidence; source-bounded authored simulations",
+        "version_profile": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+        "balance": "Чередовать положительные, граничные и противоположные условия; не учить выбору по имени API.",
+        "self_check_ru": [
+          "Нарисуй стек вызовов по конкретным вызовам next; к отсутствующему next не добавляй внутренние шаги.",
+          "Добавляй trace в точном порядке. Для await останови внешнюю функцию до завершения внутренней.",
+          "Return завершает только текущую функцию; throw пропускает обычные операторы, пока не встретится соответствующий catch.",
+          "Для каждой finally сначала добавь её эффекты, затем переходи к внешнему catch.",
+          "Сравни списки chosen/rejected: одна пропущенная, добавленная либо переставленная причинная группа; не скрытый второй дефект."
+        ]
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separately assigned later stage; not a CREATE_ONLY gate",
+        "checks": [
+          "CODEX с Astra 6 ultracode выполняет независимый выбор и оценку; генератор не выдаёт свой ответ за его вызов.",
+          "Обе альтернативы проверять в одинаковом fresh fixture и заданном runtime.",
+          "Сейчас oracle и Student NOT_RUN; ожидаемые значения не являются измерениями."
+        ]
+      },
+      "examples": [
+        {
+          "example_id": "DOC-CS-PIPELINE.REF.01",
+          "profile_id": "base",
+          "family_id": "v7.ref.pipeline.nested-success",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-029"
+          ],
+          "prompt": "Авторская изолированная симуляция C# 10 / .NET 6; using System; using System.Collections.Generic; using System.Linq; using System.Threading.Tasks; доступны. Это не запуск ASP.NET Core host. Фрагмент находится в async-методе. List.Add не выбрасывает исключений. var t=new List<string>(); async Task A(Func<Task> next){t.Add(\"A+\");await next();t.Add(\"A-\");} async Task B(Func<Task> next){t.Add(\"B+\");await next();t.Add(\"B-\");} Task C(){t.Add(\"C\");return Task.CompletedTask;} await A(()=>B(C)); Назови t в порядке записей.",
+          "chosen": "[\"A+\",\"B+\",\"C\",\"B-\",\"A-\"]. Внешние продолжения выполняются после успешного завершения внутренних вызовов.",
+          "rejected": "[\"A+\",\"B+\",\"C\",\"A-\",\"B-\"]. После C сначала завершается внешнее A, затем внутреннее B.",
+          "error_tag": "continuation_order_reversed",
+          "rationale": "Переставлены два продолжения после await.",
+          "counterexample": "Отложи A- до завершения всей B; B- относится к B, затем завершается A.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+            "origin_family_id": "v7.ref.pipeline.nested-success",
+            "leakage_group_ids": [
+              "v7.ref.pipeline.nested-success"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+              "expected": {
+                "trace": [
+                  "A+",
+                  "B+",
+                  "C",
+                  "B-",
+                  "A-"
+                ]
+              },
+              "assertion": "Отложи A- до завершения всей B; B- относится к B, затем завершается A.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-03"
+          }
+        },
+        {
+          "example_id": "DOC-CS-PIPELINE.REF.02",
+          "profile_id": "base",
+          "family_id": "v7.ref.pipeline.short-circuit",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-029"
+          ],
+          "prompt": "Авторская изолированная симуляция C# 10 / .NET 6; using System; using System.Collections.Generic; using System.Linq; using System.Threading.Tasks; доступны. Это не запуск ASP.NET Core host. Фрагмент находится в async-методе. List.Add не выбрасывает исключений. var t=new List<string>(); async Task A(Func<Task> next){t.Add(\"A+\");await next();t.Add(\"A-\");} Task B(Func<Task> next){t.Add(\"Bstop\");return Task.CompletedTask;} Task C(){t.Add(\"C\");return Task.CompletedTask;} await A(()=>B(C)); Назови t.",
+          "chosen": "[\"A+\",\"Bstop\",\"A-\"]. B не вызывает next, поэтому C не выполняется; B успешно завершается, и A продолжает работу.",
+          "rejected": "[\"A+\",\"Bstop\",\"C\",\"A-\"]. После Bstop конвейер автоматически запускает C, затем продолжает A.",
+          "error_tag": "implicit_next_invented",
+          "rationale": "Видимый B вообще не вызывает C.",
+          "counterexample": "Сосчитай реальные вызовы next в B: ноль; запись C не может появиться.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+            "origin_family_id": "v7.ref.pipeline.short-circuit",
+            "leakage_group_ids": [
+              "v7.ref.pipeline.short-circuit"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+              "expected": {
+                "trace": [
+                  "A+",
+                  "Bstop",
+                  "A-"
+                ]
+              },
+              "assertion": "Сосчитай реальные вызовы next в B: ноль; запись C не может появиться.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-03"
+          }
+        },
+        {
+          "example_id": "DOC-CS-PIPELINE.REF.03",
+          "profile_id": "base",
+          "family_id": "v7.ref.pipeline.conditional-return",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-029"
+          ],
+          "prompt": "Авторская изолированная симуляция C# 10 / .NET 6; using System; using System.Collections.Generic; using System.Linq; using System.Threading.Tasks; доступны. Это не запуск ASP.NET Core host. Фрагмент находится в async-методе. List.Add не выбрасывает исключений. var t=new List<string>(); bool blocked=true; async Task A(Func<Task> next){t.Add(\"A+\");await next();t.Add(\"A-\");} async Task B(Func<Task> next){t.Add(\"B+\");if(blocked){t.Add(\"blocked\");return;}await next();t.Add(\"B-\");} Task C(){t.Add(\"C\");return Task.CompletedTask;} await A(()=>B(C)); Назови t.",
+          "chosen": "[\"A+\",\"B+\",\"blocked\",\"A-\"]. Return завершает B; её Task успешен, поэтому A выполняет своё продолжение.",
+          "rejected": "[\"A+\",\"B+\",\"blocked\"]. Return из B завершает также A, поэтому A- отсутствует.",
+          "error_tag": "inner_return_exits_caller",
+          "rationale": "Return внутренней функции ошибочно перенесён на вызывающую.",
+          "counterexample": "После завершившегося Task B проверь следующий оператор A, а не продолжение B.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+            "origin_family_id": "v7.ref.pipeline.conditional-return",
+            "leakage_group_ids": [
+              "v7.ref.pipeline.conditional-return"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+              "expected": {
+                "trace": [
+                  "A+",
+                  "B+",
+                  "blocked",
+                  "A-"
+                ]
+              },
+              "assertion": "После завершившегося Task B проверь следующий оператор A, а не продолжение B.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-03"
+          }
+        },
+        {
+          "example_id": "DOC-CS-PIPELINE.REF.04",
+          "profile_id": "base",
+          "family_id": "v7.ref.pipeline.caught-continues",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-029"
+          ],
+          "prompt": "Авторская изолированная симуляция C# 10 / .NET 6; using System; using System.Collections.Generic; using System.Linq; using System.Threading.Tasks; доступны. Это не запуск ASP.NET Core host. Фрагмент находится в async-методе. List.Add не выбрасывает исключений. var t=new List<string>(); async Task A(Func<Task> next){t.Add(\"A+\");try{await next();}catch(InvalidOperationException){t.Add(\"caught\");}t.Add(\"A-\");} Task B(){t.Add(\"B!\");throw new InvalidOperationException();} await A(B); Назови t.",
+          "chosen": "[\"A+\",\"B!\",\"caught\",\"A-\"]. A перехватывает указанную ошибку и продолжает после catch.",
+          "rejected": "[\"A+\",\"B!\",\"caught\"]. Перехваченная ошибка всё равно не допускает выполнения A-.",
+          "error_tag": "caught_exception_still_exits",
+          "rationale": "Пропущено обычное продолжение после успешно завершённого catch.",
+          "counterexample": "В catch нет return/throw; следующий t.Add(\"A-\") достижим.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+            "origin_family_id": "v7.ref.pipeline.caught-continues",
+            "leakage_group_ids": [
+              "v7.ref.pipeline.caught-continues"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+              "expected": {
+                "trace": [
+                  "A+",
+                  "B!",
+                  "caught",
+                  "A-"
+                ]
+              },
+              "assertion": "В catch нет return/throw; следующий t.Add(\"A-\") достижим.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-03"
+          }
+        },
+        {
+          "example_id": "DOC-CS-PIPELINE.REF.05",
+          "profile_id": "base",
+          "family_id": "v7.ref.pipeline.finally-unwind",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-029"
+          ],
+          "prompt": "Авторская изолированная симуляция C# 10 / .NET 6; using System; using System.Collections.Generic; using System.Linq; using System.Threading.Tasks; доступны. Это не запуск ASP.NET Core host. Фрагмент находится в async-методе. List.Add не выбрасывает исключений. var t=new List<string>(); async Task A(Func<Task> next){t.Add(\"A+\");try{await next();}finally{t.Add(\"cleanup\");}} Task B(){t.Add(\"B!\");throw new InvalidOperationException();} try{await A(B);}catch(InvalidOperationException){t.Add(\"outer\");} Назови t.",
+          "chosen": "[\"A+\",\"B!\",\"cleanup\",\"outer\"]. Finally внутри A выполняется до передачи ошибки внешнему catch.",
+          "rejected": "[\"A+\",\"B!\",\"outer\",\"cleanup\"]. Сначала внешний catch получает ошибку, затем завершается finally A.",
+          "error_tag": "outer_catch_before_finally",
+          "rationale": "Одна ошибка — порядок очистки и внешнего обработчика.",
+          "counterexample": "При выходе из A по ошибке выполните её finally прежде внешнего catch.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+            "origin_family_id": "v7.ref.pipeline.finally-unwind",
+            "leakage_group_ids": [
+              "v7.ref.pipeline.finally-unwind"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+              "expected": {
+                "trace": [
+                  "A+",
+                  "B!",
+                  "cleanup",
+                  "outer"
+                ]
+              },
+              "assertion": "При выходе из A по ошибке выполните её finally прежде внешнего catch.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-03"
+          }
+        },
+        {
+          "example_id": "DOC-CS-PIPELINE.REF.06",
+          "profile_id": "base",
+          "family_id": "v7.ref.pipeline.unhandled-fault",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-029"
+          ],
+          "prompt": "Авторская изолированная симуляция C# 10 / .NET 6; using System; using System.Collections.Generic; using System.Linq; using System.Threading.Tasks; доступны. Это не запуск ASP.NET Core host. Фрагмент находится в async-методе. List.Add не выбрасывает исключений. var t=new List<string>(); async Task A(Func<Task> next){t.Add(\"A+\");await next();t.Add(\"A-\");} async Task B(Func<Task> next){t.Add(\"B+\");await next();t.Add(\"B-\");} Task C(){t.Add(\"C!\");throw new InvalidOperationException();} try{await A(()=>B(C));}catch(InvalidOperationException){t.Add(\"caught\");} Назови t.",
+          "chosen": "[\"A+\",\"B+\",\"C!\",\"caught\"]. Ошибка C прерывает оба обычных продолжения после await.",
+          "rejected": "[\"A+\",\"B+\",\"C!\",\"B-\",\"A-\",\"caught\"]. Перед передачей ошибки завершаются обычные продолжения обоих обработчиков.",
+          "error_tag": "ordinary_continuations_treated_as_finally",
+          "rationale": "Обычные Add после await ошибочно выполнены как finally.",
+          "counterexample": "В A/B нет finally; после faulted await обычные A-/B- не выполняются.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+            "origin_family_id": "v7.ref.pipeline.unhandled-fault",
+            "leakage_group_ids": [
+              "v7.ref.pipeline.unhandled-fault"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+              "expected": {
+                "trace": [
+                  "A+",
+                  "B+",
+                  "C!",
+                  "caught"
+                ]
+              },
+              "assertion": "В A/B нет finally; после faulted await обычные A-/B- не выполняются.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-03"
+          }
+        },
+        {
+          "example_id": "DOC-CS-PIPELINE.REF.07",
+          "profile_id": "base",
+          "family_id": "v7.ref.pipeline.disabled-pass-through",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-029"
+          ],
+          "prompt": "Авторская изолированная симуляция C# 10 / .NET 6; using System; using System.Collections.Generic; using System.Linq; using System.Threading.Tasks; доступны. Это не запуск ASP.NET Core host. Фрагмент находится в async-методе. List.Add не выбрасывает исключений. var t=new List<string>(); bool enabled=false; async Task A(Func<Task> next){if(!enabled){await next();return;}t.Add(\"A+\");await next();t.Add(\"A-\");} Task C(){t.Add(\"C\");return Task.CompletedTask;} await A(C); Назови t.",
+          "chosen": "[\"C\"]. Выключена дополнительная логика A, но в выключенной ветке явно вызывается next.",
+          "rejected": "[]. При enabled=false весь конвейер прекращается и C не запускается.",
+          "error_tag": "disabled_wrapper_mistaken_for_stop",
+          "rationale": "Имя enabled заменило чтение фактической ветки.",
+          "counterexample": "Выполни тело if(!enabled): сначала await next, затем return.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+            "origin_family_id": "v7.ref.pipeline.disabled-pass-through",
+            "leakage_group_ids": [
+              "v7.ref.pipeline.disabled-pass-through"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+              "expected": {
+                "trace": [
+                  "C"
+                ]
+              },
+              "assertion": "Выполни тело if(!enabled): сначала await next, затем return.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-03"
+          }
+        },
+        {
+          "example_id": "DOC-CS-PIPELINE.REF.08",
+          "profile_id": "base",
+          "family_id": "v7.ref.pipeline.pending-snapshot",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-029"
+          ],
+          "prompt": "Авторская изолированная симуляция C# 10 / .NET 6; using System; using System.Collections.Generic; using System.Linq; using System.Threading.Tasks; доступны. Это не запуск ASP.NET Core host. Фрагмент находится в async-методе. List.Add не выбрасывает исключений. var t=new List<string>(); var gate=new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously); async Task B(){t.Add(\"B+\");await gate.Task;t.Add(\"B-\");} async Task A(){t.Add(\"A+\");await B();t.Add(\"A-\");} var task=A(); var before=t.ToArray(); gate.SetResult(true); await task; var after=t.ToArray(); Назови before и after.",
+          "chosen": "before=[\"A+\",\"B+\"]; after=[\"A+\",\"B+\",\"B-\",\"A-\"]. Before снят, пока gate не завершён; after — после await task.",
+          "rejected": "before=[\"A+\",\"B+\",\"B-\",\"A-\"]; after=[\"A+\",\"B+\",\"B-\",\"A-\"]. Сам вызов A полностью исполняет конвейер до снимка before.",
+          "error_tag": "invocation_mistaken_for_completion",
+          "rationale": "Вызов async-функции ошибочно принят за ожидание pending-задачи.",
+          "counterexample": "До SetResult await gate.Task не завершён; B-/A- возможны только во втором снимке.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+            "origin_family_id": "v7.ref.pipeline.pending-snapshot",
+            "leakage_group_ids": [
+              "v7.ref.pipeline.pending-snapshot"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; nullable enabled; isolated Task pipeline, no ASP.NET host execution",
+              "expected": {
+                "before": [
+                  "A+",
+                  "B+"
+                ],
+                "after": [
+                  "A+",
+                  "B+",
+                  "B-",
+                  "A-"
+                ]
+              },
+              "assertion": "До SetResult await gate.Task не завершён; B-/A- возможны только во втором снимке.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-03"
+          }
+        }
+      ]
+    },
+    {
+      "objective_id": "CODE-CS-ROUND-STAGE",
+      "topic_id": "CODE-CS-04",
+      "title_ru": "Реализовать точный момент округления decimal",
+      "domain_ids": [
+        "code.csharp"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-028"
+      ],
+      "learning_goal_ru": "Перевести контракт округления в исполнимый decimal-код, различая сумму, отдельные позиции, масштаб и midpoint.",
+      "prerequisites": [
+        "Прочитать готовый request, одну назначенную карточку и вложенные RAG-выдержки.",
+        "Использовать назначенный family-plan; TRAIN не получает скрытые DEV/EXAM."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Создавай один короткий decimal-метод. В prompt укажи точную сигнатуру, nullable/диапазон, допустимость переполнения, число десятичных знаков, правило midpoint и момент округления. Назначь вход, на котором sum(round(x)) отличается от round(sum(x)), либо округление до умножения — от округления произведения. Используй decimal-литералы с m. Два ответа должны компилироваться с показанными импортами и отличаться одним правилом. Когда контракт требует округлять каждую позицию, это chosen; когда итог — chosen другой. Нельзя учить всегда округлять только в конце. Не меняй одновременно тип decimal, масштаб, знак и стадию.\n\nПРОСТАЯ САМОПРОВЕРКА:\n1. Выпиши значения до округления без double: например 0.335+0.335=0.670.\n2. Отдельно вычисли round каждого элемента и round суммы. При одинаковом ответе выбери различающий вход.\n3. Для midpoint укажи обе соседние десятичные величины и правило выбора; для отрицательного числа «от нуля» увеличивает модуль.\n4. Проверь масштаб и порядок операций по контракту, а не по названию функции.\n5. У chosen/rejected одна и та же сигнатура; нужные using доступны в prompt.\n\nРаботай по одному готовому request.json: один topic_id, objective_id, domain_id, profile_id и split. В каждом prompt повтори среду, полный видимый код/данные, точку наблюдения и форму ответа: metadata не попадает в строгую проекцию prompt/chosen/rejected. Создай полный chosen и близкий rejected с одним основным содержательным дефектом, одинакового формата. Не заменяй rejected синтаксической ошибкой, шуткой, заведомо коротким ответом или другой правильной реализацией. Объяснение проверки, source_refs и error_tag записывай вне ответов.\nСначала выпиши маленькую таблицу состояния либо результата по условию, затем сравни с ней обе альтернативы. Это самопроверка автора кандидатов, не независимая оценка качества и не измерение обучения. Если по указанному входу ответы одинаковы, измени различающий вход в пределах задания; не придумывай победу. Смена имени или чисел сама по себе не создаёт независимую семью. Производные, обратные и DOC/CODE-варианты конкретного случая наследуют общий origin/leakage group и split. Публичные reference не являются закрытым EXAM.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они дают методику и исходную тематику. Новые фрагменты являются авторскими симуляциями; runtime/oracle сейчас NOT_RUN. Не объявляй новую симуляцию извлечённым production-кодом, измеренным результатом или китайской генерацией.\nРоль человека при выборе материала выполняет CODEX с Astra 6 ultracode; оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт chosen/rejected. Сейчас CREATE_ONLY: назначение уже дано карточкой/request. Не запускай новые selection/review/oracle/accept/export/Student/production CI и не задерживай следующую партию ради них. Модель — фактически текущая выбранная в Kiro, без override; неизвестное имя/session запиши unknown. Checksum, подписи, profile receipts и независимый review не нужны для создания.\nКорень наборов C:/Users/lubao/Documents/xiigen/llm mvp/learning-sets; подготовка находится в preparation внутри него. Возьми абсолютные входные и выходные пути из request.paths, не ищи runner в llm_mvp_core. После записи реальных JSONL-строк выполни одну готовую команду finish, получи структурный DRAFT_CREATED и перейди к next_stream_id полной execution-queue.json. PREPARED без draft не считается созданием. Старые данные/попытки не удалять; существующий run продолжать через resume.\nПри прямом NEXT/новом ID немедленно перейти к нему: запрещено продолжать предыдущую задачу, её отчёт или исправления. STOP прекращает действия сразу. Живой процесс ждать штатным wait/resume по единственному handle до terminal в том же ходе; не запускать дубликаты, не делать частый polling и не завершать ход словом «жду». Отчёт по-русски: тема, созданные строки/семьи, точный файл, фактическая модель, структурный статус, следующий ID. Нельзя приписывать вызов Astra текущей модели.",
+      "response_contract_ru": "Только полный требуемый C#-метод без Markdown и без пояснения; пояснение и таблица самопроверки в metadata/rationale.",
+      "scenario_axes": [
+        {
+          "axis": "стадия",
+          "values": [
+            "каждая позиция",
+            "после суммы",
+            "после умножения"
+          ]
+        },
+        {
+          "axis": "правило",
+          "values": [
+            "AwayFromZero",
+            "ToEven",
+            "усечение к нулю"
+          ]
+        },
+        {
+          "axis": "вход",
+          "values": [
+            "положительный midpoint",
+            "отрицательный midpoint",
+            "различающий набор",
+            "нулевая/пустая сумма"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения в той же партии.",
+        "Смешение языковых версий, SQL-диалектов либо AngularJS/Angular.",
+        "Изменение production и запуск приёмки/обучения вместо создания.",
+        "Объявление ожидаемого результата наблюдавшимся."
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology/topic evidence; source-bounded authored simulations",
+        "version_profile": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+        "balance": "Чередовать положительные, граничные и противоположные условия; не учить выбору по имени API.",
+        "self_check_ru": [
+          "Выпиши значения до округления без double: например 0.335+0.335=0.670.",
+          "Отдельно вычисли round каждого элемента и round суммы. При одинаковом ответе выбери различающий вход.",
+          "Для midpoint укажи обе соседние десятичные величины и правило выбора; для отрицательного числа «от нуля» увеличивает модуль.",
+          "Проверь масштаб и порядок операций по контракту, а не по названию функции.",
+          "У chosen/rejected одна и та же сигнатура; нужные using доступны в prompt."
+        ]
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separately assigned later stage; not a CREATE_ONLY gate",
+        "checks": [
+          "CODEX с Astra 6 ultracode выполняет независимый выбор и оценку; генератор не выдаёт свой ответ за его вызов.",
+          "Обе альтернативы проверять в одинаковом fresh fixture и заданном runtime.",
+          "Сейчас oracle и Student NOT_RUN; ожидаемые значения не являются измерениями."
+        ]
+      },
+      "examples": [
+        {
+          "example_id": "CODE-CS-ROUND-STAGE.REF.01",
+          "profile_id": "base",
+          "family_id": "sim2.code-cs-04.f0003",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "prompt": "Авторская симуляция C# 10 / .NET 6; using System; using System.Linq; доступны. Все вычисления decimal, входы не null, переполнение исключено. Напиши static decimal Total(decimal[] xs): сначала сложить исходные xs, затем один раз округлить сумму до 2 знаков, midpoint AwayFromZero. Контроль xs=[0.335m,0.335m].",
+          "chosen": "static decimal Total(decimal[] xs) => Math.Round(xs.Sum(), 2, MidpointRounding.AwayFromZero);",
+          "rejected": "static decimal Total(decimal[] xs) => xs.Sum(x => Math.Round(x, 2, MidpointRounding.AwayFromZero));",
+          "error_tag": "round_items_instead_of_total",
+          "rationale": "По контракту округляется сумма 0.670, не две позиции по 0.335.",
+          "counterexample": "0.335+0.335=0.670→0.67; 0.34+0.34=0.68.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+            "origin_family_id": "sim2.code-cs-04.f0003",
+            "leakage_group_ids": [
+              "sim2.code-cs-04.f0003"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+              "expected": {
+                "input": [
+                  "0.335",
+                  "0.335"
+                ],
+                "chosen": "0.67",
+                "rejected": "0.68"
+              },
+              "assertion": "0.335+0.335=0.670→0.67; 0.34+0.34=0.68.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-CS-04",
+            "derived_from_reference_family_ids": [
+              "sim2.code-cs-04.f0003"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-CS-ROUND-STAGE.REF.02",
+          "profile_id": "base",
+          "family_id": "sim2.code-cs-04.f0003",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "prompt": "Авторская симуляция C# 10 / .NET 6; using System; using System.Linq; доступны. Все вычисления decimal, входы не null, переполнение исключено. Напиши static decimal Invoice(decimal[] xs): округлить каждую позицию до 2 знаков AwayFromZero, затем сложить позиции. Контроль xs=[0.335m,0.335m].",
+          "chosen": "static decimal Invoice(decimal[] xs) => xs.Sum(x => Math.Round(x, 2, MidpointRounding.AwayFromZero));",
+          "rejected": "static decimal Invoice(decimal[] xs) => Math.Round(xs.Sum(), 2, MidpointRounding.AwayFromZero);",
+          "error_tag": "round_total_instead_of_items",
+          "rationale": "Здесь контракт намеренно противоположный: сначала округляется каждая позиция.",
+          "counterexample": "Две позиции по 0.34 дают 0.68; round суммы даёт 0.67.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+            "origin_family_id": "sim2.code-cs-04.f0003",
+            "leakage_group_ids": [
+              "sim2.code-cs-04.f0003"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+              "expected": {
+                "input": [
+                  "0.335",
+                  "0.335"
+                ],
+                "chosen": "0.68",
+                "rejected": "0.67"
+              },
+              "assertion": "Две позиции по 0.34 дают 0.68; round суммы даёт 0.67.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-CS-04",
+            "derived_from_reference_family_ids": [
+              "sim2.code-cs-04.f0003"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-CS-ROUND-STAGE.REF.03",
+          "profile_id": "base",
+          "family_id": "sim2.code-cs-04.f0001",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "prompt": "Авторская симуляция C# 10 / .NET 6; using System; using System.Linq; доступны. Все вычисления decimal, входы не null, переполнение исключено. Напиши static decimal R(decimal x): 2 знака, midpoint от нуля. Контроль x=-1.225m.",
+          "chosen": "static decimal R(decimal x) => Math.Round(x, 2, MidpointRounding.AwayFromZero);",
+          "rejected": "static decimal R(decimal x) => Math.Round(x, 2, MidpointRounding.ToEven);",
+          "error_tag": "negative_midpoint_wrong_mode",
+          "rationale": "В rejected отрицательный midpoint округлён к чётному.",
+          "counterexample": "-1.225 между -1.22 и -1.23; дальше от 0 находится -1.23.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+            "origin_family_id": "sim2.code-cs-04.f0001",
+            "leakage_group_ids": [
+              "sim2.code-cs-04.f0001"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+              "expected": {
+                "chosen": "-1.23",
+                "rejected": "-1.22"
+              },
+              "assertion": "-1.225 между -1.22 и -1.23; дальше от 0 находится -1.23.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-CS-04",
+            "derived_from_reference_family_ids": [
+              "sim2.code-cs-04.f0001"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-CS-ROUND-STAGE.REF.04",
+          "profile_id": "base",
+          "family_id": "sim2.code-cs-04.f0002",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "prompt": "Авторская симуляция C# 10 / .NET 6; using System; using System.Linq; доступны. Все вычисления decimal, входы не null, переполнение исключено. Напиши static decimal R(decimal x): 2 знака, midpoint к чётной последней сохранённой цифре. Контроль x=1.225m.",
+          "chosen": "static decimal R(decimal x) => Math.Round(x, 2, MidpointRounding.ToEven);",
+          "rejected": "static decimal R(decimal x) => Math.Round(x, 2, MidpointRounding.AwayFromZero);",
+          "error_tag": "even_midpoint_wrong_mode",
+          "rationale": "Контракт к чётному делает 1.22 правильным, а не 1.23.",
+          "counterexample": "Сотые у 1.22 равны 2 (чётная), у 1.23 равны 3.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+            "origin_family_id": "sim2.code-cs-04.f0002",
+            "leakage_group_ids": [
+              "sim2.code-cs-04.f0002"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+              "expected": {
+                "chosen": "1.22",
+                "rejected": "1.23"
+              },
+              "assertion": "Сотые у 1.22 равны 2 (чётная), у 1.23 равны 3.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-CS-04",
+            "derived_from_reference_family_ids": [
+              "sim2.code-cs-04.f0002"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-CS-ROUND-STAGE.REF.05",
+          "profile_id": "base",
+          "family_id": "sim2.code-cs-04.f0005",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "prompt": "Авторская симуляция C# 10 / .NET 6; using System; using System.Linq; доступны. Все вычисления decimal, входы не null, переполнение исключено. Напиши static decimal Charge(decimal price,int count): сначала price*count, затем 2 знака AwayFromZero. Контроль price=1.005m,count=2.",
+          "chosen": "static decimal Charge(decimal price, int count) => Math.Round(price * count, 2, MidpointRounding.AwayFromZero);",
+          "rejected": "static decimal Charge(decimal price, int count) => Math.Round(price, 2, MidpointRounding.AwayFromZero) * count;",
+          "error_tag": "round_before_multiply",
+          "rationale": "Округление преждевременно применено к цене.",
+          "counterexample": "1.005*2=2.010→2.01; 1.01*2=2.02.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+            "origin_family_id": "sim2.code-cs-04.f0005",
+            "leakage_group_ids": [
+              "sim2.code-cs-04.f0005"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+              "expected": {
+                "chosen": "2.01",
+                "rejected": "2.02"
+              },
+              "assertion": "1.005*2=2.010→2.01; 1.01*2=2.02.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-CS-04",
+            "derived_from_reference_family_ids": [
+              "sim2.code-cs-04.f0005"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-CS-ROUND-STAGE.REF.06",
+          "profile_id": "base",
+          "family_id": "sim2.code-cs-04.f0004",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "prompt": "Авторская симуляция C# 10 / .NET 6; using System; using System.Linq; доступны. Все вычисления decimal, входы не null, переполнение исключено. Напиши static decimal Cut(decimal x): оставить 2 знака усечением к нулю. |x|<1000000m. Контроль x=-1.239m.",
+          "chosen": "static decimal Cut(decimal x) => Math.Truncate(x * 100m) / 100m;",
+          "rejected": "static decimal Cut(decimal x) => Math.Floor(x * 100m) / 100m;",
+          "error_tag": "floor_instead_of_toward_zero",
+          "rationale": "Floor для отрицательного значения уходит дальше от 0.",
+          "counterexample": "-123.9 усечь к 0→-123; floor→-124; затем разделить на 100.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+            "origin_family_id": "sim2.code-cs-04.f0004",
+            "leakage_group_ids": [
+              "sim2.code-cs-04.f0004"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+              "expected": {
+                "chosen": "-1.23",
+                "rejected": "-1.24"
+              },
+              "assertion": "-123.9 усечь к 0→-123; floor→-124; затем разделить на 100.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-CS-04",
+            "derived_from_reference_family_ids": [
+              "sim2.code-cs-04.f0004"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-CS-ROUND-STAGE.REF.07",
+          "profile_id": "base",
+          "family_id": "sim2.code-cs-04.f0006",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "prompt": "Авторская симуляция C# 10 / .NET 6; using System; using System.Linq; доступны. Все вычисления decimal, входы не null, переполнение исключено. Напиши static decimal Mills(decimal x): округлить до 3 знаков AwayFromZero. Контроль x=0.0015m.",
+          "chosen": "static decimal Mills(decimal x) => Math.Round(x, 3, MidpointRounding.AwayFromZero);",
+          "rejected": "static decimal Mills(decimal x) => Math.Round(x, 2, MidpointRounding.AwayFromZero);",
+          "error_tag": "scale_two_instead_of_three",
+          "rationale": "Изменён единственный требуемый параметр разрядности.",
+          "counterexample": "На 3 знаках 0.0015—midpoint между 0.001/0.002; на 2 знаках это 0.00.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+            "origin_family_id": "sim2.code-cs-04.f0006",
+            "leakage_group_ids": [
+              "sim2.code-cs-04.f0006"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+              "expected": {
+                "chosen": "0.002",
+                "rejected": "0.00"
+              },
+              "assertion": "На 3 знаках 0.0015—midpoint между 0.001/0.002; на 2 знаках это 0.00.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-CS-04",
+            "derived_from_reference_family_ids": [
+              "sim2.code-cs-04.f0006"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-CS-ROUND-STAGE.REF.08",
+          "profile_id": "base",
+          "family_id": "v7.ref.decimal.sum-factor",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "prompt": "Авторская симуляция C# 10 / .NET 6; using System; using System.Linq; доступны. Все вычисления decimal, входы не null, переполнение исключено. Напиши static decimal ScaledTotal(decimal[] xs,decimal factor): сначала сумма, затем умножение на factor, затем округление до 2 знаков AwayFromZero. Контроль xs=[0.007m,0.008m],factor=2m.",
+          "chosen": "static decimal ScaledTotal(decimal[] xs, decimal factor) => Math.Round(xs.Sum() * factor, 2, MidpointRounding.AwayFromZero);",
+          "rejected": "static decimal ScaledTotal(decimal[] xs, decimal factor) => Math.Round(xs.Sum(), 2, MidpointRounding.AwayFromZero) * factor;",
+          "error_tag": "round_subtotal_before_factor",
+          "rationale": "Один дефект — округлён промежуточный итог вместо произведения.",
+          "counterexample": "0.007+0.008=0.015; *2=0.030→0.03; преждевременно 0.02*2=0.04.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+            "origin_family_id": "v7.ref.decimal.sum-factor",
+            "leakage_group_ids": [
+              "v7.ref.decimal.sum-factor",
+              "sim2.code-cs-04.f0005"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 10 / .NET 6; System and System.Linq; decimal arithmetic",
+              "expected": {
+                "chosen": "0.03",
+                "rejected": "0.04"
+              },
+              "assertion": "0.007+0.008=0.015; *2=0.030→0.03; преждевременно 0.02*2=0.04.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-CS-04",
+            "derived_from_reference_family_ids": [
+              "sim2.code-cs-04.f0005"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "objective_id": "DOC-SQL-WINDOW-FRAME",
+      "topic_id": "DOC-SQL-04",
+      "title_ru": "Описать строки, partition и границы оконного агрегата",
+      "domain_ids": [
+        "docs.sql"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-040"
+      ],
+      "learning_goal_ru": "Вычислить результат конкретного оконного запроса и отличить исходные строки, вход окна после WHERE/GROUP BY и его рамку.",
+      "prerequisites": [
+        "Прочитать готовый request, одну назначенную карточку и вложенные RAG-выдержки.",
+        "Использовать назначенный family-plan; TRAIN не получает скрытые DEV/EXAM."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Создавай таблицу из 3–6 строк и один T-SQL SELECT. Все типы, NULL, ключи и данные видимы. Для окна явно задай PARTITION BY, ORDER BY и ROWS/RANGE либо явно отсутствие каждого из них. Финальный ORDER BY задаёт печатный порядок отдельно от порядка внутри окна. Сначала определяй строки после WHERE/GROUP BY, затем окно; не учи правилу «окно всегда сохраняет число строк исходной таблицы», если до него была группировка. Чередуй cumulative, bounded frame, peers RANGE, NULL и window over grouped rows. Одна пара меняет один смысловой вывод, а не диалект.\n\nПРОСТАЯ САМОПРОВЕРКА:\n1. Выпиши входные строки окна после WHERE и GROUP BY. Сосчитай их до вычисления сумм.\n2. Для каждой выходной строки перечисли ID, попавшие в её partition/frame.\n3. ROWS считает позиции; RANGE CURRENT ROW включает peers с одинаковым полным ключом оконного ORDER BY.\n4. Для пустой рамки SUM даёт NULL; COUNT(Amount) не считает NULL.\n5. Выведи столько строк, сколько осталось на входе окна, затем применяй только явный финальный ORDER BY.\n\nРаботай по одному готовому request.json: один topic_id, objective_id, domain_id, profile_id и split. В каждом prompt повтори среду, полный видимый код/данные, точку наблюдения и форму ответа: metadata не попадает в строгую проекцию prompt/chosen/rejected. Создай полный chosen и близкий rejected с одним основным содержательным дефектом, одинакового формата. Не заменяй rejected синтаксической ошибкой, шуткой, заведомо коротким ответом или другой правильной реализацией. Объяснение проверки, source_refs и error_tag записывай вне ответов.\nСначала выпиши маленькую таблицу состояния либо результата по условию, затем сравни с ней обе альтернативы. Это самопроверка автора кандидатов, не независимая оценка качества и не измерение обучения. Если по указанному входу ответы одинаковы, измени различающий вход в пределах задания; не придумывай победу. Смена имени или чисел сама по себе не создаёт независимую семью. Производные, обратные и DOC/CODE-варианты конкретного случая наследуют общий origin/leakage group и split. Публичные reference не являются закрытым EXAM.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они дают методику и исходную тематику. Новые фрагменты являются авторскими симуляциями; runtime/oracle сейчас NOT_RUN. Не объявляй новую симуляцию извлечённым production-кодом, измеренным результатом или китайской генерацией.\nРоль человека при выборе материала выполняет CODEX с Astra 6 ultracode; оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт chosen/rejected. Сейчас CREATE_ONLY: назначение уже дано карточкой/request. Не запускай новые selection/review/oracle/accept/export/Student/production CI и не задерживай следующую партию ради них. Модель — фактически текущая выбранная в Kiro, без override; неизвестное имя/session запиши unknown. Checksum, подписи, profile receipts и независимый review не нужны для создания.\nКорень наборов C:/Users/lubao/Documents/xiigen/llm mvp/learning-sets; подготовка находится в preparation внутри него. Возьми абсолютные входные и выходные пути из request.paths, не ищи runner в llm_mvp_core. После записи реальных JSONL-строк выполни одну готовую команду finish, получи структурный DRAFT_CREATED и перейди к next_stream_id полной execution-queue.json. PREPARED без draft не считается созданием. Старые данные/попытки не удалять; существующий run продолжать через resume.\nПри прямом NEXT/новом ID немедленно перейти к нему: запрещено продолжать предыдущую задачу, её отчёт или исправления. STOP прекращает действия сразу. Живой процесс ждать штатным wait/resume по единственному handle до terminal в том же ходе; не запускать дубликаты, не делать частый polling и не завершать ход словом «жду». Отчёт по-русски: тема, созданные строки/семьи, точный файл, фактическая модель, структурный статус, следующий ID. Нельзя приписывать вызов Astra текущей модели.",
+      "response_contract_ru": "Русский ответ с точными строками в заданном порядке и коротким объяснением рамки; не заменять результат советом исправить SQL.",
+      "scenario_axes": [
+        {
+          "axis": "окно",
+          "values": [
+            "полный partition",
+            "накопление ROWS",
+            "скользящая рамка",
+            "RANGE peers",
+            "пустая рамка"
+          ]
+        },
+        {
+          "axis": "вход окна",
+          "values": [
+            "исходные строки",
+            "после WHERE",
+            "после GROUP BY",
+            "nullable values"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения в той же партии.",
+        "Смешение языковых версий, SQL-диалектов либо AngularJS/Angular.",
+        "Изменение production и запуск приёмки/обучения вместо создания.",
+        "Объявление ожидаемого результата наблюдавшимся."
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology/topic evidence; source-bounded authored simulations",
+        "version_profile": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+        "balance": "Чередовать положительные, граничные и противоположные условия; не учить выбору по имени API.",
+        "self_check_ru": [
+          "Выпиши входные строки окна после WHERE и GROUP BY. Сосчитай их до вычисления сумм.",
+          "Для каждой выходной строки перечисли ID, попавшие в её partition/frame.",
+          "ROWS считает позиции; RANGE CURRENT ROW включает peers с одинаковым полным ключом оконного ORDER BY.",
+          "Для пустой рамки SUM даёт NULL; COUNT(Amount) не считает NULL.",
+          "Выведи столько строк, сколько осталось на входе окна, затем применяй только явный финальный ORDER BY."
+        ]
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separately assigned later stage; not a CREATE_ONLY gate",
+        "checks": [
+          "CODEX с Astra 6 ultracode выполняет независимый выбор и оценку; генератор не выдаёт свой ответ за его вызов.",
+          "Обе альтернативы проверять в одинаковом fresh fixture и заданном runtime.",
+          "Сейчас oracle и Student NOT_RUN; ожидаемые значения не являются измерениями."
+        ]
+      },
+      "examples": [
+        {
+          "example_id": "DOC-SQL-WINDOW-FRAME.REF.01",
+          "profile_id": "base",
+          "family_id": "sim2.doc-sql-04.f0006",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @T TABLE(Id int PRIMARY KEY,Dept char(1),Amount int); INSERT @T VALUES(1,'A',10),(2,'A',5),(3,'B',7); SELECT Id,SUM(Amount) OVER(PARTITION BY Dept) AS Total FROM @T ORDER BY Id; Укажи все пары (Id,Total).",
+          "chosen": "(1,15),(2,15),(3,7). Сумма повторяется на каждой строке соответствующего Dept.",
+          "rejected": "(1,15),(3,7). Оконная сумма сворачивает каждое Dept до одной строки.",
+          "error_tag": "window_collapsed_rows",
+          "rationale": "Окно не заменено GROUP BY; потеряна строка Id=2.",
+          "counterexample": "На входе окна 3 строки, выходных тоже 3; в Dept=A сумма 10+5.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.doc-sql-04.f0006",
+            "leakage_group_ids": [
+              "sim2.doc-sql-04.f0006"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1,
+                    15
+                  ],
+                  [
+                    2,
+                    15
+                  ],
+                  [
+                    3,
+                    7
+                  ]
+                ]
+              },
+              "assertion": "На входе окна 3 строки, выходных тоже 3; в Dept=A сумма 10+5.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-04",
+            "derived_from_reference_family_ids": [
+              "sim2.doc-sql-04.f0006"
+            ]
+          }
+        },
+        {
+          "example_id": "DOC-SQL-WINDOW-FRAME.REF.02",
+          "profile_id": "base",
+          "family_id": "sim2.doc-sql-04.f0001",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @T TABLE(Id int PRIMARY KEY,Amount int); INSERT @T VALUES(1,10),(2,5),(3,7); SELECT Id,SUM(Amount) OVER(ORDER BY Id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS Total FROM @T ORDER BY Id; Укажи (Id,Total).",
+          "chosen": "(1,10),(2,15),(3,22). Рамка заканчивается на текущей строке.",
+          "rejected": "(1,22),(2,22),(3,22). Каждая строка получает сумму всей таблицы.",
+          "error_tag": "current_row_boundary_ignored",
+          "rationale": "В rejected исчезла правая граница CURRENT ROW.",
+          "counterexample": "Рамки по Id: [1], [1,2], [1,2,3].",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.doc-sql-04.f0001",
+            "leakage_group_ids": [
+              "sim2.doc-sql-04.f0001"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1,
+                    10
+                  ],
+                  [
+                    2,
+                    15
+                  ],
+                  [
+                    3,
+                    22
+                  ]
+                ]
+              },
+              "assertion": "Рамки по Id: [1], [1,2], [1,2,3].",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-04",
+            "derived_from_reference_family_ids": [
+              "sim2.doc-sql-04.f0001"
+            ]
+          }
+        },
+        {
+          "example_id": "DOC-SQL-WINDOW-FRAME.REF.03",
+          "profile_id": "base",
+          "family_id": "v7.ref.sql.range-peers",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @T TABLE(Id int PRIMARY KEY,Score int,Amount int); INSERT @T VALUES(1,1,10),(2,1,5),(3,2,7); SELECT Id,SUM(Amount) OVER(ORDER BY Score RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS Total FROM @T ORDER BY Id; Укажи (Id,Total).",
+          "chosen": "(1,15),(2,15),(3,22). Оба Score=1 — peers, поэтому первая рамка уже включает обе строки.",
+          "rejected": "(1,10),(2,15),(3,22). Первая рамка включает только физически первую строку Score=1.",
+          "error_tag": "range_treated_as_rows",
+          "rationale": "RANGE CURRENT ROW ошибочно трактуется как одна позиция ROWS.",
+          "counterexample": "У строк 1 и 2 одинаковый оконный ключ Score, поэтому одинаковые рамка и Total.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v7.ref.sql.range-peers",
+            "leakage_group_ids": [
+              "v7.ref.sql.range-peers"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1,
+                    15
+                  ],
+                  [
+                    2,
+                    15
+                  ],
+                  [
+                    3,
+                    22
+                  ]
+                ]
+              },
+              "assertion": "У строк 1 и 2 одинаковый оконный ключ Score, поэтому одинаковые рамка и Total.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-04"
+          }
+        },
+        {
+          "example_id": "DOC-SQL-WINDOW-FRAME.REF.04",
+          "profile_id": "base",
+          "family_id": "sim2.doc-sql-04.f0003",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @T TABLE(Id int PRIMARY KEY,Amount int); INSERT @T VALUES(1,2),(2,4),(3,8); SELECT Id,SUM(Amount) OVER(ORDER BY Id ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) AS Total FROM @T ORDER BY Id; Укажи (Id,Total).",
+          "chosen": "(1,2),(2,6),(3,12). Последняя рамка содержит только строки 2 и 3.",
+          "rejected": "(1,2),(2,6),(3,14). Последняя рамка содержит все предшествующие строки.",
+          "error_tag": "bounded_frame_made_unbounded",
+          "rationale": "1 PRECEDING ошибочно расширено до UNBOUNDED PRECEDING.",
+          "counterexample": "Рамки: [1], [1,2], [2,3]; для третьей строки сумма 4+8=12, а не 2+4+8.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.doc-sql-04.f0003",
+            "leakage_group_ids": [
+              "sim2.doc-sql-04.f0003"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1,
+                    2
+                  ],
+                  [
+                    2,
+                    6
+                  ],
+                  [
+                    3,
+                    12
+                  ]
+                ]
+              },
+              "assertion": "Рамки: [1], [1,2], [2,3]; для третьей строки сумма 4+8=12, а не 2+4+8.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-04",
+            "derived_from_reference_family_ids": [
+              "sim2.doc-sql-04.f0003"
+            ]
+          }
+        },
+        {
+          "example_id": "DOC-SQL-WINDOW-FRAME.REF.05",
+          "profile_id": "base",
+          "family_id": "v7.ref.sql.empty-previous-frame",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @T TABLE(Id int PRIMARY KEY,Amount int); INSERT @T VALUES(1,10),(2,20),(3,30); SELECT Id,SUM(Amount) OVER(ORDER BY Id ROWS BETWEEN 1 PRECEDING AND 1 PRECEDING) AS PreviousAmount FROM @T ORDER BY Id; Укажи (Id,PreviousAmount).",
+          "chosen": "(1,NULL),(2,10),(3,20). У первой строки рамка пуста; SUM пустой рамки равен NULL.",
+          "rejected": "(1,0),(2,10),(3,20). У первой строки SUM пустой рамки автоматически заменяется нулём.",
+          "error_tag": "empty_sum_coalesced_without_code",
+          "rationale": "В запросе нет COALESCE; NULL подменён нулём.",
+          "counterexample": "Первая строка не имеет предшественника; проверь отсутствие COALESCE.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v7.ref.sql.empty-previous-frame",
+            "leakage_group_ids": [
+              "v7.ref.sql.empty-previous-frame"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1,
+                    null
+                  ],
+                  [
+                    2,
+                    10
+                  ],
+                  [
+                    3,
+                    20
+                  ]
+                ]
+              },
+              "assertion": "Первая строка не имеет предшественника; проверь отсутствие COALESCE.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-04"
+          }
+        },
+        {
+          "example_id": "DOC-SQL-WINDOW-FRAME.REF.06",
+          "profile_id": "base",
+          "family_id": "v7.ref.sql.window-after-filter",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @T TABLE(Id int PRIMARY KEY,Active bit,Amount int); INSERT @T VALUES(1,1,10),(2,0,100),(3,1,5); SELECT Id,SUM(Amount) OVER() AS Total FROM @T WHERE Active=1 ORDER BY Id; Укажи (Id,Total).",
+          "chosen": "(1,15),(3,15). WHERE удаляет Id2 до вычисления окна.",
+          "rejected": "(1,115),(3,115). Окно сначала суммирует все строки, затем WHERE скрывает Id2.",
+          "error_tag": "where_applied_after_window",
+          "rationale": "Сумма включает исключённую строку.",
+          "counterexample": "После WHERE остаются Amount=10 и Amount=5; значение 100 не входит в окно.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v7.ref.sql.window-after-filter",
+            "leakage_group_ids": [
+              "v7.ref.sql.window-after-filter"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1,
+                    15
+                  ],
+                  [
+                    3,
+                    15
+                  ]
+                ]
+              },
+              "assertion": "После WHERE остаются Amount=10 и Amount=5; значение 100 не входит в окно.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-04"
+          }
+        },
+        {
+          "example_id": "DOC-SQL-WINDOW-FRAME.REF.07",
+          "profile_id": "base",
+          "family_id": "v7.ref.sql.window-null-count",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @T TABLE(Id int PRIMARY KEY,Amount int NULL); INSERT @T VALUES(1,10),(2,NULL),(3,5); SELECT Id,COUNT(*) OVER() AS N,COUNT(Amount) OVER() AS NN FROM @T ORDER BY Id; Укажи (Id,N,NN).",
+          "chosen": "(1,3,2),(2,3,2),(3,3,2). COUNT(*) считает строки; COUNT(Amount) — ненулевые значения.",
+          "rejected": "(1,3,3),(2,3,3),(3,3,3). Оба COUNT считают все строки независимо от NULL.",
+          "error_tag": "nullable_count_counts_null",
+          "rationale": "Один дефект: NULL посчитан как значение Amount.",
+          "counterexample": "Строк 3; значений Amount, отличных от NULL, 2. Оба числа повторяются на трёх выходных строках.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v7.ref.sql.window-null-count",
+            "leakage_group_ids": [
+              "v7.ref.sql.window-null-count"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1,
+                    3,
+                    2
+                  ],
+                  [
+                    2,
+                    3,
+                    2
+                  ],
+                  [
+                    3,
+                    3,
+                    2
+                  ]
+                ]
+              },
+              "assertion": "Строк 3; значений Amount, отличных от NULL, 2. Оба числа повторяются на трёх выходных строках.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-04"
+          }
+        },
+        {
+          "example_id": "DOC-SQL-WINDOW-FRAME.REF.08",
+          "profile_id": "base",
+          "family_id": "sim2.doc-sql-04.f0006",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @T TABLE(Id int PRIMARY KEY,Dept char(1),Amount int); INSERT @T VALUES(1,'A',10),(2,'A',5),(3,'B',7); SELECT Dept,SUM(Amount) AS DeptTotal,SUM(SUM(Amount)) OVER() AS AllTotal FROM @T GROUP BY Dept ORDER BY Dept; Укажи (Dept,DeptTotal,AllTotal).",
+          "chosen": "(A,15,22),(B,7,22). GROUP BY сначала создаёт две группы; окно суммирует два групповых итога.",
+          "rejected": "(A,10,22),(A,5,22),(B,7,22). Наличие OVER сохраняет все три исходные строки несмотря на GROUP BY.",
+          "error_tag": "window_restores_pre_group_rows",
+          "rationale": "Окно ошибочно отменяет уже выполненную группировку.",
+          "counterexample": "Вход окна — две группы с суммами 15 и 7; восстанавливать две исходные строки A нельзя.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.doc-sql-04.f0006",
+            "leakage_group_ids": [
+              "sim2.doc-sql-04.f0006"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    "A",
+                    15,
+                    22
+                  ],
+                  [
+                    "B",
+                    7,
+                    22
+                  ]
+                ]
+              },
+              "assertion": "Вход окна — две группы с суммами 15 и 7; восстанавливать две исходные строки A нельзя.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-04",
+            "derived_from_reference_family_ids": [
+              "sim2.doc-sql-04.f0006"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "objective_id": "CODE-SQL-RANK-TIE",
+      "topic_id": "CODE-SQL-03",
+      "title_ru": "Выбрать точную строку группы и сохранить её payload",
+      "domain_ids": [
+        "code.sql"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-040"
+      ],
+      "learning_goal_ru": "Построить T-SQL запрос выбора строк по полному ключу группы, критерию, tie-break и политике отсутствия кандидата.",
+      "prerequisites": [
+        "Прочитать готовый request, одну назначенную карточку и вложенные RAG-выдержки.",
+        "Использовать назначенный family-plan; TRAIN не получает скрытые DEV/EXAM."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Создавай от 3 до 6 строк в явно объявленной таблице и запрос выбора победителя. Укажи выходные столбцы и финальную сортировку. Полностью задай ключ группы, направление сравнения, правило при равенстве, допустимость всех равных максимумов, фильтр кандидатов, NULL и необходимость сохранить пустую группу. Правильный оператор определяется контрактом: TOP(1), ROW_NUMBER и DENSE_RANK не являются безусловно хорошими или плохими. Rejected должен быть синтаксически допустимым и ошибаться на показанном наборе по одной основной причине: неверный tie-break, фильтр после ранжирования, укороченный ключ, потеря пустой группы или payload чужой строки.\n\nПростая самопроверка:\n1. Раздели строки по полному ключу группы.\n2. Примени фильтр допустимости в указанной стадии.\n3. Отсортируй ID внутри каждой группы по всем критериям.\n4. Выпиши требуемые ID и payload из тех же строк.\n5. Проверь chosen и rejected на одной таблице: rejected обязан дать другое наблюдаемое значение.\n\nРаботай по одному готовому request.json: один topic_id, objective_id, domain_id, profile_id и split. В каждом prompt повтори среду, полный видимый код/данные, точку наблюдения и форму ответа: metadata не попадает в строгую проекцию prompt/chosen/rejected. Создай полный chosen и близкий rejected с одним основным содержательным дефектом, одинакового формата. Не заменяй rejected синтаксической ошибкой, шуткой, заведомо коротким ответом или другой правильной реализацией. Объяснение проверки, source_refs и error_tag записывай вне ответов.\nСначала выпиши маленькую таблицу состояния либо результата по условию, затем сравни с ней обе альтернативы. Это самопроверка автора кандидатов, не независимая оценка качества и не измерение обучения. Если по указанному входу ответы одинаковы, измени различающий вход в пределах задания; не придумывай победу. Смена имени или чисел сама по себе не создаёт независимую семью. Производные, обратные и DOC/CODE-варианты конкретного случая наследуют общий origin/leakage group и split. Публичные reference не являются закрытым EXAM.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они дают методику и исходную тематику. Новые фрагменты являются авторскими симуляциями; runtime/oracle сейчас NOT_RUN. Не объявляй новую симуляцию извлечённым production-кодом, измеренным результатом или китайской генерацией.\nРоль человека при выборе материала выполняет CODEX с Astra 6 ultracode; оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт chosen/rejected. Сейчас CREATE_ONLY: назначение уже дано карточкой/request. Не запускай новые selection/review/oracle/accept/export/Student/production CI и не задерживай следующую партию ради них. Модель — фактически текущая выбранная в Kiro, без override; неизвестное имя/session запиши unknown. Checksum, подписи, profile receipts и независимый review не нужны для создания.\nКорень наборов C:/Users/lubao/Documents/xiigen/llm mvp/learning-sets; подготовка находится в preparation внутри него. Возьми абсолютные входные и выходные пути из request.paths, не ищи runner в llm_mvp_core. После записи реальных JSONL-строк выполни одну готовую команду finish, получи структурный DRAFT_CREATED и перейди к next_stream_id полной execution-queue.json. PREPARED без draft не считается созданием. Старые данные/попытки не удалять; существующий run продолжать через resume.\nПри прямом NEXT/новом ID немедленно перейти к нему: запрещено продолжать предыдущую задачу, её отчёт или исправления. STOP прекращает действия сразу. Живой процесс ждать штатным wait/resume по единственному handle до terminal в том же ходе; не запускать дубликаты, не делать частый polling и не завершать ход словом «жду». Отчёт по-русски: тема, созданные строки/семьи, точный файл, фактическая модель, структурный статус, следующий ID. Нельзя приписывать вызов Astra текущей модели.",
+      "response_contract_ru": "Только законченный T-SQL SELECT/CTE с предоставленными табличными переменными; без DDL, Markdown и пояснений.",
+      "scenario_axes": [
+        {
+          "axis": "выбор",
+          "values": [
+            "один победитель",
+            "все максимумы",
+            "самый ранний",
+            "NULL последним"
+          ]
+        },
+        {
+          "axis": "ключ и фильтр",
+          "values": [
+            "один ключ",
+            "составной ключ",
+            "фильтр до ранжирования",
+            "пустая группа"
+          ]
+        },
+        {
+          "axis": "результат",
+          "values": [
+            "ID",
+            "payload выбранной строки",
+            "явный порядок"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения в той же партии.",
+        "Смешение языковых версий, SQL-диалектов либо AngularJS/Angular.",
+        "Изменение production и запуск приёмки/обучения вместо создания.",
+        "Объявление ожидаемого результата наблюдавшимся."
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology/topic evidence; source-bounded authored simulations",
+        "version_profile": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+        "balance": "Чередовать положительные, граничные и противоположные условия; не учить выбору по имени API.",
+        "self_check_ru": [
+          "Разбей вход на группы по всем компонентам ключа.",
+          "Если контракт требует только успешные попытки, исключи неуспешные до ранжирования.",
+          "Запиши полный порядок ID и отметь, нужен один победитель или все равные максимумы.",
+          "Payload берётся из той же выбранной строки, а не отдельным MAX.",
+          "Проверь NULL и пустую группу по явному контракту; не придумывай отсутствующую политику."
+        ]
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separately assigned later stage; not a CREATE_ONLY gate",
+        "checks": [
+          "CODEX с Astra 6 ultracode выполняет независимый выбор и оценку; генератор не выдаёт свой ответ за его вызов.",
+          "Обе альтернативы проверять в одинаковом fresh fixture и заданном runtime.",
+          "Сейчас oracle и Student NOT_RUN; ожидаемые значения не являются измерениями."
+        ]
+      },
+      "examples": [
+        {
+          "example_id": "CODE-SQL-RANK-TIE.REF.01",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-03.f0001",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @E TABLE(Id int PRIMARY KEY,UserId int NOT NULL,Seq int NOT NULL); INSERT @E VALUES(11,1,4),(12,1,4),(13,2,2); Напиши SELECT Id,UserId: по одной строке на UserId, максимальный Seq, при равенстве — максимальный Id. Вывод по UserId.",
+          "chosen": ";WITH R AS (SELECT Id,UserId,ROW_NUMBER() OVER(PARTITION BY UserId ORDER BY Seq DESC,Id DESC) AS rn FROM @E) SELECT Id,UserId FROM R WHERE rn=1 ORDER BY UserId;",
+          "rejected": ";WITH R AS (SELECT Id,UserId,ROW_NUMBER() OVER(PARTITION BY UserId ORDER BY Seq DESC,Id ASC) AS rn FROM @E) SELECT Id,UserId FROM R WHERE rn=1 ORDER BY UserId;",
+          "error_tag": "tie_break_reversed",
+          "rationale": "При равном Seq rejected выбирает меньший Id.",
+          "counterexample": "В группе UserId=1 Seq совпадает; 12 больше 11, значит победитель Id=12.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-03.f0001",
+            "leakage_group_ids": [
+              "sim2.code-sql-03.f0001"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    12,
+                    1
+                  ],
+                  [
+                    13,
+                    2
+                  ]
+                ]
+              },
+              "assertion": "В группе UserId=1 Seq совпадает; 12 больше 11, значит победитель Id=12.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-SQL-03",
+            "derived_from_reference_family_ids": [
+              "sim2.code-sql-03.f0001"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-SQL-RANK-TIE.REF.02",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-03.f0002",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @E TABLE(Id int PRIMARY KEY,GroupId int NOT NULL,Seq int NOT NULL); INSERT @E VALUES(21,1,2),(22,1,2),(23,1,3),(24,2,1); Напиши SELECT Id,GroupId: минимальный Seq, затем минимальный Id. Вывод по GroupId.",
+          "chosen": ";WITH R AS (SELECT Id,GroupId,ROW_NUMBER() OVER(PARTITION BY GroupId ORDER BY Seq ASC,Id ASC) AS rn FROM @E) SELECT Id,GroupId FROM R WHERE rn=1 ORDER BY GroupId;",
+          "rejected": ";WITH R AS (SELECT Id,GroupId,ROW_NUMBER() OVER(PARTITION BY GroupId ORDER BY Seq ASC,Id DESC) AS rn FROM @E) SELECT Id,GroupId FROM R WHERE rn=1 ORDER BY GroupId;",
+          "error_tag": "earliest_tie_break_reversed",
+          "rationale": "Seq выбран правильно; из равных требуется меньший Id.",
+          "counterexample": "У Seq=2 две кандидатуры: 21 и 22; полный порядок группы — 21,22,23.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-03.f0002",
+            "leakage_group_ids": [
+              "sim2.code-sql-03.f0002"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    21,
+                    1
+                  ],
+                  [
+                    24,
+                    2
+                  ]
+                ]
+              },
+              "assertion": "У Seq=2 две кандидатуры: 21 и 22; полный порядок группы — 21,22,23.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-SQL-03",
+            "derived_from_reference_family_ids": [
+              "sim2.code-sql-03.f0002"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-SQL-RANK-TIE.REF.03",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-03.f0004",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @S TABLE(Id int PRIMARY KEY,Team int NOT NULL,Score int NOT NULL); INSERT @S VALUES(1,1,9),(2,1,9),(3,1,7),(4,2,8); Верни SELECT Id,Team всех строк с максимальным Score своей Team, включая все равные максимумы. Вывод по Team,Id.",
+          "chosen": ";WITH R AS (SELECT Id,Team,DENSE_RANK() OVER(PARTITION BY Team ORDER BY Score DESC) AS r FROM @S) SELECT Id,Team FROM R WHERE r=1 ORDER BY Team,Id;",
+          "rejected": ";WITH R AS (SELECT Id,Team,ROW_NUMBER() OVER(PARTITION BY Team ORDER BY Score DESC,Id ASC) AS r FROM @S) SELECT Id,Team FROM R WHERE r=1 ORDER BY Team,Id;",
+          "error_tag": "ties_dropped",
+          "rationale": "ROW_NUMBER оставляет одну строку вместо всех равных максимумов.",
+          "counterexample": "В Team=1 два точных максимума 9; оба ID должны присутствовать.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-03.f0004",
+            "leakage_group_ids": [
+              "sim2.code-sql-03.f0004"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1,
+                    1
+                  ],
+                  [
+                    2,
+                    1
+                  ],
+                  [
+                    4,
+                    2
+                  ]
+                ]
+              },
+              "assertion": "В Team=1 два точных максимума 9; оба ID должны присутствовать.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-SQL-03",
+            "derived_from_reference_family_ids": [
+              "sim2.code-sql-03.f0004"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-SQL-RANK-TIE.REF.04",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-03.f0003",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @A TABLE(Id int PRIMARY KEY,Job int NOT NULL,Seq int NOT NULL,Ok bit NOT NULL); INSERT @A VALUES(1,1,1,0),(2,1,2,1),(3,2,1,1); Напиши SELECT Id,Job первой успешной попытки каждого Job: только Ok=1; порядок Seq ASC,Id ASC. Вывод по Job.",
+          "chosen": ";WITH R AS (SELECT Id,Job,ROW_NUMBER() OVER(PARTITION BY Job ORDER BY Seq ASC,Id ASC) AS rn FROM @A WHERE Ok=1) SELECT Id,Job FROM R WHERE rn=1 ORDER BY Job;",
+          "rejected": ";WITH R AS (SELECT Id,Job,Ok,ROW_NUMBER() OVER(PARTITION BY Job ORDER BY Seq ASC,Id ASC) AS rn FROM @A) SELECT Id,Job FROM R WHERE rn=1 AND Ok=1 ORDER BY Job;",
+          "error_tag": "eligibility_filtered_after_rank",
+          "rationale": "Ранняя неуспешная попытка занимает rn=1 и скрывает позднюю успешную.",
+          "counterexample": "В Job=1 сначала исключи Id=1; первая допустимая строка — Id=2.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-03.f0003",
+            "leakage_group_ids": [
+              "sim2.code-sql-03.f0003"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    2,
+                    1
+                  ],
+                  [
+                    3,
+                    2
+                  ]
+                ]
+              },
+              "assertion": "В Job=1 сначала исключи Id=1; первая допустимая строка — Id=2.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-SQL-03",
+            "derived_from_reference_family_ids": [
+              "sim2.code-sql-03.f0003"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-SQL-RANK-TIE.REF.05",
+          "profile_id": "base",
+          "family_id": "v7.ref.sql.compound-partition",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @E TABLE(Id int PRIMARY KEY,Tenant int NOT NULL,UserId int NOT NULL,Seq int NOT NULL); INSERT @E VALUES(1,1,7,5),(2,2,7,9),(3,1,7,6); Напиши SELECT Id,Tenant,UserId: последняя строка каждой пары (Tenant,UserId), порядок Seq DESC,Id DESC. Вывод по Tenant,UserId.",
+          "chosen": ";WITH R AS (SELECT Id,Tenant,UserId,ROW_NUMBER() OVER(PARTITION BY Tenant,UserId ORDER BY Seq DESC,Id DESC) AS rn FROM @E) SELECT Id,Tenant,UserId FROM R WHERE rn=1 ORDER BY Tenant,UserId;",
+          "rejected": ";WITH R AS (SELECT Id,Tenant,UserId,ROW_NUMBER() OVER(PARTITION BY UserId ORDER BY Seq DESC,Id DESC) AS rn FROM @E) SELECT Id,Tenant,UserId FROM R WHERE rn=1 ORDER BY Tenant,UserId;",
+          "error_tag": "tenant_key_dropped",
+          "rationale": "Слиты две группы разных Tenant с одинаковым UserId.",
+          "counterexample": "Ключ (1,7) независим от (2,7); должны быть два победителя.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v7.ref.sql.compound-partition",
+            "leakage_group_ids": [
+              "v7.ref.sql.compound-partition"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    3,
+                    1,
+                    7
+                  ],
+                  [
+                    2,
+                    2,
+                    7
+                  ]
+                ]
+              },
+              "assertion": "Ключ (1,7) независим от (2,7); должны быть два победителя.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-SQL-03"
+          }
+        },
+        {
+          "example_id": "CODE-SQL-RANK-TIE.REF.06",
+          "profile_id": "base",
+          "family_id": "v7.ref.sql.keep-empty-group",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @G TABLE(GroupId int PRIMARY KEY); INSERT @G VALUES(1),(2); DECLARE @E TABLE(Id int PRIMARY KEY,GroupId int,Seq int); INSERT @E VALUES(10,1,2),(11,1,3); Верни GroupId,Id для каждой строки @G. Выбирай по Seq DESC,Id DESC. Если кандидатов нет, сохрани группу с Id=NULL. Вывод по GroupId.",
+          "chosen": "SELECT g.GroupId,e.Id FROM @G AS g OUTER APPLY (SELECT TOP(1) x.Id FROM @E AS x WHERE x.GroupId=g.GroupId ORDER BY x.Seq DESC,x.Id DESC) AS e ORDER BY g.GroupId;",
+          "rejected": "SELECT g.GroupId,e.Id FROM @G AS g CROSS APPLY (SELECT TOP(1) x.Id FROM @E AS x WHERE x.GroupId=g.GroupId ORDER BY x.Seq DESC,x.Id DESC) AS e ORDER BY g.GroupId;",
+          "error_tag": "empty_group_lost",
+          "rationale": "CROSS APPLY удаляет группу без кандидата.",
+          "counterexample": "В @G две группы; контракт требует ровно две выходные строки.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v7.ref.sql.keep-empty-group",
+            "leakage_group_ids": [
+              "v7.ref.sql.keep-empty-group"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1,
+                    11
+                  ],
+                  [
+                    2,
+                    null
+                  ]
+                ]
+              },
+              "assertion": "В @G две группы; контракт требует ровно две выходные строки.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-SQL-03"
+          }
+        },
+        {
+          "example_id": "CODE-SQL-RANK-TIE.REF.07",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-03.f0006",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @R TABLE(Id int PRIMARY KEY,Doc int,Rev int,Label nvarchar(20)); INSERT @R VALUES(1,1,1,N'z'),(2,1,2,N'a'); Для сравнения Label задано z>a. Напиши SELECT Doc,Label из строки максимального Rev, при равенстве — Id DESC. Вывод по Doc.",
+          "chosen": ";WITH X AS (SELECT Doc,Label,ROW_NUMBER() OVER(PARTITION BY Doc ORDER BY Rev DESC,Id DESC) AS rn FROM @R) SELECT Doc,Label FROM X WHERE rn=1 ORDER BY Doc;",
+          "rejected": "SELECT Doc,MAX(Label) AS Label FROM @R GROUP BY Doc ORDER BY Doc;",
+          "error_tag": "payload_taken_from_other_row",
+          "rationale": "MAX(Label) не обязан принадлежать строке максимального Rev.",
+          "counterexample": "Победитель Rev=2 — Id=2; его Label=a, а несвязанный MAX(Label)=z.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-03.f0006",
+            "leakage_group_ids": [
+              "sim2.code-sql-03.f0006"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1,
+                    "a"
+                  ]
+                ]
+              },
+              "assertion": "Победитель Rev=2 — Id=2; его Label=a, а несвязанный MAX(Label)=z.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-SQL-03",
+            "derived_from_reference_family_ids": [
+              "sim2.code-sql-03.f0006"
+            ]
+          }
+        },
+        {
+          "example_id": "CODE-SQL-RANK-TIE.REF.08",
+          "profile_id": "base",
+          "family_id": "v7.ref.sql.null-last-winner",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040"
+          ],
+          "prompt": "Авторская симуляция T-SQL / SQL Server 2019; compatibility level150; ANSI_NULLS ON. Табличные переменные пусты до INSERT; других строк нет. DECLARE @O TABLE(Id int PRIMARY KEY,GroupId int,Price int NULL); INSERT @O VALUES(1,1,NULL),(2,1,7),(3,1,4),(4,2,NULL); Выбери одну строку каждой GroupId: наименьшая Price среди значений, отличных от NULL, затем Id ASC. NULL идёт после любого ненулевого в смысле SQL значения; если все Price равны NULL, нужен минимальный Id. Верни Id,GroupId по GroupId. Значение 0, если встретится, является обычной допустимой ценой.",
+          "chosen": ";WITH R AS (SELECT Id,GroupId,ROW_NUMBER() OVER(PARTITION BY GroupId ORDER BY CASE WHEN Price IS NULL THEN 1 ELSE 0 END,Price ASC,Id ASC) AS rn FROM @O) SELECT Id,GroupId FROM R WHERE rn=1 ORDER BY GroupId;",
+          "rejected": ";WITH R AS (SELECT Id,GroupId,ROW_NUMBER() OVER(PARTITION BY GroupId ORDER BY Price ASC,Id ASC) AS rn FROM @O) SELECT Id,GroupId FROM R WHERE rn=1 ORDER BY GroupId;",
+          "error_tag": "null_order_policy_ignored",
+          "rationale": "Обычный ASC в T-SQL ставит NULL раньше значений; контракт требует обратное.",
+          "counterexample": "В GroupId=1 сравни цены 7 и 4, выбери Id=3; в GroupId=2 сохрани Id=4.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v7.ref.sql.null-last-winner",
+            "leakage_group_ids": [
+              "v7.ref.sql.null-last-winner"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    3,
+                    1
+                  ],
+                  [
+                    4,
+                    2
+                  ]
+                ]
+              },
+              "assertion": "В GroupId=1 сравни цены 7 и 4, выбери Id=3; в GroupId=2 сохрани Id=4.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-SQL-03"
+          }
+        }
+      ]
+    },
+    {
+      "objective_id": "DOC-NG-CONFIG-READY",
+      "topic_id": "DOC-NG-03",
+      "title_ru": "Описать фактическую готовность runtime config",
+      "domain_ids": [
+        "docs.angular"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-028",
+        "RAG-037"
+      ],
+      "learning_goal_ru": "Отличить вызов загрузки, завершение возвращённого Promise и фактическую готовность конфигурации по показанному коду.",
+      "prerequisites": [
+        "Прочитать готовый request, одну назначенную карточку и вложенные RAG-выдержки.",
+        "Использовать назначенный family-plan; TRAIN не получает скрытые DEV/EXAM."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Создавай короткую TypeScript-симуляцию runtime config по проектной границе из RAG-037. В prompt всегда покажи локальный host-контракт: что initializer возвращает, какой Promise host ожидает и когда разрешено читать snapshot. Не используй provideAppInitializer как будто этот API есть во всех версиях Angular. Достаточны локальные функции с полными интерфейсами.\nДокументация должна точно описывать и неправильный показанный loader: преждевременный ready, потерянный return Promise, проглоченную ошибку. Не подменяй фактическое поведение кодом, который должен был быть написан. Для нескольких потребителей покажи полный single-flight код и счётчик fetch. Для reload задай начальное состояние. Не заявляй серверный rollback, скрытую последовательность guards либо реальный запуск host.\n\nПростая самопроверка:\n1. Выпиши состояние до вызова, при pending, после fulfilled и после rejected.\n2. Проверь, какой именно Promise получает host, либо что он получает undefined.\n3. Пройди каждый catch до конца: есть ли throw, return или только логирование.\n4. При двух потребителях отдельно сосчитай вызовы fetch.\n5. Проверь getter snapshot по его телу; одно наличие cached не отменяет guard.\n\nРаботай по одному готовому request.json: один topic_id, objective_id, domain_id, profile_id и split. В каждом prompt повтори среду, полный видимый код/данные, точку наблюдения и форму ответа: metadata не попадает в строгую проекцию prompt/chosen/rejected. Создай полный chosen и близкий rejected с одним основным содержательным дефектом, одинакового формата. Не заменяй rejected синтаксической ошибкой, шуткой, заведомо коротким ответом или другой правильной реализацией. Объяснение проверки, source_refs и error_tag записывай вне ответов.\nСначала выпиши маленькую таблицу состояния либо результата по условию, затем сравни с ней обе альтернативы. Это самопроверка автора кандидатов, не независимая оценка качества и не измерение обучения. Если по указанному входу ответы одинаковы, измени различающий вход в пределах задания; не придумывай победу. Смена имени или чисел сама по себе не создаёт независимую семью. Производные, обратные и DOC/CODE-варианты конкретного случая наследуют общий origin/leakage group и split. Публичные reference не являются закрытым EXAM.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они дают методику и исходную тематику. Новые фрагменты являются авторскими симуляциями; runtime/oracle сейчас NOT_RUN. Не объявляй новую симуляцию извлечённым production-кодом, измеренным результатом или китайской генерацией.\nРоль человека при выборе материала выполняет CODEX с Astra 6 ultracode; оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт chosen/rejected. Сейчас CREATE_ONLY: назначение уже дано карточкой/request. Не запускай новые selection/review/oracle/accept/export/Student/production CI и не задерживай следующую партию ради них. Модель — фактически текущая выбранная в Kiro, без override; неизвестное имя/session запиши unknown. Checksum, подписи, profile receipts и независимый review не нужны для создания.\nКорень наборов C:/Users/lubao/Documents/xiigen/llm mvp/learning-sets; подготовка находится в preparation внутри него. Возьми абсолютные входные и выходные пути из request.paths, не ищи runner в llm_mvp_core. После записи реальных JSONL-строк выполни одну готовую команду finish, получи структурный DRAFT_CREATED и перейди к next_stream_id полной execution-queue.json. PREPARED без draft не считается созданием. Старые данные/попытки не удалять; существующий run продолжать через resume.\nПри прямом NEXT/новом ID немедленно перейти к нему: запрещено продолжать предыдущую задачу, её отчёт или исправления. STOP прекращает действия сразу. Живой процесс ждать штатным wait/resume по единственному handle до terminal в том же ходе; не запускать дубликаты, не делать частый polling и не завершать ход словом «жду». Отчёт по-русски: тема, созданные строки/семьи, точный файл, фактическая модель, структурный статус, следующий ID. Нельзя приписывать вызов Astra текущей модели.",
+      "response_contract_ru": "Короткий русский текст с точным состоянием/числом вызовов по заданной точке наблюдения; без исправления кода.",
+      "scenario_axes": [
+        {
+          "axis": "стадия",
+          "values": [
+            "pending",
+            "fulfilled",
+            "rejected",
+            "зависимости pending",
+            "reload"
+          ]
+        },
+        {
+          "axis": "связь с host",
+          "values": [
+            "Promise возвращён",
+            "Promise потерян",
+            "ошибка проглочена",
+            "single-flight"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения в той же партии.",
+        "Смешение языковых версий, SQL-диалектов либо AngularJS/Angular.",
+        "Изменение production и запуск приёмки/обучения вместо создания.",
+        "Объявление ожидаемого результата наблюдавшимся."
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology/topic evidence; source-bounded authored simulations",
+        "version_profile": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+        "balance": "Чередовать положительные, граничные и противоположные условия; не учить выбору по имени API.",
+        "self_check_ru": [
+          "Построй таблицу: load вызван, fetch pending, fetch resolved, зависимости pending, ready.",
+          "Назови реальное возвращаемое значение initializer.",
+          "Если fetch отклонён, проследи catch/throw; fulfilled оболочка может скрывать ошибку.",
+          "Сосчитай вызовы fetch отдельно от числа потребителей.",
+          "Читай snapshot только по явному getter-контракту."
+        ]
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separately assigned later stage; not a CREATE_ONLY gate",
+        "checks": [
+          "CODEX с Astra 6 ultracode выполняет независимый выбор и оценку; генератор не выдаёт свой ответ за его вызов.",
+          "Обе альтернативы проверять в одинаковом fresh fixture и заданном runtime.",
+          "Сейчас oracle и Student NOT_RUN; ожидаемые значения не являются измерениями."
+        ]
+      },
+      "examples": [
+        {
+          "example_id": "DOC-NG-CONFIG-READY.REF.01",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.load-transition",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. let ready=false; let snapshot:Config|null=null; async function load(){const c=await fetchConfig();snapshot=c;ready=true;} Функция fetchConfig():Promise<Config> задана окружением. Вызов var loadTask=load(); её Promise ещё pending. Назови ready/snapshot до завершения fetch. Затем fetch успешно возвращает {apiBaseUrl:\"/v1\"}; выполнено await loadTask. Назови новое состояние.",
+          "chosen": "До завершения fetch: ready=false,snapshot=null. После успешного завершения loadTask: ready=true,snapshot={apiBaseUrl:\"/v1\"}.",
+          "rejected": "До завершения fetch: ready=true,snapshot=null. После успешного завершения loadTask: ready=true,snapshot={apiBaseUrl:\"/v1\"}.",
+          "error_tag": "ready_inferred_from_invocation",
+          "rationale": "Флаг изменяется после await, а не при начале вызова.",
+          "counterexample": "Пока fetch pending, присваивание ready=true ещё не выполнено.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.load-transition",
+            "leakage_group_ids": [
+              "v7.ref.config.load-transition"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "pending": {
+                  "ready": false,
+                  "snapshot": null
+                },
+                "completed": {
+                  "ready": true,
+                  "snapshot": {
+                    "apiBaseUrl": "/v1"
+                  }
+                }
+              },
+              "assertion": "Пока fetch pending, присваивание ready=true ещё не выполнено.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-03"
+          }
+        },
+        {
+          "example_id": "DOC-NG-CONFIG-READY.REF.02",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.early-ready",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. let ready=false; let snapshot:Config|null=null; async function load(){ready=true;snapshot=await fetchConfig();} Функция fetchConfig():Promise<Config> ещё pending. Вызван load(), fetch ещё не завершён. Назови состояние и поясни, доказывает ли ready наличие config в этом коде.",
+          "chosen": "ready=true,snapshot=null. Показанный loader выставляет ready преждевременно; этот флаг здесь не доказывает наличие config.",
+          "rejected": "ready=true,snapshot={apiBaseUrl:\"/v1\"}. Ready=true гарантирует, что присваивание после await уже выполнено.",
+          "error_tag": "flag_treated_as_unconditional_truth",
+          "rationale": "Rejected утверждает, что присваивание после await уже выполнено.",
+          "counterexample": "Перед await есть ready=true; snapshot после pending await ещё не присвоен.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.early-ready",
+            "leakage_group_ids": [
+              "v7.ref.config.early-ready"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "ready": true,
+                "snapshot": null
+              },
+              "assertion": "Перед await есть ready=true; snapshot после pending await ещё не присвоен.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-03"
+          }
+        },
+        {
+          "example_id": "DOC-NG-CONFIG-READY.REF.03",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.initializer-return",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. Функция load():Promise<void> задана окружением и завершается только после загрузки config. const init=()=>{void load();}; Host вызвал init(); load ещё pending. Ждёт ли host загрузку по данному контракту?",
+          "chosen": "Нет. Init возвращает undefined; вызов load есть, но его Promise не возвращён host.",
+          "rejected": "Да. Сам вызов load внутри init автоматически заставляет host дождаться его Promise.",
+          "error_tag": "promise_not_returned_to_host",
+          "rationale": "Наличие вызова не равнозначно возвращению его Promise.",
+          "counterexample": "У init нет return; host не получил Promise загрузки.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.initializer-return",
+            "leakage_group_ids": [
+              "v7.ref.config.initializer-return"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "initializer_return": "undefined",
+                "host_waits_for_load": false
+              },
+              "assertion": "У init нет return; host не получил Promise загрузки.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-03"
+          }
+        },
+        {
+          "example_id": "DOC-NG-CONFIG-READY.REF.04",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.load-transition",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. let ready=false; let snapshot:Config|null=null; async function load(){const c=await fetchConfig();snapshot=c;ready=true;} fetchConfig():Promise<Config> отклоняется Error(\"load\"). Host ожидает load() и обрабатывает отказ снаружи. Каковы состояние и статус Promise load?",
+          "chosen": "Ready остаётся false,snapshot остаётся null; load отклонён той же ошибкой. Код после await не выполнен.",
+          "rejected": "Ready становится true,snapshot остаётся null; load отклонён той же ошибкой. Флаг выставляется при любом завершении fetch.",
+          "error_tag": "rejection_treated_as_success_completion",
+          "rationale": "После rejected await обычное продолжение пропускается.",
+          "counterexample": "В load нет finally; ready=true не достигается после ошибки.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.load-transition",
+            "leakage_group_ids": [
+              "v7.ref.config.load-transition"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "ready": false,
+                "snapshot": null,
+                "load": "rejected"
+              },
+              "assertion": "В load нет finally; ready=true не достигается после ошибки.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-03"
+          }
+        },
+        {
+          "example_id": "DOC-NG-CONFIG-READY.REF.05",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.swallowed-failure",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. let ready=false; let snapshot:Config|null=null; const log:string[]=[]; async function load(){try{snapshot=await fetchConfig();ready=true;}catch{log.push(\"failed\");}} fetchConfig():Promise<Config> отклоняется. Host выполнил await load(). Назови ready, статус load и log. Можно ли назвать config готовой?",
+          "chosen": "Ready=false;load выполнен успешно;log=[\"failed\"]. Ошибка проглочена, поэтому fulfilled load здесь не доказывает готовность config.",
+          "rejected": "Ready=false;load отклонён;log=[\"failed\"]. Catch автоматически передаёт ошибку ожидающему host.",
+          "error_tag": "swallowed_error_mistaken_for_rethrow",
+          "rationale": "В catch нет throw; Promise load успешно завершается.",
+          "counterexample": "После логирования catch заканчивается без throw; готовность при этом false.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.swallowed-failure",
+            "leakage_group_ids": [
+              "v7.ref.config.swallowed-failure"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "ready": false,
+                "snapshot": null,
+                "load": "fulfilled",
+                "log": [
+                  "failed"
+                ]
+              },
+              "assertion": "После логирования catch заканчивается без throw; готовность при этом false.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-03"
+          }
+        },
+        {
+          "example_id": "DOC-NG-CONFIG-READY.REF.06",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.single-flight",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. let calls=0; let pending:Promise<Config>|undefined; function fetchConfig(){calls++;return new Promise<Config>(()=>{});} function whenReady(){return pending??=fetchConfig();} const a=whenReady(); const b=whenReady(); Назови calls и a===b; Promise ещё pending.",
+          "chosen": "calls=1;a===b равно true. Второй потребитель получает уже сохранённый pending Promise.",
+          "rejected": "calls=2;a===b равно false. Каждый вызов whenReady запускает новый fetch.",
+          "error_tag": "shared_promise_ignored",
+          "rationale": "Не учтено условное присваивание pending??=.",
+          "counterexample": "После a поле pending задано; b не вычисляет правую часть ??=.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.single-flight",
+            "leakage_group_ids": [
+              "v7.ref.config.single-flight"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "calls": 1,
+                "same_promise": true
+              },
+              "assertion": "После a поле pending задано; b не вычисляет правую часть ??=.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-03"
+          }
+        },
+        {
+          "example_id": "DOC-NG-CONFIG-READY.REF.07",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.snapshot-guard",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. let ready=false; const cached:Config={apiBaseUrl:\"/default\"}; function getSnapshot(){if(!ready)throw new Error(\"not-ready\");return cached;} До load вызывается getSnapshot(). Что наблюдает вызывающий код?",
+          "chosen": "Ошибка \"not-ready\". Наличие cached не отменяет явную проверку ready.",
+          "rejected": "Объект {apiBaseUrl:\"/default\"}. Поле cached уже заполнено, поэтому getter возвращает его без загрузки.",
+          "error_tag": "cached_value_bypasses_guard",
+          "rationale": "В rejected пропущен показанный throw.",
+          "counterexample": "Первый if(!ready) истинен; return cached недостижим.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.snapshot-guard",
+            "leakage_group_ids": [
+              "v7.ref.config.snapshot-guard"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "throws": "not-ready"
+              },
+              "assertion": "Первый if(!ready) истинен; return cached недостижим.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-03"
+          }
+        },
+        {
+          "example_id": "DOC-NG-CONFIG-READY.REF.08",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.dependent-flags",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. let ready=false; let snapshot:Config|null=null; async function load(){const c=await fetchConfig();snapshot=c;await reloadFlags(c);ready=true;} Функции fetchConfig():Promise<Config> и reloadFlags(c:Config):Promise<void> даны окружением. Fetch уже вернул {apiBaseUrl:\"/v1\"}, reloadFlags ещё pending. Назови состояние. В этой симуляции договор готовности включает завершение reloadFlags; это явная вариация, а не утверждение, что исходный ADR использует асинхронный reloadFlags.",
+          "chosen": "Snapshot={apiBaseUrl:\"/v1\"};ready=false. Конфигурация присвоена, но обязательный reloadFlags ещё не завершён.",
+          "rejected": "Snapshot={apiBaseUrl:\"/v1\"};ready=true. Получения config достаточно, чтобы закончить load до reloadFlags.",
+          "error_tag": "dependency_completion_omitted",
+          "rationale": "Rejected пропускает обязательную вторую async-зависимость.",
+          "counterexample": "Ready=true находится после await reloadFlags, который ещё pending.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.dependent-flags",
+            "leakage_group_ids": [
+              "v7.ref.config.dependent-flags"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "snapshot": {
+                  "apiBaseUrl": "/v1"
+                },
+                "ready": false
+              },
+              "assertion": "Ready=true находится после await reloadFlags, который ещё pending.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-03"
+          }
+        }
+      ]
+    },
+    {
+      "objective_id": "CODE-NG-CONFIG-READY",
+      "topic_id": "CODE-NG-05",
+      "title_ru": "Реализовать ожидание runtime config по видимому контракту",
+      "domain_ids": [
+        "code.angular"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-028",
+        "RAG-037"
+      ],
+      "learning_goal_ru": "Написать короткий TypeScript-код с фактическим ожиданием config, точным состоянием ready, передачей ошибок и общим pending Promise.",
+      "prerequisites": [
+        "Прочитать готовый request, одну назначенную карточку и вложенные RAG-выдержки.",
+        "Использовать назначенный family-plan; TRAIN не получает скрытые DEV/EXAM."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Пиши одну короткую функцию или метод заданной сигнатуры. Все поля, типы и внешние функции должны присутствовать в prompt. Это TypeScript-реализация явного проектного контракта для Angular 16.2.0, а не универсальный API bootstrap.\nВсегда укажи: когда разрешён ready=true; что происходит при rejected fetch; какой Promise ожидает host; нужен ли single-flight; должна ли зависимость config→auth выполняться последовательно. Rejected сохраняет типизацию и меняет одну границу ожидания. Для преждевременного завершения initializer можно вернуть Promise.resolve(): оба ответа остаются Promise<void>, но лишь один действительно ждёт load.\n\nПростая самопроверка:\n1. Оставь fetch pending: ready должен соответствовать условию, зависимый auth ещё не запускается.\n2. Разреши fetch: присвой config и дождись всех обязательных зависимостей перед ready=true.\n3. Отклони fetch: не превращай ошибку в успех, если контракт требует её передать.\n4. В initializer проследи возвращаемый Promise до load.\n5. При single-flight два вызова whenReady должны вызывать fetch один раз.\n\nРаботай по одному готовому request.json: один topic_id, objective_id, domain_id, profile_id и split. В каждом prompt повтори среду, полный видимый код/данные, точку наблюдения и форму ответа: metadata не попадает в строгую проекцию prompt/chosen/rejected. Создай полный chosen и близкий rejected с одним основным содержательным дефектом, одинакового формата. Не заменяй rejected синтаксической ошибкой, шуткой, заведомо коротким ответом или другой правильной реализацией. Объяснение проверки, source_refs и error_tag записывай вне ответов.\nСначала выпиши маленькую таблицу состояния либо результата по условию, затем сравни с ней обе альтернативы. Это самопроверка автора кандидатов, не независимая оценка качества и не измерение обучения. Если по указанному входу ответы одинаковы, измени различающий вход в пределах задания; не придумывай победу. Смена имени или чисел сама по себе не создаёт независимую семью. Производные, обратные и DOC/CODE-варианты конкретного случая наследуют общий origin/leakage group и split. Публичные reference не являются закрытым EXAM.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они дают методику и исходную тематику. Новые фрагменты являются авторскими симуляциями; runtime/oracle сейчас NOT_RUN. Не объявляй новую симуляцию извлечённым production-кодом, измеренным результатом или китайской генерацией.\nРоль человека при выборе материала выполняет CODEX с Astra 6 ultracode; оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт chosen/rejected. Сейчас CREATE_ONLY: назначение уже дано карточкой/request. Не запускай новые selection/review/oracle/accept/export/Student/production CI и не задерживай следующую партию ради них. Модель — фактически текущая выбранная в Kiro, без override; неизвестное имя/session запиши unknown. Checksum, подписи, profile receipts и независимый review не нужны для создания.\nКорень наборов C:/Users/lubao/Documents/xiigen/llm mvp/learning-sets; подготовка находится в preparation внутри него. Возьми абсолютные входные и выходные пути из request.paths, не ищи runner в llm_mvp_core. После записи реальных JSONL-строк выполни одну готовую команду finish, получи структурный DRAFT_CREATED и перейди к next_stream_id полной execution-queue.json. PREPARED без draft не считается созданием. Старые данные/попытки не удалять; существующий run продолжать через resume.\nПри прямом NEXT/новом ID немедленно перейти к нему: запрещено продолжать предыдущую задачу, её отчёт или исправления. STOP прекращает действия сразу. Живой процесс ждать штатным wait/resume по единственному handle до terminal в том же ходе; не запускать дубликаты, не делать частый polling и не завершать ход словом «жду». Отчёт по-русски: тема, созданные строки/семьи, точный файл, фактическая модель, структурный статус, следующий ID. Нельзя приписывать вызов Astra текущей модели.",
+      "response_contract_ru": "Только требуемая TypeScript-функция или метод с заданной сигнатурой; без Markdown и пояснений. Все зависимости доступны в prompt.",
+      "scenario_axes": [
+        {
+          "axis": "обязанность",
+          "values": [
+            "ready после await",
+            "возврат Promise",
+            "передача ошибки",
+            "single-flight",
+            "config перед auth"
+          ]
+        },
+        {
+          "axis": "состояние",
+          "values": [
+            "первая загрузка",
+            "reload",
+            "pending",
+            "rejected",
+            "два потребителя"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения в той же партии.",
+        "Смешение языковых версий, SQL-диалектов либо AngularJS/Angular.",
+        "Изменение production и запуск приёмки/обучения вместо создания.",
+        "Объявление ожидаемого результата наблюдавшимся."
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology/topic evidence; source-bounded authored simulations",
+        "version_profile": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+        "balance": "Чередовать положительные, граничные и противоположные условия; не учить выбору по имени API.",
+        "self_check_ru": [
+          "При pending fetch проверь ready и число запусков зависимого auth.",
+          "При успехе сначала config, затем обязательные зависимости, затем ready=true.",
+          "При ошибке проверь требуемое отклонение Promise и состояние ready.",
+          "В initializer верни именно load Promise или ожидай его внутри возвращённого Promise.",
+          "При двух потребителях проверь один fetch и общий pending Promise."
+        ]
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separately assigned later stage; not a CREATE_ONLY gate",
+        "checks": [
+          "CODEX с Astra 6 ultracode выполняет независимый выбор и оценку; генератор не выдаёт свой ответ за его вызов.",
+          "Обе альтернативы проверять в одинаковом fresh fixture и заданном runtime.",
+          "Сейчас oracle и Student NOT_RUN; ожидаемые значения не являются измерениями."
+        ]
+      },
+      "examples": [
+        {
+          "example_id": "CODE-NG-CONFIG-READY.REF.01",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.load-transition",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. В классе Loader заданы ready=false, snapshot:Config|null=null и поле fetch:()=>Promise<Config>. Напиши метод async load():Promise<void>: присвоить полученный config, затем ready=true. Пока fetch pending, ready=false; ошибку fetch передать вызывающему. Это первый запуск.",
+          "chosen": "async load(): Promise<void> { const c = await this.fetch(); this.snapshot = c; this.ready = true; }",
+          "rejected": "async load(): Promise<void> { this.ready = true; const c = await this.fetch(); this.snapshot = c; }",
+          "error_tag": "ready_before_fetch_completion",
+          "rationale": "Флаг выставлен до получения config.",
+          "counterexample": "При pending fetch chosen ещё не дошёл до присваивания ready, rejected уже дошёл.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.load-transition",
+            "leakage_group_ids": [
+              "v7.ref.config.load-transition"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "pending_ready": false,
+                "completed_ready": true
+              },
+              "assertion": "При pending fetch chosen ещё не дошёл до присваивания ready, rejected уже дошёл.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-NG-05"
+          }
+        },
+        {
+          "example_id": "CODE-NG-CONFIG-READY.REF.02",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.initializer-return",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. Даны type Init=()=>Promise<void>; interface Loader{load():Promise<void>}. Напиши function makeInit(s:Loader):Init. Host должен ожидать именно окончания s.load(), а не отдельный немедленно завершённый Promise.",
+          "chosen": "function makeInit(s: Loader): Init { return () => s.load(); }",
+          "rejected": "function makeInit(s: Loader): Init { return () => { void s.load(); return Promise.resolve(); }; }",
+          "error_tag": "initializer_returns_unrelated_promise",
+          "rationale": "Оба ответа имеют правильный тип; rejected возвращает не Promise загрузки.",
+          "counterexample": "При pending load вызов await init() должен тоже ожидать; Promise.resolve() завершается раньше.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.initializer-return",
+            "leakage_group_ids": [
+              "v7.ref.config.initializer-return"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "host_waits_for_load": true
+              },
+              "assertion": "При pending load вызов await init() должен тоже ожидать; Promise.resolve() завершается раньше.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-NG-05"
+          }
+        },
+        {
+          "example_id": "CODE-NG-CONFIG-READY.REF.03",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.snapshot-guard",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. В этом случае type Config={apiBaseUrl:string,editor:boolean}; interface S{whenReady():Promise<Config>;readonly snapshot:Config}. Getter snapshot выбрасывает not-ready, пока config не получен. Напиши async function canEdit(s:S):Promise<boolean>: дождаться whenReady и вернуть editor. При вызове whenReady ещё pending.",
+          "chosen": "async function canEdit(s: S): Promise<boolean> { const c = await s.whenReady(); return c.editor; }",
+          "rejected": "async function canEdit(s: S): Promise<boolean> { return s.snapshot.editor; }",
+          "error_tag": "consumer_reads_snapshot_before_ready",
+          "rationale": "Rejected читает getter до загрузки.",
+          "counterexample": "До завершения whenReady chosen не читает config; rejected сразу бросает not-ready.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.snapshot-guard",
+            "leakage_group_ids": [
+              "v7.ref.config.snapshot-guard"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "while_pending": "does_not_read_snapshot",
+                "completed_result": "loaded editor"
+              },
+              "assertion": "До завершения whenReady chosen не читает config; rejected сразу бросает not-ready.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-NG-05"
+          }
+        },
+        {
+          "example_id": "CODE-NG-CONFIG-READY.REF.04",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.reload-reset",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. В классе Loader заданы ready=true, snapshot:Config|null={apiBaseUrl:\"/old\"} и fetch:()=>Promise<Config>. Напиши async reload():Promise<void>: сразу ready=false, затем дождаться нового config, присвоить snapshot и ready=true. При отказе ready остаётся false, прежний snapshot может остаться, ошибка передаётся. Контроль: fetch pending, затем rejected.",
+          "chosen": "async reload(): Promise<void> { this.ready = false; const c = await this.fetch(); this.snapshot = c; this.ready = true; }",
+          "rejected": "async reload(): Promise<void> { const c = await this.fetch(); this.snapshot = c; this.ready = true; }",
+          "error_tag": "reload_keeps_stale_ready",
+          "rationale": "Нет сброса готовности в начале новой загрузки.",
+          "counterexample": "Начальный true должен стать false до ожидания fetch; rejected оставляет true.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.reload-reset",
+            "leakage_group_ids": [
+              "v7.ref.config.reload-reset"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "pending_ready": false,
+                "failed_ready": false,
+                "snapshot_after_failure": {
+                  "apiBaseUrl": "/old"
+                }
+              },
+              "assertion": "Начальный true должен стать false до ожидания fetch; rejected оставляет true.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-NG-05"
+          }
+        },
+        {
+          "example_id": "CODE-NG-CONFIG-READY.REF.05",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.swallowed-failure",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. В классе Loader заданы ready=false, snapshot:Config|null=null, fetch:()=>Promise<Config> и log:string[]=[]. Напиши async load():Promise<void>: при успехе присвоить snapshot и ready=true; при ошибке добавить \"failed\" в log и передать исходную ошибку вызывающему. Fallback не разрешён.",
+          "chosen": "async load(): Promise<void> { try { this.snapshot = await this.fetch(); this.ready = true; } catch (e) { this.log.push(\"failed\"); throw e; } }",
+          "rejected": "async load(): Promise<void> { try { this.snapshot = await this.fetch(); this.ready = true; } catch (e) { this.log.push(\"failed\"); } }",
+          "error_tag": "error_swallowed",
+          "rationale": "Rejected сохраняет лог, но превращает отказ load в успешное завершение.",
+          "counterexample": "При rejected fetch оба ответа логируют; только chosen передаёт ошибку.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.swallowed-failure",
+            "leakage_group_ids": [
+              "v7.ref.config.swallowed-failure"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "failed_load": "rejected",
+                "log": [
+                  "failed"
+                ],
+                "ready": false
+              },
+              "assertion": "При rejected fetch оба ответа логируют; только chosen передаёт ошибку.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-NG-05"
+          }
+        },
+        {
+          "example_id": "CODE-NG-CONFIG-READY.REF.06",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.single-flight",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. В классе Loader заданы pending:Promise<Config>|undefined и fetch:()=>Promise<Config>. Напиши синхронный метод whenReady():Promise<Config>. Два вызова подряд до завершения загрузки должны разделять тот же pending Promise и вызвать fetch ровно один раз. Политика retry после завершения не является частью задачи.",
+          "chosen": "whenReady(): Promise<Config> { return this.pending ??= this.fetch(); }",
+          "rejected": "whenReady(): Promise<Config> { return this.fetch(); }",
+          "error_tag": "single_flight_not_cached",
+          "rationale": "Без сохранения pending каждый вызов fetch создаёт новую загрузку.",
+          "counterexample": "После первого вызова поле pending задано; второй не выполняет fetch.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.single-flight",
+            "leakage_group_ids": [
+              "v7.ref.config.single-flight"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "two_calls_fetch_count": 1,
+                "same_promise": true
+              },
+              "assertion": "После первого вызова поле pending задано; второй не выполняет fetch.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-NG-05"
+          }
+        },
+        {
+          "example_id": "CODE-NG-CONFIG-READY.REF.07",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.dependent-flags",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. В классе Loader заданы ready=false, snapshot:Config|null=null, fetch:()=>Promise<Config>, reloadFlags:(c:Config)=>Promise<void>. Напиши async load():Promise<void>: fetch, присвоить snapshot, дождаться reloadFlags с этим config, только затем ready=true. Ошибки передать. Контроль: fetch resolved, reloadFlags pending. Асинхронный reloadFlags — явно заданная вариация симуляции, а не факт об исходном ADR.",
+          "chosen": "async load(): Promise<void> { const c = await this.fetch(); this.snapshot = c; await this.reloadFlags(c); this.ready = true; }",
+          "rejected": "async load(): Promise<void> { const c = await this.fetch(); this.snapshot = c; void this.reloadFlags(c); this.ready = true; }",
+          "error_tag": "required_dependency_not_awaited",
+          "rationale": "Rejected не ждёт обязательную обработку флагов.",
+          "counterexample": "При pending reloadFlags chosen ещё не дошёл до ready=true, rejected уже дошёл.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.dependent-flags",
+            "leakage_group_ids": [
+              "v7.ref.config.dependent-flags"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "while_flags_pending_ready": false
+              },
+              "assertion": "При pending reloadFlags chosen ещё не дошёл до ready=true, rejected уже дошёл.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-NG-05"
+          }
+        },
+        {
+          "example_id": "CODE-NG-CONFIG-READY.REF.08",
+          "profile_id": "base",
+          "family_id": "v7.ref.config.config-before-auth",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-037"
+          ],
+          "prompt": "Авторская симуляция Angular 16.2.0 / TypeScript 5.1.6. Это изолированный Promise-fixture, а не выполненный Angular bootstrap. По умолчанию type Config={apiBaseUrl:string}; если задача явно расширяет тип, используется показанное расширение. Локальный host ждёт только возвращённый Promise initializer; если возвращён undefined, он не ждёт загрузку. Указанные завершённые состояния наблюдаются после await соответствующей задачи; pending означает, что соответствующий Promise ещё не завершён. Иных конкурентных изменений нет. Даны loadConfig:()=>Promise<void> и auth:()=>Promise<void>. Auth читает snapshot и сразу ошибается, если loadConfig не завершён. Напиши async function start():Promise<void>: загрузить config, затем выполнить auth. Успех — после обоих шагов. При старте loadConfig pending.",
+          "chosen": "async function start(): Promise<void> { await loadConfig(); await auth(); }",
+          "rejected": "async function start(): Promise<void> { await Promise.all([loadConfig(), auth()]); }",
+          "error_tag": "dependent_jobs_started_in_parallel",
+          "rationale": "Общего ожидания двух Promise недостаточно: второй шаг должен начаться после первого.",
+          "counterexample": "Аргументы Promise.all вычисляются сразу; auth запускается при pending config.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "code",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+            "origin_family_id": "v7.ref.config.config-before-auth",
+            "leakage_group_ids": [
+              "v7.ref.config.config-before-auth"
+            ],
+            "source_role": "methodology_and_topic_seed",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6; explicit project initializer contract; isolated Promise fixture",
+              "expected": {
+                "while_config_pending_auth_calls": 0,
+                "order": [
+                  "config-complete",
+                  "auth-start"
+                ]
+              },
+              "assertion": "Аргументы Promise.all вычисляются сразу; auth запускается при pending config.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "CODE-NG-05"
+          }
+        }
+      ]
+    }
+  ]
+}

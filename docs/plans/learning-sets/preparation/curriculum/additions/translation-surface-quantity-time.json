@@ -1,0 +1,2432 @@
+{
+  "schema_version": "1.0",
+  "status": "PREPARATION_ONLY_NOT_EXECUTED",
+  "updated_on": "2026-10-25",
+  "source_baseline": {
+    "repository": "lubochka/xiigen-planning",
+    "branch": "llm_plan3",
+    "commit": "642bc13f661c20225f0ddd36f614ef3d51cd684b"
+  },
+  "notes_ru": "Три новые узкие цели добавляются к существующим TR07/TR06/TR03; старые материалы сохраняются. 36 публичных авторских reference-пар: 6 направлений × 2 сценария × 3 цели. Это 6 исходных сценариев, а не 36 независимых семей. Китайская модель и Student здесь не запускались; данные не объявляются прошедшими CODEX Astra quality assessment.",
+  "objectives": [
+    {
+      "objective_id": "TR07-REPEAT",
+      "topic_id": "TR07",
+      "title_ru": "Ровно одна лишняя повторённая буква внутри слова",
+      "domain_ids": [
+        "tr.en",
+        "tr.ru",
+        "tr.he"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "learning_goal_ru": "Переводить однозначное слово после одного случайного повторения буквы; связывать чистую, ошибочную и layout-формы одной лексемы, сохраняя исходную строку.",
+      "prerequisites": [
+        "TR01",
+        "TR05",
+        "TR07-OMISSION"
+      ],
+      "family_plan_files": {
+        "train": "curriculum/family-plans/translation-surface-quantity-time.train.json"
+      },
+      "generation_prompt_ru": "Сначала составь грамматически правильную исходную фразу и выбери ровно одно обычное слово в той форме, которая реально стоит в предложении. Выбери индекс i одного Unicode code point и повтори этот же символ сразу после него: raw = canonical[:i+1] + canonical[i] + canonical[i+1:]. Длина raw на один code point больше canonical. При удалении вставленного символа по i+1 должно получиться исходное слово побуквенно, включая регистр. Запиши canonical_token, raw_token, mutation.kind=repeat_one_codepoint, mutation.index=i, inserted_index=i+1 и character. Индексы нулевые, не UTF-8 bytes и не model tokens. Строка source_raw и learner prompt содержат raw, а canonical_source хранится только в metadata. Не «упрощай» законные двойные буквы: book→boook — одна вставка; book→bok — уже удаление.\nChosen переводит восстановленное слово; rejected подменяет только этот предмет другой естественной лексемой, сохраняя действие, место, участников и остальные факты. Не используй бессмысленную строку как rejected и не выдавай правильный синоним за ошибку. Для Hebrew возьми простые слова без niqqud и без преобразования final forms; вставленный code point буквальный. Не добавляй опечатку в другое слово. В каждом request 10 новых семей назначенной темы: пять случаев повторения внутри слова, три у начала и два у конца, если назначенный материал позволяет; это распределение позиции, а не дополнительные темы. Каждый пример получает ровно одну фактическую вставку. Уже назначенное содержательное распределение request имеет приоритет перед этими примерами позиционного разнообразия.\nПростая самопроверка до записи: выпиши длины n→n+1, убери только inserted_index, сравни весь результат с canonical_token; затем назови один предмет, который неверно переведён в rejected. Эти действия помогают авторингу, отдельный review/отчёт об этом не создаётся. Лексическая семья canonical/raw/layout остаётся той же при подтверждённом смысле; молоко и сок в одну lexical family не сливаются. Если вывод о семейном происхождении не следует из назначенного общего сюжета, не выдумывай его.\n\nРабота выполняется по одному request.json: один objective_id, topic_id, profile_id и split. Текущий режим CREATE_ONLY: внешняя открытая китайская модель, уже выбранная пользователем в Kiro, создаёт полные prompt/chosen/rejected. Не меняй модель и не выдумывай её название; фактически неизвестное имя укажи unknown. Роль человека при выборе материала выполняет CODEX с Astra 6 ultracode; качество DPO также оценивает CODEX с Astra 6 ultracode. Здесь это распределение ролей для отдельного будущего этапа, не подтверждение состоявшегося вызова и не review-gate перед созданием.\n\nПрочти 17-CURRENT-PREPARATION-CONTRACT.md, 20-CREATE-ONLY-AND-PATHS.md, 02-DATA-CONTRACT.md, назначенную карточку и назначенные RAG-выдержки. Разобранные хорошие и плохие примеры находятся в prompts/TRANSLATION-SURFACE-QUANTITY-TIME-RU.md. Проектные скилы и точные референсы: 06-SOURCES-AND-SKILLS.md; для этой работы применяются human-readable-architecture-audit-SKILL.md, phase-planning-SKILL.md, plan-review-SKILL.md, code-examination-SKILL.md, prompt-patch-authoring-SKILL.md и human-communication-GLOSSARY.md. Эти скилы помогают составить материал и инструкции; они не запускают review созданных кандидатов. Источники — только xiigen-planning main и llm_plan3, уже включённые в подготовку. Старые внешние ссылки не являются заданием на загрузку. SHA/checksum, подписи, подтверждение alias, independent review и production CI не требуются для создания.\n\nВыход находится строго в request.paths: корень C:/Users/lubao/Documents/xiigen/llm mvp/learning-sets, инструменты внутри preparation. Не ищи runner в llm_mvp_core и не создавай заглушку источника. Составь реальные полные ответы в draft.jsonl, выполни один структурный finish из готового commands.md и перейди к следующему stream из execution-queue.json. После finish статус DRAFT_CREATED, review_status=not_requested, Student=NOT_RUN, учебные метрики NOT_MEASURED. Отчёт по-русски: ID, направление, число реально записанных пар/семей, абсолютный путь, структурный результат, следующий ID. Ответы ученика — только на языке назначения профиля.\n\nВ каждом prompt видны все условия, необходимые для выбора ответа. Rationale, правильная метка, canonical_source, ID семьи и ответы экзамена не подставляются в learner-visible input. Chosen и rejected решают одно и то же задание; в rejected ровно одно существенное нарушение. Другой допустимый перевод или синоним не становится rejected. Авторские примеры ниже — reference-симуляции, не цитаты корпуса, не принятые обучающие данные и не измерение обучения. Не копируй reference и их производные в запечатанный DEV/EXAM.\n\nОдин исходный сюжет, обратные переводы, перефразирования, опечатки и раскладки сохраняют общий origin/family/leakage и один split. Число строк не равно числу независимых семейств. Новое число, имя или номер партии не делает производный сюжет независимым. Лексическая семья соединяет подтверждённые формы одной лексемы; правильная и ошибочно подставленная другая лексема в ней не сливаются. Семья сценария и лексическая семья — разные связи. В иврите текст хранится в логическом Unicode-порядке без ручного разворота.\n\nНе удаляй прежние данные, эксперименты и результаты: изменённый материал получает новую revision/run и derived_from. При прямом NEXT или новом ID немедленно переключись на указанную задачу; запрещено продолжать прошлую, дописывать её отчёт, чинить её тесты или повторять запуск. При STOP немедленно прекрати действия. Если модель или инструмент уже работает, сохрани один handle и используй его штатный wait/resume до terminal state; timeout транспорта не доказывает отказ. Не заверши ход вместо ожидания, не запускай дубликаты и не подменяй ожидание частым polling.\n\nОбучение сейчас не запускается. Если позже назначен учебный пилот, сначала восстанови совместимый уже обученный checkpoint по 05-LEARNING-AND-CHECKPOINTS.md либо один раз получи и сохрани такое состояние на отдельном TRAIN. Бюджет должен допускать ненулевой учебный результат. 0→0 и малый сдвиг margin сами по себе не доказывают обучение. Любое измеренное улучшение полезного показателя на валидном учебном опыте — успех по этому показателю и домену; остальные показатели, включая ухудшения, показываются рядом. Перенос в production решается отдельно.",
+      "response_contract_ru": "Только полный перевод исходной строки на target-языке; объяснения и авторская самопроверка остаются вне learner prompt/chosen/rejected.",
+      "scenario_axes": [
+        {
+          "axis": "repeated_position",
+          "values": [
+            "near_start",
+            "interior",
+            "last"
+          ]
+        },
+        {
+          "axis": "legitimate_double_letter",
+          "values": [
+            "none",
+            "one_already_present"
+          ]
+        },
+        {
+          "axis": "context_length",
+          "values": [
+            "one_sentence",
+            "two_short_sentences"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Удаление, замена, перестановка или два повторения одновременно.",
+        "Удаление законной двойной буквы как будто она всегда опечатка.",
+        "Смена падежа/рода/окончания вместе с повторением.",
+        "Нормализация Hebrew final forms или niqqud вместо буквальной вставки.",
+        "Несколько направлений, objective или split в одном shard.",
+        "Скрытая подсказка в rationale/metadata вместо видимого контекста.",
+        "Объявление допустимого синонима или перевода плохим ответом.",
+        "Разделение переводов и производных одного исходного сюжета между TRAIN/DEV/EXAM.",
+        "Перенос публичных reference и производных в запечатанный DEV/EXAM."
+      ],
+      "review_requirements": {
+        "kind": "bilingual_review",
+        "checks": [
+          "Вставка raw == canonical[:i+1]+canonical[i]+canonical[i+1:] и обратное удаление совпадают буквально.",
+          "Опечатка находится именно в словоформе из предложения; нет тихой смены регистра.",
+          "Смысл выбранного исходного слова однозначен; rejected изменяет ровно один предметный факт.",
+          "Это требования отдельного будущего этапа; CREATE_ONLY не запускает review и не ждёт его.",
+          "Предпочтение должно выводиться из prompt без подсматривания в rationale.",
+          "Шесть направлений рассматриваются отдельно; self-review генератора не выдаётся за CODEX Astra quality assessment.",
+          "Семейства сценариев и лексические семьи не подменяют друг друга; учёт lineage сохраняется."
+        ]
+      },
+      "examples": [
+        {
+          "example_id": "TR07-REPEAT.ru-en.REF01",
+          "profile_id": "ru-en",
+          "family_id": "v3-ref.translation.repeat.milk-table",
+          "prompt": "Переведи с языка «русский» на язык «английский». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: Моолоко на столе.",
+          "chosen": "The milk is on the table.",
+          "rejected": "The juice is on the table.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "ru",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.milk-table",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "Моолоко на столе.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.milk-table",
+              "lex:ru:молоко"
+            ],
+            "canonical_source": "Молоко на столе.",
+            "canonical_token": "Молоко",
+            "raw_token": "Моолоко",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 1,
+              "inserted_index": 2,
+              "character": "о"
+            },
+            "lexical_family_ids": [
+              "lex:ru:молоко"
+            ],
+            "sense_id": "milk_beverage",
+            "contrast_lexical_families": {
+              "correct_target": "lex:en:milk",
+              "wrong_target": "lex:en:juice"
+            },
+            "author_check": {
+              "canonical_codepoints": 6,
+              "raw_codepoints": 7,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.ru-en.REF02",
+          "profile_id": "ru-en",
+          "family_id": "v3-ref.translation.repeat.book-bag",
+          "prompt": "Переведи с языка «русский» на язык «английский». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: Книгаа в сумке.",
+          "chosen": "The book is in the bag.",
+          "rejected": "The notebook is in the bag.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "ru",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.book-bag",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "Книгаа в сумке.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.book-bag",
+              "lex:ru:книга"
+            ],
+            "canonical_source": "Книга в сумке.",
+            "canonical_token": "Книга",
+            "raw_token": "Книгаа",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 4,
+              "inserted_index": 5,
+              "character": "а"
+            },
+            "lexical_family_ids": [
+              "lex:ru:книга"
+            ],
+            "sense_id": "printed_book",
+            "contrast_lexical_families": {
+              "correct_target": "lex:en:book",
+              "wrong_target": "lex:en:notebook"
+            },
+            "author_check": {
+              "canonical_codepoints": 5,
+              "raw_codepoints": 6,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.he-en.REF01",
+          "profile_id": "he-en",
+          "family_id": "v3-ref.translation.repeat.milk-table",
+          "prompt": "Переведи с языка «иврит» на язык «английский». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: החללב על השולחן.",
+          "chosen": "The milk is on the table.",
+          "rejected": "The juice is on the table.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "he",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.milk-table",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "החללב על השולחן.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.milk-table",
+              "lex:he:חלב"
+            ],
+            "canonical_source": "החלב על השולחן.",
+            "canonical_token": "החלב",
+            "raw_token": "החללב",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 2,
+              "inserted_index": 3,
+              "character": "ל"
+            },
+            "lexical_family_ids": [
+              "lex:he:חלב"
+            ],
+            "sense_id": "milk_beverage",
+            "contrast_lexical_families": {
+              "correct_target": "lex:en:milk",
+              "wrong_target": "lex:en:juice"
+            },
+            "author_check": {
+              "canonical_codepoints": 4,
+              "raw_codepoints": 5,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.he-en.REF02",
+          "profile_id": "he-en",
+          "family_id": "v3-ref.translation.repeat.book-bag",
+          "prompt": "Переведи с языка «иврит» на язык «английский». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: הספרר בתיק.",
+          "chosen": "The book is in the bag.",
+          "rejected": "The notebook is in the bag.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "he",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.book-bag",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "הספרר בתיק.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.book-bag",
+              "lex:he:ספר"
+            ],
+            "canonical_source": "הספר בתיק.",
+            "canonical_token": "הספר",
+            "raw_token": "הספרר",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 3,
+              "inserted_index": 4,
+              "character": "ר"
+            },
+            "lexical_family_ids": [
+              "lex:he:ספר"
+            ],
+            "sense_id": "printed_book",
+            "contrast_lexical_families": {
+              "correct_target": "lex:en:book",
+              "wrong_target": "lex:en:notebook"
+            },
+            "author_check": {
+              "canonical_codepoints": 4,
+              "raw_codepoints": 5,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.en-ru.REF01",
+          "profile_id": "en-ru",
+          "family_id": "v3-ref.translation.repeat.milk-table",
+          "prompt": "Переведи с языка «английский» на язык «русский». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: The miilk is on the table.",
+          "chosen": "Молоко на столе.",
+          "rejected": "Сок на столе.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "en",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.milk-table",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "The miilk is on the table.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.milk-table",
+              "lex:en:milk"
+            ],
+            "canonical_source": "The milk is on the table.",
+            "canonical_token": "milk",
+            "raw_token": "miilk",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 1,
+              "inserted_index": 2,
+              "character": "i"
+            },
+            "lexical_family_ids": [
+              "lex:en:milk"
+            ],
+            "sense_id": "milk_beverage",
+            "contrast_lexical_families": {
+              "correct_target": "lex:ru:молоко",
+              "wrong_target": "lex:ru:сок"
+            },
+            "author_check": {
+              "canonical_codepoints": 4,
+              "raw_codepoints": 5,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.en-ru.REF02",
+          "profile_id": "en-ru",
+          "family_id": "v3-ref.translation.repeat.book-bag",
+          "prompt": "Переведи с языка «английский» на язык «русский». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: The boook is in the bag.",
+          "chosen": "Книга в сумке.",
+          "rejected": "Тетрадь в сумке.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "en",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.book-bag",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "The boook is in the bag.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.book-bag",
+              "lex:en:book"
+            ],
+            "canonical_source": "The book is in the bag.",
+            "canonical_token": "book",
+            "raw_token": "boook",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 1,
+              "inserted_index": 2,
+              "character": "o"
+            },
+            "lexical_family_ids": [
+              "lex:en:book"
+            ],
+            "sense_id": "printed_book",
+            "contrast_lexical_families": {
+              "correct_target": "lex:ru:книга",
+              "wrong_target": "lex:ru:тетрадь"
+            },
+            "author_check": {
+              "canonical_codepoints": 4,
+              "raw_codepoints": 5,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.he-ru.REF01",
+          "profile_id": "he-ru",
+          "family_id": "v3-ref.translation.repeat.milk-table",
+          "prompt": "Переведи с языка «иврит» на язык «русский». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: החללב על השולחן.",
+          "chosen": "Молоко на столе.",
+          "rejected": "Сок на столе.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "he",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.milk-table",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "החללב על השולחן.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.milk-table",
+              "lex:he:חלב"
+            ],
+            "canonical_source": "החלב על השולחן.",
+            "canonical_token": "החלב",
+            "raw_token": "החללב",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 2,
+              "inserted_index": 3,
+              "character": "ל"
+            },
+            "lexical_family_ids": [
+              "lex:he:חלב"
+            ],
+            "sense_id": "milk_beverage",
+            "contrast_lexical_families": {
+              "correct_target": "lex:ru:молоко",
+              "wrong_target": "lex:ru:сок"
+            },
+            "author_check": {
+              "canonical_codepoints": 4,
+              "raw_codepoints": 5,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.he-ru.REF02",
+          "profile_id": "he-ru",
+          "family_id": "v3-ref.translation.repeat.book-bag",
+          "prompt": "Переведи с языка «иврит» на язык «русский». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: הספרר בתיק.",
+          "chosen": "Книга в сумке.",
+          "rejected": "Тетрадь в сумке.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "he",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.book-bag",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "הספרר בתיק.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.book-bag",
+              "lex:he:ספר"
+            ],
+            "canonical_source": "הספר בתיק.",
+            "canonical_token": "הספר",
+            "raw_token": "הספרר",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 3,
+              "inserted_index": 4,
+              "character": "ר"
+            },
+            "lexical_family_ids": [
+              "lex:he:ספר"
+            ],
+            "sense_id": "printed_book",
+            "contrast_lexical_families": {
+              "correct_target": "lex:ru:книга",
+              "wrong_target": "lex:ru:тетрадь"
+            },
+            "author_check": {
+              "canonical_codepoints": 4,
+              "raw_codepoints": 5,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.en-he.REF01",
+          "profile_id": "en-he",
+          "family_id": "v3-ref.translation.repeat.milk-table",
+          "prompt": "Переведи с языка «английский» на язык «иврит». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: The miilk is on the table.",
+          "chosen": "החלב על השולחן.",
+          "rejected": "המיץ על השולחן.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "en",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.milk-table",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "The miilk is on the table.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.milk-table",
+              "lex:en:milk"
+            ],
+            "canonical_source": "The milk is on the table.",
+            "canonical_token": "milk",
+            "raw_token": "miilk",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 1,
+              "inserted_index": 2,
+              "character": "i"
+            },
+            "lexical_family_ids": [
+              "lex:en:milk"
+            ],
+            "sense_id": "milk_beverage",
+            "contrast_lexical_families": {
+              "correct_target": "lex:he:חלב",
+              "wrong_target": "lex:he:מיץ"
+            },
+            "author_check": {
+              "canonical_codepoints": 4,
+              "raw_codepoints": 5,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.en-he.REF02",
+          "profile_id": "en-he",
+          "family_id": "v3-ref.translation.repeat.book-bag",
+          "prompt": "Переведи с языка «английский» на язык «иврит». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: The boook is in the bag.",
+          "chosen": "הספר בתיק.",
+          "rejected": "המחברת בתיק.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "en",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.book-bag",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "The boook is in the bag.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.book-bag",
+              "lex:en:book"
+            ],
+            "canonical_source": "The book is in the bag.",
+            "canonical_token": "book",
+            "raw_token": "boook",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 1,
+              "inserted_index": 2,
+              "character": "o"
+            },
+            "lexical_family_ids": [
+              "lex:en:book"
+            ],
+            "sense_id": "printed_book",
+            "contrast_lexical_families": {
+              "correct_target": "lex:he:ספר",
+              "wrong_target": "lex:he:מחברת"
+            },
+            "author_check": {
+              "canonical_codepoints": 4,
+              "raw_codepoints": 5,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.ru-he.REF01",
+          "profile_id": "ru-he",
+          "family_id": "v3-ref.translation.repeat.milk-table",
+          "prompt": "Переведи с языка «русский» на язык «иврит». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: Моолоко на столе.",
+          "chosen": "החלב על השולחן.",
+          "rejected": "המיץ על השולחן.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "ru",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.milk-table",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "Моолоко на столе.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.milk-table",
+              "lex:ru:молоко"
+            ],
+            "canonical_source": "Молоко на столе.",
+            "canonical_token": "Молоко",
+            "raw_token": "Моолоко",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 1,
+              "inserted_index": 2,
+              "character": "о"
+            },
+            "lexical_family_ids": [
+              "lex:ru:молоко"
+            ],
+            "sense_id": "milk_beverage",
+            "contrast_lexical_families": {
+              "correct_target": "lex:he:חלב",
+              "wrong_target": "lex:he:מיץ"
+            },
+            "author_check": {
+              "canonical_codepoints": 6,
+              "raw_codepoints": 7,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        },
+        {
+          "example_id": "TR07-REPEAT.ru-he.REF02",
+          "profile_id": "ru-he",
+          "family_id": "v3-ref.translation.repeat.book-bag",
+          "prompt": "Переведи с языка «русский» на язык «иврит». Выдай только перевод. В одном обычном слове случайно повторена ровно одна соседняя буква. Восстанови это слово и переведи предложение, сохранив остальные факты.\nИсходный текст: Книгаа в сумке.",
+          "chosen": "הספר בתיק.",
+          "rejected": "המחברת בתיק.",
+          "error_tag": "single_repeated_character_wrong_lexeme",
+          "rationale": "Удаление ровно добавленной повторной буквы возвращает исходную лексему. Rejected подменяет предмет другим; место и остальные факты не меняются.",
+          "counterexample": "Нельзя удалять букву из правильного слова только из-за двойной буквы: book имеет законное oo. В boook лишняя только одна o. Допустимый синоним перевода не становится rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "ru",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.repeat.book-bag",
+            "learning_objective_id": "TR07-REPEAT",
+            "source_raw": "Книгаа в сумке.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.repeat.book-bag",
+              "lex:ru:книга"
+            ],
+            "canonical_source": "Книга в сумке.",
+            "canonical_token": "Книга",
+            "raw_token": "Книгаа",
+            "mutation": {
+              "kind": "repeat_one_codepoint",
+              "index": 4,
+              "inserted_index": 5,
+              "character": "а"
+            },
+            "lexical_family_ids": [
+              "lex:ru:книга"
+            ],
+            "sense_id": "printed_book",
+            "contrast_lexical_families": {
+              "correct_target": "lex:he:ספר",
+              "wrong_target": "lex:he:מחברת"
+            },
+            "author_check": {
+              "canonical_codepoints": 5,
+              "raw_codepoints": 6,
+              "inverse_operation": "remove_inserted_index"
+            }
+          }
+        }
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1
+    },
+    {
+      "objective_id": "TR06-NUMBER-UNIT",
+      "topic_id": "TR06",
+      "title_ru": "Сохранение точной пары «число — единица» при переводе",
+      "domain_ids": [
+        "tr.en",
+        "tr.ru",
+        "tr.he"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "learning_goal_ru": "Переводить окружающее описание, сохраняя численное значение и явно защищённое обозначение единицы; не подменять точность свободной переформулировкой.",
+      "prerequisites": [
+        "TR01",
+        "TR06-PLACEHOLDER"
+      ],
+      "family_plan_files": {
+        "train": "curriculum/family-plans/translation-surface-quantity-time.train.json"
+      },
+      "generation_prompt_ru": "Создавай короткие бытовые или технические фразы с одной измеряемой величиной и одним явным числом: длина, время ожидания, объём или масса. Для этой узкой цели в learner prompt прямо сказано: число сохранить цифрами, обозначение единицы сохранить буквально, конверсию и локализацию единицы не выполнять. Все факты видны в исходной строке. Chosen переводит окружающий текст и сохраняет обе части пары. В rejected меняется только одно: либо число при той же единице, либо единица при том же числе. Остальные слова и факты по возможности совпадают. Не меняй одновременно 15 cm на 150 mm: там два компонента и физически эквивалентная конверсия, не нужный контраст.\nДля партии из 10 строк подготовь 5 примеров с одной неверной цифрой/числом и 5 с одной неверной единицей. Внутри этого распределения используй разные видимые ситуации из назначенных сценариев. Для простого уровня числа целые положительные, единицы из заданного набора cm/mm, min/s, kg/g, L/mL; не вводи курсы валют, медицинские дозы, неоднозначные запятые/точки или преобразования часовых поясов. Не добавляй placeholder, отрицание, род или layout-дефект как вторую учебную цель. Видимая единица может оставаться латиницей и в Hebrew/Russian: это прямой контракт задачи, а не ошибка языка ответа.\nСамопроверка: выпиши пару (число, единица) из source, chosen и rejected. Source и chosen должны совпасть по обеим частям. Между chosen и rejected отличается ровно одна часть. Проверь, что в видимом prompt есть правило без конверсии; не прячь его в metadata. Не оценивай скорость обучения по этому механическому сравнению — оно только помогает правильно составить данные. Запиши measurement, rejected_measurement, changed_component и numeric_and_unit_contract.\n\nРабота выполняется по одному request.json: один objective_id, topic_id, profile_id и split. Текущий режим CREATE_ONLY: внешняя открытая китайская модель, уже выбранная пользователем в Kiro, создаёт полные prompt/chosen/rejected. Не меняй модель и не выдумывай её название; фактически неизвестное имя укажи unknown. Роль человека при выборе материала выполняет CODEX с Astra 6 ultracode; качество DPO также оценивает CODEX с Astra 6 ultracode. Здесь это распределение ролей для отдельного будущего этапа, не подтверждение состоявшегося вызова и не review-gate перед созданием.\n\nПрочти 17-CURRENT-PREPARATION-CONTRACT.md, 20-CREATE-ONLY-AND-PATHS.md, 02-DATA-CONTRACT.md, назначенную карточку и назначенные RAG-выдержки. Разобранные хорошие и плохие примеры находятся в prompts/TRANSLATION-SURFACE-QUANTITY-TIME-RU.md. Проектные скилы и точные референсы: 06-SOURCES-AND-SKILLS.md; для этой работы применяются human-readable-architecture-audit-SKILL.md, phase-planning-SKILL.md, plan-review-SKILL.md, code-examination-SKILL.md, prompt-patch-authoring-SKILL.md и human-communication-GLOSSARY.md. Эти скилы помогают составить материал и инструкции; они не запускают review созданных кандидатов. Источники — только xiigen-planning main и llm_plan3, уже включённые в подготовку. Старые внешние ссылки не являются заданием на загрузку. SHA/checksum, подписи, подтверждение alias, independent review и production CI не требуются для создания.\n\nВыход находится строго в request.paths: корень C:/Users/lubao/Documents/xiigen/llm mvp/learning-sets, инструменты внутри preparation. Не ищи runner в llm_mvp_core и не создавай заглушку источника. Составь реальные полные ответы в draft.jsonl, выполни один структурный finish из готового commands.md и перейди к следующему stream из execution-queue.json. После finish статус DRAFT_CREATED, review_status=not_requested, Student=NOT_RUN, учебные метрики NOT_MEASURED. Отчёт по-русски: ID, направление, число реально записанных пар/семей, абсолютный путь, структурный результат, следующий ID. Ответы ученика — только на языке назначения профиля.\n\nВ каждом prompt видны все условия, необходимые для выбора ответа. Rationale, правильная метка, canonical_source, ID семьи и ответы экзамена не подставляются в learner-visible input. Chosen и rejected решают одно и то же задание; в rejected ровно одно существенное нарушение. Другой допустимый перевод или синоним не становится rejected. Авторские примеры ниже — reference-симуляции, не цитаты корпуса, не принятые обучающие данные и не измерение обучения. Не копируй reference и их производные в запечатанный DEV/EXAM.\n\nОдин исходный сюжет, обратные переводы, перефразирования, опечатки и раскладки сохраняют общий origin/family/leakage и один split. Число строк не равно числу независимых семейств. Новое число, имя или номер партии не делает производный сюжет независимым. Лексическая семья соединяет подтверждённые формы одной лексемы; правильная и ошибочно подставленная другая лексема в ней не сливаются. Семья сценария и лексическая семья — разные связи. В иврите текст хранится в логическом Unicode-порядке без ручного разворота.\n\nНе удаляй прежние данные, эксперименты и результаты: изменённый материал получает новую revision/run и derived_from. При прямом NEXT или новом ID немедленно переключись на указанную задачу; запрещено продолжать прошлую, дописывать её отчёт, чинить её тесты или повторять запуск. При STOP немедленно прекрати действия. Если модель или инструмент уже работает, сохрани один handle и используй его штатный wait/resume до terminal state; timeout транспорта не доказывает отказ. Не заверши ход вместо ожидания, не запускай дубликаты и не подменяй ожидание частым polling.\n\nОбучение сейчас не запускается. Если позже назначен учебный пилот, сначала восстанови совместимый уже обученный checkpoint по 05-LEARNING-AND-CHECKPOINTS.md либо один раз получи и сохрани такое состояние на отдельном TRAIN. Бюджет должен допускать ненулевой учебный результат. 0→0 и малый сдвиг margin сами по себе не доказывают обучение. Любое измеренное улучшение полезного показателя на валидном учебном опыте — успех по этому показателю и домену; остальные показатели, включая ухудшения, показываются рядом. Перенос в production решается отдельно.",
+      "response_contract_ru": "Только полный перевод исходной строки на target-языке; объяснения и авторская самопроверка остаются вне learner prompt/chosen/rejected.",
+      "scenario_axes": [
+        {
+          "axis": "changed_component",
+          "values": [
+            "number",
+            "unit"
+          ]
+        },
+        {
+          "axis": "measurement_kind",
+          "values": [
+            "length",
+            "duration",
+            "mass",
+            "volume"
+          ]
+        },
+        {
+          "axis": "number_position",
+          "values": [
+            "middle",
+            "end"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Одновременное изменение числа и единицы.",
+        "Конверсия единиц или локализация без видимого разрешения.",
+        "Два измерения в одной строке, где невозможно однозначно указать изменённый компонент.",
+        "Финансовые курсы, медицинские дозировки и внешние факты вместо полностью заданной симуляции.",
+        "Несколько направлений, objective или split в одном shard.",
+        "Скрытая подсказка в rationale/metadata вместо видимого контекста.",
+        "Объявление допустимого синонима или перевода плохим ответом.",
+        "Разделение переводов и производных одного исходного сюжета между TRAIN/DEV/EXAM.",
+        "Перенос публичных reference и производных в запечатанный DEV/EXAM."
+      ],
+      "review_requirements": {
+        "kind": "bilingual_review",
+        "checks": [
+          "В source и chosen буквально совпадают цифры и назначенное обозначение единицы.",
+          "В rejected изменён один компонент; не скрыта физически эквивалентная конверсия.",
+          "Единица защищена в видимом prompt; символы Hebrew/RTL не перевёрнуты вручную.",
+          "Это требования отдельного будущего этапа; CREATE_ONLY не запускает review и не ждёт его.",
+          "Предпочтение должно выводиться из prompt без подсматривания в rationale.",
+          "Шесть направлений рассматриваются отдельно; self-review генератора не выдаётся за CODEX Astra quality assessment.",
+          "Семейства сценариев и лексические семьи не подменяют друг друга; учёт lineage сохраняется."
+        ]
+      },
+      "examples": [
+        {
+          "example_id": "TR06-NUMBER-UNIT.ru-en.REF01",
+          "profile_id": "ru-en",
+          "family_id": "v3-ref.translation.measure.cable-length",
+          "prompt": "Переведи с языка «русский» на язык «английский». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: Длина кабеля — 15 cm.",
+          "chosen": "The cable is 15 cm long.",
+          "rejected": "The cable is 15 mm long.",
+          "error_tag": "changed_measurement_unit",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только единицу при том же числе.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "ru",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.cable-length",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "Длина кабеля — 15 cm.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.cable-length"
+            ],
+            "measurement": {
+              "value_literal": "15",
+              "unit_literal": "cm"
+            },
+            "rejected_measurement": {
+              "value_literal": "15",
+              "unit_literal": "mm"
+            },
+            "protected_tokens_expected": [
+              "15",
+              "cm"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "unit",
+            "author_check": {
+              "chosen_pair": [
+                "15",
+                "cm"
+              ],
+              "rejected_pair": [
+                "15",
+                "mm"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.ru-en.REF02",
+          "profile_id": "ru-en",
+          "family_id": "v3-ref.translation.measure.timer-duration",
+          "prompt": "Переведи с языка «русский» на язык «английский». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: Таймер установлен на 8 min.",
+          "chosen": "The timer is set to 8 min.",
+          "rejected": "The timer is set to 18 min.",
+          "error_tag": "changed_measurement_number",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только число при той же единице.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "ru",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.timer-duration",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "Таймер установлен на 8 min.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.timer-duration"
+            ],
+            "measurement": {
+              "value_literal": "8",
+              "unit_literal": "min"
+            },
+            "rejected_measurement": {
+              "value_literal": "18",
+              "unit_literal": "min"
+            },
+            "protected_tokens_expected": [
+              "8",
+              "min"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "number",
+            "author_check": {
+              "chosen_pair": [
+                "8",
+                "min"
+              ],
+              "rejected_pair": [
+                "18",
+                "min"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.he-en.REF01",
+          "profile_id": "he-en",
+          "family_id": "v3-ref.translation.measure.cable-length",
+          "prompt": "Переведи с языка «иврит» на язык «английский». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: אורך הכבל הוא 15 cm.",
+          "chosen": "The cable is 15 cm long.",
+          "rejected": "The cable is 15 mm long.",
+          "error_tag": "changed_measurement_unit",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только единицу при том же числе.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "he",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.cable-length",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "אורך הכבל הוא 15 cm.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.cable-length"
+            ],
+            "measurement": {
+              "value_literal": "15",
+              "unit_literal": "cm"
+            },
+            "rejected_measurement": {
+              "value_literal": "15",
+              "unit_literal": "mm"
+            },
+            "protected_tokens_expected": [
+              "15",
+              "cm"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "unit",
+            "author_check": {
+              "chosen_pair": [
+                "15",
+                "cm"
+              ],
+              "rejected_pair": [
+                "15",
+                "mm"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.he-en.REF02",
+          "profile_id": "he-en",
+          "family_id": "v3-ref.translation.measure.timer-duration",
+          "prompt": "Переведи с языка «иврит» на язык «английский». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: הטיימר מכוון ל-8 min.",
+          "chosen": "The timer is set to 8 min.",
+          "rejected": "The timer is set to 18 min.",
+          "error_tag": "changed_measurement_number",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только число при той же единице.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "he",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.timer-duration",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "הטיימר מכוון ל-8 min.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.timer-duration"
+            ],
+            "measurement": {
+              "value_literal": "8",
+              "unit_literal": "min"
+            },
+            "rejected_measurement": {
+              "value_literal": "18",
+              "unit_literal": "min"
+            },
+            "protected_tokens_expected": [
+              "8",
+              "min"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "number",
+            "author_check": {
+              "chosen_pair": [
+                "8",
+                "min"
+              ],
+              "rejected_pair": [
+                "18",
+                "min"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.en-ru.REF01",
+          "profile_id": "en-ru",
+          "family_id": "v3-ref.translation.measure.cable-length",
+          "prompt": "Переведи с языка «английский» на язык «русский». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: The cable is 15 cm long.",
+          "chosen": "Длина кабеля — 15 cm.",
+          "rejected": "Длина кабеля — 15 mm.",
+          "error_tag": "changed_measurement_unit",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только единицу при том же числе.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "en",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.cable-length",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "The cable is 15 cm long.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.cable-length"
+            ],
+            "measurement": {
+              "value_literal": "15",
+              "unit_literal": "cm"
+            },
+            "rejected_measurement": {
+              "value_literal": "15",
+              "unit_literal": "mm"
+            },
+            "protected_tokens_expected": [
+              "15",
+              "cm"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "unit",
+            "author_check": {
+              "chosen_pair": [
+                "15",
+                "cm"
+              ],
+              "rejected_pair": [
+                "15",
+                "mm"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.en-ru.REF02",
+          "profile_id": "en-ru",
+          "family_id": "v3-ref.translation.measure.timer-duration",
+          "prompt": "Переведи с языка «английский» на язык «русский». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: The timer is set to 8 min.",
+          "chosen": "Таймер установлен на 8 min.",
+          "rejected": "Таймер установлен на 18 min.",
+          "error_tag": "changed_measurement_number",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только число при той же единице.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "en",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.timer-duration",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "The timer is set to 8 min.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.timer-duration"
+            ],
+            "measurement": {
+              "value_literal": "8",
+              "unit_literal": "min"
+            },
+            "rejected_measurement": {
+              "value_literal": "18",
+              "unit_literal": "min"
+            },
+            "protected_tokens_expected": [
+              "8",
+              "min"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "number",
+            "author_check": {
+              "chosen_pair": [
+                "8",
+                "min"
+              ],
+              "rejected_pair": [
+                "18",
+                "min"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.he-ru.REF01",
+          "profile_id": "he-ru",
+          "family_id": "v3-ref.translation.measure.cable-length",
+          "prompt": "Переведи с языка «иврит» на язык «русский». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: אורך הכבל הוא 15 cm.",
+          "chosen": "Длина кабеля — 15 cm.",
+          "rejected": "Длина кабеля — 15 mm.",
+          "error_tag": "changed_measurement_unit",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только единицу при том же числе.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "he",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.cable-length",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "אורך הכבל הוא 15 cm.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.cable-length"
+            ],
+            "measurement": {
+              "value_literal": "15",
+              "unit_literal": "cm"
+            },
+            "rejected_measurement": {
+              "value_literal": "15",
+              "unit_literal": "mm"
+            },
+            "protected_tokens_expected": [
+              "15",
+              "cm"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "unit",
+            "author_check": {
+              "chosen_pair": [
+                "15",
+                "cm"
+              ],
+              "rejected_pair": [
+                "15",
+                "mm"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.he-ru.REF02",
+          "profile_id": "he-ru",
+          "family_id": "v3-ref.translation.measure.timer-duration",
+          "prompt": "Переведи с языка «иврит» на язык «русский». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: הטיימר מכוון ל-8 min.",
+          "chosen": "Таймер установлен на 8 min.",
+          "rejected": "Таймер установлен на 18 min.",
+          "error_tag": "changed_measurement_number",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только число при той же единице.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "he",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.timer-duration",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "הטיימר מכוון ל-8 min.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.timer-duration"
+            ],
+            "measurement": {
+              "value_literal": "8",
+              "unit_literal": "min"
+            },
+            "rejected_measurement": {
+              "value_literal": "18",
+              "unit_literal": "min"
+            },
+            "protected_tokens_expected": [
+              "8",
+              "min"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "number",
+            "author_check": {
+              "chosen_pair": [
+                "8",
+                "min"
+              ],
+              "rejected_pair": [
+                "18",
+                "min"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.en-he.REF01",
+          "profile_id": "en-he",
+          "family_id": "v3-ref.translation.measure.cable-length",
+          "prompt": "Переведи с языка «английский» на язык «иврит». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: The cable is 15 cm long.",
+          "chosen": "אורך הכבל הוא 15 cm.",
+          "rejected": "אורך הכבל הוא 15 mm.",
+          "error_tag": "changed_measurement_unit",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только единицу при том же числе.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "en",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.cable-length",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "The cable is 15 cm long.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.cable-length"
+            ],
+            "measurement": {
+              "value_literal": "15",
+              "unit_literal": "cm"
+            },
+            "rejected_measurement": {
+              "value_literal": "15",
+              "unit_literal": "mm"
+            },
+            "protected_tokens_expected": [
+              "15",
+              "cm"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "unit",
+            "author_check": {
+              "chosen_pair": [
+                "15",
+                "cm"
+              ],
+              "rejected_pair": [
+                "15",
+                "mm"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.en-he.REF02",
+          "profile_id": "en-he",
+          "family_id": "v3-ref.translation.measure.timer-duration",
+          "prompt": "Переведи с языка «английский» на язык «иврит». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: The timer is set to 8 min.",
+          "chosen": "הטיימר מכוון ל-8 min.",
+          "rejected": "הטיימר מכוון ל-18 min.",
+          "error_tag": "changed_measurement_number",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только число при той же единице.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "en",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.timer-duration",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "The timer is set to 8 min.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.timer-duration"
+            ],
+            "measurement": {
+              "value_literal": "8",
+              "unit_literal": "min"
+            },
+            "rejected_measurement": {
+              "value_literal": "18",
+              "unit_literal": "min"
+            },
+            "protected_tokens_expected": [
+              "8",
+              "min"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "number",
+            "author_check": {
+              "chosen_pair": [
+                "8",
+                "min"
+              ],
+              "rejected_pair": [
+                "18",
+                "min"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.ru-he.REF01",
+          "profile_id": "ru-he",
+          "family_id": "v3-ref.translation.measure.cable-length",
+          "prompt": "Переведи с языка «русский» на язык «иврит». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: Длина кабеля — 15 cm.",
+          "chosen": "אורך הכבל הוא 15 cm.",
+          "rejected": "אורך הכבל הוא 15 mm.",
+          "error_tag": "changed_measurement_unit",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только единицу при том же числе.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "ru",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.cable-length",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "Длина кабеля — 15 cm.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.cable-length"
+            ],
+            "measurement": {
+              "value_literal": "15",
+              "unit_literal": "cm"
+            },
+            "rejected_measurement": {
+              "value_literal": "15",
+              "unit_literal": "mm"
+            },
+            "protected_tokens_expected": [
+              "15",
+              "cm"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "unit",
+            "author_check": {
+              "chosen_pair": [
+                "15",
+                "cm"
+              ],
+              "rejected_pair": [
+                "15",
+                "mm"
+              ],
+              "different_components": 1
+            }
+          }
+        },
+        {
+          "example_id": "TR06-NUMBER-UNIT.ru-he.REF02",
+          "profile_id": "ru-he",
+          "family_id": "v3-ref.translation.measure.timer-duration",
+          "prompt": "Переведи с языка «русский» на язык «иврит». Выдай только перевод. Число записано цифрами. Сохрани его и указанное латинское обозначение единицы буквально; единицы не пересчитывай и обозначения не локализуй. Переведи только окружающий текст.\nИсходный текст: Таймер установлен на 8 min.",
+          "chosen": "הטיימר מכוון ל-8 min.",
+          "rejected": "הטיימר מכוון ל-18 min.",
+          "error_tag": "changed_measurement_number",
+          "rationale": "Видимое условие требует точного сохранения пары «число, единица». Rejected меняет только число при той же единице.",
+          "counterexample": "Без запрета пересчёта физически эквивалентная конверсия может быть допустима. Здесь выбранный rejected неэквивалентен по величине. Перестановка слов вокруг той же величины не является ошибкой.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "ru",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.measure.timer-duration",
+            "learning_objective_id": "TR06-NUMBER-UNIT",
+            "source_raw": "Таймер установлен на 8 min.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.measure.timer-duration"
+            ],
+            "measurement": {
+              "value_literal": "8",
+              "unit_literal": "min"
+            },
+            "rejected_measurement": {
+              "value_literal": "18",
+              "unit_literal": "min"
+            },
+            "protected_tokens_expected": [
+              "8",
+              "min"
+            ],
+            "numeric_and_unit_contract": "copy_literal_no_conversion",
+            "changed_component": "number",
+            "author_check": {
+              "chosen_pair": [
+                "8",
+                "min"
+              ],
+              "rejected_pair": [
+                "18",
+                "min"
+              ],
+              "different_components": 1
+            }
+          }
+        }
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1
+    },
+    {
+      "objective_id": "TR03-EVENT-ORDER",
+      "topic_id": "TR03",
+      "title_ru": "До и после: порядок двух завершённых событий",
+      "domain_ids": [
+        "tr.en",
+        "tr.ru",
+        "tr.he"
+      ],
+      "profiles": [
+        "ru-en",
+        "he-en",
+        "en-ru",
+        "he-ru",
+        "en-he",
+        "ru-he"
+      ],
+      "source_refs": [
+        "RAG-023",
+        "RAG-024"
+      ],
+      "learning_goal_ru": "Сохранять временную связь между двумя явно описанными событиями, даже когда порядок частей предложения отличается от порядка событий.",
+      "prerequisites": [
+        "TR01",
+        "TR03-COMPLETION"
+      ],
+      "family_plan_files": {
+        "train": "curriculum/family-plans/translation-surface-quantity-time.train.json"
+      },
+      "generation_prompt_ru": "Создавай короткие предложения с ровно двумя завершёнными событиями и явным before/after, до/после или לפני/אחרי. Участники и предметы названы; местоимение допускается только при однозначном референте. В learner prompt проси сохранить, какое событие было раньше. Chosen передаёт исходную последовательность. Rejected меняет только временную связь на противоположную: before↔after, до↔после, לפני↔אחרי. Не меняй участников, глаголы, числа, отрицание и завершённость. Согласования, необходимые для естественной грамматики, должны оставаться правильными.\nДля партии из 10 назначенных сценариев используй 5 с before/до/לפני и 5 с after/после/אחרי. Внутри каждого класса варьируй главную/придаточную часть в начале или конце; не делай порядок слов всегда равным хронологии. Это одна тема временной связи, не смешение доменов. Не используй until/пока не/עד ש, условие if, одновременность, намерение или незавершённое действие: у них другие значения. Не создавай причинный вывод из одного временного порядка.\nСамопроверка: отдельно запиши A и B; затем «раньше ___; позже ___» для source, chosen и rejected. Source и chosen должны дать одну пару, rejected — обратную. Перефраз «After A, B»→«B after A» сохраняет A→B и поэтому не годится как rejected. В metadata event_order и rejected_event_order хранят порядок фактов; они не подставляются в learner input. Формулировки оставляй естественными в target-языке. Самопроверка — часть создания, не отдельный review-gate и не измерение обучения.\n\nРабота выполняется по одному request.json: один objective_id, topic_id, profile_id и split. Текущий режим CREATE_ONLY: внешняя открытая китайская модель, уже выбранная пользователем в Kiro, создаёт полные prompt/chosen/rejected. Не меняй модель и не выдумывай её название; фактически неизвестное имя укажи unknown. Роль человека при выборе материала выполняет CODEX с Astra 6 ultracode; качество DPO также оценивает CODEX с Astra 6 ultracode. Здесь это распределение ролей для отдельного будущего этапа, не подтверждение состоявшегося вызова и не review-gate перед созданием.\n\nПрочти 17-CURRENT-PREPARATION-CONTRACT.md, 20-CREATE-ONLY-AND-PATHS.md, 02-DATA-CONTRACT.md, назначенную карточку и назначенные RAG-выдержки. Разобранные хорошие и плохие примеры находятся в prompts/TRANSLATION-SURFACE-QUANTITY-TIME-RU.md. Проектные скилы и точные референсы: 06-SOURCES-AND-SKILLS.md; для этой работы применяются human-readable-architecture-audit-SKILL.md, phase-planning-SKILL.md, plan-review-SKILL.md, code-examination-SKILL.md, prompt-patch-authoring-SKILL.md и human-communication-GLOSSARY.md. Эти скилы помогают составить материал и инструкции; они не запускают review созданных кандидатов. Источники — только xiigen-planning main и llm_plan3, уже включённые в подготовку. Старые внешние ссылки не являются заданием на загрузку. SHA/checksum, подписи, подтверждение alias, independent review и production CI не требуются для создания.\n\nВыход находится строго в request.paths: корень C:/Users/lubao/Documents/xiigen/llm mvp/learning-sets, инструменты внутри preparation. Не ищи runner в llm_mvp_core и не создавай заглушку источника. Составь реальные полные ответы в draft.jsonl, выполни один структурный finish из готового commands.md и перейди к следующему stream из execution-queue.json. После finish статус DRAFT_CREATED, review_status=not_requested, Student=NOT_RUN, учебные метрики NOT_MEASURED. Отчёт по-русски: ID, направление, число реально записанных пар/семей, абсолютный путь, структурный результат, следующий ID. Ответы ученика — только на языке назначения профиля.\n\nВ каждом prompt видны все условия, необходимые для выбора ответа. Rationale, правильная метка, canonical_source, ID семьи и ответы экзамена не подставляются в learner-visible input. Chosen и rejected решают одно и то же задание; в rejected ровно одно существенное нарушение. Другой допустимый перевод или синоним не становится rejected. Авторские примеры ниже — reference-симуляции, не цитаты корпуса, не принятые обучающие данные и не измерение обучения. Не копируй reference и их производные в запечатанный DEV/EXAM.\n\nОдин исходный сюжет, обратные переводы, перефразирования, опечатки и раскладки сохраняют общий origin/family/leakage и один split. Число строк не равно числу независимых семейств. Новое число, имя или номер партии не делает производный сюжет независимым. Лексическая семья соединяет подтверждённые формы одной лексемы; правильная и ошибочно подставленная другая лексема в ней не сливаются. Семья сценария и лексическая семья — разные связи. В иврите текст хранится в логическом Unicode-порядке без ручного разворота.\n\nНе удаляй прежние данные, эксперименты и результаты: изменённый материал получает новую revision/run и derived_from. При прямом NEXT или новом ID немедленно переключись на указанную задачу; запрещено продолжать прошлую, дописывать её отчёт, чинить её тесты или повторять запуск. При STOP немедленно прекрати действия. Если модель или инструмент уже работает, сохрани один handle и используй его штатный wait/resume до terminal state; timeout транспорта не доказывает отказ. Не заверши ход вместо ожидания, не запускай дубликаты и не подменяй ожидание частым polling.\n\nОбучение сейчас не запускается. Если позже назначен учебный пилот, сначала восстанови совместимый уже обученный checkpoint по 05-LEARNING-AND-CHECKPOINTS.md либо один раз получи и сохрани такое состояние на отдельном TRAIN. Бюджет должен допускать ненулевой учебный результат. 0→0 и малый сдвиг margin сами по себе не доказывают обучение. Любое измеренное улучшение полезного показателя на валидном учебном опыте — успех по этому показателю и домену; остальные показатели, включая ухудшения, показываются рядом. Перенос в production решается отдельно.",
+      "response_contract_ru": "Только полный перевод исходной строки на target-языке; объяснения и авторская самопроверка остаются вне learner prompt/chosen/rejected.",
+      "scenario_axes": [
+        {
+          "axis": "connector",
+          "values": [
+            "before",
+            "after"
+          ]
+        },
+        {
+          "axis": "clause_order",
+          "values": [
+            "main_first",
+            "subordinate_first"
+          ]
+        },
+        {
+          "axis": "agent_count",
+          "values": [
+            "one_explicit_agent",
+            "two_named_agents"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Условие, отрицание, until, одновременность или незавершённость как второй фактор.",
+        "Причинный вывод, не заданный исходником.",
+        "Объявление перестановки частей предложения семантической ошибкой, если временная связь прежняя.",
+        "Неоднозначные местоимения или изменение участника вместе со связкой.",
+        "Несколько направлений, objective или split в одном shard.",
+        "Скрытая подсказка в rationale/metadata вместо видимого контекста.",
+        "Объявление допустимого синонима или перевода плохим ответом.",
+        "Разделение переводов и производных одного исходного сюжета между TRAIN/DEV/EXAM.",
+        "Перенос публичных reference и производных в запечатанный DEV/EXAM."
+      ],
+      "review_requirements": {
+        "kind": "bilingual_review",
+        "checks": [
+          "Source и chosen дают одинаковую пару earlier/later; rejected даёт обратную.",
+          "Порядок событий не выведен только из линейного порядка слов.",
+          "Все участники, предметы и глаголы сохранились; различается одна временная связь.",
+          "Это требования отдельного будущего этапа; CREATE_ONLY не запускает review и не ждёт его.",
+          "Предпочтение должно выводиться из prompt без подсматривания в rationale.",
+          "Шесть направлений рассматриваются отдельно; self-review генератора не выдаётся за CODEX Astra quality assessment.",
+          "Семейства сценариев и лексические семьи не подменяют друг друга; учёт lineage сохраняется."
+        ]
+      },
+      "examples": [
+        {
+          "example_id": "TR03-EVENT-ORDER.ru-en.REF01",
+          "profile_id": "ru-en",
+          "family_id": "v3-ref.translation.event.window-call",
+          "prompt": "Переведи с языка «русский» на язык «английский». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: Майя открыла окно до того, как позвонила Дану.",
+          "chosen": "Maya opened the window before she called Dan.",
+          "rejected": "Maya opened the window after she called Dan.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит open_window, затем call_Dan. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "ru",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.window-call",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "Майя открыла окно до того, как позвонила Дану.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.window-call"
+            ],
+            "event_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "rejected_event_order": [
+              "call_Dan",
+              "open_window"
+            ],
+            "semantic_roles": {
+              "agent": "Maya"
+            },
+            "connector_semantics": "before",
+            "source_clause_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "author_check": {
+              "earlier_event": "open_window",
+              "later_event": "call_Dan",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.ru-en.REF02",
+          "profile_id": "ru-en",
+          "family_id": "v3-ref.translation.event.lock-light",
+          "prompt": "Переведи с языка «русский» на язык «английский». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: После того как Амир запер дверь, он выключил свет.",
+          "chosen": "After Amir locked the door, he switched off the light.",
+          "rejected": "Before Amir locked the door, he switched off the light.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит lock_door, затем switch_off_light. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "ru",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.lock-light",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "После того как Амир запер дверь, он выключил свет.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.lock-light"
+            ],
+            "event_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "rejected_event_order": [
+              "switch_off_light",
+              "lock_door"
+            ],
+            "semantic_roles": {
+              "agent": "Amir"
+            },
+            "connector_semantics": "after",
+            "source_clause_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "author_check": {
+              "earlier_event": "lock_door",
+              "later_event": "switch_off_light",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.he-en.REF01",
+          "profile_id": "he-en",
+          "family_id": "v3-ref.translation.event.window-call",
+          "prompt": "Переведи с языка «иврит» на язык «английский». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: מאיה פתחה את החלון לפני שהתקשרה לדן.",
+          "chosen": "Maya opened the window before she called Dan.",
+          "rejected": "Maya opened the window after she called Dan.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит open_window, затем call_Dan. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "he",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.window-call",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "מאיה פתחה את החלון לפני שהתקשרה לדן.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.window-call"
+            ],
+            "event_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "rejected_event_order": [
+              "call_Dan",
+              "open_window"
+            ],
+            "semantic_roles": {
+              "agent": "Maya"
+            },
+            "connector_semantics": "before",
+            "source_clause_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "author_check": {
+              "earlier_event": "open_window",
+              "later_event": "call_Dan",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.he-en.REF02",
+          "profile_id": "he-en",
+          "family_id": "v3-ref.translation.event.lock-light",
+          "prompt": "Переведи с языка «иврит» на язык «английский». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: אחרי שאמיר נעל את הדלת, הוא כיבה את האור.",
+          "chosen": "After Amir locked the door, he switched off the light.",
+          "rejected": "Before Amir locked the door, he switched off the light.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит lock_door, затем switch_off_light. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "en",
+            "language_pair": {
+              "source": "he",
+              "target": "en"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.lock-light",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "אחרי שאמיר נעל את הדלת, הוא כיבה את האור.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.lock-light"
+            ],
+            "event_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "rejected_event_order": [
+              "switch_off_light",
+              "lock_door"
+            ],
+            "semantic_roles": {
+              "agent": "Amir"
+            },
+            "connector_semantics": "after",
+            "source_clause_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "author_check": {
+              "earlier_event": "lock_door",
+              "later_event": "switch_off_light",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.en-ru.REF01",
+          "profile_id": "en-ru",
+          "family_id": "v3-ref.translation.event.window-call",
+          "prompt": "Переведи с языка «английский» на язык «русский». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: Maya opened the window before she called Dan.",
+          "chosen": "Майя открыла окно до того, как позвонила Дану.",
+          "rejected": "Майя открыла окно после того, как позвонила Дану.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит open_window, затем call_Dan. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "en",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.window-call",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "Maya opened the window before she called Dan.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.window-call"
+            ],
+            "event_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "rejected_event_order": [
+              "call_Dan",
+              "open_window"
+            ],
+            "semantic_roles": {
+              "agent": "Maya"
+            },
+            "connector_semantics": "before",
+            "source_clause_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "author_check": {
+              "earlier_event": "open_window",
+              "later_event": "call_Dan",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.en-ru.REF02",
+          "profile_id": "en-ru",
+          "family_id": "v3-ref.translation.event.lock-light",
+          "prompt": "Переведи с языка «английский» на язык «русский». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: After Amir locked the door, he switched off the light.",
+          "chosen": "После того как Амир запер дверь, он выключил свет.",
+          "rejected": "До того как Амир запер дверь, он выключил свет.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит lock_door, затем switch_off_light. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "en",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.lock-light",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "After Amir locked the door, he switched off the light.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.lock-light"
+            ],
+            "event_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "rejected_event_order": [
+              "switch_off_light",
+              "lock_door"
+            ],
+            "semantic_roles": {
+              "agent": "Amir"
+            },
+            "connector_semantics": "after",
+            "source_clause_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "author_check": {
+              "earlier_event": "lock_door",
+              "later_event": "switch_off_light",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.he-ru.REF01",
+          "profile_id": "he-ru",
+          "family_id": "v3-ref.translation.event.window-call",
+          "prompt": "Переведи с языка «иврит» на язык «русский». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: מאיה פתחה את החלון לפני שהתקשרה לדן.",
+          "chosen": "Майя открыла окно до того, как позвонила Дану.",
+          "rejected": "Майя открыла окно после того, как позвонила Дану.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит open_window, затем call_Dan. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "he",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.window-call",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "מאיה פתחה את החלון לפני שהתקשרה לדן.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.window-call"
+            ],
+            "event_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "rejected_event_order": [
+              "call_Dan",
+              "open_window"
+            ],
+            "semantic_roles": {
+              "agent": "Maya"
+            },
+            "connector_semantics": "before",
+            "source_clause_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "author_check": {
+              "earlier_event": "open_window",
+              "later_event": "call_Dan",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.he-ru.REF02",
+          "profile_id": "he-ru",
+          "family_id": "v3-ref.translation.event.lock-light",
+          "prompt": "Переведи с языка «иврит» на язык «русский». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: אחרי שאמיר נעל את הדלת, הוא כיבה את האור.",
+          "chosen": "После того как Амир запер дверь, он выключил свет.",
+          "rejected": "До того как Амир запер дверь, он выключил свет.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит lock_door, затем switch_off_light. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "ru",
+            "language_pair": {
+              "source": "he",
+              "target": "ru"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.lock-light",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "אחרי שאמיר נעל את הדלת, הוא כיבה את האור.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.lock-light"
+            ],
+            "event_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "rejected_event_order": [
+              "switch_off_light",
+              "lock_door"
+            ],
+            "semantic_roles": {
+              "agent": "Amir"
+            },
+            "connector_semantics": "after",
+            "source_clause_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "author_check": {
+              "earlier_event": "lock_door",
+              "later_event": "switch_off_light",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.en-he.REF01",
+          "profile_id": "en-he",
+          "family_id": "v3-ref.translation.event.window-call",
+          "prompt": "Переведи с языка «английский» на язык «иврит». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: Maya opened the window before she called Dan.",
+          "chosen": "מאיה פתחה את החלון לפני שהתקשרה לדן.",
+          "rejected": "מאיה פתחה את החלון אחרי שהתקשרה לדן.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит open_window, затем call_Dan. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "en",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.window-call",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "Maya opened the window before she called Dan.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.window-call"
+            ],
+            "event_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "rejected_event_order": [
+              "call_Dan",
+              "open_window"
+            ],
+            "semantic_roles": {
+              "agent": "Maya"
+            },
+            "connector_semantics": "before",
+            "source_clause_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "author_check": {
+              "earlier_event": "open_window",
+              "later_event": "call_Dan",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.en-he.REF02",
+          "profile_id": "en-he",
+          "family_id": "v3-ref.translation.event.lock-light",
+          "prompt": "Переведи с языка «английский» на язык «иврит». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: After Amir locked the door, he switched off the light.",
+          "chosen": "אחרי שאמיר נעל את הדלת, הוא כיבה את האור.",
+          "rejected": "לפני שאמיר נעל את הדלת, הוא כיבה את האור.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит lock_door, затем switch_off_light. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "en",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.lock-light",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "After Amir locked the door, he switched off the light.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.lock-light"
+            ],
+            "event_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "rejected_event_order": [
+              "switch_off_light",
+              "lock_door"
+            ],
+            "semantic_roles": {
+              "agent": "Amir"
+            },
+            "connector_semantics": "after",
+            "source_clause_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "author_check": {
+              "earlier_event": "lock_door",
+              "later_event": "switch_off_light",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.ru-he.REF01",
+          "profile_id": "ru-he",
+          "family_id": "v3-ref.translation.event.window-call",
+          "prompt": "Переведи с языка «русский» на язык «иврит». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: Майя открыла окно до того, как позвонила Дану.",
+          "chosen": "מאיה פתחה את החלון לפני שהתקשרה לדן.",
+          "rejected": "מאיה פתחה את החלון אחרי שהתקשרה לדן.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит open_window, затем call_Dan. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "ru",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.window-call",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "Майя открыла окно до того, как позвонила Дану.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.window-call"
+            ],
+            "event_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "rejected_event_order": [
+              "call_Dan",
+              "open_window"
+            ],
+            "semantic_roles": {
+              "agent": "Maya"
+            },
+            "connector_semantics": "before",
+            "source_clause_order": [
+              "open_window",
+              "call_Dan"
+            ],
+            "author_check": {
+              "earlier_event": "open_window",
+              "later_event": "call_Dan",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        },
+        {
+          "example_id": "TR03-EVENT-ORDER.ru-he.REF02",
+          "profile_id": "ru-he",
+          "family_id": "v3-ref.translation.event.lock-light",
+          "prompt": "Переведи с языка «русский» на язык «иврит». Выдай только перевод. Сохрани, какое из двух действий произошло раньше. Не меняй участников, предметы, завершённость или время действий.\nИсходный текст: После того как Амир запер дверь, он выключил свет.",
+          "chosen": "אחרי שאמיר נעל את הדלת, הוא כיבה את האור.",
+          "rejected": "לפני שאמיר נעל את הדלת, הוא כיבה את האור.",
+          "error_tag": "reversed_temporal_relation",
+          "rationale": "В источнике раньше происходит lock_door, затем switch_off_light. Rejected меняет только временную связь и обращает эту последовательность.",
+          "counterexample": "Порядок частей предложения не равен порядку событий. «After A, B» и «B after A» могут выражать один порядок A→B; такой перефразированный перевод нельзя назначать rejected.",
+          "source_refs": [
+            "RAG-023",
+            "RAG-024"
+          ],
+          "metadata": {
+            "response_language": "he",
+            "language_pair": {
+              "source": "ru",
+              "target": "he"
+            },
+            "reference_only": true,
+            "split": "reference",
+            "simulation": true,
+            "training_allowed": false,
+            "review_status": "semantic_review_required",
+            "measured_training_result": false,
+            "source_role": "methodology_not_translation_gold",
+            "generator_model": "reference_authoring_not_a_kiro_run",
+            "origin_family_id": "v3-ref.translation.event.lock-light",
+            "learning_objective_id": "TR03-EVENT-ORDER",
+            "source_raw": "После того как Амир запер дверь, он выключил свет.",
+            "response_contract": "translation_only",
+            "leakage_group_ids": [
+              "source:v3-ref.translation.event.lock-light"
+            ],
+            "event_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "rejected_event_order": [
+              "switch_off_light",
+              "lock_door"
+            ],
+            "semantic_roles": {
+              "agent": "Amir"
+            },
+            "connector_semantics": "after",
+            "source_clause_order": [
+              "lock_door",
+              "switch_off_light"
+            ],
+            "author_check": {
+              "earlier_event": "lock_door",
+              "later_event": "switch_off_light",
+              "changed_component": "temporal_relation_only"
+            }
+          }
+        }
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1
+    }
+  ]
+}

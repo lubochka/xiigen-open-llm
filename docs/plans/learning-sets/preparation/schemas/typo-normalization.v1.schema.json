@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "action",
+    "text",
+    "question"
+  ],
+  "properties": {
+    "action": {
+      "enum": [
+        "restore",
+        "preserve",
+        "clarify"
+      ]
+    },
+    "text": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "clarify"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "question": {
+            "minLength": 1
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "question": {
+            "const": ""
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,2147 @@
+{
+  "schema_version": "xiigen.curriculum.addition.v1",
+  "created_on": "2026-10-25",
+  "status": "REFERENCE_ONLY_NOT_GENERATED_NOT_TRAINED",
+  "scope_ru": "Предметные задания для шести ранее широких parent streams. Существующие темы, данные и опорные примеры сохраняются. Авторские симуляции; runtime и китайская генерация не запускались.",
+  "objectives": [
+    {
+      "objective_id": "DOC-CS-FINALLY",
+      "topic_id": "DOC-CS-05",
+      "title_ru": "Описать возврат и наблюдаемые эффекты finally",
+      "domain_ids": [
+        "docs.csharp"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-028"
+      ],
+      "learning_goal_ru": "Отдельно проследить вычисление возвращаемого значения, выполнение finally и то, что наблюдает вызывающий код.",
+      "prerequisites": [
+        "Прочитать предметный prompt, точную схему и назначенные RAG-фрагменты из request.",
+        "Сохранить семейства и split; будущий EXAM не показывать TRAIN-генератору."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Создавай маленький полностью видимый синхронный метод с try/finally, иногда с catch, вложенным try или using. Для каждого prompt задай точный способ наблюдения: значение return, свойства возвращённого объекта, порядок Trace либо тип пойманной ошибки. Выбери одну границу: вычисленное value не меняется последующим присваиванием локальной переменной; возвращённая ссылка остаётся ссылкой на изменяемый объект; finally выполняется до внешнего catch; выброшенная из finally ошибка отменяет return. Для using покажи весь Dispose и точную область видимости. Не добавляй async, внешние callee, БД, непоказанный logger или предположения о GC. Требуй объяснить данный код, не предложить его «улучшение». Чередуй нормальный выход, return и ошибку; не учи правилу «finally всегда успешно возвращает результат».\n\nРаботай по одному request.json: один topic, objective, domain, profile=base и split. Создавай новые содержательные ситуации, а не переименования публичных примеров. Одна пара различается одним главным предметным дефектом; не делай rejected синтаксически сломанным, бессмысленным или вторым правильным ответом. Полный код, входы, версии, контракт зависимостей и формат ответа доступны в prompt: ученик не получает rationale и metadata. Сначала сформулируй ожидаемое поведение по условию, затем полный выбранный ответ и близкий ошибочный ответ.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они подтверждают методику и тематику; новые мини-программы — авторские симуляции, не извлечённые результаты runtime. Все примеры этого дополнения имеют split=reference, training_allowed=false, oracle=NOT_RUN. Их нельзя переименовать в Chinese-generated TRAIN или скрытый EXAM. Родственные DOC/CODE/переводные версии, переименования и производные имеют один origin/leakage group и split. Новые family IDs не доказывают независимость содержания.\nРоль человека при выборе выполняет CODEX с Astra 6 ultracode, оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт обе альтернативы. Сейчас CREATE_ONLY: назначение берётся из карточки/request; отдельные selection/review, oracle, accept, export, Student и product CI не запускаются и не блокируют создание следующей партии. Генератор наследует текущую выбранную модель без override; наблюдаемое имя записывает честно, иначе unknown. Checksum, подписи и profile receipts для создания не требуются.\nПрочитай уже собранный prompt/request по абсолютным путям; не ищи другую схему в llm_mvp_core. Запиши реальные строки в request.paths.draft, выполни одну готовую команду finish и перейди к next_stream_id из полной execution-queue.json. PREPARED без draft не является созданием. Старые данные не удалять; существующий run продолжать через resume. При NEXT/новом ID сразу перейти к нему, не продолжать прежнюю задачу или её отчёт. STOP немедленно прекращает действия. Если есть живой handle, ждать штатным wait/resume до terminal в том же ходе: не запускать дубликаты, не опрашивать часто и не завершать ход словами «жду». Отчёт по-русски: тема, фактические строки/семьи, файл, модель, структурный статус и следующий ID.",
+      "response_contract_ru": "Русский текст с точным результатом и одним объяснением по показанному коду. Не переписывать код.",
+      "scenario_axes": [
+        {
+          "axis": "путь выхода",
+          "values": [
+            "return из try",
+            "обычное завершение",
+            "ошибка из try",
+            "return из catch",
+            "ошибка из finally"
+          ]
+        },
+        {
+          "axis": "наблюдаемая сущность",
+          "values": [
+            "скаляр",
+            "возвращённый объект",
+            "порядок Trace",
+            "Dispose",
+            "вложенный finally"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения внутри одной партии",
+        "Изменение production-кода",
+        "Выдуманное исполнение runtime",
+        "Расширение задачи до review/обучения"
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology and topic evidence; examples are new simulations",
+        "version_profile": "C# 12 / .NET 8.0; synchronous console fixture",
+        "balance": "Включить противоположные и граничные случаи; не учить неизменному предпочтению API по его названию."
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separate later user task",
+        "checks": [
+          "CODEX с Astra 6 ultracode решает blind A/B; генератор не оценивает собственное качество от его имени.",
+          "DOC: исполнить показанный fixture; CODE: обе альтернативы в одинаковом fresh fixture.",
+          "Результат oracle относится к фактическому запуску указанного runtime; сейчас NOT_RUN.",
+          "Проверить одну смысловую ошибку, отсутствие скрытых предпосылок и семейную независимость holdout."
+        ]
+      },
+      "examples": [
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. В классе объявлено: static int F(List<string> t) { int n=4; try { return n; } finally { n=9; t.Add(n.ToString()); } } Вызов: var t=new List<string>(); var r=F(t); Назови r и t, затем объясни порядок.",
+          "chosen": "r=4; t=[\"9\"]. Значение return вычислено до finally; присваивание n=9 меняет локальную переменную после вычисления результата.",
+          "rejected": "r=9; t=[\"9\"]. Присваивание n=9 в finally меняет возвращаемое значение перед выходом.",
+          "error_tag": "return_value_recomputed",
+          "rationale": "Rejected ошибочно вычисляет return повторно после finally.",
+          "example_id": "DOC-CS-FINALLY.REF.01",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-cs-finally.value-captured",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Выполнить F с новым списком; сравнить r и Trace.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.doc-cs-finally.value-captured",
+            "leakage_group_ids": [
+              "v6.ref.doc-cs-finally.value-captured"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "r": 4,
+                "trace": [
+                  "9"
+                ]
+              },
+              "assertion": "Выполнить F с новым списком; сравнить r и Trace.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-05"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. Объявлены: sealed class Box { public int Value; } static Box F() { var b=new Box { Value=4 }; try { return b; } finally { b.Value=9; } } Вызывающий код: var r=F(); var v=r.Value; Назови v и объясни, какой объект возвращён.",
+          "chosen": "v=9. Возвращается ссылка на тот же Box; finally меняет его Value до чтения свойства вызывающим кодом.",
+          "rejected": "v=4. Return сохраняет независимую копию Box до выполнения finally.",
+          "error_tag": "reference_mistaken_for_value_copy",
+          "rationale": "Ссылка вычислена до finally, но объект не копируется.",
+          "example_id": "DOC-CS-FINALLY.REF.02",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-cs-finally.returned-reference",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "После F прочитать Value; сравнить 9 с утверждением о копии.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.doc-cs-finally.returned-reference",
+            "leakage_group_ids": [
+              "v6.ref.doc-cs-finally.returned-reference"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "v": 9
+              },
+              "assertion": "После F прочитать Value; сравнить 9 с утверждением о копии.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-05"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. var t=new List<string>(); try { try { t.Add(\"work\"); throw new InvalidOperationException(); } finally { t.Add(\"cleanup\"); } } catch (InvalidOperationException) { t.Add(\"caught\"); } Назови t в порядке записей.",
+          "chosen": "[\"work\",\"cleanup\",\"caught\"]. Внутренний finally выполняется при выходе по ошибке до внешнего catch.",
+          "rejected": "[\"work\",\"caught\",\"cleanup\"]. Сначала внешний catch обрабатывает ошибку, затем выполняется внутренний finally.",
+          "error_tag": "catch_before_inner_finally",
+          "rationale": "Одна ошибка — переставлены обработка ошибки и cleanup.",
+          "example_id": "DOC-CS-FINALLY.REF.03",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-cs-finally.outer-catch",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Исполнить фрагмент с новым t; сравнить последовательность.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.doc-cs-finally.outer-catch",
+            "leakage_group_ids": [
+              "v6.ref.doc-cs-finally.outer-catch"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "trace": [
+                  "work",
+                  "cleanup",
+                  "caught"
+                ]
+              },
+              "assertion": "Исполнить фрагмент с новым t; сравнить последовательность.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-05"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. var t=new List<string>(); try { t.Add(\"body\"); } finally { t.Add(\"cleanup\"); } t.Add(\"after\"); Назови t. Исключений в Add нет.",
+          "chosen": "[\"body\",\"cleanup\",\"after\"]. Finally выполняется и при обычном завершении try, до следующего оператора.",
+          "rejected": "[\"body\",\"after\"]. При отсутствии исключения finally пропускается.",
+          "error_tag": "finally_only_on_exception",
+          "rationale": "Rejected пропускает один обязательный эффект.",
+          "example_id": "DOC-CS-FINALLY.REF.04",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-cs-finally.normal-exit",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Проверить все три записи без вызова исключения.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.doc-cs-finally.normal-exit",
+            "leakage_group_ids": [
+              "v6.ref.doc-cs-finally.normal-exit"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "trace": [
+                  "body",
+                  "cleanup",
+                  "after"
+                ]
+              },
+              "assertion": "Проверить все три записи без вызова исключения.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-05"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. static int F(List<string> t) { try { try { return 5; } finally { t.Add(\"inner\"); } } finally { t.Add(\"outer\"); } } var t=new List<string>(); var r=F(t); Назови r и t.",
+          "chosen": "r=5; t=[\"inner\",\"outer\"]. При return сначала завершается внутренний finally, затем внешний.",
+          "rejected": "r=5; t=[\"outer\",\"inner\"]. При return сначала завершается внешний finally, затем внутренний.",
+          "error_tag": "nested_finally_order_reversed",
+          "rationale": "Одна ошибка — порядок двух видимых эффектов.",
+          "example_id": "DOC-CS-FINALLY.REF.05",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-cs-finally.nested-cleanup",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Сравнить порядок двух Add при том же r=5.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.doc-cs-finally.nested-cleanup",
+            "leakage_group_ids": [
+              "v6.ref.doc-cs-finally.nested-cleanup"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "r": 5,
+                "trace": [
+                  "inner",
+                  "outer"
+                ]
+              },
+              "assertion": "Сравнить порядок двух Add при том же r=5.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-05"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. Объявлены: sealed class R : IDisposable { readonly List<string> t; public R(List<string> t0) { t=t0; } public void Dispose() { t.Add(\"dispose\"); } } static void F(List<string> t) { using var r=new R(t); t.Add(\"body\"); } var t=new List<string>(); F(t); t.Add(\"caller\"); Назови t.",
+          "chosen": "[\"body\",\"dispose\",\"caller\"]. Using declaration освобождает r при выходе из F, до следующего оператора вызывающего кода.",
+          "rejected": "[\"body\",\"caller\",\"dispose\"]. Using declaration откладывает Dispose до завершения вызывающего кода.",
+          "error_tag": "using_scope_extended_to_caller",
+          "rationale": "Граница жизни ресурса определена телом F.",
+          "example_id": "DOC-CS-FINALLY.REF.06",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-cs-finally.using-scope",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Выполнить F; проверить момент видимого Dispose, не ждать GC.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.doc-cs-finally.using-scope",
+            "leakage_group_ids": [
+              "v6.ref.doc-cs-finally.using-scope"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "trace": [
+                  "body",
+                  "dispose",
+                  "caller"
+                ]
+              },
+              "assertion": "Выполнить F; проверить момент видимого Dispose, не ждать GC.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-05"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. static int F() { try { return 3; } finally { throw new InvalidOperationException(\"cleanup\"); } } string observed; try { observed=F().ToString(); } catch (InvalidOperationException e) { observed=e.Message; } Назови observed.",
+          "chosen": "observed=\"cleanup\". Ошибка из finally прерывает возврат значения 3 и перехватывается внешним catch.",
+          "rejected": "observed=\"3\". Уже вычисленное значение return сохраняет приоритет перед ошибкой из finally.",
+          "error_tag": "return_survives_throwing_finally",
+          "rationale": "Rejected объявляет результат, который не передаётся вызывающему коду.",
+          "example_id": "DOC-CS-FINALLY.REF.07",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-cs-finally.cleanup-fails",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Исполнить фрагмент и прочитать observed; не подменять ошибку успешным return.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.doc-cs-finally.cleanup-fails",
+            "leakage_group_ids": [
+              "v6.ref.doc-cs-finally.cleanup-fails"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "observed": "cleanup"
+              },
+              "assertion": "Исполнить фрагмент и прочитать observed; не подменять ошибку успешным return.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-05"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. static int F(List<string> t) { try { throw new FormatException(); } catch (FormatException) { t.Add(\"catch\"); return 2; } finally { t.Add(\"finally\"); } } var t=new List<string>(); var r=F(t); Назови r и t.",
+          "chosen": "r=2; t=[\"catch\",\"finally\"]. Return из catch также проходит через finally.",
+          "rejected": "r=2; t=[\"catch\"]. Return из catch обходит finally.",
+          "error_tag": "catch_return_skips_finally",
+          "rationale": "Один пропущенный эффект cleanup.",
+          "example_id": "DOC-CS-FINALLY.REF.08",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-cs-finally.catch-return",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Сравнить r и обе записи t после вызова.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.doc-cs-finally.catch-return",
+            "leakage_group_ids": [
+              "v6.ref.doc-cs-finally.catch-return"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "r": 2,
+                "trace": [
+                  "catch",
+                  "finally"
+                ]
+              },
+              "assertion": "Сравнить r и обе записи t после вызова.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-CS-05"
+          }
+        }
+      ]
+    },
+    {
+      "objective_id": "CODE-CS-STABLE-KEY",
+      "topic_id": "CODE-CS-03",
+      "title_ru": "Удалить повторы по полному ключу с заданным порядком",
+      "domain_ids": [
+        "code.csharp"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-028"
+      ],
+      "learning_goal_ru": "Построить устойчивый отбор по явно заданному ключу, политике равенства и первому/последнему вхождению.",
+      "prerequisites": [
+        "Прочитать предметный prompt, точную схему и назначенные RAG-фрагменты из request.",
+        "Сохранить семейства и split; будущий EXAM не показывать TRAIN-генератору."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Задавай небольшой record Item, сигнатуру метода, ключ, comparer, политику null, выбор первого либо последнего вхождения и порядок результата. В learner prompt дай минимум один различающий вход и требование работать для любых входов того же контракта. Не разрешай ответу зашить конкретные элементы. Rejected компилируется и нарушает одну границу: пропускает tenant-часть ключа, меняет ordinal на ignore-case, выбирает последнюю строку вместо первой, теряет порядок либо исключает допустимый null. Сохраняй исходный массив и объекты в обоих вариантах, если мутация не является целевым дефектом. Нельзя учить универсальному «первый всегда лучше»: отдельные случаи требуют последних вхождений в порядке их позиций.\n\nРаботай по одному request.json: один topic, objective, domain, profile=base и split. Создавай новые содержательные ситуации, а не переименования публичных примеров. Одна пара различается одним главным предметным дефектом; не делай rejected синтаксически сломанным, бессмысленным или вторым правильным ответом. Полный код, входы, версии, контракт зависимостей и формат ответа доступны в prompt: ученик не получает rationale и metadata. Сначала сформулируй ожидаемое поведение по условию, затем полный выбранный ответ и близкий ошибочный ответ.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они подтверждают методику и тематику; новые мини-программы — авторские симуляции, не извлечённые результаты runtime. Все примеры этого дополнения имеют split=reference, training_allowed=false, oracle=NOT_RUN. Их нельзя переименовать в Chinese-generated TRAIN или скрытый EXAM. Родственные DOC/CODE/переводные версии, переименования и производные имеют один origin/leakage group и split. Новые family IDs не доказывают независимость содержания.\nРоль человека при выборе выполняет CODEX с Astra 6 ultracode, оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт обе альтернативы. Сейчас CREATE_ONLY: назначение берётся из карточки/request; отдельные selection/review, oracle, accept, export, Student и product CI не запускаются и не блокируют создание следующей партии. Генератор наследует текущую выбранную модель без override; наблюдаемое имя записывает честно, иначе unknown. Checksum, подписи и profile receipts для создания не требуются.\nПрочитай уже собранный prompt/request по абсолютным путям; не ищи другую схему в llm_mvp_core. Запиши реальные строки в request.paths.draft, выполни одну готовую команду finish и перейди к next_stream_id из полной execution-queue.json. PREPARED без draft не является созданием. Старые данные не удалять; существующий run продолжать через resume. При NEXT/новом ID сразу перейти к нему, не продолжать прежнюю задачу или её отчёт. STOP немедленно прекращает действия. Если есть живой handle, ждать штатным wait/resume до terminal в том же ходе: не запускать дубликаты, не опрашивать часто и не завершать ход словами «жду». Отчёт по-русски: тема, фактические строки/семьи, файл, модель, структурный статус и следующий ID.",
+      "response_contract_ru": "Полное объявление запрошенной функции/запроса, без Markdown и объяснений; типы и окружение заданы в prompt.",
+      "scenario_axes": [
+        {
+          "axis": "ключ",
+          "values": [
+            "int",
+            "string Ordinal",
+            "string OrdinalIgnoreCase",
+            "nullable string",
+            "tenant+id"
+          ]
+        },
+        {
+          "axis": "политика",
+          "values": [
+            "первое в исходном порядке",
+            "последнее в порядке последних позиций"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения внутри одной партии",
+        "Изменение production-кода",
+        "Выдуманное исполнение runtime",
+        "Расширение задачи до review/обучения"
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology and topic evidence; examples are new simulations",
+        "version_profile": "C# 12 / .NET 8.0; synchronous console fixture",
+        "balance": "Включить противоположные и граничные случаи; не учить неизменному предпочтению API по его названию."
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separate later user task",
+        "checks": [
+          "CODEX с Astra 6 ultracode решает blind A/B; генератор не оценивает собственное качество от его имени.",
+          "DOC: исполнить показанный fixture; CODE: обе альтернативы в одинаковом fresh fixture.",
+          "Результат oracle относится к фактическому запуску указанного runtime; сейчас NOT_RUN.",
+          "Проверить одну смысловую ошибку, отсутствие скрытых предпосылок и семейную независимость holdout."
+        ]
+      },
+      "examples": [
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. Дан record Item(int Id,string Value). Напиши static Item[] Keep(Item[] xs): оставить первое вхождение каждого Id в исходном порядке, xs не менять. Контроль: [(2,\"first\"),(1,\"one\"),(2,\"later\")]. Метод должен работать для любых таких входов. Только метод.",
+          "chosen": "static Item[] Keep(Item[] xs) { var seen=new HashSet<int>(); var result=new List<Item>(); foreach (var x in xs) if (seen.Add(x.Id)) result.Add(x); return result.ToArray(); }",
+          "rejected": "static Item[] Keep(Item[] xs) { var result=new List<Item>(); foreach (var x in xs) { int i=result.FindIndex(y=>y.Id==x.Id); if (i<0) result.Add(x); else result[i]=x; } return result.ToArray(); }",
+          "error_tag": "last_payload_in_first_slot",
+          "rationale": "Rejected заменяет payload первого вхождения последним, сохраняя порядок ключей.",
+          "example_id": "CODE-CS-STABLE-KEY.REF.01",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-cs-stable-key.first-keeps-payload",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Сравнить Value элемента Id=2 и неизменность исходного массива.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "csharp",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.code-cs-stable-key.first-keeps-payload",
+            "leakage_group_ids": [
+              "v6.ref.code-cs-stable-key.first-keeps-payload"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "items": [
+                  [
+                    2,
+                    "first"
+                  ],
+                  [
+                    1,
+                    "one"
+                  ]
+                ]
+              },
+              "assertion": "Сравнить Value элемента Id=2 и неизменность исходного массива.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-CS-03"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. Дан record Item(int Tenant,int Id,string Value). Напиши static Item[] Keep(Item[] xs): первое вхождение каждой пары (Tenant,Id), исходный порядок. Контроль: [(1,4,\"A\"),(2,4,\"B\"),(1,4,\"C\")]. xs не менять. Только метод.",
+          "chosen": "static Item[] Keep(Item[] xs) { var seen=new HashSet<(int,int)>(); var result=new List<Item>(); foreach (var x in xs) if (seen.Add((x.Tenant,x.Id))) result.Add(x); return result.ToArray(); }",
+          "rejected": "static Item[] Keep(Item[] xs) { var seen=new HashSet<int>(); var result=new List<Item>(); foreach (var x in xs) if (seen.Add(x.Id)) result.Add(x); return result.ToArray(); }",
+          "error_tag": "tenant_part_of_key_dropped",
+          "rationale": "Rejected считает записи разных tenants одним ключом.",
+          "example_id": "CODE-CS-STABLE-KEY.REF.02",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-cs-stable-key.full-tenant-key",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Проверить наличие (2,4,\"B\"), а не только длину первого tenant.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "csharp",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.code-cs-stable-key.full-tenant-key",
+            "leakage_group_ids": [
+              "v6.ref.code-cs-stable-key.full-tenant-key"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "items": [
+                  [
+                    1,
+                    4,
+                    "A"
+                  ],
+                  [
+                    2,
+                    4,
+                    "B"
+                  ]
+                ]
+              },
+              "assertion": "Проверить наличие (2,4,\"B\"), а не только длину первого tenant.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-CS-03"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. Дан record Item(string Key,int Value), Key не null. Напиши static Item[] Keep(Item[] xs): первое вхождение каждого Key по StringComparer.Ordinal, исходный порядок. Контроль [(\"a\",1),(\"A\",2),(\"a\",3)]. xs не менять.",
+          "chosen": "static Item[] Keep(Item[] xs) { var seen=new HashSet<string>(StringComparer.Ordinal); return xs.Where(x=>seen.Add(x.Key)).ToArray(); }",
+          "rejected": "static Item[] Keep(Item[] xs) { var seen=new HashSet<string>(StringComparer.OrdinalIgnoreCase); return xs.Where(x=>seen.Add(x.Key)).ToArray(); }",
+          "error_tag": "case_sensitive_contract_weakened",
+          "rationale": "Смена comparer ошибочно объединяет a и A.",
+          "example_id": "CODE-CS-STABLE-KEY.REF.03",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-cs-stable-key.case-sensitive",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Проверить обе различные строки ключей; порядок не сортировать.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "csharp",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.code-cs-stable-key.case-sensitive",
+            "leakage_group_ids": [
+              "v6.ref.code-cs-stable-key.case-sensitive"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "items": [
+                  [
+                    "a",
+                    1
+                  ],
+                  [
+                    "A",
+                    2
+                  ]
+                ]
+              },
+              "assertion": "Проверить обе различные строки ключей; порядок не сортировать.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-CS-03"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. Дан record Item(string Key,int Value), Key не null. Напиши static Item[] Keep(Item[] xs): первое вхождение каждого Key по StringComparer.OrdinalIgnoreCase, исходный порядок. Контроль [(\"ab\",1),(\"AB\",2),(\"b\",3)]. xs не менять.",
+          "chosen": "static Item[] Keep(Item[] xs) { var seen=new HashSet<string>(StringComparer.OrdinalIgnoreCase); return xs.Where(x=>seen.Add(x.Key)).ToArray(); }",
+          "rejected": "static Item[] Keep(Item[] xs) { var seen=new HashSet<string>(StringComparer.Ordinal); return xs.Where(x=>seen.Add(x.Key)).ToArray(); }",
+          "error_tag": "case_insensitive_contract_ignored",
+          "rationale": "Обратный контроль: Ordinal теперь нарушает явно заданную политику.",
+          "example_id": "CODE-CS-STABLE-KEY.REF.04",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-cs-stable-key.case-insensitive",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Проверить, что AB удалён, но исходная форма ab сохранена.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "csharp",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.code-cs-stable-key.case-insensitive",
+            "leakage_group_ids": [
+              "v6.ref.code-cs-stable-key.case-insensitive"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "items": [
+                  [
+                    "ab",
+                    1
+                  ],
+                  [
+                    "b",
+                    3
+                  ]
+                ]
+              },
+              "assertion": "Проверить, что AB удалён, но исходная форма ab сохранена.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-CS-03"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. Nullable включён. Дан record Item(string? Key,int Value). Напиши static Item[] Keep(Item[] xs): первое вхождение каждого Key; null является одним допустимым ключом; непустые ключи сравниваются Ordinal. Контроль [(null,1),(\"x\",2),(null,3)]. Порядок исходный; xs не менять.",
+          "chosen": "static Item[] Keep(Item[] xs) { var seen=new HashSet<string?>(); return xs.Where(x=>seen.Add(x.Key)).ToArray(); }",
+          "rejected": "static Item[] Keep(Item[] xs) { var seen=new HashSet<string?>(); return xs.Where(x=>x.Key is not null && seen.Add(x.Key)).ToArray(); }",
+          "error_tag": "valid_null_key_filtered",
+          "rationale": "Rejected удаляет допустимое первое null-вхождение.",
+          "example_id": "CODE-CS-STABLE-KEY.REF.05",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-cs-stable-key.null-is-valid-key",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Проверить наличие null=1, отсутствие null=3 и исходный порядок.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "csharp",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.code-cs-stable-key.null-is-valid-key",
+            "leakage_group_ids": [
+              "v6.ref.code-cs-stable-key.null-is-valid-key"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "items": [
+                  [
+                    null,
+                    1
+                  ],
+                  [
+                    "x",
+                    2
+                  ]
+                ]
+              },
+              "assertion": "Проверить наличие null=1, отсутствие null=3 и исходный порядок.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-CS-03"
+          }
+        },
+        {
+          "prompt": "Симуляция C# 12 / .NET 8.0. using System; using System.Collections.Generic; using System.Linq; доступны. Все методы выполняются синхронно. Дан record Item(int Id,string Value). Напиши static Item[] KeepLast(Item[] xs): последнее вхождение каждого Id, результат в порядке позиций этих последних вхождений в xs. Контроль [(1,\"old\"),(2,\"two\"),(1,\"new\")]. xs не менять.",
+          "chosen": "static Item[] KeepLast(Item[] xs) { var seen=new HashSet<int>(); var result=new List<Item>(); for (int i=xs.Length-1;i>=0;i--) if (seen.Add(xs[i].Id)) result.Add(xs[i]); result.Reverse(); return result.ToArray(); }",
+          "rejected": "static Item[] KeepLast(Item[] xs) { var seen=new HashSet<int>(); var result=new List<Item>(); for (int i=xs.Length-1;i>=0;i--) if (seen.Add(xs[i].Id)) result.Add(xs[i]); return result.ToArray(); }",
+          "error_tag": "last_positions_returned_reversed",
+          "rationale": "Оба ответа выбирают последние значения; rejected переворачивает их требуемый порядок.",
+          "example_id": "CODE-CS-STABLE-KEY.REF.06",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-cs-stable-key.last-position-order",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028"
+          ],
+          "counterexample": "Проверить последовательность Id 2,1 и неизменность xs.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "csharp",
+            "stack": "C# 12 / .NET 8.0; synchronous console fixture",
+            "origin_family_id": "v6.ref.code-cs-stable-key.last-position-order",
+            "leakage_group_ids": [
+              "v6.ref.code-cs-stable-key.last-position-order"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "C# 12 / .NET 8.0; synchronous console fixture",
+              "expected": {
+                "items": [
+                  [
+                    2,
+                    "two"
+                  ],
+                  [
+                    1,
+                    "new"
+                  ]
+                ]
+              },
+              "assertion": "Проверить последовательность Id 2,1 и неизменность xs.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-CS-03"
+          }
+        }
+      ]
+    },
+    {
+      "objective_id": "DOC-SQL-FILTER-STAGE",
+      "topic_id": "DOC-SQL-05",
+      "title_ru": "Описать состав строк до группировки и отбор готовых групп",
+      "domain_ids": [
+        "docs.sql"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-040",
+        "RAG-041"
+      ],
+      "learning_goal_ru": "Различать WHERE над исходными строками и HAVING над вычисленными группами, сохраняя фактические агрегаты.",
+      "prerequisites": [
+        "Прочитать предметный prompt, точную схему и назначенные RAG-фрагменты из request.",
+        "Сохранить семейства и split; будущий EXAM не показывать TRAIN-генератору."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Покажи полный T-SQL batch с DECLARE TABLE, INSERT, SELECT/GROUP BY/WHERE/HAVING и ORDER BY. Никаких скрытых view или данных БД. Спрашивай результирующие строки и короткое объяснение того, на каком этапе действует заданный фильтр. Rejected меняет один факт: агрегирует отфильтрованную строку, удаляет строку вместо целой группы, включает группу, не прошедшую HAVING, либо применяет SQL UNKNOWN как TRUE. Для контрольных случаев HAVING может быть без GROUP BY, а допустимый групповой фильтр не обязан уменьшать число групп. Не превращай документацию в переписывание SQL. Дубликаты и NULL задавай явно. Равноправные объяснения не объявлять ошибкой только из-за формулировки.\n\nРаботай по одному request.json: один topic, objective, domain, profile=base и split. Создавай новые содержательные ситуации, а не переименования публичных примеров. Одна пара различается одним главным предметным дефектом; не делай rejected синтаксически сломанным, бессмысленным или вторым правильным ответом. Полный код, входы, версии, контракт зависимостей и формат ответа доступны в prompt: ученик не получает rationale и metadata. Сначала сформулируй ожидаемое поведение по условию, затем полный выбранный ответ и близкий ошибочный ответ.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они подтверждают методику и тематику; новые мини-программы — авторские симуляции, не извлечённые результаты runtime. Все примеры этого дополнения имеют split=reference, training_allowed=false, oracle=NOT_RUN. Их нельзя переименовать в Chinese-generated TRAIN или скрытый EXAM. Родственные DOC/CODE/переводные версии, переименования и производные имеют один origin/leakage group и split. Новые family IDs не доказывают независимость содержания.\nРоль человека при выборе выполняет CODEX с Astra 6 ultracode, оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт обе альтернативы. Сейчас CREATE_ONLY: назначение берётся из карточки/request; отдельные selection/review, oracle, accept, export, Student и product CI не запускаются и не блокируют создание следующей партии. Генератор наследует текущую выбранную модель без override; наблюдаемое имя записывает честно, иначе unknown. Checksum, подписи и profile receipts для создания не требуются.\nПрочитай уже собранный prompt/request по абсолютным путям; не ищи другую схему в llm_mvp_core. Запиши реальные строки в request.paths.draft, выполни одну готовую команду finish и перейди к next_stream_id из полной execution-queue.json. PREPARED без draft не является созданием. Старые данные не удалять; существующий run продолжать через resume. При NEXT/новом ID сразу перейти к нему, не продолжать прежнюю задачу или её отчёт. STOP немедленно прекращает действия. Если есть живой handle, ждать штатным wait/resume до terminal в том же ходе: не запускать дубликаты, не опрашивать часто и не завершать ход словами «жду». Отчёт по-русски: тема, фактические строки/семьи, файл, модель, структурный статус и следующий ID.",
+      "response_contract_ru": "Русский текст с точным результатом и одним объяснением по показанному коду. Не переписывать код.",
+      "scenario_axes": [
+        {
+          "axis": "этап",
+          "values": [
+            "WHERE до GROUP BY",
+            "HAVING после GROUP BY",
+            "HAVING без GROUP BY"
+          ]
+        },
+        {
+          "axis": "различающий случай",
+          "values": [
+            "отфильтрованная строка влияет на SUM",
+            "COUNT nullable",
+            "UNKNOWN в WHERE",
+            "порог равенства"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения внутри одной партии",
+        "Изменение production-кода",
+        "Выдуманное исполнение runtime",
+        "Расширение задачи до review/обучения"
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology and topic evidence; examples are new simulations",
+        "version_profile": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+        "balance": "Включить противоположные и граничные случаи; не учить неизменному предпочтению API по его названию."
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separate later user task",
+        "checks": [
+          "CODEX с Astra 6 ultracode решает blind A/B; генератор не оценивает собственное качество от его имени.",
+          "DOC: исполнить показанный fixture; CODE: обе альтернативы в одинаковом fresh fixture.",
+          "Результат oracle относится к фактическому запуску указанного runtime; сейчас NOT_RUN.",
+          "Проверить одну смысловую ошибку, отсутствие скрытых предпосылок и семейную независимость holdout."
+        ]
+      },
+      "examples": [
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019, compatibility level 150, ANSI_NULLS ON. Выполняется только показанный batch. Назови результирующие строки по указанному ORDER BY и объясни действие фильтра. DECLARE @t TABLE (d char(1), active bit); INSERT INTO @t VALUES ('A',1),('A',1),('A',0),('B',1); SELECT d,COUNT(*) AS n FROM @t WHERE active=1 GROUP BY d HAVING COUNT(*)>=2 ORDER BY d;",
+          "chosen": "Строка: (A,2). WHERE удаляет неактивную строку до COUNT; HAVING затем исключает группу B с одним элементом.",
+          "rejected": "Строка: (A,3). COUNT включает все исходные строки A, после чего HAVING оставляет эту группу.",
+          "error_tag": "where_applied_after_count",
+          "rationale": "Rejected включает одну строку, которую WHERE уже исключил.",
+          "example_id": "DOC-SQL-FILTER-STAGE.REF.01",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-sql-filter-stage.active-rows-first",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040",
+            "RAG-041"
+          ],
+          "counterexample": "Исполнить batch; сравнить COUNT группы A.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v6.ref.doc-sql-filter-stage.active-rows-first",
+            "leakage_group_ids": [
+              "v6.ref.doc-sql-filter-stage.active-rows-first"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    "A",
+                    2
+                  ]
+                ]
+              },
+              "assertion": "Исполнить batch; сравнить COUNT группы A.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-05"
+          }
+        },
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019, compatibility level 150, ANSI_NULLS ON. Выполняется только показанный batch. Назови результирующие строки по указанному ORDER BY и объясни действие фильтра. DECLARE @t TABLE (d char(1), n int); INSERT INTO @t VALUES ('A',6),('A',-5),('B',4); SELECT d,SUM(n) AS s FROM @t WHERE n>0 GROUP BY d HAVING SUM(n)>=5 ORDER BY d;",
+          "chosen": "Строка: (A,6). Отрицательное значение исключено WHERE; HAVING сравнивает сумму оставшихся строк и исключает B.",
+          "rejected": "Строк нет. HAVING проверяет сумму A=1 по всем строкам A, поэтому A не проходит порог 5.",
+          "error_tag": "having_uses_prefilter_sum",
+          "rationale": "Rejected использует сумму до WHERE вместо фактической суммы группы.",
+          "example_id": "DOC-SQL-FILTER-STAGE.REF.02",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-sql-filter-stage.positive-before-sum",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040",
+            "RAG-041"
+          ],
+          "counterexample": "Проверить строку A и её сумму после фильтра n>0.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v6.ref.doc-sql-filter-stage.positive-before-sum",
+            "leakage_group_ids": [
+              "v6.ref.doc-sql-filter-stage.positive-before-sum"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    "A",
+                    6
+                  ]
+                ]
+              },
+              "assertion": "Проверить строку A и её сумму после фильтра n>0.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-05"
+          }
+        },
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019, compatibility level 150, ANSI_NULLS ON. Выполняется только показанный batch. Назови результирующие строки по указанному ORDER BY и объясни действие фильтра. DECLARE @t TABLE (d char(1), n int NULL); INSERT INTO @t VALUES ('A',NULL),('A',5),('B',1),('B',2); SELECT d,SUM(n) AS s FROM @t GROUP BY d HAVING COUNT(n)>=2 ORDER BY d;",
+          "chosen": "Строка: (B,3). HAVING COUNT(n)>=2 считает только ненулевые значения n; A содержит лишь одно такое значение.",
+          "rejected": "Строки: (A,5), (B,3). HAVING COUNT(n)>=2 считает обе строки A, включая NULL.",
+          "error_tag": "having_count_null_as_row",
+          "rationale": "Одна ошибка — COUNT(n) подменён COUNT(*).",
+          "example_id": "DOC-SQL-FILTER-STAGE.REF.03",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-sql-filter-stage.count-nonnull",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040",
+            "RAG-041"
+          ],
+          "counterexample": "Проверить исключение группы A с NULL и ненулевой 5.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v6.ref.doc-sql-filter-stage.count-nonnull",
+            "leakage_group_ids": [
+              "v6.ref.doc-sql-filter-stage.count-nonnull"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    "B",
+                    3
+                  ]
+                ]
+              },
+              "assertion": "Проверить исключение группы A с NULL и ненулевой 5.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-05"
+          }
+        },
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019, compatibility level 150, ANSI_NULLS ON. Выполняется только показанный batch. Назови результирующие строки по указанному ORDER BY и объясни действие фильтра. DECLARE @t TABLE (d char(1), state varchar(8) NULL); INSERT INTO @t VALUES ('A','open'),('A',NULL),('A','closed'),('B','open'); SELECT d,COUNT(*) AS n FROM @t WHERE state<>'closed' GROUP BY d HAVING COUNT(*)>=2 ORDER BY d;",
+          "chosen": "Строк нет. WHERE не пропускает NULL, поскольку сравнение даёт UNKNOWN; у A и B остаётся по одной строке.",
+          "rejected": "Строка: (A,2). NULL не равен closed и потому остаётся в WHERE вместе с open.",
+          "error_tag": "unknown_treated_as_true",
+          "rationale": "Rejected пропускает UNKNOWN как истинный предикат.",
+          "example_id": "DOC-SQL-FILTER-STAGE.REF.04",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-sql-filter-stage.unknown-filter",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040",
+            "RAG-041"
+          ],
+          "counterexample": "Проверить, что NULL не делает A двухстрочной группой.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v6.ref.doc-sql-filter-stage.unknown-filter",
+            "leakage_group_ids": [
+              "v6.ref.doc-sql-filter-stage.unknown-filter"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": []
+              },
+              "assertion": "Проверить, что NULL не делает A двухстрочной группой.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-05"
+          }
+        },
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019, compatibility level 150, ANSI_NULLS ON. Выполняется только показанный batch. Назови результирующие строки по указанному ORDER BY и объясни действие фильтра. DECLARE @t TABLE (d char(1), n int); INSERT INTO @t VALUES ('A',3),('A',3),('B',7); SELECT d,SUM(n) AS s FROM @t WHERE n>5 GROUP BY d ORDER BY d;",
+          "chosen": "Строка: (B,7). WHERE проверяет каждый n до группировки; обе строки A не проходят, хотя их сумма была бы 6.",
+          "rejected": "Строки: (A,6), (B,7). WHERE n>5 отбирает группы по их сумме.",
+          "error_tag": "where_reinterpreted_as_having",
+          "rationale": "Rejected заменяет отбор строк отбором групп.",
+          "example_id": "DOC-SQL-FILTER-STAGE.REF.05",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-sql-filter-stage.row-threshold-not-group",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040",
+            "RAG-041"
+          ],
+          "counterexample": "Проверить отсутствие группы A, а не только сумму B.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v6.ref.doc-sql-filter-stage.row-threshold-not-group",
+            "leakage_group_ids": [
+              "v6.ref.doc-sql-filter-stage.row-threshold-not-group"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    "B",
+                    7
+                  ]
+                ]
+              },
+              "assertion": "Проверить отсутствие группы A, а не только сумму B.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-05"
+          }
+        },
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019, compatibility level 150, ANSI_NULLS ON. Выполняется только показанный batch. Назови результирующие строки по указанному ORDER BY и объясни действие фильтра. DECLARE @t TABLE (n int); INSERT INTO @t VALUES (2),(4),(9); SELECT COUNT(*) AS n FROM @t WHERE n<9 HAVING COUNT(*)=2;",
+          "chosen": "Одна строка: n=2. WHERE оставляет два значения, агрегат формирует одну группу, и HAVING пропускает её.",
+          "rejected": "Строк нет. HAVING без GROUP BY не может пропустить агрегированную строку.",
+          "error_tag": "having_requires_explicit_group_by",
+          "rationale": "Rejected придумывает обязательное условие отсутствующее у запроса.",
+          "example_id": "DOC-SQL-FILTER-STAGE.REF.06",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-sql-filter-stage.single-implicit-group",
+          "source_refs": [
+            "RAG-027",
+            "RAG-040",
+            "RAG-041"
+          ],
+          "counterexample": "Исполнить агрегат без GROUP BY; сравнить единственную строку.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "v6.ref.doc-sql-filter-stage.single-implicit-group",
+            "leakage_group_ids": [
+              "v6.ref.doc-sql-filter-stage.single-implicit-group"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    2
+                  ]
+                ]
+              },
+              "assertion": "Исполнить агрегат без GROUP BY; сравнить единственную строку.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-SQL-05"
+          }
+        }
+      ]
+    },
+    {
+      "objective_id": "CODE-SQL-ANTI-KEY",
+      "topic_id": "CODE-SQL-04",
+      "title_ru": "Построить антисоединение с точной политикой ключа и NULL",
+      "domain_ids": [
+        "code.sql"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-041"
+      ],
+      "learning_goal_ru": "Выбрать отсутствие совпадения по полному ключу и видимой политике NULL, сохраняя кратность левой стороны.",
+      "prerequisites": [
+        "Прочитать предметный prompt, точную схему и назначенные RAG-фрагменты из request.",
+        "Сохранить семейства и split; будущий EXAM не показывать TRAIN-генератору."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Задай полные объявления A/B, данные, уникальность ключей или её отсутствие, список выходных столбцов, порядок и то, считается ли NULL равным NULL. Генерируй один SELECT без изменения данных. Контраст — ровно один дефект: неполный tenant-key; NOT IN с NULL; EXCEPT, удаляющий дубликаты; фильтрация только запрещённых активных строк; неверный nullable marker LEFT JOIN. Для каждого дефекта дай различающую строку, чтобы оба запроса не оказались эквивалентны на fixture. Не объявляй NOT IN всегда неправильным: при показанном NOT NULL он может быть правильным. Не добавляй транзакции, индексы, NOLOCK, неизвестные collation и измерения производительности.\n\nРаботай по одному request.json: один topic, objective, domain, profile=base и split. Создавай новые содержательные ситуации, а не переименования публичных примеров. Одна пара различается одним главным предметным дефектом; не делай rejected синтаксически сломанным, бессмысленным или вторым правильным ответом. Полный код, входы, версии, контракт зависимостей и формат ответа доступны в prompt: ученик не получает rationale и metadata. Сначала сформулируй ожидаемое поведение по условию, затем полный выбранный ответ и близкий ошибочный ответ.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они подтверждают методику и тематику; новые мини-программы — авторские симуляции, не извлечённые результаты runtime. Все примеры этого дополнения имеют split=reference, training_allowed=false, oracle=NOT_RUN. Их нельзя переименовать в Chinese-generated TRAIN или скрытый EXAM. Родственные DOC/CODE/переводные версии, переименования и производные имеют один origin/leakage group и split. Новые family IDs не доказывают независимость содержания.\nРоль человека при выборе выполняет CODEX с Astra 6 ultracode, оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт обе альтернативы. Сейчас CREATE_ONLY: назначение берётся из карточки/request; отдельные selection/review, oracle, accept, export, Student и product CI не запускаются и не блокируют создание следующей партии. Генератор наследует текущую выбранную модель без override; наблюдаемое имя записывает честно, иначе unknown. Checksum, подписи и profile receipts для создания не требуются.\nПрочитай уже собранный prompt/request по абсолютным путям; не ищи другую схему в llm_mvp_core. Запиши реальные строки в request.paths.draft, выполни одну готовую команду finish и перейди к next_stream_id из полной execution-queue.json. PREPARED без draft не является созданием. Старые данные не удалять; существующий run продолжать через resume. При NEXT/новом ID сразу перейти к нему, не продолжать прежнюю задачу или её отчёт. STOP немедленно прекращает действия. Если есть живой handle, ждать штатным wait/resume до terminal в том же ходе: не запускать дубликаты, не опрашивать часто и не завершать ход словами «жду». Отчёт по-русски: тема, фактические строки/семьи, файл, модель, структурный статус и следующий ID.",
+      "response_contract_ru": "Полное объявление запрошенной функции/запроса, без Markdown и объяснений; типы и окружение заданы в prompt.",
+      "scenario_axes": [
+        {
+          "axis": "смысл отсутствия",
+          "values": [
+            "равенство SQL с NULL",
+            "NULL-safe равенство",
+            "полный составной ключ",
+            "только активное совпадение"
+          ]
+        },
+        {
+          "axis": "кратность",
+          "values": [
+            "сохранить дубликаты слева",
+            "ключи слева уникальны"
+          ]
+        },
+        {
+          "axis": "форма",
+          "values": [
+            "NOT EXISTS",
+            "NOT IN при явном NOT NULL",
+            "LEFT JOIN с ненулевым marker"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения внутри одной партии",
+        "Изменение production-кода",
+        "Выдуманное исполнение runtime",
+        "Расширение задачи до review/обучения"
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology and topic evidence; examples are new simulations",
+        "version_profile": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+        "balance": "Включить противоположные и граничные случаи; не учить неизменному предпочтению API по его названию."
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separate later user task",
+        "checks": [
+          "CODEX с Astra 6 ultracode решает blind A/B; генератор не оценивает собственное качество от его имени.",
+          "DOC: исполнить показанный fixture; CODE: обе альтернативы в одинаковом fresh fixture.",
+          "Результат oracle относится к фактическому запуску указанного runtime; сейчас NOT_RUN.",
+          "Проверить одну смысловую ошибку, отсутствие скрытых предпосылок и семейную независимость holdout."
+        ]
+      },
+      "examples": [
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. DECLARE @A TABLE(k int NOT NULL); DECLARE @B TABLE(k int NOT NULL); INSERT INTO @A VALUES(3),(4),(4); INSERT INTO @B VALUES(3); Напиши SELECT с NOT IN: все строки A, чей k отсутствует в B; дубликаты сохранить, ORDER BY k. Таблицы не менять.",
+          "chosen": "SELECT a.k FROM @A AS a WHERE a.k NOT IN (SELECT b.k FROM @B AS b) ORDER BY a.k;",
+          "rejected": "SELECT DISTINCT a.k FROM @A AS a WHERE a.k NOT IN (SELECT b.k FROM @B AS b) ORDER BY a.k;",
+          "error_tag": "anti_result_deduplicated",
+          "rationale": "NOT IN здесь допустим; единственный дефект rejected — потеря кратности.",
+          "example_id": "CODE-SQL-ANTI-KEY.REF.01",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-04.f0004",
+          "source_refs": [
+            "RAG-027",
+            "RAG-041"
+          ],
+          "counterexample": "Проверить две строки 4; отличать мультимножество от множества.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "sql",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-04.f0004",
+            "leakage_group_ids": [
+              "sim2.code-sql-04.f0004"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    4
+                  ],
+                  [
+                    4
+                  ]
+                ]
+              },
+              "assertion": "Проверить две строки 4; отличать мультимножество от множества.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-SQL-04",
+            "derived_from_reference_pair_id": "CODE-SQL-04.base.REF2.F0004.P01",
+            "independent_new_family": false,
+            "derivation_note": "Контраст/обратный контроль исходной открытой семьи; замена значений не является новой независимой сценой."
+          }
+        },
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. DECLARE @A TABLE(k int NOT NULL); DECLARE @B TABLE(k int NULL); INSERT INTO @A VALUES(7),(8); INSERT INTO @B VALUES(7),(NULL); Верни a.k без равного НЕ-NULL b.k, ORDER BY a.k. Только SELECT.",
+          "chosen": "SELECT a.k FROM @A AS a WHERE NOT EXISTS (SELECT 1 FROM @B AS b WHERE b.k=a.k) ORDER BY a.k;",
+          "rejected": "SELECT a.k FROM @A AS a WHERE a.k NOT IN (SELECT b.k FROM @B AS b) ORDER BY a.k;",
+          "error_tag": "nullable_not_in_poison",
+          "rationale": "NULL в подзапросе делает отсутствие 8 не истинным для NOT IN.",
+          "example_id": "CODE-SQL-ANTI-KEY.REF.02",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-04.f0001",
+          "source_refs": [
+            "RAG-027",
+            "RAG-041"
+          ],
+          "counterexample": "Проверить наличие 8 при NULL в B; обе альтернативы на том же fixture.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "sql",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-04.f0001",
+            "leakage_group_ids": [
+              "sim2.code-sql-04.f0001"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    8
+                  ]
+                ]
+              },
+              "assertion": "Проверить наличие 8 при NULL в B; обе альтернативы на том же fixture.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-SQL-04",
+            "derived_from_reference_pair_id": "CODE-SQL-04.base.REF2.F0001.P01",
+            "independent_new_family": false,
+            "derivation_note": "Контраст/обратный контроль исходной открытой семьи; замена значений не является новой независимой сценой."
+          }
+        },
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. DECLARE @A TABLE(tenant int NOT NULL,k int NOT NULL); DECLARE @B TABLE(tenant int NOT NULL,k int NOT NULL); INSERT INTO @A VALUES(1,5),(2,5),(2,6); INSERT INTO @B VALUES(1,5),(2,6); Верни строки A без B с теми же tenant И k, ORDER BY tenant,k. Только SELECT.",
+          "chosen": "SELECT a.tenant,a.k FROM @A AS a WHERE NOT EXISTS (SELECT 1 FROM @B AS b WHERE b.tenant=a.tenant AND b.k=a.k) ORDER BY a.tenant,a.k;",
+          "rejected": "SELECT a.tenant,a.k FROM @A AS a WHERE NOT EXISTS (SELECT 1 FROM @B AS b WHERE b.k=a.k) ORDER BY a.tenant,a.k;",
+          "error_tag": "anti_missing_tenant",
+          "rationale": "Rejected исключает (2,5) по чужому tenant.",
+          "example_id": "CODE-SQL-ANTI-KEY.REF.03",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-04.f0002",
+          "source_refs": [
+            "RAG-027",
+            "RAG-041"
+          ],
+          "counterexample": "Проверить пару (2,5), совпадающую по local k, но не по полному ключу.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "sql",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-04.f0002",
+            "leakage_group_ids": [
+              "sim2.code-sql-04.f0002"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    2,
+                    5
+                  ]
+                ]
+              },
+              "assertion": "Проверить пару (2,5), совпадающую по local k, но не по полному ключу.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-SQL-04",
+            "derived_from_reference_pair_id": "CODE-SQL-04.base.REF2.F0002.P01",
+            "independent_new_family": false,
+            "derivation_note": "Контраст/обратный контроль исходной открытой семьи; замена значений не является новой независимой сценой."
+          }
+        },
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. DECLARE @A TABLE(k int NULL); DECLARE @B TABLE(k int NULL); INSERT INTO @A VALUES(NULL),(1),(2); INSERT INTO @B VALUES(NULL),(1); По контракту совпадение существует только когда SQL-предикат b.k=a.k истинен: два NULL НЕ считаются совпадением. Верни все A без совпадения, ORDER BY a.k. Только SELECT.",
+          "chosen": "SELECT a.k FROM @A AS a WHERE NOT EXISTS (SELECT 1 FROM @B AS b WHERE b.k=a.k) ORDER BY a.k;",
+          "rejected": "SELECT a.k FROM @A AS a WHERE NOT EXISTS (SELECT 1 FROM @B AS b WHERE b.k=a.k OR (b.k IS NULL AND a.k IS NULL)) ORDER BY a.k;",
+          "error_tag": "unrequested_null_safe_matching",
+          "rationale": "Обратный контроль: NULL-safe условие здесь противоречит заданной семантике.",
+          "example_id": "CODE-SQL-ANTI-KEY.REF.04",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-04.f0003",
+          "source_refs": [
+            "RAG-027",
+            "RAG-041"
+          ],
+          "counterexample": "Проверить, что левый NULL сохраняется; NULL-safe не универсальное улучшение.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "sql",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-04.f0003",
+            "leakage_group_ids": [
+              "sim2.code-sql-04.f0003"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    null
+                  ],
+                  [
+                    2
+                  ]
+                ]
+              },
+              "assertion": "Проверить, что левый NULL сохраняется; NULL-safe не универсальное улучшение.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-SQL-04",
+            "derived_from_reference_pair_id": "CODE-SQL-04.base.REF2.F0003.P01",
+            "independent_new_family": false,
+            "derivation_note": "Контраст/обратный контроль исходной открытой семьи; замена значений не является новой независимой сценой."
+          }
+        },
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. DECLARE @A TABLE(k int NOT NULL); DECLARE @B TABLE(k int NOT NULL,active bit NOT NULL); INSERT INTO @A VALUES(1),(2),(3); INSERT INTO @B VALUES(1,0),(2,1),(3,0),(3,1); Верни k из A без АКТИВНОГО совпадения B, ORDER BY k. Только SELECT.",
+          "chosen": "SELECT a.k FROM @A AS a WHERE NOT EXISTS (SELECT 1 FROM @B AS b WHERE b.k=a.k AND b.active=1) ORDER BY a.k;",
+          "rejected": "SELECT a.k FROM @A AS a WHERE NOT EXISTS (SELECT 1 FROM @B AS b WHERE b.k=a.k) ORDER BY a.k;",
+          "error_tag": "inactive_row_excludes_key",
+          "rationale": "Rejected запрещает и неактивные совпадения.",
+          "example_id": "CODE-SQL-ANTI-KEY.REF.05",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-04.f0005",
+          "source_refs": [
+            "RAG-027",
+            "RAG-041"
+          ],
+          "counterexample": "Проверить 1 и исключение 3 с одновременно активной/неактивной строками.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "sql",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-04.f0005",
+            "leakage_group_ids": [
+              "sim2.code-sql-04.f0005"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    1
+                  ]
+                ]
+              },
+              "assertion": "Проверить 1 и исключение 3 с одновременно активной/неактивной строками.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-SQL-04",
+            "derived_from_reference_pair_id": "CODE-SQL-04.base.REF2.F0005.P01",
+            "independent_new_family": false,
+            "derivation_note": "Контраст/обратный контроль исходной открытой семьи; замена значений не является новой независимой сценой."
+          }
+        },
+        {
+          "prompt": "Симуляция T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON. DECLARE @A TABLE(k int NOT NULL); DECLARE @B TABLE(id int NOT NULL,k int NOT NULL,note nvarchar(10) NULL); INSERT INTO @A VALUES(10),(20); INSERT INTO @B VALUES(1,10,NULL); Используй LEFT JOIN, чтобы вернуть a.k без равного b.k, ORDER BY a.k. Только SELECT.",
+          "chosen": "SELECT a.k FROM @A AS a LEFT JOIN @B AS b ON b.k=a.k WHERE b.id IS NULL ORDER BY a.k;",
+          "rejected": "SELECT a.k FROM @A AS a LEFT JOIN @B AS b ON b.k=a.k WHERE b.note IS NULL ORDER BY a.k;",
+          "error_tag": "nullable_payload_as_absence_marker",
+          "rationale": "NULL note есть у существующего совпадения; id гарантированно ненулевой.",
+          "example_id": "CODE-SQL-ANTI-KEY.REF.06",
+          "profile_id": "base",
+          "family_id": "sim2.code-sql-04.f0006",
+          "source_refs": [
+            "RAG-027",
+            "RAG-041"
+          ],
+          "counterexample": "Проверить отсутствие ложной строки 10 и сохранение 20.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "sql",
+            "stack": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+            "origin_family_id": "sim2.code-sql-04.f0006",
+            "leakage_group_ids": [
+              "sim2.code-sql-04.f0006"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "T-SQL / SQL Server 2019; compatibility level 150; ANSI_NULLS ON",
+              "expected": {
+                "rows": [
+                  [
+                    20
+                  ]
+                ]
+              },
+              "assertion": "Проверить отсутствие ложной строки 10 и сохранение 20.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-SQL-04",
+            "derived_from_reference_pair_id": "CODE-SQL-04.base.REF2.F0006.P01",
+            "independent_new_family": false,
+            "derivation_note": "Контраст/обратный контроль исходной открытой семьи; замена значений не является новой независимой сценой."
+          }
+        }
+      ]
+    },
+    {
+      "objective_id": "DOC-NG-ROUTE-BOUNDARY",
+      "topic_id": "DOC-NG-05",
+      "title_ru": "Описать путь, экспорт и границу route/component loader",
+      "domain_ids": [
+        "docs.angular"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-028",
+        "RAG-039",
+        "RAG-DC-001"
+      ],
+      "learning_goal_ru": "Объяснить фактический путь и то, что загружает каждый callback, не приписывая загрузку по имени файла.",
+      "prerequisites": [
+        "Прочитать предметный prompt, точную схему и назначенные RAG-фрагменты из request.",
+        "Сохранить семейства и split; будущий EXAM не показывать TRAIN-генератору."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Покажи достаточное содержимое root routes, lazy route array и экспортов target modules. Задавай конкретный URL и отключённый preloading. Спрашивай фактический маршрут, имя параметра, выбранный экспорт либо границу ленивой загрузки. Родительский loadChildren может возвращать Routes; leaf loadComponent возвращает компонент. Объяснение не должно выдумывать NgModule, SSR, сетевой запрос до навигации или eager-загрузку по названию каталога. Включай прямой импорт component как eager-контроль и маршруты с разными export names. Если задача о pathMatch/порядке, покажи все competing routes. Не делай вывод о текущей последней версии Angular из старого ADR: использовать только объявленную версию симуляции. Исторический ADR задаёт проектную стратегию, а не единственный допустимый способ для всех Angular-приложений.\n\nРаботай по одному request.json: один topic, objective, domain, profile=base и split. Создавай новые содержательные ситуации, а не переименования публичных примеров. Одна пара различается одним главным предметным дефектом; не делай rejected синтаксически сломанным, бессмысленным или вторым правильным ответом. Полный код, входы, версии, контракт зависимостей и формат ответа доступны в prompt: ученик не получает rationale и metadata. Сначала сформулируй ожидаемое поведение по условию, затем полный выбранный ответ и близкий ошибочный ответ.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они подтверждают методику и тематику; новые мини-программы — авторские симуляции, не извлечённые результаты runtime. Все примеры этого дополнения имеют split=reference, training_allowed=false, oracle=NOT_RUN. Их нельзя переименовать в Chinese-generated TRAIN или скрытый EXAM. Родственные DOC/CODE/переводные версии, переименования и производные имеют один origin/leakage group и split. Новые family IDs не доказывают независимость содержания.\nРоль человека при выборе выполняет CODEX с Astra 6 ultracode, оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт обе альтернативы. Сейчас CREATE_ONLY: назначение берётся из карточки/request; отдельные selection/review, oracle, accept, export, Student и product CI не запускаются и не блокируют создание следующей партии. Генератор наследует текущую выбранную модель без override; наблюдаемое имя записывает честно, иначе unknown. Checksum, подписи и profile receipts для создания не требуются.\nПрочитай уже собранный prompt/request по абсолютным путям; не ищи другую схему в llm_mvp_core. Запиши реальные строки в request.paths.draft, выполни одну готовую команду finish и перейди к next_stream_id из полной execution-queue.json. PREPARED без draft не является созданием. Старые данные не удалять; существующий run продолжать через resume. При NEXT/новом ID сразу перейти к нему, не продолжать прежнюю задачу или её отчёт. STOP немедленно прекращает действия. Если есть живой handle, ждать штатным wait/resume до terminal в том же ходе: не запускать дубликаты, не опрашивать часто и не завершать ход словами «жду». Отчёт по-русски: тема, фактические строки/семьи, файл, модель, структурный статус и следующий ID.",
+      "response_contract_ru": "Русский текст с точным результатом и одним объяснением по показанному коду. Не переписывать код.",
+      "scenario_axes": [
+        {
+          "axis": "наблюдение",
+          "values": [
+            "URL и параметры",
+            "route-array loader",
+            "leaf component loader",
+            "named export",
+            "eager import",
+            "full redirect"
+          ]
+        },
+        {
+          "axis": "поверхность",
+          "values": [
+            "root route",
+            "дочерний route",
+            "соседние пути с одинаковым префиксом"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения внутри одной партии",
+        "Изменение production-кода",
+        "Выдуманное исполнение runtime",
+        "Расширение задачи до review/обучения"
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology and topic evidence; examples are new simulations",
+        "version_profile": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+        "balance": "Включить противоположные и граничные случаи; не учить неизменному предпочтению API по его названию."
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separate later user task",
+        "checks": [
+          "CODEX с Astra 6 ultracode решает blind A/B; генератор не оценивает собственное качество от его имени.",
+          "DOC: исполнить показанный fixture; CODE: обе альтернативы в одинаковом fresh fixture.",
+          "Результат oracle относится к фактическому запуску указанного runtime; сейчас NOT_RUN.",
+          "Проверить одну смысловую ошибку, отсутствие скрытых предпосылок и семейную независимость holdout."
+        ]
+      },
+      "examples": [
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6. Client-side SPA; preloading отключён, guard/resolver отсутствуют. Routes импортирован из @angular/router. Все упомянутые страницы — корректные standalone-компоненты, пути файлов точны. app.routes.ts: export const routes: Routes=[{path:'reports',loadChildren:()=>import('./reports.routes').then(m=>m.REPORT_ROUTES)}]; reports.routes.ts: export const REPORT_ROUTES: Routes=[{path:'detail',loadComponent:()=>import('./detail.page').then(m=>m.DetailPage)}]; detail.page.ts экспортирует DetailPage. Для /reports/detail назови, что возвращают два loader callback; код не переписывай.",
+          "chosen": "Первый callback возвращает массив REPORT_ROUTES; второй возвращает компонент DetailPage. URL составлен из родительского reports и дочернего detail.",
+          "rejected": "Первый callback возвращает компонент DetailPage; второй возвращает тот же компонент. URL составлен из родительского reports и дочернего detail.",
+          "error_tag": "route_array_mistaken_for_component",
+          "rationale": "Один loader описан как компонентный вместо массива маршрутов.",
+          "example_id": "DOC-NG-ROUTE-BOUNDARY.REF.01",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-ng-route-boundary.flow-then-leaf",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039",
+            "RAG-DC-001"
+          ],
+          "counterexample": "В будущем router fixture проверить match и значения callback; сейчас runtime NOT_RUN.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.doc-ng-route-boundary.flow-then-leaf",
+            "leakage_group_ids": [
+              "v6.ref.doc-ng-route-boundary.flow-then-leaf"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "parent_export": "REPORT_ROUTES",
+                "leaf_export": "DetailPage",
+                "url": "/reports/detail"
+              },
+              "assertion": "В будущем router fixture проверить match и значения callback; сейчас runtime NOT_RUN.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-05"
+          }
+        },
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6. Client-side SPA; preloading отключён, guard/resolver отсутствуют. Routes импортирован из @angular/router. Все упомянутые страницы — корректные standalone-компоненты, пути файлов точны. export const routes: Routes=[{path:'groups/:groupId/feed',loadComponent:()=>import('./feed.page').then(m=>m.FeedPage)}]; feed.page.ts экспортирует FeedPage. Для URL /groups/17/feed назови компонент и параметр пути; других routes нет.",
+          "chosen": "Выбирается FeedPage; параметр groupId имеет строковое значение \"17\".",
+          "rejected": "Выбирается FeedPage; параметр id имеет строковое значение \"17\".",
+          "error_tag": "route_parameter_renamed",
+          "rationale": "Имя параметра берётся из видимого path, а не из догадки.",
+          "example_id": "DOC-NG-ROUTE-BOUNDARY.REF.02",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-ng-route-boundary.parameter-name",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039",
+            "RAG-DC-001"
+          ],
+          "counterexample": "Проверить paramMap.get(\"groupId\") и отсутствие переименования в id.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.doc-ng-route-boundary.parameter-name",
+            "leakage_group_ids": [
+              "v6.ref.doc-ng-route-boundary.parameter-name"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "component": "FeedPage",
+                "params": {
+                  "groupId": "17"
+                }
+              },
+              "assertion": "Проверить paramMap.get(\"groupId\") и отсутствие переименования в id.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-05"
+          }
+        },
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6. Client-side SPA; preloading отключён, guard/resolver отсутствуют. Routes импортирован из @angular/router. Все упомянутые страницы — корректные standalone-компоненты, пути файлов точны. app.routes.ts: export const routes: Routes=[{path:'tools',loadChildren:()=>import('./tools.routes').then(m=>m.ADMIN_ROUTES)}]; tools.routes.ts экспортирует два массива: export const ADMIN_ROUTES: Routes=[{path:'edit',loadComponent:()=>import('./edit.page').then(m=>m.EditPage)}]; export const USER_ROUTES: Routes=[{path:'view',loadComponent:()=>import('./view.page').then(m=>m.ViewPage)}]; Оба page exports корректны. Какой массив выбран родительским callback и какой дочерний URL он объявляет?",
+          "chosen": "Выбран ADMIN_ROUTES; он объявляет /tools/edit.",
+          "rejected": "Выбран USER_ROUTES; он объявляет /tools/view.",
+          "error_tag": "wrong_export_selected",
+          "rationale": "Следствие одного неверного выбора export: заменены массив и его путь.",
+          "example_id": "DOC-NG-ROUTE-BOUNDARY.REF.03",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-ng-route-boundary.named-route-export",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039",
+            "RAG-DC-001"
+          ],
+          "counterexample": "Проверить выбранный .then export; не угадывать по имени tools.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.doc-ng-route-boundary.named-route-export",
+            "leakage_group_ids": [
+              "v6.ref.doc-ng-route-boundary.named-route-export"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "route_export": "ADMIN_ROUTES",
+                "url": "/tools/edit"
+              },
+              "assertion": "Проверить выбранный .then export; не угадывать по имени tools.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-05"
+          }
+        },
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6. Client-side SPA; preloading отключён, guard/resolver отсутствуют. Routes импортирован из @angular/router. Все упомянутые страницы — корректные standalone-компоненты, пути файлов точны. import { HelpPage } from './help.page'; export const routes: Routes=[{path:'help',component:HelpPage}]; help.page.ts экспортирует HelpPage. Есть ли в этой конфигурации lazy loader для HelpPage? Ответь о видимом коде, без предположений об оптимизаторе сборки.",
+          "chosen": "Lazy loader в маршруте не объявлен: HelpPage импортирован напрямую и передан в component.",
+          "rejected": "Lazy loader объявлен самим полем component: HelpPage будет импортирован callback только при переходе.",
+          "error_tag": "direct_component_claimed_lazy",
+          "rationale": "Rejected придумывает отсутствующий loader callback.",
+          "example_id": "DOC-NG-ROUTE-BOUNDARY.REF.04",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-ng-route-boundary.eager-component",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039",
+            "RAG-DC-001"
+          ],
+          "counterexample": "Проверить прямую component-reference; не выдавать это за измерение chunks.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.doc-ng-route-boundary.eager-component",
+            "leakage_group_ids": [
+              "v6.ref.doc-ng-route-boundary.eager-component"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "lazy_callback_declared": false
+              },
+              "assertion": "Проверить прямую component-reference; не выдавать это за измерение chunks.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-05"
+          }
+        },
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6. Client-side SPA; preloading отключён, guard/resolver отсутствуют. Routes импортирован из @angular/router. Все упомянутые страницы — корректные standalone-компоненты, пути файлов точны. export const routes: Routes=[{path:'',redirectTo:'home',pathMatch:'full'},{path:'home',loadComponent:()=>import('./home.page').then(m=>m.HomePage)},{path:'settings',loadComponent:()=>import('./settings.page').then(m=>m.SettingsPage)}]; Оба page exports корректны. Для URL /settings какой из показанных маршрутов срабатывает?",
+          "chosen": "Срабатывает settings и выбирается SettingsPage. Пустой redirect с pathMatch:\"full\" не перехватывает /settings.",
+          "rejected": "Срабатывает пустой redirect и выбирается HomePage, поскольку любой URL начинается с пустого пути.",
+          "error_tag": "full_match_treated_as_prefix",
+          "rationale": "Одна ошибка — full трактуется как prefix.",
+          "example_id": "DOC-NG-ROUTE-BOUNDARY.REF.05",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-ng-route-boundary.full-empty-redirect",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039",
+            "RAG-DC-001"
+          ],
+          "counterexample": "В будущем navigateByUrl(\"/settings\"); сравнить выбранный компонент.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.doc-ng-route-boundary.full-empty-redirect",
+            "leakage_group_ids": [
+              "v6.ref.doc-ng-route-boundary.full-empty-redirect"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "url": "/settings",
+                "component": "SettingsPage"
+              },
+              "assertion": "В будущем navigateByUrl(\"/settings\"); сравнить выбранный компонент.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-05"
+          }
+        },
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6. Client-side SPA; preloading отключён, guard/resolver отсутствуют. Routes импортирован из @angular/router. Все упомянутые страницы — корректные standalone-компоненты, пути файлов точны. export const routes: Routes=[{path:'**',loadComponent:()=>import('./missing.page').then(m=>m.MissingPage)},{path:'reports',loadComponent:()=>import('./reports.page').then(m=>m.ReportsPage)}]; Оба page exports корректны. Для URL /reports назови выбранную страницу по этому порядку routes, не исправляя конфигурацию.",
+          "chosen": "Выбирается MissingPage: wildcard стоит раньше reports и первым принимает этот URL.",
+          "rejected": "Выбирается ReportsPage: более конкретный путь автоматически имеет приоритет над раньше заданным wildcard.",
+          "error_tag": "specificity_overrides_route_order",
+          "rationale": "Rejected заменяет заданный порядок выдуманным приоритетом специфичности.",
+          "example_id": "DOC-NG-ROUTE-BOUNDARY.REF.06",
+          "profile_id": "base",
+          "family_id": "v6.ref.doc-ng-route-boundary.wildcard-first",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039",
+            "RAG-DC-001"
+          ],
+          "counterexample": "Проверить первый matching route в конкретном router fixture.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "ru",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.doc-ng-route-boundary.wildcard-first",
+            "leakage_group_ids": [
+              "v6.ref.doc-ng-route-boundary.wildcard-first"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "component": "MissingPage"
+              },
+              "assertion": "Проверить первый matching route в конкретном router fixture.",
+              "execution_unit": "Shown source fixture"
+            },
+            "parent_topic_reference_only": "DOC-NG-05"
+          }
+        }
+      ]
+    },
+    {
+      "objective_id": "CODE-NG-IMMUTABLE",
+      "topic_id": "CODE-NG-03",
+      "title_ru": "Обновить нужную ветвь состояния без мутации соседних объектов",
+      "domain_ids": [
+        "code.angular"
+      ],
+      "profiles": [
+        "base"
+      ],
+      "source_refs": [
+        "RAG-027",
+        "RAG-028",
+        "RAG-039"
+      ],
+      "learning_goal_ru": "Создавать ровно требуемые новые ссылки, сохранять исходные данные и незатронутые ветви по заданному контракту.",
+      "prerequisites": [
+        "Прочитать предметный prompt, точную схему и назначенные RAG-фрагменты из request.",
+        "Сохранить семейства и split; будущий EXAM не показывать TRAIN-генератору."
+      ],
+      "generation_batch_size": 10,
+      "pilot_train_pairs": 100,
+      "pilot_dev_pairs": 20,
+      "pilot_exam_pairs": 20,
+      "pairs_per_family": 1,
+      "generation_prompt_ru": "Дай полностью определённые TypeScript-типы, неизменяемый вход, требуемое изменение, правила reference identity и контрольные данные. Различай новый массив и новые изменённые элементы: shallow copy не защищает вложенный объект. Чередуй обновление вложенной карты, перемещение в массиве, удаление элемента и no-op. В no-op явно задай, требуется ли исходная или новая ссылка; не обучай правилу «всегда копировать». Rejected должен быть типокорректным и нарушать одну границу: мутация старого объекта, потеря соседнего поля, неверная идентичность no-op или перестановка другого элемента. Сохранение ссылок незатронутых объектов проверяется отдельным oracle позднее. Эти пары сами не доказывают поведение change detection или выигрыш рендера; это определяется только разрешённым будущим Angular опытом.\n\nРаботай по одному request.json: один topic, objective, domain, profile=base и split. Создавай новые содержательные ситуации, а не переименования публичных примеров. Одна пара различается одним главным предметным дефектом; не делай rejected синтаксически сломанным, бессмысленным или вторым правильным ответом. Полный код, входы, версии, контракт зависимостей и формат ответа доступны в prompt: ученик не получает rationale и metadata. Сначала сформулируй ожидаемое поведение по условию, затем полный выбранный ответ и близкий ошибочный ответ.\nИсточники — только назначенные файлы xiigen-planning main/llm_plan3. Они подтверждают методику и тематику; новые мини-программы — авторские симуляции, не извлечённые результаты runtime. Все примеры этого дополнения имеют split=reference, training_allowed=false, oracle=NOT_RUN. Их нельзя переименовать в Chinese-generated TRAIN или скрытый EXAM. Родственные DOC/CODE/переводные версии, переименования и производные имеют один origin/leakage group и split. Новые family IDs не доказывают независимость содержания.\nРоль человека при выборе выполняет CODEX с Astra 6 ultracode, оценку качества DPO также выполняет CODEX с Astra 6 ultracode. Внешняя открытая китайская модель через Kiro создаёт обе альтернативы. Сейчас CREATE_ONLY: назначение берётся из карточки/request; отдельные selection/review, oracle, accept, export, Student и product CI не запускаются и не блокируют создание следующей партии. Генератор наследует текущую выбранную модель без override; наблюдаемое имя записывает честно, иначе unknown. Checksum, подписи и profile receipts для создания не требуются.\nПрочитай уже собранный prompt/request по абсолютным путям; не ищи другую схему в llm_mvp_core. Запиши реальные строки в request.paths.draft, выполни одну готовую команду finish и перейди к next_stream_id из полной execution-queue.json. PREPARED без draft не является созданием. Старые данные не удалять; существующий run продолжать через resume. При NEXT/новом ID сразу перейти к нему, не продолжать прежнюю задачу или её отчёт. STOP немедленно прекращает действия. Если есть живой handle, ждать штатным wait/resume до terminal в том же ходе: не запускать дубликаты, не опрашивать часто и не завершать ход словами «жду». Отчёт по-русски: тема, фактические строки/семьи, файл, модель, структурный статус и следующий ID.",
+      "response_contract_ru": "Полное объявление запрошенной функции/запроса, без Markdown и объяснений; типы и окружение заданы в prompt.",
+      "scenario_axes": [
+        {
+          "axis": "изменение",
+          "values": [
+            "nested map",
+            "перестановка",
+            "удаление",
+            "toggle одного id",
+            "no-op"
+          ]
+        },
+        {
+          "axis": "identity",
+          "values": [
+            "копировать изменённую ветвь",
+            "сохранять соседей",
+            "вернуть исходную ссылку при no-op",
+            "вернуть новый массив даже при no-op"
+          ]
+        }
+      ],
+      "forbidden_mixing": [
+        "Другой предмет обучения внутри одной партии",
+        "Изменение production-кода",
+        "Выдуманное исполнение runtime",
+        "Расширение задачи до review/обучения"
+      ],
+      "generation_constraints": {
+        "input_context": "Complete in prompt after native projection",
+        "source_role": "Methodology and topic evidence; examples are new simulations",
+        "version_profile": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+        "balance": "Включить противоположные и граничные случаи; не учить неизменному предпочтению API по его названию."
+      },
+      "review_requirements": {
+        "kind": "executable_oracle",
+        "activation": "Only a separate later user task",
+        "checks": [
+          "CODEX с Astra 6 ultracode решает blind A/B; генератор не оценивает собственное качество от его имени.",
+          "DOC: исполнить показанный fixture; CODE: обе альтернативы в одинаковом fresh fixture.",
+          "Результат oracle относится к фактическому запуску указанного runtime; сейчас NOT_RUN.",
+          "Проверить одну смысловую ошибку, отсутствие скрытых предпосылок и семейную независимость holdout."
+        ]
+      },
+      "examples": [
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6; функция меняет передаваемое как input состояние. Это задача о ссылках и значениях; фактический UI render не измеряется. type Cell={value:number;label:string}; type State={cells:Record<string,Cell>;selected:string}; Напиши function setValue(s:State,key:string,v:number):State. key гарантированно существует; новый State, новый cells и новый изменённый Cell; остальные Cell сохраняют ссылки. selected и label сохранить; исходные объекты не менять. Контроль: cells.a={value:1,label:\"A\"}, cells.b={value:2,label:\"B\"}, selected=\"b\"; key=\"a\",v=9. Только функцию.",
+          "chosen": "function setValue(s: State, key: string, v: number): State { return { ...s, cells: { ...s.cells, [key]: { ...s.cells[key], value: v } } }; }",
+          "rejected": "function setValue(s: State, key: string, v: number): State { const cells = { ...s.cells }; cells[key].value = v; return { ...s, cells }; }",
+          "error_tag": "nested_cell_mutated_after_shallow_copy",
+          "rationale": "Rejected сохраняет shared Cell и меняет исходное значение.",
+          "example_id": "CODE-NG-IMMUTABLE.REF.01",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-ng-immutable.nested-map-value",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039"
+          ],
+          "counterexample": "Сравнить old/new Cell, cells и State; old.cells.a.value должен остаться 1.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "typescript",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.code-ng-immutable.nested-map-value",
+            "leakage_group_ids": [
+              "v6.ref.code-ng-immutable.nested-map-value"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "old_a": 1,
+                "new_a": 9,
+                "old_label": "A",
+                "selected": "b",
+                "b_same_reference": true
+              },
+              "assertion": "Сравнить old/new Cell, cells и State; old.cells.a.value должен остаться 1.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-NG-03"
+          }
+        },
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6; функция меняет передаваемое как input состояние. Это задача о ссылках и значениях; фактический UI render не измеряется. type Item={id:number}; Напиши function move(xs:readonly Item[],from:number,to:number):Item[]. Оба индекса в диапазоне исходного массива. Удалить элемент from и вставить в итоговую позицию to; новый массив, те же Item refs, xs неизменён. Контроль ids=[1,2,3,4],from=0,to=2. Только функцию.",
+          "chosen": "function move(xs: readonly Item[], from: number, to: number): Item[] { const out = [...xs]; const [item] = out.splice(from, 1); out.splice(to, 0, item); return out; }",
+          "rejected": "function move(xs: readonly Item[], from: number, to: number): Item[] { const out = [...xs]; const [item] = out.splice(from, 1); out.splice(to > from ? to - 1 : to, 0, item); return out; }",
+          "error_tag": "target_index_reinterpreted_after_removal",
+          "rationale": "Rejected считает to позицией исходного gap, хотя контракт задаёт итоговый индекс.",
+          "example_id": "CODE-NG-IMMUTABLE.REF.02",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-ng-immutable.move-item-order",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039"
+          ],
+          "counterexample": "Проверить индекс перемещённого id=1, неизменность xs и те же Item refs.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "typescript",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.code-ng-immutable.move-item-order",
+            "leakage_group_ids": [
+              "v6.ref.code-ng-immutable.move-item-order"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "ids": [
+                  2,
+                  3,
+                  1,
+                  4
+                ],
+                "original_ids": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              },
+              "assertion": "Проверить индекс перемещённого id=1, неизменность xs и те же Item refs.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-NG-03"
+          }
+        },
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6; функция меняет передаваемое как input состояние. Это задача о ссылках и значениях; фактический UI render не измеряется. type Item={id:number}; Напиши function remove(xs:readonly Item[],id:number):readonly Item[]. Если id отсутствует, вернуть ТОТ ЖЕ массив; если есть, вернуть новый без него. ids уникальны, элементы не менять. Контроль ids=[2,4],id=9. Только функцию.",
+          "chosen": "function remove(xs: readonly Item[], id: number): readonly Item[] { return xs.some(x => x.id === id) ? xs.filter(x => x.id !== id) : xs; }",
+          "rejected": "function remove(xs: readonly Item[], id: number): readonly Item[] { return xs.filter(x => x.id !== id); }",
+          "error_tag": "noop_identity_lost",
+          "rationale": "Оба массива содержат те же элементы; rejected нарушает только no-op reference contract.",
+          "example_id": "CODE-NG-IMMUTABLE.REF.03",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-ng-immutable.absent-delete-policy",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039"
+          ],
+          "counterexample": "При отсутствующем id проверить result===xs, а при присутствующем — новый массив.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "typescript",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.code-ng-immutable.absent-delete-policy",
+            "leakage_group_ids": [
+              "v6.ref.code-ng-immutable.absent-delete-policy"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "same_array": true,
+                "ids": [
+                  2,
+                  4
+                ]
+              },
+              "assertion": "При отсутствующем id проверить result===xs, а при присутствующем — новый массив.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-NG-03"
+          }
+        },
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6; функция меняет передаваемое как input состояние. Это задача о ссылках и значениях; фактический UI render не измеряется. type Item={id:number}; Напиши function remove(xs:readonly Item[],id:number):Item[]. Всегда вернуть НОВЫЙ массив без данного id, даже когда id отсутствует. Item refs сохранить, xs не менять. Контроль ids=[2,4],id=9. Только функцию.",
+          "chosen": "function remove(xs: readonly Item[], id: number): Item[] { return xs.filter(x => x.id !== id); }",
+          "rejected": "function remove(xs: readonly Item[], id: number): Item[] { return xs.some(x => x.id === id) ? xs.filter(x => x.id !== id) : xs as Item[]; }",
+          "error_tag": "noop_copy_contract_ignored",
+          "rationale": "Обратный контроль: сохранение root reference теперь неверно по явному договору.",
+          "example_id": "CODE-NG-IMMUTABLE.REF.04",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-ng-immutable.absent-delete-policy",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039"
+          ],
+          "counterexample": "Проверить result!==xs и сохранение ссылок элементов при no-op.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "typescript",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.code-ng-immutable.absent-delete-policy",
+            "leakage_group_ids": [
+              "v6.ref.code-ng-immutable.absent-delete-policy"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "same_array": false,
+                "ids": [
+                  2,
+                  4
+                ]
+              },
+              "assertion": "Проверить result!==xs и сохранение ссылок элементов при no-op.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-NG-03"
+          }
+        },
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6; функция меняет передаваемое как input состояние. Это задача о ссылках и значениях; фактический UI render не измеряется. type Item={id:number;done:boolean}; Напиши function toggle(xs:readonly Item[],id:number):Item[]. Новый массив; только элемент с данным id заменить новым объектом с инверсией done; остальные объекты сохранить. ids уникальны, id существует. Контроль [(1,false),(2,true)],id=2. xs и его элементы не менять. Только функцию.",
+          "chosen": "function toggle(xs: readonly Item[], id: number): Item[] { return xs.map(x => x.id === id ? { ...x, done: !x.done } : x); }",
+          "rejected": "function toggle(xs: readonly Item[], id: number): Item[] { return xs.map(x => x.id === id ? { ...x, done: true } : x); }",
+          "error_tag": "toggle_replaced_by_set_true",
+          "rationale": "Rejected корректно копирует нужную ветвь, но не выполняет инверсию.",
+          "example_id": "CODE-NG-IMMUTABLE.REF.05",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-ng-immutable.single-toggle",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039"
+          ],
+          "counterexample": "Проверить инверсию true→false и исходный xs[1].done=true.",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "typescript",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.code-ng-immutable.single-toggle",
+            "leakage_group_ids": [
+              "v6.ref.code-ng-immutable.single-toggle"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "done": [
+                  false,
+                  false
+                ],
+                "first_same_reference": true,
+                "second_same_reference": false
+              },
+              "assertion": "Проверить инверсию true→false и исходный xs[1].done=true.",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-NG-03"
+          }
+        },
+        {
+          "prompt": "Симуляция Angular 16.2.0 / TypeScript 5.1.6; функция меняет передаваемое как input состояние. Это задача о ссылках и значениях; фактический UI render не измеряется. type Bucket={items:readonly number[];title:string}; type State={buckets:Record<string,Bucket>;busy:boolean}; Напиши function append(s:State,key:string,n:number):State. key существует. Добавить n к items только выбранного bucket, сохранив title, все другие buckets и busy. Создать новые State,buckets,изменённый Bucket и items; старое не менять. Контроль buckets.a={items:[1],title:\"A\"}, buckets.b={items:[2],title:\"B\"},busy=true; key=\"a\",n=3. Только функцию.",
+          "chosen": "function append(s: State, key: string, n: number): State { const b = s.buckets[key]; return { ...s, buckets: { ...s.buckets, [key]: { ...b, items: [...b.items, n] } } }; }",
+          "rejected": "function append(s: State, key: string, n: number): State { const b = s.buckets[key]; return { ...s, buckets: { [key]: { ...b, items: [...b.items, n] } } }; }",
+          "error_tag": "neighbor_bucket_dropped",
+          "rationale": "Rejected не мутирует данные, но теряет незатронутый bucket b.",
+          "example_id": "CODE-NG-IMMUTABLE.REF.06",
+          "profile_id": "base",
+          "family_id": "v6.ref.code-ng-immutable.map-neighbor-retention",
+          "source_refs": [
+            "RAG-027",
+            "RAG-028",
+            "RAG-039"
+          ],
+          "counterexample": "Проверить наличие b, сохранение его ссылки и старое a.items=[1].",
+          "metadata": {
+            "simulation": true,
+            "reference_only": true,
+            "training_allowed": false,
+            "response_language": "typescript",
+            "stack": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+            "origin_family_id": "v6.ref.code-ng-immutable.map-neighbor-retention",
+            "leakage_group_ids": [
+              "v6.ref.code-ng-immutable.map-neighbor-retention"
+            ],
+            "source_role": "methodology",
+            "source_evidence_status": "self_contained_simulation_runtime_required",
+            "oracle": {
+              "status": "NOT_RUN",
+              "result_observed": false,
+              "engine": "Angular 16.2.0 / TypeScript 5.1.6 / RxJS 7.8.1; client-side SPA",
+              "expected": {
+                "a_items": [
+                  1,
+                  3
+                ],
+                "b_items": [
+                  2
+                ],
+                "busy": true,
+                "b_same_reference": true
+              },
+              "assertion": "Проверить наличие b, сохранение его ссылки и старое a.items=[1].",
+              "execution_unit": "Both complete alternatives in separate fresh fixtures"
+            },
+            "parent_topic_reference_only": "CODE-NG-03"
+          }
+        }
+      ]
+    }
+  ]
+}

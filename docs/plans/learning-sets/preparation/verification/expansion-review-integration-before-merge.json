@@ -1,0 +1,313 @@
+{
+  "schema_version": "xiigen.bounded.integration.review.v1",
+  "reviewer": "orchestration_pack independent integration review",
+  "scope": "Common execution instructions and data-preparation tool; additions were not reviewed again.",
+  "status": "LOCAL_REPAIRS_COMPLETE_REBASE_REVALIDATION_REQUIRED",
+  "repository_snapshot": "Local expansion based on llm_plan3 66cd68b247ad9d92570b37594fcb2cb5eb33a6cc; concurrent remote 3a96f721beca23c92e103737a78fcdc0d0f5fd89 has not been read/merged by this reviewer.",
+  "limits": {
+    "model_generation": "NOT_RUN",
+    "native_oracle_execution": "NOT_RUN",
+    "native_training": "NOT_RUN",
+    "production_code_modified": false,
+    "historical_reports_or_21_tests_modified": false,
+    "data_validator_regression_run": true,
+    "claim_of_learning_improvement": false,
+    "full_remote_merge_review": false,
+    "known_translation_diversity_row_in_14": "Excluded from this review; owner already correcting it."
+  },
+  "files_read": [
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/00-START-HERE.md",
+      "sha256": "f91e9a0b01eadb4d535237928af57cc6610e6b1b73a6d2cf18b263182d5c4d82"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/03-GENERATION-AND-KIRO.md",
+      "sha256": "6482a2636391dae02ebea534f8beb892a292d439650c6f8e6b95af08fe53fa3e"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/04-QUALITY-AND-SPLITS.md",
+      "sha256": "3631ebc90c1be228870a33f3e3ac35a6f4974aed050ca1632b2e4f6ec4ff4197"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/05-LEARNING-AND-CHECKPOINTS.md",
+      "sha256": "cac460ab668c4d1d9d44d8922725a12ee7e61dfa6a623709393db8829f477468"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/07-CONFLICTS-AND-REQUIREMENTS.md",
+      "sha256": "57a90b0ccb293055760d777e6ef78599b2f5593085cee66f49c947073a9d49d9"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/10-NATIVE-CONTRACT-BOUNDARY.md",
+      "sha256": "cb224161c0c28c1a11a7aa6ad906b2ec93a3662f1b8286cd5cc99e7aff132511"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/13-CORPUS-EXPANSION.md",
+      "sha256": "54b5de480c605fed4331622637be1e1f9c48f43c0dd78ae6e3567d7f6810ecc9"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/14-GENERATION-CAMPAIGN.md",
+      "sha256": "6cf861dcba440e6339abce4ba368dc4963e9e540d29e93fc245e381e0bf8a5e3"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/prompts/MASTER-PROMPT-RU.md",
+      "sha256": "41c9723ddca456c63ef344aa937d1e2d63d28d65c31a27e93393f225e08458b1"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/prompts/REPAIR-PROMPT-RU.md",
+      "sha256": "a46e8fa7331ef542f9db66939ab640ff7274a8e8f804b0f2932eba5c1de86eb1"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/tools/sets.py",
+      "sha256": "4afadc686a64f5de2a3a648d39234ca4a4e47468a5d67ac30b6dc0be927210ef"
+    }
+  ],
+  "findings": [
+    {
+      "id": "INT-01",
+      "severity": "high",
+      "title": "Declared origin lineage could cross TRAIN and EXAM undetected",
+      "status": "FIXED_IN_LOCAL_PREPARATION_TOOL",
+      "location": "tools/sets.py validate_rows",
+      "before": {
+        "tool_sha256": "573857e11b678ded7191683b9de5f7dfaea8c1559e3ccc79b84153b791d86ef2",
+        "witness": "Two valid rows, distinct family_id, leakage_group_ids, prompts and pair_id; identical metadata.origin_family_id; split train vs exam.",
+        "errors": []
+      },
+      "impact": "Known related cases could contaminate held-out data despite corpus audit, undermining a later learning comparison. This is a declared-lineage defect, not a claim that semantic duplicates can be automatically discovered.",
+      "resolution": "Validate a present origin_family_id as a nonempty string. Track the union of family_id, valid origin_family_id and valid leakage_group_ids in one split-consistency namespace. Reuse RELATED_FAMILY_SPLIT_LEAKAGE; invalid origins produce ORIGIN_FAMILY_ID_MUST_BE_NONEMPTY_STRING without unhashable-value crashes.",
+      "evidence": {
+        "path": "deliverable/plan/llm mvp/learning-sets/preparation/tools/sets.py",
+        "sha256": "4afadc686a64f5de2a3a648d39234ca4a4e47468a5d67ac30b6dc0be927210ef",
+        "locations": [
+          {
+            "line": 159,
+            "text": "        origin=r['metadata'].get('origin_family_id')"
+          },
+          {
+            "line": 161,
+            "text": "            error('ORIGIN_FAMILY_ID_MUST_BE_NONEMPTY_STRING');origin=None"
+          },
+          {
+            "line": 163,
+            "text": "        lineage={r['family_id']}|set(linked)"
+          },
+          {
+            "line": 165,
+            "text": "        for group in sorted(lineage):"
+          },
+          {
+            "line": 166,
+            "text": "            if groups.setdefault(group,r['split'])!=r['split']: error('RELATED_FAMILY_SPLIT_LEAKAGE')"
+          }
+        ]
+      },
+      "regression": "origin-lineage-witness.py / origin-lineage-witness-result.json: 11 bounded cases passed; train/exam witness now rejected; same-origin same-split and absent optional origin accepted."
+    },
+    {
+      "id": "INT-02",
+      "severity": "medium",
+      "title": "Partial repair review conflicted with full request/key coverage",
+      "status": "FIXED_IN_LOCAL_INSTRUCTIONS",
+      "before": "REPAIR-PROMPT-RU requested review only changed rows, while validate_rows enforces original request count/family coverage and validate enforces complete input review coverage and whole-file key hash.",
+      "impact": "A literal executor could fail validation, invent a subset request or reuse a mismatched review, despite having repaired the requested defect.",
+      "resolution": "One supported route now explicit: full draft.v2 with unchanged rows preserved, new pair_id/derived_from only for repaired rows, immutable original request and lineage, new full blind/review/evidence binding. If a row cannot be repaired, the batch remains unaccepted; no silent dropping. Exact v2 commands and filenames are shown in 03. Parent aligned 14 separately.",
+      "evidence": [
+        {
+          "path": "deliverable/plan/llm mvp/learning-sets/preparation/prompts/REPAIR-PROMPT-RU.md",
+          "sha256": "a46e8fa7331ef542f9db66939ab640ff7274a8e8f804b0f2932eba5c1de86eb1",
+          "locations": [
+            {
+              "line": 3,
+              "text": "Входы: исходный draft.jsonl, неизменяемый request.json, validation.json, review.jsonl и карточка с тем же ID. Исправь только указанную категорию ошибки. Сохрани все исходные файлы; создай **полный** draft.v2.jsonl с тем же числом строк и всеми назначенными family_id. Неизменённые строки перенеси без изменений, включая их pair_id. Только исправленные строки получают новый pair_id и metadata.derived_from со ссылкой на исходный pair_id. Сохрани split, family_id, origin_family_id и leakage_group_ids; не меняй их для прохождения проверки. Условия и предпочтение должны оставаться проверяемыми. Не добавляй новые домены, модели и production-правки."
+            },
+            {
+              "line": 5,
+              "text": "Сначала кратко объясни причину отклонения и выбранное исправление. Для label leakage перенеси [WRONG]/объяснение в rationale, но не считай удаление ярлыка достаточным: rejected должен стать настоящим альтернативным ответом. Для tie создай содержательный контраст. Для неверного chosen исправь по видимому источнику; не переворачивай метки без повторной проверки. Для недостатка контекста добавь необходимые факты в prompt. Если исправление не обосновано, сохрани нерешённую строку и отказ в отчёте; полный пакет пока не принят. Не удаляй строку и не передавай подмножество под исходным request: validate проверяет его полные count и family coverage. Новый состав требует отдельного явно назначенного request, а не редактирования старого. Не скачивай внешние источники."
+            },
+            {
+              "line": 7,
+              "text": "В том же каталоге run проверь полный draft.v2.jsonl с исходным request.json. Затем создай **новый blind/review всего draft.v2.jsonl**, включая неизменённые строки: blind.v2.jsonl, blind.v2.key.json и review.v2.jsonl. Новый ключ связан с хешем всего input, а review обязан покрывать все его pair_id; review только исправленных строк не поддерживается этим путём. Языковые/oracle-доказательства также должны быть связаны с новым blind_sha256; старый положительный статус не копируется как новая проверка. Точные команды на примере сохранённого run есть в разделе ремонта [03-GENERATION-AND-KIRO.md](../03-GENERATION-AND-KIRO.md). Итоговый validate использует draft.v2.jsonl, исходный request.json, review.v2.jsonl и blind.v2.key.json; его файл — draft.v2.validation.json. Исходные draft, blind, key, review и validation остаются на месте."
+            }
+          ]
+        },
+        {
+          "path": "deliverable/plan/llm mvp/learning-sets/preparation/03-GENERATION-AND-KIRO.md",
+          "sha256": "6482a2636391dae02ebea534f8beb892a292d439650c6f8e6b95af08fe53fa3e",
+          "locations": [
+            {
+              "line": 53,
+              "text": "### Ремонт полного пакета"
+            },
+            {
+              "line": 55,
+              "text": "`draft.v2.jsonl` содержит весь исходный пакет: неизменённые строки остаются без изменений и с прежним pair_id; только исправленные получают новый pair_id и `metadata.derived_from`. Число строк, назначенные family_id, origin/leakage связи и split сохраняются. Исходный request не редактируется. Нельзя отправить только исправленные строки под исходным request: валидатор требует полное покрытие count и family_ids. Если исправление отдельной строки пока невозможно, весь пакет остаётся непринятым; новый состав назначается отдельно."
+            },
+            {
+              "line": 60,
+              "text": "python tools/sets.py validate --input C:/x/lsets/TR01/ru-en/R001/draft.v2.jsonl --request C:/x/lsets/TR01/ru-en/R001/request.json"
+            },
+            {
+              "line": 61,
+              "text": "python tools/sets.py blind --input C:/x/lsets/TR01/ru-en/R001/draft.v2.jsonl --out C:/x/lsets/TR01/ru-en/R001/blind.v2.jsonl"
+            },
+            {
+              "line": 64,
+              "text": "Проверяющий получает новый `blind.v2.jsonl` и пишет `review.v2.jsonl` **для всех строк**, включая неизменённые. Новые языковые/oracle-доказательства привязываются к его `blind_sha256`. Старые ключ/review не подходят к новым байтам input. Только после этого:"
+            },
+            {
+              "line": 67,
+              "text": "python tools/sets.py validate --input C:/x/lsets/TR01/ru-en/R001/draft.v2.jsonl --request C:/x/lsets/TR01/ru-en/R001/request.json --review C:/x/lsets/TR01/ru-en/R001/review.v2.jsonl --key C:/x/lsets/TR01/ru-en/R001/blind.v2.key.json"
+            },
+            {
+              "line": 70,
+              "text": "Отчёт этой версии — `draft.v2.validation.json`; исходные артефакты сохраняются. Для текущего objective использовать ровно его `first_output_directory` из очереди или сохранённый `request.json.output_directory` текущего run; имена v2-файлов те же. В `audit`/`merge` передавать принятый полный `draft.v2.jsonl`, а не вместе с его старой версией."
+            },
+            {
+              "line": 90,
+              "text": "Выполнить prompt, структурную проверку, `blind`, содержательный review и итоговый `validate --review --key` для R002 тем же способом, что для R001; все его файлы находятся в `C:/x/lsets/TR01/ru-en/R002/`. Следующие команды выполняются только после приёмки обоих пакетов. При ремонте указывать фактически принятые `draft.v2.jsonl` и их проверку, не исходный отклонённый draft."
+            }
+          ]
+        },
+        {
+          "path": "deliverable/plan/llm mvp/learning-sets/preparation/14-GENERATION-CAMPAIGN.md",
+          "sha256": "6cf861dcba440e6339abce4ba368dc4963e9e540d29e93fc245e381e0bf8a5e3",
+          "locations": [
+            {
+              "line": 67,
+              "text": "| Конкретные пары отклонены | Сохранить исходные draft и review. Создать полный draft.v2.jsonl: неизменённые строки сохранить, новым pair_id и derived_from снабдить только исправленные строки; смысловая семья прежняя. Исходный request продолжает требовать весь count и семейства. Сделать новый blind и review всего файла v2, привязанные к его новым байтам; частичный review не закрывает полный файл. |"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "INT-03",
+      "severity": "medium",
+      "title": "Generic 25-row batches conflicted with conditional/router objective constraints",
+      "status": "FIXED_IN_LOCAL_INSTRUCTIONS",
+      "before": "03 described two 25-row packages for every stream and 25 by default, although conditional families require even counts and OR-ROUTE-INTENT requires 21 or 42.",
+      "resolution": "Current batch sizes and targets come from curriculum/pilot-queue.json. Preserve complete conditional pairs and router class groups while reducing context. Legacy TR01 25-row commands remain explicitly historical examples. Review composition after 50 accepted rows rounded to complete groups; actual targets are queue values.",
+      "evidence": {
+        "path": "deliverable/plan/llm mvp/learning-sets/preparation/03-GENERATION-AND-KIRO.md",
+        "sha256": "6482a2636391dae02ebea534f8beb892a292d439650c6f8e6b95af08fe53fa3e",
+        "locations": [
+          {
+            "line": 5,
+            "text": "Для текущей детализации используются [13](13-CORPUS-EXPANSION.md), [14](14-GENERATION-CAMPAIGN.md) и [очередь микронаборов](curriculum/INDEX.md); [11](11-MICROTOPICS-AND-BATCH-PLAN.md) сохраняет базовые правила. Команда `prepare` дополняется `--objective <ID>`; она включает узкую карточку вместо полного набора соседних навыков. Конкретные команды, `batch_pairs`, квоты `planned_train_pairs`/`planned_dev_pairs`/`planned_exam_pairs` и пути каждого профиля записаны в `curriculum/pilot-queue.json`. Примеры роста исходного TR01 ниже остаются действительными для старого topic-only workflow, но не определяют порядок или квоты новой очереди."
+          },
+          {
+            "line": 25,
+            "text": "Сначала уменьшать число пар и объём новых сценариев в пакете, сохраняя ограничения objective: для обычной длинной задачи допустим `--count 5`; для TR10-CONDITIONAL — только полные пары ambiguous/resolved (`--count` кратен 2); для OR-ROUTE-INTENT — 21 или 42 строки с полным балансом классов. Число 25 относится только к историческому примеру TR01 ниже. Все обязательные источники, условия, версии, callee-контракты и семейные связи остаются в запросе. Перед отправкой проверить уже собранный `prompt.md`: молча обрезать его, заменять назначенные источники непроверенным пересказом или досочинять недостающие факты запрещено. Если даже минимальный допустимый пакет не помещается, сохранить подготовленный run со статусом `CONTEXT_NOT_FIT`; требуется явное разбиение темы/источников, без генерации повреждённых пар. Не исправлять существующий `request.json` задним числом: новое назначение получает новый run и ссылку на причину переноса, исходные файлы сохраняются."
+          },
+          {
+            "line": 27,
+            "text": "## Исторический пример первого пакета TR01"
+          },
+          {
+            "line": 74,
+            "text": "1. Для каждого текущего objective/profile взять размер первой партии и TRAIN/DEV/EXAM-квоты из его строки `curriculum/pilot-queue.json`. Проверять смысл каждой строки. После 50 принятых строк пересмотреть качество состава; при требовании полных групп использовать первый допустимый размер не меньше 50 (для маршрутизатора — 63), не урезая группы ради круглой суммы."
+          },
+          {
+            "line": 75,
+            "text": "2. Продолжить непересекающимися shards до назначенной `planned_train_pairs`; DEV/EXAM формируются отдельными семьями до обучения. Для обычных objectives начальная цель — 100 TRAIN, для OR-ROUTE-INTENT — 126 TRAIN; точное значение подтверждается очередью и фактически принятыми строками. Учебный пилот требует отдельного native binding по [05](05-LEARNING-AND-CHECKPOINTS.md)."
+          },
+          {
+            "line": 77,
+            "text": "4. Один пакет остаётся маленьким: исходный `batch_pairs` задан очередью; уменьшение до запуска сохраняет целые семьи и баланс классов, как в разделе проверки контекста. 25 пар не является общей квотой текущих objectives. Число строк накопительной версии берётся из её фактического `release.json`, а не из запланированных размеров."
+          },
+          {
+            "line": 81,
+            "text": "### Исторический пример TR01: первые 50 строк"
+          }
+        ]
+      }
+    },
+    {
+      "id": "INT-04",
+      "severity": "medium",
+      "title": "Start page still advertised old expansion counts and parent-topic entrypoint",
+      "status": "FIXED_BY_PARENT_IN_REVIEWED_LOCAL_SNAPSHOT",
+      "before": "00 top claimed 19 objectives, 44 streams, 113 references, 50 RAG sources and bold start sent executors to parent registry 01.",
+      "resolution": "Parent updated local entrypoint to 43/103/275/55, 13/14 and curriculum stable IDs. These figures must be recalculated after the concurrent remote merge.",
+      "evidence": {
+        "path": "deliverable/plan/llm mvp/learning-sets/preparation/00-START-HERE.md",
+        "sha256": "f91e9a0b01eadb4d535237928af57cc6610e6b1b73a6d2cf18b263182d5c4d82",
+        "locations": [
+          {
+            "line": 5,
+            "text": "Для текущей работы открыть [curriculum/INDEX.md](curriculum/INDEX.md): **43 узких задания, 103 потока, 275 публичных reference-примеров**. [13](13-CORPUS-EXPANSION.md) объясняет добавленные темы и происхождение материала; [14](14-GENERATION-CAMPAIGN.md) содержит готовый стартовый промпт для Kiro и точное продолжение попытки; [15](15-VERIFICATION-EXPANSION.md) фиксирует выполненные проверки и их границы. [11](11-MICROTOPICS-AND-BATCH-PLAN.md) сохраняет правила квот, семейств и B1. Прежние 37 родительских карточек и история сохранены."
+          },
+          {
+            "line": 7,
+            "text": "Единственный порядок конкретных заданий — `curriculum/index.json`; точные команды и пути — `curriculum/pilot-queue.json`. Первые 44 позиции сохранены, 59 новых идут следом. Прямой ID пользователя выше очереди. Первый поток остаётся `TR07-OMISSION/ru-en`; уже завершённые попытки не запускаются снова."
+          },
+          {
+            "line": 9,
+            "text": "RAG содержит **55** закреплённых источников, все они согласованы с `sources.lock.json`. Модель — текущая выбранная китайская модель Kiro без override. Подготовлены материалы и команды; вызовов модели, native oracle и обучения в этом дополнении нет. [План 103 008 TRAIN-пар](curriculum/scale-plan.json) является назначением после допуска и валидного учебного пилота."
+          },
+          {
+            "line": 11,
+            "text": "**Начать с [14 — промпт для Kiro](14-GENERATION-CAMPAIGN.md), затем выбрать стабильный ID из [curriculum](curriculum/INDEX.md).**"
+          },
+          {
+            "line": 19,
+            "text": "**Начать с [общего промпта](prompts/MASTER-PROMPT-RU.md), затем выбрать ID из [реестра](01-DOMAIN-REGISTRY.md).** Один запуск создаёт небольшой пакет одной темы и одного профиля. Большой набор собирается из проверенных пакетов. Число строк в плане — целевой объём, а не уже выполненная генерация и не доказательство обучения."
+          }
+        ]
+      }
+    }
+  ],
+  "non_findings_with_scope": [
+    {
+      "requirement": "One learning topic per set",
+      "observed": "03/04/07 and merge/compose enforce topic/profile and learning_objective isolation. Router topic remains orchestration even when inputs mention translation/documentation."
+    },
+    {
+      "requirement": "Restore B1 before new training",
+      "observed": "05 requires compatible full-state restore first, separate producer only when absent, native readback and explicit optimizer/RNG continuation semantics. No new trainer or B1 run is claimed."
+    },
+    {
+      "requirement": "NEXT/STOP",
+      "observed": "03 and master give immediate user ID priority and freeze old work; no completing previous report after STOP/NEXT."
+    },
+    {
+      "requirement": "Wait on a real process handle",
+      "observed": "03/14 require observed process handle and advertised wait/resume. Existing preparation directory does not imply active process. No duplicate launch or fictional wait."
+    },
+    {
+      "requirement": "Preparation checks do not replace learning",
+      "observed": "05/07/10 and tool statuses distinguish DATA_ONLY, INTERCHANGE_FORMAT_ONLY and NOT_RUN from measured native learning. 0-to-0 is not a useful learning result; useful metric-specific gains must report regressions."
+    }
+  ],
+  "changed_files": [
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/tools/sets.py",
+      "before_sha256": "573857e11b678ded7191683b9de5f7dfaea8c1559e3ccc79b84153b791d86ef2",
+      "after_sha256": "4afadc686a64f5de2a3a648d39234ca4a4e47468a5d67ac30b6dc0be927210ef"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/03-GENERATION-AND-KIRO.md",
+      "before_sha256": "c807d7755f053e38885678e41b8f07a3fbbdd5f9a34f0c2e8bf4dad6037bbf29",
+      "after_sha256": "6482a2636391dae02ebea534f8beb892a292d439650c6f8e6b95af08fe53fa3e"
+    },
+    {
+      "path": "deliverable/plan/llm mvp/learning-sets/preparation/prompts/REPAIR-PROMPT-RU.md",
+      "before_sha256": "7874e9b63f74cdd46382ba3293a8a51ef205649bdd18b5d6ced1a0a56f34af4e",
+      "after_sha256": "a46e8fa7331ef542f9db66939ab640ff7274a8e8f804b0f2932eba5c1de86eb1"
+    }
+  ],
+  "patch": {
+    "path": "agent_work/orchestration_pack/integration-fixes.patch",
+    "sha256": "7f4555fbb56430951978b236cebf4389c8bfd58bf992d63f4b9a018599576947",
+    "base": "Initial local snapshot files; apply/reconcile only intended changes when preserving newer remote checks."
+  },
+  "regression_witness": {
+    "script": "agent_work/orchestration_pack/origin-lineage-witness.py",
+    "result": "agent_work/orchestration_pack/origin-lineage-witness-result.json",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python agent_work/orchestration_pack/origin-lineage-witness.py 'deliverable/plan/llm mvp/learning-sets/preparation/tools/sets.py'",
+    "cases": 11,
+    "passed": 11,
+    "scope": "Data input lineage only, not a model or learning experiment."
+  },
+  "handoff": "Parent owns concurrent-remote merge, execution-queue integration and final counts. Re-run this witness against the merged tool before publication. No broad review, production approval or trained-result claim is implied."
+}
