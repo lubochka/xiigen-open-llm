@@ -1,0 +1,194 @@
+{
+  "id": "Q03/135-R02-EXECUTION",
+  "phase": "IMPLEMENTATION_PENDING_ROOT_QA_REVIEW",
+  "source_head": "2208e19ec419caa0c867f6aa93d2ae192e78e4a8",
+  "output_root": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z",
+  "model": {
+    "requested": "gpt-6-astra",
+    "reasoning_effort": "ultra",
+    "runtime_metadata": "UNAVAILABLE"
+  },
+  "entry": "scripts/experiment-launcher/qa/Invoke-LauncherAcceptance.ps1",
+  "command": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "scripts/experiment-launcher/qa/Invoke-LauncherAcceptance.ps1",
+    "-OutputRoot",
+    "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z"
+  ],
+  "real_entrypoints": [
+    "experiments-v2/RP01-MICRO/P10801/Run-Experiment.ps1",
+    "experiments-v2/RP01-MICRO/P10901/Run-Experiment.ps1",
+    "experiments-v2/RP01-MICRO/P11001/Run-Experiment.ps1",
+    "experiments-v2/RP01-MICRO/P11101/Run-Experiment.ps1",
+    "experiments-v2/RP01-MICRO/P11201/Run-Experiment.ps1",
+    "experiments-v2/RP01-MICRO/P11301/Run-Experiment.ps1"
+  ],
+  "qa_arguments": [
+    "-Mode",
+    "qa",
+    "-QaStage",
+    "build|run|all",
+    "-QaOutputRoot",
+    "<unique case directory under output_root>",
+    "-QaAttemptId",
+    "Q03-<case>-Pnnn",
+    "-QaFixture",
+    "<immutable fixture JSON>"
+  ],
+  "frozen_cases": {
+    "per_entrypoint": [
+      "build_run_repeat: exits0/0/0, run callbacks1/0, build receipt BUILT_ONLY and no experiment terminal after build",
+      "failure7_build_repeat: exits7/0/7, callbacks1/0, terminal bytes preserved across build"
+    ],
+    "shared_terminal": [
+      "malformed JSON",
+      "foreign attempt",
+      "missing measurement outcome",
+      "JSON null",
+      "JSON array",
+      "JSON string",
+      "terminal string false",
+      "build-stage success masquerading as run"
+    ],
+    "shared_terminal_expected": {
+      "exit": 11,
+      "callback": 0
+    },
+    "stdout_without_terminal": {
+      "exit": 11,
+      "callback": 0
+    },
+    "live_outcomes": [
+      {
+        "id": "scientific_zero",
+        "exit": 0,
+        "scientific": "NO_OBSERVED_GAIN"
+      },
+      {
+        "id": "measurement_failure",
+        "child_exit": 0,
+        "exit": 21
+      },
+      {
+        "id": "budget_failure",
+        "child_exit": 0,
+        "exit": 22
+      },
+      {
+        "id": "missing_status",
+        "child_exit": 0,
+        "exit": 11
+      }
+    ],
+    "verifier_process_chain": [
+      "qualification false",
+      "arm result false",
+      "missing checkpoint",
+      "reader false",
+      "missing required arm"
+    ],
+    "verifier_expectation": {
+      "independent_required_arms": [
+        "A",
+        "B"
+      ],
+      "child_exit": 9,
+      "outer_exit": 9
+    },
+    "deadline": [
+      "stage timeout124",
+      "total timeout125",
+      "tree stop: observed grandchild identity then absent",
+      "root-only negative: live grandchild makes126 then separate cleanup"
+    ],
+    "concurrency": [
+      "held live run => second12",
+      "held claim plus existing success => second12, holder0"
+    ],
+    "expected_case_count": 36
+  },
+  "caps": {
+    "harness_seconds": 600,
+    "ordinary_wrapper_qa_seconds": 30,
+    "stage_timeout_seconds": 4,
+    "total_timeout_seconds": 4,
+    "tree_timeout_seconds": 5,
+    "finite_dummy_lifetime_seconds": 20,
+    "planned_processes": {
+      "harness": 1,
+      "entrypoints": 62,
+      "build_children": 13,
+      "run_children": 26,
+      "verifier_children": 6,
+      "grandchildren": 2,
+      "total": 110
+    },
+    "planned_callbacks": {
+      "build": 13,
+      "run": 26
+    },
+    "Train": 0,
+    "Forward": 0,
+    "Generate": 0
+  },
+  "defaults": {
+    "P108": [
+      600,
+      900,
+      1500
+    ],
+    "P109": [
+      600,
+      1200,
+      null
+    ],
+    "P110": [
+      600,
+      1200,
+      1800
+    ],
+    "P111": [
+      600,
+      900,
+      null
+    ],
+    "P112": [
+      600,
+      1200,
+      null
+    ],
+    "P113": [
+      600,
+      900,
+      null
+    ]
+  },
+  "implementation": {
+    "common": "scripts/experiment-launcher/ExperimentLauncher.psm1",
+    "qa": [
+      "scripts/experiment-launcher/qa/Invoke-LauncherAcceptance.ps1",
+      "scripts/experiment-launcher/qa/DummyProgram.ps1",
+      "scripts/experiment-launcher/qa/Verify-DummyMaterial.ps1"
+    ],
+    "docs": "scripts/experiment-launcher/README.md",
+    "same_pipeline": "claim -> strict prior terminal/legacy -> optional build receipt -> bounded child -> source-specific outcomes -> strict finalizer -> outer exit",
+    "ordinary_science_execution": "UNRUN",
+    "old_results": "READ_ONLY",
+    "P108_verify_saved": "preserve dotnet exec --verify-saved input/output separate from PRIMARY"
+  },
+  "coverage": {
+    "core12": "FULL",
+    "applicable_skills": 35,
+    "nonapplicable": [
+      "ui-testing",
+      "html-css-render-qa-automation"
+    ],
+    "contracts": "120/40/42/31/44/45/46/48/135/146 FULL",
+    "registry": "current Q03/next targeted",
+    "six_launchers": "FULL",
+    "producer_sources": "targeted actual status/exit writers"
+  },
+  "worker": "/root/experiment_q002"
+}

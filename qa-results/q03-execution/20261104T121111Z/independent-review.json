@@ -1,0 +1,358 @@
+{
+  "schema": "independent-launcher-review/v1",
+  "human_title": "Исправление запускателя опытов — независимая проверка",
+  "work_id": "Q03/135-R02-EXECUTION",
+  "status": "NEEDS_FIX",
+  "conclusion": "Сборка отделена от результата опыта, но обработка исключений после запуска ребёнка может оставить процесс живым, а ветка сборки не учитывает отказ остановки дерева. Приёмку текущего кандидата не рекомендую.",
+  "actor": "/root/launcher_independent_review",
+  "author": "/root/experiment_q002",
+  "requested_model": "gpt-6-astra",
+  "requested_effort": "ultra",
+  "runtime_model_metadata": "UNAVAILABLE",
+  "runtime_effort_metadata": "UNAVAILABLE",
+  "nested_agents_used": false,
+  "phase": "AUTHORIZED_TRANSFER_INDEPENDENT_CODE_AND_SAVED_EVIDENCE_REVIEW",
+  "active_review_started_utc": "2026-11-04T13:46:14Z",
+  "must_stop_after_report": true,
+  "may_derive_next_phase": false,
+  "findings": [
+    {
+      "id": "R1",
+      "severity": "P1",
+      "path": "C:/Projects/llm_mvp_core/scripts/experiment-launcher/ExperimentLauncher.psm1",
+      "line": 92,
+      "related_lines": [
+        8,
+        87,
+        89,
+        105,
+        106,
+        387,
+        392,
+        393
+      ],
+      "title": "Исключение после Start-Process оставляет ребёнка без гарантированной остановки",
+      "expected": "После успешного старта любое исключение должно вести через проверяемую остановку принадлежащего запускателю дерева; запись диагностики не должна обходить cleanup или правильное завершение владения claim.",
+      "actual": "Get-ProcessIdentity и запись started/partial могут бросить исключение. В Invoke-LauncherStage нет try/finally, поэтому Stop-LauncherTree на106 пропускается. Внешний catch возвращает11; если entry-result записан, claim освобождается, хотя ребёнок ещё может работать. Если запись entry-result сама бросает, Dispose на393 не выполняется в этом вызове.",
+      "source_evidence": "Лично прочитанный исходник source-003; Write-LauncherJson использует File.WriteAllText и ErrorActionPreference=Stop. Это статически подтверждённый путь при I/O исключении, НЕ выполненное воспроизведение.",
+      "fix": "Защитить весь участок после Start-Process cleanup/finally, не зависящим от успешной записи started/partial. Сохранить исходную ошибку и отдельный результат остановки. Освобождение claim должно иметь собственный finally независимо от entry-result; при живом/ненаблюдаемом дереве повторный запуск не должен становиться свободным.",
+      "required_proof": [
+        "Исключение записи started после реального старта долгоживущего dummy: PID/start ребёнка и потомков зафиксированы, после выхода отсутствуют, внешний код ненулевой.",
+        "Исключение записи partial на timeout: остановка выполняется несмотря на отказ диагностики; live/unobservable не становятся success.",
+        "Исключение entry-result: владение claim корректно завершается независимо от диагностики; следующий вход не запускает дубликат живого ребёнка."
+      ],
+      "runtime_reproduction": "NOT_RUN",
+      "covered_by_existing_68": false
+    },
+    {
+      "id": "R2",
+      "severity": "P2",
+      "path": "C:/Projects/llm_mvp_core/scripts/experiment-launcher/ExperimentLauncher.psm1",
+      "line": 343,
+      "related_lines": [
+        335,
+        342,
+        344,
+        345,
+        360,
+        393
+      ],
+      "title": "Сборка теряет специальный исход отказа остановки дерева",
+      "expected": "Timeout сборки с cleanup.stopped=false должен давать PROCESS_TREE_NOT_STOPPED/126 и сохранять исходное доказательство живого либо ненаблюдаемого дерева, как ветка run.",
+      "actual": "При TIMEOUT_STAGE/TIMEOUT_TOTAL ветка build возвращает124/125 независимо от cleanup.stopped; ветка run на360 преобразует такой же результат в126. Результат build не отражает отказ остановки, claim затем освобождается.",
+      "source_evidence": "Статическое сравнение веток335–345 и357–360. В сохранённых68 сценариях нет timeout на build с неподтверждённым cleanup. Отрицательный run-сценарий доказывает, что cleanup.stopped=false — достижимое состояние общего stage helper.",
+      "fix": "Применить единое правило отказа остановки к build и run; хранить отказ отдельно от последующей аварийной уборки, не перезаписывать experiment terminal сборкой.",
+      "required_proof": [
+        "Timeout build с успешной остановкой возвращает124/125 и отдельную build-квитанцию, не изменяя terminal опыта.",
+        "Timeout build с живым или ненаблюдаемым потомком возвращает126; первоначальный отказ сохранён до отдельной cleanup; повторный вход не создаёт параллельную сборку."
+      ],
+      "runtime_reproduction": "NOT_RUN",
+      "covered_by_existing_68": false
+    }
+  ],
+  "checked": {
+    "source_full": [
+      "scripts/experiment-launcher/ExperimentLauncher.psm1",
+      "scripts/experiment-launcher/qa/Invoke-LauncherAcceptance.ps1",
+      "scripts/experiment-launcher/qa/DummyProgram.ps1",
+      "scripts/experiment-launcher/qa/Verify-DummyMaterial.ps1",
+      "scripts/experiment-launcher/README.md",
+      "experiments-v2/RP01-MICRO/P10801/Run-Experiment.ps1",
+      "experiments-v2/RP01-MICRO/P10901/Run-Experiment.ps1",
+      "experiments-v2/RP01-MICRO/P11001/Run-Experiment.ps1",
+      "experiments-v2/RP01-MICRO/P11101/Run-Experiment.ps1",
+      "experiments-v2/RP01-MICRO/P11201/Run-Experiment.ps1",
+      "experiments-v2/RP01-MICRO/P11301/Run-Experiment.ps1"
+    ],
+    "author_reports_full": [
+      "codex-report.md",
+      "codex-evidence.json"
+    ],
+    "plan_targeted": "codex-135-post113-addressed-repair-plan-2026-11-02.md:109–130 — весь назначенный раздел R02; остальной план не заявляется полностью прочитанным",
+    "registry_targeted": "01-registry.md:62,126,1308–1323; полный registry не заявляется",
+    "source_hashes": {
+      "live": 11,
+      "snapshot": 11,
+      "mismatch": 0,
+      "manifest": "source-003.json"
+    },
+    "protected_originals": {
+      "compared": 213,
+      "mismatch": 0,
+      "manifest": "original-bindings.json",
+      "scope": "SHA256 и размер текущих защищённых файлов против сохранённого baseline; не личная перечитка содержимого213 файлов"
+    },
+    "raw_final": {
+      "directory": "execution-20261104T123848624Z",
+      "required_case_ids": 68,
+      "unique_actual_case_ids": 68,
+      "missing": [],
+      "extra": [],
+      "outer_receipts_recomputed": 94,
+      "outer_exit_and_run_callback_mismatches": 0,
+      "build_stage_receipts": 13,
+      "run_stage_receipts": 28,
+      "distinct_recorded_pid_start_identities": 144,
+      "verifier_chains_personally_inspected": 6,
+      "qa_result_sha256": "c54c052a5ac7789b67f24f58e42b60f95e8468588f62c4aefa1336d3f3522769",
+      "elapsed_seconds": 125.2229836,
+      "scope_limit": "Прочитаны компактные actual/expected всех68; независимо проверены outer exits/callbacks и набор имён. Не заявляется полная независимая реконструкция каждого временного предиката harness."
+    },
+    "negative_tree": {
+      "case": "deadline-tree-negative",
+      "pid": 3556,
+      "start_time_utc": "2026-11-04T12:40:35.6314008Z",
+      "original_alive": true,
+      "original_stop_passed": false,
+      "original_outer_exit": 126,
+      "separate_emergency_cleanup": true,
+      "absent_after_cleanup": true
+    },
+    "historical_runs": {
+      "retained_first_passed": 54,
+      "first_total": 68,
+      "second_passed": 68,
+      "final_passed": 68,
+      "total_reported_process_records": 432,
+      "sum_harness_elapsed_seconds": 357.9867122,
+      "scope": "Разобраны три qa-result, проверены SHA256, числа случаев и записей; первый и второй не пересмотрены по всем raw цепочкам; elapsed не CPU и не модельная метрика"
+    }
+  },
+  "implementation_evidence_map": [
+    {
+      "behavior": "Сборка не перезаписывает terminal опыта; failure7 затем build затем repeat остаётся7",
+      "source": "ExperimentLauncher.psm1:335–347",
+      "evidence": "Все6 failure-build-repeat: raw outer7/0/7, run callbacks1; before/after terminal hashes совпадают в case records. P108 terminal лично прочитан."
+    },
+    {
+      "behavior": "Claim до terminal и до этапа; конкурирующий вход получает12",
+      "source": "ExperimentLauncher.psm1:Invoke-ExperimentLauncher claim/try",
+      "evidence": "concurrent-live-run и concurrent-existing-success raw outer0/12, run callbacks1/0; модель срока владения требует исправления R1"
+    },
+    {
+      "behavior": "Типизированный terminal и source-specific legacy adapters",
+      "source": "ExperimentLauncher.psm1:118–241",
+      "evidence": "8 terminal-негативов, stdout-only и30 legacy: outer exits/callbacks сверены; отсутствие исходов не превращено в0"
+    },
+    {
+      "behavior": "Ошибка verifier проходит через program до outer",
+      "source": "DummyProgram.ps1 и Verify-DummyMaterial.ps1",
+      "evidence": "Лично прочитаны6 program-result/verifier-process/verifier-result цепочек: позитив0, пять отрицательных9, причины совпали"
+    },
+    {
+      "behavior": "Double duration, старт и начальные I/O вычитаются из wait budget",
+      "source": "ExperimentLauncher.psm1:79–115",
+      "evidence": "deadline-stage124/total125; raw отрицательное дерево прочитано полностью. Все post-exit I/O временные границы отдельно не доказаны"
+    },
+    {
+      "behavior": "Consumed digest от реально прочитанного буфера и exact declared set",
+      "source": "ExperimentLauncher.psm1:10–22,188–204; DummyProgram.ps1",
+      "evidence": "consumed-changed-after-claim и missing-consumer-digest: outer11, причины в actual; не расширено до generic/native run-binding"
+    }
+  ],
+  "not_checked_or_not_run": [
+    "Новых runtime/harness/build/test запусков не было; статические дефекты не воспроизведены этим reviewer.",
+    "Обычный dotnet, native verify-saved, научные программы, training/inference/PRIMARY не запускались.",
+    "Все raw файлы3999 и все исторические временные предикаты не прочитаны; stdout/stderr не проверялись поголовно.",
+    "Исходные шесть wrappers baseline не перечитаны целиком; текущие wrappers и текущий общий модуль прочитаны полностью.",
+    "Plan135 вне раздела R02 и registry вне указанных строк не прочитаны полностью.",
+    "Git, публикация и личная приёмка родителя не выполнялись.",
+    "Не сделан общий вывод об обучаемости, точности модели, полном product acceptance либо generic run-binding."
+  ],
+  "mandatory_reads": {
+    "full": [
+      "C:/Users/lubao/.codex/AGENTS.md",
+      "C:/Users/lubao/.codex/RTK.md",
+      "C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/AGENTS.md",
+      "C:/Projects/llm_mvp_core/AGENTS.md",
+      "C:/Projects/llm_mvp_core/CLAUDE.md",
+      "execution prompt: prompt for experiments - always reread.txt",
+      "120-executor-context-and-test-repair-contract-2026-11-02.md",
+      "context-mode/SKILL.md"
+    ],
+    "additional_full": [
+      "40-effective-executor-context-2026-11-02.md",
+      "45-learning-claim-and-native-acceptance-contract-2026-11-03.md",
+      "46-qa-execution-test-repair-and-fresh-results-2026-11-03.md",
+      "codex-42-postmerge-executor-checks-2026-11-02.md",
+      "codex-43-audit-executor-repairs-2026-11-02.md",
+      "codex-44-post117-saved-evidence-and-finalizer-contract-2026-11-03.md",
+      "codex-45-post125-evidence-consumer-contract-2026-11-03.md",
+      "codex-161-postq011-executor-context-repair-2026-11-04.md"
+    ],
+    "skills_found_read_full": [
+      "C:/Projects/llm_mvp_core/docs/skills/task-slice-golden-rule-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/prompt-patch-authoring-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/human-communication-GLOSSARY.md",
+      "C:/Projects/llm_mvp_core/docs/skills/code-execution-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/code-examination-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/experiment-design-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/qa-session-type-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/improvement-measurement-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/test-failure-triage-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/systematic-debugging-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/debug-session-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/bug-to-tests-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/integration-testing-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/root-cause-tracing-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/event-driven-debugging-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/mental-debug-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/root-cause-ladder-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/user-journey-testing-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/e2e-test-matrix-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/uml-simulation-to-testcase-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/html-css-render-qa-automation-GUIDE.md",
+      "C:/Projects/llm_mvp_core/docs/skills/intent-to-plan-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/human-readable-architecture-audit-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/architectural-decision-testing-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/authority-requirement-binding-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/reference-inventory-and-source-map-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/conversation-intent-and-self-reflection-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/generated-code-review-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/test-integrity-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/verification-before-completion-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/agent-output-format-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/ui-testing-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/output-readability-gate-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/phase-planning-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/architect-behavior-classifier-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/planning-session-startup-SKILL.md",
+      "C:/Projects/llm_mvp_core/docs/skills/plan-review-SKILL.md"
+    ],
+    "skills_missing": [],
+    "skills_not_applied": [
+      {
+        "name": "ui-testing-SKILL.md",
+        "reason": "Прочитан; текущий запускатель не имеет UI."
+      },
+      {
+        "name": "html-css-render-qa-automation-GUIDE.md",
+        "reason": "Прочитан; HTML/CSS поверхности нет."
+      }
+    ],
+    "full_read_basis": "Личное чтение содержимого непотерянными диапазонами до содержательной проверки, а не hash/ingestion. Покрытие сохранено при compaction."
+  },
+  "skills_guides_impact": "Существующий NO_BARE_IDENTIFIER_RULE требует сначала человеческое название. Generated code review/test integrity применены для поиска непокрытых ошибок I/O и отделения raw evidence от passed. Governance patch не требуется и не выполнен.",
+  "claim_scope": "Один независимый ограниченный разбор исправления запускателя опытов с двумя статическими findings; приёмка отклонена.",
+  "evidence_scope": "Полный текущий код11 файлов, raw проверка перечисленных предикатов финальных68,6 verifier chains, negative-tree original/cleanup,11+213 hashes.",
+  "count_claimed": {
+    "independent_review_packets": 1,
+    "static_findings": 2,
+    "new_runtime_runs": 0,
+    "fully_recomputed_all_predicates_runtime_cases": 0
+  },
+  "independent_evidence_count": 1,
+  "subagent_id_or_NONE": "/root/launcher_independent_review",
+  "downgrade_needed": "NEEDS_FIX; 68/68 автора не означает покрытие I/O исключений или build cleanup. Полная повторная приёмка после ремонта пока не выполнена.",
+  "candidate_identity": [
+    {
+      "path": "experiments-v2/RP01-MICRO/P10801/Run-Experiment.ps1",
+      "sha256": "fcf35afde81f067f50d3c8cb447bf0d620b9489b60f70002da5d37b49a2453c3",
+      "bytes": 1086,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/experiments-v2/RP01-MICRO/P10801/Run-Experiment.ps1",
+      "current_sha256": "fcf35afde81f067f50d3c8cb447bf0d620b9489b60f70002da5d37b49a2453c3",
+      "snapshot_sha256": "fcf35afde81f067f50d3c8cb447bf0d620b9489b60f70002da5d37b49a2453c3"
+    },
+    {
+      "path": "experiments-v2/RP01-MICRO/P10901/Run-Experiment.ps1",
+      "sha256": "94061f8ca630fea86ac138843353130d9f9f86bacaa24787335d3bd836b66317",
+      "bytes": 1084,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/experiments-v2/RP01-MICRO/P10901/Run-Experiment.ps1",
+      "current_sha256": "94061f8ca630fea86ac138843353130d9f9f86bacaa24787335d3bd836b66317",
+      "snapshot_sha256": "94061f8ca630fea86ac138843353130d9f9f86bacaa24787335d3bd836b66317"
+    },
+    {
+      "path": "experiments-v2/RP01-MICRO/P11001/Run-Experiment.ps1",
+      "sha256": "04684f706ec24144fe0f3e061290e55e47e73fff0f614d4bb512b331a1f5a78b",
+      "bytes": 1087,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/experiments-v2/RP01-MICRO/P11001/Run-Experiment.ps1",
+      "current_sha256": "04684f706ec24144fe0f3e061290e55e47e73fff0f614d4bb512b331a1f5a78b",
+      "snapshot_sha256": "04684f706ec24144fe0f3e061290e55e47e73fff0f614d4bb512b331a1f5a78b"
+    },
+    {
+      "path": "experiments-v2/RP01-MICRO/P11101/Run-Experiment.ps1",
+      "sha256": "e6e67db8d3f6bf558481b72cb40ef434c9d582359fef30b4608c3c20e809fbbe",
+      "bytes": 1083,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/experiments-v2/RP01-MICRO/P11101/Run-Experiment.ps1",
+      "current_sha256": "e6e67db8d3f6bf558481b72cb40ef434c9d582359fef30b4608c3c20e809fbbe",
+      "snapshot_sha256": "e6e67db8d3f6bf558481b72cb40ef434c9d582359fef30b4608c3c20e809fbbe"
+    },
+    {
+      "path": "experiments-v2/RP01-MICRO/P11201/Run-Experiment.ps1",
+      "sha256": "075e76196e3175ecb76964e4624605d4886c764bc9a7c3a2a190722b66a88d1e",
+      "bytes": 1084,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/experiments-v2/RP01-MICRO/P11201/Run-Experiment.ps1",
+      "current_sha256": "075e76196e3175ecb76964e4624605d4886c764bc9a7c3a2a190722b66a88d1e",
+      "snapshot_sha256": "075e76196e3175ecb76964e4624605d4886c764bc9a7c3a2a190722b66a88d1e"
+    },
+    {
+      "path": "experiments-v2/RP01-MICRO/P11301/Run-Experiment.ps1",
+      "sha256": "ad1bba9311e931b8d20930dd9f370c45985cf9c7a1ff82eda2f8f8fbbfd8bd5e",
+      "bytes": 1083,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/experiments-v2/RP01-MICRO/P11301/Run-Experiment.ps1",
+      "current_sha256": "ad1bba9311e931b8d20930dd9f370c45985cf9c7a1ff82eda2f8f8fbbfd8bd5e",
+      "snapshot_sha256": "ad1bba9311e931b8d20930dd9f370c45985cf9c7a1ff82eda2f8f8fbbfd8bd5e"
+    },
+    {
+      "path": "scripts/experiment-launcher/ExperimentLauncher.psm1",
+      "sha256": "7a9e3f5f54f6ce9b60c6984539db2966d78806abbc02dd8688e72a220340e314",
+      "bytes": 28244,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/scripts/experiment-launcher/ExperimentLauncher.psm1",
+      "current_sha256": "7a9e3f5f54f6ce9b60c6984539db2966d78806abbc02dd8688e72a220340e314",
+      "snapshot_sha256": "7a9e3f5f54f6ce9b60c6984539db2966d78806abbc02dd8688e72a220340e314"
+    },
+    {
+      "path": "scripts/experiment-launcher/qa/Invoke-LauncherAcceptance.ps1",
+      "sha256": "37644e09a2377d0f57c57679c828deb44e3809964aeadf1dea074e5dd1ece7a9",
+      "bytes": 21463,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/scripts/experiment-launcher/qa/Invoke-LauncherAcceptance.ps1",
+      "current_sha256": "37644e09a2377d0f57c57679c828deb44e3809964aeadf1dea074e5dd1ece7a9",
+      "snapshot_sha256": "37644e09a2377d0f57c57679c828deb44e3809964aeadf1dea074e5dd1ece7a9"
+    },
+    {
+      "path": "scripts/experiment-launcher/qa/DummyProgram.ps1",
+      "sha256": "75d755f3d5fc85e1b33e5c4db7944c7d7fe0bf4d962d94f196cf345274fdeaea",
+      "bytes": 4817,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/scripts/experiment-launcher/qa/DummyProgram.ps1",
+      "current_sha256": "75d755f3d5fc85e1b33e5c4db7944c7d7fe0bf4d962d94f196cf345274fdeaea",
+      "snapshot_sha256": "75d755f3d5fc85e1b33e5c4db7944c7d7fe0bf4d962d94f196cf345274fdeaea"
+    },
+    {
+      "path": "scripts/experiment-launcher/qa/Verify-DummyMaterial.ps1",
+      "sha256": "888904a150935ae52486afc7b5d173e13c73888679eb86f93cd96aee85d14448",
+      "bytes": 1836,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/scripts/experiment-launcher/qa/Verify-DummyMaterial.ps1",
+      "current_sha256": "888904a150935ae52486afc7b5d173e13c73888679eb86f93cd96aee85d14448",
+      "snapshot_sha256": "888904a150935ae52486afc7b5d173e13c73888679eb86f93cd96aee85d14448"
+    },
+    {
+      "path": "scripts/experiment-launcher/README.md",
+      "sha256": "cb3740e4cdeb1a3632e6be26144978b53e2b88a09d449eceabf271f9d30fb0de",
+      "bytes": 5041,
+      "snapshot": "C:/Projects/llm_mvp_core/qa-results/q03-execution/20261104T121111Z/source-003/scripts/experiment-launcher/README.md",
+      "current_sha256": "cb3740e4cdeb1a3632e6be26144978b53e2b88a09d449eceabf271f9d30fb0de",
+      "snapshot_sha256": "cb3740e4cdeb1a3632e6be26144978b53e2b88a09d449eceabf271f9d30fb0de"
+    }
+  ],
+  "report_written_utc": "2026-11-04T13:55:54.981Z"
+}
