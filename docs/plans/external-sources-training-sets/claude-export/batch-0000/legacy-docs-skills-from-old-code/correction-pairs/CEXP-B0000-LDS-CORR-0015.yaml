@@ -1,0 +1,249 @@
+source_id: "CEXP-B0000-LDS-CORR-0015"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "CorrectionLearningUnit : ILogicalUnit<CorrectionTrainingInput, TrainingResult>"
+pair_kind: "dpo_preference_pair"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  prompt_message_uuid: "019cdcd2-c48a-7b64-93a5-8587e5ec0d2c"
+  prompt_message_index: 107
+  rejected_assistant_uuid: "019cdcd2-c48a-7fea-82a0-f495eccef238"
+  rejected_assistant_index: 108
+  correction_message_uuid: "019cdcde-2a6c-7c10-a3b7-083e4d1c8fb9"
+  correction_message_index: 109
+  chosen_assistant_uuid: "019cdcde-2a6d-7f0d-a779-2bbfed030d62"
+A:
+  Prompt: |
+      yarn build --no-install
+  yarn run v1.22.22
+  $ npx --no-install webpack --mode=production --no-install
+  npm warn Unknown env config "argv". This will stop working in the next major version of npm.
+  npm warn Unknown env config "version-commit-hooks". This will stop working in the next major version of npm.
+  npm warn Unknown env config "version-git-message". This will stop working in the next major version of npm.
+  npm warn Unknown env config "version-git-tag". This will stop working in the next major version of npm.
+  npm warn Unknown env config "version-tag-prefix". This will stop working in the next major version of npm.
+  Hash: 1443d6112c3a09ae817c
+  Version: webpack 4.47.0
+  Time: 8847ms
+  Built at: 03/11/2026 2:13:52 PM
+   2 assets
+  Entrypoint ui = ui.js
+  Entrypoint code = code.js
+   [3] ./src/plugin/utils/setting-helpers.ts 907 bytes {0} {1} [built]
+   [4] ./src/plugin/utils/element-code.ts 6.47 KiB {0} {1} [built]
+   [5] ./src/plugin/utils/is-image.ts 900 bytes {0} {1} [built]
+   [9] (webpack)/buildin/global.js 472 bytes {0} {1} [built]
+  [10] (webpack)/buildin/module.js 497 bytes {0} {1} [built]
+  [12] ./node_modules/css-loader/dist/cjs.js!./src/ui/styles/ui.css 29.5 KiB {1} [built]
+  [55] ./src/ui/assets/logo.svg 55.3 KiB {1} [built]
+  [56] ./src/ui/index.tsx + 70 modules 1.5 MiB {1} [built]
+       | ./src/ui/index.tsx 199 bytes [built]
+       | ./src/ui/styles/ui.css 335 bytes [built]
+       |     + 69 hidden modules
+  [57] ./src/plugin/core/controller.ts + 2 modules 78.6 KiB {0} [built]
+       | ./src/plugin/core/controller.ts 18.4 KiB [built]
+       | ./src/plugin/core/op-executor.ts 22.1 KiB [built]
+       | ./src/plugin/utils/styles.ts 38 KiB [built]
+      + 49 hidden modules
+  ERROR in C:\Projects\FigmaToCode-design-gen\src\ui\components\design-gen\DesignGeneratorPanel.tsx
+  [tsl] ERROR in C:\Projects\FigmaToCode-design-gen\src\ui\components\design-gen\DesignGeneratorPanel.tsx(878,13)
+        TS2554: Expected 4-7 arguments, but got 8.
+  ERROR in C:\Projects\FigmaToCode-design-gen\src\ui\components\design-gen\providers\ClaudeComparisonProvider.ts
+  [tsl] ERROR in C:\Projects\FigmaToCode-design-gen\src\ui\components\design-gen\providers\ClaudeComparisonProvider.ts(399,96)
+        TS2304: Cannot find name 'existingNodeNames'.
+  Child html-webpack-plugin for "ui.html":
+       1 asset
+      Entrypoint undefined = ui.html
+      [0] ./node_modules/html-webpack-plugin/lib/loader.js!./src/ui/index.html 299 bytes {0} [built]
+      [2] (webpack)/buildin/global.js 472 bytes {0} [built]
+      [3] (webpack)/buildin/module.js 497 bytes {0} [built]
+          + 1 hidden module
+  error Command failed with exit code 2.
+  info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+  
+  Still build errors
+  Rejected: |
+       Let me look at the actual uploaded source files to see what's there now.Let me read the actual uploaded files rather than working from my local copies.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Two surgical fixes in one file. `compareAndPlan` is missing `existingNodeNames` in its signature, and it's not passing it to `buildUserMessage`.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  One file, one change. Package it:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  One file, two-line fix. Both errors had the same root cause: the previous patch added `existingNodeNames` to `buildUserMessage`'s signature and to the `runClaudeComparison` wrapper in the panel, but the intermediate `compareAndPlan` method on the class — which sits between the two — never got the parameter added. So:
+  
+  - **TS2554** ("expected 4-7, got 8"): the panel's `runClaudeComparison` passed 8 args to `compareAndPlan`, which only declared 7.
+  - **TS2304** ("cannot find name 'existingNodeNames'"): `compareAndPlan`'s body referenced `existingNodeNames` in the `buildUserMessage` call but the variable didn't exist in its own scope.
+  
+  Both resolved by adding `existingNodeNames?: string[]` to `compareAndPlan`'s signature.
+  CorrectionSignal: |
+      The errors are all in ClaudeComparisonProvider.ts — the Python patch corrupted the backtick escaping in template literals. Let me read the damaged sections directly.Two distinct problems. The Python \\`` escape garbled the return statement, and the resolve({ frame: null })replacement hitinitDesignCanvaswhich has a different return type. Fix both cleanly:All four remainingresolve({ frame: null ... })calls are insideexecuteOpsAndGetFramewhich correctly returnsPromise<{ frame: string | null; nodeNames: string[] }>. Those are correct. Now check the ClaudeComparisonProvider.ts` export issue:The nested backtick on line 354 will fail with some TS/webpack configs. Fix it to use a string concatenation:Now do a final sanity check — copy files to the uploads directory to simulate a local build check:Clean. Repackage:Two build bugs introduced by the Python patching, both now fixed:
+  Bug A — ClaudeComparisonProvider.ts: two corruptions
+  The Python patch wrote return \Iteration ${iteration}...with literal backslash-backticks into the file. TypeScript sees`` as an invalid escape and fails to parse the entire module. Fixed by replacing with a clean template literal.
+  The existingNodesLine used a nested template literal (backtick inside backtick) — valid in modern JS but breaks with this webpack 4 / ts-loader setup. Replaced with String.prototype.map + string concatenation using \u2022 for the bullet character.
+  Bug B — DesignGeneratorPanel.tsx: blanket resolve(null) replacement hit two extra functions
+  The previous fix replaced all resolve(null) with resolve({ frame: null, nodeNames: [] }) without being scoped to executeOpsAndGetFrame. It also hit initDesignCanvas (returns Promise<string | null>) and requestFrameExport (same) — both of which don't return the new object type. TypeScript correctly complained that { frame: null } is not assignable to string | PromiseLike<string>. Both reverted to resolve(null).
+  The three return type contract boundaries are now clearly separated: initDesignCanvas → string|null, requestFrameExport → string|null, executeOpsAndGetFrame → { frame: string|null; nodeNames: string[] }.
+  But we still see the issue that the design is over written
+  # Design Generation Report
+  | Iteration | Score | Ops | Time | Breakdown | Notes |
+  |-----------|-------|-----|------|-----------|-------|
+  | Iter 1 | 0/100 | 21 ops | 47436ms | rect×4, frame×7, text×9, img×1 | Created basic structure with header, stats row, and avatar placeholder. Missing charts, activity feed, and trends sections. |
+  | Iter 2 | 15/100 | 40 ops | 41488ms | fill×5, set-txt×9, set-font-size×5, set-font-weight×4, set-position×2, rect×1, img×1, resize×1, radius×4, frame×4, text×4 | Added missing sections (weekly activity, activity feed, trends, about) as white cards with titles, updated stats content, corrected background color. |
+  | Iter 3 | 25/100 | 60 ops | 42981ms | fill×9, resize×10, radius×8, set-position×11, set-txt×12, set-font-size×5, rect×1, img×1, text×3 | Restructured header with avatar image, positioned stats cards in a row, created main content sections with proper white cards and rounded corners. |
+  | Iter 4 | 25/100 | 51 ops | 41267ms | rect×3, resize×7, fill×5, set-position×4, img×1, set-font-size×9, set-font-weight×4, layout×4, radius×4, set-txt×7, frame×3 | Created background, positioned hero image, structured stats cards in horizontal layout, and set up two-column content grid for remaining sections. |
+  | Iter 5 | 25/100 | 48 ops | 40410ms | fill×1, resize×7, set-position×8, rect×9, img×1, set-txt×13, set-font-size×1, move-to-back×8 | Added white card backgrounds to all sections and positioned main layout elements, but still missing detailed content like charts, user avatars, and proper text formatting. |
+  By some new rectangle that covers the whole design
+  Can we somehow check we do not put non transparent object to hide the whole design that was build so far?
+  Also do we provide the claude with a schem so it can catch such disasterous solutions?The errors are all in ClaudeComparisonProvider.ts — the Python patch corrupted the backtick escaping in template literals. Let me read the damaged sections directly.Two distinct problems. The Python \\`` escape garbled the return statement, and the resolve({ frame: null })replacement hitinitDesignCanvaswhich has a different return type. Fix both cleanly:All four remainingresolve({ frame: null ... })calls are insideexecuteOpsAndGetFramewhich correctly returnsPromise<{ frame: string | null; nodeNames: string[] }>. Those are correct. Now check the ClaudeComparisonProvider.ts` export issue:The nested backtick on line 354 will fail with some TS/webpack configs. Fix it to use a string concatenation:Now do a final sanity check — copy files to the uploads directory to simulate a local build check:Clean. Repackage:Two build bugs introduced by the Python patching, both now fixed:
+  Bug A — ClaudeComparisonProvider.ts: two corruptions
+  The Python patch wrote return \Iteration ${iteration}...with literal backslash-backticks into the file. TypeScript sees`` as an invalid escape and fails to parse the entire module. Fixed by replacing with a clean template literal.
+  The existingNodesLine used a nested template literal (backtick inside backtick) — valid in modern JS but breaks with this webpack 4 / ts-loader setup. Replaced with String.prototype.map + string concatenation using \u2022 for the bullet character.
+  Bug B — DesignGeneratorPanel.tsx: blanket resolve(null) replacement hit two extra functions
+  The previous fix replaced all resolve(null) with resolve({ frame: null, nodeNames: [] }) without being scoped to executeOpsAndGetFrame. It also hit initDesignCanvas (returns Promise<string | null>) and requestFrameExport (same) — both of which don't return the new object type. TypeScript correctly complained that { frame: null } is not assignable to string | PromiseLike<string>. Both reverted to resolve(null).
+  The three return type contract boundaries are now clearly separated: initDesignCanvas → string|null, requestFrameExport → string|null, executeOpsAndGetFrame → { frame: string|null; nodeNames: string[] }.
+  But we still see the issue that the design is over written
+  # Design Generation Report
+  | Iteration | Score | Ops | Time | Breakdown | Notes |
+  |-----------|-------|-----|------|-----------|-------|
+  | Iter 1 | 0/100 | 21 ops | 47436ms | rect×4, frame×7, text×9, img×1 | Created basic structure with header, stats row, and avatar placeholder. Missing charts, activity feed, and trends sections. |
+  | Iter 2 | 15/100 | 40 ops | 41488ms | fill×5, set-txt×9, set-font-size×5, set-font-weight×4, set-position×2, rect×1, img×1, resize×1, radius×4, frame×4, text×4 | Added missing sections (weekly activity, activity feed, trends, about) as white cards with titles, updated stats content, corrected background color. |
+  | Iter 3 | 25/100 | 60 ops | 42981ms | fill×9, resize×10, radius×8, set-position×11, set-txt×12, set-font-size×5, rect×1, img×1, text×3 | Restructured header with avatar image, positioned stats cards in a row, created main content sections with proper white cards and rounded corners. |
+  | Iter 4 | 25/100 | 51 ops | 41267ms | rect×3, resize×7, fill×5, set-position×4, img×1, set-font-size×9, set-font-weight×4, layout×4, radius×4, set-txt×7, frame×3 | Created background, positioned hero image, structured stats cards in horizontal layout, and set up two-column content grid for remaining sections. |
+  | Iter 5 | 25/100 | 48 ops | 40410ms | fill×1, resize×7, set-position×8, rect×9, img×1, set-txt×13, set-font-size×1, move-to-back×8 | Added white card backgrounds to all sections and positioned main layout elements, but still missing detailed content like charts, user avatars, and proper text formatting. |
+  By some new rectangle that covers the whole design
+  Can we somehow check we do not put non transparent object to hide the whole design that was build so far?
+  Also do we provide the claude with a schem so it can catch such disasterous solutions?
+  
+  Read what gemini suggests and see if it is helpful
+B:
+  Chosen: |
+       Let me analyze the situation with Mental Debugging first, then check the actual uploaded source files.
+  
+  The pattern: score stuck at 25, iter 5 has `move-to-back×8` and `rect×9` — classic shutter effect.
+  
+  Gemini's suggestions:
+  - A: SYSTEM_PROMPT z-index rules — good idea, partially already there
+  - B: Code-level safety valve in op-executor — GOOD, concrete and enforceable
+  - C: TypeScript interface schema in prompt — noise, Claude doesn't parse TS interfaces as constraints
+  
+  Let me check the actual uploaded source to see what's already there and what needs adding.Mental Debugging first — pattern recognition on the report before touching anything.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Complete picture. The prompt teaches `move-to-back` as a *recovery* tool — so Claude uses it as intended, but the scoring happens *after* the ops execute, meaning the shutter fires → is partially recovered → but the snapshot is taken before Claude confirms recovery. The real fix is executor-level prevention, not prompt instruction.
+  
+  Gemini's suggestions: A (prompt text) is already partially there and hasn't stopped the problem. C (TS interface schema) is pure noise. **B (executor guard) is correct and is the only thing that will actually work.**
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  **Fix 1 — `op-executor.ts`: shutter guard + upsert guard in `execCreateRect`:**
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  **Fix 2 — `ClaudeComparisonProvider.ts`: add one tight rule to SYSTEM_PROMPT about background changes:**
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Verify and package:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Two files. Here's the precise diagnosis and what was done vs what Gemini suggested:
+  
+  ---
+  
+  **What the report actually shows:** iter 5 has `rect×9` then `move-to-back×8`. Claude *knows* it created shutters — it immediately tried to undo them with `move-to-back`. The problem is the snapshot for scoring is taken *after* ops execute, so the shutter lands, is moved to back, but the score still reflects the partially-recovered state. The prompt already teaches `move-to-back` as recovery — that's why Claude uses it — but it's reactive, not preventive.
+  
+  **Fix 1 — `op-executor.ts`: proactive shutter guard (Gemini's suggestion B — correct)**
+  Any `create-rect` with `w >= 900 && h >= 900` that isn't named `"zone-bg"` is *automatically* placed at index 0 (bottom of stack) immediately on creation, before the frame is exported. Claude never gets a chance to bury anything. Also added the same upsert guard that `execCreateFrame` already has — `create-rect` was the only create op still missing it.
+  
+  **Fix 2 — `ClaudeComparisonProvider.ts`: one tight rule added to SYSTEM_PROMPT**
+  A single "IRON LAW" block after the layer-order section. Short, explicit, and it tells Claude the executor will auto-move large rects anyway — removing any ambiguity about whether it should try to create them. The key line: *"To change the background color: emit `set-fill` on `zone-bg`."* That's the instruction that was completely missing.
+  
+  **Gemini's suggestion C (TypeScript interface schema) was skipped** — Claude doesn't parse constraint interfaces from prompt text as enforced rules. The executor guard is the enforcement; the prompt text is just the explanation.

@@ -1,0 +1,53 @@
+source_id: "CEXP-B0000-LDS-0060"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdcfb-5402-793e-862c-9f5139615f91"
+  human_message_index: 129
+  assistant_message_uuid: "019cdcfb-5402-7cbc-80ed-cdc80cdebc4c"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0060"
+  user_request: |
+      Some of the elements are completely misplaced. Before that we did not do such a problem only with overlapping objects that were not integrated into a proper layer
+  The misplacement you're seeing in the latest run is likely caused by the removal of the coordinate instructions, which has led to a "Context Vacuum" for Claude. Without the relative coordinate rules, the AI is now guessing whether to use Absolute (canvas-wide) or Relative (parent-frame) values, leading to elements being offset by the parent's $x$ and $y$ coordinates. The Core Problem: The Coordinate Guessing Game The current "All one on another" and "Misplaced" symptoms are caused by two specific issues in the data flow:
+  * Implicit vs. Explicit Parenting: When Claude emits a `create-text` or `create-rect` without a `parentId`, the `op-executor.ts` defaults the parent to `design-gen-root`. This makes the coordinates Absolute to the canvas.
+  * The Relative Offset Bug: If Claude parents a button to `zone-content` (which starts at $y=120$) but sends an "absolute" $y=200$, the executor places it at $y=200$ inside that frame, resulting in a global position of $y=320$. The 3-Step Fix Plan
+  1. Restore the "Absolute" Reality for Zone Frames We need to tell Claude that the "Big Four" zones are fixed and mapped 1:1 to the 1024x1024 canvas. This prevents them from drifting.
+  * Change: Re-add a simplified instruction in `ClaudeComparisonProvider.ts` stating that `zone-bg`, `zone-header`, `zone-content`, and `zone-footer` always use canvas coordinates.
+  1. Force Explicit Relative Parenting We must instruct Claude that any element inside a zone MUST use the zone's name as `parentId` and its own relative offset.
+  * Rule: "Children of zones must use the zone name as `parentId` and $x/y$ relative to that zone's top-left".
+  1. Image Persistence (No More Regenerating) To stop the image regeneration loop, we will implement a simple query-based cache in the UI.
+  * The Logic: If Claude repeats the exact same `query` for an image, the `DesignGeneratorPanel.tsx` will bypass the OpenAI call and reuse the `imageBytes` from the previous iteration. Would you like me to generate the optimized `ClaudeComparisonProvider.ts` that includes the "Silent Image Cache" instruction and the restored relative coordinate rules? This will stabilize the layout and significantly reduce your OpenAI API costs.
+B:
+  DocumentId: "CEXP-B0000-LDS-0060-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      Some of the elements are completely misplaced. Before that we did not do such a problem only with overlapping objects that were not integrated into a proper layer
+  The misplacement you're seeing in the latest run is likely caused by the removal of the coordinate instructions, which has led to a "Context Vacuum" for Claude. Without the relative coordinate rules, the AI is now guessing whether to use Absolute (canvas-wide) or Relative (parent-frame) values, leading to elements being offset by the parent's $x$ and $y$ coordinates. The Core Problem: The Coordinate Guessing Game The current "All one on another" and "Misplaced" symptoms are caused by two specific issues in the data flow:
+  * Implicit vs. Explicit Parenting: When Claude emits a `create-text` or `create-rect` without a `parentId`, the `op-executor.ts` defaults the parent to `design-gen-root`. This makes the coordinates Absolute to the canvas.
+  * The Relative Offset Bug: If Claude parents a button to `zone-content` (which starts at $y=120$) but sends an "absolute" $y=200$, the executor places it at $y=200$ inside that frame, resulting in a global position of $y=320$. The 3-Step Fix Plan
+  1. Restore the "Absolute" Reality for Zone Frames We need to tell Claude that the "Big Four" zones are fixed and mapped 1:1 to the 1024x1024 canvas. This prevents them from drifting.
+  * Change: Re-add a simplified instruction in `ClaudeComparisonProvider.ts` stating that `zone-bg`, `zone-header`, `zone-content`, and `zone-footer` always use canvas coordinates.
+  1. Force Explicit Relative Parenting We must instruct Claude that any element inside a zone MUST use the zone's name as `parentId` and its own relative offset.
+  * Rule: "Children of zones must use the zone name as `parentId` and $x/y$ relative to that zone's top-left".
+  1. Image Persistence (No More Regenerating) To stop the image regeneration loop, we will implement a simple query-based cache in the UI.
+  * The Logic: If Claude repeats the exact same `query` for an image, the `DesignGeneratorPanel.tsx` will bypass the OpenAI call and reuse the `imageBytes` from the previous iteration. Would you like me to generate the optimized `ClaudeComparisonProvider.ts` that includes the "Silent Image Cache" instruction and the restored relative coordinate rules? This will stabilize the layout and significantly reduce your OpenAI API costs.
+  CompiledPredicateIds:
+    - "API_CONTRACT"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "TEST"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

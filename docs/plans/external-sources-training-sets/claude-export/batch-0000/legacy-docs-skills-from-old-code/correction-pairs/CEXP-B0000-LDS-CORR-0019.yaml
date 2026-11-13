@@ -1,0 +1,204 @@
+source_id: "CEXP-B0000-LDS-CORR-0019"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "CorrectionLearningUnit : ILogicalUnit<CorrectionTrainingInput, TrainingResult>"
+pair_kind: "dpo_preference_pair"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  prompt_message_uuid: "019cdcee-4203-7546-9196-957147997a9c"
+  prompt_message_index: 119
+  rejected_assistant_uuid: "019cdcee-4203-7a35-bc13-e6bc6dd70a6f"
+  rejected_assistant_index: 120
+  correction_message_uuid: "019cdcf0-698d-7a9c-937a-0ac95ba4cc35"
+  correction_message_index: 121
+  chosen_assistant_uuid: "019cdcf0-698d-7465-98a0-e869ec7f741e"
+A:
+  Prompt: |
+      Your Mental Debugging has reached the final architectural layer. By identifying the contradictory coordinate rules and the stale "delete-node" instruction, you've found the exact reason why the AI was fighting its own persistence model.
+  The "stagnation at the same place" wasn't just a coordinate error; it was an instruction-level conflict where the prompt was forcing Claude to behave as if the canvas were still being wiped, while the executor was trying to preserve it.
+  The Final Diagnosis & Fix Review
+  1. The Coordinate Duality Fix
+  The contradiction between the Global 0–1024 rule and the Relative Parent rule was the primary cause of elements appearing off-screen or misaligned.
+  * The Fix: The `SYSTEM_PROMPT` now explicitly defines a two-tier coordinate model: zone frames (children of `design-gen-root`) use canvas-absolute coordinates, while all elements inside those zones use parent-relative coordinates.
+  * Impact: This stops Claude from sending $y=300$ for a card inside a container that starts at $y=120$, which previously resulted in the card landing at $y=420$ (relative to the canvas).
+  2. The Stale Rule Sabotage (Upsert Alignment)
+  The instruction to "Never create a frame whose name already exists... without deleting it first" was effectively a "kill switch" for your new Upsert Guard.
+  * The Conflict: Claude would emit `delete-node` followed by `create-frame`. The executor would delete the node, and the subsequent `create-frame` would find no existing node to "upsert," leading to a fresh creation that lost all geometry progress.
+  * The Fix: This stale rule has been replaced with the instruction that `create-frame` and `create-rect` are now upsert operations. Claude is now told to emit these ops freely for existing nodes to update their properties in a single step.
+  3. Geometry Updates in `op-executor.ts`
+  The fix8 version of `op-executor.ts` ensures that when an upsert occurs, the existing node's geometry is actually updated to match the "new" creation's intent.
+  * The Logic: Instead of just returning the `existingId` and skipping the rest of the logic, the executor now uses the name-match as a "found" signal and heals the map, while still allowing the batch to flow through subsequent property-updating ops like `resize` or `set-position`.
+  Why this is the "Last" Fix
+  With these four fixes, you have aligned the AI's instructions (the Prompt), the UI's data flow (the Iteration Loop), and the Plugin's execution (the Sandbox).
+  * Stability: The Shutter Guard protects the visuals.
+  * Persistence: The Upsert Guard protects the nodes.
+  * Accuracy: The Relative Coordinate model and Delta Ops protect the details.
+  Would you like me to analyze a fresh Design Generation Report to confirm that the score finally breaks the 75 barrier and achieves 90+ fidelity?
+  Rejected: |
+       The user is asking me to validate Gemini's summary. Let me check if there's anything Gemini got wrong or missed, and confirm the current state is correct.Gemini's summary is accurate this time — no gaps or misdiagnoses to flag. The four fixes are aligned and non-contradictory:
+  
+  1. **Upsert applies geometry** (`op-executor.ts`) — create-frame/rect now update position + size in place instead of silently returning the stale node
+  2. **Shutter guard** (`op-executor.ts`) — large rects auto-moved to index 0 unless named `zone-bg`
+  3. **Two-tier coordinate model** (`ClaudeComparisonProvider.ts`) — zone frames use canvas-absolute, children use parent-relative, with a worked example
+  4. **Stale delete-first rule removed** (`ClaudeComparisonProvider.ts`) — prompt now tells Claude create-* ops are upserts
+  
+  One thing worth watching in the next run: the upsert-applies-geometry fix means Claude can now accidentally *move* a correctly-positioned zone frame by emitting `create-frame {name:"zone-header", x:0, y:0}` as a "content fill" op when it should have used `set-fill`. Watch the SKELETON→CONTENT transition — if zone frames start drifting, the two-tier instruction needs a clause: *"zone frame upserts must preserve existing x/y unless the position is visibly wrong in CURRENT."*
+  
+  That said — ship it, run a report, and let the actual scores tell us what's left. The structural fixes are solid.
+  CorrectionSignal: |
+      They are still one on another!
+  To resolve the persistent "stacking" issue where elements continue to overlap at the same coordinates, we must address a critical mismatch between how Claude calculates positions and how the Figma API applies them.
+  The "They still all one on another" symptom is caused by three specific technical gaps in the fix8 implementation:
+  1. The "Root-Parenting" Default
+  In your `op-executor.ts`, the `resolveParent` function falls back to `design-gen-root` if a `parentId` is missing or invalid.
+  * The Failure: If Claude emits a `create-text` op for a "Title" but forgets the `parentId`, the executor places it directly on the main canvas at $(x, y)$.
+  * The Result: If multiple "titles" for different sections are all parented to the root, they all stack at the same absolute position.
+  2. Relative Coordinate Drift
+  Figma coordinates are always relative to the immediate parent.
+  * The Conflict: Your prompt tells Claude that zone frames use "canvas-absolute" coordinates. However, if the `design-gen-root` frame itself is moved (e.g., to $x=2000$ to clear the page), an "absolute" $x=0$ from Claude will place the zone frame at the top-left of the root, not the top-left of the canvas.
+  * The Fix: We must ensure Claude understands that even "absolute" coordinates are relative to the `design-gen-root` $(0,0)$.
+  3. The "Upsert Position" Conflict
+  In `execCreateFrame` and `execCreateRect`, the "Upsert Guard" now updates $x$ and $y$ in place.
+  * The Problem: If Claude emits a `create-frame` to update an existing section but uses the wrong parenting logic (absolute instead of relative), it will move the existing frame to the stack at $(0,0)$, effectively "eating" the previous progress.
+  Corrective Action Plan
+  Fix A: Tighten Parenting in `op-executor.ts`
+  Modify `resolveParent` to return a warning if the parent is missing, rather than silently defaulting to root. This forces Claude to be explicit.
+  TypeScript
+  
+  ```
+  // Proposed fix for src/plugin/core/op-executor.ts
+  async function resolveParent(parentId: string | undefined, nodeMap: Map<string, string>): Promise<FrameNode | PageNode> {
+      if (parentId) {
+          const found = await resolveNode(parentId, nodeMap);
+          if (found && 'appendChild' in found) return found as FrameNode;
+      }
+      // Only return root if NO parentId was provided at all
+      const rootMappedId = nodeMap.get('design-gen-root');
+      // ... rest of logic ...
+  }
+  
+  ```
+  
+  Fix B: Absolute-Relative Example in Prompt
+  We need to provide Claude with a "Parent Origin" sanity check in the `SYSTEM_PROMPT`.
+  STRICT COORDINATE HIERARCHY:
+  1. Zones (Parent=design-gen-root): $x=0, y=0$ is the top-left of the main frame.
+  2. Components (Parent=Zone): $x=0, y=0$ is the top-left of that ZONE, not the canvas.
+  Example: A button at the bottom of the screen ($y=900$) inside `zone-footer` (which starts at $y=850$) must have $y=50$, NOT $y=900$.
+  Fix C: Prevent "Zero-Stacking" in Upsert
+  Add a safety check in `execCreateFrame` that prevents an upsert from moving a node to $(0,0)$ if it already has a valid position, unless $(0,0)$ is explicitly intended.
+  Would you like me to apply these specific coordinate and parenting refinements to the fix8 files now? This will decouple the elements and place them in their correct hierarchical slots.
+B:
+  Chosen: |
+       Let me stop theorizing and actually look at what ops Claude is generating. I need to see a real op log to diagnose this properly.Stop. Gemini is guessing without seeing the actual ops Claude sends. I need to look at real data first.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  The `executeOps` result — including all warnings — is dropped on the floor. We're flying blind: we can't see whether Claude is sending `x:0, y:0` for everything, whether the upsert is firing, or whether `parentId` is missing. Before writing any more code fixes, we need to see actual ops.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now surface the digest in the panel iteration log notes:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now log the digest to console so it shows in Figma's plugin devtools:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Build clean. This is a diagnostic release, not another blind fix.
+  
+  **Why no code fix this time:** Gemini and I have been reasoning from symptoms. We've made four rounds of fixes based on what we *think* Claude is sending — but we've never actually seen the ops. Every theory (root-parenting default, upsert position conflict, absolute vs relative drift) is plausible, and they're all unfalsifiable without real data.
+  
+  **What this build adds — op diagnostics:**
+  
+  After each iteration executes, open your browser's **DevTools console** (in Figma: right-click the plugin → Inspect → Console tab). You'll see:
+  
+  ```
+  [DG] Iter 1 — 28 applied, 2 skipped
+  [DG] Op digest:
+    create-frame name=zone-header x=0 y=0 parent=design-gen-root
+    create-frame name=card-stats x=0 y=0 parent=design-gen-root   ← wrong parent
+    create-rect name=card-bg x=0 y=0 parent=card-stats
+    ...
+  [DG] Warnings:
+    create-frame upserted — "zone-header" geometry updated in place
+  ```
+  
+  **Run one iteration, paste the digest here**, and we'll see exactly: are all `x=0 y=0`? Are elements parented to root when they should be inside zones? Is the upsert firing or not? That data will give us a one-line precise fix instead of another round of guessing.

@@ -1,0 +1,409 @@
+source_id: "CEXP-B0000-LDS-CORR-0023-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    I would like to get much more info in copy of itteration section: what was sent to claude, what did it respond, what was done with each element - so I need a log info in memmemory for each itteration - so when I press copy and a window with data opens I can copy this log data with ease
+  
+  To provide a comprehensive iteration log in the copyable report, we need to extend the data captured during each cycle of the refinement loop. This involves updating the log entry interface, capturing the AI prompt and raw response, and including the execution results from the Figma sandbox.
+  1. Extend the Log Data Structure
+  Update the `IterationLogEntry` interface in `DesignGeneratorPanel.tsx` to store the detailed context for each run:
+  TypeScript
+  
+  ```
+  // src/ui/components/design-gen/DesignGeneratorPanel.tsx
+  
+  export interface IterationLogEntry {
+      iteration: number;
+      score: number;
+      notes: string;
+      opCount: number;
+      durationMs: number;
+      ops: FigmaOperation[];
+      // New detailed fields
+      promptSent?: string;      // The exact message sent to Claude
+      rawAiResponse?: string;   // The raw JSON string from Claude
+      warnings?: string[];      // Non-fatal warnings from the op-executor
+      scoredSnapshot: string | null;
+      canvasSnapshot: string | null;
+  }
+  
+  ```
+  
+  2. Capture Loop Metadata
+  Modify the `runIterationLoop` to record the prompt and the raw response. The sandbox already returns warnings in its execution summary.
+  TypeScript
+  
+  ```
+  // Inside runIterationLoop in DesignGeneratorPanel.tsx
+  
+  // Step 2: Claude vision comparison
+  const userText = buildUserMessage(iter, prevScore, lastNotes, lastTokens, existingNodes);
+  const compareResult = await runClaudeComparison(...);
+  
+  // Step 3: Execute ops
+  const executionResult = await postToPluginWithResponse({ 
+      type: 'execute-figma-ops', 
+      ops: enrichedOps 
+  });
+  
+  appendLog({
+      iteration: iter,
+      score: (compareResult as any).score,
+      notes: (compareResult as any).notes ?? '',
+      opCount: ops.length,
+      durationMs: Date.now() - t0,
+      ops,
+      promptSent: userText, // Store what was sent
+      rawAiResponse: (compareResult as any).rawJson, // Store raw response
+      warnings: executionResult.warnings, // Store sandbox results
+      scoredSnapshot: figmaFrameOrNull,
+      canvasSnapshot: updatedFrame ?? null,
+  });
+  
+  ```
+  
+  3. Enhance the Markdown Report
+  Update `copyIterationReport` to format these new sections into the copyable text.
+  TypeScript
+  
+  ```
+  /** Copy a detailed markdown report of all iterations. */
+  const copyIterationReport = () => {
+      const report = log.filter(e => e.iteration !== -1).map(e => `
+  ## Iteration ${e.iteration} (${e.score}/100)
+  **Duration:** ${e.durationMs}ms | **Ops:** ${e.opCount} | **Notes:** ${e.notes}
+  
+  ### 📝 Prompt Sent to Claude
+  \`\`\`text
+  ${e.promptSent || 'N/A'}
+  \`\`\`
+  
+  ### 🤖 Raw AI Response
+  \`\`\`json
+  ${e.rawAiResponse || 'N/A'}
+  \`\`\`
+  
+  ### 🛠️ Execution Log
+  ${e.ops.map((op, i) => {
+      const warning = e.warnings?.[i] ? ` ⚠️ ${e.warnings[i]}` : ' ✅';
+      return `- ${op.op} (${op.name || op.nodeId || 'unnamed'})${warning}`;
+  }).join('\n') || 'No operations performed.'}
+  
+  ---
+  `).join('\n');
+  
+      setReportModalText([
+          "# Detailed Design Generation Report",
+          report
+      ].join('\n'));
+  };
+  
+  ```
+  
+  Benefits of the Enhanced Log
+  * Prompt Transparency: You can verify if Claude is following the "Persistence Model" or coordinate rules by seeing the exact instructions sent in that specific iteration.
+  * Response Debugging: Accessing the `rawJson` allows you to see if Claude attempted "shutter" operations or if the score was penalized incorrectly.
+  * Element-Level Tracking: The execution log maps every operation to a success state or a warning, making it clear why certain elements were "misplaced" or "skipped" due to parent resolution failures.
+B_wrong: |
+     Let me find the actual copy report function and data structures first before making changes.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have the full picture. `userText` is built inside `compareAndPlan` but not returned. I need to: 1) add `promptSent` to `ComparisonResult`, 2) return it from `compareAndPlan`, 3) add `promptSent`/`rawJson`/`opWarnings` to `IterationLogEntry`, 4) capture them at `appendLog`, 5) upgrade `copyIterationReport`.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  `userText` is declared at line 411, the `try` starts at line 447. The success result at line 661 is inside the same function scope — `userText` should be accessible. The issue is that `_parseResponse` is a static method called from within the function, and the success result is built *in* `compareAndPlan`. Let me check the actual nesting:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  `compareAndPlan` returns `ClaudeComparisonProvider._parseResponse(rawText)` at line 485 — the success result with `promptSent` is built *inside* `_parseResponse` (a static method), not in `compareAndPlan`. So `userText` is out of scope there. Need to pass `userText` into `_parseResponse`.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Build clean. The Copy report now produces this structure for each iteration:
+  
+  ```
+  ## Iter 3 — Score 45/100  (37.6s, 45 ops, Applied: 43 | Skipped: 2)
+  
+  **Notes:** Updated title text with emoji, positioned avatar...
+  
+  ### 📝 Prompt sent to Claude
+  ```
+  CURRENT CANVAS score: 15/100 ...
+  EXISTING NODES: zone-header, zone-content, stat-card-1 ...
+  [full user-turn text]
+  ```
+  
+  ### 🤖 Raw AI response
+  ```json
+  {"score":45,"ops":[{"op":"set-fill","nodeId":"zone-bg",...}],"notes":"..."}
+  ```
+  
+  ### 🛠️ Ops executed (45)
+    1. set-fill nodeId=zone-bg
+    2. resize name=zone-header x=0 y=0 w=1024 h=120
+    3. create-frame name=stat-card-1 x=40 y=0 w=280 h=120 parent=zone-content ⚠️ create-frame upserted — geometry updated in place
+    ...
+  ```
+  
+  The summary table stays at the top for quick scanning, detailed blocks follow. The modal is a `<textarea>` so click anywhere inside it → Cmd+A → Cmd+C gets everything.
+B_correct: |
+     Let me check the actual code before acting on Gemini's suggestions.Gemini's "race condition" theory is wrong — let me verify before touching anything.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  So for NEW frames: x/y are set BEFORE appendChild. This could actually matter in Figma. Let me check - when you create a frame with figma.createFrame(), it's initially on the page (currentPage). Setting x/y on it while it's there sets canvas-absolute coords. Then when you appendChild to a parent frame, Figma adjusts the x/y to be relative to the parent. Wait, actually in Figma API, when you appendChild, the node's x/y are recalculated relative to the new parent. So if you set x=200, y=300 on a node that's on the root page, then appendChild to zone-content (which is at y=120), Figma will adjust x/y to maintain absolute position... 
+  
+  Actually, I need to reconsider this. When you appendChild a node in Figma, the coordinates don't automatically adjust - they stay the same but become relative to the new parent. So if I set x=200, y=300 as canvas-absolute coordinates and then appendChild to zone-content at y=120, the node would end up at canvas y=420, which would be wrong if I intended y=300 to be relative to the parent. The real question is what happens when you set x/y on a newly created frame that hasn't been attached to anything yet - those coordinates might be interpreted as absolute canvas positions or something else entirely.
+  
+  For existing nodes being upserted, there's a coordinate problem: if a node already has a parent and I set its x/y values, those are relative to its current parent. But if I then reparent it to a different parent, those coordinates are now relative to the new parent instead - which creates a mismatch. For new frames though, they're created detached, and setting x/y on a detached frame uses page-relative coordinates. When I appendChild that frame to zone-content, those coordinates become relative to the new parent, which is actually the correct behavior.
+  
+  The real issue is I'm not sure how Figma interprets x/y on a node that hasn't been appended yet - whether it's meaningful at all or if it gets reset after appendChild. Rather than overthinking this, I should focus on what's actually fixable: for new frames, setting x/y before appendChild might be wrong if Figma treats pre-append coordinates as absolute, and for upserts, setting x/y before reparenting means the coordinates are wrong relative to the new parent.
+  
+  The safest approach is to append first then set coordinates for new elements, and for existing elements that are being reparented, reparent first then set coordinates. The clipboard issue for copying images is a real problem though - the clipboard API fails in Figma's null-origin iframe when dealing with binary data, so I need to either use a text-based approach or find another workaround.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Gemini is right about one thing: `applyGeometryToExisting` sets `f.x/f.y` *before* reparenting. If parent changes, those coords were interpreted in the old parent's space. And for new frames, `x/y` are set before `appendChild` — same issue. Both need reparent-first, then set coords. Let me also check `execCreateRect` new-node path:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  For the new rect: `rect.x/y` set BEFORE `appendChild`. This is the issue.
+  For the new frame: same - `frame.x/y` set BEFORE `appendChild`.
+  For upsert: `f.x/f.y` set BEFORE reparent.
+  
+  The fix:
+  1. For new frames: append first, then set x/y
+  2. For new rects: append first, then set x/y  
+  3. For applyGeometryToExisting: reparent first, then set x/y
+  4. For applyGeometryToExistingRect: same
+  
+  For the copy button - the issue is Figma's null-origin iframe blocks clipboard write of binary data. 
+  
+  For the copy functionality, I could use `navigator.clipboard.writeText` to copy the base64 data URL as text instead, which would work in Figma's iframe and let users paste it into a browser or decoder. Or I could just remove the Copy button entirely since Download already works reliably.
+  
+  Now I'm settling on a two-part fix: correct the coordinate ordering in the op-executor across the geometry functions, and replace the Copy button with a toast message explaining that downloading is the reliable option in Figma's sandbox environment.Three real fixes needed — all in `op-executor.ts`:
+  1. New frame: `x/y` set before `appendChild` — wrong parent space
+  2. New rect: same 
+  3. `applyGeometryToExisting`: reparents AFTER setting coords — coords were in old parent's space
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now fix the copy button — Figma's null-origin iframe blocks `ClipboardItem` for binary. Replace with a toast fallback:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Build clean. Two real fixes, one correctly-identified issue from Gemini.
+  
+  **Placement fix — 4 paths in `op-executor.ts`:** Figma's plugin API interprets `node.x/y` relative to the node's *current* parent at the moment you write those values. Previously all four paths (new frame, new rect, upsert frame, upsert rect) set coordinates before establishing the parent — meaning coords were set in the wrong coordinate space, then the node was moved somewhere else. All four now append/reparent first, then set `x/y`.
+  
+  **Copy button:** Gemini was right — `ClipboardItem` (binary) is blocked in Figma's null-origin iframe. Replaced with `writeText` which copies a `data:image/jpeg;base64,...` URL to clipboard — pasteable in any browser address bar or base64 decoder to view the image. A toast shows the outcome for 3 seconds. `↓ Save` remains the direct download path.
+  
+  Gemini's "restore polluting the log" point — that's a product decision, not a bug. The log shows the full history including the downgrade that triggered the restore, which is useful for debugging. Truncating it would hide information. Left as-is.

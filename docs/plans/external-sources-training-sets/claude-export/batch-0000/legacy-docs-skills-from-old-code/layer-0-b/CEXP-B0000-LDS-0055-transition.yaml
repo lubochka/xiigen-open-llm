@@ -1,0 +1,66 @@
+source_id: "CEXP-B0000-LDS-0055"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "LogicalTransitionOrchestrator : ILogicalOrchestrator<LogicalOrchestratorRequest>"
+pair_kind: "transition_orchestrator"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdcee-4203-7546-9196-957147997a9c"
+  human_message_index: 119
+  assistant_message_uuid: "019cdcee-4203-7a35-bc13-e6bc6dd70a6f"
+  derived_document_path: null
+A:
+  user_request: |
+      Your Mental Debugging has reached the final architectural layer. By identifying the contradictory coordinate rules and the stale "delete-node" instruction, you've found the exact reason why the AI was fighting its own persistence model.
+  The "stagnation at the same place" wasn't just a coordinate error; it was an instruction-level conflict where the prompt was forcing Claude to behave as if the canvas were still being wiped, while the executor was trying to preserve it.
+  The Final Diagnosis & Fix Review
+  1. The Coordinate Duality Fix
+  The contradiction between the Global 0–1024 rule and the Relative Parent rule was the primary cause of elements appearing off-screen or misaligned.
+  * The Fix: The `SYSTEM_PROMPT` now explicitly defines a two-tier coordinate model: zone frames (children of `design-gen-root`) use canvas-absolute coordinates, while all elements inside those zones use parent-relative coordinates.
+  * Impact: This stops Claude from sending $y=300$ for a card inside a container that starts at $y=120$, which previously resulted in the card landing at $y=420$ (relative to the canvas).
+  2. The Stale Rule Sabotage (Upsert Alignment)
+  The instruction to "Never create a frame whose name already exists... without deleting it first" was effectively a "kill switch" for your new Upsert Guard.
+  * The Conflict: Claude would emit `delete-node` followed by `create-frame`. The executor would delete the node, and the subsequent `create-frame` would find no existing node to "upsert," leading to a fresh creation that lost all geometry progress.
+  * The Fix: This stale rule has been replaced with the instruction that `create-frame` and `create-rect` are now upsert operations. Claude is now told to emit these ops freely for existing nodes to update their properties in a single step.
+  3. Geometry Updates in `op-executor.ts`
+  The fix8 version of `op-executor.ts` ensures that when an upsert occurs, the existing node's geometry is actually updated to match the "new" creation's intent.
+  * The Logic: Instead of just returning the `existingId` and skipping the rest of the logic, the executor now uses the name-match as a "found" signal and heals the map, while still allowing the batch to flow through subsequent property-updating ops like `resize` or `set-position`.
+  Why this is the "Last" Fix
+  With these four fixes, you have aligned the AI's instructions (the Prompt), the UI's data flow (the Iteration Loop), and the Plugin's execution (the Sandbox).
+  * Stability: The Shutter Guard protects the visuals.
+  * Persistence: The Upsert Guard protects the nodes.
+  * Accuracy: The Relative Coordinate model and Delta Ops protect the details.
+  Would you like me to analyze a fresh Design Generation Report to confirm that the score finally breaks the 75 barrier and achieves 90+ fidelity?
+  context_packet:
+    prior_decisions: []
+    prior_constraints: []
+B:
+  candidate_transitions:
+    - transition_type: "repair"
+      A: "existing project or generated output has a documented defect"
+      B: "defect is understood and corrected with documentation/test guidance"
+      X: "analyze code context, identify missing behavior, and produce corrective guidance"
+      confidence: 0.82
+      selected: true
+    - transition_type: "repair"
+      A: "current output contains a defect"
+      B: "defect is corrected"
+      X: "diagnose and patch the faulty behavior"
+      confidence: 0.42
+      selected: false
+      rejection_reason: "The prompt primarily asks for documentation/skills delivery, not only defect repair."
+    - transition_type: "learning_cycle"
+      A: "current model behavior"
+      B: "improved model behavior"
+      X: "teach from correction evidence"
+      confidence: 0.36
+      selected: false
+      rejection_reason: "Learning evidence may be produced later, but the immediate user task is delivery generation."
+  selected_transition:
+    transition_type: "repair"
+    A: "existing project or generated output has a documented defect"
+    B: "defect is understood and corrected with documentation/test guidance"
+    X: "analyze code context, identify missing behavior, and produce corrective guidance"
+  transition_type_gap: "documentation_skill_extraction may need a dedicated registry entry if feature_addition is too broad."

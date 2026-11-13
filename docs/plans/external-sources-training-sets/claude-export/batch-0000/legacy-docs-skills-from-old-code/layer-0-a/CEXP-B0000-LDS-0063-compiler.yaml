@@ -1,0 +1,156 @@
+source_id: "CEXP-B0000-LDS-0063"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdd06-15bb-701c-981d-71245d7c2dd3"
+  human_message_index: 135
+  assistant_message_uuid: "019cdd06-15bb-7992-be52-ee8309fdda65"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0063"
+  user_request: |
+      Seems that we are still loosing the placements
+  Also restore is not full and have left overs from the other sessions# Design Generation Report
+  | Iteration | Score | Ops | Time | Breakdown | Notes |
+  |-----------|-------|-----|------|-----------|-------|
+  | Iter 1 | 0/100 | 25 ops | 44806ms | rect×2, frame×10, text×12, img×1 | Created structural foundation with header, content sections, and basic card layout matching the reference design. |
+  | Iter 2 | 15/100 | 44 ops | 35171ms | fill×1, set-txt×12, set-font-size×8, set-font-weight×8, img×1, rect×7, move-to-back×7 | Updated background colors, text content, and added white card backgrounds for all sections with proper corner radius. |
+  | Iter 3 | 15/100 | 45 ops | 37634ms | fill×1, resize×3, set-txt×12, set-font-size×10, set-font-weight×8, set-position×4, rect×4, img×1, layout×1, move-to-back×1 | Updated title text with emoji, positioned avatar placeholder in header, configured stat cards with proper values and styling, set section titles. |
+  | Iter 4 | 25/100 | 27 ops | 68302ms | set-txt×8, img×3, rect×12, text×4 | Added missing stat cards, chart bars, and started activity feed with first item. Avatar and chart elements now visible. |
+  | Iter 5 | 35/100 | 34 ops | 49134ms | set-txt×13, set-font-size×1, img×3, rect×5, text×5, fill×7 | Added content to stats cards with values, labels, progress bars and star ratings. Enhanced chart section with proper blue colors. Started populating activity feed. |
+  
+  The persistent "stacking" and "dirty restore" issues indicate that while the Persistence Model is active, the plugin sandbox is failing to maintain a clean "Spatial Truth" between iterations.
+  The report shows a score plateau at 35/100 and notes that elements are still misplaced, while "leftovers" from previous sessions are appearing.
+  1. Diagnosis: The "Dirty Canvas" Root Cause
+  The "leftovers" from other sessions and misplaced elements are caused by a failure in the Reset Handshake between the UI and the Sandbox.
+  * Session Pollution: The `designGenNodeMap` is meant to map Claude's semantic names to real Figma IDs. If this map is not fully cleared—or if the Figma layers themselves are not deleted when you click "Generate"—Claude sees a mixture of old and new layers.
+  * The Identity Crisis: When Claude sees a "leftover" frame named `zone-header` from a previous session, but its internal session map is empty, it creates a new `zone-header`. Now Figma has two layers with the same name. The `resolveNode` logic may then fetch the wrong one in subsequent iterations, causing the "one on another" stacking effect.
+  2. The "Upsert-Reparent" Loophole
+  While you added reparenting to `applyGeometryToExisting`, a logic gap remains in how coordinates are applied.
+  * Timing of Append: If the executor sets `rect.x = 100` before calling `parent.appendChild(rect)`, and that parent is a frame at $y=500$, the rectangle's relative position becomes $100$ within that parent, effectively moving it to a global $y=600$.
+  * The Parent Default: If Claude omits a `parentId`, `resolveParent` defaults to the first frame on the page or the `currentPage`. This lack of strictness causes elements to "leak" out of their containers and stack on the root canvas.
+  3. Required Fixes
+  Fix A: Hard-Reset the Canvas
+  In `src/plugin/core/controller.ts`, the `reset-design-gen-session` handler must physically clear the Figma frame, not just the memory map.
+  TypeScript
+  
+  ```
+  // Proposed fix for src/plugin/core/controller.ts
+  if (msg.type === 'reset-design-gen-session') {
+      designGenNodeMap = new Map();
+      // NEW: Physically clear the root frame to ensure no leftovers
+      const rootId = designGenNodeMap.get('design-gen-root');
+      const root = rootId ? await figma.getNodeByIdAsync(rootId) : null;
+      if (root && 'children' in root) {
+          (root as FrameNode).children.forEach(child => child.remove());
+      }
+  }
+  
+  ```
+  
+  Fix B: Strict Coordinate Application
+  In `src/plugin/core/op-executor.ts`, we must ensure the parent is set before any coordinates are touched.
+  TypeScript
+  
+  ```
+  // src/plugin/core/op-executor.ts
+  
+  async function execCreateRect(op: any, nodeMap: Map<string, string>): Promise<OpResult> {
+      const rect = figma.createRectangle();
+      const parent = await resolveParent(op.parentId, nodeMap);
+      
+      // CRITICAL: Append to parent FIRST so x/y are relative to the right origin
+      parent.appendChild(rect); 
+  
+      rect.x = typeof op.x === 'number' ? op.x : 0;
+      rect.y = typeof op.y === 'number' ? op.y : 0;
+      // ... rest of logic
+  }
+  
+  ```
+  
+  Fix C: Restore logic
+  The "Restore is not full" issue likely stems from `DesignGeneratorPanel.tsx` restoring `bestOps` but not resetting the Node Map to the state that existed when those ops were first run. When you restore an iteration, you must tell the plugin to clear the canvas and re-run the `bestOps` sequence from a clean slate.
+  Would you like me to prepare the updated code for `controller.ts` and `op-executor.ts` to implement this hard-reset and strict-parenting logic? Concluding this session with a clean "Spatial Truth" will allow the score to finally break the 35/100 barrier.
+B:
+  DocumentId: "CEXP-B0000-LDS-0063-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      Seems that we are still loosing the placements
+  Also restore is not full and have left overs from the other sessions# Design Generation Report
+  | Iteration | Score | Ops | Time | Breakdown | Notes |
+  |-----------|-------|-----|------|-----------|-------|
+  | Iter 1 | 0/100 | 25 ops | 44806ms | rect×2, frame×10, text×12, img×1 | Created structural foundation with header, content sections, and basic card layout matching the reference design. |
+  | Iter 2 | 15/100 | 44 ops | 35171ms | fill×1, set-txt×12, set-font-size×8, set-font-weight×8, img×1, rect×7, move-to-back×7 | Updated background colors, text content, and added white card backgrounds for all sections with proper corner radius. |
+  | Iter 3 | 15/100 | 45 ops | 37634ms | fill×1, resize×3, set-txt×12, set-font-size×10, set-font-weight×8, set-position×4, rect×4, img×1, layout×1, move-to-back×1 | Updated title text with emoji, positioned avatar placeholder in header, configured stat cards with proper values and styling, set section titles. |
+  | Iter 4 | 25/100 | 27 ops | 68302ms | set-txt×8, img×3, rect×12, text×4 | Added missing stat cards, chart bars, and started activity feed with first item. Avatar and chart elements now visible. |
+  | Iter 5 | 35/100 | 34 ops | 49134ms | set-txt×13, set-font-size×1, img×3, rect×5, text×5, fill×7 | Added content to stats cards with values, labels, progress bars and star ratings. Enhanced chart section with proper blue colors. Started populating activity feed. |
+  
+  The persistent "stacking" and "dirty restore" issues indicate that while the Persistence Model is active, the plugin sandbox is failing to maintain a clean "Spatial Truth" between iterations.
+  The report shows a score plateau at 35/100 and notes that elements are still misplaced, while "leftovers" from previous sessions are appearing.
+  1. Diagnosis: The "Dirty Canvas" Root Cause
+  The "leftovers" from other sessions and misplaced elements are caused by a failure in the Reset Handshake between the UI and the Sandbox.
+  * Session Pollution: The `designGenNodeMap` is meant to map Claude's semantic names to real Figma IDs. If this map is not fully cleared—or if the Figma layers themselves are not deleted when you click "Generate"—Claude sees a mixture of old and new layers.
+  * The Identity Crisis: When Claude sees a "leftover" frame named `zone-header` from a previous session, but its internal session map is empty, it creates a new `zone-header`. Now Figma has two layers with the same name. The `resolveNode` logic may then fetch the wrong one in subsequent iterations, causing the "one on another" stacking effect.
+  2. The "Upsert-Reparent" Loophole
+  While you added reparenting to `applyGeometryToExisting`, a logic gap remains in how coordinates are applied.
+  * Timing of Append: If the executor sets `rect.x = 100` before calling `parent.appendChild(rect)`, and that parent is a frame at $y=500$, the rectangle's relative position becomes $100$ within that parent, effectively moving it to a global $y=600$.
+  * The Parent Default: If Claude omits a `parentId`, `resolveParent` defaults to the first frame on the page or the `currentPage`. This lack of strictness causes elements to "leak" out of their containers and stack on the root canvas.
+  3. Required Fixes
+  Fix A: Hard-Reset the Canvas
+  In `src/plugin/core/controller.ts`, the `reset-design-gen-session` handler must physically clear the Figma frame, not just the memory map.
+  TypeScript
+  
+  ```
+  // Proposed fix for src/plugin/core/controller.ts
+  if (msg.type === 'reset-design-gen-session') {
+      designGenNodeMap = new Map();
+      // NEW: Physically clear the root frame to ensure no leftovers
+      const rootId = designGenNodeMap.get('design-gen-root');
+      const root = rootId ? await figma.getNodeByIdAsync(rootId) : null;
+      if (root && 'children' in root) {
+          (root as FrameNode).children.forEach(child => child.remove());
+      }
+  }
+  
+  ```
+  
+  Fix B: Strict Coordinate Application
+  In `src/plugin/core/op-executor.ts`, we must ensure the parent is set before any coordinates are touched.
+  TypeScript
+  
+  ```
+  // src/plugin/core/op-executor.ts
+  
+  async function execCreateRect(op: any, nodeMap: Map<string, string>): Promise<OpResult> {
+      const rect = figma.createRectangle();
+      const parent = await resolveParent(op.parentId, nodeMap);
+      
+      // CRITICAL: Append to parent FIRST so x/y are relative to the right origin
+      parent.appendChild(rect); 
+  
+      rect.x = typeof op.x === 'number' ? op.x : 0;
+      rect.y = typeof op.y === 'number' ? op.y : 0;
+      // ... rest of logic
+  }
+  
+  ```
+  
+  Fix C: Restore logic
+  The "Restore is not full" issue likely stems from `DesignGeneratorPanel.tsx` restoring `bestOps` but not resetting the Node Map to the state that existed when those ops were first run. When you restore an iteration, you must tell the plugin to clear the canvas and re-run the `bestOps` sequence from a clean slate.
+  Would you like me to prepare the updated code for `controller.ts` and `op-executor.ts` to implement this hard-reset and strict-parenting logic? Concluding this session with a clean "Spatial Truth" will allow the score to finally break the 35/100 barrier.
+  CompiledPredicateIds:
+    - "IMPLEMENT"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

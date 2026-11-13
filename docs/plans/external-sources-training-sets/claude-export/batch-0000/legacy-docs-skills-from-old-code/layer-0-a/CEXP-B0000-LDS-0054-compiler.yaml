@@ -1,0 +1,56 @@
+source_id: "CEXP-B0000-LDS-0054"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdcea-f45d-7754-aa54-c954ae4cb304"
+  human_message_index: 117
+  assistant_message_uuid: "019cdcea-f45d-7353-bf4b-944cdc942674"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0054"
+  user_request: |
+      Yes, that is exactly why your elements are stacking on top of each other. The "same place" issue is a direct result of how Figma coordinates interact with Parent-Child hierarchies.
+  When an element is created in Figma, its $(x, y)$ coordinates are relative to its immediate parent, not the entire 1024x1024 canvas. If Claude makes a mistake in the `parentId`, the results are catastrophic:
+  1. The "Root Stacking" Problem
+  If Claude fails to specify a `parentId` or incorrectly uses `"design-gen-root"` for every element, everything is placed at the same relative origin $(0,0)$ of the main canvas. Even if an element is supposed to be "at the bottom" of the screen (e.g., $y=800$), if it is parented to a footer frame that is already at $y=800$, its relative $y$ should be $0$. If Claude sends $y=800$ to that footer, the element disappears off the bottom of the screen.
+  2. How the "Shutter" and "Upsert" Guards Interact
+  The fix7 implementation includes specific logic to prevent this "same place" chaos:
+  * Upsert Guard: In `execCreateFrame` and `execCreateRect`, the system now checks if a node name already exists before creating a new one. This prevents the AI from stacking five different "Header" frames in the exact same spot.
+  * Hierarchy Rule: The `SYSTEM_PROMPT` now explicitly instructs Claude to parent components to their specific zones (e.g., `zone-header`) rather than the root canvas.
+  * The Shutter Guard: By auto-moving large rectangles ($900\times900+$) to the bottom of the stack (index 0), the executor ensures that even if Claude creates a "background" at the wrong time, it won't bury the other elements sharing that same coordinate space.
+  3. The "Relative" Logic Failure
+  Currently, if Claude sees a button at $x=500, y=500$ in the `REFERENCE` but the `CURRENT` canvas has it at $0,0$, Claude might try to "fix" it by creating a new one instead of using `set-position`. The new Delta Ops Rule in the prompt forces Claude to use `set-position` on the existing `nodeId`, which updates the $(x, y)$ of the original element rather than stacking a new one.
+  Would you like me to verify the `resolveParent` logic in your `op-executor.ts` to ensure it isn't defaulting to the wrong frame when Claude omits a `parentId`?
+B:
+  DocumentId: "CEXP-B0000-LDS-0054-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      Yes, that is exactly why your elements are stacking on top of each other. The "same place" issue is a direct result of how Figma coordinates interact with Parent-Child hierarchies.
+  When an element is created in Figma, its $(x, y)$ coordinates are relative to its immediate parent, not the entire 1024x1024 canvas. If Claude makes a mistake in the `parentId`, the results are catastrophic:
+  1. The "Root Stacking" Problem
+  If Claude fails to specify a `parentId` or incorrectly uses `"design-gen-root"` for every element, everything is placed at the same relative origin $(0,0)$ of the main canvas. Even if an element is supposed to be "at the bottom" of the screen (e.g., $y=800$), if it is parented to a footer frame that is already at $y=800$, its relative $y$ should be $0$. If Claude sends $y=800$ to that footer, the element disappears off the bottom of the screen.
+  2. How the "Shutter" and "Upsert" Guards Interact
+  The fix7 implementation includes specific logic to prevent this "same place" chaos:
+  * Upsert Guard: In `execCreateFrame` and `execCreateRect`, the system now checks if a node name already exists before creating a new one. This prevents the AI from stacking five different "Header" frames in the exact same spot.
+  * Hierarchy Rule: The `SYSTEM_PROMPT` now explicitly instructs Claude to parent components to their specific zones (e.g., `zone-header`) rather than the root canvas.
+  * The Shutter Guard: By auto-moving large rectangles ($900\times900+$) to the bottom of the stack (index 0), the executor ensures that even if Claude creates a "background" at the wrong time, it won't bury the other elements sharing that same coordinate space.
+  3. The "Relative" Logic Failure
+  Currently, if Claude sees a button at $x=500, y=500$ in the `REFERENCE` but the `CURRENT` canvas has it at $0,0$, Claude might try to "fix" it by creating a new one instead of using `set-position`. The new Delta Ops Rule in the prompt forces Claude to use `set-position` on the existing `nodeId`, which updates the $(x, y)$ of the original element rather than stacking a new one.
+  Would you like me to verify the `resolveParent` logic in your `op-executor.ts` to ensure it isn't defaulting to the wrong frame when Claude omits a `parentId`?
+  CompiledPredicateIds:
+    - "ARCHITECTURE"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

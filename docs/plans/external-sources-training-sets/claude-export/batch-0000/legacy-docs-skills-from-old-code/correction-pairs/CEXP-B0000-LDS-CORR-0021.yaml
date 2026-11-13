@@ -1,0 +1,336 @@
+source_id: "CEXP-B0000-LDS-CORR-0021"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "CorrectionLearningUnit : ILogicalUnit<CorrectionTrainingInput, TrainingResult>"
+pair_kind: "dpo_preference_pair"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  prompt_message_uuid: "019cdd02-5ccb-7d3b-8620-5fcded40a414"
+  prompt_message_index: 133
+  rejected_assistant_uuid: "019cdd02-5ccb-781a-8cee-a5003f097c6a"
+  rejected_assistant_index: 134
+  correction_message_uuid: "019cdd06-15bb-701c-981d-71245d7c2dd3"
+  correction_message_index: 135
+  chosen_assistant_uuid: "019cdd06-15bb-7992-be52-ee8309fdda65"
+A:
+  Prompt: |
+      I want to be able to zoom in and copy screenshots of different itterations
+  Now the plus of the mouse doesn't do anything
+  Rejected: |
+       The user wants clicking on the thumbnail images to open a lightbox/zoom view where they can see the full image and copy it. Currently the CSS has `cursor: zoom-in` but no click handler is wired up.
+  
+  Let me add a lightbox modal to the panel.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now add the CSS:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Build clean. Click any SCORED or BUILT thumbnail in the iteration log and a dark modal opens with the full image. Two actions in the header:
+  
+  - **⎘ Copy** — writes the image to clipboard (works in most browsers; Figma's webview may block the Clipboard API silently, in which case use Save)
+  - **↓ Save** — downloads the JPEG directly, named like `Iter-3-BUILT.jpg`
+  
+  Click anywhere on the dark backdrop or the **✕** button to dismiss. Escape key isn't wired (Figma's iframe intercepts keyboard events) — backdrop click is the reliable dismiss path.
+  CorrectionSignal: |
+      Seems that we are still loosing the placements
+  Also restore is not full and have left overs from the other sessions# Design Generation Report
+  | Iteration | Score | Ops | Time | Breakdown | Notes |
+  |-----------|-------|-----|------|-----------|-------|
+  | Iter 1 | 0/100 | 25 ops | 44806ms | rect×2, frame×10, text×12, img×1 | Created structural foundation with header, content sections, and basic card layout matching the reference design. |
+  | Iter 2 | 15/100 | 44 ops | 35171ms | fill×1, set-txt×12, set-font-size×8, set-font-weight×8, img×1, rect×7, move-to-back×7 | Updated background colors, text content, and added white card backgrounds for all sections with proper corner radius. |
+  | Iter 3 | 15/100 | 45 ops | 37634ms | fill×1, resize×3, set-txt×12, set-font-size×10, set-font-weight×8, set-position×4, rect×4, img×1, layout×1, move-to-back×1 | Updated title text with emoji, positioned avatar placeholder in header, configured stat cards with proper values and styling, set section titles. |
+  | Iter 4 | 25/100 | 27 ops | 68302ms | set-txt×8, img×3, rect×12, text×4 | Added missing stat cards, chart bars, and started activity feed with first item. Avatar and chart elements now visible. |
+  | Iter 5 | 35/100 | 34 ops | 49134ms | set-txt×13, set-font-size×1, img×3, rect×5, text×5, fill×7 | Added content to stats cards with values, labels, progress bars and star ratings. Enhanced chart section with proper blue colors. Started populating activity feed. |
+  
+  The persistent "stacking" and "dirty restore" issues indicate that while the Persistence Model is active, the plugin sandbox is failing to maintain a clean "Spatial Truth" between iterations.
+  The report shows a score plateau at 35/100 and notes that elements are still misplaced, while "leftovers" from previous sessions are appearing.
+  1. Diagnosis: The "Dirty Canvas" Root Cause
+  The "leftovers" from other sessions and misplaced elements are caused by a failure in the Reset Handshake between the UI and the Sandbox.
+  * Session Pollution: The `designGenNodeMap` is meant to map Claude's semantic names to real Figma IDs. If this map is not fully cleared—or if the Figma layers themselves are not deleted when you click "Generate"—Claude sees a mixture of old and new layers.
+  * The Identity Crisis: When Claude sees a "leftover" frame named `zone-header` from a previous session, but its internal session map is empty, it creates a new `zone-header`. Now Figma has two layers with the same name. The `resolveNode` logic may then fetch the wrong one in subsequent iterations, causing the "one on another" stacking effect.
+  2. The "Upsert-Reparent" Loophole
+  While you added reparenting to `applyGeometryToExisting`, a logic gap remains in how coordinates are applied.
+  * Timing of Append: If the executor sets `rect.x = 100` before calling `parent.appendChild(rect)`, and that parent is a frame at $y=500$, the rectangle's relative position becomes $100$ within that parent, effectively moving it to a global $y=600$.
+  * The Parent Default: If Claude omits a `parentId`, `resolveParent` defaults to the first frame on the page or the `currentPage`. This lack of strictness causes elements to "leak" out of their containers and stack on the root canvas.
+  3. Required Fixes
+  Fix A: Hard-Reset the Canvas
+  In `src/plugin/core/controller.ts`, the `reset-design-gen-session` handler must physically clear the Figma frame, not just the memory map.
+  TypeScript
+  
+  ```
+  // Proposed fix for src/plugin/core/controller.ts
+  if (msg.type === 'reset-design-gen-session') {
+      designGenNodeMap = new Map();
+      // NEW: Physically clear the root frame to ensure no leftovers
+      const rootId = designGenNodeMap.get('design-gen-root');
+      const root = rootId ? await figma.getNodeByIdAsync(rootId) : null;
+      if (root && 'children' in root) {
+          (root as FrameNode).children.forEach(child => child.remove());
+      }
+  }
+  
+  ```
+  
+  Fix B: Strict Coordinate Application
+  In `src/plugin/core/op-executor.ts`, we must ensure the parent is set before any coordinates are touched.
+  TypeScript
+  
+  ```
+  // src/plugin/core/op-executor.ts
+  
+  async function execCreateRect(op: any, nodeMap: Map<string, string>): Promise<OpResult> {
+      const rect = figma.createRectangle();
+      const parent = await resolveParent(op.parentId, nodeMap);
+      
+      // CRITICAL: Append to parent FIRST so x/y are relative to the right origin
+      parent.appendChild(rect); 
+  
+      rect.x = typeof op.x === 'number' ? op.x : 0;
+      rect.y = typeof op.y === 'number' ? op.y : 0;
+      // ... rest of logic
+  }
+  
+  ```
+  
+  Fix C: Restore logic
+  The "Restore is not full" issue likely stems from `DesignGeneratorPanel.tsx` restoring `bestOps` but not resetting the Node Map to the state that existed when those ops were first run. When you restore an iteration, you must tell the plugin to clear the canvas and re-run the `bestOps` sequence from a clean slate.
+  Would you like me to prepare the updated code for `controller.ts` and `op-executor.ts` to implement this hard-reset and strict-parenting logic? Concluding this session with a clean "Spatial Truth" will allow the score to finally break the 35/100 barrier.
+B:
+  Chosen: |
+       Let me analyze the screenshots carefully before doing anything.
+  
+  Image 1: Shows the canvas with elements - looks like there are overlapping elements in the header area (profile info on top of title text, chart overlapping). The structure is partially there but messy.
+  
+  Image 2: Similar but slightly different state - elements are overlapping. The stat cards (1.4K, 834, 872.5K) appear to have doubled text (each number appears twice, slightly offset).
+  
+  Image 3: The iteration log showing the plugin UI. Score reached 35/100 by iter 5. The "restore is not full and have left overs" issue is visible.
+  
+  Two actual problems to diagnose:
+  
+  
+  1. **Placement issues** - elements still overlapping/misplaced
+  2. **Restore leftovers** - when restoring, old elements remain visible
+  
+  The restore issue seems to be the core problem - when the plugin re-runs bestOps on the existing canvas, it's not clearing out the old elements first, so remnants from previous iterations stick around. For the placement issue, the doubled numbers in image 2 suggest the upsert logic is creating nodes at slightly offset positions during reparenting. Let me check the actual restore logic to understand what's happening.Let me read the actual restore logic before accepting Gemini's diagnosis.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I understand the restore problem clearly.
+  
+  The restore just re-runs the ops from that iteration ON TOP of the current canvas state. It doesn't clear the canvas first. So:
+  - Iter 3 built nodes A, B, C
+  - Iter 4 built nodes D, E, F  
+  - Restoring iter 3 re-runs iter 3's ops on the canvas that has A,B,C,D,E,F
+  - The upsert guard updates A,B,C in place
+  - D,E,F remain → "leftovers"
+  
+  The fix is: before re-running bestOps, send a `clear-design-gen-canvas` message to the sandbox that removes all children of `design-gen-root` (but keeps the root frame itself).
+  
+  
+  For the placement issue, the doubled numbers in the image suggest the upsert guard is finding multiple nodes with the same name instead of updating a single node, likely because the name lookup isn't properly deduplicating or the nodes weren't cleaned up from previous iterations.
+  
+  The core issue is that `reset-design-gen-session` clears the nodeMap but leaves the actual Figma nodes untouched, so when a new generation starts, old named elements from the previous run still exist on the canvas. When the upsert tries to find them by name, it either updates one and leaves duplicates, or creates new ones alongside the old ones. The fix is to actually delete those leftover Figma nodes when resetting the session, not just clear the in-memory map.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have the full picture:
+  
+  **Problem 1 — Leftovers on restore:**
+  The restore just re-runs `entry.ops` on top of the existing canvas. It doesn't clear the canvas first. So nodes added in later iterations remain. Fix: send a `clear-canvas-children` message to the sandbox before re-running ops.
+  
+  **Problem 2 — Leftovers from previous sessions / doubled elements:**
+  `init-design-gen-canvas` creates a NEW `AI Design Canvas` frame every time, places it to the right of existing content. So when you hit Generate again, a new frame is created. The old frame's nodes stay. But wait - the nodeMap is reset. 
+  
+  When a new iteration runs and tries to create a frame like `zone-header`, the nodeMap lookup fails since it was cleared. Then `findOne` searches the entire page and finds the old `zone-header` from the previous session's frame, so the upsert updates that stale node instead of creating a fresh one in the new frame. That's the root cause—`findOne` doesn't respect frame boundaries, so it pulls in nodes from old frames that should've been left alone.
+  
+  The fix is to scope the search: instead of letting `findOne` scan the whole page, I'll make it search only within the `design-gen-root` frame so it can't accidentally grab nodes from previous sessions.
+  
+  Limiting the search scope... The issue is that `init-design-gen-canvas` creates a fresh frame each session, but `findOne` still searches the entire page, so it picks up leftover elements from the previous session's frame. I need to scope the `findOne` calls in the upsert guards to only search within the current `design-gen-root`, and add a `clear-design-gen-children` operation for restore to wipe the root frame's children before re-running the ops.Three distinct problems visible in the screenshots:
+  
+  1. **Doubled elements** (image 2 — "834" appearing twice) — `findOne` in the upsert guards scans the *whole page*, so it finds nodes from the *previous session's frame* and updates those instead of creating in the new root
+  2. **Restore leftovers** — restore re-runs ops on top of the existing canvas, never clears it first
+  3. **Score plateau at 35** — symptom of both above; Claude can't make progress because it's fighting ghost nodes
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now fix restore — clear root children before replaying ops:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now update the panel — add a `clearCanvasChildren()` helper and call it before restore:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Build clean. Two root causes fixed, not the symptoms Gemini described.
+  
+  **Fix 1 — Cross-session ghost nodes (the doubled "834", "872.5K"):** Every `findOne` in `resolveNode`, `execCreateFrame`, and `execCreateRect` now searches within `design-gen-root` first, falling back to page-wide scan only if the root isn't in the map yet. `initDesignCanvas` creates a new frame every run, so previous sessions' frames (and their `zone-header`, `stat-card` etc.) stay on the page indefinitely. The page-wide scan was finding those old nodes and treating them as the current session's — upsert would update them, leaving the new session's frame empty and the old frame corrupted.
+  
+  **Fix 2 — Restore leftovers:** Both the automatic downgrade-restore and the manual ↩ Restore button now call `clearCanvasChildren()` before replaying ops. This sends `clear-canvas-children` to the sandbox, which removes every child of `design-gen-root` (the 1024×1024 frame stays), waits for `canvas-cleared` confirmation, then re-runs the ops onto a clean slate. No more iter 4 nodes surviving a restore to iter 2.
+  
+  Gemini's "Fix B: append parent before setting x/y" is already handled — `applyGeometryToExisting` calls `appendChild` then sets `x/y`. The coordinate timing issue it described doesn't exist in the current code.

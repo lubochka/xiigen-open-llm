@@ -1,0 +1,252 @@
+source_id: "CEXP-B0000-LDS-CORR-0014-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    Looks like gemini is very effective with this project problem solution and here how it does that
+  I would like us to extend the memmory and update the skill sets at the project of xiigen and figma code generator to use this approach
+  It comes down to a systematic approach of comparing intent (what the instructions say) against execution (how the code actually moves data).
+  Here is the "Mental Debugging" framework I used to find those specific issues:
+  1. Pattern Recognition in the "Verdicts"
+  When you showed me the Design Generation Report, I looked for a pattern in the scores. A score that goes 0 → 15 → 25 → 25 is a "Stagnation Pattern."
+  * If the AI were just "bad," the score would fluctuate or go down.
+  * A flatline at 25 usually means the AI has done the easy part (structural skeleton) and is now hitting a hard limit where it can’t add more detail without breaking what it already built. That immediately suggested a conflict between the "Persistence Model" and the actual canvas state.
+  2. Tracing the "Data Lifecycle"
+  I follow a single piece of information from the moment the user clicks a button until the final result is rendered.
+  * For Design Gen: I traced the Figma operations. I saw Claude was being told "Persistence is on," but then I checked the "Gatekeeper" (the `controller.ts` file). I looked specifically for the `execute-figma-ops` message handler. Finding the `.remove()` loop there was the "Aha!" moment—the code was physically fighting the instructions.
+  * For AI Enhancement: I looked at the `AIGenerationConfig` interface. I checked what fields were being passed to the `buildPrompt` function. By noticing that the "Result" of the previous generation wasn't in that list, it was a logical certainty that the AI was "blind" to its own previous work.
+  3. Identifying "Contextual Gaps"
+  I often look for what isn't there.
+  * In the Image Generation issue, I looked at the `enrichOpsWithImages` function. I noticed there was no logic to handle a "detailed" prompt versus a "generic" one.
+  * When a system is underperforming, it’s usually because the "Context Window" given to the AI is too narrow. If the AI doesn't know what it did 10 seconds ago, it can't improve; it can only repeat.
+  4. The "Mental Execution" of Code
+  I don't just read the code; I "run" it in my head. I imagine I am the `onGenerate` function:
+  1. I take the HTML from the props.
+  2. I take the prompt from the state.
+  3. I send them to the API.
+  Wait—where is the code I just spent 30 seconds generating? It’s sitting in the `result` state, but I didn't put it in the suitcase I just sent to the API. That "Mental Execution" quickly reveals where the handoffs between different parts of the system are failing.
+B_wrong: |
+     The user wants to extend the memory and update the skill sets for both XIIGen and the Figma Code Generator projects to incorporate Gemini's "Mental Debugging" framework. This is about creating a reusable debugging methodology skill.
+  
+  Let me:
+  1. Update the memory with this framework
+  2. Create/update skill files for both projects
+  3. Save to the outputs directoryGreat framework. Let me formalize it into skills for both projects, then update memory.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have a good understanding of the existing skill. I need to:
+  
+  1. Create a new/extended skill file that incorporates Gemini's Mental Debugging framework on top of the existing techniques
+  2. Update the memory with this approach
+  3. Make it applicable to both XIIGen and Figma Code Generator projects
+  
+  The key additions from Gemini's framework:
+  1. Pattern Recognition in Verdicts (score patterns → stagnation detection)
+  2. Data Lifecycle Tracing (similar to existing but more systematic)
+  3. Contextual Gap Identification ("what isn't there")
+  4. Mental Execution ("run the code in your head")
+  
+  
+  These complement the existing 6 techniques, so I'll create three new rule files for pattern recognition, contextual gap identification, and mental execution, then update the main skill and agent documentation to weave these in, along with refreshing the memory.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have everything. Let me build the three new rule files and the updated skill, then update memory.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now update the AGENTS.md compiled document and create a ZIP:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now update memory:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  **What was built — 3 new rule files + updated SKILL.md and AGENTS.md:**
+  
+  ---
+  
+  **`pattern-recognition-verdicts.md`** — The "read output before code" move.
+  Five named patterns with exact score shapes, failure class, and where to look. Flatline = gatekeeper fight. Oscillation = missing context. Peak-collapse = wrong restore. Gen2-ignores-gen1 = previousResult not forwarded. Images wrong style = wrapper override. Validated against every real bug found this session.
+  
+  **`contextual-gap.md`** — The "what isn't there" move.
+  The gap audit procedure: write what the component needs → find the config object → cross-reference field by field. Five gap classes: previous output missing, image query too short, tokens not re-injected, score context absent, interface updated but call site not. Worked example: AI Enhance `previousResult` omission.
+  
+  **`mental-execution.md`** — The "run it in your head" move.
+  The suitcase test: at every config object before a call, check that everything just produced is actually packed. Four handoff failure patterns: "computed but not packed," "interface updated but call site not," "reset before using," "gatekeeper fights instruction." Worked example: canvas wipe vs. persistence model.
+  
+  **Updated `SKILL.md` (v1→v2):** Priority table now has 7 categories. New routing table maps any symptom to the first technique to apply. "Never start reading code before identifying the pattern" is now rule zero.
+  
+  **Memory updated** — framework applies to both XIIGen and Figma plugin projects.
+B_correct: |
+     The user wants me to analyze the report and Gemini's diagnosis, then apply the Mental Debugging framework to confirm/extend the findings, and propose fixes. Let me check the actual current source code first.Good. Let me apply the Mental Debugging framework before touching any code.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have the full picture. Let me apply the Mental Debugging framework properly:
+  
+  1. **Pattern Recognition**: Scores 0→15→25→25→25→25→25→5 - this is stagnation at 25 + collapse at iter 8. The canvas is NOT being wiped (gatekeeper is clean - no .remove() loop). So stagnation is NOT from canvas wipe.
+  
+  2. **Real issues found**:
+  
+  **Issue 1 - Default fallback query**: When `op.query` is missing/empty, it falls back to `'abstract background'` which EXACTLY matches the `isGenericQuery` regex (`/^(abstract\s+)?background$/i`). So if Claude ever sends an empty query (or the op has no query field), it always falls through to loremflickr. This is a real bug.
+   
+  **Issue 2 - Score never reaches 40, so phase never advances beyond SKELETON**: The score gets stuck at 0→15→25→25. Since the phase threshold is score < 40 for SKELETON PASS, and it never hits 40, the system stays locked in SKELETON mode indefinitely - always rebuilding with `create-frame` and `create-rect` for containers. This is the structural rebuild loop's root cause. The phase logic itself is fine, but the score threshold is too high - at 25/100 it should be progressing to content pass.
+  
+  **Issue 3 - Iter 8 collapse**: Score drops from 25 to 5. The restore...
+  
+  The restore condition checks `bestScore >= 60 && score < bestScore - 15`, but since bestScore is only 25, the first check fails immediately - restore never triggers. The collapse isn't from a failed restore attempt, it's from Claude switching to a completely different approach on iter 8 with many rects and frames, essentially a full rebuild. The `bestScore >= 60` guard is too strict and prevents recovery when scores are low.
+  
+  **Issue 4 - Gemini's isGenericQuery claim**: The regex `/^(abstract\s+)?background$/i` has anchors so "abstract background for a dashboard" wouldn't match, but the real issue is the default fallback query is exactly `'abstract background'` when op.query is missing - and that DOES match the regex. So the bug isn't in the regex itself but in how the fallback gets applied.
+  
+  The missing query defaults to 'abstract background', which matches the regex and triggers loremflickr. I need to change that default fallback to something that won't match the generic pattern.
+  
+  **Issue 5 - SKELETON phase too wide**: The SKELETON phase stays active while score < 40, and since the system consistently scores around 25, it's always in SKELETON mode. That phase instructs Claude to use create-frame and create-rect for containers, so every iteration just keeps creating containers instead of refining them. This is what's causing the stagnation. I should lower the SKELETON threshold to 30 and modify the instruction to only create frames when they're clearly missing, not as a default action.
+  
+  Now looking at the restore logic more carefully. The bestOps save timing looks correct—it captures after export but before execute. But the restore condition checks `bestScore >= 60`, and since bestScore is only 25, that condition never triggers. That's why iteration 8 dropped to 5 without any restore attempt. So this isn't actually a BestOps bug—it's just that the restore threshold is too high.
+  
+  Let me work out the exact fixes needed.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have the full picture. Three real bugs, one Gemini misdiagnosis. Let me write the precise fix plan:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Three real bugs, clearly isolated. Here's the precise diagnosis before any code is written:
+  
+  ---
+  
+  ## Mental Debugging Verdict
+  
+  ### Bug 1 — SKELETON phase is a tar pit (root cause of stagnation)
+  
+  **Pattern:** Flatline at 25 across 5 iterations — classic stagnation.
+  
+  **Mental execution:** Score=25 → `25 < 40` → SKELETON PASS → instruction says **"Use create-frame and create-rect for containers."** Claude is explicitly told to rebuild containers every single iteration. The score never reaches 40, so it never escapes to CONTENT. It's not that Claude is broken — it's following orders.
+  
+  **Fix:** Two changes in `ClaudeComparisonProvider.ts`:
+  1. Lower the SKELETON threshold: `score < 40` → `score < 20`
+  2. Change SKELETON instruction — remove "Use create-frame and create-rect". Replace with: *"Build any zones clearly ABSENT from CURRENT. If structural containers already exist in CURRENT, skip to filling them with content."*
+  
+  ---
+  
+  ### Bug 2 — Restore guard never fires below score 60 (root cause of iter 8 collapse)
+  
+  **Pattern:** Score drops 25→5 with zero recovery.
+  
+  **Mental execution:** `isSignificantDowngrade = bestScore >= 60 && score < bestScore - 15`. bestScore was 25. `25 >= 60 = FALSE`. The guard was designed for high-scoring runs and is completely blind to low-score regressions. Iter 8 collapsed to 5, no restore fired, nothing protected the progress.
+  
+  **Fix:** `DesignGeneratorPanel.tsx` — two changes:
+  ```typescript
+  // BEFORE:
+  const isSignificantDowngrade = bestScore >= 60 && score < bestScore - 15;
+  
+  // AFTER:
+  const isSignificantDowngrade = bestScore >= 20 && score < bestScore - 10;
+  ```
+  
+  ---
+  
+  ### Bug 3 — Missing query defaults to 'abstract background', always hits loremflickr
+  
+  **Pattern:** Gemini got the regex wrong (anchored `$`, so long strings don't match), but there IS a real bug one line above it.
+  
+  `op.query || 'abstract background'` — when Claude omits the query field, the default is exactly `'abstract background'`, which matches `/^(abstract\s+)?background$/i` perfectly → always loremflickr. Claude shouldn't be omitting queries, but when it does, it gets a random stock photo instead of nothing.
+  
+  **Fix:** `DesignGeneratorPanel.tsx` line 307:
+  ```typescript
+  // BEFORE:
+  const query = String(op.query || 'abstract background');
+  
+  // AFTER:
+  const query = String(op.query || '');
+  if (!query) return op; // no query = skip enrichment entirely, leave grey placeholder
+  ```
+  
+  ---
+  
+  **Gemini's isGenericQuery regex claim is incorrect** — the `$` anchor means `"abstract background for a dashboard"` does NOT match. The real problem is the default value feeding it, not the regex itself. The regex is fine to keep.
+  
+  Want me to implement all three fixes now?

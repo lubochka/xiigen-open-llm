@@ -1,0 +1,62 @@
+source_id: "CEXP-B0000-LDS-0030"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "LogicalTransitionOrchestrator : ILogicalOrchestrator<LogicalOrchestratorRequest>"
+pair_kind: "transition_orchestrator"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdc64-8357-7c25-8e60-3f078e4aee14"
+  human_message_index: 61
+  assistant_message_uuid: "019cdc64-8357-7f6e-a837-2a6378be7de8"
+  derived_document_path: null
+A:
+  user_request: |
+      We still have troubles with very small details like font size, types, margins,... We probably do not read or ask the claude properly for details
+  ‫Gemini אמר
+  The reason you are missing small details like font sizes, margins, and types is that vision models naturally "hallucinate" proportions when given raw images without context. Claude sees a "title" but doesn't know if it's 24px or 26px just by looking—it guesses.
+  To fix this, we need to implement a "Two-Stage Fidelity Loop". I am updating the system to:
+  1. Extract Design Tokens: Explicitly ask Claude to look for and document the font family, specific hex codes, and spacing units before it generates operations.
+  2. Visual Overlays: The prompt now uses a "Grid-Thinking" technique, asking Claude to mentally overlay an 8px grid on the reference to calculate margins.
+  3. Strict Contrast validation: Forcing Claude to verify that the generated color matches the reference luminosity.
+  I've also updated `DesignGeneratorPanel.tsx` to include a "High Fidelity" mode toggle logic in the prompt construction.
+  
+  Why this addresses the "Small Details":
+  1. Iterative Phase Shift: The prompt now changes behavior based on the iteration count. After Iteration 3, it switches to a "Detail Pass" where it ignores structural issues to fix font sizes and 4px margin errors.
+  2. Chain of Thought: By explicitly mentioning the "Mental 8px Grid," we force the vision model to quantify distance rather than just saying "move it a bit."
+  3. Specific Critique Access: By passing `prevNotes` back into the loop, Claude remembers that it failed the "font size" check in the last turn, preventing it from repeating the same mistake.
+  Next Steps: I recommend running 5 iterations. If you reach Iteration 4 and the font sizes are still off, the `buildUserMessage` will trigger the "Strict Detail" instruction set which usually pushes the score from 75 to 90+.
+  
+  Please prepare a plan
+  context_packet:
+    prior_decisions: []
+    prior_constraints: []
+B:
+  candidate_transitions:
+    - transition_type: "repair"
+      A: "existing project or generated output has a documented defect"
+      B: "defect is understood and corrected with documentation/test guidance"
+      X: "analyze code context, identify missing behavior, and produce corrective guidance"
+      confidence: 0.82
+      selected: true
+    - transition_type: "repair"
+      A: "current output contains a defect"
+      B: "defect is corrected"
+      X: "diagnose and patch the faulty behavior"
+      confidence: 0.42
+      selected: false
+      rejection_reason: "The prompt primarily asks for documentation/skills delivery, not only defect repair."
+    - transition_type: "learning_cycle"
+      A: "current model behavior"
+      B: "improved model behavior"
+      X: "teach from correction evidence"
+      confidence: 0.36
+      selected: false
+      rejection_reason: "Learning evidence may be produced later, but the immediate user task is delivery generation."
+  selected_transition:
+    transition_type: "repair"
+    A: "existing project or generated output has a documented defect"
+    B: "defect is understood and corrected with documentation/test guidance"
+    X: "analyze code context, identify missing behavior, and produce corrective guidance"
+  transition_type_gap: "documentation_skill_extraction may need a dedicated registry entry if feature_addition is too broad."

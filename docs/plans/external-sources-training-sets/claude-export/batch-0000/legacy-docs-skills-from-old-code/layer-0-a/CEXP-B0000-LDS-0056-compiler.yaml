@@ -1,0 +1,117 @@
+source_id: "CEXP-B0000-LDS-0056"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdcf0-698d-7a9c-937a-0ac95ba4cc35"
+  human_message_index: 121
+  assistant_message_uuid: "019cdcf0-698d-7465-98a0-e869ec7f741e"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0056"
+  user_request: |
+      They are still one on another!
+  To resolve the persistent "stacking" issue where elements continue to overlap at the same coordinates, we must address a critical mismatch between how Claude calculates positions and how the Figma API applies them.
+  The "They still all one on another" symptom is caused by three specific technical gaps in the fix8 implementation:
+  1. The "Root-Parenting" Default
+  In your `op-executor.ts`, the `resolveParent` function falls back to `design-gen-root` if a `parentId` is missing or invalid.
+  * The Failure: If Claude emits a `create-text` op for a "Title" but forgets the `parentId`, the executor places it directly on the main canvas at $(x, y)$.
+  * The Result: If multiple "titles" for different sections are all parented to the root, they all stack at the same absolute position.
+  2. Relative Coordinate Drift
+  Figma coordinates are always relative to the immediate parent.
+  * The Conflict: Your prompt tells Claude that zone frames use "canvas-absolute" coordinates. However, if the `design-gen-root` frame itself is moved (e.g., to $x=2000$ to clear the page), an "absolute" $x=0$ from Claude will place the zone frame at the top-left of the root, not the top-left of the canvas.
+  * The Fix: We must ensure Claude understands that even "absolute" coordinates are relative to the `design-gen-root` $(0,0)$.
+  3. The "Upsert Position" Conflict
+  In `execCreateFrame` and `execCreateRect`, the "Upsert Guard" now updates $x$ and $y$ in place.
+  * The Problem: If Claude emits a `create-frame` to update an existing section but uses the wrong parenting logic (absolute instead of relative), it will move the existing frame to the stack at $(0,0)$, effectively "eating" the previous progress.
+  Corrective Action Plan
+  Fix A: Tighten Parenting in `op-executor.ts`
+  Modify `resolveParent` to return a warning if the parent is missing, rather than silently defaulting to root. This forces Claude to be explicit.
+  TypeScript
+  
+  ```
+  // Proposed fix for src/plugin/core/op-executor.ts
+  async function resolveParent(parentId: string | undefined, nodeMap: Map<string, string>): Promise<FrameNode | PageNode> {
+      if (parentId) {
+          const found = await resolveNode(parentId, nodeMap);
+          if (found && 'appendChild' in found) return found as FrameNode;
+      }
+      // Only return root if NO parentId was provided at all
+      const rootMappedId = nodeMap.get('design-gen-root');
+      // ... rest of logic ...
+  }
+  
+  ```
+  
+  Fix B: Absolute-Relative Example in Prompt
+  We need to provide Claude with a "Parent Origin" sanity check in the `SYSTEM_PROMPT`.
+  STRICT COORDINATE HIERARCHY:
+  1. Zones (Parent=design-gen-root): $x=0, y=0$ is the top-left of the main frame.
+  2. Components (Parent=Zone): $x=0, y=0$ is the top-left of that ZONE, not the canvas.
+  Example: A button at the bottom of the screen ($y=900$) inside `zone-footer` (which starts at $y=850$) must have $y=50$, NOT $y=900$.
+  Fix C: Prevent "Zero-Stacking" in Upsert
+  Add a safety check in `execCreateFrame` that prevents an upsert from moving a node to $(0,0)$ if it already has a valid position, unless $(0,0)$ is explicitly intended.
+  Would you like me to apply these specific coordinate and parenting refinements to the fix8 files now? This will decouple the elements and place them in their correct hierarchical slots.
+B:
+  DocumentId: "CEXP-B0000-LDS-0056-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      They are still one on another!
+  To resolve the persistent "stacking" issue where elements continue to overlap at the same coordinates, we must address a critical mismatch between how Claude calculates positions and how the Figma API applies them.
+  The "They still all one on another" symptom is caused by three specific technical gaps in the fix8 implementation:
+  1. The "Root-Parenting" Default
+  In your `op-executor.ts`, the `resolveParent` function falls back to `design-gen-root` if a `parentId` is missing or invalid.
+  * The Failure: If Claude emits a `create-text` op for a "Title" but forgets the `parentId`, the executor places it directly on the main canvas at $(x, y)$.
+  * The Result: If multiple "titles" for different sections are all parented to the root, they all stack at the same absolute position.
+  2. Relative Coordinate Drift
+  Figma coordinates are always relative to the immediate parent.
+  * The Conflict: Your prompt tells Claude that zone frames use "canvas-absolute" coordinates. However, if the `design-gen-root` frame itself is moved (e.g., to $x=2000$ to clear the page), an "absolute" $x=0$ from Claude will place the zone frame at the top-left of the root, not the top-left of the canvas.
+  * The Fix: We must ensure Claude understands that even "absolute" coordinates are relative to the `design-gen-root` $(0,0)$.
+  3. The "Upsert Position" Conflict
+  In `execCreateFrame` and `execCreateRect`, the "Upsert Guard" now updates $x$ and $y$ in place.
+  * The Problem: If Claude emits a `create-frame` to update an existing section but uses the wrong parenting logic (absolute instead of relative), it will move the existing frame to the stack at $(0,0)$, effectively "eating" the previous progress.
+  Corrective Action Plan
+  Fix A: Tighten Parenting in `op-executor.ts`
+  Modify `resolveParent` to return a warning if the parent is missing, rather than silently defaulting to root. This forces Claude to be explicit.
+  TypeScript
+  
+  ```
+  // Proposed fix for src/plugin/core/op-executor.ts
+  async function resolveParent(parentId: string | undefined, nodeMap: Map<string, string>): Promise<FrameNode | PageNode> {
+      if (parentId) {
+          const found = await resolveNode(parentId, nodeMap);
+          if (found && 'appendChild' in found) return found as FrameNode;
+      }
+      // Only return root if NO parentId was provided at all
+      const rootMappedId = nodeMap.get('design-gen-root');
+      // ... rest of logic ...
+  }
+  
+  ```
+  
+  Fix B: Absolute-Relative Example in Prompt
+  We need to provide Claude with a "Parent Origin" sanity check in the `SYSTEM_PROMPT`.
+  STRICT COORDINATE HIERARCHY:
+  1. Zones (Parent=design-gen-root): $x=0, y=0$ is the top-left of the main frame.
+  2. Components (Parent=Zone): $x=0, y=0$ is the top-left of that ZONE, not the canvas.
+  Example: A button at the bottom of the screen ($y=900$) inside `zone-footer` (which starts at $y=850$) must have $y=50$, NOT $y=900$.
+  Fix C: Prevent "Zero-Stacking" in Upsert
+  Add a safety check in `execCreateFrame` that prevents an upsert from moving a node to $(0,0)$ if it already has a valid position, unless $(0,0)$ is explicitly intended.
+  Would you like me to apply these specific coordinate and parenting refinements to the fix8 files now? This will decouple the elements and place them in their correct hierarchical slots.
+  CompiledPredicateIds:
+    - "API_CONTRACT"
+    - "ARCHITECTURE"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

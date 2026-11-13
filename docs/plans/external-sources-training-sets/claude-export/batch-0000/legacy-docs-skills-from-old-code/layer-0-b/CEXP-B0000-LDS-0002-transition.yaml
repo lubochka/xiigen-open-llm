@@ -1,0 +1,48 @@
+source_id: "CEXP-B0000-LDS-0002"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "LogicalTransitionOrchestrator : ILogicalOrchestrator<LogicalOrchestratorRequest>"
+pair_kind: "transition_orchestrator"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cd94e-8a4b-7d40-ab46-1aeb31a5b607"
+  human_message_index: 2
+  assistant_message_uuid: "019cd94e-8a4b-71e9-9884-4c438b749c75"
+  derived_document_path: null
+A:
+  user_request: |
+      I have some issue with my figma code
+  it uses figmaBase64 of just generated frame. Since we use the dynamic document, the moment we need to use it , it is still null. We are missing some async call which wasn't really finished and do not know where a fix is required
+  context_packet:
+    prior_decisions: []
+    prior_constraints: []
+B:
+  candidate_transitions:
+    - transition_type: "repair"
+      A: "existing project or generated output has a documented defect"
+      B: "defect is understood and corrected with documentation/test guidance"
+      X: "analyze code context, identify missing behavior, and produce corrective guidance"
+      confidence: 0.82
+      selected: true
+    - transition_type: "repair"
+      A: "current output contains a defect"
+      B: "defect is corrected"
+      X: "diagnose and patch the faulty behavior"
+      confidence: 0.42
+      selected: false
+      rejection_reason: "The prompt primarily asks for documentation/skills delivery, not only defect repair."
+    - transition_type: "learning_cycle"
+      A: "current model behavior"
+      B: "improved model behavior"
+      X: "teach from correction evidence"
+      confidence: 0.36
+      selected: false
+      rejection_reason: "Learning evidence may be produced later, but the immediate user task is delivery generation."
+  selected_transition:
+    transition_type: "repair"
+    A: "existing project or generated output has a documented defect"
+    B: "defect is understood and corrected with documentation/test guidance"
+    X: "analyze code context, identify missing behavior, and produce corrective guidance"
+  transition_type_gap: "documentation_skill_extraction may need a dedicated registry entry if feature_addition is too broad."

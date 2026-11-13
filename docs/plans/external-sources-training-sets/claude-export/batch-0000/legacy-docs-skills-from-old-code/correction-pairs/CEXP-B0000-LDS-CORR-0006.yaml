@@ -1,0 +1,313 @@
+source_id: "CEXP-B0000-LDS-CORR-0006"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "CorrectionLearningUnit : ILogicalUnit<CorrectionTrainingInput, TrainingResult>"
+pair_kind: "dpo_preference_pair"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  prompt_message_uuid: "019cdc25-0bb4-78b3-a6b2-bf7fa3123287"
+  prompt_message_index: 46
+  rejected_assistant_uuid: "019cdc25-0bb4-7628-ac1e-8d9c4f68403a"
+  rejected_assistant_index: 47
+  correction_message_uuid: "019cdc2d-c836-7256-813e-3844ea2506f6"
+  correction_message_index: 48
+  chosen_assistant_uuid: "019cdc2d-c836-75d6-beed-38c069edcf4c"
+A:
+  Prompt: |
+      I need some skill how to examin the code productively in order to find the proper problems
+  
+  Productive code examination, especially for complex systems like Figma plugins with asynchronous bridges and AI loops, requires moving beyond just reading lines of code. It involves tracing data flow, auditing boundaries, and verifying environmental assumptions.
+  Here are specific skills and techniques to examine your code more productively to find problems:
+  1. Follow the Data Lifecycle (Cross-Boundary Tracing)
+  In your plugin, data constantly travels between the UI (Iframe) and the Sandbox (Figma main thread). A productive way to examine this is to create a "Message Map":
+  * Trace a single variable: Take `figmaBase64`. Ask: Who creates it? Who sends it? Who receives it? And what is the state of the document when it is created?.
+  * Identify the "Dead Zone": In your code, the "Dead Zone" is the time between a node being created in the sandbox and the UI requesting an export of it. Productive examination means looking for `postMessage` calls that don't have a corresponding `await` or confirmation signal on the other side.
+  2. Audit Environmental Assumptions
+  Productive debugging often involves questioning if the environment (Figma) behaves the way your code assumes.
+  * Dynamic Access Constraints: Since you use `documentAccess: 'dynamic-page'`, your code cannot assume a node is "there" just because you have its ID.
+  * Skill: Search your `plugin` folder for every instance of `figma.getNodeById`. Replace the "assumption" of its success with an "investigation" of its failure: "If this returns null, is it because the node is gone, or just not loaded yet?".
+  3. State-Delta Analysis in Loops
+  When debugging loops like your `runIterationLoop`, don't just look at the code; look at the State Delta (the change in state) for a single cycle.
+  * The "Off-by-One" Audit: Examine what is saved in `bestOps` at the moment a score is recorded.
+  * Productive Question: "In Iteration 2, am I saving the ops that resulted in this score, or the ops I plan to run next?". In your current code, you were saving the "plan" for the future as the "best" version of the past.
+  4. Logic Path Visualization
+  Use "Pencil and Paper" debugging for complex conditional logic, such as your regression handling.
+  * Trace the regression path: 1. Assume `bestScore` is 80.
+  2. Assume `currentScore` is 50.
+  3. Follow the code: Does `executeOpsAndGetFrame(bestOps)` actually receive the correct IDs?.
+  * Audit the "Clean Slate" assumption: Look at `execute-figma-ops` in `controller.ts`. It clears the `designGenNodeMap`. If your `bestOps` rely on that map to find parents or targets, the "Restore" will fail because the map was wiped.
+  5. Intentional Logging (Breadcrumbing)
+  Productive examination uses logs to verify the order of operations, not just the values.
+  * Instead of: `console.log(data)`
+  * Use: `console.log('[Iteration Loop] 1. Requesting Export', Date.now())` followed by `console.log('[Controller] 2. Received Export Request', Date.now())`.
+  * This reveals if the UI is "waiting" for a response that the Sandbox hasn't even started processing yet because of an un-awaited `loadAllPagesAsync`.
+  6. Boundary Audit of `Try/Catch` Blocks
+  Look at every `catch` block in your code.
+  * Skill: Determine if the catch is "Silent" (doing nothing) or "Informative" (passing the error back to the UI).
+  * In your `controller.ts`, many errors are caught but not sent back to the UI, which is why the UI might show "No data" instead of a specific "Node not found" error. Examine these blocks to ensure every failure path has a voice.
+  
+  Please prepare a plan with guidelines how to generate the skill where to put it and how to edit claude files and documentation and references
+  Rejected: |
+       The user wants to create a formal skill document for "Productive Code Examination" — following the pattern of the agent-skills-main library they've been using. They want to know where to put it, how to edit Claude files, and what references/documentation to include.
+  
+  Let me look at the skill builder zip and the existing skill structure to understand the format, then create a proper plan.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have a very clear picture of the skill format. Let me build the complete skill package:
+  
+  1. `SKILL.md` - the main skill file
+  2. `rules/_sections.md` - category definitions
+  3. `rules/_template.md` - rule template
+  4. One rule file per examination technique (6 rules from the user's description)
+  5. `AGENTS.md` - how AI agents should use this skill
+  6. Plan document explaining where to put it and how to update Claude/docs files
+  
+  The skill should follow the agent-skills-main format (rule-per-file with frontmatter) since that's the established pattern.Now I have everything. Building the full skill package.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now the integration plan — where to put it and what to update:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  The skill is built and packaged. Here's the structure and what each piece does:
+  
+  ---
+  
+  **The skill has the same format as `react-best-practices`** — a `SKILL.md` with trigger description + category table, an `AGENTS.md` with the full compiled guide, and one `.md` file per rule under `rules/`. This means it drops straight into `agent-skills-main/skills/` alongside the existing ones.
+  
+  **6 rules across 4 categories, all grounded in real bugs from this codebase:**
+  
+  `boundary-message-map` — before reading any code, grep-map every send to its listener. Finds missing handlers in 5 minutes vs 20 by reading.
+  
+  `boundary-data-lifecycle` — pick one variable, trace it forward from creation. Finds the "Dead Zone" (node not loaded when exported) that explains "no data" errors.
+  
+  `loop-state-delta` — write a concrete 3-row table (init / peak score / regression) filling in every variable per cycle. The `bestOps = ops` off-by-one bug is invisible when reading, obvious in the table.
+  
+  `loop-off-by-one` — the most reusable rule: for every variable saved in a loop, ask "does this represent what just happened or what's about to happen?" with a timing diagram. The restore-the-wrong-iteration bug is this pattern exactly.
+  
+  `env-dynamic-access` — grep for `getNodeById` (sync), then for every `nodeMap.get()`, then for every `nodeMap.clear()`. Each hit is an environmental assumption to verify.
+  
+  `error-silent-catch` — classify every catch as Silent / Logged / Surfaced. Any Silent catch inside a sandbox message handler causes a 20-second timeout on the UI with no explanation.
+  
+  **Integration guide** covers 6 steps: adding to `agent-skills-main`, updating `AGENTS.md` and `README.md`, updating your project `CLAUDE.md`, updating `xiigen-architect-skill` references to invoke this skill before writing any fix plan, and installation instructions for Claude Code / Cursor / claude.ai.
+  CorrectionSignal: |
+      We are still showing the score in a wrong place, since the score is related to the design in previous iteration we need a beautiful way to show it , use ui ux skills to place the proper score in a proper place - I need just a detailed plan no implementation
+B:
+  Chosen: |
+       The user wants a plan for fixing the score display in the Design Generator panel. The score shown is always for the *previous* iteration's canvas (since Claude scores the current canvas then proposes new ops). They want a UX-smart way to show which score belongs to which design snapshot. Let me look at the web design guidelines skill and the current UI rendering to form a good plan.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have the full picture. Let me analyze exactly what's wrong and design the proper UX plan.
+  
+  The core problem: 
+  - In iteration N, Claude receives the canvas (built by iteration N-1's ops), scores it, and proposes new ops
+  - So `currentScore` at the end of iteration N actually describes the *canvas built by iteration N-1*
+  - The score bubble in SideBySide sits between the reference image and the CURRENT Figma — suggesting it scores the current Figma
+  - The score overlay on the reference image also misleadingly suggests it relates to the reference
+  - The log shows "Iter 5 score 75" — but the Figma canvas shown is the result AFTER iter 5's ops ran, while score 75 rated what was there BEFORE iter 5's ops ran
+  
+  
+  - The real issue is that every visual placement of the score creates a false impression: the overlay suggests it rates the reference, the center bubble suggests it compares both, and the log thumbnail suggests it rates the post-iteration canvas, when actually it only describes the pre-iteration state.
+  
+  The fix is straightforward: remove the score from the reference entirely, clarify that the divider bubble represents the previous iteration's quality, and make sure the current canvas displays with no score since it hasn't been evaluated yet. canvas (the one that was scored)
+  3. **The log entries** — score should visually connect to the canvas that was scored (i.e., the previous iteration's thumbnail, or shown as a "rated by" arrow)
+  4. **Live display during loop** — show "⏳ Scoring..." on the current figma, then when score arrives, show it as having scored THAT canvas
+  
+  The cleanest approach is a filmstrip model where each log card shows the canvas snapshot, the score from when it was evaluated in the next iteration, and the ops count. The current canvas displays "Awaiting score..." until the next iteration evaluates it.
+  
+  For the live side-by-side view, I'll show the reference on the left and the current canvas on the right with a "Built in iter N" label, only displaying the score after it's confirmed by the next iteration's scoring step. During evaluation, there's a loading state saying "Scoring iter N canvas...", and once complete, the score appears on the canvas that was scored before the new canvas starts building. In the iteration log, each row contains the thumbnail and related metadata. I see the timing issue now—each iteration's log entry needs the score from the *next* iteration's evaluation, but we don't have that information until later. So I need to either backfill scores retroactively once they're available, or defer logging the entry until after the scoring step completes and we know what score to attach to it. The key insight is that each iteration has an "in" canvas (what existed at the start, which gets scored) and an "out" canvas (what the iteration produces). The score logically belongs with the "in" canvas, so I should display it as a badge on the previous iteration's thumbnail rather than the current one. For the live view, I'll remove the score from the center divider and instead label the left column as "last scored" to show which canvas the score actually evaluates. filmstrip/log**
+  - Each row: [scored canvas thumbnail] score badge → [arrow →] [resulting canvas thumbnail]
+  - The score badge sits on/below the canvas that was scored (the input to this iteration), not the output
+  
+  **Phase C: Score on reference image**
+  - Remove completely. Score has no relationship to the reference image.
+  
+  Let me write this up as a clean plan with specific UI element positions.
+  
+  The key insight for the UX plan:
+  - **The center score bubble shows scores a canvas that's no longer visible** (it scored the canvas before the current ops ran)
+  - **The score overlay on the reference image makes no sense at all** (it scores the Figma, not the reference)
+  - **The log shows score + ops + thumbnail but the score and the thumbnail describe different canvases**
+  
+  The beautiful solution:
+  1. **Live panel:** Two-state display. While scoring, show the canvas being evaluated with a "scoring..." indicator. Once complete, transition to display the newly built canvas. The score anchors to whichever canvas it actually rated.
+  2. **Log:** Each entry is a "before → after" card: small thumbnail of the canvas that entered this iteration (with score badge on it) + small thumbnail of the canvas that exited (no score yet, will get one next iteration).
+  3. **Score graph:** The X-axis point aligns with the canvas that was scored, not the canvas built in that iteration.
+  
+  Now I'm thinking through the practical constraints. The current implementation stores `updatedFrame` (the post-ops canvas) as the snapshot, so I have `log[N].canvasSnapshot` representing the canvas built by iteration N and `log[N].score` representing the score given at the start of iteration N, which actually scored the previous canvas.
+  
+  The fix is straightforward: show `log[N].score` as a badge on `log[N-1].canvasSnapshot` in the log, or label it as "Score received for previous canvas" with an arrow pointing to the previous thumbnail. The first log entry has score 0 since it scored the blank canvas. For the side-by-side view, I should remove the center score bubble entirely and instead place the score label under or on the previous canvas state, showing something like "← Scored N/100" under the previous canvas and "Building..." under the current one.
+  
+  Now I'm finalizing the implementation plan.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have the complete picture. Let me map out exactly what's wrong and design the UX plan properly.
+  
+  The exact timing:
+  
+  ```
+  Loop iteration N:
+    t1: export canvas (= canvas built by ops from iter N-1 = log[N-2].canvasSnapshot if we have the snapshot plan)
+    t2: Claude scores it → score = quality of canvas[N-1]
+    t3: setCurrentScore(score)  ← this score labels canvas[N-1], not canvas[N]
+    t4: execute new ops → produces canvas[N]
+    t5: setCurrentFigmaBase64(canvas[N])  ← this is what's shown in the panel
+    t6: appendLog({ score, canvas[N] snapshot })  ← score describes canvas[N-1], snapshot is canvas[N]
+  ```
+  
+  So the mismatches are clear: the score bubble shows `currentScore` between the reference and current Figma, but that score (set at t3) actually describes `canvas[N-1]` while `currentFigmaBase64` has already been updated to `canvas[N]`. The score is labeling a canvas that's no longer visible anywhere on screen.
+  
+  The reference image itself is the AI-generated mockup, and overlaying a similarity score on it makes no sense — that score compares the reference to the Figma canvas, not to itself. And in the log, the score S describes `canvas[N-1]` but the thumbnail shows `canvas[N]`, so they're describing different states.
+  
+  The real issue is that score S at iteration N represents "how similar was canvas[N-1] to the reference," so it should live on canvas[N-1]'s thumbnail, not canvas[N]'s. For the log after implementing the snapshot plan, I need to attach each score to the correct canvas version it actually describes.
+  
+  In the SideBySide view, I should remove the center score bubble entirely and instead badge the canvas that was actually scored. During scoring, show a spinner on the current canvas being evaluated, then after scoring completes, display the score badge on that same canvas. Once new operations execute and a fresh canvas appears, shift the scored one to the previous position and show the new one as current. And the reference image should have no score overlay at all since it's not being scored.
+  
+  For the plugin panel layout, I'm thinking of a three-column structure: the AI reference on the left, the last scored canvas in the middle with its score badge, and the newly built canvas on the right showing it's awaiting evaluation.
+  
+  Actually, that's too cramped for a narrow panel. Better to use a two-phase approach where the layout shifts based on what's happening. When Claude is actively scoring, I'll show the reference and the canvas being analyzed side-by-side with a loading indicator between them. Once scoring completes, the same two-column view updates to display the score and transitions to show the current Figma state.
+  
+  For the log rows, each snapshot needs to be paired with its corresponding score from when it was evaluated. The fix is straightforward: label each canvas thumbnail with "Rated: X/100" to show what score it received, and make sure the next iteration's snapshot displays without a score label since it hasn't been evaluated yet.
+  
+  Actually, I'm overcomplicating this. Let me reconsider what's actually implementable and visually clear.
+  
+  The key insight is that a score represents a measurement taken at the start of an iteration—it's a retrospective label on the canvas being replaced, not the new one. So the flow should be: evaluate the current canvas, then run operations to improve it, producing a new canvas state.
+  
+  For the UI, this means removing the score overlay from the reference image entirely, and rethinking how the side-by-side comparison displays scores.
+  
+  Instead of centering a bubble between the two images, I should label the Figma canvas with something like "Iter 5 · built from score 75" underneath it, making it clear that Claude scored the previous canvas at 75 before building this one. Or I could use a compact notation like "◎ 75 → ▲20 (iter 5)" to show the previous score and the improvement made.
+  
+  For the log view, the score badge should appear on the canvas it actually describes.  Right now the thumbnail shows canvas_5 but the score 75 refers to canvas_4, which is confusing. I need to show both snapshots — the canvas that was scored and the canvas that was produced — with the score badge attached to the right one. I already have `figmaFrameOrNull` capturing the starting state, so I can use that as the "in" canvas and pair it with the final output.
+  
+  The fix is straightforward: add `scoredSnapshot` to the log entry to store the pre-ops canvas, then redesign the UI across five phases to show the before-and-after flow with the score positioned correctly on the scored canvas. Let me map out the implementation plan now.Now I have everything — the full data flow, the three places score is displayed, and the exact timing mismatch. Let me write the plan.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  

@@ -1,0 +1,267 @@
+source_id: "CEXP-B0000-LDS-CORR-0012-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    On the backend ai enhance for some reson .Net is missing
+B_wrong: |
+     The user is asking about the AI Enhance backend - specifically that .Net is missing. Let me look at the relevant code.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Found it. The fix is one line in `PromptTemplates.ts`. Here's what to add:
+  
+  **File:** `src/ui/components/ai-enhance/PromptTemplates.ts`
+  
+  ```typescript
+  export const SERVER_STACKS = [
+      {value: 'express',  label: 'Node.js / Express'},
+      {value: 'fastapi',  label: 'Python / FastAPI'},
+      {value: 'dotnet',   label: '.NET / ASP.NET Core'},   // ← ADD THIS
+      {value: 'spring',   label: 'Java / Spring'},
+      {value: 'go',       label: 'Go / Gin'},
+  ];
+  ```
+  
+  Then in `AIService.ts` around line 277, the `express`-specific scaffold block needs a `.NET` case alongside the others:
+  
+  ```typescript
+  // Around line 277 in the serverStack switch/if:
+  if (config.serverStack === 'express') {
+      // ... existing express scaffold
+  } else if (config.serverStack === 'dotnet') {
+      result.serverCode = `// ASP.NET Core Web API\n// TODO: Implement controllers`;
+  } else {
+      result.serverCode = `# ${config.serverStack} server scaffold\n# TODO: Implement API endpoints`;
+  }
+  ```
+  
+  And the system prompt line 74 already interpolates `config.serverStack` directly into the prompt text (`"### Server-Side Code (dotnet)"`), so the AI will get the right instruction automatically once the value exists.
+  
+  Want me to implement both changes now?
+B_correct: |
+     Let me check the actual uploaded source to see what's been implemented and what hasn't, then check the build warnings.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Good progress! Many of the planned changes are now implemented. Let me check what's still missing and look at the build warnings.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have a complete picture. Let me summarize what's implemented vs what's missing:
+  
+  **Implemented ✅:**
+  - MAX_OPS = 60, MAX_TOKENS = 16384
+  - Persistence model in SYSTEM_PROMPT (no more "from scratch")
+  - Naming convention in prompt
+  - Phase-aware messages (SKELETON/CONTENT/DETAIL)
+  - prevNotes passed through
+  - DesignTokens type defined and extracted in parseResponse
+  - tokens included in ComparisonResult
+  - 5 new ops: set-font-size, set-font-weight, set-position, set-opacity, set-stroke
+  
+  
+  - reorder and move-to-back ops
+  - scoredSnapshot, bestIteration, and lastExecutedOps fixes
+  - compareAndPlan accepts prevTokens
+  
+  **Missing / Broken ❌:**
+  1. lastTokens state is never actually populated from the comparison results or passed to runClaudeComparison
+  2. The runClaudeComparison wrapper doesn't handle prevTokens at all
+  3. .NET is missing from SERVER_STACKS and not handled in AIService.ts
+  
+  Now I'm implementing these fixes directly.Good. Now I have the complete picture. Let me just fix the actual gaps directly.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  **Gap 1: tokens extracted but never stored or passed forward** — `lastTokens` state exists but is never set, and `runClaudeComparison` doesn't accept `prevTokens`.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now fix `runClaudeComparison` wrapper to accept and forward `prevTokens`:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  **Gap 2: .NET missing from SERVER_STACKS and AIService**
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now verify all fixes and package:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  All 5 fixes verified. Package the output:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  You're right to push back. The plans were written but the code wasn't shipped. Here's exactly what was done and not done in the uploaded source, and what this fix addresses:
+  
+  **Already implemented in your upload ✅**
+  - `MAX_OPS = 60`, `MAX_TOKENS = 16384`
+  - Persistence model replacing "from scratch" instruction
+  - Naming convention (`zone-header`, `zone-content`, etc.)
+  - Phase-aware messages (SKELETON / CONTENT / DETAIL)
+  - `prevNotes` passed through
+  - `DesignTokens` type defined and extracted in `_parseResponse`
+  - All 5 new ops: `set-font-size`, `set-font-weight`, `set-position`, `set-opacity`, `set-stroke`
+  - `reorder` / `move-to-back` ops
+  - `scoredSnapshot`, `bestIteration`, `lastExecutedOps` off-by-one fix
+  
+  **Gaps fixed in this zip ✅**
+  1. **Token loop broken** — `lastTokens` state was declared but never populated. `setLastTokens(cr.tokens)` now fires after each iteration. `runClaudeComparison` now accepts and forwards `prevTokens`, so extracted font/color/spacing values from iteration N are injected into iteration N+1's prompt.
+  2. **`.NET / ASP.NET Core`** added to `SERVER_STACKS` in `PromptTemplates.ts` and a proper scaffold added in `AIService.ts`.

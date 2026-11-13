@@ -1,0 +1,196 @@
+source_id: "CEXP-B0000-LDS-CORR-0015-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    yarn build --no-install
+  yarn run v1.22.22
+  $ npx --no-install webpack --mode=production --no-install
+  npm warn Unknown env config "argv". This will stop working in the next major version of npm.
+  npm warn Unknown env config "version-commit-hooks". This will stop working in the next major version of npm.
+  npm warn Unknown env config "version-git-message". This will stop working in the next major version of npm.
+  npm warn Unknown env config "version-git-tag". This will stop working in the next major version of npm.
+  npm warn Unknown env config "version-tag-prefix". This will stop working in the next major version of npm.
+  Hash: 1443d6112c3a09ae817c
+  Version: webpack 4.47.0
+  Time: 8847ms
+  Built at: 03/11/2026 2:13:52 PM
+   2 assets
+  Entrypoint ui = ui.js
+  Entrypoint code = code.js
+   [3] ./src/plugin/utils/setting-helpers.ts 907 bytes {0} {1} [built]
+   [4] ./src/plugin/utils/element-code.ts 6.47 KiB {0} {1} [built]
+   [5] ./src/plugin/utils/is-image.ts 900 bytes {0} {1} [built]
+   [9] (webpack)/buildin/global.js 472 bytes {0} {1} [built]
+  [10] (webpack)/buildin/module.js 497 bytes {0} {1} [built]
+  [12] ./node_modules/css-loader/dist/cjs.js!./src/ui/styles/ui.css 29.5 KiB {1} [built]
+  [55] ./src/ui/assets/logo.svg 55.3 KiB {1} [built]
+  [56] ./src/ui/index.tsx + 70 modules 1.5 MiB {1} [built]
+       | ./src/ui/index.tsx 199 bytes [built]
+       | ./src/ui/styles/ui.css 335 bytes [built]
+       |     + 69 hidden modules
+  [57] ./src/plugin/core/controller.ts + 2 modules 78.6 KiB {0} [built]
+       | ./src/plugin/core/controller.ts 18.4 KiB [built]
+       | ./src/plugin/core/op-executor.ts 22.1 KiB [built]
+       | ./src/plugin/utils/styles.ts 38 KiB [built]
+      + 49 hidden modules
+  ERROR in C:\Projects\FigmaToCode-design-gen\src\ui\components\design-gen\DesignGeneratorPanel.tsx
+  [tsl] ERROR in C:\Projects\FigmaToCode-design-gen\src\ui\components\design-gen\DesignGeneratorPanel.tsx(878,13)
+        TS2554: Expected 4-7 arguments, but got 8.
+  ERROR in C:\Projects\FigmaToCode-design-gen\src\ui\components\design-gen\providers\ClaudeComparisonProvider.ts
+  [tsl] ERROR in C:\Projects\FigmaToCode-design-gen\src\ui\components\design-gen\providers\ClaudeComparisonProvider.ts(399,96)
+        TS2304: Cannot find name 'existingNodeNames'.
+  Child html-webpack-plugin for "ui.html":
+       1 asset
+      Entrypoint undefined = ui.html
+      [0] ./node_modules/html-webpack-plugin/lib/loader.js!./src/ui/index.html 299 bytes {0} [built]
+      [2] (webpack)/buildin/global.js 472 bytes {0} [built]
+      [3] (webpack)/buildin/module.js 497 bytes {0} [built]
+          + 1 hidden module
+  error Command failed with exit code 2.
+  info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+  
+  Still build errors
+B_wrong: |
+     Let me look at the actual uploaded source files to see what's there now.Let me read the actual uploaded files rather than working from my local copies.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Two surgical fixes in one file. `compareAndPlan` is missing `existingNodeNames` in its signature, and it's not passing it to `buildUserMessage`.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  One file, one change. Package it:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  One file, two-line fix. Both errors had the same root cause: the previous patch added `existingNodeNames` to `buildUserMessage`'s signature and to the `runClaudeComparison` wrapper in the panel, but the intermediate `compareAndPlan` method on the class — which sits between the two — never got the parameter added. So:
+  
+  - **TS2554** ("expected 4-7, got 8"): the panel's `runClaudeComparison` passed 8 args to `compareAndPlan`, which only declared 7.
+  - **TS2304** ("cannot find name 'existingNodeNames'"): `compareAndPlan`'s body referenced `existingNodeNames` in the `buildUserMessage` call but the variable didn't exist in its own scope.
+  
+  Both resolved by adding `existingNodeNames?: string[]` to `compareAndPlan`'s signature.
+B_correct: |
+     Let me analyze the situation with Mental Debugging first, then check the actual uploaded source files.
+  
+  The pattern: score stuck at 25, iter 5 has `move-to-back×8` and `rect×9` — classic shutter effect.
+  
+  Gemini's suggestions:
+  - A: SYSTEM_PROMPT z-index rules — good idea, partially already there
+  - B: Code-level safety valve in op-executor — GOOD, concrete and enforceable
+  - C: TypeScript interface schema in prompt — noise, Claude doesn't parse TS interfaces as constraints
+  
+  Let me check the actual uploaded source to see what's already there and what needs adding.Mental Debugging first — pattern recognition on the report before touching anything.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Complete picture. The prompt teaches `move-to-back` as a *recovery* tool — so Claude uses it as intended, but the scoring happens *after* the ops execute, meaning the shutter fires → is partially recovered → but the snapshot is taken before Claude confirms recovery. The real fix is executor-level prevention, not prompt instruction.
+  
+  Gemini's suggestions: A (prompt text) is already partially there and hasn't stopped the problem. C (TS interface schema) is pure noise. **B (executor guard) is correct and is the only thing that will actually work.**
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  **Fix 1 — `op-executor.ts`: shutter guard + upsert guard in `execCreateRect`:**
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  **Fix 2 — `ClaudeComparisonProvider.ts`: add one tight rule to SYSTEM_PROMPT about background changes:**
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Verify and package:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Two files. Here's the precise diagnosis and what was done vs what Gemini suggested:
+  
+  ---
+  
+  **What the report actually shows:** iter 5 has `rect×9` then `move-to-back×8`. Claude *knows* it created shutters — it immediately tried to undo them with `move-to-back`. The problem is the snapshot for scoring is taken *after* ops execute, so the shutter lands, is moved to back, but the score still reflects the partially-recovered state. The prompt already teaches `move-to-back` as recovery — that's why Claude uses it — but it's reactive, not preventive.
+  
+  **Fix 1 — `op-executor.ts`: proactive shutter guard (Gemini's suggestion B — correct)**
+  Any `create-rect` with `w >= 900 && h >= 900` that isn't named `"zone-bg"` is *automatically* placed at index 0 (bottom of stack) immediately on creation, before the frame is exported. Claude never gets a chance to bury anything. Also added the same upsert guard that `execCreateFrame` already has — `create-rect` was the only create op still missing it.
+  
+  **Fix 2 — `ClaudeComparisonProvider.ts`: one tight rule added to SYSTEM_PROMPT**
+  A single "IRON LAW" block after the layer-order section. Short, explicit, and it tells Claude the executor will auto-move large rects anyway — removing any ambiguity about whether it should try to create them. The key line: *"To change the background color: emit `set-fill` on `zone-bg`."* That's the instruction that was completely missing.
+  
+  **Gemini's suggestion C (TypeScript interface schema) was skipped** — Claude doesn't parse constraint interfaces from prompt text as enforced rules. The executor guard is the enforcement; the prompt text is just the explanation.

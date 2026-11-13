@@ -1,0 +1,99 @@
+source_id: "CEXP-B0000-LDS-CORR-0020-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    Just removing these from prompt helped:
+  
+  ```typescript
+  COORDINATE SYSTEM — TWO TIERS:
+    • Zone frames (zone-bg, zone-header, zone-content, zone-footer): x/y are CANVAS-ABSOLUTE (0,0 = top-left of the 1024×1024 canvas).
+    • Everything else (children of zones): x/y are RELATIVE to their parent frame's top-left (0,0).
+    Example: a card inside zone-content (y=120) at visual position y=200 should be sent as y=80, NOT y=200.
+  
+  ```
+B_wrong: |
+     The user found that removing the TWO TIERS coordinate explanation fixed the stacking issue. This means the "fix" we added actually caused the problem — by telling Claude about two different coordinate systems, Claude got confused and started sending wrong coordinates. The original simpler "coordinates are relative to parent" was correct and sufficient.
+  
+  Let me update the prompt to remove that block and restore the simpler rule.Classic case of an "explanation" making things worse. The original single rule — *"Coordinates: relative to the parent frame's top-left (0,0)"* — was correct and Figma-consistent. Our TWO TIERS addition told Claude to use canvas-absolute coords for zone frames, which is only true when the zone frames are direct children of a zero-origin root. Claude took that as license to send `y=800` for a footer zone, which then placed it at `y=800` relative to `design-gen-root` — correct — but then also sent `y=800` for content *inside* that footer because the "canvas-absolute for zones" rule stuck in its context. Everything stacked at 0,0 because the relative rule for children was being overridden.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Good catch. The lesson here: **adding explanation to a prompt can be worse than saying nothing**, especially when the explanation introduces a distinction the model has to choose between. Figma's coordinate system is uniformly relative-to-parent — that's one simple rule. Our TWO TIERS block created a two-case decision tree that Claude then applied inconsistently across iterations.
+  
+  The replacement keeps it honest: *"Zone frames happen to equal canvas pixels because their parent's origin is (0,0) — not because of a special rule."* This way Claude doesn't need to classify each node before deciding which coordinate system to use.
+  
+  The diagnostics (console op digest + warnings) are still in this build — they'll be useful if any positioning issues remain.
+B_correct: |
+     Let me implement the image cache fix directly.Good diagnosis this time. Let me find the actual `enrichOpsWithImages` code before touching anything.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now update the prompt — Claude should know re-emitting the same query preserves the image:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Build clean. What changed:
+  
+  **`DesignGeneratorPanel.tsx`** — `imageSessionCache` is a `useRef<Map>` that lives for the whole generation session. `enrichOpsWithImages` now accepts it as an optional third argument. First time a query is seen → generate + store. Every subsequent iteration with the same query → return cached payload immediately, no API call. `resetSession` clears the map so a fresh generation starts clean. The loremflickr fallback is also cached, so placeholder images don't reshuffle between iterations.
+  
+  **`ClaudeComparisonProvider.ts`** — Two prompt lines now tell Claude explicitly: re-emitting the same query string costs nothing and reuses the image; only change the query string if you actually want something different visually.

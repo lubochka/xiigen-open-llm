@@ -1,0 +1,118 @@
+source_id: "CEXP-B0000-LDS-CORR-0002-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    To my regret this didn't help
+  Error — see log below
+  Figma frame export returned no data. Make sure the AI Design Canvas frame exists and try again.
+B_wrong: |
+     Let me look more carefully at the flow. The user says the fix didn't help. Let me re-read the controller code more carefully to find the real issue.
+  
+  The flow is:
+  1. `handleGenerate` → calls `initDesignCanvas()` → sends `init-design-gen-canvas` → creates frame, stores ID in `designGenNodeMap`
+  2. `handleApprove` → calls `runIterationLoop` → calls `requestFrameExport()` → sends `request-frame-export` → controller tries to find frame by `designGenNodeMap.get('design-gen-root')`
+  
+  Wait - but there's a timing issue I missed. Look at `handleGenerate`:
+  
+  
+  It resets the session first, which clears the node map and sends an async message to the plugin, then immediately calls `initDesignCanvas()` to create the frame. But `resetSession()` also sets the panel state to idle at the end, and since the messages are asynchronous, there's a race condition where the map might be cleared after the frame is created. The plugin processes messages sequentially, so the reset and init should happen in the right order. But I'm noticing another problem—`request-frame-export` calls `loadAllPagesAsync` once, while `execute-figma-ops` calls it twice, and the comment explains that the second load is necessary to ensure newly created nodes are fully committed before exporting. On the first iteration, we're calling `request-frame-export` on a fresh document, so we might be missing that second load.
+  
+  Let me trace through this more carefully. When `initDesignCanvas` creates the frame and calls `loadAllPagesAsync`, then `requestFrameExport` runs and calls it again, the `designGenNodeMap` should still have the frame ID since it's just a JavaScript Map in the plugin's sandbox. But I'm wondering if `loadAllPagesAsync` could somehow invalidate node IDs in Figma's dynamic-page mode.
+  
+  Actually, the real issue is that `figmaFrameOrNull` is coming back null from `requestFrameExport`, which means either a `dg-frame-error` message was received, the 12-second timeout fired, or something else went wrong with the message handling.
+  
+  Looking at the controller's `request-frame-export` handler, after `loadAllPagesAsync()` it tries to get the frame node by ID, and if that fails it falls back to checking the selection. The problem might be that in `dynamic-page` mode, the frame ID becomes invalid after loading all pages, or `figma.currentPage` changes in a way that breaks the node lookup.
+  
+  Let me trace through this more carefully—the core question is whether the frame ID remains valid after `loadAllPagesAsync()` completes.
+  
+  Actually, I think I'm overcomplicating this. On the first iteration, the canvas was just created by `init-design-gen-canvas`, so the frame definitely exists and should be findable. An empty 1024x1024 white frame exported as JPG at 0.5 scale would be 512x512 pixels, which should easily exceed 500 bytes. So something else is causing the export to produce such a tiny file.
+  
+  Wait—could there be a race condition where `reset-design-gen-session` and `init-design-gen-canvas` messages are being sent in quick succession, causing the canvas to be cleared before the export even happens?
+  
+  Actually, let me reconsider. The error happens on the first `request-frame-export` call, which comes after `initDesignCanvas()` has already resolved successfully. Since `initDesignCanvas()` waits for the `dg-canvas-ready` message, the frame should definitely exist and be in `designGenNodeMap` by that point. So the issue isn't about the frame not existing—it's about why the export is producing such a tiny file.
+  
+  Now looking at the regenerate flow: when the user clicks "Start Refinement" after regenerating, `handleRegenerate` calls `resetSession()` first, which sends a `reset-design-gen-session` message to clear everything out. Then it sets the panel to idle. This is different from the initial flow where `resetSession()` happens before `initDesignCanvas()` is even called. So in the regenerate case, there's a reset happening right before the iteration loop starts, which might be affecting the frame state or the export data.
+  
+  I'm also noticing that `initDesignCanvas()` creates a brand new frame every time it runs without checking if one already exists, so multiple regenerations would pile up frames on the canvas. But that shouldn't explain why the very first export is failing.
+  
+  Let me reconsider what's happening at iteration 1 when the export returns null. There are a few possibilities I haven't fully explored yet, like whether the document or frame state is in an unexpected condition when the export is being requested. I'm wondering if `loadAllPagesAsync()` actually reloads the current page from disk, which would discard any frames I created in memory before calling it. My fix loads the page first, then creates the frame, so the ID should persist—but the user says it didn't work, so either the fix wasn't applied correctly or there's something else going on. Let me check for other potential issues like message handler conflicts in `requestFrameExport`.
+  
+  Examining the frame export handler more closely... I'm realizing the real issue might be that `dg-frame-bytes` arrives but with a payload smaller than 500 bytes, which would cause the handler to silently skip both cleanup and resolution, leaving the promise hanging until the 12-second timeout fires and returns null. Let me trace through what the controller actually sends when it exports the frame bytes.
+  
+  Actually, stepping back—the user reports "Awaiting export..." followed by an error on iteration 1, so let me walk through the exact sequence: the loop starts, sets the panel to requesting state, calls `requestFrameExport`, which sets up a message listener and sends the request to the plugin, and the plugin loads all pages before attempting the export.
+  
+  With my fix in place, `init-design-gen-canvas` should already call `loadAllPagesAsync()` when creating the frame, so it should exist when `request-frame-export` runs and calls it again. But either the fix isn't being applied, there's a build issue, or maybe `loadAllPagesAsync()` isn't available due to missing `documentAccess: dynamic-page` in the manifest—though that would trigger the catch block and send an error message.
+  
+  Wait, I'm realizing something about the flow here.
+  
+  Both handlers call `loadAllPagesAsync()`, but the real question is whether calling it a second time affects nodes created after the first call. Looking at Figma's behavior, `loadAllPagesAsync()` is idempotent—it only loads pages that aren't already loaded, so subsequent calls shouldn't invalidate existing nodes.
+  
+  Let me trace through the UI side message handler instead. The handler is listening for the `dg-frame-bytes` message and checking if the bytes payload is large enough before attempting to compress it to JPEG and resolve with base64 data.
+  
+  But I'm realizing there's a potential type mismatch here — when a `Uint8Array` gets sent through `postMessage`, it might arrive on the receiving end as a plain array of numbers rather than staying as a `Uint8Array`, depending on how the Figma plugin environment serializes it. The controller is sending the raw `bytes` from `exportAsync`, which is definitely a `Uint8Array`, but by the time it reaches the UI handler, it could be in a different format entirely.
+  
+  Actually, thinking about this more — Figma's `postMessage` likely handles this gracefully and converts it to a regular array, which means `new Uint8Array(msg.bytes)` should work fine since the constructor accepts array-like objects. Let me step back and consider if there's something else going on here.
+  
+  Looking at the screenshot, I can see the actual error message and what's being displayed: the frame export is returning null, which means `requestFrameExport()` isn't getting the data it needs. This could happen if the plugin sends an error message, if the bytes payload is too small to be valid, or if the request times out. Given the error message specifically mentions checking that the AI Design Canvas frame exists, it's most likely either an error from the plugin or a timeout issue.
+  
+  Now I'm realizing something crucial about the `handleGenerate` function — it calls `initDesignCanvas()` with a "best-effort" approach that continues even if initialization fails. If that fails, the plugin won't have the 'design-gen-root' node set up, but the code keeps going anyway. Then when `request-frame-export` runs, it falls back to searching for any frame on the current page, so there might be a frame found but it's not the right one.
+  
+  Actually, wait — I need to reconsider the original flow without my fix. The `init-design-gen-canvas` creates a frame on the current page (which always works since the main thread has access), stores its ID, and then `request-frame-export` loads other pages but the current page was already loaded, so `figma.getNodeById()` should still find that frame. Maybe my fix wasn't actually solving a real problem? Let me think about what `documentAccess: dynamic-page` actually changes here.
+  
+  When the plugin starts, the current page is partially loaded and accessible — I can create frames, append them, and get valid node IDs. Later when `loadAllPagesAsync()` runs, it loads the other pages but doesn't affect the frame I already created. So the frame should still be findable.
+  
+  What if the real issue is something more subtle in how the frame gets stored or referenced? Let me look at the actual frame creation and ID storage logic more carefully.
+B_correct: |
+     The user is sharing AI-suggested fixes. Let me look at the actual code carefully to understand the real issue, then provide the correct fix for controller.ts.
+  
+  The key issues:
+  1. `figma.loadAllPagesAsync()` missing at the top-level startup (before `selection` scan and before `init-design-gen-canvas`)
+  2. The initial frame export is fire-and-forget, not awaited
+  
+  Let me write the full fixed controller.ts.Yes, that diagnosis is correct. Let me implement the full fix properly.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I see the full picture clearly. There are TWO problems:
+  
+  1. **Startup**: Lines 80-190 run synchronously at top level without `await figma.loadAllPagesAsync()`. With `documentAccess: dynamic-page`, the current page's nodes aren't loaded yet when the script starts, so:
+     - `figma.currentPage.selection` may not have loaded node data
+     - `exportAsync` at line 182 runs on a node that isn't fully loaded → returns empty bytes
+     - The scene scanning may work partially (syncronous traversal) but image data won't be there
+  
+  2. **`init-design-gen-canvas` handler** (line 231): Missing `await figma.loadAllPagesAsync()` before creating the frame. 
+  
+  The previous fix didn't work because the real culprit is the startup code running before the document loads. I need to wrap the entire startup logic in an async IIFE that calls `await figma.loadAllPagesAsync()` first, keeping `designGenNodeMap` at module level so it's accessible from the message handler. I'll also add the same await to the `init-design-gen-canvas` handler.Now I can see both problems clearly. Let me write the complete fixed file:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Here's what changed and why the previous partial fix didn't work:
+  
+  **The previous fix** only added `loadAllPagesAsync()` inside `init-design-gen-canvas`. That helps the canvas init handler, but the real bug was earlier — the frame export was still happening at the top level before the document was loaded at all.
+  
+  **Three actual changes in this version:**
+  
+  **1. `onmessage` registered BEFORE the async IIFE** — this is critical. If you put the handler inside or after the IIFE, any message sent by the UI during the async startup (like `get-openai-api-key` on mount) gets dropped entirely. The handler must be synchronously registered first.
+  
+  **2. Entire startup logic wrapped in `async () => { await figma.loadAllPagesAsync(); ... }()`** — this is the core fix. `const selection = figma.currentPage.selection` and the `exportAsync` call both previously ran synchronously at the top level against an unloaded document. Now they run after the document is confirmed loaded.
+  
+  **3. `request-frame-export` gets a smarter fallback chain** — after checking `designGenNodeMap`, it now also searches by `n.name === 'AI Design Canvas'` before falling back to "any frame on page". This recovers gracefully if the node map is cleared between a reset and the next export. It also re-registers the found frame back into the map if it was missing.

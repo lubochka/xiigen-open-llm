@@ -1,0 +1,68 @@
+source_id: "CEXP-B0000-LDS-0044"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "LogicalTransitionOrchestrator : ILogicalOrchestrator<LogicalOrchestratorRequest>"
+pair_kind: "transition_orchestrator"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdca7-908f-7214-bbcf-d9d57bc09419"
+  human_message_index: 94
+  assistant_message_uuid: "019cdca7-908f-76f7-a858-2f0ed7bb4c06"
+  derived_document_path: null
+A:
+  user_request: |
+      Looks like gemini is very effective with this project problem solution and here how it does that
+  I would like us to extend the memmory and update the skill sets at the project of xiigen and figma code generator to use this approach
+  It comes down to a systematic approach of comparing intent (what the instructions say) against execution (how the code actually moves data).
+  Here is the "Mental Debugging" framework I used to find those specific issues:
+  1. Pattern Recognition in the "Verdicts"
+  When you showed me the Design Generation Report, I looked for a pattern in the scores. A score that goes 0 → 15 → 25 → 25 is a "Stagnation Pattern."
+  * If the AI were just "bad," the score would fluctuate or go down.
+  * A flatline at 25 usually means the AI has done the easy part (structural skeleton) and is now hitting a hard limit where it can’t add more detail without breaking what it already built. That immediately suggested a conflict between the "Persistence Model" and the actual canvas state.
+  2. Tracing the "Data Lifecycle"
+  I follow a single piece of information from the moment the user clicks a button until the final result is rendered.
+  * For Design Gen: I traced the Figma operations. I saw Claude was being told "Persistence is on," but then I checked the "Gatekeeper" (the `controller.ts` file). I looked specifically for the `execute-figma-ops` message handler. Finding the `.remove()` loop there was the "Aha!" moment—the code was physically fighting the instructions.
+  * For AI Enhancement: I looked at the `AIGenerationConfig` interface. I checked what fields were being passed to the `buildPrompt` function. By noticing that the "Result" of the previous generation wasn't in that list, it was a logical certainty that the AI was "blind" to its own previous work.
+  3. Identifying "Contextual Gaps"
+  I often look for what isn't there.
+  * In the Image Generation issue, I looked at the `enrichOpsWithImages` function. I noticed there was no logic to handle a "detailed" prompt versus a "generic" one.
+  * When a system is underperforming, it’s usually because the "Context Window" given to the AI is too narrow. If the AI doesn't know what it did 10 seconds ago, it can't improve; it can only repeat.
+  4. The "Mental Execution" of Code
+  I don't just read the code; I "run" it in my head. I imagine I am the `onGenerate` function:
+  1. I take the HTML from the props.
+  2. I take the prompt from the state.
+  3. I send them to the API.
+  Wait—where is the code I just spent 30 seconds generating? It’s sitting in the `result` state, but I didn't put it in the suitcase I just sent to the API. That "Mental Execution" quickly reveals where the handoffs between different parts of the system are failing.
+  context_packet:
+    prior_decisions: []
+    prior_constraints: []
+B:
+  candidate_transitions:
+    - transition_type: "repair"
+      A: "existing project or generated output has a documented defect"
+      B: "defect is understood and corrected with documentation/test guidance"
+      X: "analyze code context, identify missing behavior, and produce corrective guidance"
+      confidence: 0.82
+      selected: true
+    - transition_type: "repair"
+      A: "current output contains a defect"
+      B: "defect is corrected"
+      X: "diagnose and patch the faulty behavior"
+      confidence: 0.42
+      selected: false
+      rejection_reason: "The prompt primarily asks for documentation/skills delivery, not only defect repair."
+    - transition_type: "learning_cycle"
+      A: "current model behavior"
+      B: "improved model behavior"
+      X: "teach from correction evidence"
+      confidence: 0.36
+      selected: false
+      rejection_reason: "Learning evidence may be produced later, but the immediate user task is delivery generation."
+  selected_transition:
+    transition_type: "repair"
+    A: "existing project or generated output has a documented defect"
+    B: "defect is understood and corrected with documentation/test guidance"
+    X: "analyze code context, identify missing behavior, and produce corrective guidance"
+  transition_type_gap: "documentation_skill_extraction may need a dedicated registry entry if feature_addition is too broad."

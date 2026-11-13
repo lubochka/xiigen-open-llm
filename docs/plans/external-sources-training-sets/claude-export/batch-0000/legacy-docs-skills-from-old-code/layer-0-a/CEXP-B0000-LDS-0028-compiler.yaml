@@ -1,0 +1,126 @@
+source_id: "CEXP-B0000-LDS-0028"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdc4b-d432-7123-8c77-6b7ec64b451b"
+  human_message_index: 57
+  assistant_message_uuid: "019cdc4b-d432-785d-9175-688401532582"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0028"
+  user_request: |
+      We still get very poor design results on each iteration of generating figma from design, what do we miss? 
+  # Design Generation Report
+  | Iteration | Score | Ops | Time | Breakdown | Notes |
+  |-----------|-------|-----|------|-----------|-------|
+  | Iter 1 | 0/100 | 27 ops | 30839ms | rect×6, frame×7, text×12, img×2 | Created complete teen dashboard layout with header, stats cards, charts, and content sections matching the reference design structure. |
+  | Iter 2 | 15/100 | 24 ops | 26020ms | rect×6, frame×7, text×9, img×2 | Created basic layout structure with header containing title and avatar, stats bar, and four main content cards matching reference proportions and positioning. |
+  | Iter 3 | 25/100 | 25 ops | 40526ms | rect×3, frame×7, text×12, img×3 | Improved typography with correct font sizes and weights, fixed text content accuracy, and positioned avatar illustration in header area. |
+  | Iter 4 | 35/100 | 30 ops | 28060ms | rect×8, frame×6, text×13, img×3 | Improved typography with correct font sizes, added proper card structure with white backgrounds, and set up image placeholders for charts - still missing exact text content and some layout details. |
+  | Iter 5 | 40/100 | 30 ops | 33011ms | rect×4, frame×10, text×13, img×2, layout×1 | Added main structure with header avatar, stat cards in horizontal layout, weekly activity chart, activity feed section, and trends with proper spacing but missing detailed chart elements and activity feed items. |
+  | Iter 6 | 55/100 | 30 ops | 30999ms | rect×5, frame×10, text×12, img×2, layout×1 | Added proper card structure with white backgrounds, improved spacing and positioning to match reference layout with stats row and two-column content area. |
+  | Iter 7 | 65/100 | 30 ops | 30182ms | rect×13, frame×2, text×14, img×1 | Added proper card layouts with white backgrounds, improved spacing to 24px gaps between cards, and structured the content into distinct sections with rounded corners. |
+  | Iter 8 | 75/100 | 30 ops | 31623ms | rect×4, frame×9, text×14, img×1, layout×2 | No notes provided. |
+  | Iter 9 | 25/100 | 0 ops | 24747ms | — | Downgrade detected (25 < 75). Restoring best iteration. |
+  
+  I've analyzed the logs and the underlying code. The "design plateau" you're seeing (where scores jump between 65-75 and then crash) is caused by the "Full Redraw" constraint.
+  Because the AI is forced to recreate the entire layout from scratch every iteration within a strict 30-operation limit, it eventually hits a wall: it can't add a new detail (like a chart legend) without "deleting" something else (like the footer) to stay under the budget.
+  I have updated the Claude Comparison Provider to shift from "Redraw" to "Delta-Refinement" and increased the operation budget.
+  Key Changes
+  1. Refinement Logic: The prompt now instructs the AI to treat existing named frames as persistent. It can now use `set-fill`, `resize`, and `set-text` to fix details without wasting budget on recreating the entire container.
+  2. Increased Budget: Boosted `MAX_OPS_PER_ITERATION` from 30 to 80.
+  3. Critique Loop: Added a `prevNotes` parameter so the AI can read its own previous failure notes and specifically address them.
+  4. Claude Comparison Provider
+  5. 11 במרץ, 11:46
+  Implementation Note for `DesignGeneratorPanel.tsx`
+  To make this work, update the call to `runClaudeComparison` in your main panel to pass the `lastNotes`:
+  TypeScript
+  
+  ```
+  // Inside DesignGeneratorPanel.tsx -> runIterationLoop
+  const lastNotes = log.length > 0 ? log[log.length - 1].notes : undefined;
+  
+  const compareResult = await runClaudeComparison(
+      refBase64, 
+      figmaFrameOrNull, 
+      iter, 
+      prevScore ?? undefined,
+      lastNotes // Pass this to the provider
+  );
+  
+  ### Why this fixes the problem:
+  1.  **Memory**: By passing `lastNotes` (e.g., "Missing detailed chart elements"), the AI treats that as its primary task for the next 30,000ms.
+  2.  **Efficiency**: Instead of wasting 15 operations saying "Create the background, create the header, create the sidebar" every single time, it assumes they exist and spends all 80 operations on the **details** that are currently missing.
+  3.  **Stability**: Higher operation limits prevent the AI from "cutting corners" (literally) to fit the JSON response limit.
+  
+  ```
+  
+  I need just a plan how to fix that
+B:
+  DocumentId: "CEXP-B0000-LDS-0028-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      We still get very poor design results on each iteration of generating figma from design, what do we miss? 
+  # Design Generation Report
+  | Iteration | Score | Ops | Time | Breakdown | Notes |
+  |-----------|-------|-----|------|-----------|-------|
+  | Iter 1 | 0/100 | 27 ops | 30839ms | rect×6, frame×7, text×12, img×2 | Created complete teen dashboard layout with header, stats cards, charts, and content sections matching the reference design structure. |
+  | Iter 2 | 15/100 | 24 ops | 26020ms | rect×6, frame×7, text×9, img×2 | Created basic layout structure with header containing title and avatar, stats bar, and four main content cards matching reference proportions and positioning. |
+  | Iter 3 | 25/100 | 25 ops | 40526ms | rect×3, frame×7, text×12, img×3 | Improved typography with correct font sizes and weights, fixed text content accuracy, and positioned avatar illustration in header area. |
+  | Iter 4 | 35/100 | 30 ops | 28060ms | rect×8, frame×6, text×13, img×3 | Improved typography with correct font sizes, added proper card structure with white backgrounds, and set up image placeholders for charts - still missing exact text content and some layout details. |
+  | Iter 5 | 40/100 | 30 ops | 33011ms | rect×4, frame×10, text×13, img×2, layout×1 | Added main structure with header avatar, stat cards in horizontal layout, weekly activity chart, activity feed section, and trends with proper spacing but missing detailed chart elements and activity feed items. |
+  | Iter 6 | 55/100 | 30 ops | 30999ms | rect×5, frame×10, text×12, img×2, layout×1 | Added proper card structure with white backgrounds, improved spacing and positioning to match reference layout with stats row and two-column content area. |
+  | Iter 7 | 65/100 | 30 ops | 30182ms | rect×13, frame×2, text×14, img×1 | Added proper card layouts with white backgrounds, improved spacing to 24px gaps between cards, and structured the content into distinct sections with rounded corners. |
+  | Iter 8 | 75/100 | 30 ops | 31623ms | rect×4, frame×9, text×14, img×1, layout×2 | No notes provided. |
+  | Iter 9 | 25/100 | 0 ops | 24747ms | — | Downgrade detected (25 < 75). Restoring best iteration. |
+  
+  I've analyzed the logs and the underlying code. The "design plateau" you're seeing (where scores jump between 65-75 and then crash) is caused by the "Full Redraw" constraint.
+  Because the AI is forced to recreate the entire layout from scratch every iteration within a strict 30-operation limit, it eventually hits a wall: it can't add a new detail (like a chart legend) without "deleting" something else (like the footer) to stay under the budget.
+  I have updated the Claude Comparison Provider to shift from "Redraw" to "Delta-Refinement" and increased the operation budget.
+  Key Changes
+  1. Refinement Logic: The prompt now instructs the AI to treat existing named frames as persistent. It can now use `set-fill`, `resize`, and `set-text` to fix details without wasting budget on recreating the entire container.
+  2. Increased Budget: Boosted `MAX_OPS_PER_ITERATION` from 30 to 80.
+  3. Critique Loop: Added a `prevNotes` parameter so the AI can read its own previous failure notes and specifically address them.
+  4. Claude Comparison Provider
+  5. 11 במרץ, 11:46
+  Implementation Note for `DesignGeneratorPanel.tsx`
+  To make this work, update the call to `runClaudeComparison` in your main panel to pass the `lastNotes`:
+  TypeScript
+  
+  ```
+  // Inside DesignGeneratorPanel.tsx -> runIterationLoop
+  const lastNotes = log.length > 0 ? log[log.length - 1].notes : undefined;
+  
+  const compareResult = await runClaudeComparison(
+      refBase64, 
+      figmaFrameOrNull, 
+      iter, 
+      prevScore ?? undefined,
+      lastNotes // Pass this to the provider
+  );
+  
+  ### Why this fixes the problem:
+  1.  **Memory**: By passing `lastNotes` (e.g., "Missing detailed chart elements"), the AI treats that as its primary task for the next 30,000ms.
+  2.  **Efficiency**: Instead of wasting 15 operations saying "Create the background, create the header, create the sidebar" every single time, it assumes they exist and spends all 80 operations on the **details** that are currently missing.
+  3.  **Stability**: Higher operation limits prevent the AI from "cutting corners" (literally) to fit the JSON response limit.
+  
+  ```
+  
+  I need just a plan how to fix that
+  CompiledPredicateIds:
+    - "API_CONTRACT"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

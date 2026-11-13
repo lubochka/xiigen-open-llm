@@ -1,0 +1,61 @@
+source_id: "CEXP-B0000-LDS-0034"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "LogicalTransitionOrchestrator : ILogicalOrchestrator<LogicalOrchestratorRequest>"
+pair_kind: "transition_orchestrator"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdc77-e1a7-789d-acd7-e099bdc4399c"
+  human_message_index: 71
+  assistant_message_uuid: "019cdc77-e1a7-761e-9da4-d41cbeed07c4"
+  derived_document_path: null
+A:
+  user_request: |
+      We still have build warnings - so the resistance to make a proper plan of how to solve it - problematic. So far we did the implementations following the plans - check yourself
+  
+  This design plateau occurs because the AI is stuck in a "Complete Redraw" cycle. Every time the score reaches ~75, the dashboard complexity exceeds the 30-operation budget. Because the AI is instructed to start from scratch every time, it runs out of "ink" halfway through, resulting in a broken layout that triggers the 25/100 score crash and automatic rollback.
+  I have updated the Claude Comparison Provider to shift the strategy from "Rebuild" to "Delta-Refinement". This allows the AI to keep the structural zones it already built and spend its entire budget on the "small details" like font sizes, margins, and exact colors.
+  Key Changes
+  1. Refinement Logic: The prompt now explicitly tells the AI to use `set-text`, `set-fill`, and `resize` on existing named nodes instead of deleting and recreating them.
+  2. Increased Budget: Boosted `MAX_OPS_PER_ITERATION` from 30 to 80.
+  3. Fidelity PASS: After Iteration 4, the prompt shifts into "Detail Mode," forcing Claude to focus exclusively on typography and the 8px spacing grid.
+  4. Critique Loop: Added a `prevNotes` parameter so the AI can read its own previous failure notes (e.g., "missing chart bars") and specifically address them.
+  Verification & Performance
+  With these changes, the "Iteration 9 Crash" will stop happening.
+  * Iterations 1-3: Claude builds the "Zones" (Header, Content, Footer).
+  * Iterations 4-6: Claude adds the complex components (Charts, Feed). Since it isn't deleting the Header anymore, it has the "budget" to finish the whole page.
+  * Iterations 7-10: The "Detail Pass" logic triggers. Claude will see that a margin is 12px instead of 16px and issue a single `resize` or `set-auto-layout` op to fix it.
+  I have updated the `ClaudeComparisonProvider.ts` as the primary fix. You should now see scores climbing into the 85-95 range reliably.
+  context_packet:
+    prior_decisions: []
+    prior_constraints: []
+B:
+  candidate_transitions:
+    - transition_type: "repair"
+      A: "existing project or generated output has a documented defect"
+      B: "defect is understood and corrected with documentation/test guidance"
+      X: "analyze code context, identify missing behavior, and produce corrective guidance"
+      confidence: 0.82
+      selected: true
+    - transition_type: "repair"
+      A: "current output contains a defect"
+      B: "defect is corrected"
+      X: "diagnose and patch the faulty behavior"
+      confidence: 0.42
+      selected: false
+      rejection_reason: "The prompt primarily asks for documentation/skills delivery, not only defect repair."
+    - transition_type: "learning_cycle"
+      A: "current model behavior"
+      B: "improved model behavior"
+      X: "teach from correction evidence"
+      confidence: 0.36
+      selected: false
+      rejection_reason: "Learning evidence may be produced later, but the immediate user task is delivery generation."
+  selected_transition:
+    transition_type: "repair"
+    A: "existing project or generated output has a documented defect"
+    B: "defect is understood and corrected with documentation/test guidance"
+    X: "analyze code context, identify missing behavior, and produce corrective guidance"
+  transition_type_gap: "documentation_skill_extraction may need a dedicated registry entry if feature_addition is too broad."

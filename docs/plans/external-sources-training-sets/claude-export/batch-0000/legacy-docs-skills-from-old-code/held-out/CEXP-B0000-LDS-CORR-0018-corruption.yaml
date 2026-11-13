@@ -1,0 +1,157 @@
+source_id: "CEXP-B0000-LDS-CORR-0018-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    1. Now all elements inserted in the same place 
+  Your Mental Debugging process has pinpointed the mechanical failures precisely, and the fix7 package is a significant improvement over the initial suggestions. By moving the "Shutter Guard" into the executor, you've created a proactive safety net that doesn't rely solely on the AI's compliance.
+  Validation of the Fix7 Implementation
+  1. Proactive Shutter & Upsert Guards
+  The updated `op-executor.ts` now contains two critical architectural safeguards:
+  * The Shutter Guard: In `execCreateRect`, any new opaque rectangle larger than $900 \times 900$ pixels that is not named "zone-bg" is immediately moved to index 0 (the bottom of the stack). This prevents accidental "blackouts" where a new background-colored rect buries the entire design.
+  * The Upsert Guard: Both `execCreateFrame` and `execCreateRect` now check the `nodeMap` and the current page for existing nodes with the same name before creating a new one. If a match is found, it returns the existing node ID instead of creating a duplicate, which is the direct fix for the "doubling" issue.
+  2. Strengthening the AI "Handshake"
+  The `ClaudeComparisonProvider.ts` has been reinforced with several logic layers:
+  * The Iron Law: The system prompt now contains a rigid rule forbidding the creation of new full-canvas rectangles to fix the background, instructing Claude to use `set-fill` on the existing `zone-bg` instead.
+  * Existing Nodes List: The `buildUserMessage` now dynamically injects a bulleted list of node names currently on the canvas. This provides Claude with the "Spatial Identity" it was missing, telling it exactly which nodes it can already control.
+  * Image Scoring Rule: A new critical rule instructs Claude not to penalize the score for the grey/flat placeholders that represent image fills, focusing the evaluation on structure and typography.
+  Addressing Remaining Stagnation (The "Tar Pit")
+  In your debugging verdict, you noted that the PHASE 1 (SKELETON) phase was a "tar pit" because it stayed active up to a score of 40, keeping Claude focused on containers. While your plan mentioned lowering this threshold to 20, the provided `ClaudeComparisonProvider.ts` still has it set at 40:
+  TypeScript
+  
+  ```
+  // Current state in ClaudeComparisonProvider.ts:
+  const phase =
+      score < 40 ? 'PHASE 1 (SKELETON)' :
+      score < 70 ? 'PHASE 2 (CONTENT)' :
+                   'PHASE 3 (REFINEMENT)';
+  
+  ```
+  
+  Updating this to `score < 20` will allow Claude to transition to the CONTENT PASS much earlier, breaking the stagnation you saw in iterations 3 through 10.
+  Bug 3: The Default Query Trap
+  You were correct that the regex `/^(abstract\s+)?background$/i` was not the failure point, but rather the default value `'abstract background'` assigned in `DesignGeneratorPanel.tsx`. By removing this default, you've ensured that the generic query filter only triggers on actual generic requests, rather than empty fields.
+  With the Upsert Guard and Shutter Guard now in the executor, the system is physically protected from its own mistakes, and the Iron Law ensures Claude stays within the design's existing boundaries.
+B_wrong: |
+     The user is showing a screenshot where all elements are inserted in the same place (top-left corner, overlapping). Let me analyze what's happening and check the code.
+  
+  The image shows iter 2 with a canvas that has elements all piled in the top-left. This is a positioning/coordinate issue.
+  
+  Also Gemini mentions the SKELETON threshold is still at 40 not 20. Let me check the actual uploaded file state.Let me read the screenshot and check the actual code state before doing anything.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Found it. The upsert guard is too aggressive — it returns early without applying the new op's geometry. When iter 1 creates `card-stats` at `x:0, y:0` (wrong position) and iter 2 sends `create-frame {name:"card-stats", x:50, y:200}` to correct it, the guard intercepts and returns the old misplaced node unchanged. Everything stays at `0,0`.
+  
+  The fix: upsert should still apply `x`, `y`, `width`, `height` from the new op to the existing node before returning.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now address Gemini's valid point about the SKELETON threshold still being 40:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now build-verify before packaging:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Clean. Package:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Build verified clean. Three fixes in this delivery:
+  
+  **Bug — Upsert guard froze all nodes at iter-1 positions (root cause of stacking at 0,0)**
+  
+  The upsert guard in both `execCreateFrame` and `execCreateRect` was returning the existing node immediately without applying the new op's `x`, `y`, `width`, `height`. So when iter 1 created `zone-header` at `x:0, y:0` (wrong) and iter 2 sent `create-frame {name:"zone-header", x:0, y:0, width:1024, height:120}` to correct it, the guard said "already exists, here's the old ID" and walked away. Every node stayed exactly where iter 1 left it — all at `0,0`. The fix: both upsert paths now call `applyGeometryToExisting()` which updates `x`, `y`, `resize`, `fillColor`, and `cornerRadius` from the incoming op before returning.
+  
+  **Missing fix — SKELETON threshold still at 40 in the uploaded file**
+  
+  Gemini correctly spotted this. The threshold fix from fix3 (40→20, SKELETON instruction rewritten to "check CURRENT first") never made it into the plugin.zip you uploaded. Applied now.
+  
+  **Two fixes together mean:** the upsert guard now acts as a true `create-or-update` — no duplicates, but position corrections from later iterations actually land. And SKELETON graduates at score 20 instead of holding Claude in container-rebuild mode until 40.
+B_correct: |
+     Let me check resolveParent and the actual coordinate system behavior rather than accepting Gemini's diagnosis at face value.Gemini is theorizing. Let me check the actual resolveParent code and trace what happens with a real op.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Found the conflict. Line 276: *"Coordinates: relative to the parent frame's top-left (0,0)"* — correct. Line 222: *"CANVAS: 1024×1024 px. Coordinates map 1:1 to Figma pixels. All x/y/w/h values must stay within 0–1024"* — contradicts it. Claude reads the 0–1024 constraint and sends canvas-absolute coordinates even for children of zone frames. A text node inside `zone-header` (y=0) sent with `y=50` from the canvas top gets placed at `y=50` relative to the header — fine. But a stat card sent as `y=300` (canvas position) inside `zone-content` (which starts at y=120) lands at `y=300` below `zone-content`'s top — off-screen.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Two real issues confirmed:
+  
+  1. **Contradicting coordinate rules** — line 222 says `0–1024` globally, line 276 says relative to parent. Claude follows line 222 (it's more prominent and comes with an absolute range) and sends canvas-absolute y values for children of zone frames.
+  
+  2. **Stale rule on line 276** — *"Never create a frame whose name already exists in CURRENT without deleting it first — duplicate names cause silent resolution failures"* — this directly contradicts the upsert guard we just built. Claude reads this and emits `delete-node` + `create-frame` pairs for existing nodes, which wipes geometry we preserved.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Build clean. Four fixes total in this delivery — two in `op-executor.ts`, two in `ClaudeComparisonProvider.ts`.
+  
+  **Gemini's diagnosis was partially right** — coordinate confusion is real — but it described the wrong mechanism. The stacking at `0,0` was caused by the upsert guard silently discarding the new `x/y` (already fixed). The coordinate issue Gemini describes is a *separate* problem that produces elements appearing off-screen or misaligned, not stacked at 0,0.
+  
+  **Two prompt fixes caught by reading the actual file:**
+  
+  **Fix 3 — Contradicting coordinate rules.** Line 222 declared `"All x/y/w/h values must stay within 0–1024"` as a global rule. Line 276 said coordinates are relative to the parent. Claude follows the global rule — it's more prominent and comes with an enforced range. Replaced with an explicit two-tier model: zone frames use canvas-absolute coords; children use parent-relative coords, with a worked example.
+  
+  **Fix 4 — Stale `delete-node` instruction contradicts the upsert guard.** The prompt still said *"Never create a frame whose name already exists without deleting it first."* The upsert guard was built to *prevent* that pattern. Claude would read this rule, emit `delete-node` + `create-frame` pairs for existing nodes, and the upsert guard would never trigger because the node had just been deleted. Replaced with an explicit statement that `create-frame` and `create-rect` are now upsert operations.

@@ -1,0 +1,237 @@
+source_id: "CEXP-B0000-LDS-0064"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdd09-563c-7971-9664-d56c5d2e01f2"
+  human_message_index: 137
+  assistant_message_uuid: "019cdd09-563c-7575-893c-5f24fb1c33ff"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0064"
+  user_request: |
+      I would like to get much more info in copy of itteration section: what was sent to claude, what did it respond, what was done with each element - so I need a log info in memmemory for each itteration - so when I press copy and a window with data opens I can copy this log data with ease
+  
+  To provide a comprehensive iteration log in the copyable report, we need to extend the data captured during each cycle of the refinement loop. This involves updating the log entry interface, capturing the AI prompt and raw response, and including the execution results from the Figma sandbox.
+  1. Extend the Log Data Structure
+  Update the `IterationLogEntry` interface in `DesignGeneratorPanel.tsx` to store the detailed context for each run:
+  TypeScript
+  
+  ```
+  // src/ui/components/design-gen/DesignGeneratorPanel.tsx
+  
+  export interface IterationLogEntry {
+      iteration: number;
+      score: number;
+      notes: string;
+      opCount: number;
+      durationMs: number;
+      ops: FigmaOperation[];
+      // New detailed fields
+      promptSent?: string;      // The exact message sent to Claude
+      rawAiResponse?: string;   // The raw JSON string from Claude
+      warnings?: string[];      // Non-fatal warnings from the op-executor
+      scoredSnapshot: string | null;
+      canvasSnapshot: string | null;
+  }
+  
+  ```
+  
+  2. Capture Loop Metadata
+  Modify the `runIterationLoop` to record the prompt and the raw response. The sandbox already returns warnings in its execution summary.
+  TypeScript
+  
+  ```
+  // Inside runIterationLoop in DesignGeneratorPanel.tsx
+  
+  // Step 2: Claude vision comparison
+  const userText = buildUserMessage(iter, prevScore, lastNotes, lastTokens, existingNodes);
+  const compareResult = await runClaudeComparison(...);
+  
+  // Step 3: Execute ops
+  const executionResult = await postToPluginWithResponse({ 
+      type: 'execute-figma-ops', 
+      ops: enrichedOps 
+  });
+  
+  appendLog({
+      iteration: iter,
+      score: (compareResult as any).score,
+      notes: (compareResult as any).notes ?? '',
+      opCount: ops.length,
+      durationMs: Date.now() - t0,
+      ops,
+      promptSent: userText, // Store what was sent
+      rawAiResponse: (compareResult as any).rawJson, // Store raw response
+      warnings: executionResult.warnings, // Store sandbox results
+      scoredSnapshot: figmaFrameOrNull,
+      canvasSnapshot: updatedFrame ?? null,
+  });
+  
+  ```
+  
+  3. Enhance the Markdown Report
+  Update `copyIterationReport` to format these new sections into the copyable text.
+  TypeScript
+  
+  ```
+  /** Copy a detailed markdown report of all iterations. */
+  const copyIterationReport = () => {
+      const report = log.filter(e => e.iteration !== -1).map(e => `
+  ## Iteration ${e.iteration} (${e.score}/100)
+  **Duration:** ${e.durationMs}ms | **Ops:** ${e.opCount} | **Notes:** ${e.notes}
+  
+  ### 📝 Prompt Sent to Claude
+  \`\`\`text
+  ${e.promptSent || 'N/A'}
+  \`\`\`
+  
+  ### 🤖 Raw AI Response
+  \`\`\`json
+  ${e.rawAiResponse || 'N/A'}
+  \`\`\`
+  
+  ### 🛠️ Execution Log
+  ${e.ops.map((op, i) => {
+      const warning = e.warnings?.[i] ? ` ⚠️ ${e.warnings[i]}` : ' ✅';
+      return `- ${op.op} (${op.name || op.nodeId || 'unnamed'})${warning}`;
+  }).join('\n') || 'No operations performed.'}
+  
+  ---
+  `).join('\n');
+  
+      setReportModalText([
+          "# Detailed Design Generation Report",
+          report
+      ].join('\n'));
+  };
+  
+  ```
+  
+  Benefits of the Enhanced Log
+  * Prompt Transparency: You can verify if Claude is following the "Persistence Model" or coordinate rules by seeing the exact instructions sent in that specific iteration.
+  * Response Debugging: Accessing the `rawJson` allows you to see if Claude attempted "shutter" operations or if the score was penalized incorrectly.
+  * Element-Level Tracking: The execution log maps every operation to a success state or a warning, making it clear why certain elements were "misplaced" or "skipped" due to parent resolution failures.
+B:
+  DocumentId: "CEXP-B0000-LDS-0064-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      I would like to get much more info in copy of itteration section: what was sent to claude, what did it respond, what was done with each element - so I need a log info in memmemory for each itteration - so when I press copy and a window with data opens I can copy this log data with ease
+  
+  To provide a comprehensive iteration log in the copyable report, we need to extend the data captured during each cycle of the refinement loop. This involves updating the log entry interface, capturing the AI prompt and raw response, and including the execution results from the Figma sandbox.
+  1. Extend the Log Data Structure
+  Update the `IterationLogEntry` interface in `DesignGeneratorPanel.tsx` to store the detailed context for each run:
+  TypeScript
+  
+  ```
+  // src/ui/components/design-gen/DesignGeneratorPanel.tsx
+  
+  export interface IterationLogEntry {
+      iteration: number;
+      score: number;
+      notes: string;
+      opCount: number;
+      durationMs: number;
+      ops: FigmaOperation[];
+      // New detailed fields
+      promptSent?: string;      // The exact message sent to Claude
+      rawAiResponse?: string;   // The raw JSON string from Claude
+      warnings?: string[];      // Non-fatal warnings from the op-executor
+      scoredSnapshot: string | null;
+      canvasSnapshot: string | null;
+  }
+  
+  ```
+  
+  2. Capture Loop Metadata
+  Modify the `runIterationLoop` to record the prompt and the raw response. The sandbox already returns warnings in its execution summary.
+  TypeScript
+  
+  ```
+  // Inside runIterationLoop in DesignGeneratorPanel.tsx
+  
+  // Step 2: Claude vision comparison
+  const userText = buildUserMessage(iter, prevScore, lastNotes, lastTokens, existingNodes);
+  const compareResult = await runClaudeComparison(...);
+  
+  // Step 3: Execute ops
+  const executionResult = await postToPluginWithResponse({ 
+      type: 'execute-figma-ops', 
+      ops: enrichedOps 
+  });
+  
+  appendLog({
+      iteration: iter,
+      score: (compareResult as any).score,
+      notes: (compareResult as any).notes ?? '',
+      opCount: ops.length,
+      durationMs: Date.now() - t0,
+      ops,
+      promptSent: userText, // Store what was sent
+      rawAiResponse: (compareResult as any).rawJson, // Store raw response
+      warnings: executionResult.warnings, // Store sandbox results
+      scoredSnapshot: figmaFrameOrNull,
+      canvasSnapshot: updatedFrame ?? null,
+  });
+  
+  ```
+  
+  3. Enhance the Markdown Report
+  Update `copyIterationReport` to format these new sections into the copyable text.
+  TypeScript
+  
+  ```
+  /** Copy a detailed markdown report of all iterations. */
+  const copyIterationReport = () => {
+      const report = log.filter(e => e.iteration !== -1).map(e => `
+  ## Iteration ${e.iteration} (${e.score}/100)
+  **Duration:** ${e.durationMs}ms | **Ops:** ${e.opCount} | **Notes:** ${e.notes}
+  
+  ### 📝 Prompt Sent to Claude
+  \`\`\`text
+  ${e.promptSent || 'N/A'}
+  \`\`\`
+  
+  ### 🤖 Raw AI Response
+  \`\`\`json
+  ${e.rawAiResponse || 'N/A'}
+  \`\`\`
+  
+  ### 🛠️ Execution Log
+  ${e.ops.map((op, i) => {
+      const warning = e.warnings?.[i] ? ` ⚠️ ${e.warnings[i]}` : ' ✅';
+      return `- ${op.op} (${op.name || op.nodeId || 'unnamed'})${warning}`;
+  }).join('\n') || 'No operations performed.'}
+  
+  ---
+  `).join('\n');
+  
+      setReportModalText([
+          "# Detailed Design Generation Report",
+          report
+      ].join('\n'));
+  };
+  
+  ```
+  
+  Benefits of the Enhanced Log
+  * Prompt Transparency: You can verify if Claude is following the "Persistence Model" or coordinate rules by seeing the exact instructions sent in that specific iteration.
+  * Response Debugging: Accessing the `rawJson` allows you to see if Claude attempted "shutter" operations or if the score was penalized incorrectly.
+  * Element-Level Tracking: The execution log maps every operation to a success state or a warning, making it clear why certain elements were "misplaced" or "skipped" due to parent resolution failures.
+  CompiledPredicateIds:
+    - "API_CONTRACT"
+    - "ARCHITECTURE"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

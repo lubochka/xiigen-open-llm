@@ -1,0 +1,112 @@
+source_id: "CEXP-B0000-LDS-CORR-0008-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    Please make a plan for updating docs with latest changes on this session
+B_wrong: |
+     The user wants a plan for updating documentation with the latest changes from this session. Let me look at what exists and what was discussed/planned in this session to understand what needs to be documented.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have the full picture. Let me map every plan produced this session against every document that needs updating.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  The plan covers four documents, each with a different role, and specifies exactly what to write in each one.
+  
+  ---
+  
+  **The four documents and why each one matters:**
+  
+  **`NEXT_SESSION_PLAN.md`** — the most important one to create first. It is the session recovery file. Without it, the next session must re-read this entire conversation to understand what was decided and in what order to implement it. The plan includes the full content to write: P0 (data correctness, must go first because visual fixes are meaningless if the restored canvas is wrong), P1 (visual redesign, depends on P0), P2 (independent new features), and a table of which plan file covers which implementation item.
+  
+  **`CLAUDE.md`** — the file Claude reads at the start of every session. It needs: a session table showing all 16 planned items with their status and source plan file, two new gotchas (score timing and bestOps off-by-one), two new reference rows for the plans written this session, and a new Maintenance Rules section that prevents future sessions from making changes without updating the relevant docs.
+  
+  **`qa-skill/SKILL.md`** — the known bug registry. Two new bugs need registering: BUG-DG-09 (bestOps saves the future plan, confirmed from the iter 5→6 run data) and BUG-DG-10 (setCurrentScore(bestScore) after a wrong restore actively lies to the UI). Four new planned message types for the docs/tests storage pipeline. And a new Score Timing Model section that makes the `t1→t6` sequence a permanent reference — because this timing confusion has already caused two bugs and will cause more.
+  
+  **`code-examination-skill/AGENTS.md`** — the new diagnostic skill built this session should record that its techniques were validated against a real bug. The iter 5→6 run is a concrete proof that `loop-off-by-one` and `loop-state-delta` actually find what they claim to find.
+B_correct: |
+     The user wants a plan to fix poor design generation results. They've shared analysis about the "Full Redraw" constraint problem. Let me read the current ClaudeComparisonProvider to understand the exact current state before planning.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have everything. I can see the exact current system prompt, the full loop, and all the constraints. Let me write a precise, complete plan.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  The diagnosis reveals four causes, not one. The suggested approach catches two of them but misses the one that will silently break the fix.
+  
+  ---
+  
+  **The four causes in priority order:**
+  
+  **Cause 1 (biggest)** — The system prompt explicitly tells Claude to "always produce a COMPLETE set of create-* ops for the full layout — never assume any previous elements exist." This is the actual ceiling. By iter 7 with score 65, the structure is already correct — but Claude is spending ops 1–15 recreating frames that already exist, leaving only 15 ops for the details that are actually missing. The fix is to change the mental model: frames with consistent names persist, early iters build skeleton, late iters fix details.
+  
+  **Cause 2** — 30 ops is too few for a complex dashboard. A complete first-pass needs 25–45 ops minimum. At 30, Claude has to choose between structure and content every iteration, causing the oscillation (15→25→35 instead of a steady climb). The fix is 60 ops — not 80, because at 80 ops the token output approaches the current `MAX_TOKENS: 8192` limit and will regularly trigger JSON truncation/repair.
+  
+  **Cause 3** — No phase awareness. The user message says the same thing on iter 1 and iter 7. By iter 7 Claude should know it's in refinement mode, not skeleton mode. Passing `prevScore` (already in the codebase but unused) enables phase detection: SKELETON (<40), CONTENT (40–70), REFINEMENT (>70). Combined with `prevNotes` (what was identified as missing last time), this directly addresses the missing chart elements gap.
+  
+  **Cause 4 (the hidden prerequisite)** — No naming convention. This is what the suggested approach misses entirely, and it's what will silently break the delta-refinement approach. When Claude uses `set-fill { nodeId: "zone-header" }` but created the frame as `header-section` in iter 2, the op executor looks it up in `designGenNodeMap` by name, finds nothing, and silently drops the op. Every delta op becomes a no-op. The persistence model cannot work without consistent names — so Change 4 must be implemented *first*, before testing anything else.
+  
+  The implementation order: naming convention → ops budget → persistence model prompt → prevNotes plumbing.

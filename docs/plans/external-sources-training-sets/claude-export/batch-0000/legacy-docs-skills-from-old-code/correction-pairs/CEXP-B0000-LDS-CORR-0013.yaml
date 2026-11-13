@@ -1,0 +1,173 @@
+source_id: "CEXP-B0000-LDS-CORR-0013"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "CorrectionLearningUnit : ILogicalUnit<CorrectionTrainingInput, TrainingResult>"
+pair_kind: "dpo_preference_pair"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  prompt_message_uuid: "019cdc8c-a9f8-7209-8645-cd6571f2971f"
+  prompt_message_index: 77
+  rejected_assistant_uuid: "019cdc8c-a9f8-78fd-a877-d1ae79d58a5f"
+  rejected_assistant_index: 78
+  correction_message_uuid: "019cdc8f-4b88-7a93-a355-f345eaed3a32"
+  correction_message_index: 79
+  chosen_assistant_uuid: "019cdc8f-4b88-7c6a-ba58-368f9292ae34"
+A:
+  Prompt: |
+      Please prepare additional doc updates plan with recent changes that not covered here
+  Rejected: |
+       The user wants me to look at what's been done in recent sessions (this conversation) that isn't covered in the existing DOC_UPDATE_PLAN.md, and produce an addendum plan.
+  
+  Let me think about what happened in this conversation that's new:
+  
+  1. **IMPLEMENTATION_ORDER.md** — the consolidated "stop planning, start implementing" document
+  2. **DESIGN_GEN_QUALITY_FIX_PLAN.md** — persistence model, naming convention, ops budget, prevNotes
+  3. **DETAIL_FIDELITY_PLAN.md** — 5 new ops (set-font-size, set-font-weight, set-position, set-opacity, set-stroke), create-text new fields
+  
+  
+  4. **OPENAI_IMAGE_GEN_PLAN.md** — replacing loremflickr with OpenAI image generation, plus a bunch of actual implementations already shipped in src_fixed.zip including the persistence tracking fields, the new ops across the system, reorder and move-to-back operations, the persistence model in the system prompt, and the updated token/ops limits.
+  
+  5. Phase-aware user messages with skeleton/content/detail levels are in, prevNotes threading is done, DesignTokens extraction from responses is working, the token loop wiring got completed this session, .NET got added to the server stacks with the AIService scaffold, annotation fields are there, naming conventions are locked in the system prompt, and prevTokens parameter flows through compareAndPlan.
+  
+  What's still missing from the documentation is that a lot of these P0/P1 items are actually implemented now rather than just planned, the new ops schema for things like set-font-size needs to be documented, and the OpenAI image generation plan is incomplete.
+  
+  The token extraction loop with DesignTokens and lastTokens state management, the .NET backend work, the annotation field implementation, fixing that webpack performance hints warning, and the meta-observation about stopping the planning cycle all need to get added to the update plan since they weren't captured when the doc was first written.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Good — overlay is already gone. Now I have the full picture. Let me write the addendum.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  The addendum covers two distinct problems with the original plan:
+  
+  **Part 1 — Status corrections.** Ten items listed as PLANNED in the original are now IMPLEMENTED. If `NEXT_SESSION_PLAN.md` is written from the original plan, the next session will try to implement things that already exist and create conflicts. The biggest one: the entire P0 list (lastExecutedOps, bestIteration, scoredSnapshot) is done — P0 is empty.
+  
+  **Part 2 — Six new items the original plan never mentioned:**
+  - The full SYSTEM_PROMPT overhaul (persistence model, phase messages, naming convention, MAX_OPS/MAX_TOKENS) — the most impactful change made and completely absent from the docs
+  - DesignTokens extraction loop — implemented but broken in the upload, fixed in src_fixed; BUG-DG-11 registered
+  - Five new delta ops + create-text field additions + the Inter hardcode fix
+  - OpenAI image generation replacing loremflickr (including the Uint8Array round-trip gotcha)
+  - .NET backend in AI Enhance
+  - Webpack warnings — confirmed unfixed with a 1-line solution; needs a gotcha entry so it stops being investigated as a real error
+  
+  **Part 3** rewrites the `NEXT_SESSION_PLAN.md` priority queue so the next session starts from the correct state — a completed P0/P1 and a focused P2 list with the webpack fix at the very top (1 line, `webpack.config.js`).
+  CorrectionSignal: |
+      We made some more changes but still dealing with issues of ruining previos progress on new itteration
+  # Design Generation Report
+  | Iteration | Score | Ops | Time | Breakdown | Notes |
+  |-----------|-------|-----|------|-----------|-------|
+  | Iter 1 | 0/100 | 22 ops | 35322ms | rect×2, frame×9, text×11 | Built structural skeleton with header, stats cards, and main content sections - missing detailed content, charts, and activity feed items. |
+  | Iter 2 | 15/100 | 23 ops | 38946ms | rect×2, frame×7, text×13, img×1 | Created basic structural skeleton with header zone, stats row, and four main content cards with proper spacing and white backgrounds. |
+  | Iter 3 | 25/100 | 30 ops | 44758ms | rect×2, img×1, text×13, frame×12, layout×2 | Created main structural layout with stats row, main avatar area, and sectioned card layout matching reference proportions. |
+  | Iter 4 | 25/100 | 25 ops | 48957ms | rect×2, frame×10, text×12, img×1 | Built structural skeleton with header, stats row, and four main content sections matching the reference layout |
+  
+  Look what gemini says - we need a plan of how to fix this
+B:
+  Chosen: |
+       The key insight from the code dump is crystal clear: `controller.ts` clears the entire canvas on every iteration (`execute-figma-ops` handler removes all children and resets the nodeMap). This completely contradicts the persistence model in the prompt.
+  
+  The Gemini analysis is correct. Let me just confirm this is the actual issue and provide a targeted fix plan.Gemini is right. I can see it directly in the code you shared:
+  
+  ```typescript
+  // controller.ts line 220 — runs on EVERY iteration
+  for (let i = rootFrame.children.length - 1; i >= 0; i--) {
+      rootFrame.children[i].remove();  // wipes the canvas
+  }
+  designGenNodeMap = new Map();  // loses all node IDs
+  ```
+  
+  The prompt says "frames persist." The controller deletes everything. Claude stops sending `create-frame` ops for the skeleton (because it thinks it exists), the canvas gets wiped, nothing gets built, score stays at 0–25 forever.
+  
+  **The fix is two surgical changes:**
+  
+  ---
+  
+  ### Change 1 — `controller.ts`: Remove the wipe (the critical one)
+  
+  Replace the clear-and-reset block with a no-op comment:
+  
+  ```typescript
+  if (msg.type === 'execute-figma-ops') {
+      try {
+          const ops: any[] = Array.isArray(msg.ops) ? msg.ops : [];
+  
+          // PERSISTENCE MODEL: do NOT clear children or reset the node map.
+          // Claude's delta ops (set-fill, set-text, resize) target nodes by name
+          // from designGenNodeMap — wiping it here breaks every delta op.
+          // The canvas is modified in-place; previous nodes survive between iterations.
+  
+          await executeOps(ops, designGenNodeMap);
+          // ... rest unchanged
+  ```
+  
+  ---
+  
+  ### Change 2 — `ClaudeComparisonProvider.ts`: Fix the EARLY ITERATIONS instruction
+  
+  Currently says "Use create-frame and create-rect for containers." Change to:
+  
+  ```
+  EARLY ITERATIONS (score < 40):
+    Check CURRENT image first. Only use create-frame if the zone is visibly absent.
+    If a zone exists but is wrong, use resize or set-fill to correct it.
+    Never recreate a zone that already appears in CURRENT.
+  ```
+  
+  Without this, Claude still sends `create-frame` for zones that exist, which stacks duplicate frames on top of each other now that the canvas isn't cleared.
+  
+  ---
+  
+  ### One consequence to handle
+  
+  Without the wipe, `delete-node` ops become important — when Claude wants to replace something structurally wrong it must explicitly delete it first. Add a note to the RULES section:
+  
+  ```
+  - To replace a wrongly-built element: emit delete-node first, then create-* the replacement
+  - Never create a frame with the same name as one that already exists in CURRENT
+  ```
+  
+  ---
+  
+  That's the entire fix. Two files, ~10 lines total. The plateau at 15–25 will immediately break because the skeleton from iter 1 survives into iter 2, and Claude can spend all 60 ops on content instead of rebuilding structure.
+  
+  Want me to implement both changes directly?

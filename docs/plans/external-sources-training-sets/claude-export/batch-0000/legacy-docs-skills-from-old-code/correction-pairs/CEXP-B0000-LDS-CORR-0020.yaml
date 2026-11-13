@@ -1,0 +1,180 @@
+source_id: "CEXP-B0000-LDS-CORR-0020"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "CorrectionLearningUnit : ILogicalUnit<CorrectionTrainingInput, TrainingResult>"
+pair_kind: "dpo_preference_pair"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  prompt_message_uuid: "019cdcf3-6e6d-7528-8615-e1b4d986178d"
+  prompt_message_index: 123
+  rejected_assistant_uuid: "019cdcf3-6e6d-757f-abda-ac5002873db6"
+  rejected_assistant_index: 124
+  correction_message_uuid: "019cdcf6-3cd1-76f5-b306-c1afc0018ebe"
+  correction_message_index: 125
+  chosen_assistant_uuid: "019cdcf6-3cd1-72eb-b885-a7ff8583cdf2"
+A:
+  Prompt: |
+      Just removing these from prompt helped:
+  
+  ```typescript
+  COORDINATE SYSTEM — TWO TIERS:
+    • Zone frames (zone-bg, zone-header, zone-content, zone-footer): x/y are CANVAS-ABSOLUTE (0,0 = top-left of the 1024×1024 canvas).
+    • Everything else (children of zones): x/y are RELATIVE to their parent frame's top-left (0,0).
+    Example: a card inside zone-content (y=120) at visual position y=200 should be sent as y=80, NOT y=200.
+  
+  ```
+  Rejected: |
+       The user found that removing the TWO TIERS coordinate explanation fixed the stacking issue. This means the "fix" we added actually caused the problem — by telling Claude about two different coordinate systems, Claude got confused and started sending wrong coordinates. The original simpler "coordinates are relative to parent" was correct and sufficient.
+  
+  Let me update the prompt to remove that block and restore the simpler rule.Classic case of an "explanation" making things worse. The original single rule — *"Coordinates: relative to the parent frame's top-left (0,0)"* — was correct and Figma-consistent. Our TWO TIERS addition told Claude to use canvas-absolute coords for zone frames, which is only true when the zone frames are direct children of a zero-origin root. Claude took that as license to send `y=800` for a footer zone, which then placed it at `y=800` relative to `design-gen-root` — correct — but then also sent `y=800` for content *inside* that footer because the "canvas-absolute for zones" rule stuck in its context. Everything stacked at 0,0 because the relative rule for children was being overridden.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Good catch. The lesson here: **adding explanation to a prompt can be worse than saying nothing**, especially when the explanation introduces a distinction the model has to choose between. Figma's coordinate system is uniformly relative-to-parent — that's one simple rule. Our TWO TIERS block created a two-case decision tree that Claude then applied inconsistently across iterations.
+  
+  The replacement keeps it honest: *"Zone frames happen to equal canvas pixels because their parent's origin is (0,0) — not because of a special rule."* This way Claude doesn't need to classify each node before deciding which coordinate system to use.
+  
+  The diagnostics (console op digest + warnings) are still in this build — they'll be useful if any positioning issues remain.
+  CorrectionSignal: |
+      Now I see that we regenerate images each itteration. We are not suppose to do that if the prompt of the image wasn't changed, and if claude specifically didn't ask to regenerate it, and it is not supposes to 
+  
+  The unnecessary regeneration of images is occurring because the iteration loop receives a fresh set of operations from Claude every cycle. Even if Claude repeats the exact same `query` for an image, the `enrichOpsWithImages` function treats it as a new request because the operation object lacks the `imageBytes` or `imageUrl` from previous runs.
+  To fix this, we need to implement a Session Image Cache in the UI and update the System Prompt to allow Claude to maintain image consistency.
+  1. Diagnosis: The "Stateless" Loop
+  * The Problem: In `DesignGeneratorPanel.tsx`, `enrichOpsWithImages` is called every iteration. Since Claude returns a new JSON array of ops, the `op.imageBytes` check fails, and a new OpenAI API call is triggered even for identical queries.
+  * The Prompt Paradox: The system prompt currently tells Claude to "Re-emit set-image-fill every iteration". This is necessary so the engine knows the node is an image, but it's currently interpreted as a "Regenerate" command by the UI logic.
+  2. The Implementation Plan
+  Fix A: Implement a Query-Based Cache
+  We should move the image caching logic into `DesignGeneratorPanel.tsx` using a `useRef` to persist across the iteration loop without triggering re-renders.
+  Update `src/ui/components/design-gen/DesignGeneratorPanel.tsx`:
+  Modify `enrichOpsWithImages` to accept an `imageCache` parameter and check it before calling the OpenAI API.
+  TypeScript
+  
+  ```
+  // Proposed update for src/ui/components/design-gen/DesignGeneratorPanel.tsx
+  
+  // A persistent cache for this generation session: query -> {bytes, url}
+  const imageCache = new Map<string, { bytes?: number[], url?: string }>();
+  
+  async function enrichOpsWithImages(ops: any[], openaiKey: string): Promise<any[]> {
+      return Promise.all(ops.map(async op => {
+          if (op.op !== 'set-image-fill') return op;
+          if (op.imageUrl || op.imageBytes) return op;
+  
+          const query = String(op.query || '').trim();
+          if (!query) return op;
+  
+          // 1. Check local session cache first
+          const cached = imageCache.get(query);
+          if (cached) {
+              return { ...op, imageBytes: cached.bytes, imageUrl: cached.url };
+          }
+  
+          // ... existing OpenAI/Fallback logic ...
+          
+          // 2. Save result to cache after generation
+          const result = /* generated op */;
+          imageCache.set(query, { bytes: result.imageBytes, url: result.imageUrl });
+          return result;
+      }));
+  }
+  
+  ```
+  
+  Fix B: Refine the Claude Instruction
+  Update the instructions in `ClaudeComparisonProvider.ts` to explicitly state that repeating a query preserves the existing image.
+  Update `src/ui/components/design-gen/providers/ClaudeComparisonProvider.ts`:
+  Modify the `IMAGE SCORING RULE` and `set-image-fill` instructions.
+  TypeScript
+  
+  ```
+  // src/ui/components/design-gen/providers/ClaudeComparisonProvider.ts
+  
+  { "op": "set-image-fill", "nodeId": string, "query": string }
+    ...
+    "IMAGE PERSISTENCE: If the CURRENT image placeholder matches your intent, 
+     RE-EMIT the exact same query string. The system will reuse the existing 
+     image. ONLY change the query if you want to regenerate a new image."
+  
+  ```
+  
+  3. Benefits of this approach
+  1. Zero Redundancy: Identical queries across iterations 2 through 10 will hit the cache, resulting in $0$ extra OpenAI calls.
+  2. Visual Stability: The user avatar or hero image won't "flicker" to a new generated version every 40 seconds.
+  3. Cost Efficiency: DALL-E/GPT-Image calls are only made when Claude actually decides to change the visual prompt.
+  The `fix9-op-diagnostics` build already contains the necessary plumbing to track operation execution. Adding this caching layer to `DesignGeneratorPanel.tsx` will complete the optimization.
+B:
+  Chosen: |
+       Let me implement the image cache fix directly.Good diagnosis this time. Let me find the actual `enrichOpsWithImages` code before touching anything.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now update the prompt — Claude should know re-emitting the same query preserves the image:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Build clean. What changed:
+  
+  **`DesignGeneratorPanel.tsx`** — `imageSessionCache` is a `useRef<Map>` that lives for the whole generation session. `enrichOpsWithImages` now accepts it as an optional third argument. First time a query is seen → generate + store. Every subsequent iteration with the same query → return cached payload immediately, no API call. `resetSession` clears the map so a fresh generation starts clean. The loremflickr fallback is also cached, so placeholder images don't reshuffle between iterations.
+  
+  **`ClaudeComparisonProvider.ts`** — Two prompt lines now tell Claude explicitly: re-emitting the same query string costs nothing and reuses the image; only change the query string if you actually want something different visually.

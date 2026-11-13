@@ -1,0 +1,84 @@
+source_id: "CEXP-B0000-LDS-0026"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "LogicalTransitionOrchestrator : ILogicalOrchestrator<LogicalOrchestratorRequest>"
+pair_kind: "transition_orchestrator"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdc40-61e7-70fb-8fcc-a9c878ef7d39"
+  human_message_index: 53
+  assistant_message_uuid: "019cdc40-61e7-7c56-88fa-840362f779fd"
+  derived_document_path: null
+A:
+  user_request: |
+      I also need the AI to automatically update existing documentation and tests when managing code changes - how can I make it do that on each itteration?
+  
+  To make the AI automatically update documentation and tests during each iteration, you need to integrate these tasks directly into the loop where the AI proposes and executes code changes. This transforms the AI from a simple "code generator" into a "full-system maintainer."
+  In your current architecture, this would involve modifying both the UI loop logic in `DesignGeneratorPanel.tsx` and the Sandbox execution logic in `controller.ts`.
+  1. The Multi-Step Iteration Loop
+  Instead of the AI returning only Figma operations, you must update the system prompt to require a multi-part response that includes code for documentation (e.g., Markdown) and tests (e.g., Jest or Cypress).
+  Updated UI Loop Strategy
+  In `src/ui/components/design-gen/DesignGeneratorPanel.tsx`, modify the logic to handle these additional artifacts:
+  * Expanded AI Prompt: Update your `SYSTEM_PROMPT` in `ClaudeComparisonProvider.ts` to request a JSON structure that includes `documentationUpdate` and `testUpdate` strings alongside the `ops` array.
+  * State Tracking: Add state variables in `DesignGeneratorPanel.tsx` to hold the current version of the documentation and tests.
+  * Sequential Execution: After the sandbox executes the Figma operations, the UI should then trigger secondary "Update File" calls to save the documentation and test files to your project.
+  2. Integration into `AIService.ts`
+  The logic for parsing these updates should live in your service layer to keep the UI clean.
+  * Unified Schema: Modify the `AIResponse` interface in `src/ui/components/ai-enhance/AIService.ts` to include optional fields for `documentation` and `tests`.
+  * Enhanced Parsing: Update `parseResponse` to look for specific markdown markers or JSON keys that contain the updated docs and test suites.
+  3. Implementation Checklist for Each Iteration
+  To ensure these stay in sync, follow this "Verify-Before-Commit" pattern within your loop:
+  StepActionResponsibility1. GenerationAI proposes Figma ops, doc updates, and test changes.`ClaudeComparisonProvider`2. Apply UIExecute Figma operations to update the design.`controller.ts`3. Update DocsOverwrite or append to the `.md` documentation files.UI post-processing4. Update TestsGenerate or refine test cases based on the new UI structure.UI post-processing5. Validation(Optional) Run the new tests to ensure the iteration is stable.Local development environment
+  4. Code Example: Updating the Prompt
+  In `src/ui/components/design-gen/providers/ClaudeComparisonProvider.ts`, update your instructions:
+  TypeScript
+  
+  ```
+  const SYSTEM_PROMPT = `... 
+  Your response must be JSON:
+  {
+    "score": 0-100,
+    "ops": [...],
+    "documentation": "Update for README.md describing the new components",
+    "tests": "Jest code to verify these elements exist",
+    "notes": "..."
+  }`;
+  
+  ```
+  
+  
+  
+  Just need a plan - no implementation
+  context_packet:
+    prior_decisions: []
+    prior_constraints: []
+B:
+  candidate_transitions:
+    - transition_type: "feature_addition"
+      A: "existing or old codebase has insufficient documentation and reusable skill guidance"
+      B: "documentation, skill library, and test/plan guidance are produced from the codebase"
+      X: "inspect existing code and artifacts, split documentation/skill/test work, and deliver reusable outputs"
+      confidence: 0.88
+      selected: true
+    - transition_type: "repair"
+      A: "current output contains a defect"
+      B: "defect is corrected"
+      X: "diagnose and patch the faulty behavior"
+      confidence: 0.42
+      selected: false
+      rejection_reason: "The prompt primarily asks for documentation/skills delivery, not only defect repair."
+    - transition_type: "learning_cycle"
+      A: "current model behavior"
+      B: "improved model behavior"
+      X: "teach from correction evidence"
+      confidence: 0.36
+      selected: false
+      rejection_reason: "Learning evidence may be produced later, but the immediate user task is delivery generation."
+  selected_transition:
+    transition_type: "feature_addition"
+    A: "existing or old codebase has insufficient documentation and reusable skill guidance"
+    B: "documentation, skill library, and test/plan guidance are produced from the codebase"
+    X: "inspect existing code and artifacts, split documentation/skill/test work, and deliver reusable outputs"
+  transition_type_gap: "documentation_skill_extraction may need a dedicated registry entry if feature_addition is too broad."

@@ -1,0 +1,95 @@
+source_id: "CEXP-B0000-LDS-0065"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdd0d-f0ac-70fc-9761-82721a9ee764"
+  human_message_index: 139
+  assistant_message_uuid: "019cdd0d-f0ac-76c6-9bf2-866550c30d21"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0065"
+  user_request: |
+      Still have issues with placements and with coping image, only download works
+  
+  The persistent placement issues and the "copy image" failure are caused by two specific technical friction points in the current build. The "Placements" problem is a byproduct of how coordinates are being applied during the "Upsert" phase, while the "Copy" failure is a standard security restriction within the Figma plugin environment.
+  1. The "Placement" Root Cause: Upsert-Parent Handshake
+  While recent fixes addressed node reparenting, a "race condition" in the coordinate application still exists. In Figma, a node's $(x, y)$ coordinates change their meaning depending on whether the node is attached to a parent or floating on the page.
+  * The Conflict: In `execCreateFrame` and `execCreateRect`, the code currently updates `rect.x` and `rect.y` before it ensures the node is parented to the correct container.
+  * The Result: If Claude sends coordinates intended to be relative to `zone-content`, but the node is still technically parented to the root canvas when those coordinates are set, the element will appear misplaced or "jump" once it is finally appended to the zone.
+  The Required Fix: The `exec` functions in `op-executor.ts` must call `parent.appendChild(node)` immediately after creation or resolution, and only then apply the $x/y$ coordinates.
+  2. Why "Copy" Fails (Security Sandbox)
+  The "Copy" button in your lightbox is failing because the browser's `navigator.clipboard` API is often blocked inside the Figma `iframe` sandbox for security reasons.
+  * The Issue: Your current code tries to `fetch` a data URL and write a `Blob` to the clipboard. Figma plugins run in a restricted "null" origin, which prevents direct access to the system clipboard for binary data like images.
+  * The Workaround: To fix this, we must use a "Proxy" approach. The UI must send the base64 string to the Plugin Sandbox using `parent.postMessage`, and the Sandbox (which has higher privileges) can then potentially interact with Figma's internal clipboard or notify the user to use the "Download" button.
+  3. "Restore" Polluting the Log
+  The "leftovers" you noticed are likely a result of the `log` state not being truncated when a restore occurs.
+  * The Fix: When `handleRestore` is triggered, the `setLog` function should be called to remove all entries after the restoration point. This prevents the "Iteration Report" from showing a confusing mix of the failed path and the restored path.
+  Would you like me to update the `op-executor.ts` to enforce the "Parent-First" coordinate rule and provide a more robust copy-to-clipboard fallback for the UI? Concluding this final mechanical alignment will resolve the "Misplaced Elements" and improve the report's accuracy.
+  
+  The "placements" issue and the "copy image" failure are caused by two specific technical friction points in the current build. The "Placements" problem is a byproduct of how coordinates are being applied during the "Upsert" phase, while the "Copy" failure is a standard security restriction within the Figma plugin environment.
+  1. The "Placement" Root Cause: Upsert-Parent Handshake
+  While recent fixes addressed node reparenting, a "race condition" in the coordinate application still exists. In Figma, a node's $(x, y)$ coordinates change their meaning depending on whether the node is attached to a parent or floating on the page.
+  * The Conflict: In `execCreateFrame` and `execCreateRect`, the code currently updates `rect.x` and `rect.y` before it ensures the node is parented to the correct container.
+  * The Result: If Claude sends coordinates intended to be relative to `zone-content`, but the node is still technically parented to the root canvas when those coordinates are set, the element will appear misplaced or "jump" once it is finally appended to the zone.
+  The Required Fix: The `exec` functions in `op-executor.ts` must call `parent.appendChild(node)` immediately after creation or resolution, and only then apply the $x/y$ coordinates.
+  2. Why "Copy" Fails (Security Sandbox)
+  The "Copy" button in your lightbox is failing because the browser's `navigator.clipboard` API is often blocked inside the Figma `iframe` sandbox for security reasons.
+  * The Issue: Your current code tries to `fetch` a data URL and write a `Blob` to the clipboard. Figma plugins run in a restricted "null" origin, which prevents direct access to the system clipboard for binary data like images.
+  * The Workaround: To fix this, we must use a "Proxy" approach. The UI must send the base64 string to the Plugin Sandbox using `parent.postMessage`, and the Sandbox (which has higher privileges) can then potentially interact with Figma's internal clipboard or notify the user to use the "Download" button.
+  3. "Restore" Polluting the Log
+  The "leftovers" you noticed are likely a result of the `log` state not being truncated when a restore occurs.
+  * The Fix: When `handleRestore` is triggered, the `setLog` function should be called to remove all entries after the restoration point. This prevents the "Iteration Report" from showing a confusing mix of the failed path and the restored path.
+  Would you like me to update the `op-executor.ts` to enforce the "Parent-First" coordinate rule and provide a more robust copy-to-clipboard fallback for the UI?
+B:
+  DocumentId: "CEXP-B0000-LDS-0065-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      Still have issues with placements and with coping image, only download works
+  
+  The persistent placement issues and the "copy image" failure are caused by two specific technical friction points in the current build. The "Placements" problem is a byproduct of how coordinates are being applied during the "Upsert" phase, while the "Copy" failure is a standard security restriction within the Figma plugin environment.
+  1. The "Placement" Root Cause: Upsert-Parent Handshake
+  While recent fixes addressed node reparenting, a "race condition" in the coordinate application still exists. In Figma, a node's $(x, y)$ coordinates change their meaning depending on whether the node is attached to a parent or floating on the page.
+  * The Conflict: In `execCreateFrame` and `execCreateRect`, the code currently updates `rect.x` and `rect.y` before it ensures the node is parented to the correct container.
+  * The Result: If Claude sends coordinates intended to be relative to `zone-content`, but the node is still technically parented to the root canvas when those coordinates are set, the element will appear misplaced or "jump" once it is finally appended to the zone.
+  The Required Fix: The `exec` functions in `op-executor.ts` must call `parent.appendChild(node)` immediately after creation or resolution, and only then apply the $x/y$ coordinates.
+  2. Why "Copy" Fails (Security Sandbox)
+  The "Copy" button in your lightbox is failing because the browser's `navigator.clipboard` API is often blocked inside the Figma `iframe` sandbox for security reasons.
+  * The Issue: Your current code tries to `fetch` a data URL and write a `Blob` to the clipboard. Figma plugins run in a restricted "null" origin, which prevents direct access to the system clipboard for binary data like images.
+  * The Workaround: To fix this, we must use a "Proxy" approach. The UI must send the base64 string to the Plugin Sandbox using `parent.postMessage`, and the Sandbox (which has higher privileges) can then potentially interact with Figma's internal clipboard or notify the user to use the "Download" button.
+  3. "Restore" Polluting the Log
+  The "leftovers" you noticed are likely a result of the `log` state not being truncated when a restore occurs.
+  * The Fix: When `handleRestore` is triggered, the `setLog` function should be called to remove all entries after the restoration point. This prevents the "Iteration Report" from showing a confusing mix of the failed path and the restored path.
+  Would you like me to update the `op-executor.ts` to enforce the "Parent-First" coordinate rule and provide a more robust copy-to-clipboard fallback for the UI? Concluding this final mechanical alignment will resolve the "Misplaced Elements" and improve the report's accuracy.
+  
+  The "placements" issue and the "copy image" failure are caused by two specific technical friction points in the current build. The "Placements" problem is a byproduct of how coordinates are being applied during the "Upsert" phase, while the "Copy" failure is a standard security restriction within the Figma plugin environment.
+  1. The "Placement" Root Cause: Upsert-Parent Handshake
+  While recent fixes addressed node reparenting, a "race condition" in the coordinate application still exists. In Figma, a node's $(x, y)$ coordinates change their meaning depending on whether the node is attached to a parent or floating on the page.
+  * The Conflict: In `execCreateFrame` and `execCreateRect`, the code currently updates `rect.x` and `rect.y` before it ensures the node is parented to the correct container.
+  * The Result: If Claude sends coordinates intended to be relative to `zone-content`, but the node is still technically parented to the root canvas when those coordinates are set, the element will appear misplaced or "jump" once it is finally appended to the zone.
+  The Required Fix: The `exec` functions in `op-executor.ts` must call `parent.appendChild(node)` immediately after creation or resolution, and only then apply the $x/y$ coordinates.
+  2. Why "Copy" Fails (Security Sandbox)
+  The "Copy" button in your lightbox is failing because the browser's `navigator.clipboard` API is often blocked inside the Figma `iframe` sandbox for security reasons.
+  * The Issue: Your current code tries to `fetch` a data URL and write a `Blob` to the clipboard. Figma plugins run in a restricted "null" origin, which prevents direct access to the system clipboard for binary data like images.
+  * The Workaround: To fix this, we must use a "Proxy" approach. The UI must send the base64 string to the Plugin Sandbox using `parent.postMessage`, and the Sandbox (which has higher privileges) can then potentially interact with Figma's internal clipboard or notify the user to use the "Download" button.
+  3. "Restore" Polluting the Log
+  The "leftovers" you noticed are likely a result of the `log` state not being truncated when a restore occurs.
+  * The Fix: When `handleRestore` is triggered, the `setLog` function should be called to remove all entries after the restoration point. This prevents the "Iteration Report" from showing a confusing mix of the failed path and the restored path.
+  Would you like me to update the `op-executor.ts` to enforce the "Parent-First" coordinate rule and provide a more robust copy-to-clipboard fallback for the UI?
+  CompiledPredicateIds:
+    - "API_CONTRACT"
+    - "ARCHITECTURE"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

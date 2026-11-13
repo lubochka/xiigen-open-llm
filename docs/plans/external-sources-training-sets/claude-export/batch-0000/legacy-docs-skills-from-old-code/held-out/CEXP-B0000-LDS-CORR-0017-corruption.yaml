@@ -1,0 +1,140 @@
+source_id: "CEXP-B0000-LDS-CORR-0017-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    Check this up please
+  Your Mental Debugging is exactly right: the `move-to-back×8` in Iteration 5 is a "reactive recovery" signature. Claude realized it made a mistake and spent 8 operations trying to dig the UI out from under the shutter it just created.
+  By the time the `dg-ops-bytes` export fires, the design is a layering mess, and the score reflects that chaos. Proactive prevention at the executor level is the only way to stop the "shutter" from ever landing on top of the design.
+  The Two-Pronged Fix
+  1. The Executor Guard (`op-executor.ts`)
+  We are implementing a "Sentry" in the `execCreateRect` function. If a large rectangle is created and isn't explicitly the designated background, it is immediately shunted to the bottom of the stack (`index 0`). We also added the missing `nodeMap.set` to ensure this new rect is trackable.
+  TypeScript
+  
+  ```
+  // src/plugin/core/op-executor.ts
+  
+  async function execCreateRect(op: any, nodeMap: Map<string, string>): Promise<OpResult> {
+      const rect = figma.createRectangle();
+      rect.name = op.name || 'rect';
+      // ... sizing and styling ...
+  
+      const parent = await resolveParent(op.parentId, nodeMap);
+      parent.appendChild(rect);
+  
+      // THE SHUTTER GUARD: 
+      // If it's a "fullscreen" rect but NOT named zone-bg, force it to the back.
+      if (rect.width >= 900 && rect.height >= 900 && rect.name !== 'zone-bg') {
+          parent.insertChild(0, rect);
+      }
+  
+      nodeMap.set(rect.name, rect.id); // Fixed: map registration
+      return { nodeId: rect.id, warning: null };
+  }
+  
+  ```
+  
+  2. The "Iron Law" Instruction (`ClaudeComparisonProvider.ts`)
+  We are adding a specific "Iron Law" block to the `SYSTEM_PROMPT`. This removes the ambiguity that leads Claude to reach for `create-rect` when it really just wants to change a color.
+  IRON LAW OF BACKGROUNDS:
+  To change the canvas background color, you MUST use `set-fill` on the `nodeId: "zone-bg"`. NEVER create a new 1024x1024 rectangle to "fix" the background; the system will automatically move such rectangles to the back, rendering your change invisible.
+  Why this breaks the 52/100 Plateau
+  The reason the score was stuck at 52 is that Claude was afraid to touch the background or large containers for fear of covering up the progress it made in Iterations 1-4.
+  By making the background "unkillable" and the executor "shutter-proof," Claude can now safely emit `set-fill` ops for the background and `resize` ops for large cards without risking a total visual blackout. This stability is what will allow the score to finally climb into the 80s and 90s.
+  Would you like me to apply these specific code changes to `op-executor.ts` and `ClaudeComparisonProvider.ts` now?
+B_wrong: |
+     The user wants me to verify what Gemini is saying against what we already implemented in fix7. Let me check.Already done and build-verified. Let me show exactly how our fix7 compares to what Gemini is describing:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Fix7 is a strict superset of what Gemini describes. Summary of the diff:
+  
+  **What Gemini suggested — already in fix7:**
+  - Shutter guard: `w >= 900 && h >= 900 && name !== 'zone-bg'` → `insertChild(0, rect)` ✅
+  - Iron Law prompt block: `set-fill on zone-bg`, never create a new full-canvas rect ✅
+  - `nodeMap.set` registration after creation ✅
+  
+  **What Gemini's snippet skips that fix7 has:**
+  
+  1. **Upsert guard** — Gemini's version creates a new rect unconditionally even if `"card-bg"` already exists. Ours checks the map and page first, returns the existing node if found. Without this, you still get duplicate rects on every iteration, just at the bottom of the stack instead of the top.
+  
+  2. **`rect.name` set before append** — Gemini sets `rect.name = op.name || 'rect'` then appends. Ours resolves `rectName` first and uses it consistently for both the upsert check and the `rect.name` assignment. Gemini's fallback `'rect'` would cause all unnamed rects to collide in the map.
+  
+  3. **`trimEnd` ES2017 compat** — Gemini wouldn't have caught this since it doesn't build. Our delivery is build-verified clean.
+  
+  The zip from fix7 is ready to use as-is.
+B_correct: |
+     The user is showing a screenshot where all elements are inserted in the same place (top-left corner, overlapping). Let me analyze what's happening and check the code.
+  
+  The image shows iter 2 with a canvas that has elements all piled in the top-left. This is a positioning/coordinate issue.
+  
+  Also Gemini mentions the SKELETON threshold is still at 40 not 20. Let me check the actual uploaded file state.Let me read the screenshot and check the actual code state before doing anything.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Found it. The upsert guard is too aggressive — it returns early without applying the new op's geometry. When iter 1 creates `card-stats` at `x:0, y:0` (wrong position) and iter 2 sends `create-frame {name:"card-stats", x:50, y:200}` to correct it, the guard intercepts and returns the old misplaced node unchanged. Everything stays at `0,0`.
+  
+  The fix: upsert should still apply `x`, `y`, `width`, `height` from the new op to the existing node before returning.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now address Gemini's valid point about the SKELETON threshold still being 40:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now build-verify before packaging:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Clean. Package:
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Build verified clean. Three fixes in this delivery:
+  
+  **Bug — Upsert guard froze all nodes at iter-1 positions (root cause of stacking at 0,0)**
+  
+  The upsert guard in both `execCreateFrame` and `execCreateRect` was returning the existing node immediately without applying the new op's `x`, `y`, `width`, `height`. So when iter 1 created `zone-header` at `x:0, y:0` (wrong) and iter 2 sent `create-frame {name:"zone-header", x:0, y:0, width:1024, height:120}` to correct it, the guard said "already exists, here's the old ID" and walked away. Every node stayed exactly where iter 1 left it — all at `0,0`. The fix: both upsert paths now call `applyGeometryToExisting()` which updates `x`, `y`, `resize`, `fillColor`, and `cornerRadius` from the incoming op before returning.
+  
+  **Missing fix — SKELETON threshold still at 40 in the uploaded file**
+  
+  Gemini correctly spotted this. The threshold fix from fix3 (40→20, SKELETON instruction rewritten to "check CURRENT first") never made it into the plugin.zip you uploaded. Applied now.
+  
+  **Two fixes together mean:** the upsert guard now acts as a true `create-or-update` — no duplicates, but position corrections from later iterations actually land. And SKELETON graduates at score 20 instead of holding Claude in container-rebuild mode until 40.

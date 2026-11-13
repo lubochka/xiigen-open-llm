@@ -1,0 +1,478 @@
+source_id: "CEXP-B0000-LDS-CORR-0004"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "CorrectionLearningUnit : ILogicalUnit<CorrectionTrainingInput, TrainingResult>"
+pair_kind: "dpo_preference_pair"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  prompt_message_uuid: "019cd990-4db6-707b-8d33-50549e814553"
+  prompt_message_index: 27
+  rejected_assistant_uuid: "019cd990-4db6-77dd-a3b6-6748cc79f14c"
+  rejected_assistant_index: 28
+  correction_message_uuid: "019cd99a-5197-7da9-9abb-2a01ad2f8f10"
+  correction_message_index: 29
+  chosen_assistant_uuid: "019cd99a-5197-77ef-b1bd-326f9009f2b0"
+A:
+  Prompt: |
+      The system enables after a generation to only start over - what if I want to continue improving more iterrations from current state?
+  Rejected: |
+       Let me look at the panel state machine and what happens after "done" state to understand the current flow and what's missing.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have everything I need. The issue is clear:
+  
+  In the `done` state, only "Start Over" is available. To continue more iterations from current state, we need a "Continue" button that:
+  
+  1. Does NOT reset the session (keeps referenceBase64, currentFigmaBase64, scoreHistory, logs, bestScore)
+  2. Does NOT reinitialize the canvas (it already exists)
+  3. Picks up the iteration counter from where it stopped
+  4. Calls `runIterationLoop` again with the existing reference
+  
+  The key challenge: `runIterationLoop` starts `iter` at 1 always. We need to either:
+  
+  
+  - Pass a starting iteration number
+  - Or keep a persistent `iterationOffset` 
+  
+  Also `maxIterations` would need to be relative to the continuation, not absolute.
+  
+  The simplest approach is adding a `handleContinue` that sets `abortRef.current = false` and calls `runIterationLoop` directly, but since the loop always starts at iter=1, I could add an `iterationOffset` state that gets added to `iter` for display purposes so the logs show the correct iteration numbers.
+  
+  Actually, I think the cleaner solution is using an `iterationBase` ref to track total iterations completed so far, then display `iterationBase + iter` in the logs. For the loop condition, `maxIterations` represents additional iterations to run, so continuing with `maxIterations=3` would do exactly 3 more iterations.Full picture. The fix is surgical — three changes, no refactor needed.
+  
+  ---
+  
+  ## What's missing
+  
+  `runIterationLoop` hardcodes `let iter = 1` and always resets `bestScore = 0`. When `done` state renders, the only option is `resetSession()` which wipes everything. There is no path that says "keep the canvas, keep the reference, keep the log — just run more iterations from where I stopped."
+  
+  ---
+  
+  ## Fix — `DesignGeneratorPanel.tsx`, three changes
+  
+  ### Change 1 — Add `iterationBase` state
+  
+  This tracks the total iterations already completed so that "Continue" logs show `Iter 6, 7, 8…` instead of restarting from `Iter 1`.
+  
+  ```typescript
+  // Add alongside the other state declarations (near `const [iteration, setIteration]`)
+  const [iterationBase, setIterationBase] = React.useState(0);
+  ```
+  
+  Also reset it in `resetSession`:
+  ```typescript
+  // Inside resetSession(), alongside the other resets:
+  setIterationBase(0);
+  ```
+  
+  ---
+  
+  ### Change 2 — `runIterationLoop` accepts a start offset and best-score seed
+  
+  ```typescript
+  // CURRENT signature:
+  const runIterationLoop = async (refBase64: string) => {
+      let iter = 1;
+      let score = 0;
+      let prevScore: number | null = null;
+      let bestScore = 0;
+      let bestOps: any[] = [];
+  
+  // REPLACE WITH:
+  const runIterationLoop = async (
+      refBase64: string,
+      startIter: number = 1,        // for Continue: pass current iteration + 1
+      seedBestScore: number = 0,    // for Continue: pass currentScore so downgrade detection works
+  ) => {
+      let iter = startIter;
+      let score = 0;
+      let prevScore: number | null = null;
+      let bestScore = seedBestScore;
+      let bestOps: any[] = [];
+  ```
+  
+  The loop condition stays unchanged (`while (iter <= startIter + maxIterations - 1`... wait — actually `maxIterations` means "how many more" when continuing). Simplest approach: change the condition to `iter < startIter + maxIterations`:
+  
+  ```typescript
+  // CURRENT:
+  while (iter <= maxIterations && !abortRef.current) {
+  
+  // REPLACE WITH:
+  while (iter < startIter + maxIterations && !abortRef.current) {
+  ```
+  
+  This means `maxIterations` always means "run N iterations from wherever we start" — consistent whether first run or continuation.
+  
+  ---
+  
+  ### Change 3 — Add `handleContinue` and wire it into the `done` state UI
+  
+  ```typescript
+  // Add after handleApprove:
+  const handleContinue = async () => {
+      if (!referenceBase64) return;
+      abortRef.current = false;
+  
+      // Iteration log, reference image, and Figma canvas are all preserved.
+      // We only need to know where to start numbering and what the current best was.
+      const nextIter = iteration + 1;        // iteration = last completed iteration number
+      const seedScore = currentScore ?? 0;   // seed downgrade detection with the last score
+  
+      setIterationBase(iteration);           // so status bar shows "iter 6/5" correctly
+      await runIterationLoop(referenceBase64, nextIter, seedScore);
+  };
+  ```
+  
+  Then in the `done` state render block, add the Continue button next to Start Over:
+  
+  ```tsx
+  // CURRENT done block:
+  ) : panelState === 'done' ? (
+      <div className="dg-approval-row">
+          <div className="dg-done-chip">...</div>
+          <button className="dg-btn dg-btn-secondary" onClick={resetSession}>
+              Start Over
+          </button>
+          ...codeGenState status...
+      </div>
+  
+  // REPLACE WITH:
+  ) : panelState === 'done' ? (
+      <div className="dg-approval-row">
+          <div className="dg-done-chip">
+              <FontAwesomeIcon icon={faCheckCircle} className="dg-done-icon" />
+              {stopReason === 'threshold'
+                  ? `Target reached · ${currentScore ?? '–'}/100`
+                  : `Best score · ${currentScore ?? '–'}/100`
+              }
+          </div>
+          <button
+              className="dg-btn dg-btn-primary"
+              onClick={handleContinue}
+              disabled={!referenceBase64}
+              title={`Run ${maxIterations} more iterations from current canvas state`}
+          >
+              <FontAwesomeIcon icon={faRedo} /> Continue
+          </button>
+          <button className="dg-btn dg-btn-secondary" onClick={resetSession}>
+              Start Over
+          </button>
+          {codeGenState === 'generating' && (
+              <div className="dg-codegen-status">
+                  <FontAwesomeIcon icon={faSpinner} spin /> Generating code…
+              </div>
+          )}
+          {codeGenState === 'done' && (
+              <div className="dg-codegen-status dg-codegen-done">
+                  ✓ Code ready — switch to Code or Preview tab
+              </div>
+          )}
+          {codeGenState === 'error' && (
+              <div className="dg-codegen-status dg-codegen-warn">
+                  ⚠ Code generation failed — select the frame manually and reopen plugin
+              </div>
+          )}
+      </div>
+  ```
+  
+  > **Import `faRedo`** — add to FontAwesome imports:
+  > ```typescript
+  > import { ..., faRedo } from '@fortawesome/free-solid-svg-icons';
+  > ```
+  
+  ---
+  
+  ## Behaviour after the fix
+  
+  | Scenario | Before | After |
+  |----------|--------|-------|
+  | Score 65 after 5 iters, user wants more | Only "Start Over" — wipes everything | "Continue" runs 5 more iters from canvas at score 65 |
+  | Threshold hit early (e.g. score 80 at iter 2) | Only "Start Over" | "Continue" runs more iters to push toward 90/95 |
+  | User stops manually | Goes to `idle`, no continue | "Continue" available — stopped is now the same as done |
+  | Log after Continue | Would restart from Iter 1 | Continues from Iter 6, 7, 8… |
+  | Downgrade detection on Continue | Would seed at 0 — any score looks great | Seeded with last `currentScore` — real downgrade protection |
+  
+  ---
+  
+  ## One edge case to be aware of
+  
+  The `maxIterations` slider in the controls says e.g. "5 iterations". After Continue, it still means "5 more" — which is correct and consistent. No label change needed, but if you want to make it explicit, the status bar already shows `iter 6/5` style (iteration/maxIterations) — you may want to change that display to `iter 6 (+5 more)` during a continuation run using `iterationBase`.
+  CorrectionSignal: |
+      Something is not working right with the improving the design, probably because new added items are covering the old - instead of moving backward... So it's important additionaly to the forms and colors return their indexes
+  
+  # Design Generation Report
+  | Iteration | Score | Ops | Time | Breakdown | Notes |
+  |-----------|-------|-----|------|-----------|-------|
+  | Iter 1 | 0/100 | 30 ops | 32433ms | frame×1, text×19, rect×10 | Created complete portfolio layout with main sections, project grid, testimonial, stats, and right sidebar app showcase from scratch. |
+  | Iter 2 | 65/100 | 30 ops | 31472ms | frame×3, text×17, rect×10 | Added missing right sidebar content with app details, skill tags, contact section, and repositioned elements to match reference layout more closely. |
+  | Iter 3 | 65/100 | 30 ops | 33482ms | frame×3, text×18, rect×9 | Added complete layout with proper project cards, quote section, stats section, and right sidebar elements - still needs refinement of positioning and additional sidebar content. |
+  | Iter 4 | 65/100 | 30 ops | 33009ms | frame×1, text×19, rect×10 | Recreated the complete portfolio layout with proper positioning, added the circular chart element on the right side, and included all text elements and project cards with appropriate colors and styling. |
+  | Iter 5 | 75/100 | 30 ops | 33105ms | frame×3, text×18, rect×9 | Recreated complete layout with proper positioning, added missing sidebar content and testimonial section, improved spacing and typography to better match reference design. |
+  | Iter 6 | 75/100 | 30 ops | 32498ms | frame×1, text×19, rect×10 | Added missing right sidebar elements including the Really Cost App section, circular blue element, and bottom blue button, while maintaining the existing project grid and testimonial layout structure. |
+  | Iter 7 | 75/100 | 30 ops | 31704ms | frame×4, text×18, rect×8 | Added missing right-side elements including app preview, detailed project grid layout, quote section, and stats - layout now matches reference structure. |
+  | Iter 8 | 75/100 | 30 ops | 31481ms | frame×1, text×19, rect×10 | Recreated the portfolio layout with header, projects grid, testimonial section, and stats - main elements now match but some text positioning and right sidebar elements are still missing. |
+  | Iter 9 | 75/100 | 30 ops | 32212ms | frame×1, text×19, rect×10 | Added the complete right sidebar with Really Cost App section and circular blue element that was missing from the current canvas. |
+  | Iter 10 | 45/100 | 30 ops | 31791ms | frame×1, text×19, rect×10 | Added the missing right sidebar with Really Cost App section and blue circle, maintained project grid layout, included testimonial and stats sections. |
+  
+  I think we should make a skill set of how to properly translate the design to proper figma...
+B:
+  Chosen: |
+       The user is describing a fundamental problem with the iterative design generation approach: new elements are being added on top of old ones instead of replacing them, causing visual stacking/overlapping issues. They also want proper z-index handling.
+  
+  Let me look at the execute-figma-ops flow to understand the clearing mechanism, then think about what a proper "design translation skill" would look like for the Claude prompt.
+  
+  The key issues from the report:
+  1. Scores plateau at 65-75 and never improve
+  2. "new added items are covering the old" - the canvas clear isn't working, or Claude is adding elements instead of recreating
+  3. Need z-index/ordering control
+  
+  
+  4. I need to examine the code that handles clearing the canvas between iterations to see if that's where the problem lies.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have the complete picture. Let me analyze the two problems:
+  
+  1. **Layering/z-index problem**: The canvas IS being cleared (rootFrame.children are all removed), so the stacking isn't from old elements persisting. The real issue is that Claude creates frames and elements and `appendChild` always adds to the END (top of visual stack in Figma). When Claude creates a background rect after creating content elements, the background covers everything. The issue is **creation order = z-order** in Figma.
+  
+  2. **Score plateauing at 65-75**: Claude is rebuilding from scratch each time but making different layout decisions, so it never learns. The 65 → 65 → 65 → 65 → 75 pattern shows it's not improving, it's just getting different results.
+     
+  For the design translation skill, I need to establish clear guidelines: Claude should create background and structural elements first, then layer foreground content on top, since Figma's z-ordering follows append order. I also need to add a reorder operation so Claude can adjust layer positions after the fact rather than getting the order right on the first try. I should create a comprehensive SKILL.md document that teaches the design translation process—covering layer ordering fundamentals, the coordinate system, how to differentiate between backgrounds and content, color handling, op budgeting, and common pitfalls to avoid.Now I have the full picture. Two separate problems — let me diagnose precisely before writing instructions.
+  
+  **Problem 1 — Stacking (code bug):** The canvas IS cleared each iteration. The stacking happens *within a single iteration* because `appendChild` always adds to the top of the stack. If Claude emits a background rect after content text nodes, the background covers everything. **Creation order = z-order in Figma.** There's also no `reorder` op, so Claude has no way to fix it.
+  
+  **Problem 2 — Score plateau (prompt/skill bug):** Claude rebuilds from scratch every iteration but has no structural contract to follow — no named zones, no coordinate anchors, no op ordering rules. Each rebuild is a fresh guess.
+  
+  ---
+  
+  ## Changes needed — three files
+  
+  ---
+  
+  ### File 1 — `IDesignAiProvider.ts` — Add `reorder` op type
+  
+  ```typescript
+  // Add after OpSetImageFill:
+  export interface OpReorder {
+      op: 'reorder';
+      nodeId: string;   // node to move (by name or Figma ID)
+      index: number;    // 0 = bottom of stack, parent.children.length-1 = top
+  }
+  ```
+  
+  Update the union and VALID_OPS:
+  ```typescript
+  export type FigmaOperation =
+      | OpCreateFrame
+      | OpCreateText
+      | OpCreateRect
+      | OpSetFill
+      | OpSetText
+      | OpResize
+      | OpSetCornerRadius
+      | OpSetAutoLayout
+      | OpDeleteNode
+      | OpSetImageFill
+      | OpReorder;          // ← add
+  
+  export const VALID_OPS: FigmaOperation['op'][] = [
+      'create-frame',
+      'create-text',
+      'create-rect',
+      'set-fill',
+      'set-text',
+      'resize',
+      'set-corner-radius',
+      'set-auto-layout',
+      'delete-node',
+      'set-image-fill',
+      'reorder',            // ← add
+  ];
+  ```
+  
+  ---
+  
+  ### File 2 — `op-executor.ts` — Implement `reorder` handler
+  
+  Add this function after `execDeleteNode`:
+  
+  ```typescript
+  async function execReorder(
+      op: any,
+      nodeMap: Map<string, string>
+  ): Promise<OpResult> {
+      const node = await resolveNode(op.nodeId, nodeMap);
+      if (!node) {
+          return { nodeId: null, warning: `reorder: node not found — ${op.nodeId}` };
+      }
+      const parent = node.parent;
+      if (!parent || !('insertChild' in parent)) {
+          return { nodeId: node.id, warning: `reorder: parent does not support insertChild — ${op.nodeId}` };
+      }
+      const maxIndex = (parent as FrameNode).children.length - 1;
+      const targetIndex = Math.max(0, Math.min(typeof op.index === 'number' ? op.index : 0, maxIndex));
+      (parent as FrameNode).insertChild(targetIndex, node);
+      return { nodeId: node.id, warning: null };
+  }
+  ```
+  
+  Wire it into the switch in `executeOp`:
+  ```typescript
+  case 'reorder':            return await execReorder(op, nodeMap);
+  ```
+  
+  Wire it into `_validateOps` in `ClaudeComparisonProvider.ts`:
+  ```typescript
+  case 'reorder':
+      if (typeof raw.nodeId !== 'string' || typeof raw.index !== 'number') continue;
+      break;
+  ```
+  
+  ---
+  
+  ### File 3 — `ClaudeComparisonProvider.ts` — Prompt + skill rewrite
+  
+  Replace the current `SYSTEM_PROMPT` with the version below. The key additions are: the **LAYER ORDER** section (the primary fix), the `reorder` op in the schema, and the **LAYOUT CONTRACT** that gives Claude named zones with fixed coordinates so it stops guessing the layout each iteration.
+  
+  ```typescript
+  const SYSTEM_PROMPT = `You are a Figma design assistant performing iterative design refinement.
+  
+  You will receive two images:
+  1. REFERENCE — the target design (AI-generated mockup)
+  2. CURRENT — the current state of the Figma canvas
+  
+  Your task: recreate the REFERENCE design as closely as possible using Figma ops. The canvas is cleared before your ops run, so always produce a COMPLETE set of create-* ops for the full layout.
+  
+  RESPONSE FORMAT — return ONLY valid JSON, no markdown, no prose, no code fences:
+  {
+    "score": <integer 0-100, how similar CURRENT is to REFERENCE>,
+    "ops": [ <array of FigmaOperation objects, max ${MAX_OPS_PER_ITERATION}> ],
+    "notes": "<one-sentence summary of what changed and what still differs>"
+  }
+  
+  ═══════════════════════════════════════════════════
+  LAYER ORDER — CRITICAL (READ FIRST)
+  ═══════════════════════════════════════════════════
+  
+  In Figma, the LAST node appended to a parent sits on TOP (highest z-index).
+  The FIRST node appended sits at the BOTTOM (lowest z-index, drawn first).
+  
+  You MUST emit ops in this exact order — ALWAYS — within each parent frame:
+    1. Background fills first  (create-rect for solid backgrounds, large colored areas)
+    2. Structural sub-frames   (create-frame for sections, cards, sidebars)
+    3. Image fills             (set-image-fill on rects/frames that show photos)
+    4. Text nodes last         (create-text — always on top, never covered)
+  
+  If you get this wrong, backgrounds will cover text. Use reorder to fix z-order
+  problems from previous iterations.
+  
+  Use { "op": "reorder", "nodeId": "<name>", "index": 0 } to send a node to the
+  BOTTOM of its parent. Use a high index (e.g. 99) to send it to the TOP.
+  
+  ═══════════════════════════════════════════════════
+  LAYOUT CONTRACT — FIXED ZONES (use every iteration)
+  ═══════════════════════════════════════════════════
+  
+  The canvas is always 1024 × 1024. Divide it into NAMED ZONES and use these
+  exact names and coordinates consistently across ALL iterations. This prevents
+  layout drift between iterations.
+  
+    design-gen-root       0,0  → 1024×1024   fillColor: match the reference background
+    zone-left             0,0  → 680×1024    main content area
+    zone-right          680,0  → 344×1024    sidebar / secondary panel
+    zone-header           0,0  → 680×80     top navigation / logo bar
+    zone-content-main     0,80 → 680×700    primary content (projects, hero, etc.)
+    zone-footer           0,780 → 680×244   stats, CTA, bottom content
+  
+  Always create these six structural frames first (before any content).
+  If the reference has no sidebar, make zone-right the same color as zone-left.
+  
+  ═══════════════════════════════════════════════════
+  ALLOWED OPERATIONS
+  ═══════════════════════════════════════════════════
+  
+  { "op": "create-frame",   "name": string, "parentId"?: string, "x": number, "y": number, "width": number, "height": number, "fillColor"?: {"r":0-1,"g":0-1,"b":0-1}, "cornerRadius"?: number }
+  { "op": "create-text",    "parentId": string, "content": string, "x": number, "y": number, "fontSize": number, "color": {"r":0-1,"g":0-1,"b":0-1}, "fontWeight"?: "Regular"|"Bold"|"Medium"|"Light" }
+  { "op": "create-rect",    "parentId": string, "x": number, "y": number, "width": number, "height": number, "fillColor": {"r":0-1,"g":0-1,"b":0-1}, "cornerRadius"?: number }
+  { "op": "set-fill",       "nodeId": string, "color": {"r":0-1,"g":0-1,"b":0-1} }
+  { "op": "set-text",       "nodeId": string, "content": string }
+  { "op": "resize",         "nodeId": string, "width": number, "height": number }
+  { "op": "set-corner-radius", "nodeId": string, "radius": number }
+  { "op": "set-auto-layout", "nodeId": string, "direction": "HORIZONTAL"|"VERTICAL"|"NONE", "gap": number, "paddingTop"?: number, "paddingRight"?: number, "paddingBottom"?: number, "paddingLeft"?: number }
+  { "op": "delete-node",    "nodeId": string }
+  { "op": "set-image-fill", "nodeId": string, "query": string, "width"?: number, "height"?: number }
+  { "op": "reorder",        "nodeId": string, "index": number }
+  
+  ═══════════════════════════════════════════════════
+  RULES
+  ═══════════════════════════════════════════════════
+  
+  HARD RULE — NO IMAGE FILLS ON BACKGROUNDS:
+  NEVER use set-image-fill on any node whose width OR height exceeds 500px.
+  Large areas (backgrounds, sidebars, section panels) MUST use fillColor.
+  set-image-fill is ONLY allowed for thumbnails and photos smaller than 300×300px.
+  
+  - RGB values: floats 0.0–1.0 (never 0–255)
+  - Coordinates: relative to the parent frame's top-left (0,0)
+  - Use 'design-gen-root' as parentId for the six zone frames; use zone names as parentId for content inside them
+  - Op budget: ~6 ops for zone frames, ~4 ops for background rects, ~8 ops for key text, ~8 ops for cards/buttons/rects, ~4 ops for image fills, max 1 reorder op if needed
+  - EMIT BACKGROUNDS BEFORE CONTENT — always, no exceptions
+  - Do NOT exceed ${MAX_OPS_PER_ITERATION} ops total
+  - Return ONLY the JSON object
+  
+  IMAGE SCORING RULE:
+  Grey/flat-color rectangles that received set-image-fill are image placeholders — NOT design mistakes. Do NOT penalise the score for these. Re-emit set-image-fill for them every iteration.`;
+  ```
+  
+  ---
+  
+  ## Summary — what each change fixes
+  
+  | Change | File | Fixes |
+  |--------|------|-------|
+  | Add `reorder` op type | `IDesignAiProvider.ts` | Gives Claude a way to fix z-order problems it creates |
+  | Implement `execReorder` using `insertChild` | `op-executor.ts` | Actually moves nodes in the Figma layer stack |
+  | Add `reorder` to `_validateOps` | `ClaudeComparisonProvider.ts` | Allows the op through validation |
+  | **LAYER ORDER** section in prompt | `ClaudeComparisonProvider.ts` | Tells Claude to emit backgrounds before text — the root cause of stacking |
+  | **LAYOUT CONTRACT** with fixed zone names | `ClaudeComparisonProvider.ts` | Stops layout drift between iterations — zones are stable anchors so each iteration refines rather than reinvents |
+  | Op budget hint with zone allocation | `ClaudeComparisonProvider.ts` | Ensures the 6 zone frames are always created before Claude runs out of ops |

@@ -1,0 +1,247 @@
+source_id: "CEXP-B0000-LDS-CORR-0005-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    I would like to make code generator "ai enhance" much more  intelligent using our current skill set and documentation. 
+  So 1. I would like to keep previous code generated for scene in session storage with "Design Name" + "Scene name" + version key
+  1. Dependent on what user selected I would like to use our skill sets as additional info
+  2. User can give a feedback on the generated content -> it will be kept with the user selection and ai output (like or dislike + some comment) and the last 5 it will be provided with input -> if user selected to flag - keep history a checkbox that will be available on the ai enhance tab
+  3. Currently user can change the client and the server technologies on select, but this doesn't change the prompt, we need to regenerete the prompt if user changed one of the selections: client, server, database
+  I need a detailed plan with a test guideline for each task
+B_wrong: |
+     Let me analyze the uploaded files and current codebase to understand what we're working with before creating the plan.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have the full picture. Let me create a comprehensive detailed plan for all 4 features. Let me structure this carefully based on what I've read from all the files.Now I have everything needed. Let me write the full plan.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I have everything. Writing the full plan.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Here's the full breakdown before you start coding:
+  
+  ---
+  
+  **Task 1 — Versioned History** (6 phases, 7 tests)
+  The storage model uses `ai-history:{designName}:{sceneName}` as the key in `figma.clientStorage`. Two new message types in `controller.ts` (`store-ai-history` / `get-ai-history`) follow the exact same pattern as the existing api-key round-trip. `sceneName` needs to be passed down from `App.tsx` as a new prop — it's already there, just not wired. Max 10 versions per scene, oldest dropped automatically.
+  
+  **Task 2 — Skill Injection** (3 phases, 7 tests)
+  A new file `SkillRegistry.ts` holds distilled rules from `react-best-practices`, `react-native-skills`, and `web-design-guidelines` — only CRITICAL and HIGH impact rules to keep token budget controlled. `buildPrompt()` in `AIService.ts` gets a `skillContext` field. The panel computes which skills apply at generate time based on the active stacks. `fix-design` intentionally skips skill injection — it would pollute the HTML/CSS correction output.
+  
+  **Task 3 — Feedback** (4 phases, 9 tests)
+  Feedback extends `HistoryRecord` — no new storage key. A "Keep history" checkbox controls both history and feedback persistence, stored as a preference via `figma.clientStorage`. Last 5 rated entries are injected into the next prompt as a "Previous Generation Feedback" section — Claude uses them to avoid repeating disliked patterns. Feedback UI only appears after a successful generation and resets on each new generation.
+  
+  **Task 4 — Stack-Aware Prompt Rebuild** (3 phases, 8 tests)
+  The root cause is that `prompt` state is set once in `onTemplateChange()` and never updated. Fix: add `buildPromptText(clientStack, serverStack, databaseType)` to the `PromptTemplate` interface and a `useEffect` in the panel watching all three stack values. `fix-design` and `custom` templates are explicitly immune. A 3-second "↻ Updated for vue" badge gives the user visual confirmation the prompt changed.
+  
+  **Recommended order: 1 → 4 → 2 → 3** — storage foundation first, then the zero-dependency quick win (Task 4), then skills, then feedback on top of both.
+B_correct: |
+     Let me check the current state of the code to see if the fixes from the document were already applied or not.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Good. Now I have a clear picture:
+  
+  1. `controller.ts` — already uses `getNodeByIdAsync` everywhere ✅
+  2. `op-executor.ts` — already uses `getNodeByIdAsync` everywhere ✅
+  3. `DesignGeneratorPanel.tsx` — has the **off-by-one bug** still present
+  
+  The document says the fix is `lastExecutedOps` — track what built the current canvas separately from what Claude just proposed. The current code saves `bestOps = ops` (the new plan from Claude) when score is high, but this is the plan that will produce the NEXT canvas, not the one that produced the current scored canvas.
+  
+  
+  The issue is a timing mismatch: when Claude scores the current canvas and proposes new operations, that score reflects what the *previous* iteration built, not what the new proposal will create. So I need to save the ops that were actually executed last time, not the freshly proposed ones.
+  
+  For iteration 1, there's a bootstrap problem since nothing has executed yet—the initial canvas is blank. The fix is to track `lastExecutedOps`, update `bestOps` to reference what was actually executed rather than the new proposal, and save the current ops before executing them so they become the reference point for the next iteration's scoring.Clear picture. The two async fixes (`getNodeByIdAsync` everywhere) are **already done** in both files. The only unfixed bug is the off-by-one in `DesignGeneratorPanel.tsx`. The document's diagnosis is exactly right. Here's the precise fix plan:
+  
+  ---
+  
+  ## What's already fixed ✅
+  
+  - `controller.ts` — all `getNodeById` → `getNodeByIdAsync` ✅
+  - `op-executor.ts` — `resolveNode` / `resolveParent` async ✅
+  
+  ## What's still broken ❌
+  
+  **Single location: `DesignGeneratorPanel.tsx`, `runIterationLoop`**
+  
+  The bug is a timing mismatch between what Claude **scores** and what Claude **proposes**.
+  
+  ```
+  Iter 1: Canvas = blank   → Claude scores it → score=0,  proposes ops_A → execute ops_A → Canvas = Design_A
+  Iter 2: Canvas = Design_A → Claude scores it → score=80, proposes ops_B → execute ops_B → Canvas = Design_B
+  Iter 3: Canvas = Design_B → Claude scores it → score=45, proposes ops_C
+  ```
+  
+  At iter 3: `score=45`, `bestScore=80`, downgrade detected.  
+  Current code: `bestOps = ops` saved **when score=80**, meaning `bestOps = ops_B`.  
+  `ops_B` is what **created Design_B** (the bad one). Restoring it re-applies the regression.
+  
+  The fix: save `lastExecutedOps` — the ops that **produced** the currently-scored canvas, not the newly proposed ones.
+  
+  ---
+  
+  ## The Fix — `DesignGeneratorPanel.tsx`
+  
+  **Change 1 — Add `lastExecutedOps` variable** (line after `let bestOps: any[] = []`):
+  
+  ```typescript
+  let lastExecutedOps: any[] = [];   // ops that produced the canvas currently being scored
+  ```
+  
+  **Change 2 — Save `lastExecutedOps` as bestOps** (not `ops`):
+  
+  ```typescript
+  // CURRENT (wrong — saves the new plan, not what made the current good canvas):
+  if (score > bestScore && ops.length > 0) {
+      bestScore = score;
+      bestOps = ops;
+  }
+  
+  // REPLACE WITH:
+  if (score > bestScore) {
+      bestScore = score;
+      bestOps = [...lastExecutedOps];   // what PRODUCED this score, not what Claude just proposed
+  }
+  ```
+  
+  **Change 3 — Capture `lastExecutedOps` before executing** (just before `executeOpsAndGetFrame`):
+  
+  ```typescript
+  // CURRENT:
+  setPanelState('executing');
+  if (ops.length > 0) {
+      const updatedFrame = await executeOpsAndGetFrame(ops);
+  
+  // REPLACE WITH:
+  lastExecutedOps = ops;   // record what we're about to execute — scored next iteration
+  setPanelState('executing');
+  if (ops.length > 0) {
+      const updatedFrame = await executeOpsAndGetFrame(ops);
+  ```
+  
+  **Change 4 — Lower downgrade threshold** from `bestScore - 20` to `bestScore - 15` (less tolerant of regression, catches the 80→65 case your logs show):
+  
+  ```typescript
+  // CURRENT:
+  const isSignificantDowngrade = bestScore >= 60 && score < bestScore - 20;
+  
+  // REPLACE WITH:
+  const isSignificantDowngrade = bestScore >= 60 && score < bestScore - 15;
+  ```
+  
+  ---
+  
+  ## Verification — walk through the scenario after fix
+  
+  ```
+  Iter 1: lastExecutedOps=[]    → score=0,  bestOps stays []      → lastExecutedOps=ops_A → execute ops_A
+  Iter 2: lastExecutedOps=ops_A → score=80, bestOps=ops_A ✓       → lastExecutedOps=ops_B → execute ops_B
+  Iter 3: lastExecutedOps=ops_B → score=45, downgrade detected
+           → restore bestOps = ops_A                              ← CORRECT: re-applies Design_A
+  ```
+  
+  ---
+  
+  ## Test Guidelines
+  
+  | Test | How to verify | Pass |
+  |------|--------------|------|
+  | T1: Restore re-applies the right design | Run until regression — log shows "Restoring best iteration" | Figma canvas visually matches the best-scored iteration, not the regressed one |
+  | T2: bestOps on iter 1 is empty — no false restore | Force a score drop on iter 2 when bestScore < 60 | No restore triggered; loop continues normally |
+  | T3: bestScore threshold 15 catches 80→65 | Score hits 80 then drops to 64 | Downgrade triggered and restored |
+  | T4: bestScore threshold 15 ignores noise | Score goes 80→67 (within 13 pts) | Loop continues, no restore |
+  | T5: Restored frame matches UI display | After restore, `currentFigmaBase64` state matches Figma canvas | Side-by-side "Current Figma" image shows the restored design |

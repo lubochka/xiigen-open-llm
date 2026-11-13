@@ -1,0 +1,167 @@
+source_id: "CEXP-B0000-LDS-0058"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdcf6-3cd1-76f5-b306-c1afc0018ebe"
+  human_message_index: 125
+  assistant_message_uuid: "019cdcf6-3cd1-72eb-b885-a7ff8583cdf2"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0058"
+  user_request: |
+      Now I see that we regenerate images each itteration. We are not suppose to do that if the prompt of the image wasn't changed, and if claude specifically didn't ask to regenerate it, and it is not supposes to 
+  
+  The unnecessary regeneration of images is occurring because the iteration loop receives a fresh set of operations from Claude every cycle. Even if Claude repeats the exact same `query` for an image, the `enrichOpsWithImages` function treats it as a new request because the operation object lacks the `imageBytes` or `imageUrl` from previous runs.
+  To fix this, we need to implement a Session Image Cache in the UI and update the System Prompt to allow Claude to maintain image consistency.
+  1. Diagnosis: The "Stateless" Loop
+  * The Problem: In `DesignGeneratorPanel.tsx`, `enrichOpsWithImages` is called every iteration. Since Claude returns a new JSON array of ops, the `op.imageBytes` check fails, and a new OpenAI API call is triggered even for identical queries.
+  * The Prompt Paradox: The system prompt currently tells Claude to "Re-emit set-image-fill every iteration". This is necessary so the engine knows the node is an image, but it's currently interpreted as a "Regenerate" command by the UI logic.
+  2. The Implementation Plan
+  Fix A: Implement a Query-Based Cache
+  We should move the image caching logic into `DesignGeneratorPanel.tsx` using a `useRef` to persist across the iteration loop without triggering re-renders.
+  Update `src/ui/components/design-gen/DesignGeneratorPanel.tsx`:
+  Modify `enrichOpsWithImages` to accept an `imageCache` parameter and check it before calling the OpenAI API.
+  TypeScript
+  
+  ```
+  // Proposed update for src/ui/components/design-gen/DesignGeneratorPanel.tsx
+  
+  // A persistent cache for this generation session: query -> {bytes, url}
+  const imageCache = new Map<string, { bytes?: number[], url?: string }>();
+  
+  async function enrichOpsWithImages(ops: any[], openaiKey: string): Promise<any[]> {
+      return Promise.all(ops.map(async op => {
+          if (op.op !== 'set-image-fill') return op;
+          if (op.imageUrl || op.imageBytes) return op;
+  
+          const query = String(op.query || '').trim();
+          if (!query) return op;
+  
+          // 1. Check local session cache first
+          const cached = imageCache.get(query);
+          if (cached) {
+              return { ...op, imageBytes: cached.bytes, imageUrl: cached.url };
+          }
+  
+          // ... existing OpenAI/Fallback logic ...
+          
+          // 2. Save result to cache after generation
+          const result = /* generated op */;
+          imageCache.set(query, { bytes: result.imageBytes, url: result.imageUrl });
+          return result;
+      }));
+  }
+  
+  ```
+  
+  Fix B: Refine the Claude Instruction
+  Update the instructions in `ClaudeComparisonProvider.ts` to explicitly state that repeating a query preserves the existing image.
+  Update `src/ui/components/design-gen/providers/ClaudeComparisonProvider.ts`:
+  Modify the `IMAGE SCORING RULE` and `set-image-fill` instructions.
+  TypeScript
+  
+  ```
+  // src/ui/components/design-gen/providers/ClaudeComparisonProvider.ts
+  
+  { "op": "set-image-fill", "nodeId": string, "query": string }
+    ...
+    "IMAGE PERSISTENCE: If the CURRENT image placeholder matches your intent, 
+     RE-EMIT the exact same query string. The system will reuse the existing 
+     image. ONLY change the query if you want to regenerate a new image."
+  
+  ```
+  
+  3. Benefits of this approach
+  1. Zero Redundancy: Identical queries across iterations 2 through 10 will hit the cache, resulting in $0$ extra OpenAI calls.
+  2. Visual Stability: The user avatar or hero image won't "flicker" to a new generated version every 40 seconds.
+  3. Cost Efficiency: DALL-E/GPT-Image calls are only made when Claude actually decides to change the visual prompt.
+  The `fix9-op-diagnostics` build already contains the necessary plumbing to track operation execution. Adding this caching layer to `DesignGeneratorPanel.tsx` will complete the optimization.
+B:
+  DocumentId: "CEXP-B0000-LDS-0058-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      Now I see that we regenerate images each itteration. We are not suppose to do that if the prompt of the image wasn't changed, and if claude specifically didn't ask to regenerate it, and it is not supposes to 
+  
+  The unnecessary regeneration of images is occurring because the iteration loop receives a fresh set of operations from Claude every cycle. Even if Claude repeats the exact same `query` for an image, the `enrichOpsWithImages` function treats it as a new request because the operation object lacks the `imageBytes` or `imageUrl` from previous runs.
+  To fix this, we need to implement a Session Image Cache in the UI and update the System Prompt to allow Claude to maintain image consistency.
+  1. Diagnosis: The "Stateless" Loop
+  * The Problem: In `DesignGeneratorPanel.tsx`, `enrichOpsWithImages` is called every iteration. Since Claude returns a new JSON array of ops, the `op.imageBytes` check fails, and a new OpenAI API call is triggered even for identical queries.
+  * The Prompt Paradox: The system prompt currently tells Claude to "Re-emit set-image-fill every iteration". This is necessary so the engine knows the node is an image, but it's currently interpreted as a "Regenerate" command by the UI logic.
+  2. The Implementation Plan
+  Fix A: Implement a Query-Based Cache
+  We should move the image caching logic into `DesignGeneratorPanel.tsx` using a `useRef` to persist across the iteration loop without triggering re-renders.
+  Update `src/ui/components/design-gen/DesignGeneratorPanel.tsx`:
+  Modify `enrichOpsWithImages` to accept an `imageCache` parameter and check it before calling the OpenAI API.
+  TypeScript
+  
+  ```
+  // Proposed update for src/ui/components/design-gen/DesignGeneratorPanel.tsx
+  
+  // A persistent cache for this generation session: query -> {bytes, url}
+  const imageCache = new Map<string, { bytes?: number[], url?: string }>();
+  
+  async function enrichOpsWithImages(ops: any[], openaiKey: string): Promise<any[]> {
+      return Promise.all(ops.map(async op => {
+          if (op.op !== 'set-image-fill') return op;
+          if (op.imageUrl || op.imageBytes) return op;
+  
+          const query = String(op.query || '').trim();
+          if (!query) return op;
+  
+          // 1. Check local session cache first
+          const cached = imageCache.get(query);
+          if (cached) {
+              return { ...op, imageBytes: cached.bytes, imageUrl: cached.url };
+          }
+  
+          // ... existing OpenAI/Fallback logic ...
+          
+          // 2. Save result to cache after generation
+          const result = /* generated op */;
+          imageCache.set(query, { bytes: result.imageBytes, url: result.imageUrl });
+          return result;
+      }));
+  }
+  
+  ```
+  
+  Fix B: Refine the Claude Instruction
+  Update the instructions in `ClaudeComparisonProvider.ts` to explicitly state that repeating a query preserves the existing image.
+  Update `src/ui/components/design-gen/providers/ClaudeComparisonProvider.ts`:
+  Modify the `IMAGE SCORING RULE` and `set-image-fill` instructions.
+  TypeScript
+  
+  ```
+  // src/ui/components/design-gen/providers/ClaudeComparisonProvider.ts
+  
+  { "op": "set-image-fill", "nodeId": string, "query": string }
+    ...
+    "IMAGE PERSISTENCE: If the CURRENT image placeholder matches your intent, 
+     RE-EMIT the exact same query string. The system will reuse the existing 
+     image. ONLY change the query if you want to regenerate a new image."
+  
+  ```
+  
+  3. Benefits of this approach
+  1. Zero Redundancy: Identical queries across iterations 2 through 10 will hit the cache, resulting in $0$ extra OpenAI calls.
+  2. Visual Stability: The user avatar or hero image won't "flicker" to a new generated version every 40 seconds.
+  3. Cost Efficiency: DALL-E/GPT-Image calls are only made when Claude actually decides to change the visual prompt.
+  The `fix9-op-diagnostics` build already contains the necessary plumbing to track operation execution. Adding this caching layer to `DesignGeneratorPanel.tsx` will complete the optimization.
+  CompiledPredicateIds:
+    - "API_CONTRACT"
+    - "ARCHITECTURE"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

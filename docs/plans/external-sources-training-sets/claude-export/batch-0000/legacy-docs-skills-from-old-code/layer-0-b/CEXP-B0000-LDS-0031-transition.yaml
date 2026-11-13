@@ -1,0 +1,65 @@
+source_id: "CEXP-B0000-LDS-0031"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "LogicalTransitionOrchestrator : ILogicalOrchestrator<LogicalOrchestratorRequest>"
+pair_kind: "transition_orchestrator"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdc66-efc2-7964-b52a-014829d67961"
+  human_message_index: 63
+  assistant_message_uuid: "019cdc66-efc2-72da-b4cc-8f1a86ba72bf"
+  derived_document_path: null
+A:
+  user_request: |
+      We made tones of changes but still ruin proper design on itterations
+  ‫Gemini אמר
+  This is a common "plateau" in AI-driven design tools. The reason your designs "ruin" themselves after iteration 7 is that you have a "Rebuild Budget" problem.
+  The Diagnosis
+  1. Rebuild vs. Refine: Currently, your system prompt tells Claude: "The canvas is cleared before your ops run... produce a COMPLETE set of ops." By iteration 8, the design is complex. Claude tries to recreate the entire dashboard (30+ nodes) but hits the 30-op limit. It runs out of "ink," so it stops halfway through, leaving the design broken.
+  2. No Memory of Failure: Claude doesn't know why the previous score was 75. It just knows it has to try again. It often "hallucinates" a different layout, causing the score to drop.
+  3. Z-Order Fighting: Without a "Delta" mindset, Claude keeps placing background rectangles on top of existing text because it's trying to rebuild the stack from scratch.
+  The Solution: "Delta-Refinement"
+  I am updating the Claude Comparison Provider to shift the AI from a "Creator" to an "Editor." Instead of rebuilding, it will now look at the existing node names and only emit `resize`, `set-fill`, or `set-text` for things that are wrong, using its budget only for new details.
+  
+  To ensure this works, I've also updated the `DesignGeneratorPanel.tsx` to correctly pass the "Critique Notes" from the previous iteration into Claude, so it remembers what it needs to fix.
+  Design Generator Panel
+  11 במרץ, 12:16
+  
+  Why this fixes your "ruined" iterations:
+  1. Persistence: By removing the "clear the canvas" instruction, Claude stops deleting your hard work. It now treats `zone-header` and `zone-content` as permanent foundations.
+  2. Detail Budget: Because it doesn't have to re-emit 15 ops for the background and header every time, it has 80 ops of pure refinement budget. This is where it will finally add the "small details like font size and margins."
+  3. The "Detail Pass" Trigger: Notice the logic in `buildUserMessage`: at Iteration 4, it explicitly commands Claude to stop worrying about layout and start worrying about "4px margin errors." This forces the shift from "General Idea" to "Pixel Perfect."
+  Run it again—you should see the score climb steadily into the 80s and 90s without the Iteration 9 crash.
+  context_packet:
+    prior_decisions: []
+    prior_constraints: []
+B:
+  candidate_transitions:
+    - transition_type: "repair"
+      A: "existing project or generated output has a documented defect"
+      B: "defect is understood and corrected with documentation/test guidance"
+      X: "analyze code context, identify missing behavior, and produce corrective guidance"
+      confidence: 0.82
+      selected: true
+    - transition_type: "repair"
+      A: "current output contains a defect"
+      B: "defect is corrected"
+      X: "diagnose and patch the faulty behavior"
+      confidence: 0.42
+      selected: false
+      rejection_reason: "The prompt primarily asks for documentation/skills delivery, not only defect repair."
+    - transition_type: "learning_cycle"
+      A: "current model behavior"
+      B: "improved model behavior"
+      X: "teach from correction evidence"
+      confidence: 0.36
+      selected: false
+      rejection_reason: "Learning evidence may be produced later, but the immediate user task is delivery generation."
+  selected_transition:
+    transition_type: "repair"
+    A: "existing project or generated output has a documented defect"
+    B: "defect is understood and corrected with documentation/test guidance"
+    X: "analyze code context, identify missing behavior, and produce corrective guidance"
+  transition_type_gap: "documentation_skill_extraction may need a dedicated registry entry if feature_addition is too broad."

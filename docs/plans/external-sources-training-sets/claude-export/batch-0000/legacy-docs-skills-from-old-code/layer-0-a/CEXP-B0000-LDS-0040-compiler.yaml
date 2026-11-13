@@ -1,0 +1,120 @@
+source_id: "CEXP-B0000-LDS-0040"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdc96-3b87-722b-867b-9194baa66990"
+  human_message_index: 83
+  assistant_message_uuid: "019cdc96-3b87-7a82-87dc-fd51c87fd474"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0040"
+  user_request: |
+      I also don't see that the images are any reasonable images that generated. Claude supposes to provide proper prompt instructions to generate images. Does it happen? Do we use the prompts?
+  
+  Look what gemini says To answer your question: Yes, the prompts are being used, but the current implementation has three significant "chokepoints" that are likely causing the poor image quality you're seeing.
+  Here is exactly how the image generation is flowing through your code right now:
+  1. The "Generic Query" Problem
+  In `ClaudeComparisonProvider.ts`, the instructions given to Claude for the `set-image-fill` operation are very minimal. Claude is simply told to provide a `query`. Because it isn't explicitly instructed to write "highly descriptive DALL-E prompts," it often falls back to simple keywords like `"user avatar"` or `"hero image"`.
+  2. The Rigid Template Wrapper
+  In `DesignGeneratorPanel.tsx`, the system doesn't send Claude's query directly to OpenAI. It wraps it in a hardcoded template:
+  TypeScript
+  
+  ```
+  // src/ui/components/design-gen/DesignGeneratorPanel.tsx
+  const prompt = `High quality photo: ${query}. Clean, centered subject, no text overlay, suitable as a UI element image.`;
+  
+  ```
+  
+  If Claude's query is `"app icon"`, the final prompt becomes: "High quality photo: app icon. Clean, centered subject...". This forces every single image to try to be a "high quality photo," even if the design actually needs an illustration, an icon, or an abstract pattern. This mismatch is why the images often look "unreasonable" for the specific UI context.
+  3. The "Generic Filter" Fallback
+  There is a safety filter in your `enrichOpsWithImages` function that intentionally blocks OpenAI from running if it thinks the query is too generic:
+  TypeScript
+  
+  ```
+  // Rule 2: skip generic queries that produce useless results
+  const isGenericQuery = /^(abstract\s+)?background$/i.test(query.trim());
+  
+  ```
+  
+  If Claude sends a query like `"background"`, the system silently falls back to `loremflickr.com`, which serves random stock photos. These stock photos are almost never relevant to your specific design, which explains why some images feel completely disconnected from the prompt.
+  Recommended Fix
+  To get "reasonable" images, you should update the system prompt in `ClaudeComparisonProvider.ts` to demand high-fidelity descriptions.
+  Update the `set-image-fill` definition in your `SYSTEM_PROMPT`:
+  `set-image-fill { nodeId: string, query: string }`: Provide a highly descriptive, 20-30 word prompt for an AI image generator. Describe the subject, style (e.g., "3D render," "minimalist illustration," or "macro photography"), lighting, and color palette to match the REFERENCE.
+  And in `DesignGeneratorPanel.tsx`, consider removing the "High quality photo" prefix and let Claude control the full style:
+  TypeScript
+  
+  ```
+  // Change this:
+  const prompt = `High quality photo: ${query}...`;
+  
+  // To this:
+  const prompt = `${query}. No text overlay, suitable as a UI element.`;
+  
+  ```
+B:
+  DocumentId: "CEXP-B0000-LDS-0040-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      I also don't see that the images are any reasonable images that generated. Claude supposes to provide proper prompt instructions to generate images. Does it happen? Do we use the prompts?
+  
+  Look what gemini says To answer your question: Yes, the prompts are being used, but the current implementation has three significant "chokepoints" that are likely causing the poor image quality you're seeing.
+  Here is exactly how the image generation is flowing through your code right now:
+  1. The "Generic Query" Problem
+  In `ClaudeComparisonProvider.ts`, the instructions given to Claude for the `set-image-fill` operation are very minimal. Claude is simply told to provide a `query`. Because it isn't explicitly instructed to write "highly descriptive DALL-E prompts," it often falls back to simple keywords like `"user avatar"` or `"hero image"`.
+  2. The Rigid Template Wrapper
+  In `DesignGeneratorPanel.tsx`, the system doesn't send Claude's query directly to OpenAI. It wraps it in a hardcoded template:
+  TypeScript
+  
+  ```
+  // src/ui/components/design-gen/DesignGeneratorPanel.tsx
+  const prompt = `High quality photo: ${query}. Clean, centered subject, no text overlay, suitable as a UI element image.`;
+  
+  ```
+  
+  If Claude's query is `"app icon"`, the final prompt becomes: "High quality photo: app icon. Clean, centered subject...". This forces every single image to try to be a "high quality photo," even if the design actually needs an illustration, an icon, or an abstract pattern. This mismatch is why the images often look "unreasonable" for the specific UI context.
+  3. The "Generic Filter" Fallback
+  There is a safety filter in your `enrichOpsWithImages` function that intentionally blocks OpenAI from running if it thinks the query is too generic:
+  TypeScript
+  
+  ```
+  // Rule 2: skip generic queries that produce useless results
+  const isGenericQuery = /^(abstract\s+)?background$/i.test(query.trim());
+  
+  ```
+  
+  If Claude sends a query like `"background"`, the system silently falls back to `loremflickr.com`, which serves random stock photos. These stock photos are almost never relevant to your specific design, which explains why some images feel completely disconnected from the prompt.
+  Recommended Fix
+  To get "reasonable" images, you should update the system prompt in `ClaudeComparisonProvider.ts` to demand high-fidelity descriptions.
+  Update the `set-image-fill` definition in your `SYSTEM_PROMPT`:
+  `set-image-fill { nodeId: string, query: string }`: Provide a highly descriptive, 20-30 word prompt for an AI image generator. Describe the subject, style (e.g., "3D render," "minimalist illustration," or "macro photography"), lighting, and color palette to match the REFERENCE.
+  And in `DesignGeneratorPanel.tsx`, consider removing the "High quality photo" prefix and let Claude control the full style:
+  TypeScript
+  
+  ```
+  // Change this:
+  const prompt = `High quality photo: ${query}...`;
+  
+  // To this:
+  const prompt = `${query}. No text overlay, suitable as a UI element.`;
+  
+  ```
+  CompiledPredicateIds:
+    - "ARCHITECTURE"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "QA"
+    - "TEST"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

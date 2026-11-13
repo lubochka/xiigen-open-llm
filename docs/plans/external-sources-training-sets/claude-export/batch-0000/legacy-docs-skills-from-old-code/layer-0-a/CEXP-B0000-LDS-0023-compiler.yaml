@@ -1,0 +1,100 @@
+source_id: "CEXP-B0000-LDS-0023"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdc25-0bb4-78b3-a6b2-bf7fa3123287"
+  human_message_index: 46
+  assistant_message_uuid: "019cdc25-0bb4-7628-ac1e-8d9c4f68403a"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0023"
+  user_request: |
+      I need some skill how to examin the code productively in order to find the proper problems
+  
+  Productive code examination, especially for complex systems like Figma plugins with asynchronous bridges and AI loops, requires moving beyond just reading lines of code. It involves tracing data flow, auditing boundaries, and verifying environmental assumptions.
+  Here are specific skills and techniques to examine your code more productively to find problems:
+  1. Follow the Data Lifecycle (Cross-Boundary Tracing)
+  In your plugin, data constantly travels between the UI (Iframe) and the Sandbox (Figma main thread). A productive way to examine this is to create a "Message Map":
+  * Trace a single variable: Take `figmaBase64`. Ask: Who creates it? Who sends it? Who receives it? And what is the state of the document when it is created?.
+  * Identify the "Dead Zone": In your code, the "Dead Zone" is the time between a node being created in the sandbox and the UI requesting an export of it. Productive examination means looking for `postMessage` calls that don't have a corresponding `await` or confirmation signal on the other side.
+  2. Audit Environmental Assumptions
+  Productive debugging often involves questioning if the environment (Figma) behaves the way your code assumes.
+  * Dynamic Access Constraints: Since you use `documentAccess: 'dynamic-page'`, your code cannot assume a node is "there" just because you have its ID.
+  * Skill: Search your `plugin` folder for every instance of `figma.getNodeById`. Replace the "assumption" of its success with an "investigation" of its failure: "If this returns null, is it because the node is gone, or just not loaded yet?".
+  3. State-Delta Analysis in Loops
+  When debugging loops like your `runIterationLoop`, don't just look at the code; look at the State Delta (the change in state) for a single cycle.
+  * The "Off-by-One" Audit: Examine what is saved in `bestOps` at the moment a score is recorded.
+  * Productive Question: "In Iteration 2, am I saving the ops that resulted in this score, or the ops I plan to run next?". In your current code, you were saving the "plan" for the future as the "best" version of the past.
+  4. Logic Path Visualization
+  Use "Pencil and Paper" debugging for complex conditional logic, such as your regression handling.
+  * Trace the regression path: 1. Assume `bestScore` is 80.
+  2. Assume `currentScore` is 50.
+  3. Follow the code: Does `executeOpsAndGetFrame(bestOps)` actually receive the correct IDs?.
+  * Audit the "Clean Slate" assumption: Look at `execute-figma-ops` in `controller.ts`. It clears the `designGenNodeMap`. If your `bestOps` rely on that map to find parents or targets, the "Restore" will fail because the map was wiped.
+  5. Intentional Logging (Breadcrumbing)
+  Productive examination uses logs to verify the order of operations, not just the values.
+  * Instead of: `console.log(data)`
+  * Use: `console.log('[Iteration Loop] 1. Requesting Export', Date.now())` followed by `console.log('[Controller] 2. Received Export Request', Date.now())`.
+  * This reveals if the UI is "waiting" for a response that the Sandbox hasn't even started processing yet because of an un-awaited `loadAllPagesAsync`.
+  6. Boundary Audit of `Try/Catch` Blocks
+  Look at every `catch` block in your code.
+  * Skill: Determine if the catch is "Silent" (doing nothing) or "Informative" (passing the error back to the UI).
+  * In your `controller.ts`, many errors are caught but not sent back to the UI, which is why the UI might show "No data" instead of a specific "Node not found" error. Examine these blocks to ensure every failure path has a voice.
+  
+  Please prepare a plan with guidelines how to generate the skill where to put it and how to edit claude files and documentation and references
+B:
+  DocumentId: "CEXP-B0000-LDS-0023-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      I need some skill how to examin the code productively in order to find the proper problems
+  
+  Productive code examination, especially for complex systems like Figma plugins with asynchronous bridges and AI loops, requires moving beyond just reading lines of code. It involves tracing data flow, auditing boundaries, and verifying environmental assumptions.
+  Here are specific skills and techniques to examine your code more productively to find problems:
+  1. Follow the Data Lifecycle (Cross-Boundary Tracing)
+  In your plugin, data constantly travels between the UI (Iframe) and the Sandbox (Figma main thread). A productive way to examine this is to create a "Message Map":
+  * Trace a single variable: Take `figmaBase64`. Ask: Who creates it? Who sends it? Who receives it? And what is the state of the document when it is created?.
+  * Identify the "Dead Zone": In your code, the "Dead Zone" is the time between a node being created in the sandbox and the UI requesting an export of it. Productive examination means looking for `postMessage` calls that don't have a corresponding `await` or confirmation signal on the other side.
+  2. Audit Environmental Assumptions
+  Productive debugging often involves questioning if the environment (Figma) behaves the way your code assumes.
+  * Dynamic Access Constraints: Since you use `documentAccess: 'dynamic-page'`, your code cannot assume a node is "there" just because you have its ID.
+  * Skill: Search your `plugin` folder for every instance of `figma.getNodeById`. Replace the "assumption" of its success with an "investigation" of its failure: "If this returns null, is it because the node is gone, or just not loaded yet?".
+  3. State-Delta Analysis in Loops
+  When debugging loops like your `runIterationLoop`, don't just look at the code; look at the State Delta (the change in state) for a single cycle.
+  * The "Off-by-One" Audit: Examine what is saved in `bestOps` at the moment a score is recorded.
+  * Productive Question: "In Iteration 2, am I saving the ops that resulted in this score, or the ops I plan to run next?". In your current code, you were saving the "plan" for the future as the "best" version of the past.
+  4. Logic Path Visualization
+  Use "Pencil and Paper" debugging for complex conditional logic, such as your regression handling.
+  * Trace the regression path: 1. Assume `bestScore` is 80.
+  2. Assume `currentScore` is 50.
+  3. Follow the code: Does `executeOpsAndGetFrame(bestOps)` actually receive the correct IDs?.
+  * Audit the "Clean Slate" assumption: Look at `execute-figma-ops` in `controller.ts`. It clears the `designGenNodeMap`. If your `bestOps` rely on that map to find parents or targets, the "Restore" will fail because the map was wiped.
+  5. Intentional Logging (Breadcrumbing)
+  Productive examination uses logs to verify the order of operations, not just the values.
+  * Instead of: `console.log(data)`
+  * Use: `console.log('[Iteration Loop] 1. Requesting Export', Date.now())` followed by `console.log('[Controller] 2. Received Export Request', Date.now())`.
+  * This reveals if the UI is "waiting" for a response that the Sandbox hasn't even started processing yet because of an un-awaited `loadAllPagesAsync`.
+  6. Boundary Audit of `Try/Catch` Blocks
+  Look at every `catch` block in your code.
+  * Skill: Determine if the catch is "Silent" (doing nothing) or "Informative" (passing the error back to the UI).
+  * In your `controller.ts`, many errors are caught but not sent back to the UI, which is why the UI might show "No data" instead of a specific "Node not found" error. Examine these blocks to ensure every failure path has a voice.
+  
+  Please prepare a plan with guidelines how to generate the skill where to put it and how to edit claude files and documentation and references
+  CompiledPredicateIds:
+    - "API_CONTRACT"
+    - "ARCHITECTURE"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "LEARNING"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

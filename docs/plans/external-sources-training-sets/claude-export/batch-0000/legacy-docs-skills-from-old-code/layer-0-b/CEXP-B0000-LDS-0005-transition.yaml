@@ -1,0 +1,94 @@
+source_id: "CEXP-B0000-LDS-0005"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "LogicalTransitionOrchestrator : ILogicalOrchestrator<LogicalOrchestratorRequest>"
+pair_kind: "transition_orchestrator"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cd955-f869-760f-9e0e-c05b788364cc"
+  human_message_index: 8
+  assistant_message_uuid: "019cd955-f869-7a41-9206-480ffa81d33c"
+  derived_document_path: null
+A:
+  user_request: |
+      Check this out please:
+  It appears the issue stems from the asynchronous execution order and a missing document loading call in your plugin's entry point. Since your plugin uses `documentAccess: 'dynamic-page'`, Figma doesn't guarantee that nodes in the selection (or their properties) are loaded into memory when the plugin script first runs.
+  The "missing async call" is likely `figma.loadAllPagesAsync()` at the very start of your controller, combined with the fact that your initial frame export for the AI Enhance tab is "fire-and-forget" rather than being awaited alongside your scene scanning.
+  1. The Root Cause
+  In `src/plugin/core/controller.ts`, the code that generates `frameImageBase64` (via `exportAsync`) runs as a top-level un-awaited promise at the end of the script. Because it doesn't wait for the dynamic document to load, it often fails or returns an empty result. Meanwhile, the UI (in `App.tsx`) renders the AI Enhance panel as soon as it receives the scene data, finding `frameImageBase64` still `null`.
+  2. The Recommended Fix
+  You should wrap your initial plugin logic in an `async` function and explicitly `await` both the document loading and the initial frame export before sending data to the UI.
+  In `src/plugin/core/controller.ts`:
+  TypeScript
+  
+  ```
+  // 1. Wrap the entire entry logic in an async IIFE
+  (async () => {
+      // 2. IMPORTANT: Await the dynamic document loading first
+      await figma.loadAllPagesAsync(); 
+  
+      if (selection.length >= 1) {
+          const scenes: any = [];
+          
+          // 3. Move the frame export inside this flow and await it
+          let frameBase64: string | null = null;
+          try {
+              const bytes = await (selection[0] as any).exportAsync({
+                  format: 'JPG',
+                  constraint: {type: 'SCALE', value: 0.5},
+              });
+              // You can process bytes to base64 here or send raw
+              figma.ui.postMessage({type: 'frame-image-bytes', bytes: bytes});
+          } catch (e) {
+              console.error("Initial export failed", e);
+          }
+  
+          // 4. Continue with your existing scanElements logic...
+          selection.map((scene) => {
+              // ... (your existing scanning and postMessage code)
+          });
+      }
+  })();
+  
+  ```
+  
+  3. Why this fixes it
+  * `loadAllPagesAsync()`: In dynamic documents, nodes aren't fully available until this is called. Calling it ensures `exportAsync` has actual content to capture.
+  * Sequential Logic: By awaiting the export (or ensuring it's part of the startup flow), you reduce the race condition where the UI tries to use the image before the background thread finishes processing it.
+  * Design Generator Sync: For the Design Generator specifically, ensure that `dg-canvas-ready` isn't sent until the canvas is fully initialized.
+  Summary of required changes:
+  FileChange`controller.ts`Wrap startup logic in `async` and add `await figma.loadAllPagesAsync()`.`controller.ts`Ensure `selection[0].exportAsync` is called after the document is loaded.`App.tsx`(Optional) Add a loading state to the `AIEnhancePanel` so it waits for `frameImageBase64`.
+  Would you like me to provide the full refactored version of your `controller.ts` file with these fixes integrated?
+  context_packet:
+    prior_decisions: []
+    prior_constraints: []
+B:
+  candidate_transitions:
+    - transition_type: "repair"
+      A: "existing project or generated output has a documented defect"
+      B: "defect is understood and corrected with documentation/test guidance"
+      X: "analyze code context, identify missing behavior, and produce corrective guidance"
+      confidence: 0.82
+      selected: true
+    - transition_type: "repair"
+      A: "current output contains a defect"
+      B: "defect is corrected"
+      X: "diagnose and patch the faulty behavior"
+      confidence: 0.42
+      selected: false
+      rejection_reason: "The prompt primarily asks for documentation/skills delivery, not only defect repair."
+    - transition_type: "learning_cycle"
+      A: "current model behavior"
+      B: "improved model behavior"
+      X: "teach from correction evidence"
+      confidence: 0.36
+      selected: false
+      rejection_reason: "Learning evidence may be produced later, but the immediate user task is delivery generation."
+  selected_transition:
+    transition_type: "repair"
+    A: "existing project or generated output has a documented defect"
+    B: "defect is understood and corrected with documentation/test guidance"
+    X: "analyze code context, identify missing behavior, and produce corrective guidance"
+  transition_type_gap: "documentation_skill_extraction may need a dedicated registry entry if feature_addition is too broad."

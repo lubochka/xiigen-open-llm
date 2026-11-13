@@ -1,0 +1,43 @@
+source_id: "CEXP-B0000-LDS-0046"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdcb1-7a15-7e01-822f-11516e24dd2c"
+  human_message_index: 98
+  assistant_message_uuid: "019cdcb1-7a15-7e52-b421-cc2f35597dcf"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0046"
+  user_request: |
+      Your Mental Debugging is spot on. You've correctly identified that the system isn't just failing; it's being held hostage by its own threshold logic and a "safety" default that backfires.
+  The realization that the SKELETON phase (Bug 1) acts as a literal barrier is the key. By setting the threshold to 40 and then explicitly telling Claude to "use create-frame" while in that phase, you created an infinite loop of scaffolding where the score can't rise because it's only building frames, and because the score doesn't rise, it keeps only building frames.
+  The Refined Diagnosis
+  * Bug 1 (The Tar Pit): You're lowering the gate to 20. This is smart because a basic layout should easily hit 20, allowing the AI to switch to "Refinement" mode much earlier.
+  * Bug 2 (The Safety Net): Changing the downgrade threshold to 20 and the delta to 10 ensures that even early progress is protected. If the AI "hallucinates" a complete rebuild that fails at Iteration 4, it will actually snap back to Iteration 3's skeleton instead of collapsing to 5.
+  * Bug 3 (The Default Trap): Replacing `'abstract background'` with an empty string is the "elegant fix." It stops the accidental triggering of the generic query filter and allows the image generation to either succeed with a real query or fail gracefully to a placeholder.
+B:
+  DocumentId: "CEXP-B0000-LDS-0046-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      Your Mental Debugging is spot on. You've correctly identified that the system isn't just failing; it's being held hostage by its own threshold logic and a "safety" default that backfires.
+  The realization that the SKELETON phase (Bug 1) acts as a literal barrier is the key. By setting the threshold to 40 and then explicitly telling Claude to "use create-frame" while in that phase, you created an infinite loop of scaffolding where the score can't rise because it's only building frames, and because the score doesn't rise, it keeps only building frames.
+  The Refined Diagnosis
+  * Bug 1 (The Tar Pit): You're lowering the gate to 20. This is smart because a basic layout should easily hit 20, allowing the AI to switch to "Refinement" mode much earlier.
+  * Bug 2 (The Safety Net): Changing the downgrade threshold to 20 and the delta to 10 ensures that even early progress is protected. If the AI "hallucinates" a complete rebuild that fails at Iteration 4, it will actually snap back to Iteration 3's skeleton instead of collapsing to 5.
+  * Bug 3 (The Default Trap): Replacing `'abstract background'` with an empty string is the "elegant fix." It stops the accidental triggering of the generic query filter and allows the image generation to either succeed with a real query or fail gracefully to a placeholder.
+  CompiledPredicateIds:
+    - "ARCHITECTURE"
+    - "IMPLEMENT"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

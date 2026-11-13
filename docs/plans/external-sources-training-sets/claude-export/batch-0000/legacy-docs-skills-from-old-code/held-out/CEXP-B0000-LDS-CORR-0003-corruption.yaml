@@ -1,0 +1,219 @@
+source_id: "CEXP-B0000-LDS-CORR-0003-HELDOUT"
+pair_kind: "corruption_case"
+corruption_type: "rejected_assistant_output"
+conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+conversation_name: "Documentation and skills for Claude Code"
+A: |
+    These files have been changed - what wasn't done yet?
+B_wrong: |
+     Let me check what's missing by comparing against the instructions.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  All three files look complete. Let me do a deeper check to see if there's anything missing from the instructions that wasn't implemented.
+  
+  Let me check the handleUploadReference implementation more carefully - specifically the `setReferenceModelUsed('uploaded')` call.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Everything from the instructions is implemented. There is **one real gap** though — the Upload button is missing its own enable guard.
+  
+  **The problem:** The Upload button uses `disabled={isRunning(panelState)}` — so it's enabled even when `localClaudeKey` is empty. But after upload, the refinement loop immediately needs Claude. If the user uploads without a Claude key, it will silently fail mid-loop.
+  
+  **The fix — add `canUpload` constant** (one line, in `DesignGeneratorPanel.tsx`):
+  
+  ```typescript
+  const canUpload =
+      (panelState === 'idle' || panelState === 'error') &&
+      prompt.trim().length > 0 &&
+      localClaudeKey.trim().length > 0;
+      // intentionally NO openaiKey check — upload skips OpenAI
+  ```
+  
+  Then change the Upload button's `disabled`:
+  ```tsx
+  // before:
+  disabled={isRunning(panelState)}
+  
+  // after:
+  disabled={!canUpload}
+  ```
+  
+  That's the only missing piece. Everything else — `generate-code-from-canvas` handler in `controller.ts`, all three `triggerCodeGen` call sites, `codeGenState` resets, download button, upload file input, and all CSS — is done.
+B_correct: |
+     Let me look at the source files to understand the current prompts and op generation logic.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I see the issues clearly. Looking at the screenshot and the prompt, there are two main problems:
+  
+  1. **Background image instead of color** - The current Figma output shows what looks like a photo/texture as background instead of a solid color. This is because Claude is using `set-image-fill` on large frames that should use `fillColor`. The system prompt already has a rule about this but it's not working well enough.
+  
+  2. **Score oscillation and slow improvement** - Scores go 0 → 45 → 25 → 15 → 65, which is very unstable. The "complete from scratch" approach every iteration means no incremental improvement.
+  
+  
+  The real problem is that the system prompt's rule against using image fills for large backgrounds isn't being followed consistently, and the requirement to rebuild the entire layout each iteration prevents any stable progress. The user's feedback suggests these are actually straightforward fixes once the prompt constraints are adjusted. The system prompt already forbids image fills on large nodes, but Claude keeps ignoring it. I need to add a code-level guard in the operation executor that rejects any image-fill operations on nodes exceeding 80% of the canvas width, checking dimensions at execution time rather than relying on the prompt alone.
+  
+  Looking at the iteration results, the scores are wildly inconsistent (0, 45, 25, 15, 65) because the canvas clears between iterations and Claude rebuilds from scratch each time. Beyond fixing the background issue with stronger rules and a code guard, I need to address why the scoring is so unstable and why the "complete from scratch" approach isn't working well.
+  
+  The op budget of 30 operations might also be too tight for complex layouts. For the code guard, I'll add a dimension check in `execSetImageFill` that skips the image fill if the node is too large and applies a solid white fill instead, then prepare the detailed instructions for these changes.Now I can see both problems clearly. Let me analyze them precisely before writing the fix.
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  
+  ```
+  This block is not supported on your current device yet.
+  ```
+  
+  Now I understand both problems clearly:
+  
+  1. **Background image problem**: The system prompt has a rule saying don't use `set-image-fill` for large nodes (>819px in both dimensions), but Claude is ignoring it. There's NO code-level guard in `execSetImageFill` — it will apply image fills to any node regardless of size.
+  
+  2. **Prompt issue**: The current prompt says "Use CURRENT only to score how close the previous attempt was; your ops should always describe the entire design from scratch." This means Claude can't do incremental improvement — it rebuilds from scratch every time, leading to inconsistent scores.
+  
+  Two fixes needed:
+  
+  
+  First, I need to add a size check in the image fill executor that prevents applying images to nodes larger than 80% of the canvas, falling back to a solid color instead. Second, I should update the comparison prompt to allow incremental improvements rather than forcing a complete rebuild each time, while also adding explicit warnings about avoiding image fills for backgrounds.
+  
+  But actually, the real issue is that the canvas gets cleared before each operation run, which means Claude sees the previous iteration's result and judges it, but then generates entirely new operations from scratch—leading to wildly inconsistent scores like 0, 45, 25, 15, 65. I need to decide whether to keep the clean-slate approach and make Claude more consistent in its choices, or switch to incremental operations that build on the current canvas state.
+  
+  The user's right that the fixes are straightforward: I should add a guard in the operation executor to fall back to solid fills for large image operations, tighten up the prompt to make the background rule non-negotiable, and explicitly tell Claude to maintain structural consistency across iterations while only refining details. I'll also add a specific instruction about matching light backgrounds with white fill colors.Two problems, two root causes:
+  
+  **Problem 1 (background image):** The prompt has the "80% rule" but there's **zero enforcement in code**. `execSetImageFill` applies the image fill to any node, any size, unconditionally. Claude keeps violating the rule because nothing stops it.
+  
+  **Problem 2 (score instability 0→45→25→15→65):** The canvas clears + full rebuild every iteration means Claude makes completely different layout choices each time. There's no "memory" — each iteration is independently random.
+  
+  ---
+  
+  ## Fix 1 — `op-executor.ts` (code guard — the most important fix)
+  
+  In `execSetImageFill`, after resolving the node, add a dimension check **before** loading any image. If the node is too large, fall back to a solid fill instead:
+  
+  ```typescript
+  async function execSetImageFill(
+      op: any,
+      nodeMap: Map<string, string>
+  ): Promise<OpResult> {
+      const node = await resolveNode(op.nodeId, nodeMap);
+      if (!node) {
+          return { nodeId: null, warning: `set-image-fill: node not found — ${op.nodeId}` };
+      }
+      if (!('fills' in node)) {
+          return { nodeId: node.id, warning: `set-image-fill: node has no fills — ${node.type}` };
+      }
+  
+      // ── DIMENSION GUARD ─────────────────────────────────────────────────────
+      // Never apply image fill to large background-like nodes (>80% of 1024px canvas).
+      // Claude often ignores the prompt rule; this is the hard enforcement.
+      // Fall back to a neutral solid fill so the background stays clean.
+      const CANVAS_SIZE = 1024;
+      const MAX_IMAGE_FILL_DIM = CANVAS_SIZE * 0.8; // 819px
+      const nodeW = ('width'  in node) ? (node as any).width  : 0;
+      const nodeH = ('height' in node) ? (node as any).height : 0;
+      if (nodeW > MAX_IMAGE_FILL_DIM && nodeH > MAX_IMAGE_FILL_DIM) {
+          // Apply solid fallback color if provided, otherwise white
+          const fb = op.fallbackFillColor;
+          const r = (fb && typeof fb.r === 'number') ? fb.r : 1;
+          const g = (fb && typeof fb.g === 'number') ? fb.g : 1;
+          const b = (fb && typeof fb.b === 'number') ? fb.b : 1;
+          (node as GeometryMixin).fills = [{ type: 'SOLID', color: { r, g, b } }];
+          return { nodeId: node.id, warning: `set-image-fill blocked: node ${op.nodeId} is ${Math.round(nodeW)}×${Math.round(nodeH)} — too large for image fill, applied solid fallback` };
+      }
+      // ────────────────────────────────────────────────────────────────────────
+  
+      let image: Image | null = null;
+      // ... rest unchanged
+  ```
+  
+  ---
+  
+  ## Fix 2 — `ClaudeComparisonProvider.ts` (prompt improvements)
+  
+  Two targeted changes to `SYSTEM_PROMPT`:
+  
+  ### 2a — Strengthen the background rule (it's currently buried and ignored)
+  
+  Replace the existing image-fill rule block with this harder version placed **before** the general RULES section:
+  
+  ```
+  HARD RULE — NO IMAGE FILLS ON BACKGROUNDS:
+  NEVER use set-image-fill on any frame or rect that functions as a background, page background, sidebar background, card background, or any node whose width OR height exceeds 500px. These large areas MUST use fillColor with a solid RGB color. Violating this rule produces an ugly photo texture on the background, which is always wrong. If the reference shows a white background, use fillColor: {r:1,g:1,b:1}. If it shows a light grey, use fillColor: {r:0.96,g:0.96,b:0.96}. set-image-fill is ONLY allowed for small content thumbnails (width < 300px AND height < 300px) such as product images, profile photos, and gallery tiles.
+  ```
+  
+  Change the threshold from `819px (80%)` to `500px` — the current `>819px AND >819px` (both dimensions) means a 900×100 sidebar banner could still get an image fill. Using 500px for either dimension covers all real background scenarios.
+  
+  ### 2b — Fix score instability with an iteration anchor
+  
+  The rebuild-from-scratch approach is fine architecturally, but Claude needs to stay anchored to the same structural decisions. Replace the current user message template:
+  
+  ```typescript
+  // CURRENT:
+  const userText =
+      `Iteration ${iteration}. ` +
+      `Image 1 is the REFERENCE (target design). ` +
+      `Image 2 is the CURRENT canvas — score it against the reference, then produce a COMPLETE set of create-* ops that recreates the full reference design from scratch inside 'design-gen-root'. ` +
+      `Return only JSON.`;
+  
+  // REPLACE WITH:
+  const userText =
+      `Iteration ${iteration}. ` +
+      `Image 1 is the REFERENCE (target design). ` +
+      `Image 2 is the CURRENT canvas — score it against the reference. ` +
+      `Now produce a COMPLETE set of create-* ops that recreates the full reference from scratch inside 'design-gen-root'. ` +
+      `IMPORTANT: Keep the same overall structural layout as CURRENT if it was reasonable — only fix what is visibly wrong (wrong colors, wrong positions, missing elements, wrong sizes). Do NOT switch to a completely different layout if the overall structure was already close. ` +
+      `Return only JSON.`;
+  ```
+  
+  ### 2c — Fix the op budget allocation hint
+  
+  Add this to the RULES section to help Claude prioritise correctly within 30 ops:
+  
+  ```
+  - Op budget strategy: With 30 ops max, spend ~1 op on the root background frame, ~8 ops on major structural frames (header, sidebar, main content areas), ~10 ops on key text labels, ~8 ops on rect shapes/cards/buttons, ~3 ops on image fills for small thumbnails only. Never waste ops on minor cosmetic tweaks when structural elements are missing.
+  ```
+  
+  ---
+  
+  ## Summary — What to change in which file
+  
+  | File | Change | Why |
+  |------|--------|-----|
+  | `op-executor.ts` | Dimension guard in `execSetImageFill` — blocks image fills on nodes > 500px in either dimension, applies solid white fallback | Claude keeps ignoring the prompt rule; code enforcement is the only reliable fix |
+  | `ClaudeComparisonProvider.ts` | Move + strengthen background rule to `HARD RULE` at top, lower threshold to 500px, add `fallbackFillColor` field hint to op schema | Makes the rule impossible to miss |
+  | `ClaudeComparisonProvider.ts` | Update `userText` to anchor structure across iterations | Stops score oscillation caused by Claude choosing a different layout every time |
+  | `ClaudeComparisonProvider.ts` | Add op-budget strategy hint to RULES | Helps Claude allocate 30 ops correctly instead of wasting them on decorative details |

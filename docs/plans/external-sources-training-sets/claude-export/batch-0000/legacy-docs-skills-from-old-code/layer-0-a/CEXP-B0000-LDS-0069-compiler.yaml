@@ -1,0 +1,80 @@
+source_id: "CEXP-B0000-LDS-0069"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdd2a-87d1-7972-9fe8-aec090149715"
+  human_message_index: 147
+  assistant_message_uuid: "019cdd2a-87d1-73e6-b3f3-32f05903f536"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0069"
+  user_request: |
+      Another regression even though here are already overlaping elements
+  for some reason the score doesn't really implify the actual state
+  
+  The "regression" you noticed between Iteration 3 and Iteration 4—despite the score increasing from 35 to 45—is a classic Semantic Hallucination triggered by the transition from "PHASE 1 (SKELETON)" to "PHASE 2 (CONTENT)".
+  By analyzing your Iteration Log and comparing the Reference Image to the Raw AI Response, here is exactly why the design felt like it went backward:
+  1. The "Monthly" Hallucination (Semantic Regression)
+  In Iteration 3, the AI correctly identified the chart as a weekly activity tracker and created labels for "Mon", "Tue", "Wed", etc.
+  However, in Iteration 4, the prompt switched to PHASE 2 (CONTENT). Claude interpreted "Fill containers with text" as a signal to provide "realistic" dashboard data rather than strictly replicating the visual characters it saw.
+  * Regression: It changed the labels to "May", "Feb", "Mag" (hallucinated months).
+  * Why: When models switch to "Content" mode, they often prioritize "predicting" what a dashboard should contain over "transcribing" what the reference image actually shows.
+  2. Heading "Un-formatting"
+  In Iteration 1, the AI created the main heading with a manual newline: `"Your teen\ndashboard 😊"`.
+  In Iteration 4, it "refined" the text content to: `"Your teen dashboard 😊"` (no newline).
+  * Impact: This likely broke the visual alignment or text wrapping that made Iteration 3 look more "correct" to your eye, even if the AI thought the string was cleaner.
+  3. Typo Retention & Progress Plateau
+  Despite the prompt asking for a "CONTENT PASS," the AI failed to correct existing errors:
+  * The Typo: The reference image shows 872.5K for the first card. Iteration 1 hallucinated 672.5K. Iteration 4 performed a `set-text` but kept the wrong value 672.5K.
+  * The Missing Elements: The AI spent its entire 54-operation budget on "Fine-tuning" (changing font sizes by 2px or weights from Regular to Medium) instead of adding the missing wavy line graphs or the additional feed items noted in its own annotations.
+  4. The "Score Paradox"
+  The score increased to 45 because the AI (acting as the scorer) gave itself "credit" for applying the Design Tokens and Typography Scale requested in the Phase 2 prompt. It prioritized "Correct Font Sizes" over "Correct Data Labels."
+  How to Fix This in the Next Run
+  To prevent this "semantic drift" in Phase 2, you should add a "Visual Truth" guard to your `SYSTEM_PROMPT` in `ClaudeComparisonProvider.ts`:
+  STRICT CONTENT RULE: Do NOT hallucinate data. If the REFERENCE shows "Mon, Tue, Wed," do NOT change them to "Jan, Feb, Mar." Transcription accuracy for labels is higher priority than "realistic" data generation.
+  Would you like me to provide an updated `ClaudeComparisonProvider.ts` that tightens the "Content Pass" instructions to prevent these hallucinations?
+B:
+  DocumentId: "CEXP-B0000-LDS-0069-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      Another regression even though here are already overlaping elements
+  for some reason the score doesn't really implify the actual state
+  
+  The "regression" you noticed between Iteration 3 and Iteration 4—despite the score increasing from 35 to 45—is a classic Semantic Hallucination triggered by the transition from "PHASE 1 (SKELETON)" to "PHASE 2 (CONTENT)".
+  By analyzing your Iteration Log and comparing the Reference Image to the Raw AI Response, here is exactly why the design felt like it went backward:
+  1. The "Monthly" Hallucination (Semantic Regression)
+  In Iteration 3, the AI correctly identified the chart as a weekly activity tracker and created labels for "Mon", "Tue", "Wed", etc.
+  However, in Iteration 4, the prompt switched to PHASE 2 (CONTENT). Claude interpreted "Fill containers with text" as a signal to provide "realistic" dashboard data rather than strictly replicating the visual characters it saw.
+  * Regression: It changed the labels to "May", "Feb", "Mag" (hallucinated months).
+  * Why: When models switch to "Content" mode, they often prioritize "predicting" what a dashboard should contain over "transcribing" what the reference image actually shows.
+  2. Heading "Un-formatting"
+  In Iteration 1, the AI created the main heading with a manual newline: `"Your teen\ndashboard 😊"`.
+  In Iteration 4, it "refined" the text content to: `"Your teen dashboard 😊"` (no newline).
+  * Impact: This likely broke the visual alignment or text wrapping that made Iteration 3 look more "correct" to your eye, even if the AI thought the string was cleaner.
+  3. Typo Retention & Progress Plateau
+  Despite the prompt asking for a "CONTENT PASS," the AI failed to correct existing errors:
+  * The Typo: The reference image shows 872.5K for the first card. Iteration 1 hallucinated 672.5K. Iteration 4 performed a `set-text` but kept the wrong value 672.5K.
+  * The Missing Elements: The AI spent its entire 54-operation budget on "Fine-tuning" (changing font sizes by 2px or weights from Regular to Medium) instead of adding the missing wavy line graphs or the additional feed items noted in its own annotations.
+  4. The "Score Paradox"
+  The score increased to 45 because the AI (acting as the scorer) gave itself "credit" for applying the Design Tokens and Typography Scale requested in the Phase 2 prompt. It prioritized "Correct Font Sizes" over "Correct Data Labels."
+  How to Fix This in the Next Run
+  To prevent this "semantic drift" in Phase 2, you should add a "Visual Truth" guard to your `SYSTEM_PROMPT` in `ClaudeComparisonProvider.ts`:
+  STRICT CONTENT RULE: Do NOT hallucinate data. If the REFERENCE shows "Mon, Tue, Wed," do NOT change them to "Jan, Feb, Mar." Transcription accuracy for labels is higher priority than "realistic" data generation.
+  Would you like me to provide an updated `ClaudeComparisonProvider.ts` that tightens the "Content Pass" instructions to prevent these hallucinations?
+  CompiledPredicateIds:
+    - "API_CONTRACT"
+    - "ARCHITECTURE"
+    - "IMPLEMENT"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

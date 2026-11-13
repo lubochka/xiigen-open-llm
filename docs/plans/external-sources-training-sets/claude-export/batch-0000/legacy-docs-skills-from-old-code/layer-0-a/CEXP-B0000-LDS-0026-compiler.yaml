@@ -1,0 +1,110 @@
+source_id: "CEXP-B0000-LDS-0026"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdc40-61e7-70fb-8fcc-a9c878ef7d39"
+  human_message_index: 53
+  assistant_message_uuid: "019cdc40-61e7-7c56-88fa-840362f779fd"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0026"
+  user_request: |
+      I also need the AI to automatically update existing documentation and tests when managing code changes - how can I make it do that on each itteration?
+  
+  To make the AI automatically update documentation and tests during each iteration, you need to integrate these tasks directly into the loop where the AI proposes and executes code changes. This transforms the AI from a simple "code generator" into a "full-system maintainer."
+  In your current architecture, this would involve modifying both the UI loop logic in `DesignGeneratorPanel.tsx` and the Sandbox execution logic in `controller.ts`.
+  1. The Multi-Step Iteration Loop
+  Instead of the AI returning only Figma operations, you must update the system prompt to require a multi-part response that includes code for documentation (e.g., Markdown) and tests (e.g., Jest or Cypress).
+  Updated UI Loop Strategy
+  In `src/ui/components/design-gen/DesignGeneratorPanel.tsx`, modify the logic to handle these additional artifacts:
+  * Expanded AI Prompt: Update your `SYSTEM_PROMPT` in `ClaudeComparisonProvider.ts` to request a JSON structure that includes `documentationUpdate` and `testUpdate` strings alongside the `ops` array.
+  * State Tracking: Add state variables in `DesignGeneratorPanel.tsx` to hold the current version of the documentation and tests.
+  * Sequential Execution: After the sandbox executes the Figma operations, the UI should then trigger secondary "Update File" calls to save the documentation and test files to your project.
+  2. Integration into `AIService.ts`
+  The logic for parsing these updates should live in your service layer to keep the UI clean.
+  * Unified Schema: Modify the `AIResponse` interface in `src/ui/components/ai-enhance/AIService.ts` to include optional fields for `documentation` and `tests`.
+  * Enhanced Parsing: Update `parseResponse` to look for specific markdown markers or JSON keys that contain the updated docs and test suites.
+  3. Implementation Checklist for Each Iteration
+  To ensure these stay in sync, follow this "Verify-Before-Commit" pattern within your loop:
+  StepActionResponsibility1. GenerationAI proposes Figma ops, doc updates, and test changes.`ClaudeComparisonProvider`2. Apply UIExecute Figma operations to update the design.`controller.ts`3. Update DocsOverwrite or append to the `.md` documentation files.UI post-processing4. Update TestsGenerate or refine test cases based on the new UI structure.UI post-processing5. Validation(Optional) Run the new tests to ensure the iteration is stable.Local development environment
+  4. Code Example: Updating the Prompt
+  In `src/ui/components/design-gen/providers/ClaudeComparisonProvider.ts`, update your instructions:
+  TypeScript
+  
+  ```
+  const SYSTEM_PROMPT = `... 
+  Your response must be JSON:
+  {
+    "score": 0-100,
+    "ops": [...],
+    "documentation": "Update for README.md describing the new components",
+    "tests": "Jest code to verify these elements exist",
+    "notes": "..."
+  }`;
+  
+  ```
+  
+  
+  
+  Just need a plan - no implementation
+B:
+  DocumentId: "CEXP-B0000-LDS-0026-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      I also need the AI to automatically update existing documentation and tests when managing code changes - how can I make it do that on each itteration?
+  
+  To make the AI automatically update documentation and tests during each iteration, you need to integrate these tasks directly into the loop where the AI proposes and executes code changes. This transforms the AI from a simple "code generator" into a "full-system maintainer."
+  In your current architecture, this would involve modifying both the UI loop logic in `DesignGeneratorPanel.tsx` and the Sandbox execution logic in `controller.ts`.
+  1. The Multi-Step Iteration Loop
+  Instead of the AI returning only Figma operations, you must update the system prompt to require a multi-part response that includes code for documentation (e.g., Markdown) and tests (e.g., Jest or Cypress).
+  Updated UI Loop Strategy
+  In `src/ui/components/design-gen/DesignGeneratorPanel.tsx`, modify the logic to handle these additional artifacts:
+  * Expanded AI Prompt: Update your `SYSTEM_PROMPT` in `ClaudeComparisonProvider.ts` to request a JSON structure that includes `documentationUpdate` and `testUpdate` strings alongside the `ops` array.
+  * State Tracking: Add state variables in `DesignGeneratorPanel.tsx` to hold the current version of the documentation and tests.
+  * Sequential Execution: After the sandbox executes the Figma operations, the UI should then trigger secondary "Update File" calls to save the documentation and test files to your project.
+  2. Integration into `AIService.ts`
+  The logic for parsing these updates should live in your service layer to keep the UI clean.
+  * Unified Schema: Modify the `AIResponse` interface in `src/ui/components/ai-enhance/AIService.ts` to include optional fields for `documentation` and `tests`.
+  * Enhanced Parsing: Update `parseResponse` to look for specific markdown markers or JSON keys that contain the updated docs and test suites.
+  3. Implementation Checklist for Each Iteration
+  To ensure these stay in sync, follow this "Verify-Before-Commit" pattern within your loop:
+  StepActionResponsibility1. GenerationAI proposes Figma ops, doc updates, and test changes.`ClaudeComparisonProvider`2. Apply UIExecute Figma operations to update the design.`controller.ts`3. Update DocsOverwrite or append to the `.md` documentation files.UI post-processing4. Update TestsGenerate or refine test cases based on the new UI structure.UI post-processing5. Validation(Optional) Run the new tests to ensure the iteration is stable.Local development environment
+  4. Code Example: Updating the Prompt
+  In `src/ui/components/design-gen/providers/ClaudeComparisonProvider.ts`, update your instructions:
+  TypeScript
+  
+  ```
+  const SYSTEM_PROMPT = `... 
+  Your response must be JSON:
+  {
+    "score": 0-100,
+    "ops": [...],
+    "documentation": "Update for README.md describing the new components",
+    "tests": "Jest code to verify these elements exist",
+    "notes": "..."
+  }`;
+  
+  ```
+  
+  
+  
+  Just need a plan - no implementation
+  CompiledPredicateIds:
+    - "API_CONTRACT"
+    - "ARCHITECTURE"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "TEST"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

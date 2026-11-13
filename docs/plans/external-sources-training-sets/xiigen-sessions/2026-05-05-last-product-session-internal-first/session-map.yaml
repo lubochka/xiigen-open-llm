@@ -1,0 +1,34 @@
+source_id: xiigen-last-product-session-internal-first
+source_title: last product session.txt
+source_path: "C:\\Users\\lubao\\Documents\\xiigen\\llm mvp\\last product session.txt"
+last_paragraph_fact: "The session states that PermissionGate, FeedbackRouter, AutonomousLearningPipeline, and ILlmGateway already exist as separate pieces and need connection around the internal-first principle."
+prompts:
+  - prompt_id: XIIGEN-LPS-001
+    prompt_text: "So I would like to make currently 21-23 to work with the internal llms as much as possible, and request at the first phase for an approval to call an external api for AI assistance - with proper prompt and expected results criterias... Also I would like the 21-23 use the internal llm to examine the result, reuse it for learning (which will be stored as preprocess learning data) and schedule learning processes when the pc is relatively idle"
+    sub_phases_mentioned: ["3.1", "4.1", "4.5", "6.3", "7.3", "7.5"]
+    transition_type: "implementation_internal_first_learning_cycle"
+    correction: false
+dependencies:
+  - from_sub_phase: "3.1"
+    to_sub_phase: "4.1"
+    reason: "Architecture and internal-first gateway boundaries must be defined before implementation."
+  - from_sub_phase: "4.1"
+    to_sub_phase: "7.3"
+    reason: "Runtime result examination must exist before monitoring and feedback loop scheduling can use it."
+  - from_sub_phase: "7.3"
+    to_sub_phase: "7.5"
+    reason: "Feedback observations must exist before learning-set/model feedback can retrain units."
+decisions:
+  - decision_text: "Internal LLM must be used before external API calls."
+    source_sub_phase: "3.1"
+    target_sub_phases: ["4.1", "4.5", "6.3"]
+  - decision_text: "External AI calls require explicit approval with prompt and expected-result criteria."
+    source_sub_phase: "6.3"
+    target_sub_phases: ["4.5"]
+  - decision_text: "Internal LLM review results must feed preprocessing learning data and idle scheduled learning."
+    source_sub_phase: "7.3"
+    target_sub_phases: ["7.5"]
+arbiters:
+  - what_was_wrong: "Calling external AI without approval or expected-result criteria."
+    what_is_correct: "Route external AI through approval gate and preserve context pack evidence."
+    sub_phase: "6.3"

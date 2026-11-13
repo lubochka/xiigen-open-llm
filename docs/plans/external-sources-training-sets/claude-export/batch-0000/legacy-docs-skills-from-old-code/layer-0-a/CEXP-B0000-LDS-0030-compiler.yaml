@@ -1,0 +1,64 @@
+source_id: "CEXP-B0000-LDS-0030"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "PromptRoutingInputCompilerUnit : ILogicalUnit<LogicalOrchestratorRequest, SubPhaseRouterSourceDocument>"
+pair_kind: "adaptive_routing_compiler"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdc64-8357-7c25-8e60-3f078e4aee14"
+  human_message_index: 61
+  assistant_message_uuid: "019cdc64-8357-7f6e-a837-2a6378be7de8"
+  derived_document_path: null
+A:
+  run_id: "CEXP-B0000-LDS-0030"
+  user_request: |
+      We still have troubles with very small details like font size, types, margins,... We probably do not read or ask the claude properly for details
+  ‫Gemini אמר
+  The reason you are missing small details like font sizes, margins, and types is that vision models naturally "hallucinate" proportions when given raw images without context. Claude sees a "title" but doesn't know if it's 24px or 26px just by looking—it guesses.
+  To fix this, we need to implement a "Two-Stage Fidelity Loop". I am updating the system to:
+  1. Extract Design Tokens: Explicitly ask Claude to look for and document the font family, specific hex codes, and spacing units before it generates operations.
+  2. Visual Overlays: The prompt now uses a "Grid-Thinking" technique, asking Claude to mentally overlay an 8px grid on the reference to calculate margins.
+  3. Strict Contrast validation: Forcing Claude to verify that the generated color matches the reference luminosity.
+  I've also updated `DesignGeneratorPanel.tsx` to include a "High Fidelity" mode toggle logic in the prompt construction.
+  
+  Why this addresses the "Small Details":
+  1. Iterative Phase Shift: The prompt now changes behavior based on the iteration count. After Iteration 3, it switches to a "Detail Pass" where it ignores structural issues to fix font sizes and 4px margin errors.
+  2. Chain of Thought: By explicitly mentioning the "Mental 8px Grid," we force the vision model to quantify distance rather than just saying "move it a bit."
+  3. Specific Critique Access: By passing `prevNotes` back into the loop, Claude remembers that it failed the "font size" check in the last turn, preventing it from repeating the same mistake.
+  Next Steps: I recommend running 5 iterations. If you reach Iteration 4 and the font sizes are still off, the `buildUserMessage` will trigger the "Strict Detail" instruction set which usually pushes the score from 75 to 90+.
+  
+  Please prepare a plan
+B:
+  DocumentId: "CEXP-B0000-LDS-0030-prompt"
+  SourcePath: "logical-orchestrator://user-prompt"
+  SourceTier: "runtime_prompt"
+  LicenseOrAuthority: "first_party_user_session"
+  DocumentType: "user_prompt"
+  DocumentTitle: "Runtime user prompt from Claude export"
+  CompiledText: |
+      We still have troubles with very small details like font size, types, margins,... We probably do not read or ask the claude properly for details
+  ‫Gemini אמר
+  The reason you are missing small details like font sizes, margins, and types is that vision models naturally "hallucinate" proportions when given raw images without context. Claude sees a "title" but doesn't know if it's 24px or 26px just by looking—it guesses.
+  To fix this, we need to implement a "Two-Stage Fidelity Loop". I am updating the system to:
+  1. Extract Design Tokens: Explicitly ask Claude to look for and document the font family, specific hex codes, and spacing units before it generates operations.
+  2. Visual Overlays: The prompt now uses a "Grid-Thinking" technique, asking Claude to mentally overlay an 8px grid on the reference to calculate margins.
+  3. Strict Contrast validation: Forcing Claude to verify that the generated color matches the reference luminosity.
+  I've also updated `DesignGeneratorPanel.tsx` to include a "High Fidelity" mode toggle logic in the prompt construction.
+  
+  Why this addresses the "Small Details":
+  1. Iterative Phase Shift: The prompt now changes behavior based on the iteration count. After Iteration 3, it switches to a "Detail Pass" where it ignores structural issues to fix font sizes and 4px margin errors.
+  2. Chain of Thought: By explicitly mentioning the "Mental 8px Grid," we force the vision model to quantify distance rather than just saying "move it a bit."
+  3. Specific Critique Access: By passing `prevNotes` back into the loop, Claude remembers that it failed the "font size" check in the last turn, preventing it from repeating the same mistake.
+  Next Steps: I recommend running 5 iterations. If you reach Iteration 4 and the font sizes are still off, the `buildUserMessage` will trigger the "Strict Detail" instruction set which usually pushes the score from 75 to 90+.
+  
+  Please prepare a plan
+  CompiledPredicateIds:
+    - "ARCHITECTURE"
+    - "DOCUMENT"
+    - "IMPLEMENT"
+    - "UI"
+  Confidence: 0.92
+  SourceStatus: "ready"
+  KnownFailureMode: "runtime_prompt_compiled_from_real_conversation"

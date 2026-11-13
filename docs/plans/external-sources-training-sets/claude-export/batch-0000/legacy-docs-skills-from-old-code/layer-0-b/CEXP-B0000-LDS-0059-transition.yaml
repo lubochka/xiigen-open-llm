@@ -1,0 +1,65 @@
+source_id: "CEXP-B0000-LDS-0059"
+source_family: "xiigen-session-export"
+source_license_state: "first_party_private"
+contract_signature: "LogicalTransitionOrchestrator : ILogicalOrchestrator<LogicalOrchestratorRequest>"
+pair_kind: "transition_orchestrator"
+conversation_trace:
+  export_batch: "batch-0000"
+  conversation_uuid: "2b4b55b1-382f-4dc3-a235-70a813f7b8a1"
+  conversation_name: "Documentation and skills for Claude Code"
+  human_message_uuid: "019cdcfb-11be-74f9-9058-84e9d8e0ca56"
+  human_message_index: 127
+  assistant_message_uuid: "019cdcfb-11bf-7ded-b3c7-d39696909513"
+  derived_document_path: null
+A:
+  user_request: |
+      Some of the elements are completely misplaced. Before that we did not do such a problem only with overlapping objects that were not integrated into a proper layer
+  
+  The misplacement you're seeing in the latest run is likely caused by the removal of the coordinate instructions, which has led to a "Context Vacuum" for Claude.
+  Without the relative coordinate rules, the AI is now guessing whether to use Absolute (canvas-wide) or Relative (parent-frame) values, leading to elements being offset by the parent's $x$ and $y$ coordinates.
+  The Core Problem: The Coordinate Guessing Game
+  The current "All one on another" and "Misplaced" symptoms are caused by two specific issues in the data flow:
+  * Implicit vs. Explicit Parenting: When Claude emits a `create-text` or `create-rect` without a `parentId`, the `op-executor.ts` defaults the parent to `design-gen-root`. This makes the coordinates Absolute to the canvas.
+  * The Relative Offset Bug: If Claude parents a button to `zone-content` (which starts at $y=120$) but sends an "absolute" $y=200$, the executor places it at $y=200$ inside that frame, resulting in a global position of $y=320$.
+  The 3-Step Fix Plan
+  1. Restore the "Absolute" Reality for Zone Frames
+  We need to tell Claude that the "Big Four" zones are fixed and mapped 1:1 to the 1024x1024 canvas. This prevents them from drifting.
+  * Change: Re-add a simplified instruction in `ClaudeComparisonProvider.ts` stating that `zone-bg`, `zone-header`, `zone-content`, and `zone-footer` always use canvas coordinates.
+  2. Force Explicit Relative Parenting
+  We must instruct Claude that any element inside a zone MUST use the zone's name as `parentId` and its own relative offset.
+  * Rule: "Children of zones must use the zone name as `parentId` and $x/y$ relative to that zone's top-left".
+  3. Image Persistence (No More Regenerating)
+  To stop the image regeneration loop, we will implement a simple query-based cache in the UI.
+  * The Logic: If Claude repeats the exact same `query` for an image, the `DesignGeneratorPanel.tsx` will bypass the OpenAI call and reuse the `imageBytes` from the previous iteration.
+  Would you like me to generate the optimized `ClaudeComparisonProvider.ts` that includes the "Silent Image Cache" instruction and the restored relative coordinate rules? This will stabilize the layout and significantly reduce your OpenAI API costs.
+  context_packet:
+    prior_decisions: []
+    prior_constraints: []
+B:
+  candidate_transitions:
+    - transition_type: "repair"
+      A: "existing project or generated output has a documented defect"
+      B: "defect is understood and corrected with documentation/test guidance"
+      X: "analyze code context, identify missing behavior, and produce corrective guidance"
+      confidence: 0.82
+      selected: true
+    - transition_type: "repair"
+      A: "current output contains a defect"
+      B: "defect is corrected"
+      X: "diagnose and patch the faulty behavior"
+      confidence: 0.42
+      selected: false
+      rejection_reason: "The prompt primarily asks for documentation/skills delivery, not only defect repair."
+    - transition_type: "learning_cycle"
+      A: "current model behavior"
+      B: "improved model behavior"
+      X: "teach from correction evidence"
+      confidence: 0.36
+      selected: false
+      rejection_reason: "Learning evidence may be produced later, but the immediate user task is delivery generation."
+  selected_transition:
+    transition_type: "repair"
+    A: "existing project or generated output has a documented defect"
+    B: "defect is understood and corrected with documentation/test guidance"
+    X: "analyze code context, identify missing behavior, and produce corrective guidance"
+  transition_type_gap: "documentation_skill_extraction may need a dedicated registry entry if feature_addition is too broad."
