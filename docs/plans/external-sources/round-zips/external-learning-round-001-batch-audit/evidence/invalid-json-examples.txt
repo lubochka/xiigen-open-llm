@@ -1,0 +1,2078 @@
+﻿
+
+File    : ext-batch-061-090.md
+Error   : Unterminated string passed in. (1619): {
+            "rowId": "EXT-068",
+            "sourceIds": ["MERMAID"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "H_GOVERNANCE",
+            "subdomain": "sequence-diagram-formatting",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "A user asks: 'Can you show me the sequence of steps when a user logs in using Google SSO?' The pipeline has produced a formal result describing the OAuth 2.0 authorization code flow: user â†’ browser â†’ Google auth endpoint â†’ redirect 
+          with code â†’ app â†’ Google token endpoint â†’ access token â†’ Google userinfo â†’ user record lookup â†’ session creation.",
+              "b": "Formal result: 9-step OAuth 2.0 authorization code flow with PKCE. Steps: (1) user initiates, (2) browser redirects to Google, (3) user authenticates at Google, (4) Google returns code, (5) browser sends code to app, (6) app POSTs to 
+          Google token endpoint, (7) Google returns access+id tokens, (8) app calls Google userinfo, (9) app creates/updates user record and issues session.",
+              "c": "Context: Node 9 (formatter) must produce a Mermaid sequence diagram when the user asks for a visual representation of a flow. The Mermaid sequenceDiagram syntax requires participant declarations before message arrows. Actor labels must be 
+          human-readable. Activation blocks show which actor is processing at each step."
+            },
+            "function": "Format the 9-step OAuth flow as a correct Mermaid sequence diagram. All participants declared. Messages labeled with the protocol action. Activation blocks on the app server during the token exchange steps.",
+            "acceptedOutput": {
+              "diagram": "
+Snippet : {
+            "rowId": "EXT-068",
+            "sourceIds": ["MERMAID"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "H_GOVERNANCE",
+            "subdomain": "sequence-diagram-formatting",
+            "rowClass": 
+
+File    : ext-batch-121-150.md
+Error   : Unterminated string passed in. (1502): {
+            "rowId": "EXT-109",
+            "sourceIds": ["GOOD-DOCS-TEMPLATES"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "H_GOVERNANCE",
+            "subdomain": "how-to-guide-formatting",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Format this approved result as a how-to guide for a developer who needs to add retry-with-backoff to their existing API client. The guide must be actionable â€” the reader should be able to complete the task without referring to any other 
+          document.",
+              "b": "Approved result: RetryPolicy class documentation plus the implementation from EXT-092 (retry_with_backoff function with max_retries, base_delay, exponential backoff, KeyboardInterrupt passthrough).",
+              "c": "Context: DiÃ¡taxis how-to guide format (task-oriented). A how-to guide starts from where the reader is now, tells them exactly what to do, and ends at a specific accomplished state. It does not explain why the design is the way it is (that 
+          is explanation documentation). It does not teach from scratch (that is a tutorial)."
+            },
+            "function": "Format the retry implementation as a how-to guide. Include: prerequisite state, numbered steps, a working code example, and a verification step.",
+            "acceptedOutput": {
+              "howToGuide": "## How to add retry-with-backoff to your API client\n\n**Before you start:** You have a Python function that makes an API call and may raise an exception on failure.\n\n### Steps\n\n1. Copy this function into your project:\n\n
+Snippet : {
+            "rowId": "EXT-109",
+            "sourceIds": ["GOOD-DOCS-TEMPLATES"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "H_GOVERNANCE",
+            "subdomain": "how-to-guide-formatting",
+            "row
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1382): {
+            "rowId": "EXT-431-R1",
+            "sourceIds": ["EXT-431"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A3-topology-change",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "We have a video transcoding queue that receives 500 jobs at 9 AM and is idle from 10 AM to 9 PM. Jobs take 2â€“5 minutes each. Should we use KEDA ScaledJob or ScaledObject?",
+              "b": "Current approach: ScaledObject with minReplicas=1, maxReplicas=50, targeting queue length / 10. Problem: pods stay Running after the burst drains, wasting resources for 12 idle hours. A colleague suggests ScaledJob instead.",
+              "c": "Cluster has spot node pools. Jobs are idempotent and restartable. Queue is RabbitMQ."
+            },
+            "function": "Recommend KEDA ScaledJob vs ScaledObject and explain the architectural tradeoff for burst-then-idle batch workloads.",
+            "acceptedOutput": "Use KEDA **ScaledJob** for this pattern.\n\n**Why ScaledJob wins here:**\n- ScaledJob creates a new Kubernetes Job per scale-out event; pods terminate when the Job completes. With ScaledObject, pods stay Running between messages 
+          and you pay for 12 idle hours of spot instances.\n- For 500 jobs at 2â€“5 min each, ScaledJob with `maxReplicaCount: 50` and `pollingInterval: 10` drains the queue in ~20â€“50 min then scales to zero automatically.\n\n**ScaledJob manifest:**\n
+Snippet : {
+            "rowId": "EXT-431-R1",
+            "sourceIds": ["EXT-431"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A3-topology-change",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (975): {
+            "rowId": "EXT-432-R1",
+            "sourceIds": ["EXT-432"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D2-execution-concurrency",
+            "rowClass": "anti-pattern-detection",
+            "input": {
+              "a": "Python asyncio service fetches user profile, order history, and recommendations from three separate microservices before building a dashboard response.",
+              "b": "Current code: `profile = await fetch_profile(uid)` then `orders = await fetch_orders(uid)` then `recs = await fetch_recs(uid)`. Each call takes ~150 ms. Total: ~450 ms.",
+              "c": "All three calls are independent â€” no data dependency between them."
+            },
+            "function": "Identify the anti-pattern and produce the corrected implementation using asyncio.gather.",
+            "acceptedOutput": "**Anti-pattern:** sequential `await` for independent coroutines serializes I/O that could run concurrently, tripling latency unnecessarily.\n\n**Fixed implementation:**\n
+Snippet : {
+            "rowId": "EXT-432-R1",
+            "sourceIds": ["EXT-432"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D2-execution-concurrency",
+            "rowClass": "anti-patte
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1463): {
+            "rowId": "EXT-433-R1",
+            "sourceIds": ["EXT-433"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "domainResultsArray_to_resultI",
+            "domain": "E",
+            "subdomain": "E2-result-quality-filter",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Django API endpoint returns a list of Author objects, each with their associated Books (reverse FK from Book.author). Currently using select_related('books') â€” but Django raises an error: 'Invalid field name(s) for model Author: books'.",
+              "b": "Team lead says to use prefetch_related instead. Junior developer asks: what is the actual difference and when would you use each?",
+              "c": "Author has many Books (one-to-many). Books have many Tags (many-to-many). Need both books and tags per author."
+            },
+            "function": "Explain select_related vs prefetch_related and produce the correct queryset for the described schema.",
+            "acceptedOutput": "**Rule:**\n- `select_related`: SQL JOIN, works for **ForeignKey (forward)** and **OneToOneField** only â€” fetches related object in the same query.\n- `prefetch_related`: separate query per relation, works for **reverse FK** 
+          (Authorâ†’Books) and **ManyToMany** â€” fetches all related objects in one additional SQL query and joins in Python.\n\n**Why select_related fails:** `Author.books` is a reverse FK accessor (Django auto-creates it as `RelatedManager`), not a 
+          concrete FK field â€” you cannot JOIN through it with select_related.\n\n**Correct queryset:**\n
+Snippet : {
+            "rowId": "EXT-433-R1",
+            "sourceIds": ["EXT-433"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "domainResultsArray_to_resultI",
+            "domain": "E",
+            "subdomain": "E2-result-quality-filter",
+            "rowClass": "tradeoff-decis
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1289): {
+            "rowId": "EXT-434-R1",
+            "sourceIds": ["EXT-434"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D3-execution-validation",
+            "rowClass": "anti-pattern-detection",
+            "input": {
+              "a": "Python module has 200 class-level annotations referencing complex generic types like `dict[str, list[tuple[int, str]]]`. At import time, Python evaluates these annotations eagerly, adding ~15 ms to startup.",
+              "b": "Developer adds `from __future__ import annotations` (PEP-563) to defer evaluation. mypy still works. But a colleague warns this breaks `pydantic.BaseModel` field discovery at runtime.",
+              "c": "Project uses Python 3.10, Pydantic v2, and FastAPI."
+            },
+            "function": "Identify the correct approach to eliminate annotation evaluation cost without breaking Pydantic v2 and FastAPI.",
+            "acceptedOutput": "**Root conflict:** `from __future__ import annotations` (PEP-563) makes ALL annotations strings (lazy), which breaks Pydantic v2's runtime type introspection â€” Pydantic reads `__annotations__` at class construction time to 
+          build validators.\n\n**Correct approach for Pydantic + FastAPI:** do NOT use `from __future__ import annotations`. Instead:\n\n1. **Use `TYPE_CHECKING` guard for expensive imports:**\n
+Snippet : {
+            "rowId": "EXT-434-R1",
+            "sourceIds": ["EXT-434"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D3-execution-validation",
+            "rowClass": "anti-patter
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1271): {
+            "rowId": "EXT-435-R1",
+            "sourceIds": ["EXT-435"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E3-evidence-linkage",
+            "rowClass": "arbiter-construction",
+            "input": {
+              "a": "Prometheus dashboard shows P99 HTTP latency spiking to 2s every 5 minutes but the average stays at 80 ms. Team cannot correlate the metric spike to a specific trace to diagnose the root cause.",
+              "b": "System uses OTel .NET SDK with OTLP exporter to Grafana Tempo (traces) and Prometheus (metrics via OTel Collector). Metrics are histograms. No exemplars configured.",
+              "c": "Need to link the P99 spike metric data points to the specific trace IDs that caused them, without adding a full distributed tracing search for every request."
+            },
+            "function": "Design the OTel exemplar configuration to link P99 metric spikes to specific trace IDs for root cause analysis.",
+            "acceptedOutput": "**OTel Exemplars** attach a `{traceId, spanId, timestamp, value}` sample to histogram bucket observations. When Prometheus scrapes the metric, each bucket carries exemplars for recent high-value observations â€” allowing direct 
+          navigation from a slow P99 bucket to the exact trace.\n\n**Configuration (.NET OTel SDK):**\n
+Snippet : {
+            "rowId": "EXT-435-R1",
+            "sourceIds": ["EXT-435"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E3-evidence-linkage",
+            "rowClass": "arbiter-cons
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1241): {
+            "rowId": "EXT-436-R1",
+            "sourceIds": ["EXT-436"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F1-storage-retrieval",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Dashboard API endpoint must return order summary, customer profile, and recent activity for a given customerId. Currently issues three separate Dapper queries in sequence. Each query: ~8 ms network round-trip + ~5 ms execution = ~39 ms 
+          total.",
+              "b": "Developer proposes using Dapper's QueryMultiple to execute all three SELECT statements in one round-trip. DBA is concerned about connection hold time during result reading.",
+              "c": "SQL Server 2019. Queries are read-only. GridReader must be disposed explicitly."
+            },
+            "function": "Evaluate QueryMultiple vs separate queries and produce the correct implementation.",
+            "acceptedOutput": "**QueryMultiple** executes multiple SELECT statements in a single SQL batch, returning a `GridReader` that reads successive resultsets. For 3 independent read queries, this eliminates 2 of the 3 network 
+          round-trips.\n\n**Latency:** 1 round-trip Ã— 8 ms + max(5ms, 5ms, 5ms) â‰ˆ 13 ms vs 39 ms sequential â€” ~66% reduction.\n\n**Implementation:**\n
+Snippet : {
+            "rowId": "EXT-436-R1",
+            "sourceIds": ["EXT-436"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F1-storage-retrieval",
+            "rowClass": "tradeoff-decision
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1134): {
+            "rowId": "EXT-437-R1",
+            "sourceIds": ["EXT-437"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Angular 17 app with OnPush change detection. Components use @Input() with ngOnChanges to detect property changes. Team reports ChangeDetectorRef.markForCheck() calls scattered through the codebase causing maintenance burden.",
+              "b": "Angular 17 introduced signal-based inputs (`input()` function). Team wants to migrate but is unsure of the reactivity model difference.",
+              "c": "Components need to react to input changes to compute derived values â€” currently done in ngOnChanges with manual state tracking."
+            },
+            "function": "Compare @Input with ngOnChanges vs signal inputs for OnPush components and recommend migration approach.",
+            "acceptedOutput": "**Signal inputs eliminate ngOnChanges and manual ChangeDetectorRef calls** by making input values reactive signals that automatically notify Angular's change detection graph.\n\n**Before (decorator @Input + ngOnChanges):**\n
+Snippet : {
+            "rowId": "EXT-437-R1",
+            "sourceIds": ["EXT-437"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1478): {
+            "rowId": "EXT-438-R1",
+            "sourceIds": ["EXT-438"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E1-result-selection",
+            "rowClass": "anti-pattern-detection",
+            "input": {
+              "a": "React component passes an event handler to a deeply nested child wrapped in React.memo. The handler references a state value `count`. Developer uses `useCallback(handler, [])` with empty deps to avoid re-rendering the memoized child.",
+              "b": "Bug report: after clicking increment 3 times, the handler still logs `count = 0` (stale closure). Developer tried adding `count` to deps â€” now the child re-renders on every count change, defeating memo.",
+              "c": "The handler is an analytics logger: `() => analytics.log('click', { count })`. It does not need to trigger re-renders in the child, only needs the latest count at call time."
+            },
+            "function": "Identify the stale closure anti-pattern and produce the correct implementation using useRef for a stable handler with fresh state.",
+            "acceptedOutput": "**Anti-pattern:** `useCallback(fn, [])` with stale closure â€” the empty dependency array freezes the closure at creation time. Adding the dependency fixes correctness but breaks memoization.\n\n**Root cause:** `useCallback` 
+          memoizes the function reference, not its captured values. The closure captures `count` at the time of creation.\n\n**Correct pattern â€” useRef for stable handler with latest value:**\n
+Snippet : {
+            "rowId": "EXT-438-R1",
+            "sourceIds": ["EXT-438"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E1-result-selection",
+            "rowClass": "anti-pattern
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1132): {
+            "rowId": "EXT-439-R1",
+            "sourceIds": ["EXT-439"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D3-execution-validation",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "ASP.NET Core 8 API needs a centralized exception handler that returns RFC-9457 ProblemDetails JSON for all unhandled exceptions, logs structured errors with correlation IDs, and maps specific exception types (NotFoundException, 
+          ValidationException) to appropriate HTTP status codes.",
+              "b": "Current approach: `UseExceptionHandler(app => app.Run(async ctx => { ... }))` with a nested lambda. Correlation ID extraction is duplicated across the lambda and middleware. Code is difficult to unit-test.",
+              "c": "ASP.NET Core 8 introduced `IExceptionHandler` interface for structured exception handling."
+            },
+            "function": "Migrate from UseExceptionHandler lambda to IExceptionHandler with ProblemDetails mapping.",
+            "acceptedOutput": "**IExceptionHandler** (.NET 8+) is an interface that enables testable, composable exception handling with DI support.\n\n**Implementation:**\n
+Snippet : {
+            "rowId": "EXT-439-R1",
+            "sourceIds": ["EXT-439"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D3-execution-validation",
+            "rowClass": "tradeoff-de
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1426): {
+            "rowId": "EXT-440-R1",
+            "sourceIds": ["EXT-440"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "NestJS e-commerce service has OrderController injecting OrderService, PaymentService, InventoryService, and NotificationService directly. Each new write operation adds a new service dependency to the controller, creating a fat controller 
+          with 7 constructor parameters.",
+              "b": "Team is evaluating NestJS CQRS module (CommandBus + QueryBus) to decouple the controller from write logic. Tech lead asks for honest evaluation â€” CQRS adds complexity and may be overkill.",
+              "c": "System is a single NestJS monolith. No event sourcing. No separate read/write databases."
+            },
+            "function": "Evaluate CommandBus CQRS vs direct service injection for this NestJS monolith and recommend with rationale.",
+            "acceptedOutput": "**Honest assessment:** CQRS CommandBus is justified here primarily as a **mediator pattern** to reduce controller coupling â€” the full CQRS value (separate read/write stores, event sourcing) does not apply to your 
+          monolith.\n\n**The actual problem:** the controller violates Single Responsibility Principle (SRP) by orchestrating 4 services. CommandBus solves this by making the controller emit Commands, not call services directly.\n\n**With CommandBus:**\n
+Snippet : {
+            "rowId": "EXT-440-R1",
+            "sourceIds": ["EXT-440"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1216): {
+            "rowId": "EXT-441-R1",
+            "sourceIds": ["EXT-441"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "C",
+            "subdomain": "C3-format-negotiation",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "REST API needs to support JSON and CSV responses for the same /reports/monthly endpoint. Option A: Accept header (Accept: text/csv vs application/json). Option B: URL suffix (/reports/monthly.csv vs /reports/monthly.json). Option C: query 
+          parameter (?format=csv).",
+              "b": "Team serves both browser clients (prefer URL-based for bookmark/download) and programmatic API clients (prefer Accept header). API is public-facing with documentation.",
+              "c": "RFC-9110 Section 12 defines content negotiation."
+            },
+            "function": "Recommend the content negotiation strategy per RFC-9110 and address the browser vs API client tension.",
+            "acceptedOutput": "**RFC-9110 Section 12** defines **proactive content negotiation** (server-driven) via `Accept` header as the primary HTTP mechanism. The `Vary: Accept` response header tells caches that the response varies by Accept 
+          value.\n\n**Recommended approach: Accept header as primary, query parameter as escape hatch:**\n\n
+Snippet : {
+            "rowId": "EXT-441-R1",
+            "sourceIds": ["EXT-441"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "C",
+            "subdomain": "C3-format-negotiation",
+            "rowClass": "tradeoff-deci
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1148): {
+            "rowId": "EXT-442-R1",
+            "sourceIds": ["EXT-442"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "gRPC + HTTP API list endpoint for orders grows filter requirements: status, customer ID, date range, amount range, product tags. Each new filter adds a new query parameter: 
+          ?status=ACTIVE&customerId=123&startDate=...&endDate=...&minAmount=... â€” now 8 parameters.",
+              "b": "Google AIP-160 specifies a single `filter` string parameter using Common Expression Language (CEL). Team is evaluating whether to adopt it.",
+              "c": "API serves both internal tooling and external partners. External partners send filters from UI dropdowns."
+            },
+            "function": "Compare AIP-160 filter expression vs multi-parameter approach and recommend with implementation guidance.",
+            "acceptedOutput": "**AIP-160 filter** uses a single `filter` query parameter with CEL syntax, enabling arbitrary boolean combinations without adding new query parameters per filter criterion.\n\n**Multi-parameter approach (current):**\n
+Snippet : {
+            "rowId": "EXT-442-R1",
+            "sourceIds": ["EXT-442"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1434): {
+            "rowId": "EXT-443-R1",
+            "sourceIds": ["EXT-443"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G2-training-stability",
+            "rowClass": "migration-decision",
+            "input": {
+              "a": "LLM fine-tuning on OpenAssistant conversation trees fails after epoch 2. Training loss spikes from 1.8 to NaN. Gradient norm logs show norm=147 at the crash step. Model is LLaMA-3-8B fine-tuned on multi-turn conversations averaging 12 
+          turns.",
+              "b": "Current config: learning_rate=2e-4, no gradient clipping, batch_size=4, max_seq_len=4096. The crash happens on samples where the conversation is >8 turns long.",
+              "c": "Trainer uses HuggingFace Trainer with bf16=True on A100."
+            },
+            "function": "Diagnose the gradient norm explosion and produce the corrected training configuration.",
+            "acceptedOutput": "**Diagnosis:** gradient norm explosion on long conversation chains is caused by accumulated attention gradients over many tokens (12 turns Ã— avg 150 tokens = 1800 tokens), compounded by the absence of gradient clipping. The 147 
+          norm vs typical <1.0 indicates the optimizer step is taking an enormous parameter update.\n\n**Root causes:**\n1. No gradient clipping â€” single bad batch causes norm explosion\n2. LR 2e-4 is too high for 8B model fine-tuning (1e-4 to 5e-5 is 
+          typical)\n3. Long sequences amplify gradient variance\n\n**Corrected configuration:**\n
+Snippet : {
+            "rowId": "EXT-443-R1",
+            "sourceIds": ["EXT-443"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G2-training-stability",
+            "rowClass": "migr
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1242): {
+            "rowId": "EXT-444-R1",
+            "sourceIds": ["EXT-444"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineCommand_to_machineActionItems",
+            "domain": "C",
+            "subdomain": "C1-translation-filtering",
+            "rowClass": "arbiter-construction",
+            "input": {
+              "a": "EN-DE translation pipeline filters Tatoeba pairs using LASER cosine similarity threshold of 0.9. Post-review reveals 12% of passing pairs have fluent German but wrong translation (e.g., EN: 'The cat sat on the mat' â†’ DE: 'Die Katze lag 
+          auf dem Boden' â€” mat vs floor). LASER score: 0.94.",
+              "b": "Single LASER threshold passes semantically drifted pairs when both sentences are individually fluent. Need a second quality signal.",
+              "c": "Pipeline uses MarianMT for ENâ†’DE back-translation. COMET scorer is available."
+            },
+            "function": "Design a dual-threshold filter combining LASER alignment and COMET back-translation quality for EN-DE Tatoeba pairs.",
+            "acceptedOutput": "**Problem:** LASER measures cross-lingual semantic similarity between sentence embeddings, but high-quality fluent German can have a high LASER score even when it drifts from the source (both sentences talk about cats on 
+          surfaces â€” embeddings are close).\n\n**Dual-threshold filter design:**\n
+Snippet : {
+            "rowId": "EXT-444-R1",
+            "sourceIds": ["EXT-444"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineCommand_to_machineActionItems",
+            "domain": "C",
+            "subdomain": "C1-translation-filtering",
+            "rowClass": "arbiter
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1171): {
+            "rowId": "EXT-445-R1",
+            "sourceIds": ["EXT-445"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Vue 3 SPA (Single-Page Application) has a HeavyDashboard component (280 KB gzipped) imported eagerly in App.vue. Initial bundle is 1.1 MB â€” Lighthouse TTI (Time to Interactive) is 5.8s on 3G.",
+              "b": "Developer wants to lazy-load HeavyDashboard. Vite already supports dynamic import(). Team is unsure whether to use defineAsyncComponent or route-level lazy loading.",
+              "c": "HeavyDashboard is always shown after login â€” it's the main dashboard, not an occasional modal."
+            },
+            "function": "Recommend the correct Vue 3 code splitting approach and implement it with loading/error states.",
+            "acceptedOutput": "**For a main route component:** use **route-level lazy loading** via Vue Router â€” simpler, integrates with router navigation guards, and Vite handles the chunk automatically.\n\n**For an in-template component** (not a route): 
+          use `defineAsyncComponent`.\n\n**Route-level (recommended for your case):**\n
+Snippet : {
+            "rowId": "EXT-445-R1",
+            "sourceIds": ["EXT-445"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1118): {
+            "rowId": "EXT-446-R1",
+            "sourceIds": ["EXT-446"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F2-storage-performance",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "ASP.NET Core 8 API endpoint `GET /products/{id}` is called 50,000 times/minute. EF Core profiler shows 0.8 ms per request spent on LINQ query compilation â€” the SQL itself executes in 0.3 ms. Total: 1.1 ms; compilation is 73% of cost.",
+              "b": "Developer suggests EF Core compiled queries (EF.CompileAsyncQuery) to eliminate repeated compilation. DBA suggests switching to Dapper for this endpoint.",
+              "c": "The query is a simple point-lookup: `context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id)`."
+            },
+            "function": "Evaluate EF Core compiled query vs Dapper for this hot-path point-lookup and implement the correct solution.",
+            "acceptedOutput": "**EF Core compiled query** is correct here â€” it eliminates LINQ compilation cost on the hot path without abandoning EF Core or introducing Dapper for a single endpoint.\n\n**Implementation:**\n
+Snippet : {
+            "rowId": "EXT-446-R1",
+            "sourceIds": ["EXT-446"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F2-storage-performance",
+            "rowClass": "tradeoff-decisi
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (953): {
+            "rowId": "EXT-447-R1",
+            "sourceIds": ["EXT-447"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "New .NET 8 microservices project (4 services + Redis + PostgreSQL) needs a local development orchestration strategy. Team is debating .NET Aspire AppHost vs docker-compose.",
+              "b": ".NET Aspire was released stable with .NET 8. Team members have docker-compose experience. Some prefer staying with a known tool.",
+              "c": "All services are .NET 8. Local dev environment is Windows + VS2022. CI/CD is GitHub Actions deploying to Kubernetes."
+            },
+            "function": "Compare .NET Aspire vs docker-compose for local .NET microservice development and recommend.",
+            "acceptedOutput": "**Recommendation: .NET Aspire for local dev, docker-compose for CI parity.**\n\n**.NET Aspire advantages for .NET 8 local dev:**\n
+Snippet : {
+            "rowId": "EXT-447-R1",
+            "sourceIds": ["EXT-447"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1228): {
+            "rowId": "EXT-448-R1",
+            "sourceIds": ["EXT-448"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G3-failure-recovery",
+            "rowClass": "anti-pattern-detection",
+            "input": {
+              "a": "Azure Service Bus consumer fails to process an order message after 3 retries. Current code catches the exception and calls `message.CompleteAsync()` to remove the message from the queue â€” no error is logged, no record kept. Orders 
+          silently vanish.",
+              "b": "Incident: 47 orders lost in production last week. Developer realizes the complete-on-failure pattern was added to 'prevent poison messages from blocking the queue'.",
+              "c": "Service Bus max delivery count is 10. Dead letter queue (DLQ) is enabled on the subscription."
+            },
+            "function": "Identify the anti-pattern and implement correct dead letter queue handling for failed messages.",
+            "acceptedOutput": "**Anti-pattern:** completing a message on failure is a **silent discard** â€” it prevents queue blocking but loses the message with no recovery path. This is worse than a poison message: at least a poison message is 
+          visible.\n\n**Correct approach â€” let Service Bus manage dead lettering:**\n
+Snippet : {
+            "rowId": "EXT-448-R1",
+            "sourceIds": ["EXT-448"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G3-failure-recovery",
+            "rowClass": "anti-p
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1146): {
+            "rowId": "EXT-449-R1",
+            "sourceIds": ["EXT-449"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "negative-example",
+            "input": {
+              "a": "ASP.NET Core API endpoint `DELETE /documents/{id}` is protected with `[Authorize(Roles = \"User\")]`. Any authenticated user with role 'User' can delete any document by guessing the document ID.",
+              "b": "Security audit flags this as CWE-862 (Missing Authorization) â€” horizontal privilege escalation. User A can delete User B's documents.",
+              "c": "Documents have an OwnerId field. Requirement: users can only delete their own documents; admins can delete any document."
+            },
+            "function": "Identify the CWE-862 vulnerability and implement resource-based authorization to fix it.",
+            "acceptedOutput": "**Vulnerability:** `[Authorize(Roles = \"User\")]` only checks authentication + role â€” it does not verify that the requesting user **owns** the resource. This is CWE-862 horizontal privilege escalation.\n\n**Fix: ASP.NET Core 
+          resource-based authorization with IAuthorizationHandler:**\n\n
+Snippet : {
+            "rowId": "EXT-449-R1",
+            "sourceIds": ["EXT-449"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "negative-exampl
+
+File    : ext-batch-631-660.md
+Error   : Unterminated string passed in. (1320): {
+            "rowId": "EXT-450-R1",
+            "sourceIds": ["EXT-450"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "arbiter-construction",
+            "input": {
+              "a": "OWASP ASVS V4.1.3 requires: 'Verify that the application enforces least privilege access controls â€” users should only be able to access functions, data files, URLs, controllers, services, and other resources for which they possess 
+          specific authorization.'",
+              "b": "Security review of NestJS API finds 11 endpoints that fetch objects by ID without verifying the requesting user owns or has permission to access that object. Pattern: `const invoice = await this.invoiceService.findById(id)` â€” no 
+          ownership check.",
+              "c": "NestJS uses Passport JWT. User ID is available in req.user.sub. Invoices have an ownerId field."
+            },
+            "function": "Design a NestJS guard implementing ASVS V4.1 object-level authorization for the invoice endpoints.",
+            "acceptedOutput": "**OWASP ASVS V4.1.3** requires object-level authorization (OLA) â€” verifying ownership/permission before returning or modifying any object, not just route-level role checks. This is the OWASP API Security Top 10 #1: BOLA 
+          (Broken Object Level Authorization).\n\n**NestJS OLA Guard implementation:**\n
+Snippet : {
+            "rowId": "EXT-450-R1",
+            "sourceIds": ["EXT-450"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "arbiter-constru
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1498): {
+            "rowId": "EXT-451-R1",
+            "sourceIds": ["EXT-451"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Shared Kubernetes cluster serves 6 product teams. Currently using nginx Ingress. Problems: teams annotate Ingress resources with vendor-specific annotations, one team's misconfigured annotation breaks routing for all teams, and ops cannot 
+          delegate routing ownership to teams safely.",
+              "b": "Kubernetes Gateway API is now GA (General Availability). Platform team wants to evaluate migrating.",
+              "c": "Cluster is EKS (Elastic Kubernetes Service). Currently using AWS Load Balancer Controller for Ingress."
+            },
+            "function": "Compare Kubernetes Gateway API vs Ingress for multi-team clusters and recommend migration approach.",
+            "acceptedOutput": "**Kubernetes Gateway API** solves the multi-team Ingress problem through role-separated resource types:\n\n| Resource | Owner | Scope |\n|---|---|---|\n| `GatewayClass` | Cluster admin | Defines infrastructure provider |\n| 
+          `Gateway` | Platform team | Defines listener (port 443, TLS cert) |\n| `HTTPRoute` | Product teams | Defines routing rules for their services |\n\n**Key advantage:** HTTPRoute resources are namespace-scoped â€” Team A's misconfigured route cannot 
+          affect Team B's routing. The Gateway owner controls which namespaces can attach routes.\n\n**Gateway manifest (platform team):**\n
+Snippet : {
+            "rowId": "EXT-451-R1",
+            "sourceIds": ["EXT-451"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1129): {
+            "rowId": "EXT-452-R1",
+            "sourceIds": ["EXT-452"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D3-execution-validation",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Python dataclass `Order` has fields `quantity: int` and `unit_price: float`. Business rule: quantity must be â‰¥ 1, unit_price must be > 0. Current implementation uses a property setter with validation.",
+              "b": "Developer wants to migrate to a plain `@dataclass` but is unsure how to preserve invariant validation without property setters (which conflict with `@dataclass` field generation).",
+              "c": "The class is used in a hot path â€” 50,000 instantiations per minute. Performance matters."
+            },
+            "function": "Compare __post_init__ validation vs property setters for dataclass invariants and recommend.",
+            "acceptedOutput": "**For dataclasses, use `__post_init__` for validation** â€” property setters conflict with `@dataclass` generated `__init__` and require `field(default_factory=...)` workarounds that add complexity.\n\n**Implementation with 
+          __post_init__:**\n
+Snippet : {
+            "rowId": "EXT-452-R1",
+            "sourceIds": ["EXT-452"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D3-execution-validation",
+            "rowClass": "tradeoff-de
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1137): {
+            "rowId": "EXT-453-R1",
+            "sourceIds": ["EXT-453"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "domainResultsArray_to_resultI",
+            "domain": "E",
+            "subdomain": "E2-result-quality-filter",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "pytest test suite with 200 tests takes 8 minutes to run. Profiling shows 6 minutes spent on database schema creation (CREATE TABLE migrations) in a function-scoped fixture that runs before each test.",
+              "b": "Developer wants to use `scope='session'` for the database fixture but is concerned about test isolation â€” shared state between tests could cause flaky failures.",
+              "c": "Tests use PostgreSQL via testcontainers. Each test writes and reads data independently."
+            },
+            "function": "Design the correct fixture scope strategy to preserve isolation while eliminating redundant schema creation.",
+            "acceptedOutput": "**Strategy: session-scoped container + schema, function-scoped transaction rollback.**\n\nThe expensive part (container startup, schema creation) runs once per session. Each test gets a clean slate via transaction rollback â€” 
+          no DROP/CREATE between tests.\n\n
+Snippet : {
+            "rowId": "EXT-453-R1",
+            "sourceIds": ["EXT-453"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "domainResultsArray_to_resultI",
+            "domain": "E",
+            "subdomain": "E2-result-quality-filter",
+            "rowClass": "tradeoff-decis
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1182): {
+            "rowId": "EXT-454-R1",
+            "sourceIds": ["EXT-454"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D2-execution-concurrency",
+            "rowClass": "migration-decision",
+            "input": {
+              "a": "Python 3.11+ asyncio.TaskGroup replaces asyncio.gather for concurrent task management. When multiple tasks fail, TaskGroup raises an ExceptionGroup containing all failures. Pre-3.11 code uses asyncio.gather(return_exceptions=True) and 
+          manually checks each result for exceptions.",
+              "b": "Team wants to migrate to TaskGroup + ExceptionGroup for cleaner error handling. Currently on Python 3.11.",
+              "c": "Tasks: fetch_profile(), fetch_orders(), fetch_recs() â€” all independent. Need to handle each exception type differently (HTTPError vs TimeoutError)."
+            },
+            "function": "Migrate from asyncio.gather to TaskGroup + ExceptionGroup with per-exception-type handling using except*.",
+            "acceptedOutput": "**PEP-654 ExceptionGroup** (Python 3.11+) allows multiple simultaneous exceptions from concurrent tasks. `except*` syntax handles each exception type independently.\n\n**Before (gather with manual exception checks):**\n
+Snippet : {
+            "rowId": "EXT-454-R1",
+            "sourceIds": ["EXT-454"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D2-execution-concurrency",
+            "rowClass": "migration-
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1259): {
+            "rowId": "EXT-455-R1",
+            "sourceIds": ["EXT-455"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E3-evidence-linkage",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Microservice system has 12 services: 8 .NET services and 4 Java Spring Boot services. .NET services use OTel with W3C TraceContext headers (traceparent, tracestate). Java services were instrumented with Zipkin and use B3 headers 
+          (X-B3-TraceId, X-B3-SpanId).",
+              "b": "Distributed traces are broken at the .NET â†’ Java boundary â€” Java services don't read traceparent headers, .NET services don't read X-B3 headers. Traces appear as separate disconnected spans in Jaeger.",
+              "c": "Team wants to fix trace propagation without redeploying all Java services simultaneously."
+            },
+            "function": "Design the trace context propagation fix to bridge W3C TraceContext and B3 headers across the .NET/Java boundary.",
+            "acceptedOutput": "**Root cause:** W3C TraceContext (RFC-7231) uses `traceparent`/`tracestate` headers; Zipkin B3 uses `X-B3-TraceId`/`X-B3-SpanId`/`X-B3-Sampled`. The two formats are incompatible without a bridge.\n\n**Fix Option 1 â€” OTel 
+          multi-propagator on .NET services (preferred):**\n
+Snippet : {
+            "rowId": "EXT-455-R1",
+            "sourceIds": ["EXT-455"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E3-evidence-linkage",
+            "rowClass": "tradeoff-dec
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1120): {
+            "rowId": "EXT-456-R1",
+            "sourceIds": ["EXT-456"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F1-storage-retrieval",
+            "rowClass": "anti-pattern-detection",
+            "input": {
+              "a": "Dapper query JOINs Order and Customer tables. Developer uses `Query<Order>()` and manually maps `customer_id`, `customer_name` columns from the Order result into a nested Customer object in a foreach loop.",
+              "b": "Code review flags this as the 'manual mapping anti-pattern'. The reviewer suggests Dapper multi-mapping with `splitOn`. Developer is unfamiliar with the API.",
+              "c": "Query: `SELECT o.Id, o.Total, c.Id, c.Name FROM Orders o JOIN Customers c ON o.CustomerId = c.Id`"
+            },
+            "function": "Identify the manual mapping anti-pattern and implement the correct Dapper multi-mapping solution.",
+            "acceptedOutput": "**Anti-pattern:** manually extracting joined columns into nested objects after `Query<Order>()` â€” this discards Dapper's built-in type splitting and produces fragile string-column-name mapping.\n\n**Dapper multi-mapping with 
+          `splitOn`:**\n
+Snippet : {
+            "rowId": "EXT-456-R1",
+            "sourceIds": ["EXT-456"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F1-storage-retrieval",
+            "rowClass": "anti-pattern-dete
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1089): {
+            "rowId": "EXT-457-R1",
+            "sourceIds": ["EXT-457"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Angular 14+ introduced the `inject()` function as an alternative to constructor injection for services. Team is debating whether to adopt it for new components.",
+              "b": "Current style: `constructor(private readonly router: Router, private readonly auth: AuthService) {}` with 5-6 dependencies per component. Constructor signatures grow long as features are added.",
+              "c": "Team uses Angular 16. Some members use class-based components, some use functional guards introduced in Angular 15."
+            },
+            "function": "Compare inject() function vs constructor injection for Angular services and recommend when to use each.",
+            "acceptedOutput": "**`inject()` function** resolves dependencies in the injection context (constructor, field initializer, factory function) without constructor parameters.\n\n**Constructor injection (traditional):**\n
+Snippet : {
+            "rowId": "EXT-457-R1",
+            "sourceIds": ["EXT-457"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "tradeoff-decisio
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1389): {
+            "rowId": "EXT-458-R1",
+            "sourceIds": ["EXT-458"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Next.js 14 app (App Router) dashboard page fetches user data, analytics summary, and recent activity from three API endpoints. Currently all components are client components with useEffect + fetch â€” data is fetched after hydration, 
+          causing a visible loading flash.",
+              "b": "Team wants to eliminate the loading flash. Senior developer suggests migrating data fetching to React Server Components (RSC). Junior developer is confused about what RSC can and cannot do.",
+              "c": "The analytics chart has interactive filters (user can click to change date range). The user profile section is display-only."
+            },
+            "function": "Design the RSC vs client component split for this dashboard to eliminate the loading flash while preserving interactivity.",
+            "acceptedOutput": "**React Server Components** render on the server at request time â€” data is fetched server-side before HTML is sent to the browser, eliminating the useEffect-based loading flash.\n\n**RSC constraints:**\n- Cannot use useState, 
+          useEffect, event handlers\n- Cannot access browser APIs\n- Can be async functions (await fetch directly)\n\n**Recommended component split:**\n
+Snippet : {
+            "rowId": "EXT-458-R1",
+            "sourceIds": ["EXT-458"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1043): {
+            "rowId": "EXT-459-R1",
+            "sourceIds": ["EXT-459"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "New .NET 8 microservice needs 8 endpoints: 5 CRUD + 3 business operations. Team is evaluating minimal APIs (app.MapGet/MapPost) vs controller-based APIs ([ApiController] + [HttpGet]).",
+              "b": "Team has strong ASP.NET MVC background. Some argue controllers are more familiar; others argue minimal APIs are simpler for small microservices.",
+              "c": "Microservice will have Swagger, FluentValidation, versioning, and integration tests."
+            },
+            "function": "Compare minimal APIs vs controller-based APIs for this microservice and recommend.",
+            "acceptedOutput": "**For a focused microservice (8 endpoints), minimal APIs are appropriate** â€” less ceremony, better startup performance, and full feature parity with controllers in .NET 8.\n\n**Minimal API structure (.NET 8 with endpoint 
+          groups):**\n
+Snippet : {
+            "rowId": "EXT-459-R1",
+            "sourceIds": ["EXT-459"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1342): {
+            "rowId": "EXT-460-R1",
+            "sourceIds": ["EXT-460"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D3-execution-validation",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "NestJS API needs: (1) add correlation ID to every request from X-Request-Id header or generate UUID, (2) wrap all successful responses in `{data: ..., meta: {timestamp, requestId}}` envelope, (3) log request duration after response.",
+              "b": "Junior developer put all three behaviors in Express middleware. Tech lead says requirements (2) and (3) must be interceptors. Developer does not understand the difference.",
+              "c": "NestJS app uses Express adapter."
+            },
+            "function": "Explain NestJS middleware vs interceptor and implement the three requirements in the correct layer.",
+            "acceptedOutput": "**Key distinction:**\n- **Middleware**: runs before routing, has access to raw `req`/`res`, cannot access NestJS execution context (controller, handler metadata). Best for: correlation ID, auth token extraction, raw request 
+          parsing.\n- **Interceptor**: wraps the handler + pipe + guard execution, has access to the execution context, can transform the response observable. Best for: response envelope, logging duration, caching.\n\n**Requirement 1 â€” Correlation ID 
+          (middleware):**\n
+Snippet : {
+            "rowId": "EXT-460-R1",
+            "sourceIds": ["EXT-460"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D3-execution-validation",
+            "rowClass": "tradeoff-de
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1735): {
+            "rowId": "EXT-461-R1",
+            "sourceIds": ["EXT-461"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "negative-example",
+            "input": {
+              "a": "API documentation shows two token transmission options: `Authorization: Bearer <token>` header, and `?access_token=<token>` query parameter. Developer uses the query parameter because it's easier to test in a browser.",
+              "b": "Security reviewer flags the query parameter approach. RFC-6750 Section 2.3 allows it but marks it as NOT RECOMMENDED.",
+              "c": "API serves mobile apps and third-party integrations. Tokens have 1-hour lifetime."
+            },
+            "function": "Explain why the query parameter approach is a security risk per RFC-6750 and enforce Authorization header usage.",
+            "acceptedOutput": "**RFC-6750 Section 2.3** explicitly states: 'Form-Encoded Body Parameter' and 'URI Query Parameter' methods are NOT RECOMMENDED due to security considerations.\n\n**Security risks of `?access_token=` query parameter:**\n1. 
+          **Server access logs**: web servers log full URLs including query strings â€” tokens appear in plaintext in access logs, forwarded to log aggregators, and accessible to ops teams.\n2. **Browser history**: browsers store URLs with tokens in history 
+          â€” shared workstations expose tokens.\n3. **HTTP Referer header**: if the page links to any external resource, the full URL (including token) is sent in the Referer header to that resource.\n4. **CDN / proxy caching**: some CDN configurations cache 
+          responses by URL â€” a cached URL includes the token.\n5. **Shoulder surfing**: visible in browser address bar.\n\n**Correct approach â€” Authorization header only:**\n
+Snippet : {
+            "rowId": "EXT-461-R1",
+            "sourceIds": ["EXT-461"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "negative-exampl
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (946): {
+            "rowId": "EXT-462-R1",
+            "sourceIds": ["EXT-462"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "C",
+            "subdomain": "C2-output-formatting",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "gRPC API returns errors with custom fields: `{code: 'ORDER_NOT_FOUND', message: 'Order 123 does not exist', orderId: 123, timestamp: '2026-05-04T10:00:00Z'}`. Clients must parse custom JSON fields to understand error details.",
+              "b": "Google AIP-217 defines a canonical error model using `google.rpc.Status` with `details` array containing typed `Any` messages.",
+              "c": "API uses gRPC with HTTP/JSON transcoding. Clients are mobile apps and third-party partners."
+            },
+            "function": "Compare custom error fields vs AIP-217 Status + details error model and implement the canonical approach.",
+            "acceptedOutput": "**AIP-217** specifies `google.rpc.Status` as the canonical gRPC error model:\n
+Snippet : {
+            "rowId": "EXT-462-R1",
+            "sourceIds": ["EXT-462"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "C",
+            "subdomain": "C2-output-formatting",
+            "rowClass": "tradeoff-decis
+
+File    : ext-batch-661-690.md
+Error   : Invalid JSON primitive: .
+Snippet : \n{\n  \"code\": 5,\n  \"message\": \"Order 123 does not exist\",\n  \"details\": [{\n    \"@type\": \"type.googleapis.com/google.rpc.ResourceInfo\",\n    \"resourceType\": \"order\",\n    \"resourceName\": \"orders/123\
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1732): {
+            "rowId": "EXT-463-R1",
+            "sourceIds": ["EXT-463"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G1-data-quality-decision",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "RLHF (Reinforcement Learning from Human Feedback) reward model trained on OpenAssistant pairwise preference data. Current evaluation: measure reward model accuracy as percentage of pairs where it correctly ranks human-preferred response 
+          higher. Accuracy: 72%.",
+              "b": "Researcher asks: should the reward model be evaluated on absolute quality scores (output a score 0-10 for any response) or relative ranking (given pair A/B, which is better)?",
+              "c": "Downstream use: the reward model will score candidate responses during PPO (Proximal Policy Optimization) training â€” it assigns a scalar reward per response, not a pairwise comparison."
+            },
+            "function": "Evaluate absolute scoring vs relative ranking for reward model training and recommend alignment with PPO downstream use.",
+            "acceptedOutput": "**Critical mismatch:** pairwise preference training produces a model that compares two responses â€” but PPO requires an absolute scalar reward per response. Relative ranking does not directly transfer to absolute scoring 
+          without calibration.\n\n**Problem with naive relative-only training:**\n- Reward model trained on pairs learns: 'response A > response B'\n- PPO asks: 'what is the reward for response C alone?' â€” the model has no calibrated baseline\n- Result: 
+          reward hacking â€” PPO finds responses that score high relative to training distribution but are not actually good\n\n**Recommended approach â€” Bradley-Terry model with absolute anchors:**\n
+Snippet : {
+            "rowId": "EXT-463-R1",
+            "sourceIds": ["EXT-463"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G1-data-quality-decision",
+            "rowClass": "t
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1394): {
+            "rowId": "EXT-464-R1",
+            "sourceIds": ["EXT-464"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineCommand_to_machineActionItems",
+            "domain": "C",
+            "subdomain": "C2-translation-quality",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "ZH-EN translation training pipeline processes Tatoeba pairs. Chinese idiom: 'é©¬åˆ°æˆåŠŸ' (mÇŽ dÃo chÃ©ng gÅng). Literal translation: 'When the horse arrives, success comes'. Functional equivalent: 'Instant success' or 'Success at the 
+          first attempt'.",
+              "b": "MT (Machine Translation) pipeline evaluator finds BLEU score for literal translation = 0.61 (high word overlap with human reference). BLEU for functional equivalent = 0.12 (low word overlap).",
+              "c": "Model will be used for Chinese business communication translation. Functional equivalence is the goal."
+            },
+            "function": "Identify why BLEU fails for idiomatic translation and design a filter that favors functional equivalents for idioms.",
+            "acceptedOutput": "**BLEU failure mode for idioms:** BLEU measures n-gram overlap between MT output and reference translation. For 'é©¬åˆ°æˆåŠŸ': a literal translation matches the word-level reference, scoring high on BLEU. A functional 
+          equivalent ('instant success') has nearly zero n-gram overlap with the literal reference â€” BLEU incorrectly penalizes the better translation.\n\n**Filter design for idiomatic pairs:**\n
+Snippet : {
+            "rowId": "EXT-464-R1",
+            "sourceIds": ["EXT-464"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineCommand_to_machineActionItems",
+            "domain": "C",
+            "subdomain": "C2-translation-quality",
+            "rowClass": "tradeoff-
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1119): {
+            "rowId": "EXT-465-R1",
+            "sourceIds": ["EXT-465"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Vue 3 app has a deeply nested component tree: App â†’ Layout â†’ Dashboard â†’ Widget â†’ DataTable. DataTable needs the current user's locale and theme preferences. Passing via props through 4 layers is prop-drilling.",
+              "b": "Options: (A) use provide/inject from App to DataTable. (B) add locale + theme to Pinia store.",
+              "c": "Locale and theme are set once at login and rarely change. App does not yet use Pinia but may add it later."
+            },
+            "function": "Recommend provide/inject vs Pinia for locale/theme cross-component sharing and explain the decision threshold.",
+            "acceptedOutput": "**For locale and theme that are set once and shared read-only:** `provide/inject` is the correct, lighter-weight solution â€” Pinia adds infrastructure overhead that is not justified for two rarely-changing 
+          values.\n\n**Implementation with provide/inject (+ reactivity):**\n
+Snippet : {
+            "rowId": "EXT-465-R1",
+            "sourceIds": ["EXT-465"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1027): {
+            "rowId": "EXT-466-R1",
+            "sourceIds": ["EXT-466"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F1-storage-retrieval",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Domain model has an `Address` value object used on `Customer` (billing address) and `Order` (shipping address). Developer is deciding between: (A) owned entity type mapped to the same table as Customer/Order, (B) separate Address table 
+          with foreign key.",
+              "b": "Address has: Street, City, PostalCode, Country (4 fields). Addresses are never queried independently â€” they are always loaded with their owner entity.",
+              "c": "EF Core 8. Using SQL Server."
+            },
+            "function": "Compare EF Core owned entity (same table) vs separate Address table for the Address value object and recommend.",
+            "acceptedOutput": "**EF Core owned entity types** (mapped to the owner's table) are the correct pattern for value objects that are never queried independently.\n\n**Implementation:**\n
+Snippet : {
+            "rowId": "EXT-466-R1",
+            "sourceIds": ["EXT-466"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F1-storage-retrieval",
+            "rowClass": "tradeoff-decision
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1234): {
+            "rowId": "EXT-467-R1",
+            "sourceIds": ["EXT-467"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G2-training-stability",
+            "rowClass": "migration-decision",
+            "input": {
+              "a": ".NET 8 microservice team manually configures OpenTelemetry, health checks, and HttpClient resilience in each of 6 services. Each service has slightly different OTel endpoint configuration, different health check paths, and one service 
+          forgot to add Polly retry policies.",
+              "b": ".NET Aspire introduces a 'service defaults' project that standardizes all three concerns across services via `builder.AddServiceDefaults()`.",
+              "c": "Team is evaluating whether to migrate existing services to Aspire service defaults or maintain manual configuration."
+            },
+            "function": "Evaluate .NET Aspire service defaults vs manual per-service configuration and recommend migration approach.",
+            "acceptedOutput": "**.NET Aspire Service Defaults** is a shared project (added by `dotnet new aspire-servicedefaults`) that centralizes OTel, health checks, and HttpClient resilience into a single `AddServiceDefaults()` call.\n\n**What 
+          `AddServiceDefaults()` configures automatically:**\n
+Snippet : {
+            "rowId": "EXT-467-R1",
+            "sourceIds": ["EXT-467"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G2-training-stability",
+            "rowClass": "migr
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1398): {
+            "rowId": "EXT-468-R1",
+            "sourceIds": ["EXT-468"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Azure microservice platform (8 services on AKS) needs an API gateway for: JWT validation, rate limiting, request transformation, API versioning, and developer portal with API keys for external partners.",
+              "b": "Option A: Azure API Management (APIM). Option B: nginx Ingress + custom JWT validation middleware in each service. Option C: Kong Gateway on AKS.",
+              "c": "Platform team is small (3 engineers). External partners number 20. Budget allows for APIM Standard tier (~$700/month)."
+            },
+            "function": "Compare APIM vs nginx Ingress vs Kong for this scenario and recommend.",
+            "acceptedOutput": "**Recommendation: Azure API Management (APIM) Standard tier.**\n\n**Decision factors:**\n- External partners requiring API keys â†’ APIM has a built-in developer portal with self-service API key provisioning. Building this with 
+          nginx or Kong requires significant custom work.\n- Small platform team (3 engineers) â†’ APIM is fully managed; no patching, upgrades, or capacity planning.\n- 20 partners â†’ APIM subscription management, usage reporting, and throttling per-partner 
+          are built in.\n\n**APIM policy for JWT validation + rate limiting:**\n
+Snippet : {
+            "rowId": "EXT-468-R1",
+            "sourceIds": ["EXT-468"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1115): {
+            "rowId": "EXT-469-R1",
+            "sourceIds": ["EXT-469"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "negative-example",
+            "input": {
+              "a": "Security scan of ASP.NET Core 8 API reveals response headers: `Server: Microsoft-IIS/10.0`, `X-Powered-By: ASP.NET`, `X-AspNet-Version: 4.0.30319`. These headers expose technology stack information.",
+              "b": "CWE-200 (Exposure of Sensitive Information to Unauthorized Actor) â€” attacker uses version information to target known vulnerabilities. Example: IIS 10.0 + ASP.NET 4.0 indicates the server may be vulnerable to specific CVEs.",
+              "c": "ASP.NET Core 8 hosted on IIS. Also needs: X-Content-Type-Options, X-Frame-Options, and Content-Security-Policy headers added."
+            },
+            "function": "Remove information-exposure headers and add security headers per CWE-200 mitigation.",
+            "acceptedOutput": "**CWE-200 mitigation** requires removing server technology disclosure headers and adding protective security headers.\n\n**Step 1 â€” Remove disclosure headers:**\n
+Snippet : {
+            "rowId": "EXT-469-R1",
+            "sourceIds": ["EXT-469"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "negative-exampl
+
+File    : ext-batch-661-690.md
+Error   : Unterminated string passed in. (1151): {
+            "rowId": "EXT-470-R1",
+            "sourceIds": ["EXT-470"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "arbiter-construction",
+            "input": {
+              "a": "OWASP ASVS V7.1.1 requires: 'Verify that the application does not log credentials or payment details.' V7.1.2 requires: 'Verify that the application does not log other sensitive information as determined by local privacy laws or relevant 
+          security policy.'",
+              "b": "Current ASP.NET Core API logs: `_logger.LogInformation($\"User {email} authenticated with password {password}\")`. SIEM (Security Information and Event Management) team cannot detect brute force attacks from free-text logs.",
+              "c": "Need logs that: (1) never include credentials, (2) are structured for SIEM query, (3) include security event classification."
+            },
+            "function": "Design OWASP ASVS V7.1 compliant structured logging for authentication events.",
+            "acceptedOutput": "**ASVS V7.1 compliance requires:** no credential logging + structured format for SIEM detection.\n\n**Serilog structured logging implementation:**\n
+Snippet : {
+            "rowId": "EXT-470-R1",
+            "sourceIds": ["EXT-470"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "arbiter-constru
+
+File    : ext-batch-661-690.md
+Error   : Invalid JSON primitive: .
+Snippet : \n{\n  \"Serilog\": {\n    \"Destructure\": [\n      // Prevent accidental credential logging via object destructuring\n      { \"Name\": \"ByTransforming\",\n        \"Args\": { \"type\": \"LoginRequest\",\n            
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1228): {
+            "rowId": "EXT-471-R1",
+            "sourceIds": ["EXT-471"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A3-topology-change",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Kubernetes cluster has 20 deployments with manually set resource requests that were guessed 18 months ago. Cluster utilization shows 60% of pods have requests 3x higher than actual usage â€” wasting node capacity. Platform team wants to 
+          right-size them.",
+              "b": "VPA (Vertical Pod Autoscaler) can recommend or automatically adjust resource requests based on historical usage. But VPA in Auto mode evicts and restarts pods to apply new requests.",
+              "c": "Production services â€” pod restarts are disruptive. Some services are stateful (Redis, Postgres)."
+            },
+            "function": "Design a VPA-based right-sizing strategy that provides recommendations without disruptive auto-eviction for production services.",
+            "acceptedOutput": "**VPA Recommendation-only mode** provides right-sizing data without automatic pod eviction â€” the team manually applies recommendations during planned maintenance windows.\n\n**VPA manifest (Off mode â€” recommendations only, 
+          no automatic updates):**\n
+Snippet : {
+            "rowId": "EXT-471-R1",
+            "sourceIds": ["EXT-471"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A3-topology-change",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1210): {
+            "rowId": "EXT-472-R1",
+            "sourceIds": ["EXT-472"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Python service has an `IRepository` abstract base class (ABC) with abstract methods `get`, `save`, `delete`. Third-party library returns objects that implement the same methods but don't inherit from `IRepository`. Code that accepts 
+          `IRepository` rejects them at runtime.",
+              "b": "Developer wants to accept any object that implements the required methods without requiring inheritance. Python 3.8+ `typing.Protocol` supports this.",
+              "c": "The codebase has both internal implementations (inherit from IRepository) and third-party adapters (cannot modify to add inheritance)."
+            },
+            "function": "Compare ABC vs typing.Protocol for Python interface enforcement and produce the Protocol-based solution.",
+            "acceptedOutput": "**typing.Protocol** implements structural subtyping (duck typing with static checking) â€” any class that implements the required methods satisfies the protocol, regardless of inheritance.\n\n**Before (ABC â€” nominal 
+          subtyping):**\n
+Snippet : {
+            "rowId": "EXT-472-R1",
+            "sourceIds": ["EXT-472"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "tradeoff-decisio
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1006): {
+            "rowId": "EXT-473-R1",
+            "sourceIds": ["EXT-473"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G2-training-stability",
+            "rowClass": "migration-decision",
+            "input": {
+              "a": "SQLAlchemy 2.0 removes the legacy `session.query(Model).filter(...)` Query API (deprecated in 1.4, removed in 2.0). Application uses `session.query(User).filter(User.id == uid).first()` in 140 places.",
+              "b": "Migration to `session.execute(select(User).where(User.id == uid)).scalar_one_or_none()` is required. Team wants to understand the semantic differences before bulk migration.",
+              "c": "Using Python 3.11, SQLAlchemy 2.0, PostgreSQL."
+            },
+            "function": "Document the SQLAlchemy 1.x to 2.0 Query API migration with semantic equivalences and common patterns.",
+            "acceptedOutput": "**SQLAlchemy 2.0 migration** replaces the legacy Query API with `session.execute()` + Core `select()` statements.\n\n**Common pattern equivalences:**\n\n
+Snippet : {
+            "rowId": "EXT-473-R1",
+            "sourceIds": ["EXT-473"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G2-training-stability",
+            "rowClass": "migr
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1130): {
+            "rowId": "EXT-474-R1",
+            "sourceIds": ["EXT-474"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "migration-decision",
+            "input": {
+              "a": "Python 3.13 introduces PEP-696 TypeVar defaults, allowing generic classes to have default type arguments: `class Stack[T = int]: ...` means `Stack()` is treated as `Stack[int]` by type checkers.",
+              "b": "Library has a generic `Result[T, E]` class used in 300 call sites. 250 of those sites use `Result[SomeData, AppError]` â€” AppError is always the error type. Developer wants to reduce the boilerplate to `Result[SomeData]` at those 250 
+          sites.",
+              "c": "Library targets Python 3.12+. mypy version must support PEP-696."
+            },
+            "function": "Implement PEP-696 TypeVar defaults to add a default error type to Result[T, E].",
+            "acceptedOutput": "**PEP-696 TypeVar defaults** (Python 3.13+, or `typing_extensions` for 3.12) allow specifying a default type argument that is used when the type parameter is omitted.\n\n**Before (all 300 call sites must specify both type 
+          args):**\n
+Snippet : {
+            "rowId": "EXT-474-R1",
+            "sourceIds": ["EXT-474"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "migration-decisi
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1404): {
+            "rowId": "EXT-475-R1",
+            "sourceIds": ["EXT-475"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E3-evidence-linkage",
+            "rowClass": "arbiter-construction",
+            "input": {
+              "a": "OTel-instrumented .NET service shows database spans in Jaeger with no attributes â€” only span duration and name 'Query'. Team cannot identify which SQL query is slow without reading application logs.",
+              "b": "OTel semantic conventions define required and recommended attributes for database spans: db.system, db.name, db.operation, db.statement.",
+              "c": "Using SqlClient (.NET) with manual OTel span creation. Automatic SqlClient instrumentation was not configured."
+            },
+            "function": "Configure OTel database span attributes per semantic conventions to enable query-level performance analysis.",
+            "acceptedOutput": "**OTel Database Semantic Conventions** define standard attributes for database spans that enable query-level observability across all backends.\n\n**Required attributes (all database spans):**\n- `db.system`: database type 
+          (`mssql`, `postgresql`, `redis`, etc.)\n- `db.name`: database name\n- `db.operation`: SQL operation (`SELECT`, `INSERT`, `UPDATE`)\n- `db.statement`: the SQL statement (**CAUTION**: may contain PII â€” sanitize before logging)\n\n**Option 1 â€” Use 
+          automatic SqlClient instrumentation (preferred):**\n
+Snippet : {
+            "rowId": "EXT-475-R1",
+            "sourceIds": ["EXT-475"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E3-evidence-linkage",
+            "rowClass": "arbiter-cons
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1221): {
+            "rowId": "EXT-476-R1",
+            "sourceIds": ["EXT-476"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D2-execution-concurrency",
+            "rowClass": "anti-pattern-detection",
+            "input": {
+              "a": "ASP.NET Core API has a Dapper query that takes 3â€“8 seconds for complex reports. When the user navigates away or the HTTP client times out, the server continues executing the query for the full duration â€” wasting DB connection pool 
+          slots.",
+              "b": "Developer uses `await conn.QueryAsync<ReportRow>(sql, parameters)` without passing a CancellationToken. The ASP.NET Core request CancellationToken is available from the controller's HttpContext.",
+              "c": "SQL Server. Dapper 2.1."
+            },
+            "function": "Identify the missing CancellationToken anti-pattern and implement cooperative cancellation for the Dapper query.",
+            "acceptedOutput": "**Anti-pattern:** not propagating `CancellationToken` through Dapper async methods â€” when the HTTP client disconnects (request cancelled), the database query continues running until completion, holding a connection pool slot 
+          unnecessarily.\n\n**Dapper async methods accept CancellationToken via `CommandDefinition`:**\n
+Snippet : {
+            "rowId": "EXT-476-R1",
+            "sourceIds": ["EXT-476"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D2-execution-concurrency",
+            "rowClass": "anti-patte
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1244): {
+            "rowId": "EXT-477-R1",
+            "sourceIds": ["EXT-477"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G2-training-stability",
+            "rowClass": "migration-decision",
+            "input": {
+              "a": "Angular 14+ introduced standalone components. Large Angular 13 app (120 components, 15 NgModules) wants to migrate to standalone architecture. Team debates incremental migration vs rewriting all components at once.",
+              "b": "Angular CLI provides `ng generate @angular/core:standalone` schematic for automated migration. Angular supports mixing NgModule and standalone components.",
+              "c": "App uses lazy-loaded feature modules. Some shared modules (SharedModule, MaterialModule) are imported in 12+ feature modules."
+            },
+            "function": "Design the NgModule to standalone migration strategy for this 120-component Angular app.",
+            "acceptedOutput": "**Recommended: incremental migration using the Angular CLI schematic** â€” Angular officially supports NgModule + standalone coexistence, so you can migrate leaf components first without breaking the app.\n\n**Migration 
+          phases:**\n\n**Phase 1 â€” Convert leaf components (no template dependencies on other NgModule components):**\n
+Snippet : {
+            "rowId": "EXT-477-R1",
+            "sourceIds": ["EXT-477"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G2-training-stability",
+            "rowClass": "migr
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1268): {
+            "rowId": "EXT-478-R1",
+            "sourceIds": ["EXT-478"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E1-result-selection",
+            "rowClass": "anti-pattern-detection",
+            "input": {
+              "a": "React app has a single AppContext containing: user, theme, cart, notifications (4 separate values). When the cart updates (user adds an item), ALL 200 components that consume AppContext re-render â€” including the user profile, theme, and 
+          notification components that don't use the cart.",
+              "b": "React DevTools Profiler shows 200 re-renders per cart update. Only 8 components actually use the cart.",
+              "c": "Current implementation: `const AppContext = createContext({user, theme, cart, notifications})`."
+            },
+            "function": "Identify the context re-render anti-pattern and implement context splitting to limit re-renders.",
+            "acceptedOutput": "**Anti-pattern:** monolithic context â€” any change to any value in the context object triggers re-renders in ALL consumers, regardless of which value they use. React compares context value by reference â€” a new `{user, theme, 
+          cart, notifications}` object (created on every render) always triggers re-renders.\n\n**Fix: split contexts by update frequency:**\n
+Snippet : {
+            "rowId": "EXT-478-R1",
+            "sourceIds": ["EXT-478"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E1-result-selection",
+            "rowClass": "anti-pattern
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1292): {
+            "rowId": "EXT-479-R1",
+            "sourceIds": ["EXT-479"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F2-storage-performance",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "ASP.NET Core 8 API endpoint `GET /products/featured` returns 50 products that change once per hour. Currently called 10,000 times/hour. Each call executes a DB query taking 45 ms.",
+              "b": "Developer wants to cache the response for 60 minutes. Two options: `[ResponseCache]` attribute (HTTP Cache-Control headers) vs `[OutputCache]` attribute (.NET 7+ server-side cache).",
+              "c": "API is behind a CDN (Content Delivery Network). Clients are browser SPAs and mobile apps."
+            },
+            "function": "Compare [ResponseCache] vs [OutputCache] for this scenario and recommend with implementation.",
+            "acceptedOutput": "**Key distinction:**\n- `[ResponseCache]`: sets HTTP `Cache-Control` headers â€” caching happens in the **client or CDN**, not the server. Server still executes the action on every cache miss.\n- `[OutputCache]`: caches the 
+          response **on the server** â€” action is not executed for cache hits. Also sets cache headers for downstream caching.\n\n**For this scenario: use `[OutputCache]` for server-side caching + configure CDN:**\n
+Snippet : {
+            "rowId": "EXT-479-R1",
+            "sourceIds": ["EXT-479"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F2-storage-performance",
+            "rowClass": "tradeoff-decisi
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1746): {
+            "rowId": "EXT-480-R1",
+            "sourceIds": ["EXT-480"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "NestJS API needs JWT authentication. Developer implemented a custom guard that manually calls `jwt.verify(token, secret)` from the `jsonwebtoken` package. Tech lead suggests using Passport.js JwtStrategy instead.",
+              "b": "Custom guard: extracts Bearer token from Authorization header, calls `jwt.verify()`, attaches decoded payload to `req.user`. It works but the tech lead says it misses important edge cases.",
+              "c": "API will later add OAuth 2.0 (Google, GitHub) as additional auth methods."
+            },
+            "function": "Compare manual JWT verification vs Passport JwtStrategy for NestJS and recommend considering future OAuth requirements.",
+            "acceptedOutput": "**Passport JwtStrategy** is recommended over manual JWT verification when OAuth 2.0 strategies will be added â€” it provides a unified auth framework where multiple strategies (JWT, Google OAuth, GitHub OAuth) coexist without 
+          duplicating guard logic.\n\n**What manual jwt.verify() misses:**\n1. Token expiry: `jwt.verify()` throws on expiry â€” must catch and convert to 401\n2. Algorithm confusion: manual verify may not enforce `algorithms: ['RS256']` â€” vulnerable to 
+          `alg: 'none'` attack if not specified\n3. Clock skew: `jwt.verify()` has no built-in clock skew tolerance (`clockTolerance` option)\n4. JWKS (JSON Web Key Set) support: for Google/GitHub OAuth, tokens are verified against a remote JWKS endpoint â€” 
+          Passport handles this; manual verification requires additional code\n\n**Passport JwtStrategy implementation:**\n
+Snippet : {
+            "rowId": "EXT-480-R1",
+            "sourceIds": ["EXT-480"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "tradeoff-decisi
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1554): {
+            "rowId": "EXT-481-R1",
+            "sourceIds": ["EXT-481"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "C",
+            "subdomain": "C3-format-negotiation",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Web app shows real-time order status updates. Current implementation: browser polls `GET /orders/{id}/status` every 5 seconds. At 10,000 active users, this generates 2M requests/hour. Most polls return 'no change'.",
+              "b": "Team is evaluating three alternatives: (A) WebSocket persistent connection, (B) Server-Sent Events (SSE), (C) Web Push Protocol (RFC-8030) with push notifications.",
+              "c": "Order status changes happen on average every 20 minutes per order. Users don't need to have the tab open to receive notifications."
+            },
+            "function": "Select the appropriate real-time delivery mechanism and explain the tradeoffs.",
+            "acceptedOutput": "**Recommendation: Server-Sent Events (SSE) for in-app real-time + Web Push for background notifications.**\n\n**Analysis:**\n\n**Polling (current):** 2M wasted requests/hour. Latency: up to 5s. Eliminates: zero. Verdict: 
+          replace.\n\n**WebSocket:** bidirectional, persistent TCP connection. Required when: client sends messages to server in real-time (chat, collaborative editing). Overhead: connection management, heartbeats, reconnection logic. For order status 
+          (serverâ†’client only): overkill.\n\n**Server-Sent Events (SSE):** unidirectional serverâ†’client over HTTP/2. No WebSocket overhead. Browser auto-reconnects. Native EventSource API.\n
+Snippet : {
+            "rowId": "EXT-481-R1",
+            "sourceIds": ["EXT-481"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "C",
+            "subdomain": "C3-format-negotiation",
+            "rowClass": "tradeoff-deci
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1460): {
+            "rowId": "EXT-482-R1",
+            "sourceIds": ["EXT-482"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "API resource `DocumentTemplate` needs versioning: users want to view previous versions, compare two versions, and roll back to a prior version. Two approaches considered: (A) AIP-162 resource revisions with `{name}@{revisionId}`, (B) 
+          separate `DocumentTemplateHistory` collection with timestamp-based lookup.",
+              "b": "Google AIP-162 defines a revision pattern: each mutation creates a new immutable revision. Resources are addressable as `documents/123` (latest) or `documents/123@c7cfa2a8` (specific revision).",
+              "c": "API uses standard REST. ~50 revisions per document over its lifetime."
+            },
+            "function": "Compare AIP-162 resource revisions vs separate history collection and implement AIP-162.",
+            "acceptedOutput": "**AIP-162 resource revisions** are the correct pattern for this use case â€” they make revisions first-class addressable resources without a separate API surface.\n\n**AIP-162 revision API surface:**\n- `GET /documents/123` â†’ 
+          latest revision\n- `GET /documents/123@c7cfa2a8` â†’ specific revision by ID\n- `GET /documents/123:listRevisions` â†’ list all revisions\n- `POST /documents/123:rollback` with `{revisionId: \"c7cfa2a8\"}` â†’ roll back\n\n**Implementation (ASP.NET 
+          Core):**\n
+Snippet : {
+            "rowId": "EXT-482-R1",
+            "sourceIds": ["EXT-482"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1473): {
+            "rowId": "EXT-483-R1",
+            "sourceIds": ["EXT-483"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G1-data-quality-decision",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "RLHF dataset curation from OpenAssistant oasst1: dataset contains conversation trees where each node has multiple branching responses (breadth) and conversations extend to many turns (depth). Budget allows labeling 10,000 additional 
+          comparison pairs.",
+              "b": "Option A: sample from deep conversation chains (8+ turns) to improve multi-turn coherence. Option B: sample from diverse root prompts (new conversations) to improve topic breadth.",
+              "c": "Current model weakness: loses coherence after turn 5. Topic coverage is already 85% of target domains."
+            },
+            "function": "Recommend how to allocate 10,000 comparison pairs between depth (multi-turn chains) and breadth (new prompts) given the model weakness.",
+            "acceptedOutput": "**Recommendation: 70% depth (7,000 pairs from turn 5+ chains) + 30% breadth (3,000 pairs from diverse roots).**\n\n**Rationale for depth-first allocation:**\n\nThe stated model weakness is coherence after turn 5. RLHF reward 
+          signal directly influences behavior for the data distribution it is trained on. If 95% of training pairs are from turns 1-3 (breadth-focused), the reward model has limited signal for correct behavior at turns 6-12.\n\n**Depth sampling strategy:**\n
+Snippet : {
+            "rowId": "EXT-483-R1",
+            "sourceIds": ["EXT-483"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G1-data-quality-decision",
+            "rowClass": "t
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1239): {
+            "rowId": "EXT-484-R1",
+            "sourceIds": ["EXT-484"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineCommand_to_machineActionItems",
+            "domain": "C",
+            "subdomain": "C1-translation-filtering",
+            "rowClass": "arbiter-construction",
+            "input": {
+              "a": "EN-FR Tatoeba pipeline: after LASER alignment filtering (threshold 0.88), some pairs have extreme length ratios â€” EN sentence of 3 words paired with FR sentence of 42 words. These pass LASER filter because both sentences are semantically 
+          related to the same concept.",
+              "b": "Current length ratio filter: reject if `max(len_en, len_fr) / min(len_en, len_fr) > 3`. This rejects the 3:42 pair (ratio = 14) but also incorrectly rejects valid pairs where one language is genuinely more verbose.",
+              "c": "French is on average 15% longer than English. German compounds can make one EN word map to a long DE phrase."
+            },
+            "function": "Design a language-pair-aware length ratio filter that handles cross-linguistic verbosity differences.",
+            "acceptedOutput": "**Language-pair-aware length ratio filter** adjusts thresholds based on known average length ratio for each language pair, then identifies statistical outliers rather than using a fixed ratio.\n\n**Implementation:**\n
+Snippet : {
+            "rowId": "EXT-484-R1",
+            "sourceIds": ["EXT-484"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineCommand_to_machineActionItems",
+            "domain": "C",
+            "subdomain": "C1-translation-filtering",
+            "rowClass": "arbiter
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1132): {
+            "rowId": "EXT-485-R1",
+            "sourceIds": ["EXT-485"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Vue 3 app uses Vuex 4 for all state management. New feature: a multi-step form wizard with 4 steps, form data, validation state, and step navigation logic. Team debates adding a new Vuex module vs implementing it as a composable.",
+              "b": "The form wizard state is only used inside the FormWizard component tree â€” it is not shared across the app.",
+              "c": "App already uses Pinia for other global state (user, cart). Vuex 4 is legacy from Vue 2."
+            },
+            "function": "Recommend composable vs Vuex module for feature-scoped form wizard state and recommend Pinia migration path.",
+            "acceptedOutput": "**For feature-scoped state (only used in FormWizard component tree): use a composable** â€” Vuex modules are global and designed for shared cross-component state. Adding a Vuex module for state that belongs to one component tree 
+          is overengineering.\n\n**Form wizard composable:**\n
+Snippet : {
+            "rowId": "EXT-485-R1",
+            "sourceIds": ["EXT-485"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A2-topology-selection",
+            "rowClass": "tradeoff-decision
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1152): {
+            "rowId": "EXT-486-R1",
+            "sourceIds": ["EXT-486"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F1-storage-retrieval",
+            "rowClass": "anti-pattern-detection",
+            "input": {
+              "a": "Every entity has `CreatedAt`, `UpdatedAt`, `CreatedBy`, `UpdatedBy` fields. Currently set manually in each service method: `entity.UpdatedAt = DateTime.UtcNow; entity.UpdatedBy = currentUser.Id;`. Audit fields are occasionally missed â€” 3 
+          incidents last quarter.",
+              "b": "Developer wants to centralize audit field assignment. Options: (A) EF Core interceptor (ISaveChangesInterceptor), (B) override DbContext.SaveChanges().",
+              "c": "Current user is available via IHttpContextAccessor. Multi-tenant app."
+            },
+            "function": "Implement centralized audit field assignment using EF Core interceptors to eliminate manual assignment errors.",
+            "acceptedOutput": "**EF Core interceptors** are preferred over overriding `SaveChanges()` because they support async and are composable â€” multiple interceptors can be chained without base class conflicts.\n\n**ISaveChangesInterceptor 
+          implementation:**\n
+Snippet : {
+            "rowId": "EXT-486-R1",
+            "sourceIds": ["EXT-486"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F1-storage-retrieval",
+            "rowClass": "anti-pattern-dete
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1227): {
+            "rowId": "EXT-487-R1",
+            "sourceIds": ["EXT-487"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Order service saves an order to DB then publishes `OrderPlaced` event to RabbitMQ. Current code: `await _db.SaveChangesAsync(); await _bus.Publish(new OrderPlaced(order.Id))`. Incident: DB save succeeds but RabbitMQ publish fails â€” order 
+          created but downstream services never notified.",
+              "b": "Team wants to implement the outbox pattern. Options: (A) manually implement an Outbox table + background worker, (B) use MassTransit's built-in transactional outbox with EF Core.",
+              "c": "Stack: .NET 8, EF Core, MassTransit 8.x, RabbitMQ."
+            },
+            "function": "Implement the transactional outbox pattern using MassTransit's built-in EF Core outbox to eliminate the publish failure incident.",
+            "acceptedOutput": "**MassTransit 8 built-in transactional outbox** with EF Core eliminates the dual-write problem: events are written to an `OutboxMessage` table in the same DB transaction as the domain entity. A background worker then reliably 
+          delivers them to RabbitMQ.\n\n**Setup:**\n
+Snippet : {
+            "rowId": "EXT-487-R1",
+            "sourceIds": ["EXT-487"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1664): {
+            "rowId": "EXT-488-R1",
+            "sourceIds": ["EXT-488"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Azure microservice platform needs integration events for two scenarios: (1) `OrderPlaced` event must be processed by Inventory, Shipping, and Notifications services â€” each must process EVERY event. (2) `BlobUploaded` events from Azure 
+          Storage must trigger downstream processing â€” events are fan-out, no retry needed.",
+              "b": "Evaluating Azure Service Bus Topics vs Azure Event Grid.",
+              "c": "Order volume: 50,000/day. Blob events: 500,000/day. Budget: Azure Standard tier."
+            },
+            "function": "Select Azure Service Bus vs Event Grid for each scenario and explain the architectural distinction.",
+            "acceptedOutput": "**Scenario 1 (OrderPlaced â€” guaranteed delivery to 3 services): Azure Service Bus Topics with subscriptions.**\n\n**Scenario 2 (BlobUploaded â€” fan-out notification, no guaranteed processing): Azure Event 
+          Grid.**\n\n**Architectural distinction:**\n\n| Property | Service Bus Topics | Event Grid |\n|---|---|---|\n| Delivery guarantee | At-least-once + DLQ | At-least-once (24h retry) |\n| Consumer model | Pull (consumer polls) | Push (HTTP webhook) |\n| 
+          Message ordering | Sessions-based FIFO | Not guaranteed |\n| Max message size | 256 KB | 1 MB (Event Grid data) |\n| Retry on failure | Built-in + DLQ | Yes (24h) |\n| Pricing | Per operation | Per million events |\n| Primary use case | Business 
+          transactions | Reactive fan-out |\n\n**Scenario 1 â€” Service Bus Topic (OrderPlaced):**\n
+Snippet : {
+            "rowId": "EXT-488-R1",
+            "sourceIds": ["EXT-488"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1551): {
+            "rowId": "EXT-489-R1",
+            "sourceIds": ["EXT-489"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "negative-example",
+            "input": {
+              "a": "Security audit finds `[AllowAnonymous]` on an admin controller method: `[HttpPost('admin/users/delete')] [AllowAnonymous] public async Task<IActionResult> DeleteUser(int userId)`. The method was annotated during testing and never cleaned 
+          up.",
+              "b": "CWE-306 (Missing Authentication for Critical Function) â€” the DeleteUser endpoint is callable by anyone without authentication.",
+              "c": "Global authorization policy is configured with `RequireAuthenticatedUser()`. The AllowAnonymous attribute overrides the global policy."
+            },
+            "function": "Identify the CWE-306 vulnerability, explain how AllowAnonymous overrides global auth policy, and implement detection.",
+            "acceptedOutput": "**CWE-306 vulnerability:** `[AllowAnonymous]` explicitly bypasses ASP.NET Core's global authorization policy. Any HTTP client can call `POST /admin/users/delete?userId=1` without any credentials and delete any user.\n\n**How 
+          AllowAnonymous overrides global policy:**\nASP.NET Core's authorization middleware checks `[AllowAnonymous]` first â€” if present, all `[Authorize]` attributes and global `RequireAuthenticatedUser()` policies are bypassed entirely. This is by design 
+          for public endpoints (health checks, OAuth callbacks) but catastrophic when applied to administrative operations.\n\n**Immediate fix:**\n
+Snippet : {
+            "rowId": "EXT-489-R1",
+            "sourceIds": ["EXT-489"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "negative-exampl
+
+File    : ext-batch-691-720.md
+Error   : Unterminated string passed in. (1522): {
+            "rowId": "EXT-490-R1",
+            "sourceIds": ["EXT-490"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "arbiter-construction",
+            "input": {
+              "a": "OWASP ASVS V2.1.1 requires minimum 12-character passwords. V2.1.9 requires NOT mandating character composition rules (uppercase + number + symbol). Current system requires 8 characters minimum + uppercase + number + symbol.",
+              "b": "Security team debates the change: removing composition rules will 'weaken' security. NIST SP 800-63B Section 5.1.1 specifically recommends against composition rules.",
+              "c": "User research shows 40% of support tickets are password reset requests. Most users store passwords in plaintext notes due to complexity requirements."
+            },
+            "function": "Implement ASVS V2.1 + NIST SP 800-63B compliant password policy and explain the security rationale.",
+            "acceptedOutput": "**NIST SP 800-63B rationale for removing composition rules:** users respond to mandatory complexity by making minimal changes â€” 'Password1!' satisfies uppercase + number + symbol but is a dictionary password. Length provides 
+          more entropy than forced composition.\n\n**Entropy comparison:**\n- 8-char with complexity (uppercase + number + symbol): ~10^14 combinations\n- 12-char lowercase only (random): ~26^12 â‰ˆ 9.5Ã—10^16 combinations\n- 12 random chars beats 
+          forced-complex 8 chars by 1,000x\n\n**ASVS V2.1 compliant ASP.NET Core Identity configuration:**\n
+Snippet : {
+            "rowId": "EXT-490-R1",
+            "sourceIds": ["EXT-490"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "arbiter-constru
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1138): {
+            "rowId": "EXT-491-R1",
+            "sourceIds": ["EXT-491"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "arbiter-construction",
+            "input": {
+              "a": "Kubernetes cluster has 8 microservices with no NetworkPolicy resources. By default, all pods can communicate with all other pods in the cluster â€” a compromised pod can reach any database, internal API, or message broker.",
+              "b": "Security audit recommends implementing default-deny NetworkPolicy as the baseline, then allowing only required traffic.",
+              "c": "CNI (Container Network Interface) plugin is Cilium. Services: orders-api, payment-api, inventory-api, postgres, redis, rabbitmq."
+            },
+            "function": "Implement default-deny NetworkPolicy baseline and explicit allow rules for the described services.",
+            "acceptedOutput": "**Default-deny NetworkPolicy** closes all pod-to-pod communication by default, then explicit policies open only required connections â€” implementing least-privilege networking.\n\n**Step 1 â€” Default deny all ingress and 
+          egress per namespace:**\n
+Snippet : {
+            "rowId": "EXT-491-R1",
+            "sourceIds": ["EXT-491"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "arbiter-constru
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1097): {
+            "rowId": "EXT-492-R1",
+            "sourceIds": ["EXT-492"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Python service creates a temporary directory for file processing, must clean it up on success AND failure, and needs to track the directory path during processing. Developer is choosing between `@contextlib.contextmanager` and a class with 
+          `__enter__`/`__exit__`.",
+              "b": "The cleanup logic must run even if an exception is raised inside the `with` block.",
+              "c": "Python 3.11. The context manager will be used in 15 places across the codebase."
+            },
+            "function": "Compare @contextmanager vs class-based context manager and implement the correct choice for temporary directory management.",
+            "acceptedOutput": "**Use `@contextlib.contextmanager` for simple linear setup/teardown** â€” it is more readable and less boilerplate than a class when the context manager logic flows naturally as a generator.\n\n**@contextmanager 
+          implementation:**\n
+Snippet : {
+            "rowId": "EXT-492-R1",
+            "sourceIds": ["EXT-492"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "tradeoff-decisio
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1304): {
+            "rowId": "EXT-493-R1",
+            "sourceIds": ["EXT-493"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "anti-pattern-detection",
+            "input": {
+              "a": "FastAPI service uses a global SQLAlchemy Session created at module load time: `db = SessionLocal()`. All request handlers use this single session. Under load, concurrent requests corrupt each other's database state â€” phantom reads, wrong 
+          data returned.",
+              "b": "Root cause: SQLAlchemy Session is not thread-safe. A single session shared across requests causes state corruption.",
+              "c": "FastAPI. SQLAlchemy 2.0 async. PostgreSQL."
+            },
+            "function": "Identify the global session anti-pattern and implement per-request session using FastAPI dependency injection.",
+            "acceptedOutput": "**Anti-pattern:** global SQLAlchemy Session â€” sessions are not thread-safe and track object state internally. A shared session causes:\n- Transaction contamination: request A's uncommitted changes visible to request B\n- 
+          Object identity conflicts: same DB row loaded twice as different Python objects\n- Connection pool exhaustion: one session holds a connection for the app lifetime\n\n**Fix: FastAPI dependency injection for per-request async session:**\n
+Snippet : {
+            "rowId": "EXT-493-R1",
+            "sourceIds": ["EXT-493"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "anti-pattern-det
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1097): {
+            "rowId": "EXT-494-R1",
+            "sourceIds": ["EXT-494"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D3-execution-validation",
+            "rowClass": "negative-example",
+            "input": {
+              "a": "Python dataclass with a mutable default: `@dataclass class Order: tags: list = []`. Python raises `ValueError: mutable default <class 'list'> for field tags is not allowed: use default_factory`. Developer doesn't understand why.",
+              "b": "In a regular class, `tags = []` as a class attribute would share the same list across all instances â€” a classic Python bug. Dataclass explicitly disallows this pattern.",
+              "c": "Need: each Order instance has its own independent tags list, starting empty."
+            },
+            "function": "Explain the mutable default bug and implement the correct dataclass field() with default_factory.",
+            "acceptedOutput": "**Root cause:** mutable defaults are shared across all instances in Python class definitions â€” not just dataclasses. This is a Python language behavior.\n\n**The bug (without dataclass protection):**\n
+Snippet : {
+            "rowId": "EXT-494-R1",
+            "sourceIds": ["EXT-494"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D3-execution-validation",
+            "rowClass": "negative-ex
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1373): {
+            "rowId": "EXT-495-R1",
+            "sourceIds": ["EXT-495"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E3-evidence-linkage",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Multi-service system needs to propagate `userId` and `tenantId` across service boundaries for: (1) logging correlation â€” each downstream service logs with the userId, (2) feature flag evaluation â€” each service checks feature flags for 
+          the tenant.",
+              "b": "Current approach: each HTTP client adds `X-User-Id` and `X-Tenant-Id` custom headers manually. Some services forget to forward them, breaking the correlation.",
+              "c": "System uses OTel for distributed tracing. W3C TraceContext propagation is configured."
+            },
+            "function": "Compare OTel Baggage vs custom headers for cross-service context propagation and implement Baggage-based solution.",
+            "acceptedOutput": "**OTel Baggage** is the standardized mechanism for propagating application-level key-value pairs alongside trace context â€” automatically forwarded by OTel instrumentation on every outbound HTTP call.\n\n**Advantage over custom 
+          headers:** Baggage is automatically forwarded by OTel HttpClient instrumentation â€” services don't manually add headers. OTel adds them as part of the W3C `baggage` header.\n\n**Implementation (.NET OTel SDK):**\n
+Snippet : {
+            "rowId": "EXT-495-R1",
+            "sourceIds": ["EXT-495"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E3-evidence-linkage",
+            "rowClass": "tradeoff-dec
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1161): {
+            "rowId": "EXT-496-R1",
+            "sourceIds": ["EXT-496"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F1-storage-retrieval",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Domain model has a `Money` value object: `record Money(decimal Amount, string Currency)`. Database stores money as two columns: `amount DECIMAL(18,4)` and `currency CHAR(3)`. Dapper cannot map a single SQL column to a composite C# type.",
+              "b": "Current workaround: query maps to a flat DTO then manually constructs Money objects. This adds mapping code at every call site.",
+              "c": "Dapper supports `SqlMapper.TypeHandler<T>` for custom type mapping."
+            },
+            "function": "Implement a Dapper TypeHandler for the Money value object to eliminate per-call-site mapping.",
+            "acceptedOutput": "**Dapper TypeHandler** is designed for mapping between SQL column values and C# types. However, Money maps FROM two columns â€” TypeHandler handles one column. The correct Dapper approach for multi-column value objects is 
+          multi-mapping.\n\n**Option 1 â€” Dapper multi-mapping (recommended for 2-column value object):**\n
+Snippet : {
+            "rowId": "EXT-496-R1",
+            "sourceIds": ["EXT-496"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "resultI_to_finalMachineResults",
+            "domain": "F",
+            "subdomain": "F1-storage-retrieval",
+            "rowClass": "tradeoff-decision
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1115): {
+            "rowId": "EXT-497-R1",
+            "sourceIds": ["EXT-497"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "migration-decision",
+            "input": {
+              "a": "Angular 17 introduced built-in control flow syntax: `@if`, `@for`, `@switch` as template-native alternatives to `*ngIf`, `*ngFor`, `*ngSwitch` structural directives. Team is migrating from Angular 15 to 17.",
+              "b": "Old code: `<div *ngIf=\"user; else loading\">`, `<li *ngFor=\"let item of items; trackBy: trackById\">`. Developer wants to know if migration is required and what changes.",
+              "c": "Angular 17. Standalone components."
+            },
+            "function": "Compare new @if/@for control flow vs *ngIf/*ngFor and provide migration patterns.",
+            "acceptedOutput": "**Angular 17 built-in control flow** is a template syntax improvement â€” not a breaking change. `*ngIf`/`*ngFor` continue to work but are recommended to migrate for performance (no directive overhead) and 
+          readability.\n\n**Migration patterns:**\n\n**@if / @else (replaces *ngIf with else template):**\n
+Snippet : {
+            "rowId": "EXT-497-R1",
+            "sourceIds": ["EXT-497"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "migration-decisi
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1439): {
+            "rowId": "EXT-498-R1",
+            "sourceIds": ["EXT-498"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E1-result-selection",
+            "rowClass": "anti-pattern-detection",
+            "input": {
+              "a": "React component fetches user data and renders it. When the API returns an error, the component throws during render, crashing the entire React tree â€” white screen of death. Developer adds a try/catch around the render return statement.",
+              "b": "The try/catch approach doesn't work â€” React rendering errors still propagate up. Developer is confused about why try/catch fails in React render.",
+              "c": "React 18. Using React.Suspense for data loading."
+            },
+            "function": "Explain why try/catch cannot catch React render errors and implement the correct Error Boundary pattern.",
+            "acceptedOutput": "**Why try/catch doesn't work in React render:** React calls component functions synchronously and propagates errors through its own internal fiber tree â€” NOT through JavaScript's call stack that try/catch intercepts. Errors 
+          thrown during render are caught by React's reconciler, not by any try/catch in the render function itself.\n\n**Error Boundaries** are class components that implement `componentDidCatch` â€” React's dedicated mechanism for catching render errors in 
+          a component subtree.\n\n**Error Boundary implementation (class component â€” required by React):**\n
+Snippet : {
+            "rowId": "EXT-498-R1",
+            "sourceIds": ["EXT-498"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E1-result-selection",
+            "rowClass": "anti-pattern
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1112): {
+            "rowId": "EXT-499-R1",
+            "sourceIds": ["EXT-499"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "ASP.NET Core 8 API needs rate limiting. Two strategies: (A) limit by IP address â€” 100 requests/minute per IP, (B) limit by authenticated user ID â€” 1000 requests/hour per user. Some users are behind NAT (Network Address Translation) 
+          sharing one IP.",
+              "b": ".NET 7+ includes `Microsoft.AspNetCore.RateLimiting` middleware with FixedWindow, SlidingWindow, TokenBucket, and Concurrency policies.",
+              "c": "API serves both anonymous (login endpoint) and authenticated (data endpoints) traffic."
+            },
+            "function": "Design a combined rate limiting strategy: IP-based for anonymous endpoints, user-based for authenticated endpoints.",
+            "acceptedOutput": "**Combined strategy:** IP-based rate limiting for unauthenticated endpoints (prevents credential stuffing), user-based for authenticated endpoints (prevents API abuse per customer, solves NAT problem).\n\n
+Snippet : {
+            "rowId": "EXT-499-R1",
+            "sourceIds": ["EXT-499"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "arbitrateResultI_with_resultsContext",
+            "domain": "E",
+            "subdomain": "E4-security-gate",
+            "rowClass": "tradeoff-decisi
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1185): {
+            "rowId": "EXT-500-R1",
+            "sourceIds": ["EXT-500"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "NestJS microservice platform needs internal service-to-service communication for: (1) synchronous request/reply (orders-api queries inventory availability before checkout), (2) async events (order placed â†’ notifications, shipping, 
+          accounting).",
+              "b": "NestJS supports multiple transports: TCP (built-in), RabbitMQ, Redis, gRPC. Team is building from scratch.",
+              "c": "Expected load: 500 synchronous calls/sec for inventory checks, 200 events/sec for order events. SLA: inventory check <100ms."
+            },
+            "function": "Select the correct NestJS microservice transport for each communication pattern and implement.",
+            "acceptedOutput": "**Pattern â†’ Transport mapping:**\n- Synchronous request/reply with <100ms SLA â†’ **gRPC** (HTTP/2 multiplexed, binary Protocol Buffers, low latency)\n- Async events with guaranteed delivery â†’ **RabbitMQ** (message 
+          durability, DLQ, consumer groups)\n\n**gRPC for inventory check (synchronous):**\n
+Snippet : {
+            "rowId": "EXT-500-R1",
+            "sourceIds": ["EXT-500"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "userPrompt_to_machineCommands",
+            "domain": "A",
+            "subdomain": "A1-topology-design",
+            "rowClass": "tradeoff-decision",
+          
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1338): {
+            "rowId": "EXT-501-R1",
+            "sourceIds": ["EXT-501"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "C",
+            "subdomain": "C2-output-formatting",
+            "rowClass": "arbiter-construction",
+            "input": {
+              "a": "REST API currently returns custom error JSON: `{error: 'NOT_FOUND', message: 'Order 123 not found', code: 404}`. Different endpoints use different field names â€” some use `error`, some use `errorMessage`, some use `msg`. Clients must 
+          parse each endpoint's schema separately.",
+              "b": "RFC-9457 (Problem Details for HTTP APIs, supersedes RFC-7807) defines a standard error response format.",
+              "c": "ASP.NET Core 8 has built-in ProblemDetails support."
+            },
+            "function": "Implement RFC-9457 Problem Details for all API error responses in ASP.NET Core 8.",
+            "acceptedOutput": "**RFC-9457 Problem Details** standardizes error responses with a defined JSON schema â€” clients learn one format for all API errors.\n\n**Standard fields:**\n- `type`: URI identifying the problem type (not required to 
+          dereference)\n- `title`: short human-readable summary\n- `status`: HTTP status code (duplicated in body for easy parsing)\n- `detail`: human-readable explanation specific to this occurrence\n- `instance`: URI of the specific occurrence 
+          (optional)\n\n**ASP.NET Core 8 configuration:**\n
+Snippet : {
+            "rowId": "EXT-501-R1",
+            "sourceIds": ["EXT-501"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "C",
+            "subdomain": "C2-output-formatting",
+            "rowClass": "arbiter-constr
+
+File    : ext-batch-721-750.md
+Error   : Invalid JSON primitive: .
+Snippet : \n{\n  \"type\": \"https://api.example.com/errors/validation-failed\",\n  \"title\": \"Validation Failed\",\n  \"status\": 422,\n  \"errors\": { \"Email\": [\"Email is required\"], \"Amount\": [\"Amount must be > 0\"] }\
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1017): {
+            "rowId": "EXT-502-R1",
+            "sourceIds": ["EXT-502"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "C",
+            "subdomain": "C2-output-formatting",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "gRPC API has inconsistent error handling: some methods return custom error codes in the response body, some throw gRPC StatusCode.Unknown for all errors, and some return empty responses on failure. Clients cannot distinguish error types.",
+              "b": "Google AIP-193 mandates using google.rpc.Status with canonical error codes for all API errors.",
+              "c": "API is gRPC with HTTP/JSON transcoding. Clients are Google Cloud-style APIs."
+            },
+            "function": "Implement AIP-193 consistent error handling using google.rpc.Status canonical codes.",
+            "acceptedOutput": "**AIP-193** requires using `google.rpc.Status` with canonical `google.rpc.Code` values â€” NOT custom error codes in response bodies, NOT StatusCode.Unknown for all errors.\n\n**Canonical code mapping:**\n
+Snippet : {
+            "rowId": "EXT-502-R1",
+            "sourceIds": ["EXT-502"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "finalMachineResults_to_userFormat",
+            "domain": "C",
+            "subdomain": "C2-output-formatting",
+            "rowClass": "tradeoff-decis
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1600): {
+            "rowId": "EXT-503-R1",
+            "sourceIds": ["EXT-503"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G2-training-stability",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Team wants to fine-tune LLaMA-3-8B on OpenAssistant pairwise preference data for alignment. Options: (A) DPO (Direct Preference Optimization â€” trains directly on preference pairs without a separate reward model), (B) full RLHF pipeline 
+          (SFT â†’ reward model â†’ PPO).",
+              "b": "Team has 2 A100 GPUs, 3 engineers, 4-week timeline. DPO requires only SFT + DPO training steps; RLHF requires SFT + reward model training + PPO.",
+              "c": "Dataset: OpenAssistant oasst1 (~160K messages, pairwise preferences available)."
+            },
+            "function": "Evaluate DPO vs RLHF for this team's constraints and recommend with implementation approach.",
+            "acceptedOutput": "**Recommendation: DPO for this team's constraints.**\n\n**Why DPO wins given 2 A100s, 3 engineers, 4 weeks:**\n- DPO eliminates the reward model training step â€” saves ~1 week of training + validation\n- DPO has no PPO 
+          instability (KL divergence tuning, reward hacking) â€” simpler to debug\n- DPO training is one step: SFT â†’ DPO on preference pairs\n- Memory: DPO needs model + reference model in memory (2Ã— model size) â€” fits on 2Ã—A100 80GB\n\n**RLHF is better 
+          when:** you need the reward model for inference-time reranking, you have >3 months and dedicated infra team, you need fine-grained reward shaping beyond pairwise preferences.\n\n**DPO training pipeline with TRL:**\n
+Snippet : {
+            "rowId": "EXT-503-R1",
+            "sourceIds": ["EXT-503"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "historyAndVersions_to_reprocessingDecision",
+            "domain": "G",
+            "subdomain": "G2-training-stability",
+            "rowClass": "trad
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1214): {
+            "rowId": "EXT-504-R1",
+            "sourceIds": ["EXT-504"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineCommand_to_machineActionItems",
+            "domain": "C",
+            "subdomain": "C2-translation-quality",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Translation pipeline needs EN-ZH pairs. Tatoeba has 40K direct EN-ZH pairs and 500K EN-FR pairs and 200K FR-ZH pairs. Team considers using pivot translation (ENâ†’FRâ†’ZH) to augment the 40K direct pairs.",
+              "b": "Pivot translation introduces error compounding â€” errors in ENâ†’FR are amplified in FRâ†’ZH. BLEU score for pivot translations is 18.4 vs direct translations at 24.1.",
+              "c": "Target use: training data for a business-domain ZH translation model."
+            },
+            "function": "Evaluate pivot translation augmentation vs direct pair quality for EN-ZH training data and design the filtering strategy.",
+            "acceptedOutput": "**Pivot translation is viable as augmentation with strict quality filtering** â€” used directly without filtering, it degrades model performance (BLEU 18.4 vs 24.1 direct). With quality filtering, pivot pairs can supplement the 
+          40K direct pairs for low-frequency domains.\n\n**Quality-filtered pivot augmentation strategy:**\n
+Snippet : {
+            "rowId": "EXT-504-R1",
+            "sourceIds": ["EXT-504"],
+            "sourceTrustTier": 2,
+            "datasetFamily": "machineCommand_to_machineActionItems",
+            "domain": "C",
+            "subdomain": "C2-translation-quality",
+            "rowClass": "tradeoff-
+
+File    : ext-batch-721-750.md
+Error   : Unterminated string passed in. (1385): {
+            "rowId": "EXT-505-R1",
+            "sourceIds": ["EXT-505"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "tradeoff-decision",
+            "input": {
+              "a": "Vue 3 app has a modal dialog component nested inside a CSS `overflow: hidden` container. The modal is clipped â€” only part of it is visible because of the ancestor's CSS. Developer is considering using `position: fixed` with high 
+          z-index.",
+              "b": "Even with `position: fixed`, if any ancestor has `transform`, `perspective`, or `filter` CSS, the fixed positioning is relative to that ancestor, not the viewport â€” the modal is still clipped.",
+              "c": "Vue 3 has the built-in `<Teleport>` component."
+            },
+            "function": "Identify the CSS stacking context problem and implement the correct Vue 3 Teleport solution.",
+            "acceptedOutput": "**Root cause:** CSS `overflow: hidden` on an ancestor clips ALL descendants regardless of position. `position: fixed` is trapped by any ancestor with `transform`, `perspective`, or `filter` â€” these create a new stacking 
+          context that contains fixed positioning.\n\n**Vue 3 Teleport** moves the modal's DOM node to a different location in the HTML document (typically `<body>`) while keeping the component logic and state in its original place in the Vue component 
+          tree.\n\n**Implementation:**\n
+Snippet : {
+            "rowId": "EXT-505-R1",
+            "sourceIds": ["EXT-505"],
+            "sourceTrustTier": 1,
+            "datasetFamily": "machineActionItem_to_domainResult",
+            "domain": "D",
+            "subdomain": "D1-execution-setup",
+            "rowClass": "tradeoff-decisio
+
+
+
+

@@ -1,0 +1,509 @@
+[
+  {
+    "arbiterId": "jwtValidationArbiter",
+    "domain": "E_ARBITER_QUALITY",
+    "sourceIds": ["OWASP-ASVS", "IETF-RFC-JWT"],
+    "checks": [
+      "Is the algorithm in the token header present in the server-side allowlist?",
+      "Is the signature cryptographically valid for the declared algorithm?",
+      "Is the exp (expiration) claim in the future?",
+      "Does the iss (issuer) claim match the expected issuer?",
+      "Does the aud (audience) claim match the intended service?",
+      "Are required claims (sub, exp, iss, aud) all present?"
+    ],
+    "positiveSignals": [
+      "Algorithm is in the server-controlled allowlist before any other check",
+      "Signature verifies against the public key for the declared algorithm",
+      "exp is in the future at time of validation",
+      "iss matches the expected issuer URL",
+      "aud contains the expected service identifier"
+    ],
+    "negativeSignals": [
+      "Algorithm is 'none' or is absent",
+      "Algorithm is taken from the token without checking against an allowlist",
+      "Signature check is skipped because algorithm is trusted from the token",
+      "exp is in the past",
+      "iss does not match expected issuer",
+      "Required claims are absent without rejection"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-SEC-001"]
+  },
+  {
+    "arbiterId": "oauthGrantArbiter",
+    "domain": "E_ARBITER_QUALITY",
+    "sourceIds": ["IETF-RFC-OAUTH2", "OWASP-ASVS"],
+    "checks": [
+      "Is the client type public (cannot store a secret) or confidential?",
+      "Is the grant type appropriate for the client type?",
+      "For public clients: is PKCE used with the authorization code flow?",
+      "Is the implicit grant being used in a new implementation?",
+      "Are access tokens visible in the browser address bar or referrer headers?"
+    ],
+    "positiveSignals": [
+      "Public client uses authorization code + PKCE",
+      "Confidential client uses authorization code with client secret or client_credentials",
+      "No implicit grant in any new implementation",
+      "code_verifier is generated before the authorization request",
+      "code_challenge is SHA-256 hash of code_verifier"
+    ],
+    "negativeSignals": [
+      "Public client uses implicit grant",
+      "Access token appears in redirect URI fragment",
+      "client_secret is present in browser-visible JavaScript code",
+      "PKCE is absent for a public client",
+      "Implicit grant is described as 'simpler' without noting its deprecation"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-SEC-002"]
+  },
+  {
+    "arbiterId": "passwordStorageArbiter",
+    "domain": "E_ARBITER_QUALITY",
+    "sourceIds": ["OWASP-ASVS"],
+    "checks": [
+      "Is the hashing algorithm designed specifically for password storage (memory-hard)?",
+      "Is the cost factor (work factor) set to make brute-force computationally expensive?",
+      "Is the hash comparison performed in constant time?",
+      "Is a unique per-password salt used?",
+      "Is MD5, SHA-1, or SHA-256 used without a memory-hard wrapper?"
+    ],
+    "positiveSignals": [
+      "bcrypt with cost factor >= 10",
+      "Argon2id with adequate memory and time parameters",
+      "scrypt with N >= 16384",
+      "PBKDF2 with >= 100,000 iterations and HMAC-SHA-256",
+      "Constant-time comparison function used for hash verification"
+    ],
+    "negativeSignals": [
+      "MD5, SHA-1, or SHA-256 used directly for password hashing",
+      "Fast general-purpose hash used even with a salt",
+      "Cost factor is 1 or default without review",
+      "Non-constant-time string comparison used for hash verification",
+      "'Salt prevents rainbow tables' used as complete security argument"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-SEC-003"]
+  },
+  {
+    "arbiterId": "sqlInjectionArbiter",
+    "domain": "E_ARBITER_QUALITY",
+    "sourceIds": ["CWE-TOP25", "OWASP-ASVS"],
+    "checks": [
+      "Are all database queries constructed using parameterized statements or prepared statements?",
+      "Is user-controlled input ever interpolated into a query string?",
+      "Are dynamic table or column names validated against an allowlist?",
+      "Is an ORM used and is it configured to use parameterized binding by default?"
+    ],
+    "positiveSignals": [
+      "All queries use parameterized statements with bound parameters",
+      "No string interpolation, f-strings, or + operator in query construction",
+      "Dynamic identifiers (table names, column names) validated against a static allowlist",
+      "ORM is configured with parameterized binding; raw SQL is not used"
+    ],
+    "negativeSignals": [
+      "Any query constructed by string concatenation or interpolation of user input",
+      "Input sanitization used as primary defense against SQL injection",
+      "User-controlled input appears in a query string before parameter binding",
+      "Dynamic SQL constructed with f-string, sprintf, or string.Format with user values"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-SEC-004"]
+  },
+  {
+    "arbiterId": "secretPresenceArbiter",
+    "domain": "H_GOVERNANCE",
+    "sourceIds": ["NIST-SSDF", "CWE-TOP25"],
+    "checks": [
+      "Are any literal credentials, API keys, passwords, or private keys present in source code?",
+      "Are credentials present in committed configuration files?",
+      "Are credentials present in git history, even if removed from the current file?",
+      "Are credentials stored in environment variables or a secrets manager?"
+    ],
+    "positiveSignals": [
+      "All credential references resolve to environment variable reads or secrets manager calls",
+      "No credential literal in any source file, config file, or Dockerfile",
+      "Pre-commit hook or CI secret scanner is active and blocking",
+      ".env files are in .gitignore and never committed"
+    ],
+    "negativeSignals": [
+      "Any literal credential in source code regardless of file type",
+      "Credential in a committed .env, YAML, or JSON config file",
+      "Credential in git history even if removed from the current HEAD",
+      "'Repository is private' offered as mitigation for committed credentials"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext", "historyAndVersions_to_reprocessingDecision"],
+    "trainingRows": ["EXT-SEC-005"]
+  },
+  {
+    "arbiterId": "tenantIsolationArbiter",
+    "domain": "E_ARBITER_QUALITY",
+    "sourceIds": ["OWASP-ASVS"],
+    "checks": [
+      "Is tenant_id a mandatory binding parameter in every database query for tenant-scoped data?",
+      "Is tenant_id extracted from the validated JWT, not from a user-supplied request parameter?",
+      "Is the absence of tenant_id treated as an error, not as a fallback to global scope?",
+      "Does the endpoint return 404 (not 403) when a resource belongs to a different tenant?"
+    ],
+    "positiveSignals": [
+      "tenant_id is a WHERE clause binding on every query for tenant-scoped data",
+      "tenant_id comes from the JWT claims, not from URL parameters or request body",
+      "Missing tenant_id causes query rejection before execution",
+      "Cross-tenant access returns 404 to prevent tenant enumeration"
+    ],
+    "negativeSignals": [
+      "tenant_id is optional in the query",
+      "tenant_id is accepted from a URL path parameter or request body parameter",
+      "Cross-tenant check is performed after data retrieval",
+      "Missing tenant_id defaults to a global or superadmin context",
+      "Cross-tenant access returns 403 (confirms resource existence)"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-SEC-006"]
+  },
+  {
+    "arbiterId": "tlsConfigArbiter",
+    "domain": "E_ARBITER_QUALITY",
+    "sourceIds": ["IETF-RFC-TLS13", "OWASP-ASVS"],
+    "checks": [
+      "Is the minimum TLS version set to TLS 1.2 or higher?",
+      "Are TLS 1.0 and TLS 1.1 disabled?",
+      "Are cipher suites limited to those providing forward secrecy (ECDHE key exchange)?",
+      "Is RC4, DES, or 3DES present in the cipher suite list?",
+      "For internal services: is TLS 1.3 enforced where all clients support it?"
+    ],
+    "positiveSignals": [
+      "min_version = TLS 1.3 where all clients support it; min_version = TLS 1.2 otherwise",
+      "TLS 1.0 and 1.1 explicitly disabled",
+      "Cipher suites restricted to ECDHE-based suites or TLS 1.3 suites",
+      "Certificate chain validation is on for all connections"
+    ],
+    "negativeSignals": [
+      "TLS 1.0 or 1.1 accepted",
+      "RC4, DES, or 3DES in the accepted cipher suite list",
+      "Certificate validation disabled for internal services",
+      "'Internal network so TLS security is lower priority' — network perimeter is not a TLS substitute"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-SEC-007"]
+  },
+  {
+    "arbiterId": "supplyChainArbiter",
+    "domain": "H_GOVERNANCE",
+    "sourceIds": ["NIST-SSDF"],
+    "checks": [
+      "Is every dependency pinned to an exact version with a verified hash?",
+      "Is an SBOM (Software Bill of Materials) generated for each release?",
+      "Are artifact signatures verified before installation?",
+      "Is the dependency resolved from its canonical source, not an unverified mirror?",
+      "Have any dependencies received new CVEs since the last scan?"
+    ],
+    "positiveSignals": [
+      "Dependencies pinned to exact versions with hash verification in lockfile",
+      "SBOM generated per release and stored with the release artifact",
+      "Artifact signatures verified via package registry's signing keys",
+      "Dependency resolution traces to canonical source, not unverified mirror",
+      "Vulnerability scan completed within 24 hours of release promotion"
+    ],
+    "negativeSignals": [
+      "Dependencies resolved by version range (^, ~, >=, latest)",
+      "No lockfile or lockfile not committed",
+      "Artifact hash unverifiable (registry returns 404 for this version)",
+      "Dependency resolved from a mirror with no hash verification",
+      "New CVE published since the last scan; deferral justification is stale"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext", "historyAndVersions_to_reprocessingDecision"],
+    "trainingRows": ["EXT-SEC-008", "EXT-SEC-011"]
+  },
+  {
+    "arbiterId": "circuitBreakerArbiter",
+    "domain": "A_TOPOLOGY",
+    "sourceIds": ["MICROSOFT-LEARN-ARCH"],
+    "checks": [
+      "Does every external dependency call have a circuit breaker?",
+      "Is the failure threshold configured based on measured baseline failure rate?",
+      "Is a half-open probe strategy defined for detecting recovery?",
+      "Is a fallback behavior defined for when the circuit is open?",
+      "Are retry counts bounded and is backoff jitter applied?"
+    ],
+    "positiveSignals": [
+      "Circuit breaker present on all external calls",
+      "Failure threshold is configured; open state stops new requests immediately",
+      "Half-open probe sends one test request at a configured interval",
+      "Fallback behavior is defined (cached result, graceful degradation, queued operation)",
+      "Retry count is bounded; exponential backoff with jitter is applied"
+    ],
+    "negativeSignals": [
+      "No circuit breaker on external dependency calls",
+      "Direct retry without backoff on a service returning sustained failures",
+      "No fallback defined for unavailable dependency",
+      "Circuit breaker present but failure threshold is unlimited",
+      "No probe strategy for detecting recovery; circuit stays open indefinitely"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-ARCH-001"]
+  },
+  {
+    "arbiterId": "bulkheadIsolationArbiter",
+    "domain": "A_TOPOLOGY",
+    "sourceIds": ["MICROSOFT-LEARN-ARCH"],
+    "checks": [
+      "Do distinct workload types have separate resource pools (thread pools, connection pools)?",
+      "Is pool size configured per expected concurrency level per workload?",
+      "Can a spike in one workload visibly delay or block a different workload?",
+      "Is pool exhaustion in one workload monitored and alarmed independently?"
+    ],
+    "positiveSignals": [
+      "Each distinct workload type has a bounded, separate resource pool",
+      "Pool size is configured based on expected concurrency for each workload",
+      "Exhaustion of one pool does not affect other pools",
+      "Pool depth is monitored per workload; alarms are per-pool"
+    ],
+    "negativeSignals": [
+      "All workloads share a single thread pool or connection pool",
+      "A spike in one workload is visible as latency or timeout in an unrelated workload",
+      "Pool monitoring is aggregate; per-workload pool depth is not visible",
+      "Rate limiting is the only isolation mechanism (does not prevent remaining allowed requests from consuming shared pool)"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-ARCH-002"]
+  },
+  {
+    "arbiterId": "tracePropagationArbiter",
+    "domain": "H_GOVERNANCE",
+    "sourceIds": ["OPENTELEMETRY-SPEC"],
+    "checks": [
+      "Is W3C traceparent header injected on all outbound HTTP requests?",
+      "Is the SDK's built-in propagator used rather than manual header copying?",
+      "Do spans from upstream and downstream services share the same trace ID in the observability backend?",
+      "Do span attributes use OTel semantic conventions (no custom naming)?"
+    ],
+    "positiveSignals": [
+      "W3C traceparent and tracestate headers present on all outbound requests",
+      "SDK propagator is configured (otel.SetTextMapPropagator) and active",
+      "Parent-child span relationship visible in Jaeger, Zipkin, or equivalent",
+      "Span attributes use OTel semantic conventions (http.method, db.system, etc.)"
+    ],
+    "negativeSignals": [
+      "Custom X-Trace-ID header instead of W3C traceparent",
+      "Trace context is read from incoming requests but not forwarded on outbound requests",
+      "Downstream spans appear as disconnected root spans",
+      "Correlation requires joining logs rather than following parent-child span links"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-ARCH-003"]
+  },
+  {
+    "arbiterId": "apiVersioningArbiter",
+    "domain": "H_GOVERNANCE",
+    "sourceIds": ["GOOGLE-AIP", "OPENAPI-SPEC"],
+    "checks": [
+      "Are breaking changes introduced in a new major version path (/v2/, /v3/)?",
+      "Does the old version remain active during the migration window?",
+      "Is a deprecation notice issued before the old version is removed?",
+      "Is the migration window measured in months, not days?",
+      "Is a migration guide provided?"
+    ],
+    "positiveSignals": [
+      "Breaking change is in a new path prefix (v2/)",
+      "Old version serves traffic during the migration period",
+      "Deprecation timeline is announced in advance with a specific sunset date",
+      "Migration guide describes the changes and how to update clients",
+      "Version removal is based on measured traffic, not calendar date alone"
+    ],
+    "negativeSignals": [
+      "Breaking change deployed in the existing version path",
+      "Old version is removed on the same day as the new version is deployed",
+      "New field added alongside old field with old field removed after arbitrary delay",
+      "No migration guide; clients discover breaking changes through errors"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext", "historyAndVersions_to_reprocessingDecision"],
+    "trainingRows": ["EXT-ARCH-004"]
+  },
+  {
+    "arbiterId": "longRunningOpArbiter",
+    "domain": "A_TOPOLOGY",
+    "sourceIds": ["GOOGLE-AIP"],
+    "checks": [
+      "Do operations that take more than a few seconds return an operation resource immediately?",
+      "Does the initiation call return 200 or 202 within a bounded time (< 1 second)?",
+      "Is there a polling endpoint for checking operation status?",
+      "Does the operation resource have a status field (RUNNING, DONE, FAILED) and a done flag?",
+      "Is the operation ID stable and safe to retry?"
+    ],
+    "positiveSignals": [
+      "POST returns 200/202 with operation resource in < 1 second",
+      "GET /operations/{id} returns current status",
+      "done flag is set to true when the operation completes",
+      "Operation ID is idempotent: same operation ID returns the same result on retry",
+      "Operation resource includes error details when status is FAILED"
+    ],
+    "negativeSignals": [
+      "HTTP connection is held open for the duration of the operation",
+      "Client must retry the full operation from scratch after a timeout",
+      "No operation resource returned; status must be inferred from polling the original resource",
+      "Operation has no stable ID; cannot resume after connection drop"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-ARCH-005"]
+  },
+  {
+    "arbiterId": "idempotentCreateArbiter",
+    "domain": "D_EXECUTION_APPLIER",
+    "sourceIds": ["GOOGLE-AIP"],
+    "checks": [
+      "Does the Create endpoint accept a client-provided idempotency key?",
+      "Does a duplicate request with the same key return the existing resource (not a new one)?",
+      "Does a duplicate request return 200 OK, not 409 Conflict?",
+      "Is the idempotency key generated by the client before the first attempt?",
+      "Is the key stored with sufficient TTL to cover the retry window?"
+    ],
+    "positiveSignals": [
+      "Idempotency-Key header or request_id field accepted",
+      "Duplicate request with same key returns existing resource with 200 OK",
+      "No duplicate record is created on retry",
+      "Key is validated as present before processing the request",
+      "Key storage TTL is >= the maximum client retry window"
+    ],
+    "negativeSignals": [
+      "No idempotency key mechanism; every POST creates a new record",
+      "Duplicate request returns 409 Conflict, making retry logic ambiguous",
+      "Idempotency is based on content matching (amount + timestamp) rather than explicit key",
+      "Key is generated server-side and returned to the client (client cannot pre-generate for retry)"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-ARCH-006"]
+  },
+  {
+    "arbiterId": "stranglerMigrationArbiter",
+    "domain": "A_TOPOLOGY",
+    "sourceIds": ["MICROSOFT-LEARN-ARCH"],
+    "checks": [
+      "Is the migration proceeding incrementally (one feature or route at a time)?",
+      "Is the legacy system still active and serving traffic during migration?",
+      "Is rollback possible at the individual route or feature level?",
+      "Is migration progress measurable per feature or route?",
+      "Is a facade or proxy used to route traffic between old and new implementations?"
+    ],
+    "positiveSignals": [
+      "One feature or route extracted per sprint with production validation",
+      "Legacy system handles all other traffic while extraction proceeds",
+      "Rollback is changing a routing rule, not a full deployment revert",
+      "Per-feature migration status is tracked and visible",
+      "Facade routes traffic to either old or new implementation per feature"
+    ],
+    "negativeSignals": [
+      "All features migrated simultaneously in a single cutover",
+      "Legacy system is shut down before new system is fully validated in production",
+      "Rollback requires reverting the entire deployment",
+      "'60% design complete' used as a reason to continue a stalled big-bang rewrite",
+      "No production traffic to new system before cutover date"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext", "historyAndVersions_to_reprocessingDecision"],
+    "trainingRows": ["EXT-ARCH-007"]
+  },
+  {
+    "arbiterId": "cqrsFitArbiter",
+    "domain": "F_REGISTRY_STORAGE",
+    "sourceIds": ["MICROSOFT-LEARN-ARCH"],
+    "checks": [
+      "Do read and write workloads have materially different scalability requirements?",
+      "Are read models denormalized or projected in a way not possible with a shared model?",
+      "Does eventual consistency between write and read models create an acceptable user experience?",
+      "Are there complex aggregations or projections on the read side that justify a separate model?",
+      "Is the team able to manage two separate models and their synchronization?"
+    ],
+    "positiveSignals": [
+      "Read workload is 10x+ higher than write workload and requires a different optimization",
+      "Read model is a materialized view or projection that cannot be expressed in the write model",
+      "Business domain has accepted that reads may be slightly stale (eventual consistency)",
+      "Team has experience managing read model synchronization"
+    ],
+    "negativeSignals": [
+      "Read and write loads are approximately equal with no distinct optimization need",
+      "Queries are simple lookups by primary key or unique index",
+      "CQRS is applied because 'it is good practice' rather than because of workload characteristics",
+      "Team familiarity with the pattern is the primary justification"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-DATA-001"]
+  },
+  {
+    "arbiterId": "transactionalOutboxArbiter",
+    "domain": "F_REGISTRY_STORAGE",
+    "sourceIds": ["DOTNET-MICROSERVICES", "MICROSOFT-LEARN-ARCH"],
+    "checks": [
+      "Is the domain event written to an outbox table in the same transaction as the business state change?",
+      "Is a separate relay process responsible for publishing events from the outbox?",
+      "Does the relay mark outbox rows as published only after the broker confirms receipt?",
+      "Are consumers idempotent (outbox events may be published more than once on relay restart)?",
+      "Is there any code path that publishes directly to the broker without going through the outbox?"
+    ],
+    "positiveSignals": [
+      "Business data update and outbox insert are in a single database transaction",
+      "Relay process reads from outbox and publishes to broker independently of the business flow",
+      "Outbox row is marked published only after broker acknowledgement",
+      "Consumer endpoints are idempotent with a deduplication key"
+    ],
+    "negativeSignals": [
+      "Broker publish is called in the same code path as the database write without transaction coordination",
+      "Business data update is rolled back when broker publish fails (dual-write failure mode)",
+      "Event is published before the database transaction commits",
+      "No retry mechanism on the relay; failed publishes are lost"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-DATA-002"]
+  },
+  {
+    "arbiterId": "proposalCompletenessArbiter",
+    "domain": "H_GOVERNANCE",
+    "sourceIds": ["RUST-RFCS"],
+    "checks": [
+      "Is the Motivation section non-empty and specific?",
+      "Is the Design section complete?",
+      "Is the Drawbacks section non-empty?",
+      "Is the Alternatives section non-empty and does it explain why each alternative was rejected?",
+      "Are all Unresolved Questions either answered or explicitly delegated with the delegation boundary stated?"
+    ],
+    "positiveSignals": [
+      "All five sections present and non-empty",
+      "Alternatives section lists at least two alternatives with rejection rationale",
+      "Unresolved questions are either answered or delegated with explicit scope",
+      "Motivation references a concrete problem, not an abstract principle"
+    ],
+    "negativeSignals": [
+      "Alternatives section is empty or says 'none'",
+      "Unresolved questions marked TODO without delegation",
+      "Motivation is abstract ('this is a good practice') without a concrete use case",
+      "Proposal is submitted for review with empty sections pending completion"
+    ],
+    "datasetFamilies": ["arbitrateResultI_with_resultsContext"],
+    "trainingRows": ["EXT-PROP-001"]
+  },
+  {
+    "arbiterId": "protocolMigrationArbiter",
+    "domain": "A_TOPOLOGY",
+    "sourceIds": ["KAFKA-KIPS"],
+    "checks": [
+      "Does the migration plan support running old and new protocol versions simultaneously?",
+      "Is migration progress measured per client, not by calendar date?",
+      "Is old protocol support removed only when all clients are confirmed migrated?",
+      "Is rollback possible at the client level without a full cluster restart?",
+      "Is the migration plan tested with a subset of clients before broad rollout?"
+    ],
+    "positiveSignals": [
+      "Dual-mode operation supports both old and new protocol simultaneously",
+      "Per-client migration telemetry tracks which clients have migrated",
+      "Old protocol removal is gated on measured adoption, not schedule",
+      "Rollback is per-client or per-cluster-node, not whole-system"
+    ],
+    "negativeSignals": [
+      "Single cutover date where all clients must switch simultaneously",
+      "No intermediate dual-mode state; old and new protocol cannot coexist",
+      "Protocol removal is on a fixed date regardless of actual migration progress",
+      "No per-client telemetry; migration status is unknown until cutover"
+    ],
+    "datasetFamilies": ["historyAndVersions_to_reprocessingDecision"],
+    "trainingRows": ["EXT-PROP-002"]
+  }
+]
