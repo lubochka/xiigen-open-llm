@@ -1,0 +1,70 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\missing infrastructure\old\FLOW-18-INFRASTRUCTURE-GAP-ANALYSIS.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `missing infrastructure\old\FLOW-18-INFRASTRUCTURE-GAP-ANALYSIS.md`
+- Type: review and validation
+- Inventory type: not listed in attached MVP inventory
+- File size: 26158 bytes
+- Line count read for this round: 387
+- SHA256: 4974BE4AF936C0691D82D5D5EA9C1691ACCF7657A0581C085BC6617AF50F9A4C
+- First meaningful line: `XIIGen — Infrastructure Gap Analysis for the visual flow canvas`
+- Last meaningful line: `architectural issues, the visual flow canvas plan may need revision before Phase A starts.`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- No exact duplicate was recorded in the manifest.
+
+Same-name files:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\missing infrastructure\old\FLOW-18-INFRASTRUCTURE-GAP-ANALYSIS.md`
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\missing infrastructure\old\FLOW-18-INFRASTRUCTURE-GAP-ANALYSIS.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\missing infrastructure\old\FLOW-18-INFRASTRUCTURE-GAP-ANALYSIS.md`
+
+## Source Meaning Used For Training
+
+XIIGen — Infrastructure Gap Analysis for the visual flow canvas
+
+## Domains This Document Teaches
+
+- review responsibility
+- rule coverage
+- conflict detection
+- impact explanation
+- reprocess instruction
+- approval boundary
+- xiigen infrastructure gap analysis for the visual flow canvas
+- what must be built before the visual flow canvas can execute
+- date 2026 03 23
+- the bottom line
+- layer 1 kernel blocks everything
+- status session p26 s1 md ready not executed
+- layer 2 elasticsearch indices bootstrapper blocks phase a
+- layer 3 node handlers executor blocks phase b
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

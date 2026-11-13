@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\Older\Complete missing parts to plan\OBSERVABILITY_CONTRACT.md`
+
+- Relative path: `Older\Complete missing parts to plan\OBSERVABILITY_CONTRACT.md`
+- Manifest category: undefined
+- Top folder: Older
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 18077 bytes
+- Line count read: 459
+- SHA256: 9FAAE05D5257F829D87BB66A5F22841CDF312305E2D12C5C1F2DA8CAB3D260CC
+- First meaningful line: `XIIGen — OBSERVABILITY CONTRACT`
+- Last meaningful line: `Created 2026-03-06 — Phase 3`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+XIIGen — OBSERVABILITY CONTRACT
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- xiigen — observability contract
+- version: 1.0 date: 2026-03-06 status: authoritative
+- infrastructure: f1111 inodeeventemitterservice + structuredlogger per flow
+- purpose
+- the canonical log event schema
+- payload conventions
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

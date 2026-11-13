@@ -1,0 +1,588 @@
+{
+  "kind": "analytic-source-witness",
+  "source_ref": "dcb931773147267c8864a532351d22b4c351265b",
+  "native_runtime_executed": false,
+  "native_train_calls": 0,
+  "native_generate_calls": 0,
+  "input_blob_sha1": {
+    "42.ProjectWikiDomain/PromptFlowGroundingModel.cs": "b1982c77c593f0f5dcc9747a7345c0d770981344",
+    "42.ProjectWikiDomain/OrchestrationKnnStore.cs": "2bf119f4caee7c807d80c398f54b695a0304e0d9",
+    "42.ProjectWikiDomain/OrchestrationPlanMachine.cs": "449aa38d4cc316b53d5506d1f387a4308a93f028",
+    "42.ProjectWikiDomain/OrchestrationPlanContracts.cs": "916b3eb6f64e88459d8ef3a8a629d9aa445b2bd2",
+    "42.ProjectWikiDomain/HumanIntentBoundaryClassifier.cs": "effb98f900fab397f4da38462b474c60d8fc3e45",
+    "42.ProjectWikiDomain/TrainedRouteComposerUnit.cs": "848a5f7e6d5a315ade30c47eaf79ee9b7f2d1e12"
+  },
+  "fixture": {
+    "pairs": [
+      {
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "prompt": "alpha",
+        "body_marker": "ALPHA_BODY_ONLY"
+      },
+      {
+        "pair_id": "witness-b",
+        "flow_ref": "FLOW-02",
+        "prompt": "beta",
+        "body_marker": "BETA_BODY_ONLY"
+      }
+    ],
+    "query": "beta FLOW-01"
+  },
+  "cases": {
+    "A_only_negative": {
+      "prompt": "beta FLOW-01",
+      "contract": {
+        "Kind": "KnownFlowPlanning",
+        "AllowedFlowScope": [
+          "FLOW-01"
+        ],
+        "ForbiddenFlowScope": [],
+        "PhaseScope": [],
+        "RequiresApprovalGate": false,
+        "RequiresSaveState": true,
+        "HumanConstraints": [],
+        "RequestedFlowTextSpans": [
+          "FLOW-01"
+        ]
+      },
+      "query_text": "beta FLOW-01 FLOW-01 FLOW-01",
+      "query_tokens": [
+        "01",
+        "beta",
+        "flow"
+      ],
+      "candidate_scores": [
+        {
+          "flow_ref": "FLOW-01",
+          "input_score": 0,
+          "scope_score": 2,
+          "total": 2
+        }
+      ],
+      "selected_flow": "FLOW-01",
+      "witness_scope": "global",
+      "nearest": {
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "jaccard": 0.0
+      },
+      "selected_flow_jaccard_before_evidence": 0.0,
+      "confidence": null,
+      "predicted_route_mode": "Mode2Generalization",
+      "predicted_body_marker": null,
+      "body_lookup": null,
+      "basis": "source-derived arithmetic; native GeneratePlanAsync UNRUN",
+      "try_ground_exit": "reject: nonpositive candidate or absent/nonpositive witness"
+    },
+    "A_plus_B_negative_current": {
+      "prompt": "beta FLOW-01",
+      "contract": {
+        "Kind": "KnownFlowPlanning",
+        "AllowedFlowScope": [
+          "FLOW-01"
+        ],
+        "ForbiddenFlowScope": [],
+        "PhaseScope": [],
+        "RequiresApprovalGate": false,
+        "RequiresSaveState": true,
+        "HumanConstraints": [],
+        "RequestedFlowTextSpans": [
+          "FLOW-01"
+        ]
+      },
+      "query_text": "beta FLOW-01 FLOW-01 FLOW-01",
+      "query_tokens": [
+        "01",
+        "beta",
+        "flow"
+      ],
+      "candidate_scores": [
+        {
+          "flow_ref": "FLOW-01",
+          "input_score": 0,
+          "scope_score": 2,
+          "total": 2
+        },
+        {
+          "flow_ref": "FLOW-02",
+          "input_score": 1,
+          "scope_score": 1,
+          "total": 2
+        }
+      ],
+      "selected_flow": "FLOW-01",
+      "witness_scope": "global",
+      "nearest": {
+        "pair_id": "witness-b",
+        "flow_ref": "FLOW-02",
+        "jaccard": 0.3333333333333333
+      },
+      "selected_flow_jaccard_before_evidence": 0.0,
+      "confidence": 0.9666666666666666,
+      "predicted_route_mode": "LearnedFlowGrounding",
+      "predicted_body_marker": "ALPHA_BODY_ONLY",
+      "body_lookup": {
+        "evidence_features": [
+          "01",
+          "alpha",
+          "flow"
+        ],
+        "query_tokens": [
+          "01",
+          "alpha",
+          "beta",
+          "flow"
+        ],
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "jaccard": 0.25
+      },
+      "basis": "source-derived arithmetic; native GeneratePlanAsync UNRUN",
+      "try_ground_exit": "return grounding"
+    },
+    "A_plus_B_negative_proposed": {
+      "prompt": "beta FLOW-01",
+      "contract": {
+        "Kind": "KnownFlowPlanning",
+        "AllowedFlowScope": [
+          "FLOW-01"
+        ],
+        "ForbiddenFlowScope": [],
+        "PhaseScope": [],
+        "RequiresApprovalGate": false,
+        "RequiresSaveState": true,
+        "HumanConstraints": [],
+        "RequestedFlowTextSpans": [
+          "FLOW-01"
+        ]
+      },
+      "query_text": "beta FLOW-01 FLOW-01 FLOW-01",
+      "query_tokens": [
+        "01",
+        "beta",
+        "flow"
+      ],
+      "candidate_scores": [
+        {
+          "flow_ref": "FLOW-01",
+          "input_score": 0,
+          "scope_score": 2,
+          "total": 2
+        },
+        {
+          "flow_ref": "FLOW-02",
+          "input_score": 1,
+          "scope_score": 1,
+          "total": 2
+        }
+      ],
+      "selected_flow": "FLOW-01",
+      "witness_scope": "selected_flow",
+      "nearest": {
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "jaccard": 0.0
+      },
+      "selected_flow_jaccard_before_evidence": 0.0,
+      "confidence": null,
+      "predicted_route_mode": "Mode2Generalization",
+      "predicted_body_marker": null,
+      "body_lookup": null,
+      "basis": "source-derived arithmetic; native GeneratePlanAsync UNRUN",
+      "try_ground_exit": "reject: nonpositive candidate or absent/nonpositive witness"
+    },
+    "B_then_A_negative_current": {
+      "prompt": "beta FLOW-01",
+      "contract": {
+        "Kind": "KnownFlowPlanning",
+        "AllowedFlowScope": [
+          "FLOW-01"
+        ],
+        "ForbiddenFlowScope": [],
+        "PhaseScope": [],
+        "RequiresApprovalGate": false,
+        "RequiresSaveState": true,
+        "HumanConstraints": [],
+        "RequestedFlowTextSpans": [
+          "FLOW-01"
+        ]
+      },
+      "query_text": "beta FLOW-01 FLOW-01 FLOW-01",
+      "query_tokens": [
+        "01",
+        "beta",
+        "flow"
+      ],
+      "candidate_scores": [
+        {
+          "flow_ref": "FLOW-01",
+          "input_score": 0,
+          "scope_score": 2,
+          "total": 2
+        },
+        {
+          "flow_ref": "FLOW-02",
+          "input_score": 1,
+          "scope_score": 1,
+          "total": 2
+        }
+      ],
+      "selected_flow": "FLOW-01",
+      "witness_scope": "global",
+      "nearest": {
+        "pair_id": "witness-b",
+        "flow_ref": "FLOW-02",
+        "jaccard": 0.3333333333333333
+      },
+      "selected_flow_jaccard_before_evidence": 0.0,
+      "confidence": 0.9666666666666666,
+      "predicted_route_mode": "LearnedFlowGrounding",
+      "predicted_body_marker": "ALPHA_BODY_ONLY",
+      "body_lookup": {
+        "evidence_features": [
+          "01",
+          "alpha",
+          "flow"
+        ],
+        "query_tokens": [
+          "01",
+          "alpha",
+          "beta",
+          "flow"
+        ],
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "jaccard": 0.25
+      },
+      "basis": "source-derived arithmetic; native GeneratePlanAsync UNRUN",
+      "try_ground_exit": "return grounding"
+    },
+    "A_only_positive": {
+      "prompt": "alpha FLOW-01",
+      "contract": {
+        "Kind": "KnownFlowPlanning",
+        "AllowedFlowScope": [
+          "FLOW-01"
+        ],
+        "ForbiddenFlowScope": [],
+        "PhaseScope": [],
+        "RequiresApprovalGate": false,
+        "RequiresSaveState": true,
+        "HumanConstraints": [],
+        "RequestedFlowTextSpans": [
+          "FLOW-01"
+        ]
+      },
+      "query_text": "alpha FLOW-01 FLOW-01 FLOW-01",
+      "query_tokens": [
+        "01",
+        "alpha",
+        "flow"
+      ],
+      "candidate_scores": [
+        {
+          "flow_ref": "FLOW-01",
+          "input_score": 1,
+          "scope_score": 2,
+          "total": 3
+        }
+      ],
+      "selected_flow": "FLOW-01",
+      "witness_scope": "global",
+      "nearest": {
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "jaccard": 0.3333333333333333
+      },
+      "selected_flow_jaccard_before_evidence": 0.3333333333333333,
+      "confidence": 1.0,
+      "predicted_route_mode": "LearnedFlowGrounding",
+      "predicted_body_marker": "ALPHA_BODY_ONLY",
+      "body_lookup": {
+        "evidence_features": [
+          "01",
+          "alpha",
+          "flow"
+        ],
+        "query_tokens": [
+          "01",
+          "alpha",
+          "flow"
+        ],
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "jaccard": 0.3333333333333333
+      },
+      "basis": "source-derived arithmetic; native GeneratePlanAsync UNRUN",
+      "try_ground_exit": "return grounding"
+    },
+    "A_plus_B_positive_A_current": {
+      "prompt": "alpha FLOW-01",
+      "contract": {
+        "Kind": "KnownFlowPlanning",
+        "AllowedFlowScope": [
+          "FLOW-01"
+        ],
+        "ForbiddenFlowScope": [],
+        "PhaseScope": [],
+        "RequiresApprovalGate": false,
+        "RequiresSaveState": true,
+        "HumanConstraints": [],
+        "RequestedFlowTextSpans": [
+          "FLOW-01"
+        ]
+      },
+      "query_text": "alpha FLOW-01 FLOW-01 FLOW-01",
+      "query_tokens": [
+        "01",
+        "alpha",
+        "flow"
+      ],
+      "candidate_scores": [
+        {
+          "flow_ref": "FLOW-01",
+          "input_score": 1,
+          "scope_score": 2,
+          "total": 3
+        },
+        {
+          "flow_ref": "FLOW-02",
+          "input_score": 0,
+          "scope_score": 1,
+          "total": 1
+        }
+      ],
+      "selected_flow": "FLOW-01",
+      "witness_scope": "global",
+      "nearest": {
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "jaccard": 0.3333333333333333
+      },
+      "selected_flow_jaccard_before_evidence": 0.3333333333333333,
+      "confidence": 1.0,
+      "predicted_route_mode": "LearnedFlowGrounding",
+      "predicted_body_marker": "ALPHA_BODY_ONLY",
+      "body_lookup": {
+        "evidence_features": [
+          "01",
+          "alpha",
+          "flow"
+        ],
+        "query_tokens": [
+          "01",
+          "alpha",
+          "flow"
+        ],
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "jaccard": 0.3333333333333333
+      },
+      "basis": "source-derived arithmetic; native GeneratePlanAsync UNRUN",
+      "try_ground_exit": "return grounding"
+    },
+    "A_plus_B_positive_A_proposed": {
+      "prompt": "alpha FLOW-01",
+      "contract": {
+        "Kind": "KnownFlowPlanning",
+        "AllowedFlowScope": [
+          "FLOW-01"
+        ],
+        "ForbiddenFlowScope": [],
+        "PhaseScope": [],
+        "RequiresApprovalGate": false,
+        "RequiresSaveState": true,
+        "HumanConstraints": [],
+        "RequestedFlowTextSpans": [
+          "FLOW-01"
+        ]
+      },
+      "query_text": "alpha FLOW-01 FLOW-01 FLOW-01",
+      "query_tokens": [
+        "01",
+        "alpha",
+        "flow"
+      ],
+      "candidate_scores": [
+        {
+          "flow_ref": "FLOW-01",
+          "input_score": 1,
+          "scope_score": 2,
+          "total": 3
+        },
+        {
+          "flow_ref": "FLOW-02",
+          "input_score": 0,
+          "scope_score": 1,
+          "total": 1
+        }
+      ],
+      "selected_flow": "FLOW-01",
+      "witness_scope": "selected_flow",
+      "nearest": {
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "jaccard": 0.3333333333333333
+      },
+      "selected_flow_jaccard_before_evidence": 0.3333333333333333,
+      "confidence": 1.0,
+      "predicted_route_mode": "LearnedFlowGrounding",
+      "predicted_body_marker": "ALPHA_BODY_ONLY",
+      "body_lookup": {
+        "evidence_features": [
+          "01",
+          "alpha",
+          "flow"
+        ],
+        "query_tokens": [
+          "01",
+          "alpha",
+          "flow"
+        ],
+        "pair_id": "witness-a",
+        "flow_ref": "FLOW-01",
+        "jaccard": 0.3333333333333333
+      },
+      "basis": "source-derived arithmetic; native GeneratePlanAsync UNRUN",
+      "try_ground_exit": "return grounding"
+    },
+    "A_plus_B_positive_B_current": {
+      "prompt": "beta FLOW-02",
+      "contract": {
+        "Kind": "KnownFlowPlanning",
+        "AllowedFlowScope": [
+          "FLOW-02"
+        ],
+        "ForbiddenFlowScope": [],
+        "PhaseScope": [],
+        "RequiresApprovalGate": false,
+        "RequiresSaveState": true,
+        "HumanConstraints": [],
+        "RequestedFlowTextSpans": [
+          "FLOW-02"
+        ]
+      },
+      "query_text": "beta FLOW-02 FLOW-02 FLOW-02",
+      "query_tokens": [
+        "02",
+        "beta",
+        "flow"
+      ],
+      "candidate_scores": [
+        {
+          "flow_ref": "FLOW-02",
+          "input_score": 1,
+          "scope_score": 2,
+          "total": 3
+        },
+        {
+          "flow_ref": "FLOW-01",
+          "input_score": 0,
+          "scope_score": 1,
+          "total": 1
+        }
+      ],
+      "selected_flow": "FLOW-02",
+      "witness_scope": "global",
+      "nearest": {
+        "pair_id": "witness-b",
+        "flow_ref": "FLOW-02",
+        "jaccard": 0.3333333333333333
+      },
+      "selected_flow_jaccard_before_evidence": 0.3333333333333333,
+      "confidence": 1.0,
+      "predicted_route_mode": "LearnedFlowGrounding",
+      "predicted_body_marker": "BETA_BODY_ONLY",
+      "body_lookup": {
+        "evidence_features": [
+          "02",
+          "beta",
+          "flow"
+        ],
+        "query_tokens": [
+          "02",
+          "beta",
+          "flow"
+        ],
+        "pair_id": "witness-b",
+        "flow_ref": "FLOW-02",
+        "jaccard": 0.3333333333333333
+      },
+      "basis": "source-derived arithmetic; native GeneratePlanAsync UNRUN",
+      "try_ground_exit": "return grounding"
+    },
+    "A_plus_B_positive_B_proposed": {
+      "prompt": "beta FLOW-02",
+      "contract": {
+        "Kind": "KnownFlowPlanning",
+        "AllowedFlowScope": [
+          "FLOW-02"
+        ],
+        "ForbiddenFlowScope": [],
+        "PhaseScope": [],
+        "RequiresApprovalGate": false,
+        "RequiresSaveState": true,
+        "HumanConstraints": [],
+        "RequestedFlowTextSpans": [
+          "FLOW-02"
+        ]
+      },
+      "query_text": "beta FLOW-02 FLOW-02 FLOW-02",
+      "query_tokens": [
+        "02",
+        "beta",
+        "flow"
+      ],
+      "candidate_scores": [
+        {
+          "flow_ref": "FLOW-02",
+          "input_score": 1,
+          "scope_score": 2,
+          "total": 3
+        },
+        {
+          "flow_ref": "FLOW-01",
+          "input_score": 0,
+          "scope_score": 1,
+          "total": 1
+        }
+      ],
+      "selected_flow": "FLOW-02",
+      "witness_scope": "selected_flow",
+      "nearest": {
+        "pair_id": "witness-b",
+        "flow_ref": "FLOW-02",
+        "jaccard": 0.3333333333333333
+      },
+      "selected_flow_jaccard_before_evidence": 0.3333333333333333,
+      "confidence": 1.0,
+      "predicted_route_mode": "LearnedFlowGrounding",
+      "predicted_body_marker": "BETA_BODY_ONLY",
+      "body_lookup": {
+        "evidence_features": [
+          "02",
+          "beta",
+          "flow"
+        ],
+        "query_tokens": [
+          "02",
+          "beta",
+          "flow"
+        ],
+        "pair_id": "witness-b",
+        "flow_ref": "FLOW-02",
+        "jaccard": 0.3333333333333333
+      },
+      "basis": "source-derived arithmetic; native GeneratePlanAsync UNRUN",
+      "try_ground_exit": "return grounding"
+    }
+  },
+  "limitations": [
+    "ASCII one-lesson-per-flow arithmetic only; not a general C# interpreter.",
+    "Classifier regex evaluated with Python only for these ASCII fixtures.",
+    "No .NET compilation, TrainOrchestrationBatchAsync or GeneratePlanAsync was executed.",
+    "No claim about accuracy, calibration, task execution, latency or allocation.",
+    "Scoped-witness cases describe a proposed repair, not modified product behavior."
+  ]
+}

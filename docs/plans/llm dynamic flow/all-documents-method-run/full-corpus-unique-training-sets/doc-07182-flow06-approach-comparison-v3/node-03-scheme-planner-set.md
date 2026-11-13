@@ -1,0 +1,100 @@
+# Node-03 - Scheme Planner Set
+
+Runtime A is all translated domain statements. Runtime B is the separated work plan.
+
+## Pair 3.1 - Plan Work Pieces
+
+A: Translated statements for XIIGen — the group management flow APPROACH COMPARISON: user intent is present; creation evidence is present; decision trail is present; version change is present.
+
+B: Create one work piece for each of user intent, creation evidence, decision trail, version change. Preserve order only where one piece needs another result. Allow parallel movement where responsibilities are independent. Add a wait state before merge, a review point before formatting, and a recovery route that returns only the failed fragment.
+
+Pair 3.1 - Rephrased
+
+A: The translated responsibilities are user intent, creation evidence, decision trail, version change.
+
+B: Keep the branches separate. Merge only after required evidence and review are ready. Do not collapse waiting, recovery, or review into a single happy path.
+
+## Pair 3.2 - Plan Work Pieces
+
+A: Translated statements for XIIGen — the group management flow APPROACH COMPARISON: creation evidence is present; decision trail is present; version change is present; resume state is present.
+
+B: Create one work piece for each of creation evidence, decision trail, version change, resume state. Preserve order only where one piece needs another result. Allow parallel movement where responsibilities are independent. Add a wait state before merge, a review point before formatting, and a recovery route that returns only the failed fragment.
+
+Pair 3.2 - Rephrased
+
+A: The translated responsibilities are creation evidence, decision trail, version change, resume state.
+
+B: Keep the branches separate. Merge only after required evidence and review are ready. Do not collapse waiting, recovery, or review into a single happy path.
+
+## Pair 3.3 - Plan Work Pieces
+
+A: Translated statements for XIIGen — the group management flow APPROACH COMPARISON: decision trail is present; version change is present; resume state is present; open work is present.
+
+B: Create one work piece for each of decision trail, version change, resume state, open work. Preserve order only where one piece needs another result. Allow parallel movement where responsibilities are independent. Add a wait state before merge, a review point before formatting, and a recovery route that returns only the failed fragment.
+
+Pair 3.3 - Rephrased
+
+A: The translated responsibilities are decision trail, version change, resume state, open work.
+
+B: Keep the branches separate. Merge only after required evidence and review are ready. Do not collapse waiting, recovery, or review into a single happy path.
+
+## Pair 3.4 - Plan Work Pieces
+
+A: Translated statements for XIIGen — the group management flow APPROACH COMPARISON: version change is present; resume state is present; open work is present; validation note is present.
+
+B: Create one work piece for each of version change, resume state, open work, validation note. Preserve order only where one piece needs another result. Allow parallel movement where responsibilities are independent. Add a wait state before merge, a review point before formatting, and a recovery route that returns only the failed fragment.
+
+Pair 3.4 - Rephrased
+
+A: The translated responsibilities are version change, resume state, open work, validation note.
+
+B: Keep the branches separate. Merge only after required evidence and review are ready. Do not collapse waiting, recovery, or review into a single happy path.
+
+## Pair 3.5 - Plan Work Pieces
+
+A: Translated statements for XIIGen — the group management flow APPROACH COMPARISON: resume state is present; open work is present; validation note is present; later use is present.
+
+B: Create one work piece for each of resume state, open work, validation note, later use. Preserve order only where one piece needs another result. Allow parallel movement where responsibilities are independent. Add a wait state before merge, a review point before formatting, and a recovery route that returns only the failed fragment.
+
+Pair 3.5 - Rephrased
+
+A: The translated responsibilities are resume state, open work, validation note, later use.
+
+B: Keep the branches separate. Merge only after required evidence and review are ready. Do not collapse waiting, recovery, or review into a single happy path.
+
+## Pair 3.6 - Plan Work Pieces
+
+A: Translated statements for XIIGen — the group management flow APPROACH COMPARISON: open work is present; validation note is present; later use is present; xiigen — the group management flow approach comparison is present.
+
+B: Create one work piece for each of open work, validation note, later use, xiigen — the group management flow approach comparison. Preserve order only where one piece needs another result. Allow parallel movement where responsibilities are independent. Add a wait state before merge, a review point before formatting, and a recovery route that returns only the failed fragment.
+
+Pair 3.6 - Rephrased
+
+A: The translated responsibilities are open work, validation note, later use, xiigen — the group management flow approach comparison.
+
+B: Keep the branches separate. Merge only after required evidence and review are ready. Do not collapse waiting, recovery, or review into a single happy path.
+
+## Pair 3.7 - Plan Work Pieces
+
+A: Translated statements for XIIGen — the group management flow APPROACH COMPARISON: validation note is present; later use is present; xiigen — the group management flow approach comparison is present; my improved plan vs p1-p5 v2 approach is present.
+
+B: Create one work piece for each of validation note, later use, xiigen — the group management flow approach comparison, my improved plan vs p1-p5 v2 approach. Preserve order only where one piece needs another result. Allow parallel movement where responsibilities are independent. Add a wait state before merge, a review point before formatting, and a recovery route that returns only the failed fragment.
+
+Pair 3.7 - Rephrased
+
+A: The translated responsibilities are validation note, later use, xiigen — the group management flow approach comparison, my improved plan vs p1-p5 v2 approach.
+
+B: Keep the branches separate. Merge only after required evidence and review are ready. Do not collapse waiting, recovery, or review into a single happy path.
+
+## Pair 3.8 - Plan Work Pieces
+
+A: Translated statements for XIIGen — the group management flow APPROACH COMPARISON: later use is present; xiigen — the group management flow approach comparison is present; my improved plan vs p1-p5 v2 approach is present; date: 2026-02-26 status: comparison complete — improved plan v3 below is present.
+
+B: Create one work piece for each of later use, xiigen — the group management flow approach comparison, my improved plan vs p1-p5 v2 approach, date: 2026-02-26 status: comparison complete — improved plan v3 below. Preserve order only where one piece needs another result. Allow parallel movement where responsibilities are independent. Add a wait state before merge, a review point before formatting, and a recovery route that returns only the failed fragment.
+
+Pair 3.8 - Rephrased
+
+A: The translated responsibilities are later use, xiigen — the group management flow approach comparison, my improved plan vs p1-p5 v2 approach, date: 2026-02-26 status: comparison complete — improved plan v3 below.
+
+B: Keep the branches separate. Merge only after required evidence and review are ready. Do not collapse waiting, recovery, or review into a single happy path.
+

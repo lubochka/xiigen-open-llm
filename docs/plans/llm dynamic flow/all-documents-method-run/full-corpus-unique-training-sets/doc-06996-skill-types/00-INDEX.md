@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\Multimodel Orchestrator\skill builder\skill builder\skillbuilder-main\skillbuilder-main\references\skill-types.md`
+
+- Relative path: `Multimodel Orchestrator\skill builder\skill builder\skillbuilder-main\skillbuilder-main\references\skill-types.md`
+- Manifest category: undefined
+- Top folder: Multimodel Orchestrator
+- Type: testing and simulation
+- Inventory type: not listed in attached MVP inventory
+- File size: 2904 bytes
+- Line count read: 121
+- SHA256: 214943003C92F1037D7F28375F7BF468FC2C17FEE8EDB9DF793AF29CCDA66E19
+- First meaningful line: `Skill Types Reference`
+- Last meaningful line: `Create Standard when Simple works Start Simple, upgrade if needed`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+Skill Types Reference
+
+## Domains This Document Teaches
+
+- test objective
+- scenario setup
+- expected behavior
+- failure evidence
+- coverage decision
+- release gate
+- simulation result
+- repair signal
+- skill types reference
+- type classification matrix
+- simple skills < 200 lines
+- standard skills < 400 lines
+- complex skills < 500 lines
+- command skills < 100 lines
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

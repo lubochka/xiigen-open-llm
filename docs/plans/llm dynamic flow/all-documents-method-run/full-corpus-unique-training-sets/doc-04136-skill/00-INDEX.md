@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\skills\23-monitoring-service\SKILL.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\skills\23-monitoring-service\SKILL.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 3429 bytes
+- Line count read: 93
+- SHA256: 25870B561939B3E44A43B0C0F199560CE6E153C27B6D6F45E5C679065135532D
+- First meaningful line: `---`
+- Last meaningful line: `All alternatives MUST: store metrics/rules as dynamic documents, use BuildSearchFilter for metric queries, support dynamic alert rule definitions, return DataProcessResult.`
+
+## Related Versions And Duplicate Copies
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Multimodel Orchestrator\xiigen_v18_complete\V17-skills\23-monitoring-service\SKILL.md`
+
+## Source Meaning Used For Training
+
+Skill 23: Monitoring Service
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- skill 23: monitoring service
+- service health, metrics & alerts — components 12, 15
+- genie dna integration
+- alert rules as dynamic documents dna-1, freedom
+- metric records as dynamic documents dna-1
+- interface
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

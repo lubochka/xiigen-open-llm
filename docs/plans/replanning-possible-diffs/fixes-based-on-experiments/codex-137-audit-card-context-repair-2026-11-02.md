@@ -1,0 +1,62 @@
+# 137. Исправление живых заданий после аудита 134–136
+
+Работа начата 2 ноября 2026, завершена 3 ноября 2026. Имя файла сохраняет дату начала. Автор: `/root/post107_card_context`, один исследователь Astra ultra; родитель `/root` проверяет результат. Фаза READ_ONLY_RESEARCH + запрошенные Markdown. Вложенные workers не создавались. Продукт, runners, данные, веса и исторические raw/report не изменялись; build/tests/inference/Train/replay не выполнялись, Git mutations и push не выполнялись.
+
+Исправлены 12 завершённых P-карточек, четыре адресных плана и два общих входа; добавлены 43 и этот 137 — **20 Markdown-путей работника**. Это не 12 научных аудитов и не 20 исполненных проверок модели. Удаление 137 не отменяет результат: оперативные задания исправлены непосредственно в живых карточках и планах.
+
+## Основание и текущий срез
+
+Оба приложения `d8e03c87…/Pasted text.txt` и `c5cef839…/Pasted text.txt` прочитаны полностью. Первое поступило до доступности названных 134–136; его пересказ не выдавался за первичные файлы. После появления файлов полностью прочитаны [134](codex-134-post113-transfer-and-experiment-audit-2026-11-02.md), [135](codex-135-post113-addressed-repair-plan-2026-11-02.md), [136](codex-136-post113-card-coverage-2026-11-02.md). Их уже внесённые исправления 44/39 pure, Q129 candidate/live и 39 AddPair не объявляются новой работой 137.
+
+Начальный source3499063ae881fce7fc1385052343815cb32b3f68; аудит стал доступен на 80e89835188987678117380badda81e05a4064a6. Последующие внешние изменения учитывались адресно: e16987c — продуктовый material guard, 5bb764277d9 — ValueKind preflight. Последний прочитанный HEAD перед записью карты:945fe367c66fc14858bbb0a3190df077eba44e49. Это read-only наблюдения локальной истории, не утверждение нашего commit/push или удалённой публикации. Новые внешние P116-артефакты не включены в научный аудит; чужие staged/untracked/product изменения сохранены.
+
+## Что исправлено непосредственно
+
+| Живой путь | Конкретная дельта и граница |
+|---|---|
+| [P104-law-eligibility](../experimets/cards/P104-law-eligibility.md) | Выполненный паспорт/H-command исторические; текущий prompt ведёт к 16 остаточным S01/R07 условиям, не повторяет девять уже исправленных пар |
+| [P105-frozen-reference](../experimets/cards/P105-frozen-reference.md) | Текущий вход — saved reference evidence; logP/gold/odds и ответы отдельно, недоступные bytes не восстанавливаются новым Train |
+| [P106-corrected-semantic-target](../experimets/cards/P106-corrected-semantic-target.md) | Recorded PRIMARY не повторяется; M03 restored target witness не подменяется третьим обученным tokenizer, неназначенный native режим HOLD |
+| [P107-lawful-neighbor-aggregation](../experimets/cards/P107-lawful-neighbor-aggregation.md) | S02 уже реализован; 51/50 остаётся историческим budget failure; lawful A=B не требует нового поиска выигрыша |
+| [P108-metadata-carrier](../experimets/cards/P108-metadata-carrier.md) | Старый активный остаток M06 помечен историческим; нынешний R02 только отдельный dummy stage/terminal/tree паспорт, прежняя команда PRIMARY не его entry |
+| [P109-gold-validity](../experimets/cards/P109-gold-validity.md) | Убраны SHALL_IMPLEMENT и автоматический NEXT из действующего назначения; сохранены numeric0/3, sign1/1, положительные оси и ухудшение E2 |
+| [P110-numeric-matrix-cost](../experimets/cards/P110-numeric-matrix-cost.md) | Оперативный prompt R03/130:44 pure, Train/Predict/MatVec0; снят выбор нового D/A/B/caller trace; historical tolerance acceptance не выдумывается |
+| [P111-reward-credit](../experimets/cards/P111-reward-credit.md) | Внешний frozen U1/U2, drop-both/empty/missing expected и законный unknown-owner отказ; 9 future pure comparisons, no new Train/Execute |
+| [P112-family-disjoint-evaluation](../experimets/cards/P112-family-disjoint-evaluation.md) | R04 экспериментального checker OPEN отдельно от product guard PRESENT; current prompt требует actual consumed binding владельца 132 |
+| [P113-feature-energy](../experimets/cards/P113-feature-energy.md) | Current R06:39 algebra-only, Encode0; отсутствующий native full-vector expectation остаётся NOT_OBSERVED, не выводится из energy |
+| [P114-zero-weight-pair](../experimets/cards/P114-zero-weight-pair.md) | Исторический PRIMARY и текущий R08 разделены в самом prompt; сохранены 3 updates и 16 дополнительных Forward, no fourth update |
+| [P115-bm25-statistics-cache](../experimets/cards/P115-bm25-statistics-cache.md) | Recorded passport и ограниченный saved corpus/cache контроль; не назначен новый fit/benchmark. Научная квалификация P115 этой правкой не заявлена |
+| [131](codex-131-p111-addressed-feedback-transfer-2026-11-02.md) | Прежние 5 pure + DROP-BOTH + EMPTY-REFUSAL + NO-EXPECTED + HONEST-REFUSAL =9; native4 Train/10 Execute прежние. Внешний required owner set не выводится из мутируемой receipt |
+| [132](codex-132-p112-material-lineage-transfer-2026-11-02.md) | Убрано неверное «файлы не существуют»; отражены 6 existing pure tests,12 будущих guard calls и отдельный integration HOLD; material admission должен связывать actual finalPreferences/combined text/KNN corpus и наружную receipt/NOT_EVALUATED |
+| [135](codex-135-post113-addressed-repair-plan-2026-11-02.md) | Самодостаточный actual quote; R02 entry/output/mode/budget HOLD автора;9 pure T111 и current T112; N18 guard уже существует, текущий typed error согласован с source, native UNRUN |
+| [127](codex-127-postmerge-addressed-repair-plan-2026-11-02.md) | Узкое согласование N18 после 5bb: не писать ValueKind guard повторно; три UNRUN tests не доказывают learned-positive |
+| [120](120-executor-context-and-test-repair-contract-2026-11-02.md), [42](../experimets/codex-42-postmerge-executor-checks-2026-11-02.md) | Обязательная достижимость 43; PM-C10 отвергает старое A/B ядро даже при наличии всех ссылок |
+| [43](../experimets/codex-43-audit-executor-repairs-2026-11-02.md) | Короткий общий контракт стадий, внешнего expected set, actual consumed input и доказательств, соответствующих callable |
+
+Все 12 карточек сохраняют PRIMARY data/factor/учебный budget и буквальные исторические pwsh-команды. Старый общий копируемый текст с новым D/A/B снят, а не спрятан за верхним предупреждением. В каждом новом actual prompt находятся self path,120 §1,40 §2,42, default model, текущий этап, русский отчёт, STOP/NEXT и правило полезного эффекта с ухудшениями рядом. Pure repair PASS не назван новым научным результатом.
+
+## Первичные адресные проверки
+
+P111 [AddressingVerifier:217](../../../../experiments-v2/RP01-MICRO/P11101/Program.cs:217) обходит только Before.Keys, :230 сравнивает два заявленных count, :282 снова обходит Before.Keys. Это статическое основание внешнего полного U, не выполненный mutant replay. Честный unknown-owner контроль нужен, чтобы строгая проверка не отвергала разрешённый отказ.
+
+P112 [experimental verifier:60](../../../../experiments-v2/RP01-MICRO/P11201/src/MaterialLedgerVerifier.cs:60) ищет по предъявленным hashes, [LessonsFor:139](../../../../experiments-v2/RP01-MICRO/P11201/src/SplitMaterializer.cs:139) передаёт entry.Content. Current [trainer:268](../../../../18.CapabilityTraining/DefaultLogicalCapabilityTrainer.cs:268) проверяет provider.Material/ActualOwnedRows, но :588 готовит finalPreferences, :680 combinedTrainingText, :699 проверяет только IsSuccess, :710 получает permit, :717/:739 потребляют отдельные inputs, :1029 строит корпус из другого owned набора. [OnlyTrainRows…:212](../../../../Tests/ExperimentFixes/CapabilityMaterialLineageTests.cs:212) проверяет результат SelectTrainingRows, не learner. Pure helper сохраняется; назначен отдельный отрицательный пример «честный provider + TEST family в actual finalPreferences», с отказом до permit. Положительный capture до permit — branch/binding evidence, не обучение и не E2E.
+
+N18 сверено по неизменному 5bb764277d9: ValueKind до TryGetProperty; null разрешён, non-object typed BATCH_ROW_CHOSEN_OUTPUT_NOT_OBJECT. Прочитанные source/tests показывают [] на fresh empty state, null bookkeeping и object collision negative. Это source implementation PRESENT и tests UNRUN, не native proof сохранения выученного ответа. Новая научная программа/доза не назначена.
+
+## Что уже достаточно и не изменено
+
+[130](codex-130-p110-numeric-projection-disposition-2026-11-02.md) уже разделяет 32 saved recomputations и 12 synthetic cases, всего 44, без reconstruction weights/tolerance. [133](codex-133-p113-channel-balance-disposition-2026-11-02.md) уже разделяет 32 saved+7 synthetic=39 и native Encode/HOLD. Их текущие условия прочитаны адресно, повторные правки не нужны. В [Q129](../experimets/cards/HELDOUT-ADMISSION-ATOMICITY-01.md) адресно проверены candidate/live identity,4 TrainOnExample и условный source-derived39 AddPair: это уже исправлено 134–136. Новой научной аттестации Q129 нет. M03/M04/M06 владельца 127 уже имеют согласованные current/historical состояния; изменена только последующая N18 source-граница.
+
+Перечень возможных соседних P13/P18/P19/P21/P40/P51/P53/P58/P59/P67/P72/P79/P82/P91/P95/P96 и переносов 02/03/20/50/74/97/101/109/111 не объявляется заново полностью проверенным. Общая защита 43 достижима из их обязательного 120/42; адресная предметная полнота всего этого списка здесь не доказана. Это честная граница текущей подтверждённой семьи, а не blanket PASS всех карточек.
+
+## Фактическое чтение и проверка дельты
+
+Перед содержательной работой заново полностью прочитаны cwd AGENTS, canonical AGENTS/CLAUDE, RTK и Context Mode SKILL. Полностью прочитаны 12 основных файлов из `C:/Projects/llm_mvp_core/docs/skills/`: architect-behavior-classifier, planning-session-startup, task-slice-golden-rule, conversation-intent-and-self-reflection, plan-review, code-execution, code-examination, generated-code-review, prompt-patch-authoring, output-readability-gate, human-readable-architecture-audit (все с суффиксом `-SKILL.md`) и human-communication-GLOSSARY.md. Дополнительно полностью прочитаны intent-to-plan, phase-planning, improvement-measurement, experiment-design, test-integrity. Усечённые диапазоны восстановлены; план-review прочитан до конца 4273, canonical AGENTS до 8705, CLAUDE до 4373. Read-only diff3499063..945fe367 по AGENTS/CLAUDE/docs/skills пуст. Это чтение 17 навыков, не 17 ревью/циклов. Файлы навыков не переписывались.
+
+134–136,132 и исходная P110 прочитаны полностью. Остальные карточки читались адресно: текущие блоки, PRIMARY/H/R/passport, actual prompts; общий хвост сопоставлен по точному тексту после нормализации только своего ID/self path. Report headers использованы для сверки наличия записанного результата, не вместо нового разбора всех raw. Исходники прочитаны указанными диапазонами. Полные domain-specific translation навыки и вся история соседних ветвей в этой задаче не перечитывались; полное предметное ревью переводного тракта не заявлено.
+
+Перед каждой порцией правок фиксировались SHA и exact old text; native apply_patch изменял только Markdown. После записи 18 существующих файлов readback совпал с подготовленными bytes; обратное применение наших замен в памяти восстановило снимок перед соответствующими порциями для 18/18. Для 12 карточек отдельно сохранены LF и буквальные PRIMARY команды. Это механическая сохранность ограниченной дельты, не тест продукта. Parent `/root` структурно проверил 12 финальных quotes; полностью прочитал оперативный P112, дельту P110 и документы 131/132/43/137. Полное семантическое чтение всех 12 карточек родителем не заявляется; его review не выдаётся за второй вложенный worker. Исторические результаты и чужие изменения не откатывались.
+
+Статическая проверка добавленных локальных ссылок: 63, отсутствующих путей 0; числовые суффиксы :line отделялись перед проверкой существования. В 12 карточках извлечены 20 actual fragments (12 финальных quotes и 8 inline prompts): текущая стадия и обязательный контекст находятся внутри каждого. Документные negative-варианты с удалённым RESULT_RECORDED либо возвращённым «исполни только этот PRIMARY» отклонены проверкой входа. Это статическая проверка текста, не runtime модели. Read-only diff --check завершился с exit 0. На финальной сверке git diff --stat показывал только чужой required-changes.md; внешнее включение наших файлов в историю и remote push этой проверкой не аттестуются.
+
+Остаток: R02 repair entry/output/mode, T112 actual-consumed binding и наружный evidence, native state/restore и собственные неисполненные controls остаются у указанных владельцев. Эта документная работа не снимает их HOLD и не разрешает их запуск.

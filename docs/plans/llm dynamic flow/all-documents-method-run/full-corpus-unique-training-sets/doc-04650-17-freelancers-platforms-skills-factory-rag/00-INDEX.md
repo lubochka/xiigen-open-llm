@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\business flows\17-freelancers_platforms_SKILLS_FACTORY_RAG.md`
+
+- Relative path: `business flows\17-freelancers_platforms_SKILLS_FACTORY_RAG.md`
+- Manifest category: undefined
+- Top folder: business flows
+- Type: testing and simulation
+- Inventory type: not listed in attached MVP inventory
+- File size: 24832 bytes
+- Line count read: 526
+- SHA256: FC3A35B65C504B258DE7782F60B1D4CAFF7EECEF7754BDAEEC238BA00E307A60
+- First meaningful line: `17 — Freelancer Marketplace Platform — SKILLS FACTORY the retrieval system`
+- Last meaningful line: `Next: Load FLOW15 P5 UNIFIED SOURCE INDEX`
+
+## Related Versions And Duplicate Copies
+
+- `C:\Users\lubao\Documents\xiigen\business-flows\business flows\17-freelancers_platforms_SKILLS_FACTORY_RAG.md`
+
+## Source Meaning Used For Training
+
+17 — Freelancer Marketplace Platform — SKILLS FACTORY the retrieval system
+
+## Domains This Document Teaches
+
+- test objective
+- scenario setup
+- expected behavior
+- failure evidence
+- coverage decision
+- release gate
+- simulation result
+- repair signal
+- 17 — freelancer marketplace platform — skills factory the retrieval system
+- continues from a planning skill the notifications flow last skill
+- skill overview table
+- skill details
+- a planning skill — job enrichment ai pipeline
+- a planning skill — idempotent publish gate
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

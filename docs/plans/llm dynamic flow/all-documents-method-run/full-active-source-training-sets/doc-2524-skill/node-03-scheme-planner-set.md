@@ -1,0 +1,101 @@
+# Node-03 - Scheme Planner Set
+
+Runtime A is the collection of translated domain statements.
+Runtime B is the plan of separated work pieces.
+
+## Pair 3.1 - Plan Work Pieces
+
+A: Translated domain statements for Skill 44: Moderation Service: review responsibility is present and needs its own handling; rule coverage is present and needs its own handling; conflict detection is present and needs its own handling; impact explanation is present and needs its own handling.
+
+B: Create work pieces for review responsibility, rule coverage, conflict detection, impact explanation. Keep review responsibility and rule coverage separate. Allow conflict detection and impact explanation to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.1 - Rephrased
+
+A: The current request has translated responsibilities: review responsibility, rule coverage, conflict detection, impact explanation.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.2 - Plan Work Pieces
+
+A: Translated domain statements for Skill 44: Moderation Service: rule coverage is present and needs its own handling; conflict detection is present and needs its own handling; impact explanation is present and needs its own handling; reprocess instruction is present and needs its own handling.
+
+B: Create work pieces for rule coverage, conflict detection, impact explanation, reprocess instruction. Keep rule coverage and conflict detection separate. Allow impact explanation and reprocess instruction to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.2 - Rephrased
+
+A: The current request has translated responsibilities: rule coverage, conflict detection, impact explanation, reprocess instruction.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.3 - Plan Work Pieces
+
+A: Translated domain statements for Skill 44: Moderation Service: conflict detection is present and needs its own handling; impact explanation is present and needs its own handling; reprocess instruction is present and needs its own handling; approval boundary is present and needs its own handling.
+
+B: Create work pieces for conflict detection, impact explanation, reprocess instruction, approval boundary. Keep conflict detection and impact explanation separate. Allow reprocess instruction and approval boundary to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.3 - Rephrased
+
+A: The current request has translated responsibilities: conflict detection, impact explanation, reprocess instruction, approval boundary.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.4 - Plan Work Pieces
+
+A: Translated domain statements for Skill 44: Moderation Service: impact explanation is present and needs its own handling; reprocess instruction is present and needs its own handling; approval boundary is present and needs its own handling; skill 44 moderation service is present and needs its own handling.
+
+B: Create work pieces for impact explanation, reprocess instruction, approval boundary, skill 44 moderation service. Keep impact explanation and reprocess instruction separate. Allow approval boundary and skill 44 moderation service to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.4 - Rephrased
+
+A: The current request has translated responsibilities: impact explanation, reprocess instruction, approval boundary, skill 44 moderation service.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.5 - Plan Work Pieces
+
+A: Translated domain statements for Skill 44: Moderation Service: reprocess instruction is present and needs its own handling; approval boundary is present and needs its own handling; skill 44 moderation service is present and needs its own handling; human ai content review the approval gateway is present and needs its own handling.
+
+B: Create work pieces for reprocess instruction, approval boundary, skill 44 moderation service, human ai content review the approval gateway. Keep reprocess instruction and approval boundary separate. Allow skill 44 moderation service and human ai content review the approval gateway to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.5 - Rephrased
+
+A: The current request has translated responsibilities: reprocess instruction, approval boundary, skill 44 moderation service, human ai content review the approval gateway.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.6 - Plan Work Pieces
+
+A: Translated domain statements for Skill 44: Moderation Service: approval boundary is present and needs its own handling; skill 44 moderation service is present and needs its own handling; human ai content review the approval gateway is present and needs its own handling; genie dna integration is present and needs its own handling.
+
+B: Create work pieces for approval boundary, skill 44 moderation service, human ai content review the approval gateway, genie dna integration. Keep approval boundary and skill 44 moderation service separate. Allow human ai content review the approval gateway and genie dna integration to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.6 - Rephrased
+
+A: The current request has translated responsibilities: approval boundary, skill 44 moderation service, human ai content review the approval gateway, genie dna integration.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.7 - Plan Work Pieces
+
+A: Translated domain statements for Skill 44: Moderation Service: skill 44 moderation service is present and needs its own handling; human ai content review the approval gateway is present and needs its own handling; genie dna integration is present and needs its own handling; ai scoring with generic interface the dynamic controller pattern is present and needs its own handling.
+
+B: Create work pieces for skill 44 moderation service, human ai content review the approval gateway, genie dna integration, ai scoring with generic interface the dynamic controller pattern. Keep skill 44 moderation service and human ai content review the approval gateway separate. Allow genie dna integration and ai scoring with generic interface the dynamic controller pattern to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.7 - Rephrased
+
+A: The current request has translated responsibilities: skill 44 moderation service, human ai content review the approval gateway, genie dna integration, ai scoring with generic interface the dynamic controller pattern.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.8 - Plan Work Pieces
+
+A: Translated domain statements for Skill 44: Moderation Service: human ai content review the approval gateway is present and needs its own handling; genie dna integration is present and needs its own handling; ai scoring with generic interface the dynamic controller pattern is present and needs its own handling; auto decision logic is present and needs its own handling.
+
+B: Create work pieces for human ai content review the approval gateway, genie dna integration, ai scoring with generic interface the dynamic controller pattern, auto decision logic. Keep human ai content review the approval gateway and genie dna integration separate. Allow ai scoring with generic interface the dynamic controller pattern and auto decision logic to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.8 - Rephrased
+
+A: The current request has translated responsibilities: human ai content review the approval gateway, genie dna integration, ai scoring with generic interface the dynamic controller pattern, auto decision logic.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+

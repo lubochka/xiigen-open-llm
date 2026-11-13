@@ -1,0 +1,58 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\Planning sessions\old\skills_flat\design-for-ai--checklists.md`
+
+- Relative path: `Planning sessions\old\skills_flat\design-for-ai--checklists.md`
+- Manifest category: undefined
+- Top folder: Planning sessions
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 45271 bytes
+- Line count read: 622
+- SHA256: E9490E8D8B6BAF5AC9803DB824988CA3D24CAAF90D32A8F1F79081BE9848184B
+- First meaningful line: `Design for Hackers: Master Checklists & Decision Trees`
+- Last meaningful line: `- Cultural check -- Any unintended color associations for target audience? Ch 9`
+
+## Related Versions And Duplicate Copies
+
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\ext_skills_flat_translated\design-for-ai--checklists.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\xiigen start session files\ext\design-for-ai--checklists.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\xiigen start session files\xiigen-ext-skills-flat\design-for-ai--checklists.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\xiigen start session files\xiigen-ext-skills-flat\xiigen-ext-skills-flat\design-for-ai--checklists.md`
+
+## Source Meaning Used For Training
+
+Design for Hackers: Master Checklists & Decision Trees
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- design for hackers: master checklists & decision trees
+- full design review checklist
+- typography checks
+- color checks
+- proportion & layout checks
+- composition checks
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

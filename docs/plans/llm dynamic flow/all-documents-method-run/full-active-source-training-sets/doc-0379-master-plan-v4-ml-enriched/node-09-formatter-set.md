@@ -1,0 +1,101 @@
+# Node-09 - Formatter Set
+
+Runtime A is all approved translated results.
+Runtime B is one coherent answer for the selected audience.
+
+## Pair 9.1 - human requester
+
+A: Approved fragments for MASTER PLAN v4: DECODE → UPGRADE → AI Pipeline: source inventory is approved; metadata and tags is approved; retrieval routing is approved; graph relationships is approved. Audience: human requester.
+
+B: Produce one answer for the human requester. Start with the practical result, then group source inventory, metadata and tags, retrieval routing, graph relationships into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.1 - Rephrased
+
+A: Formatter receives approved readable fragments about source inventory, metadata and tags, retrieval routing, graph relationships.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.2 - planner
+
+A: Approved fragments for MASTER PLAN v4: DECODE → UPGRADE → AI Pipeline: metadata and tags is approved; retrieval routing is approved; graph relationships is approved; evidence selection is approved. Audience: planner.
+
+B: Produce one answer for the planner. Start with the practical result, then group metadata and tags, retrieval routing, graph relationships, evidence selection into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.2 - Rephrased
+
+A: Formatter receives approved readable fragments about metadata and tags, retrieval routing, graph relationships, evidence selection.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.3 - reviewer
+
+A: Approved fragments for MASTER PLAN v4: DECODE → UPGRADE → AI Pipeline: retrieval routing is approved; graph relationships is approved; evidence selection is approved; quality measurement is approved. Audience: reviewer.
+
+B: Produce one answer for the reviewer. Start with the practical result, then group retrieval routing, graph relationships, evidence selection, quality measurement into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.3 - Rephrased
+
+A: Formatter receives approved readable fragments about retrieval routing, graph relationships, evidence selection, quality measurement.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.4 - operator
+
+A: Approved fragments for MASTER PLAN v4: DECODE → UPGRADE → AI Pipeline: graph relationships is approved; evidence selection is approved; quality measurement is approved; master plan v4 decode upgrade ai pipeline is approved. Audience: operator.
+
+B: Produce one answer for the operator. Start with the practical result, then group graph relationships, evidence selection, quality measurement, master plan v4 decode upgrade ai pipeline into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.4 - Rephrased
+
+A: Formatter receives approved readable fragments about graph relationships, evidence selection, quality measurement, master plan v4 decode upgrade ai pipeline.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.5 - teacher
+
+A: Approved fragments for MASTER PLAN v4: DECODE → UPGRADE → AI Pipeline: evidence selection is approved; quality measurement is approved; master plan v4 decode upgrade ai pipeline is approved; figma to code css ml enriched architecture is approved. Audience: teacher.
+
+B: Produce one answer for the teacher. Start with the practical result, then group evidence selection, quality measurement, master plan v4 decode upgrade ai pipeline, figma to code css ml enriched architecture into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.5 - Rephrased
+
+A: Formatter receives approved readable fragments about evidence selection, quality measurement, master plan v4 decode upgrade ai pipeline, figma to code css ml enriched architecture.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.6 - product owner
+
+A: Approved fragments for MASTER PLAN v4: DECODE → UPGRADE → AI Pipeline: quality measurement is approved; master plan v4 decode upgrade ai pipeline is approved; figma to code css ml enriched architecture is approved; march 2026 geometry first ml classifiers zero ai cost is approved. Audience: product owner.
+
+B: Produce one answer for the product owner. Start with the practical result, then group quality measurement, master plan v4 decode upgrade ai pipeline, figma to code css ml enriched architecture, march 2026 geometry first ml classifiers zero ai cost into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.6 - Rephrased
+
+A: Formatter receives approved readable fragments about quality measurement, master plan v4 decode upgrade ai pipeline, figma to code css ml enriched architecture, march 2026 geometry first ml classifiers zero ai cost.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.7 - implementation lead
+
+A: Approved fragments for MASTER PLAN v4: DECODE → UPGRADE → AI Pipeline: master plan v4 decode upgrade ai pipeline is approved; figma to code css ml enriched architecture is approved; march 2026 geometry first ml classifiers zero ai cost is approved; what changed from v3 is approved. Audience: implementation lead.
+
+B: Produce one answer for the implementation lead. Start with the practical result, then group master plan v4 decode upgrade ai pipeline, figma to code css ml enriched architecture, march 2026 geometry first ml classifiers zero ai cost, what changed from v3 into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.7 - Rephrased
+
+A: Formatter receives approved readable fragments about master plan v4 decode upgrade ai pipeline, figma to code css ml enriched architecture, march 2026 geometry first ml classifiers zero ai cost, what changed from v3.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.8 - auditor
+
+A: Approved fragments for MASTER PLAN v4: DECODE → UPGRADE → AI Pipeline: figma to code css ml enriched architecture is approved; march 2026 geometry first ml classifiers zero ai cost is approved; what changed from v3 is approved; the three stage pipeline is approved. Audience: auditor.
+
+B: Produce one answer for the auditor. Start with the practical result, then group figma to code css ml enriched architecture, march 2026 geometry first ml classifiers zero ai cost, what changed from v3, the three stage pipeline into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.8 - Rephrased
+
+A: Formatter receives approved readable fragments about figma to code css ml enriched architecture, march 2026 geometry first ml classifiers zero ai cost, what changed from v3, the three stage pipeline.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+

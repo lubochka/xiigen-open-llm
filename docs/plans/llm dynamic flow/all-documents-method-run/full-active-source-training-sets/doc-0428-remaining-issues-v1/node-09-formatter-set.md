@@ -1,0 +1,101 @@
+# Node-09 - Formatter Set
+
+Runtime A is all approved translated results.
+Runtime B is one coherent answer for the selected audience.
+
+## Pair 9.1 - human requester
+
+A: Approved fragments for Remaining Issues After fix 12/13/14v2/15: screen structure is approved; component meaning is approved; user action is approved; data binding is approved. Audience: human requester.
+
+B: Produce one answer for the human requester. Start with the practical result, then group screen structure, component meaning, user action, data binding into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.1 - Rephrased
+
+A: Formatter receives approved readable fragments about screen structure, component meaning, user action, data binding.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.2 - planner
+
+A: Approved fragments for Remaining Issues After fix 12/13/14v2/15: component meaning is approved; user action is approved; data binding is approved; system type is approved. Audience: planner.
+
+B: Produce one answer for the planner. Start with the practical result, then group component meaning, user action, data binding, system type into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.2 - Rephrased
+
+A: Formatter receives approved readable fragments about component meaning, user action, data binding, system type.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.3 - reviewer
+
+A: Approved fragments for Remaining Issues After fix 12/13/14v2/15: user action is approved; data binding is approved; system type is approved; gap completion is approved. Audience: reviewer.
+
+B: Produce one answer for the reviewer. Start with the practical result, then group user action, data binding, system type, gap completion into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.3 - Rephrased
+
+A: Formatter receives approved readable fragments about user action, data binding, system type, gap completion.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.4 - operator
+
+A: Approved fragments for Remaining Issues After fix 12/13/14v2/15: data binding is approved; system type is approved; gap completion is approved; remaining issues after fix 12 13 14v2 15 is approved. Audience: operator.
+
+B: Produce one answer for the operator. Start with the practical result, then group data binding, system type, gap completion, remaining issues after fix 12 13 14v2 15 into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.4 - Rephrased
+
+A: Formatter receives approved readable fragments about data binding, system type, gap completion, remaining issues after fix 12 13 14v2 15.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.5 - teacher
+
+A: Approved fragments for Remaining Issues After fix 12/13/14v2/15: system type is approved; gap completion is approved; remaining issues after fix 12 13 14v2 15 is approved; three distinct root causes is approved. Audience: teacher.
+
+B: Produce one answer for the teacher. Start with the practical result, then group system type, gap completion, remaining issues after fix 12 13 14v2 15, three distinct root causes into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.5 - Rephrased
+
+A: Formatter receives approved readable fragments about system type, gap completion, remaining issues after fix 12 13 14v2 15, three distinct root causes.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.6 - product owner
+
+A: Approved fragments for Remaining Issues After fix 12/13/14v2/15: gap completion is approved; remaining issues after fix 12 13 14v2 15 is approved; three distinct root causes is approved; root cause a step 14 subtraction bug fix 14v3 is approved. Audience: product owner.
+
+B: Produce one answer for the product owner. Start with the practical result, then group gap completion, remaining issues after fix 12 13 14v2 15, three distinct root causes, root cause a step 14 subtraction bug fix 14v3 into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.6 - Rephrased
+
+A: Formatter receives approved readable fragments about gap completion, remaining issues after fix 12 13 14v2 15, three distinct root causes, root cause a step 14 subtraction bug fix 14v3.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.7 - implementation lead
+
+A: Approved fragments for Remaining Issues After fix 12/13/14v2/15: remaining issues after fix 12 13 14v2 15 is approved; three distinct root causes is approved; root cause a step 14 subtraction bug fix 14v3 is approved; the problem is approved. Audience: implementation lead.
+
+B: Produce one answer for the implementation lead. Start with the practical result, then group remaining issues after fix 12 13 14v2 15, three distinct root causes, root cause a step 14 subtraction bug fix 14v3, the problem into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.7 - Rephrased
+
+A: Formatter receives approved readable fragments about remaining issues after fix 12 13 14v2 15, three distinct root causes, root cause a step 14 subtraction bug fix 14v3, the problem.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.8 - auditor
+
+A: Approved fragments for Remaining Issues After fix 12/13/14v2/15: three distinct root causes is approved; root cause a step 14 subtraction bug fix 14v3 is approved; the problem is approved; proof from cart item 1 is approved. Audience: auditor.
+
+B: Produce one answer for the auditor. Start with the practical result, then group three distinct root causes, root cause a step 14 subtraction bug fix 14v3, the problem, proof from cart item 1 into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.8 - Rephrased
+
+A: Formatter receives approved readable fragments about three distinct root causes, root cause a step 14 subtraction bug fix 14v3, the problem, proof from cart item 1.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+

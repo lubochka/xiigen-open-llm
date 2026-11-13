@@ -1,0 +1,685 @@
+Running the pre-condition gate before touching any code.
+
+Ran
+Run all four pre-condition checks
+Pre-conditions:
+
+BaseService in 21.AgentInfrastructure/Core/Core.cs — PASS
+29.SemanticCompiler — CLEAN
+12.SearchEngine exists separately — PASS
+Test count — 852 (baseline shifted: 820 + 32 from 12.SemanticCompiler already in repo)
+Target becomes 852 + 25 = 877. Checking the BaseService and OperationResult shape before writing code:
+
+
+Read 7 files, ran 3 commands
+The pattern across all subprojects (28.SemanticNlp, 33.MatrixAlgorithms) is: self-contained, own OperationResult<T> + BaseService in local Core.cs, no external project references. The plan's csproj references are inconsistent with the codebase pattern — I'll follow the codebase pattern.
+
+ROUND CONTRACT:
+
+Baseline: 852 tests passing, 0 failing
+Current: 852 passing (just verified)
+Produced: Phase 1 — scaffold + Core.cs + Interfaces.cs (3 tests)
+Phase gate: dotnet build 29.SemanticCompiler clean + dotnet test --filter "SemanticCompiler_Domain" 3 pass
+Gap: 4 phases remaining after this one
+Starting Phase 1:
+
+Created
+SemanticCompiler.csproj
++11
+-0
+12.SemanticCompiler already occupies the SemanticCompiler namespace in the Tests project — both projects can't share it without type-name collisions (OperationResult<T>, ISemanticCompiler). Using SemanticCompiler29 namespace avoids all conflicts and lets the 32 existing tests keep passing.
+
+Now writing Phase 1 files:
+
+
+Created 2 files
+Now add the project reference to Tests.csproj:
+
+Edited
+LlmFromScratch.Tests.csproj
++1
+-0
+Now add the 3 Phase 1 tests to the existing test file:
+
+
+Read a file, created a file, ran 3 commands
+Phase 1 gate: 3/3 pass. Committing phase 1:
+
+Committed
+9a1a029
+ROUND CONTRACT:
+
+Baseline: 852 tests passing
+Current: 855 passing (852 + 3)
+Produced: Phase 1 committed — Core.cs, Interfaces.cs, csproj, 3 tests
+Phase gate: dotnet test --filter "SC29_Domain" → 3 pass ✓
+Gap: Phases 2-5 (compression → routing → planning → translation+beautification+pipeline)
+Phase 2 — Compression pipeline (E01, E08, E15, E16, E17) — +7 tests → 862
+
+
+Created 5 files
+Now add the 7 Phase 2 tests:
+
+
+Read a file, edited a file, ran 3 commands
+10/10 pass. Gate B: VocabSize=22 verified in the test. Committing Phase 2:
+
+Committed
+6fd04df
+Phase 3 — Routing (E20, E18) — +5 tests → 867
+
+
+Created 2 files, edited a file, ran a command, read a file
+The edit placed Phase 3 tests outside the class body. Rewriting the complete file:
+
+
+Created a file, ran a command
+The TypeScript test is failing because the example only matches one marker ("Promise<") but MinMarkers=2. Adding "export async " and "(): " (TS return-type annotation) to the markers:
+
+
+Edited a file, ran 3 commands
+15/15 pass. Committing Phase 3:
+
+Committed
+757ca44
+Phase 4 — Planning (E21, E33, E35) — +5 tests → 872
+
+
+Created 3 files, edited a file, ran 3 commands
+The false-CONJ guard uses StartsWith but "them" appears mid-clause in "log them". Fixing to Contains:
+
+
+Edited a file, ran 2 commands
+20/20 pass. Committing Phase 4:
+
+Committed
+a3835fc
+Phase 5 — Translation + Beautification + Pipeline integration — +5 tests → 877
+
+
+Created 4 files
+Now the main pipeline:
+
+
+Created a file, edited a file, ran 3 commands
+25/25 pass. Running full suite gate:
+
+Ran
+Full test suite verification
+877/877 — exactly the target. Running the three critical verification checks from the plan:
+
+Ran
+Run three critical verification checks from the plan
+All three checks pass:
+
+VocabSize = 22 ✓
+return Validate({X}) (not the string "SUCCESS") ✓
+StackDetector line 18 < SemanticNormalizer line 22 ✓
+Committing Phase 5 and pushing:
+
+Committed
+7435932
+29.SemanticCompiler complete
+ROUND CONTRACT — final:
+
+Baseline: 852 tests passing
+Current: 877 passing, 0 failing
+Produced: 5 commits — 29.SemanticCompiler complete (Core, Compression, Routing, Planning, Translation, Beautification, Pipeline)
+Phase gate: all 3 critical checks pass ✓
+Gap: none — plan complete
+Summary of what was built:
+
+Phase	Files	Tests
+1	Core.cs, Interfaces.cs, .csproj	+3 → 855
+2	AstTokenizer, RoleAssigner, SemanticNormalizer, FamilyCollapser, LogicExtractor	+7 → 862
+3	StackDetector (E20 pre-norm), RouteClassifier (D-04)	+5 → 867
+4	Decomposer (false-CONJ guard), StopSignalDetector, DependencyGraph	+5 → 872
+5	PatternClassifier, ContextualDictionary, PatternReorderer, TemplateBeautifier, SemanticCompilerPipeline	+5 → 877
+Three critical rules embedded in code: E20 pipeline order (StackDetector line 18 < SemanticNormalizer line 22), E23 SUCCESS=RETURN (return Validate not string "SUCCESS"), E17 VocabSize=22. Namespace SemanticCompiler29 avoids collision with the standalone 12.SemanticCompiler.
+
+currently we have some dependency on project 21-23 so the code would be only on .Net, what are these?
+
+Let me look at what projects 21-23 are and what the Tests project depends on from them.
+
+
+Ran 4 commands, ran an agent
+Here's the answer:
+
+Projects 21-23 are the "agent runtime" layer — pure C# implementation of what OSS frameworks (LangGraph, LangChain, etc.) provide in Python. They contain no ML model weights, so the code dependency is on the algorithms and patterns, not on trained parameters.
+
+21.AgentInfrastructure — the execution substrate:
+
+ReAct (Reasoning + Acting) loop engine
+Tool registry with permission gates
+Session/context state management
+Token counting
+NuGet: Microsoft.CodeAnalysis.CSharp (Roslyn, for code analysis), Microsoft.Data.Sqlite (for session persistence)
+22.AgentAlgorithms — planning and routing:
+
+Context compaction (what to keep when the window fills)
+ComplexTaskDecomposer (the same false-CONJ guard logic referenced in 29.SemanticCompiler)
+Multi-agent orchestration (AgentOrchestrator)
+AST-based relevance ranking with K-NN
+NuGet: Microsoft.CodeAnalysis.CSharp only
+23.OssEquivalents — replacements for Python OSS libraries:
+
+MCP (Model Context Protocol) transport + tool dispatcher ← LangGraph equivalent
+Roslyn-based code analysis
+YAML skill-file parsing (YamlDotNet)
+Prompt translation and beautification
+State machine with SQLite checkpointing
+NuGet: Microsoft.CodeAnalysis.CSharp, Microsoft.Data.Sqlite, YamlDotNet
+The .NET constraint comes from two things:
+
+Roslyn (Microsoft.CodeAnalysis.CSharp) — used in all three for C# AST parsing. In Python/TypeScript you'd use tree-sitter or ast-grep. In a Java runtime you'd use JavaParser.
+SQLite via Microsoft.Data.Sqlite — the session state and MCP state machine use SQLite for persistence. This is purely a library choice, not a language-level constraint — Python has sqlite3 built-in and TypeScript has better-sqlite3.
+Everything else (the OperationResult<T> envelope, ReAct loop, tool registry, context compaction, task decomposition) is algorithmic — it's portable to any language. The patterns themselves are language-agnostic; the implementation is just C# because that's the project language.
+
+@C:\Users\lubao\Documents\xiigen\llm mvp\Product session 4.txt @C:\Users\lubao\Documents\xiigen\llm mvp\Product session 3.txt @C:\Users\lubao\Documents\xiigen\llm mvp\Claude code session 2.txt @C:\Users\lubao\Documents\xiigen\llm mvp\project-skills-v4.zip Please read these files related our current state of the project
+
+
+Read 2 files
+Here's what the three session files reveal as the current state:
+
+Session state synthesis
+Product session 3 (docs analysis — 15/116 rounds complete)
+
+Execution priority confirmed: 15.OrchestratorModel v1.1 first, then 14.ContinuousLearning v1.1
+Both plans are ready to execute — baseline is 877 tests (852 pre-SC29 + 25 SC29)
+Critical locks confirmed: E20 pipeline order, E40 StratifiedSplit, E44 weight formula, D-09/D-10/D-11
+Product session 4 (skills — complete)
+
+project-skills-v4.zip has 166 skill files, zero NOT-APPLICABLE markings
+Needs to be extracted and committed to docs/skills/ in the repo
+Current worktree state
+
+877 tests passing, 0 failing
+29.SemanticCompiler is the last completed subproject
+The user's stated priority in Product session 3: "I would like to start the learning and testing from orchestrator + .net datasets." That maps directly to 15.OrchestratorModel. Let me check what's in the plan file and confirm the worktree is clean before starting Phase 1.
+
+
+Found files, ran a command
+Worktree is clean. The plan isn't in the worktree — let me find it in the docs folder.
+
+
+Found files
+Project folder doesn't exist yet — this is a fresh build. Let me read the v1.1 plan:
+
+Read
+ORCHESTRATOR-MODEL-SESSION-PLAN-v1.1.md
+Plan is complete and detailed. Now running the pre-condition gate — all six checks in parallel:
+
+Phase 1 — Project scaffold
+
+Ran 5 commands
+Pre-condition gate: ✅ all six checks pass. Baseline: 877 passed, 0 failed.
+
+Let me check the actual ISemanticCompiler interface name and ISessionStorage methods before writing code:
+
+
+Ran 3 commands
+Critical finding: the interface is ISemanticCompiler29 (not ISemanticCompiler). Let me read the full files I need:
+
+
+Read 2 files
+I need to see the rest of 21.AgentInfrastructure/Core/Core.cs — ISessionStorage must be after line 49:
+
+
+Read 3 files, ran 4 commands
+Now I have everything needed. Let me check the solution and tests csproj before writing code:
+
+
+Ran 6 commands
+Let me check how AgentAlgorithms handles namespacing to stay consistent:
+
+
+Read a file, ran a command
+Good. I have everything I need. Now I'll implement Phase 1 in full. Creating all files simultaneously:
+
+
+Ran a command, created 4 files
+Now write the test file and update the csproj:
+
+Created
+OrchestratorModelTests.cs
++92
+-0
+Now update the test csproj and add the project to the solution:
+
+
+Read a file, edited a file
+Now add to solution and run the Phase 1 Gate B:
+
+
+Ran 2 commands
+OperationResult<T> not found — need global usings. Let me check how AgentAlgorithms handles this:
+
+
+Ran 4 commands
+Interesting — AgentAlgorithms.csproj has NO project reference to AgentInfrastructure! Let me find where OperationResult<T> is defined in AgentAlgorithms:
+
+
+Ran a command, read a file
+Critical insight — each subproject is self-contained. AgentAlgorithms doesn't reference AgentInfrastructure — it has its own OperationResult<T>. I need to follow the same pattern: define local types in Core/Core.cs and remove the AgentInfrastructure reference that would cause ambiguity.
+
+
+Edited a file, created a file
+Now update InMemoryEpisodeMemory.cs to use the local types:
+
+Created
+InMemoryEpisodeMemory.cs
++52
+-0
+Update the test file to use local IOrchestratorStorage:
+
+
+Created a file, ran a command
+OrchestratorModel builds clean. Now run Gate B for Phase 1:
+
+Ran
+Run Phase 1 tests (EpisodeMemory tests)
+3/3 Phase 1 tests pass. Run full suite to confirm baseline + 3:
+
+Ran
+Full test run to confirm 880 passing (baseline 877 + 3)
+880 passed, 0 failed — Phase 1 Gate B confirmed. Commit and move to Phase 2:
+
+Committed
+28a4cb4
+Phase 2 — EpisodeClassifier + EpisodeDecomposer
+Phase 2 — EpisodeClassifier (FC-10: uses ISemanticCompiler29) and EpisodeDecomposer (E32):
+
+
+Ran a command, created 2 files
+Now add Phase 2 tests (the StubSemanticCompiler29 and 5 tests) to the test file:
+
+Edited
+OrchestratorModelTests.cs
++76
+-0
+Add the StubSemanticCompiler29 at the bottom of the test file:
+
+
+Edited a file, ran a command
+5/5 Phase 2 tests pass. Verify FC-10 then full suite:
+
+Ran
+FC-10 check (no IRouteClassifier) and full test count
+IRouteClassifier appears only in comments (FC-10 notes) — zero production usage. 885 passed (877 + 3 + 5). Commit:
+
+Committed
+ec60fa7
+Phase 3 — StopSignalDetector + DependencyGraph
+
+Ran a command, created a file
+Add Phase 3 tests (3 tests: 2 for StopSignalDetector, 1 for DependencyGraph reuse):
+
+
+Edited a file, ran a command
+"Design the authentication module architecture" is 5 words — Signal 4 fires with threshold ≤6. Fix: lower threshold to ≤3 (truly atomic tasks only):
+
+
+Edited a file, ran 2 commands
+888 passed, 0 failed. DependencyGraph.cs not duplicated (empty result). Commit Phase 3:
+
+Committed
+beba0c8
+Phase 4 — AgentLauncher + ResultMerger
+Phase 4: AgentLauncher, TemplateBeautifierAdapter, ResultMerger. I need to check the TemplateBeautifier constructor first:
+
+
+Ran 2 commands, created 3 files
+Now add Phase 4 tests with the necessary stubs:
+
+Edited
+OrchestratorModelTests.cs
++49
+-0
+Add the NullCompilerStorage29 and NullEventLogger29 stubs at the bottom:
+
+
+Edited a file, ran a command
+Verify FC-12 then full suite:
+
+Ran
+FC-12 check (no concrete type in ResultMerger) + full count
+SemanticCompiler29.TemplateBeautifier in ResultMerger appears only in a comment — zero production usage. 891 passed (877 + 14). Commit:
+
+Committed
+a6dbdb3
+Phase 5 — QualityOrchestrator + main pipeline
+Phase 5: QualityOrchestrator (E39), main OrchestratorPipeline, and Gate B test:
+
+Created
+QualityOrchestrator.cs
++59
+-0
+Phase 5 needs the main pipeline class. I'll name it OrchestratorPipeline (not OrchestratorModel — would conflict with the namespace):
+
+
+Ran 3 commands, created a file
+Now add Phase 5 tests (3: QualityOrchestrator ×2, Gate B ×1):
+
+
+Edited a file, ran 9 commands
+Build error: ?? false on bool (not bool?) — unconstrained generic T? returns T for value types. Fix the filter expression in OrchestratorPipeline.cs:
+
+
+Edited a file, ran 2 commands
+894 passed, 0 failed — exactly the plan target (877 + 17). Run the final self-checks then commit:
+
+
+Ran 2 commands
+All checks pass:
+
+FC-10: 0 production uses of IRouteClassifier ✅
+FC-12: 0 concrete TemplateBeautifier in ResultMerger ✅
+FC-2: OrchestratorModel.csproj (no numeric prefix) ✅
+No DependencyGraph.cs duplication ✅
+17 [Fact] tests ✅
+Gate B test passed. Commit:
+
+Committed
+336a502
+Now push to main per the memory rule (always push to main after the final phase):
+
+
+Ran 3 commands
+Remote main has diverged — other work was pushed there. Need to rebase:
+
+
+Ran 2 commands
+The remote already has a version of 15.OrchestratorModel — abort the rebase and examine what's there:
+
+
+Ran 5 commands
+The remote has a complete implementation. Let me check its test count and test file:
+
+
+Ran 2 commands
+Remote already has a complete 17-test implementation of 15.OrchestratorModel. Both use the same test names. Let me merge — take the remote version for conflicting 15.OrchestratorModel files:
+
+Merged
+Merge remote main into worktree branch
+Take the remote version for all conflicted 15.OrchestratorModel files (the remote implementation is complete and correct):
+
+Ran
+Take remote version for all conflicted 15.OrchestratorModel files
+Now resolve Tests/LlmFromScratch.Tests.csproj (keep both the remote's 14.ContinuousLearning ref and the 15.OrchestratorModel ref):
+
+
+Read a file, edited a file
+Now resolve LlmFromScratch.sln:
+
+
+Ran a command, read 3 files
+The sln conflicts are just different GUIDs for the same project. Take the remote's GUIDs (theirs) since they're already on main:
+
+Ran
+Take remote sln, add resolved files
+My local Core/Core.cs and subdirectory files will conflict with the remote's AgentInfrastructure-based approach. Remove them:
+
+
+Ran 3 commands
+No remaining conflicts. Build and test:
+
+
+Ran 3 commands
+916 passed, 0 failed — the merge incorporated the remote's 14.ContinuousLearning (+22 tests) plus 15.OrchestratorModel (+17 tests). Complete the merge commit and push:
+
+
+Ran 2 commands
+15.OrchestratorModel complete
+Pushed to main. 916 passed, 0 failed.
+
+15.OrchestratorModel — done. Here's what was built and what's now on main:
+
+Phase	Deliverable	Tests
+1	Project scaffold, interfaces, ITemplateBeautifier, InMemoryEpisodeMemory	+3
+2	EpisodeClassifier (FC-10: ISemanticCompiler29), EpisodeDecomposer (E32)	+5
+3	StopSignalDetector (E33, 4 signals), DependencyGraph reuse (E35)	+3
+4	AgentLauncher, ResultMerger (FC-12: ITemplateBeautifier), TemplateBeautifierAdapter	+3
+5	QualityOrchestrator (E39), OrchestratorPipeline, Gate B test	+3
+Merge result: remote main already had a parallel implementation (different file layout, same 17 test names). Merge unified both — remote's flat-layout AgentInfrastructure-based version is canonical. Remote also had 14.ContinuousLearning (+22 tests). Final count: 916 (877 + 17 + 22).
+
+The next plan in the execution queue is SESSION-PROMPT-SKILLS-ADAPTATION-PLAN-v1.0.md (docs-only governance update, no test impact), followed by continuing the docs analysis from Round 16 (SUBPROJECT-22-AGENT-ALGORITHMS-PLAN-v1.md).
+
+@C:\Users\lubao\Documents\xiigen\llm mvp\Claude code session 2.txt @C:\Users\lubao\Documents\xiigen\llm mvp\project-skills-v4.zip @C:\Users\lubao\Documents\xiigen\llm mvp\project-skills-v3.zip @C:\Users\lubao\Documents\xiigen\llm mvp\llm-skills-v2.zip @C:\Users\lubao\Documents\xiigen\llm mvp\llm-session-package.zip @C:\Users\lubao\Documents\xiigen\llm mvp\Product session 4.txt @C:\Users\lubao\Documents\xiigen\llm mvp\Product session 3.txt please continue. Take into account please some of this plan is already implemented in other sessions. Also SESSION-PROMPT-SKILLS-ADAPTATION-PLAN-v1.0.md was only partial - please examine carefully what have been done in these two sessions
+
+Audit of parallel sessions
+
+Read 5 files, ran 8 commands, found files
+Let me look at the remaining session 2 content and find the adaptation plan:
+
+
+Ran a command, read 5 files
+Adaptation plan audit
+
+Read 2 files, found files, ran a command
+I now have the full picture. Let me check the current test count and subproject map before producing a status report:
+
+
+Read a file, ran a command
+Now I have the complete picture. Let me check what plans exist for 16.AutonomousLearning and the EXPERIMENT-RESULTS-MAP:
+
+
+Read a file, ran 3 commands
+Found the analysis state. Let me read all three files:
+
+
+Read 2 files, ran a command
+Docs analysis continuation
+Good. I now have the full picture. Let me read the critical blocking rounds for sections D/E:
+
+Read
+E40-E45-AUTONOMOUS-LEARNING-PLANS-v1.0.md
+Autonomous Learning Plan
+I now have all the data needed from rounds 1, 12, and 92. Let me write the plan:
+
+Created
+AUTONOMOUS-LEARNING-SESSION-PLAN-v1.0.md
++306
+-0
+Now let me check the ContinuousLearning project structure to verify my plan's references are correct:
+
+
+Ran 4 commands, read a file
+Good — IncrementalTrainer, DomainModelRegistry, DomainDatasetCache all confirmed in the CL project. Now update SUBPROJECT-MAP and commit the plan:
+
+
+Read a file, edited a file, ran a command
+Phase 1 implementation
+
+Ran 5 commands, read 2 files
+Now I'll build Phase 1. Creating the project:
+
+Created
+AutonomousLearning.csproj
++15
+-0
+Phase 1 — IdleDetector implementation
+Let me check what's already in the worktree before writing code:
+
+
+Found files
+Good. Let me read existing files to understand patterns before writing anything:
+
+
+Read 6 files, found files
+Now I have all the patterns I need. Let me write the Phase 1 files:
+
+
+Created 3 files
+Now add the project reference to Tests.csproj:
+
+Edited
+LlmFromScratch.Tests.csproj
++1
+-0
+Now build and run the Phase 1 tests:
+
+
+Ran 4 commands
+Gate B Phase 1: 5 passed, 0 failed ✅
+
+Now commit Phase 1 and immediately move to Phase 2:
+
+Committed
+a4b6343
+Phase 2 — TrustScorer + DataSourceFinder
+Now Phase 2 — TrustScorer and DataSourceFinder:
+
+
+Created 2 files
+Now add the 5 Phase 2 tests to AutonomousLearningTests.cs:
+
+
+Read a file, edited a file, ran a command
+Gate B Phase 2: 5 passed, 0 failed ✅
+
+Committed
+12dc096
+Phase 3 — DatasetPreprocessor + DatasetWeighter
+Now Phase 3 — DatasetPreprocessor with E20 gate, DatasetWeighter with D-09 formula. First I need to check the SemanticCompiler29 interface:
+
+
+Found files, read 2 files
+Now I have everything I need. Writing Phase 3 files:
+
+
+Created 2 files
+Now add Phase 3 tests to AutonomousLearningTests.cs, plus the required stubs:
+
+
+Edited 2 files
+Now add the Phase 3 stubs to the file-scoped fakes section:
+
+
+Edited a file, ran a command
+Need to check the TrainingExample record definition to fix parameter naming:
+
+
+Searched code, read a file
+The field is CapturedAt, not CreatedAt. Fix both files:
+
+
+Edited 2 files
+The test is in AutonomousLearningTests.cs — let me fix it there:
+
+Searched
+new TrainingExample
+Good — the test uses positional parameters which is correct (CapturedAt is the 5th positional). Now let me also check the DatasetWeighter.cs for the same issue (it has the Select with e with { Weight = ... }):
+
+Ran
+Re-run Phase 3 tests after fixing CapturedAt
+Gate B Phase 3: 5 passed, 0 failed ✅
+
+Committed
+99aff97
+Phase 4 — ReplayBuffer + AutonomousTrainer
+Phase 4 — ReplayBuffer and AutonomousTrainer. First let me check IncrementalTrainer interface carefully:
+
+Read
+IncrementalTrainer.cs
+Good. Now write the Phase 4 files:
+
+
+Created 2 files
+Now add the 4 Phase 4 tests:
+
+Edited
+AutonomousLearningTests.cs
++88
+-0
+Now add the StubIncrementalTrainerAL to the fakes section:
+
+
+Edited a file, ran a command
+Gate B Phase 4: 4 passed, 0 failed ✅
+
+Committed
+821e367
+Phase 5 — Full Pipeline + before/after verification
+Phase 5 needs a few extra interface types. First read Core/Interfaces.cs, then extend it:
+
+
+Read a file, edited a file, created a file
+Let me check ModelAdapter definition before the build fails:
+
+
+Searched code, read a file
+Fix the ModelAdapter constructor call — it's TrainingExamples, not ExampleCount:
+
+Edited
+AutonomousLearningPipeline.cs
++4
+-4
+Also need to add using ContinuousLearning; to the pipeline file since it uses TrainingExample, IDomainModelRegistry, and ModelAdapter:
+
+Read
+AutonomousLearningPipeline.cs
+Good, using ContinuousLearning; is already there. Now add the 3 Phase 5 tests plus the required stubs:
+
+Edited
+AutonomousLearningTests.cs
++97
+-0
+Now add the Phase 5 stubs — StubSystemMonitorAL, StubDataProviderAL, SequentialAccuracyAL, NullCodeWriterAL:
+
+
+Edited a file, ran 2 commands
+Gate B Phase 5: 3 passed, 0 failed ✅
+
+Now run the full 22-test suite to confirm the target count:
+
+Ran
+Run all 22 AutonomousLearning tests
+All 22 AutonomousLearning tests passed ✅
+
+Now verify the full baseline hasn't broken anything:
+
+Ran
+Full test suite — verify 938 passed, 0 failed
+938 passed, 0 failed — exactly the planned target ✅
+
+Commit Phase 5, then push everything to main:
+
+Committed
+3605e95
+Push to main + SUBPROJECT-MAP update
+
+Ran 2 commands
+Now update SUBPROJECT-MAP.md to mark 16 as Done:
+
+Edited
+SUBPROJECT-MAP.md
++1
+-1
+Also update the test baseline line in the map:
+
+Edited
+SUBPROJECT-MAP.md
++1
+-1
+Also update the dependency graph section to show 16's edges:
+
+
+Edited a file, ran a command
+Done. Here's what was completed in this session:
+
+16.AutonomousLearning — all 5 phases shipped
+
+Phase	Files	Tests	Gate B
+1 — IdleDetector (E41)	Core/Interfaces.cs, IdleDetector/IdleDetector.cs	5	✅ 5 passed
+2 — TrustScorer (E40V2) + DataSourceFinder	TrustScorer/TrustScorer.cs, DataSourceFinder/DataSourceFinder.cs	5	✅ 5 passed
+3 — DatasetPreprocessor (E20 gate) + DatasetWeighter (D-09)	Preprocessing/DatasetPreprocessor.cs, Preprocessing/DatasetWeighter.cs	5	✅ 5 passed
+4 — ReplayBuffer (E43 70/30) + AutonomousTrainer	Training/ReplayBuffer.cs, Training/AutonomousTrainer.cs	4	✅ 4 passed
+5 — AutonomousLearningPipeline + before/after measurement	Pipeline/AutonomousLearningPipeline.cs	3	✅ 3 passed
+Final test count: 938 passed, 0 failed (baseline 916 + 22 new)
+
+Key hard gates enforced:
+
+E20: ISemanticCompiler29.Compile runs before Normalize() — verified by TrackingCompilerAL stub in test
+D-09: ComputeMaxWeight(1000, 5, 50) == 4.0 — not the ×10 E44 failure constant
+E43: ReplayRatio = 0.3f — 7 new + 3 old = 10 total in the 70/30 mix test
+E28-E31: IAccuracyEvaluator used for before/after (not bigram proxy)

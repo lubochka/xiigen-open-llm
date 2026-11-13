@@ -1,0 +1,101 @@
+# Node-09 - Formatter Set
+
+Runtime A is all approved translated results.
+Runtime B is one coherent answer for the selected audience.
+
+## Pair 9.1 - human requester
+
+A: Approved fragments for Stop Planning. Start Implementing.: review responsibility is approved; rule coverage is approved; conflict detection is approved; impact explanation is approved. Audience: human requester.
+
+B: Produce one answer for the human requester. Start with the practical result, then group review responsibility, rule coverage, conflict detection, impact explanation into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.1 - Rephrased
+
+A: Formatter receives approved readable fragments about review responsibility, rule coverage, conflict detection, impact explanation.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.2 - planner
+
+A: Approved fragments for Stop Planning. Start Implementing.: rule coverage is approved; conflict detection is approved; impact explanation is approved; reprocess instruction is approved. Audience: planner.
+
+B: Produce one answer for the planner. Start with the practical result, then group rule coverage, conflict detection, impact explanation, reprocess instruction into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.2 - Rephrased
+
+A: Formatter receives approved readable fragments about rule coverage, conflict detection, impact explanation, reprocess instruction.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.3 - reviewer
+
+A: Approved fragments for Stop Planning. Start Implementing.: conflict detection is approved; impact explanation is approved; reprocess instruction is approved; approval boundary is approved. Audience: reviewer.
+
+B: Produce one answer for the reviewer. Start with the practical result, then group conflict detection, impact explanation, reprocess instruction, approval boundary into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.3 - Rephrased
+
+A: Formatter receives approved readable fragments about conflict detection, impact explanation, reprocess instruction, approval boundary.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.4 - operator
+
+A: Approved fragments for Stop Planning. Start Implementing.: impact explanation is approved; reprocess instruction is approved; approval boundary is approved; stop planning start implementing is approved. Audience: operator.
+
+B: Produce one answer for the operator. Start with the practical result, then group impact explanation, reprocess instruction, approval boundary, stop planning start implementing into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.4 - Rephrased
+
+A: Formatter receives approved readable fragments about impact explanation, reprocess instruction, approval boundary, stop planning start implementing.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.5 - teacher
+
+A: Approved fragments for Stop Planning. Start Implementing.: reprocess instruction is approved; approval boundary is approved; stop planning start implementing is approved; consolidated implementation order for all session fixes is approved. Audience: teacher.
+
+B: Produce one answer for the teacher. Start with the practical result, then group reprocess instruction, approval boundary, stop planning start implementing, consolidated implementation order for all session fixes into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.5 - Rephrased
+
+A: Formatter receives approved readable fragments about reprocess instruction, approval boundary, stop planning start implementing, consolidated implementation order for all session fixes.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.6 - product owner
+
+A: Approved fragments for Stop Planning. Start Implementing.: approval boundary is approved; stop planning start implementing is approved; consolidated implementation order for all session fixes is approved; the actual problem is approved. Audience: product owner.
+
+B: Produce one answer for the product owner. Start with the practical result, then group approval boundary, stop planning start implementing, consolidated implementation order for all session fixes, the actual problem into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.6 - Rephrased
+
+A: Formatter receives approved readable fragments about approval boundary, stop planning start implementing, consolidated implementation order for all session fixes, the actual problem.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.7 - implementation lead
+
+A: Approved fragments for Stop Planning. Start Implementing.: stop planning start implementing is approved; consolidated implementation order for all session fixes is approved; the actual problem is approved; the six changes ordered by impact effort is approved. Audience: implementation lead.
+
+B: Produce one answer for the implementation lead. Start with the practical result, then group stop planning start implementing, consolidated implementation order for all session fixes, the actual problem, the six changes ordered by impact effort into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.7 - Rephrased
+
+A: Formatter receives approved readable fragments about stop planning start implementing, consolidated implementation order for all session fixes, the actual problem, the six changes ordered by impact effort.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.8 - auditor
+
+A: Approved fragments for Stop Planning. Start Implementing.: consolidated implementation order for all session fixes is approved; the actual problem is approved; the six changes ordered by impact effort is approved; change 1 two lines single biggest quality impact is approved. Audience: auditor.
+
+B: Produce one answer for the auditor. Start with the practical result, then group consolidated implementation order for all session fixes, the actual problem, the six changes ordered by impact effort, change 1 two lines single biggest quality impact into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.8 - Rephrased
+
+A: Formatter receives approved readable fragments about consolidated implementation order for all session fixes, the actual problem, the six changes ordered by impact effort, change 1 two lines single biggest quality impact.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+

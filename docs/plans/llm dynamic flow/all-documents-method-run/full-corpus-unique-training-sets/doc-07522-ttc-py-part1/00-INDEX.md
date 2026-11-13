@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\old\TTC_PY_PART1.md`
+
+- Relative path: `old\TTC_PY_PART1.md`
+- Manifest category: undefined
+- Top folder: old
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 276744 bytes
+- Line count read: 4292
+- SHA256: 768FE74198AEE810E102521235FCFB303DB1CA93FEFE1B82EE8F7662FCDD1094
+- First meaningful line: `XIIGen — TASK TYPES & ENGINE CONTRACTS CATALOG Python + React Native`
+- Last meaningful line: `- Weak <0.5 : 5 posts per user, bottom 40% zone, high-engagement posts only`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+XIIGen — TASK TYPES & ENGINE CONTRACTS CATALOG Python + React Native
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- xiigen — task types & engine contracts catalog python + react native
+- consolidated: t1–a task type templates 1–119 , all 32 flows merged
+- scope: t1–a task type, templates 1–115, 31 flows
+- stack: python 3.12 + fastapi react native + expo + typescript
+- supersedes: task types catalog merged.md .net/c reference — archived
+- ═══ consolidated master index post the design intelligence flow ═══
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

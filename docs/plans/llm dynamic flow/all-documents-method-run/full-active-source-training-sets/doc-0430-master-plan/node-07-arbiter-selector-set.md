@@ -1,0 +1,101 @@
+# Node-07 - Arbiter Selector Set
+
+Runtime A is the formal result collection.
+Runtime B is the required review units.
+
+## Pair 7.1 - Select Review
+
+A: Formal results for FIGMA NAMING + LAYER ORDER SKILL — Master Execution Plan include review responsibility, rule coverage, conflict detection.
+
+B: Select review units: [ordering reviewer, consistency reviewer]. Reason: the formal result collection includes review responsibility, rule coverage, conflict detection and must be checked before approved translations reach the formatter.
+
+Pair 7.1 - Rephrased
+
+A: R1...Rn contains branches about review responsibility, rule coverage, conflict detection.
+
+B: Required review: ordering reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.2 - Select Review
+
+A: Formal results for FIGMA NAMING + LAYER ORDER SKILL — Master Execution Plan include rule coverage, conflict detection, impact explanation.
+
+B: Select review units: [privacy reviewer, consistency reviewer]. Reason: the formal result collection includes rule coverage, conflict detection, impact explanation and must be checked before approved translations reach the formatter.
+
+Pair 7.2 - Rephrased
+
+A: R1...Rn contains branches about rule coverage, conflict detection, impact explanation.
+
+B: Required review: privacy reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.3 - Select Review
+
+A: Formal results for FIGMA NAMING + LAYER ORDER SKILL — Master Execution Plan include conflict detection, impact explanation, reprocess instruction.
+
+B: Select review units: [business-rule reviewer, consistency reviewer]. Reason: the formal result collection includes conflict detection, impact explanation, reprocess instruction and must be checked before approved translations reach the formatter.
+
+Pair 7.3 - Rephrased
+
+A: R1...Rn contains branches about conflict detection, impact explanation, reprocess instruction.
+
+B: Required review: business-rule reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.4 - Select Review
+
+A: Formal results for FIGMA NAMING + LAYER ORDER SKILL — Master Execution Plan include impact explanation, reprocess instruction, approval boundary.
+
+B: Select review units: [evidence reviewer, consistency reviewer]. Reason: the formal result collection includes impact explanation, reprocess instruction, approval boundary and must be checked before approved translations reach the formatter.
+
+Pair 7.4 - Rephrased
+
+A: R1...Rn contains branches about impact explanation, reprocess instruction, approval boundary.
+
+B: Required review: evidence reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.5 - Select Review
+
+A: Formal results for FIGMA NAMING + LAYER ORDER SKILL — Master Execution Plan include reprocess instruction, approval boundary, figma naming layer order skill master execution plan.
+
+B: Select review units: [consistency reviewer, consistency reviewer]. Reason: the formal result collection includes reprocess instruction, approval boundary, figma naming layer order skill master execution plan and must be checked before approved translations reach the formatter.
+
+Pair 7.5 - Rephrased
+
+A: R1...Rn contains branches about reprocess instruction, approval boundary, figma naming layer order skill master execution plan.
+
+B: Required review: consistency reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.6 - Select Review
+
+A: Formal results for FIGMA NAMING + LAYER ORDER SKILL — Master Execution Plan include approval boundary, figma naming layer order skill master execution plan, xiigen protocol plan before code phase gated state preserved.
+
+B: Select review units: [recovery reviewer, consistency reviewer]. Reason: the formal result collection includes approval boundary, figma naming layer order skill master execution plan, xiigen protocol plan before code phase gated state preserved and must be checked before approved translations reach the formatter.
+
+Pair 7.6 - Rephrased
+
+A: R1...Rn contains branches about approval boundary, figma naming layer order skill master execution plan, xiigen protocol plan before code phase gated state preserved.
+
+B: Required review: recovery reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.7 - Select Review
+
+A: Formal results for FIGMA NAMING + LAYER ORDER SKILL — Master Execution Plan include figma naming layer order skill master execution plan, xiigen protocol plan before code phase gated state preserved, generated 2026 03 11.
+
+B: Select review units: [audience reviewer, consistency reviewer]. Reason: the formal result collection includes figma naming layer order skill master execution plan, xiigen protocol plan before code phase gated state preserved, generated 2026 03 11 and must be checked before approved translations reach the formatter.
+
+Pair 7.7 - Rephrased
+
+A: R1...Rn contains branches about figma naming layer order skill master execution plan, xiigen protocol plan before code phase gated state preserved, generated 2026 03 11.
+
+B: Required review: audience reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.8 - Select Review
+
+A: Formal results for FIGMA NAMING + LAYER ORDER SKILL — Master Execution Plan include xiigen protocol plan before code phase gated state preserved, generated 2026 03 11, context what is being extended.
+
+B: Select review units: [completion reviewer, consistency reviewer]. Reason: the formal result collection includes xiigen protocol plan before code phase gated state preserved, generated 2026 03 11, context what is being extended and must be checked before approved translations reach the formatter.
+
+Pair 7.8 - Rephrased
+
+A: R1...Rn contains branches about xiigen protocol plan before code phase gated state preserved, generated 2026 03 11, context what is being extended.
+
+B: Required review: completion reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+

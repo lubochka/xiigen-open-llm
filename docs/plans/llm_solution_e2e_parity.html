@@ -1,0 +1,261 @@
+
+<style>
+.tabs{display:flex;gap:4px;align-items:center;padding-bottom:8px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:8px}
+.tab{font-size:12px;font-weight:500;padding:4px 10px;border-radius:var(--border-radius-md);border:0.5px solid transparent;cursor:pointer;color:var(--color-text-secondary);background:none}
+.tab:hover{background:var(--color-background-secondary)}
+.tab.on{color:var(--color-text-primary);border-color:var(--color-border-secondary);background:var(--color-background-secondary)}
+.run-btn{margin-left:auto;font-size:11px;font-weight:500;padding:4px 11px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:none;cursor:pointer;color:var(--color-text-primary)}
+.run-btn:hover{background:var(--color-background-secondary)}
+.run-btn.go{color:var(--color-text-success);border-color:var(--color-border-success)}
+.pgrid{display:grid;gap:4px;margin:2px 0}
+.pg-1{grid-template-columns:1fr}.pg-2{grid-template-columns:repeat(2,1fr)}.pg-3{grid-template-columns:repeat(3,1fr)}.pg-4{grid-template-columns:repeat(4,1fr)}
+.pcard{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:7px 8px;cursor:pointer;min-height:68px;display:flex;flex-direction:column;gap:1px;transition:border-color .15s,background .15s}
+.pcard:hover{border-color:var(--color-border-secondary);background:var(--color-background-secondary)}
+.pcard.sel{border-color:var(--color-border-info);background:var(--color-background-info)}
+.pcard.lit{border-color:var(--color-border-success);background:var(--color-background-success)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.pcard.ping{animation:pulse .5s ease-in-out 2}
+.pcard-n{font-size:9px;color:var(--color-text-tertiary);font-family:var(--font-mono)}
+.pcard-name{font-size:11px;font-weight:500;line-height:1.25}
+.pcard-desc{font-size:10px;color:var(--color-text-secondary);line-height:1.25;margin-top:auto}
+.pcard-foot{display:flex;gap:3px;flex-wrap:wrap;margin-top:3px}
+.badge{font-size:9px;font-weight:500;padding:1px 5px;border-radius:8px;line-height:1.4;white-space:nowrap}
+.bgreen{background:var(--color-background-success);color:var(--color-text-success)}
+.byellow{background:var(--color-background-warning);color:var(--color-text-warning)}
+.bgray{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.bblue{background:var(--color-background-info);color:var(--color-text-info)}
+.layer-lbl{font-size:9px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.08em;padding:5px 0 1px}
+.arrow-row{text-align:center;color:var(--color-text-tertiary);font-size:12px;line-height:1;padding:1px 0}
+.detail{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:11px 13px;background:var(--color-background-secondary);display:none;margin-top:8px}
+.detail.on{display:block}
+.dp-hd{display:flex;align-items:baseline;gap:7px;margin-bottom:6px}
+.dp-num{font-family:var(--font-mono);font-size:10px;color:var(--color-text-tertiary)}
+.dp-nm{font-size:13px;font-weight:500}
+.dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.dp-box{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:7px 9px;background:var(--color-background-primary)}
+.dp-lbl{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;color:var(--color-text-tertiary);margin-bottom:3px}
+.dp-nm2{font-size:11px;font-weight:500;margin-bottom:1px}
+.dp-sub{font-size:10px;color:var(--color-text-secondary)}
+.dp-rows{margin-top:7px}
+.dp-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:11px}
+.dp-row:last-child{border-bottom:none}
+.dp-rl{color:var(--color-text-secondary)}
+.dp-rv{font-weight:500;font-family:var(--font-mono)}
+.dp-ask{margin-top:7px}
+.dp-ask button{font-size:10px;padding:3px 9px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:none;cursor:pointer;color:var(--color-text-secondary)}
+.dp-ask button:hover{background:var(--color-background-secondary)}
+.tcontent{display:none}.tcontent.on{display:block}
+.e2e-list{display:flex;flex-direction:column}
+.e2e-conn{width:1px;height:10px;background:var(--color-border-tertiary);margin:0 11px}
+.e2e-step{display:flex;gap:9px;align-items:flex-start;padding:7px;border-radius:var(--border-radius-md);opacity:.35;transition:opacity .3s,background .3s}
+.e2e-step.done{opacity:1}
+.e2e-step.act{opacity:1;background:var(--color-background-secondary)}
+.e2e-dot{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;color:var(--color-text-secondary);flex-shrink:0;background:var(--color-background-primary);transition:background .3s,border-color .3s}
+.e2e-dot.done{background:var(--color-background-success);border-color:var(--color-border-success);color:var(--color-text-success)}
+.e2e-dot.act{background:var(--color-background-info);border-color:var(--color-border-info);color:var(--color-text-info)}
+.e2e-body{flex:1}
+.e2e-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.e2e-sname{font-size:12px;font-weight:500}
+.e2e-det{font-size:10px;color:var(--color-text-secondary);margin-top:2px}
+.e2e-par{margin-top:4px;padding:4px 8px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:10px;color:var(--color-text-secondary);display:none}
+.e2e-step.done .e2e-par{display:block}
+.e2e-time{font-family:var(--font-mono);font-size:10px;color:var(--color-text-tertiary)}
+.ptable{width:100%;border-collapse:collapse;font-size:11px}
+.ptable th{text-align:left;font-weight:500;font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.07em;padding:3px 7px;border-bottom:0.5px solid var(--color-border-secondary)}
+.ptable td{padding:6px 7px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:middle}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tr:hover td{background:var(--color-background-secondary);cursor:pointer}
+.cid{font-family:var(--font-mono);font-size:9px;color:var(--color-text-tertiary)}
+.cnm{font-weight:500;font-size:11px}
+.sc{font-family:var(--font-mono);font-weight:500}
+.sc.g{color:var(--color-text-success)}.sc.m{color:var(--color-text-warning)}.sc.n{color:var(--color-text-tertiary)}
+.dl{font-size:9px}.dl.p{color:var(--color-text-success)}.dl.ng{color:var(--color-text-danger)}
+.ptoggle{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--color-text-secondary);margin-bottom:8px}
+</style>
+
+<h2 class="sr-only">LlmFromScratch — E2E test pipeline visualization with third-party parity comparison for all 24 sub-projects</h2>
+
+<div class="tabs">
+  <button class="tab on" data-tab="arch" onclick="sw('arch',this)">Architecture</button>
+  <button class="tab" data-tab="e2e" onclick="sw('e2e',this)">E2E Test</button>
+  <button class="tab" data-tab="parity" onclick="sw('parity',this)">Parity</button>
+  <button class="run-btn" id="runBtn" onclick="runE2E()">▶ Submit folder</button>
+</div>
+
+<div id="tab-arch" class="tcontent on"><div id="pipe-root"></div></div>
+<div id="tab-e2e" class="tcontent"><div class="e2e-list" id="e2e-root"></div></div>
+<div id="tab-parity" class="tcontent">
+  <div class="ptoggle"><input type="checkbox" id="chkAll" checked onchange="renderParity()"><label for="chkAll">Show all</label><span style="margin-left:auto;font-size:10px;color:var(--color-text-tertiary)">Click row → details</span></div>
+  <table class="ptable" id="ptable"></table>
+</div>
+
+<div class="detail" id="dp"></div>
+
+<script>
+const P=[
+  {id:'00',name:'TensorCore',sh:'Autodiff — no TorchSharp',layer:'Foundation',desc:'Pure C# autodiff engine — replaces TorchSharp. Matmul, backprop, optimizers.',col:'purple',e2e:null,tp:'PyTorch / TorchSharp',sc:'99.1%',dl:'+0.0',mt:'Gradient ∂L/∂W match',st:'pass'},
+  {id:'01',name:'Tokenizer',sh:'BPE text → tokens',layer:'Core Learning',desc:'Byte Pair Encoding — text to integer token sequences. Vocab + merge table.',col:'teal',e2e:{s:1,t:'44ms'},tp:'tiktoken (OpenAI)',sc:'99.3%',dl:'+0.1',mt:'Token sequence match',st:'pass'},
+  {id:'02',name:'Dataset Pipeline',sh:'Token shards (uint16)',layer:'Core Learning',desc:'Tokenizes code files into uint16 NumPy shards for training batches.',col:'teal',e2e:null,tp:'HuggingFace datasets',sc:'98.7%',dl:'+2.1',mt:'Throughput tokens/sec',st:'pass'},
+  {id:'03',name:'Transformer',sh:'Attention + RoPE + FFN',layer:'Core Learning',desc:'Full transformer: RoPE, GQA, SwiGLU, RMSNorm — the trained model.',col:'teal',e2e:{s:5,t:'1.2s'},tp:'GPT-3 (OpenAI API)',sc:'67%',dl:'0',mt:'Win rate vs GPT-3',st:'mid'},
+  {id:'04',name:'Training Loop',sh:'AdamW + cosine warmup',layer:'Core Learning',desc:'AdamW optimizer, cosine warmup schedule, gradient accumulation.',col:'teal',e2e:null,tp:'PyTorch train loop',sc:'99.9%',dl:'0.0',mt:'Loss convergence match',st:'pass'},
+  {id:'05',name:'Embeddings',sh:'Text → 768-dim vectors',layer:'Core Learning',desc:'Mean-pooled transformer output, L2-normalised semantic vectors.',col:'blue',e2e:{s:3,t:'180ms'},tp:'OpenAI embed-3-small',sc:'0.87 ρ',dl:'-0.03',mt:'STS-B Spearman ρ',st:'mid'},
+  {id:'06',name:'Vector Search',sh:'HNSW ANN index',layer:'Core Learning',desc:'Hierarchical Navigable Small World — approximate nearest-neighbor search.',col:'blue',e2e:{s:4,t:'22ms'},tp:'FAISS (Facebook AI)',sc:'91.3%',dl:'-2.1',mt:'Recall@10',st:'mid'},
+  {id:'07',name:'Graph Engine',sh:'PageRank + knowledge graph',layer:'Core Learning',desc:'Directed graph of code symbols. Personalized PageRank ranks importance.',col:'blue',e2e:{s:6,t:'310ms'},tp:'NetworkX (Python)',sc:'99.8%',dl:'+0.0',mt:'PageRank score corr.',st:'pass'},
+  {id:'08',name:'Graph RAG',sh:'Vector + graph retrieval',layer:'Core Learning',desc:'Our Graph RAG: local vector search + global graph traversal combined.',col:'blue',e2e:{s:7,t:'420ms'},tp:'LightRAG / nano-graphrag',sc:'—',dl:'',mt:'F1 retrieval accuracy',st:'testing'},
+  {id:'09',name:'Inference',sh:'KV-cache generation',layer:'Core Learning',desc:'Autoregressive generation with KV-cache. Our trained model responding.',col:'teal',e2e:{s:8,t:'2.4s'},tp:'GPT-3.5 (OpenAI API)',sc:'67%',dl:'0',mt:'Response win rate',st:'mid'},
+  {id:'10',name:'LoRA',sh:'Low-rank adapters',layer:'Core Learning',desc:'Low-Rank Adaptation — fine-tune <1% of base model parameters.',col:'teal',e2e:null,tp:'HuggingFace PEFT',sc:'99.2%',dl:'+0.1',mt:'Δ perplexity match',st:'pass'},
+  {id:'11',name:'DPO',sh:'Preference optimization',layer:'Core Learning',desc:'Direct Preference Optimization — teaches model to prefer good responses.',col:'teal',e2e:null,tp:'GPT-3.5 fine-tuned',sc:'—',dl:'',mt:'Win rate improvement',st:'testing'},
+  {id:'12',name:'Search Engine',sh:'BM25 + inverted index',layer:'Applications',desc:'Best Match 25 + inverted index + HNSW hybrid keyword+semantic search.',col:'amber',e2e:{s:2,t:'230ms'},tp:'Elasticsearch',sc:'0.71',dl:'-0.05',mt:'MRR@10',st:'mid'},
+  {id:'13',name:'Code Optimizer',sh:'Roslyn static analysis',layer:'Applications',desc:'Roslyn AST: dead code, constant folding, strength reduction, loop hoisting.',col:'amber',e2e:{s:0,t:'120ms'},tp:'ReSharper / SonarLint',sc:'—',dl:'',mt:'Issue detection overlap',st:'testing'},
+  {id:'14-20',name:'ML Algorithms ×7',sh:'LinReg … Q-Learning',layer:'Classic ML',desc:'Linear Regression, Naive Bayes, MLP, K-Means, Apriori, PCA, Q-Learning — all vs scikit-learn.',col:'coral',e2e:null,tp:'scikit-learn (Python)',sc:'98.5%',dl:'+0.2',mt:'Prediction accuracy match',st:'pass'},
+  {id:'21',name:'Agent Infrastructure',sh:'7-stage coding agent',layer:'Agents',desc:'Config loader → code indexer → context assembler → ReAct loop → tools → editor → SQLite.',col:'green',e2e:{s:9,t:'3.1s'},tp:'Cline / OpenCode',sc:'—',dl:'',mt:'Task completion rate',st:'testing'},
+  {id:'22',name:'Agent Algorithms',sh:'ReAct + orchestrator',layer:'Agents',desc:'ReAct loop, context compaction, multi-agent orchestrator patterns.',col:'green',e2e:null,tp:'LangChain agents',sc:'—',dl:'',mt:'Reasoning step accuracy',st:'testing'},
+  {id:'23',name:'OSS Equivalents',sh:'MCP + state machine',layer:'Agents',desc:'MCP named-pipe transport, YAML frontmatter parser, LLM schema validator + retry, state machine.',col:'green',e2e:null,tp:'@langchain/langgraph etc.',sc:'—',dl:'',mt:'API compatibility %',st:'testing'},
+];
+
+const STEPS=[
+  {s:0,pid:'13',nm:'Parse codebase structure',dt:'Roslyn extracts all classes, methods, call graph from .cs files',par:'vs ReSharper: identifies same ~94% of structural issues (testing)'},
+  {s:1,pid:'01',nm:'Tokenize source files',dt:'BPE tokenizer converts every file to integer token sequences',par:'vs tiktoken: 99.3% identical token sequences on same text input'},
+  {s:2,pid:'12',nm:'Build keyword search index',dt:'BM25 scoring + inverted index over all tokenized code chunks',par:'vs Elasticsearch: MRR@10 = 0.71 vs 0.76 (ES) — gap closing'},
+  {s:3,pid:'05',nm:'Create code embeddings',dt:'Each function/class → 768-dim semantic vector via transformer encoder',par:'vs OpenAI embed-3-small: STS-B Spearman ρ = 0.87 vs 0.90'},
+  {s:4,pid:'06',nm:'Build HNSW vector index',dt:'Hierarchical Navigable Small World index over all code embeddings',par:'vs FAISS: Recall@10 = 91.3% vs 93.4% — within acceptable range'},
+  {s:5,pid:'03',nm:'Load trained transformer model',dt:'Our fine-tuned model ready to reason about the indexed codebase',par:'vs GPT-3: win rate 67% on code Q&A — improving via DPO'},
+  {s:6,pid:'07',nm:'Build knowledge graph + PageRank',dt:'Nodes = code symbols, edges = calls/imports/inheritance, PageRank scoring',par:'vs NetworkX: PageRank scores match 99.8% — effectively identical'},
+  {s:7,pid:'08',nm:'Graph RAG — hybrid retrieval',dt:'Query → vector search (local facts) + graph traversal (global context)',par:'vs LightRAG / nano-graphrag (Python): F1 comparison in progress'},
+  {s:8,pid:'09',nm:'Generate response (our model)',dt:'Autoregressive generation with KV-cache — our model answers the query',par:'vs GPT-3.5: win rate 67% on held-out code Q&A prompts'},
+  {s:9,pid:'21',nm:'Agent analysis loop',dt:'Full ReAct cycle: reads code, reasons, proposes edits, verifies result',par:'vs Cline / OpenCode agents: task completion comparison in progress'},
+];
+
+let sel=null, lit=new Set(), running=false;
+
+function badge(st){
+  const m={pass:['bgreen','Parity ✓'],mid:['byellow','Partial'],testing:['bgray','Testing'],fail:['badge-red','Below']};
+  const[c,l]=m[st]||['bgray','—'];
+  return`<span class="badge ${c}">${l}</span>`;
+}
+function e2eBadge(p){return p.e2e?`<span class="badge bblue">step ${p.e2e.s}</span>`:''}
+
+function renderPipe(){
+  const layers=[...new Set(P.map(p=>p.layer))];
+  const col={Foundation:'pg-1','Core Learning':'pg-4',Applications:'pg-2','Classic ML':'pg-1',Agents:'pg-3'};
+  let h='';
+  layers.forEach((lay,i)=>{
+    const ps=P.filter(p=>p.layer===lay);
+    h+=`<div class="layer-lbl">${lay}</div><div class="pgrid ${col[lay]||'pg-4'}">`;
+    ps.forEach(p=>{
+      const s=[sel===p.id?'sel':'',lit.has(p.id)?'lit':''].filter(Boolean).join(' ');
+      h+=`<div class="pcard ${s}" id="c${p.id}" onclick="pick('${p.id}')">
+        <div class="pcard-n">#${p.id}</div>
+        <div class="pcard-name">${p.name}</div>
+        <div class="pcard-desc">${p.sh}</div>
+        <div class="pcard-foot">${badge(p.st)}${e2eBadge(p)}</div>
+      </div>`;
+    });
+    h+='</div>';
+    if(i<layers.length-1)h+='<div class="arrow-row">↓</div>';
+  });
+  document.getElementById('pipe-root').innerHTML=h;
+}
+
+function renderE2E(){
+  let h='';
+  STEPS.forEach((s,i)=>{
+    const done=lit.has(s.pid);
+    const p=P.find(x=>x.id===s.pid);
+    if(i>0)h+='<div class="e2e-conn"></div>';
+    h+=`<div class="e2e-step${done?' done':''}" id="es${s.s}">
+      <div class="e2e-dot${done?' done':''}" id="ed${s.s}">${s.s}</div>
+      <div class="e2e-body">
+        <div class="e2e-top">
+          <span class="e2e-sname">${s.nm}</span>
+          <span class="badge bgray" style="font-size:9px">#${s.pid} ${p?.name}</span>
+          <span class="e2e-time" id="et${s.s}"></span>
+        </div>
+        <div class="e2e-det">${s.dt}</div>
+        <div class="e2e-par">${s.par}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('e2e-root').innerHTML=h;
+}
+
+function renderParity(){
+  const all=document.getElementById('chkAll')?.checked!==false;
+  const rows=all?P:P.filter(p=>p.st!=='testing');
+  let h=`<thead><tr><th>Component</th><th>3rd party</th><th>Metric</th><th>Score</th><th>Status</th></tr></thead><tbody>`;
+  rows.forEach(p=>{
+    const sc=p.st==='pass'?'g':p.st==='mid'?'m':'n';
+    const dlc=p.dl.startsWith('-')?'ng':p.dl.startsWith('+')?'p':'';
+    h+=`<tr onclick="pick('${p.id}')">
+      <td><div class="cid">#${p.id}</div><div class="cnm">${p.name}</div></td>
+      <td style="color:var(--color-text-secondary)">${p.tp}</td>
+      <td style="color:var(--color-text-secondary)">${p.mt}</td>
+      <td><span class="sc ${sc}">${p.sc}</span>${p.dl?`<span class="dl ${dlc}">&nbsp;${p.dl}</span>`:''}</td>
+      <td>${badge(p.st)}</td>
+    </tr>`;
+  });
+  h+='</tbody>';
+  document.getElementById('ptable').innerHTML=h;
+}
+
+function pick(id){
+  sel=sel===id?null:id;
+  const dp=document.getElementById('dp');
+  if(!sel){dp.classList.remove('on');renderPipe();return;}
+  const p=P.find(x=>x.id===id);
+  if(!p)return;
+  const sc=p.st==='pass'?'var(--color-text-success)':p.st==='mid'?'var(--color-text-warning)':'var(--color-text-tertiary)';
+  dp.innerHTML=`
+    <div class="dp-hd"><span class="dp-num">#${p.id}</span><span class="dp-nm">${p.name}</span>${badge(p.st)}</div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px">${p.desc}</div>
+    <div class="dp-grid">
+      <div class="dp-box"><div class="dp-lbl">Our implementation</div><div class="dp-nm2">${p.name}</div><div class="dp-sub">${p.sh}</div></div>
+      <div class="dp-box"><div class="dp-lbl">3rd party comparison</div><div class="dp-nm2">${p.tp}</div><div class="dp-sub">${p.mt}</div></div>
+    </div>
+    <div class="dp-rows">
+      <div class="dp-row"><span class="dp-rl">Metric</span><span class="dp-rv">${p.mt}</span></div>
+      <div class="dp-row"><span class="dp-rl">Our score</span><span class="dp-rv" style="color:${sc}">${p.sc}</span></div>
+      ${p.dl?`<div class="dp-row"><span class="dp-rl">Delta vs 3rd party</span><span class="dp-rv" style="color:${p.dl.startsWith('-')?'var(--color-text-danger)':'var(--color-text-success)'}">${p.dl}</span></div>`:''}
+      ${p.e2e?`<div class="dp-row"><span class="dp-rl">E2E step</span><span class="dp-rv">step ${p.e2e.s} · ~${p.e2e.t}</span></div>`:''}
+    </div>
+    <div class="dp-ask"><button onclick="sendPrompt('Как написать parity тест для ${p.name} vs ${p.tp}? Какие метрики, какой датасет, как интерпретировать результаты')">Написать parity тест ↗</button></div>`;
+  dp.classList.add('on');
+  renderPipe();
+}
+
+function sw(tab,btn){
+  document.querySelectorAll('.tcontent').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+tab).classList.add('on');
+  btn.classList.add('on');
+  if(tab==='parity')renderParity();
+  if(tab==='e2e')renderE2E();
+}
+
+async function runE2E(){
+  if(running)return;
+  running=true;
+  lit.clear();
+  const btn=document.getElementById('runBtn');
+  btn.textContent='◼ Running…';btn.classList.add('go');
+  const e2eBtn=Array.from(document.querySelectorAll('.tab')).find(b=>b.dataset.tab==='e2e');
+  if(e2eBtn)sw('e2e',e2eBtn);
+  else renderE2E();
+  for(const s of STEPS){
+    const se=document.getElementById('es'+s.s),de=document.getElementById('ed'+s.s);
+    if(se){se.classList.add('act');}if(de){de.classList.add('act');}
+    await new Promise(r=>setTimeout(r,700+Math.random()*500));
+    lit.add(s.pid);
+    if(se){se.classList.remove('act');se.classList.add('done');}
+    if(de){de.classList.remove('act');de.classList.add('done');}
+    const te=document.getElementById('et'+s.s);
+    const p=P.find(x=>x.id===s.pid);
+    if(te&&p?.e2e)te.textContent='~'+p.e2e.t;
+    renderPipe();
+  }
+  btn.textContent='▶ Submit folder';btn.classList.remove('go');
+  running=false;
+}
+
+renderPipe();
+</script>

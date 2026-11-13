@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Multimodel Orchestrator\xiigen_v18_complete\genie-dna\SKILL_COMPOSITION_GUIDE.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\Multimodel Orchestrator\xiigen_v18_complete\genie-dna\SKILL_COMPOSITION_GUIDE.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 31125 bytes
+- Line count read: 574
+- SHA256: 5464E2704D6D1A734DC288FAA5DA8CD0D904EA6CCB2C9C7ED62862CE82E85941
+- First meaningful line: `Skill Composition Guide — How to Assemble Modules from V17 Skills`
+- Last meaningful line: `Last updated: 2026-02-10 Source: COMPLETE AI AGENT GUIDE.md Parts 4, 6, 7, 8`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+Skill Composition Guide — How to Assemble Modules from V17 Skills
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- skill composition guide — how to assemble modules from v17 skills
+- xiigen v18 for ai coding agents and human developers
+- part 1: master mapping table
+- cross-cutting skills used by all modules
+- skills not mapped to modules knowledge/tooling layer
+- part 2: module-by-module agent instructions
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

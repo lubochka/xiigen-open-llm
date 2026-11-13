@@ -1,0 +1,80 @@
+namespace SemanticCompiler;
+
+// PatternReorderer rearranges words from a source word-order pattern into SVO.
+// E27: +250% reorder_accuracy — pure rule table, no ML needed once pattern is known.
+public static class PatternReorderer
+{
+    private static readonly Dictionary<int, Func<List<TaggedWord>, List<TaggedWord>>>
+        Transformations = new()
+    {
+        // SVO → SVO: no change
+        [PatternClassifier.SVO] = words => words,
+
+        // SOV → SVO: move the verb to immediately after the subject
+        [PatternClassifier.SOV] = words =>
+        {
+            var result  = words.ToList();
+            int verbIdx = result.FindIndex(w => w.PosTag == 8);
+            if (verbIdx > 1)
+            {
+                var verb    = result[verbIdx];
+                result.RemoveAt(verbIdx);
+                int subjEnd = result.FindIndex(w => w.PosTag == 7 || w.PosTag == 3) + 1;
+                result.Insert(Math.Max(1, subjEnd), verb);
+            }
+            return result;
+        },
+
+        // VSO → SVO: move the subject before the verb
+        [PatternClassifier.VSO] = words =>
+        {
+            var result  = words.ToList();
+            int subjIdx = result.FindIndex(1, w => w.PosTag == 7 || w.PosTag == 3);
+            if (subjIdx > 0)
+            {
+                var subj = result[subjIdx];
+                result.RemoveAt(subjIdx);
+                result.Insert(0, subj);
+            }
+            return result;
+        },
+
+        // IMPERATIVE_V: no change (English imperatives are also verb-first)
+        [PatternClassifier.IMPERATIVE_V] = words => words,
+
+        // IMPERATIVE_VS → IMPERATIVE_V: remove the explicit subject pronoun
+        [PatternClassifier.IMPERATIVE_VS] = words =>
+            words.Where(w => w.PosTag != 3).ToList(),
+
+        // TOPIC_OV → SVO: move the fronted topic to end
+        [PatternClassifier.TOPIC_OV] = words =>
+        {
+            var result  = words.ToList();
+            int verbIdx = result.FindIndex(w => w.PosTag == 8);
+            if (verbIdx > 0)
+            {
+                var topic = result.Take(verbIdx).ToList();
+                var rest  = result.Skip(verbIdx).ToList();
+                return rest.Concat(topic).ToList();
+            }
+            return result;
+        },
+    };
+
+    // Reorder words from sourcePattern into SVO-compatible order
+    public static List<TaggedWord> Reorder(List<TaggedWord> words, int sourcePattern)
+    {
+        if (!Transformations.TryGetValue(sourcePattern, out var transform))
+            return words;
+        return transform(words);
+    }
+
+    // True when the word list has subject (or no subject at all) before the verb
+    public static bool IsSVO(List<TaggedWord> words)
+    {
+        int firstVerb = words.FindIndex(w => w.PosTag == 8);
+        int firstNoun = words.FindIndex(w => w.PosTag == 7 || w.PosTag == 3);
+        if (firstVerb == -1 || firstNoun == -1) return true;
+        return firstNoun < firstVerb;
+    }
+}

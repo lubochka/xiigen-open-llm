@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\old\XIIGEN_V35_IMPROVED_PLAN.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\old\XIIGEN_V35_IMPROVED_PLAN.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 61140 bytes
+- Line count read: 1261
+- SHA256: 319D986EE3E7011948CC54F9877FC416971FF95F8BC0559EC06B0A6FE54E5076
+- First meaningful line: `XIIGen V35 "ADAPTIVE FLOW GENERATION"`
+- Last meaningful line: `Prompt Master skills/prompt-master/ AF-1, AF-6 prompt builders Prompt optimization techniques`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+XIIGen V35 "ADAPTIVE FLOW GENERATION"
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- xiigen v35 "adaptive flow generation"
+- improved unified plan: extends v33 + v34 + 7 approach libraries + task types v6
+- date: 2026-02-23 resume:
+- checksum: v35-9ph-236s-141r-24g-51f-36ac-adaptive-flowgen
+- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- part 0 — why v35 exists what v34 missed
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

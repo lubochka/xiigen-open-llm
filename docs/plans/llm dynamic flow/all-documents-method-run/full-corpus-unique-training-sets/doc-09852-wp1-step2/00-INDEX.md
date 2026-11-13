@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\states\WP1_STEP2.md`
+
+- Relative path: `states\WP1_STEP2.md`
+- Manifest category: undefined
+- Top folder: states
+- Type: testing and simulation
+- Inventory type: not listed in attached MVP inventory
+- File size: 2328 bytes
+- Line count read: 53
+- SHA256: 34A5F886B0E171D2531BDE91AA4D83ED59093B6392CAC7CFE92B90DC0B7F2646
+- First meaningful line: `XIIGen V16 — State: WP1.2 Complete`
+- Last meaningful line: `- Previous state:`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+XIIGen V16 — State: WP1.2 Complete
+
+## Domains This Document Teaches
+
+- test objective
+- scenario setup
+- expected behavior
+- failure evidence
+- coverage decision
+- release gate
+- simulation result
+- repair signal
+- xiigen v16 — state: wp1.2 complete
+- ✅ completed
+- wp1.1 — skills 01-02 foundation
+- wp1.2 — skills 03-04 storage + queue
+- pre-existing full skills from phases 0-7.1
+- 📊 progress summary
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

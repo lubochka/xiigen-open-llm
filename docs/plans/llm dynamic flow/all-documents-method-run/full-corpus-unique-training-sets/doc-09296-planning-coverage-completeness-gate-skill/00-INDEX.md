@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\Planning sessions\session start and skills\planning--coverage-completeness-gate-SKILL.md`
+
+- Relative path: `Planning sessions\session start and skills\planning--coverage-completeness-gate-SKILL.md`
+- Manifest category: undefined
+- Top folder: Planning sessions
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 10975 bytes
+- Line count read: 213
+- SHA256: C214EB266E570C3A7F67CCF760A6D6F83E9AE43F19455F40F0219E74D7AD14CC
+- First meaningful line: `the coverage completeness gate Coverage Completeness Gate — Claim scope must match evidence scope`
+- Last meaningful line: `END OF the coverage completeness gate`
+
+## Related Versions And Duplicate Copies
+
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\skills_extracted\session start and skills\planning--coverage-completeness-gate-SKILL.md`
+
+## Source Meaning Used For Training
+
+the coverage completeness gate Coverage Completeness Gate — Claim scope must match evidence scope
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- origin
+- when to invoke
+- section 1 — the coverage gate table
+- section 2 — coverage check at stop here and wait for approval
+- section 3 — claim downgrade protocol
+- section 4 — threshold reasoning
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

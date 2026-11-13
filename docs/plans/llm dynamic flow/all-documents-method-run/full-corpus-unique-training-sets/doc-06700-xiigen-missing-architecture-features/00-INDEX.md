@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\missing infrastructure\orchestrator gap\third round\XIIGEN-MISSING-ARCHITECTURE-FEATURES.md`
+
+- Relative path: `missing infrastructure\orchestrator gap\third round\XIIGEN-MISSING-ARCHITECTURE-FEATURES.md`
+- Manifest category: undefined
+- Top folder: missing infrastructure
+- Type: learning and teaching material
+- Inventory type: not listed in attached MVP inventory
+- File size: 38941 bytes
+- Line count read: 1013
+- SHA256: 9839738B90DC7F238C5266698F130CFFB6153989EE0D0B6837E92CEDFFB6281D
+- First meaningful line: `XIIGen — Missing Architecture Features Proposal`
+- Last meaningful line: `available per the kernel's Phase 9 bootstrap.`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+XIIGen — Missing Architecture Features Proposal
+
+## Domains This Document Teaches
+
+- training input
+- expected output
+- example coverage
+- rephrasing coverage
+- node responsibility
+- quality signal
+- gap marker
+- curation decision
+- xiigen — missing architecture features proposal
+- date: 2026-03-26 purpose: close all gaps between vision and code state
+- how to read this document
+- feature 1: multi-generate.handler
+- what it is
+- interface
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

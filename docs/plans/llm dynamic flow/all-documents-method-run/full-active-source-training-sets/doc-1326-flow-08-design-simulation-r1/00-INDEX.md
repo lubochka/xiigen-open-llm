@@ -1,0 +1,72 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\Missing gaps\flow-07-08-extracted\FLOW-08-DESIGN-SIMULATION-R1.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `Missing gaps\flow-07-08-extracted\FLOW-08-DESIGN-SIMULATION-R1.md`
+- Type: testing and simulation
+- Inventory type: not listed in attached MVP inventory
+- File size: 67357 bytes
+- Line count read for this round: 1254
+- SHA256: DFEEBBC27FEDAC1BF59AB16293E6BF950BC82141322D45571022A1A13FDE9FF6
+- First meaningful line: `the marketplace flow — COMPLETE DESIGN SIMULATION`
+- Last meaningful line: `☑ Inheritance documented: 10 patterns from prior flows, none re-derived`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- `C:\Users\lubao\Documents\xiigen\Missing gaps\FLOW-08-DESIGN-SIMULATION-R1.md`
+
+Same-name files:
+
+- `C:\Users\lubao\Documents\xiigen\Missing gaps\FLOW-08-DESIGN-SIMULATION-R1.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Missing gaps\flow-07-08-extracted\FLOW-08-DESIGN-SIMULATION-R1.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Missing gaps\FLOW-08-DESIGN-SIMULATION-R1.md`
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Missing gaps\flow-07-08-extracted\FLOW-08-DESIGN-SIMULATION-R1.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Missing gaps\FLOW-08-DESIGN-SIMULATION-R1.md`
+
+## Source Meaning Used For Training
+
+The marketplace flow — COMPLETE DESIGN SIMULATION
+
+## Domains This Document Teaches
+
+- test objective
+- scenario setup
+- expected behavior
+- failure evidence
+- coverage decision
+- release gate
+- the marketplace flow complete design simulation
+- event participation purchase history
+- purchaseoverlapanalyzer participationanalytics bootstrapgate
+- simulated by xiigen design co architect mode
+- date 2026 04 12
+- inventory check mandatory before design
+- what the marketplace flow inherits no re derivation
+- session start checklist
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

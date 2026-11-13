@@ -1,0 +1,13 @@
+# P52 — независимый предел, происхождение метки и адрес ответа. Дополнение 11.11.2026
+
+Связано с `P52-semantic-annotation.md`, `RULE-TAG-ORACLE`, `P52-ADDRESS-VS-TRANSLATION` и паспортом12 Unit-lessons/12Flow. Core `009bf226174441fa0fbf0336e74ad2f2b7174d92`. Исходные попытки и raw не изменяются.
+
+**Две разные величины.** В attempt2 cold answer score0/4 ошибочно записан как `предел_постоянного_ответа`. Настоящий максимум постоянной строки2/4: `He checked the file` и `He checks the file` встречаются вgold по два раза. Для времени адреса constant ceiling тоже2/4. Это отдельные расчёты по gold с тем же правилом equality, что судит ordinary outputs, а не повтор cold измерения. Записывать cold, constant answer maximum, constant tense maximum и их независимые знаменатели отдельно.
+
+**Исправить и writer, и независимый review.** Правильный максимум строится перечислением distinct gold candidates плюс пустого ответа; tie фиксировать детерминированно и не считать выбор другого равного максимизатора ошибкой счёта. Negative: cold0, но gold histogram имеет положительный максимум — эти поля обязаны различаться. Проверка, сравнивающая ceiling с тем же cold JSON, не независима. Датированная correction к attempt2 должна ссылаться на raw JSON pointer/hash и явно снимать соответствующее утверждение проверки10.11 о полном отсутствии неверных чисел. Нового обучения для такой correction не требуется.
+
+**Результат остаётся узким.** Сохраняются answer4/4→4/4 и address tense1/4→3/4. Все обученные ответы этой панели пришли через `executor-ru_en-exact-source`; punctuation variant не равен новым знаниям при нормализации exact key. Для каждой строки держать raw chosen/rejected, independently verified tag, canonical tag, written signature, actual runtime key и reached adapter. Rejected-side PRESENT остаётся настоящим отрицательным контролем для verified PAST, но не источником expected правильной метки.
+
+**Единицы расхода не смешивать.**12 Unit lessons и12 Flow — фактические верхние вызовы данной попытки. Записанные8 Tokenize readbacks сняты внутри восьми обученных Flow, поэтому их нельзя молча прибавлять как8 дополнительных Flow; обозначить как component observations. Назначенные отдельные readback calls подтверждаются отдельным call-site counter, не повторным подсчётом уже полученного sequence.
+
+**Terminal и summary.** Литеральное «пройдено2из2,код0» внутри первого Fact не удостоверяет весь suite. Actual FQN→discovery→TRX и внешний exit связываются с source/assembly/run identity отдельным завершающим collector; until then suite outcome не измерен. Изменение expected F02/F03 по canonical RULE:TENSE=PAST не допускает ослабления rejected negative и не удостоверяет другие проверки автоматически.

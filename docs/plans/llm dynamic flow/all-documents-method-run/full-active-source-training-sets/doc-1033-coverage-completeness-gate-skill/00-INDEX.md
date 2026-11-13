@@ -1,0 +1,74 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\llm mvp\project_skills_v4\all-skills\coverage-completeness-gate-SKILL.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `llm mvp\project_skills_v4\all-skills\coverage-completeness-gate-SKILL.md`
+- Type: testing and simulation
+- Inventory type: not listed in attached MVP inventory
+- File size: 1862 bytes
+- Line count read for this round: 65
+- SHA256: 39687B7A21067FC58AD714F365EC1AA6776C027F873A04C2D77FCCF08CE5120F
+- First meaningful line: `coverage-completeness-gate-SKILL.md v1.0 — Evidence scope must match claim scope`
+- Last meaningful line: `dotnet test passes "all tests pass right now" "the codebase is stable"`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- No exact duplicate was recorded in the manifest.
+
+Same-name files:
+
+- No same-name version was recorded in the manifest.
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\planning--coverage-completeness-gate-SKILL.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\start-session-extract\planning--coverage-completeness-gate-SKILL.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\extracted\planning--coverage-completeness-gate-SKILL.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\plain-english-session-files\planning--coverage-completeness-gate-SKILL-v2.0.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\planning--coverage-completeness-gate-SKILL.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\skills_flat\planning--coverage-completeness-gate-SKILL.md`
+
+## Source Meaning Used For Training
+
+Coverage-completeness-gate-SKILL.md v1.0 — Evidence scope must match claim scope
+
+## Domains This Document Teaches
+
+- test objective
+- scenario setup
+- expected behavior
+- failure evidence
+- coverage decision
+- release gate
+- the principle
+- when to invoke
+- the 3 questions
+- q1 what is the denominator
+- total experiments
+- total subprojects
+- total skills
+- q2 how many did this session actually examine or improve
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Multimodel Orchestrator\skill builder\skill builder\skillbuilder-main\skillbuilder-main\references\validation-rules.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\Multimodel Orchestrator\skill builder\skill builder\skillbuilder-main\skillbuilder-main\references\validation-rules.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 6172 bytes
+- Line count read: 227
+- SHA256: 8B98A5B5C3927F1E557266D7DF18A033FCAA8E25E53F5DEC044E271FC08A7D7C
+- First meaningful line: `Validation Rules & Checklist`
+- Last meaningful line: `Golden Rule: If any validation fails, fix before proceeding. Never skip validation.`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+Validation Rules & Checklist
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- validation rules & checklist
+- file size limits mandatory
+- skill.yaml validation
+- metadata requirements
+- skill.md structure validation
+- required sections in order
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

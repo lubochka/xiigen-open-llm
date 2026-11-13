@@ -1,0 +1,124 @@
+# Node-01 - Domain Splitter Set
+
+Runtime A is a human prompt. Runtime B is an array of domain labels.
+
+## Pair 1.1 - Runtime Split
+
+A: "Use this document to understand Four-Tier Decision Classification SK-510 and keep its main responsibilities visible."
+
+B: ["user intent","creation evidence","decision trail","version change"]
+
+Pair 1.1 - Rephrased
+
+A: "Apply this document to understand Four-Tier Decision Classification SK-510 and keep its main responsibilities visible."
+
+B: ["user intent","creation evidence","decision trail","version change"]
+
+## Pair 1.2 - Runtime Split
+
+A: "Explain how Four-Tier Decision Classification SK-510 should guide a human request without losing decisions, risks, or expected results."
+
+B: ["creation evidence","decision trail","resume state","validation note"]
+
+Pair 1.2 - Rephrased
+
+A: "Show how Four-Tier Decision Classification SK-510 should guide a human request without losing decisions, risks, or expected results."
+
+B: ["creation evidence","decision trail","resume state","validation note"]
+
+## Pair 1.3 - Runtime Split
+
+A: "Plan the work described by Four-Tier Decision Classification SK-510 as separated responsibilities that can move through the dynamic flow."
+
+B: ["decision trail","version change","open work","later use"]
+
+Pair 1.3 - Rephrased
+
+A: "Prepare the work described by Four-Tier Decision Classification SK-510 as separated responsibilities that can move through the dynamic flow."
+
+B: ["decision trail","version change","open work","later use"]
+
+## Pair 1.4 - Runtime Split
+
+A: "Find the review points, exceptions, and recovery needs in Four-Tier Decision Classification SK-510."
+
+B: ["resume state","open work","four-tier decision classification sk-510","when to invoke"]
+
+Pair 1.4 - Rephrased
+
+A: "Identify the review points, exceptions, and recovery needs in Four-Tier Decision Classification SK-510."
+
+B: ["resume state","open work","four-tier decision classification sk-510","when to invoke"]
+
+## Pair 1.5 - Runtime Split
+
+A: "Turn Four-Tier Decision Classification SK-510 into learning examples for the node pipeline."
+
+B: ["user intent","validation note","what this skill prevents","the four-tier test"]
+
+Pair 1.5 - Rephrased
+
+A: "Translate Four-Tier Decision Classification SK-510 into learning examples for the node pipeline."
+
+B: ["user intent","validation note","what this skill prevents","the four-tier test"]
+
+## Pair 1.6 - Runtime Split
+
+A: "Compare the source meaning of Four-Tier Decision Classification SK-510 with related versions or session evidence."
+
+B: ["user intent","four-tier decision classification sk-510","what this skill prevents","the five learnable indicators for q3"]
+
+Pair 1.6 - Rephrased
+
+A: "Contrast the source meaning of Four-Tier Decision Classification SK-510 with related versions or session evidence."
+
+B: ["user intent","four-tier decision classification sk-510","what this skill prevents","the five learnable indicators for q3"]
+
+## Pair 1.7 - Runtime Split
+
+A: "Prepare a user-facing answer from approved results about Four-Tier Decision Classification SK-510."
+
+B: ["validation note","later use","the four-tier test","classification table template"]
+
+Pair 1.7 - Rephrased
+
+A: "Prepare a user-facing answer from approved results about Four-Tier Decision Classification SK-510."
+
+B: ["validation note","later use","the four-tier test","classification table template"]
+
+## Pair 1.8 - Runtime Split
+
+A: "Check whether Four-Tier Decision Classification SK-510 has enough evidence to be trusted by a reviewer."
+
+B: ["resume state","open work","when to invoke","what this skill prevents"]
+
+Pair 1.8 - Rephrased
+
+A: "Check whether Four-Tier Decision Classification SK-510 has enough evidence to be trusted by a reviewer."
+
+B: ["resume state","open work","when to invoke","what this skill prevents"]
+
+## Pair 1.9 - Runtime Split
+
+A: "Show what would break if one responsibility in Four-Tier Decision Classification SK-510 were skipped."
+
+B: ["decision trail","version change","open work","four-tier decision classification sk-510"]
+
+Pair 1.9 - Rephrased
+
+A: "Show what would break if one responsibility in Four-Tier Decision Classification SK-510 were skipped."
+
+B: ["decision trail","version change","open work","four-tier decision classification sk-510"]
+
+## Pair 1.10 - Runtime Split
+
+A: "Build a simulation that proves the session and history evidence content can pass through all nine nodes."
+
+B: ["user intent","version change","validation note","the four-tier test"]
+
+Pair 1.10 - Rephrased
+
+A: "Build a simulation that proves the session and history evidence content can pass through all nine nodes."
+
+B: ["user intent","version change","validation note","the four-tier test"]
+

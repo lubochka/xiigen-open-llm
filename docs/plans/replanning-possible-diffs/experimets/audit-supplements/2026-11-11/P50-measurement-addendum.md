@@ -1,0 +1,13 @@
+# P50 — единый допуск результата и полная цена. Дополнение 11.11.2026
+
+Связано с `P50-graph-dependencies.md`, разделами09.11 о restore и `P50-STATE-AND-PHYSICAL-COST`. Core `009bf226174441fa0fbf0336e74ad2f2b7174d92`. Сохранённые consumer journals A2/4,B4/4, constant2/4 остаются действительным локальным наблюдением здоровой attempt2. Нативного повторного запуска в аудите не было.
+
+**Guard должен управлять всеми исходами.** В текущем `attempt-0002/Program.cs` unknown-step и ошибочная доза попадают в guardProblems, но блокируют только execution label; validity/hypothesis и return0 их обходят. Ввести одно решение о пригодности: полный назначенный stage, корректная identity/schema, отсутствие обязательных guard violations и точный учёт вызовов. Только при valid вычислять научный outcome. Invalid даёт learning invalid, hypothesis open, ненулевой внешний exit и конкретные проблемы; здоровое отсутствие полезного эффекта остаётся завершённым экспериментом с отрицательным научным исходом.
+
+**Различающая приёмка.** При тех же observed before2/4,after4/4,ceiling2/4 заменить только recorded MainLessons8 на9. Итог обязан отказать по дозе, даже когда качество выше baseline. Независимый unknown-step сценарий обязан отказать до объявления поддержки. Проверять не только return helper: serialized status и фактический process exit того же run должны согласоваться. Исторический healthy report не переименовывается invalid из-за найденной потенциальной failure branch.
+
+**Смысл sweep.** Сохранённый ряд[2,4,4,4,4] не убывает. Условие last>first доказывает только endpoint gain; нельзя именовать его проверкой монотонности. Либо переименовать поле, либо вычислять все соседние разности. Ряд[2,4,1,4] служит отрицательным контролем монотонности и положительным контролем endpoint gain. Это проверка критерия на наблюдениях, без нового learner.
+
+**Бюджет по физическим исполнениям.** Attempt2 показывает8 main и46 extra lessons, итого54; main1 иextra7 Train calls, отдельно refused call иtokenizer witness. Два ранних физических прохода attempt1 имеют собственные IDs и минимум16 main lessons; их не поглощает новый report. Сводить main/probe/negative/restore и lifetime costs по identity, не по имени attempt-папки.
+
+**Restore не расширять словами.** Отдельный reader, который напрямую загружает tokenizer/index/answer records, удостоверяет только эту экспериментальную сериализацию. Для claim native Unit restore требуются actual Import/Load нового KnnLogicalUnit, обычный ExecuteAsync и отдельно разрешённая continuation; восстановленный payload обязан обнаружить missing/mixed/foreign record при прежнем count. Эта добавка не назначает новый Train и не объявляет эти будущие native проверки пройденными.

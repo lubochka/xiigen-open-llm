@@ -1,0 +1,76 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\Multimodel Orchestrator\module-architecture\CONSOLIDATION_PROMPT.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `Multimodel Orchestrator\module-architecture\CONSOLIDATION_PROMPT.md`
+- Type: retrieval and graph knowledge
+- Inventory type: not listed in attached MVP inventory
+- File size: 22042 bytes
+- Line count read for this round: 442
+- SHA256: 237BD47B16F2E2C257C3046F73D95A9B4390DA74040DDC84FA866F18B3639413
+- First meaningful line: `XIIGen V18 — Genie DNA Module Architecture Consolidation`
+- Last meaningful line: `This is a composition/documentation task, not a code generation task. The 62 skills already have ~173,000 lines of code. This phase adds ~4,000 lines of architecture documentation that makes those 173,000 lines usable as a product factory.`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- `C:\Users\lubao\Documents\xiigen\Older\CONSOLIDATION_PROMPT.md`
+
+Same-name files:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Multimodel Orchestrator\module-architecture\CONSOLIDATION_PROMPT.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Older\CONSOLIDATION_PROMPT.md`
+- `C:\Users\lubao\Documents\xiigen\Older\CONSOLIDATION_PROMPT.md`
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Multimodel Orchestrator\module-architecture\CONSOLIDATION_PROMPT.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Multimodel Orchestrator\module-architecture\HOW_TO_USE_CONSOLIDATION_PROMPT.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Older\CONSOLIDATION_PROMPT.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Older\HOW_TO_USE_CONSOLIDATION_PROMPT.md`
+- `C:\Users\lubao\Documents\xiigen\Older\CONSOLIDATION_PROMPT.md`
+- `C:\Users\lubao\Documents\xiigen\Older\HOW_TO_USE_CONSOLIDATION_PROMPT.md`
+
+## Source Meaning Used For Training
+
+XIIGen V18 — Genie DNA Module Architecture Consolidation
+
+## Domains This Document Teaches
+
+- source inventory
+- metadata and tags
+- retrieval routing
+- graph relationships
+- evidence selection
+- quality measurement
+- xiigen v18 genie dna module architecture consolidation
+- context what happened before this session
+- what you need to do
+- phase e1 inventory deduplication read only
+- phase e2 create the composition layer
+- phase e3 update root level files
+- genie dna composition layer
+- the one rule
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

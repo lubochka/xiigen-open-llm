@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\good skills to check\uiux-lib\ui-ux-pro-max-skill-main\.claude\skills\design-system\references\token-architecture.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\good skills to check\uiux-lib\ui-ux-pro-max-skill-main\.claude\skills\design-system\references\token-architecture.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 5589 bytes
+- Line count read: 225
+- SHA256: 48A87D58AA804F80B5F3E0A4BECCF322E24C63AF9FDFB3035FE54FC807BF9F52
+- First meaningful line: `Token Architecture`
+- Last meaningful line: `"$type": "color"`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+Token Architecture
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- token architecture
+- layer overview
+- why three layers?
+- layer 1: primitive tokens
+- layer 2: semantic tokens
+- layer 3: component tokens
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

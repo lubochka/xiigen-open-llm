@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\skills\28-prompt-engineering\SKILL.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\skills\28-prompt-engineering\SKILL.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 10390 bytes
+- Line count read: 234
+- SHA256: 33F6ADB7ACB21ADAD64B1B67180724F2595DD80A1512741A7DA3E8F5EC9CC04D
+- First meaningful line: `---`
+- Last meaningful line: `- 12 — AI Review uses templates for review criteria`
+
+## Related Versions And Duplicate Copies
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Multimodel Orchestrator\xiigen_v18_complete\V17-skills\28-prompt-engineering\SKILL.md`
+
+## Source Meaning Used For Training
+
+Skill 28: Prompt Engineering Service
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- skill 28: prompt engineering service
+- template management with feedback-driven improvement
+- overview
+- key concepts
+- component classification machine vs freedom
+- 🔧 machine static infrastructure — build once
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

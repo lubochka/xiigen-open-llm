@@ -1,0 +1,124 @@
+# Node-01 - Domain Splitter Set
+
+Runtime A is a human prompt. Runtime B is an array of domain labels.
+
+## Pair 1.1 - Runtime Split
+
+A: "Use this document to understand PRE-the user registration flow TASK DOCUMENT and keep its main responsibilities visible."
+
+B: ["training input","expected output","example coverage","rephrasing coverage"]
+
+Pair 1.1 - Rephrased
+
+A: "Apply this document to understand PRE-the user registration flow TASK DOCUMENT and keep its main responsibilities visible."
+
+B: ["training input","expected output","example coverage","rephrasing coverage"]
+
+## Pair 1.2 - Runtime Split
+
+A: "Explain how PRE-the user registration flow TASK DOCUMENT should guide a human request without losing decisions, risks, or expected results."
+
+B: ["expected output","example coverage","node responsibility","gap marker"]
+
+Pair 1.2 - Rephrased
+
+A: "Show how PRE-the user registration flow TASK DOCUMENT should guide a human request without losing decisions, risks, or expected results."
+
+B: ["expected output","example coverage","node responsibility","gap marker"]
+
+## Pair 1.3 - Runtime Split
+
+A: "Plan the work described by PRE-the user registration flow TASK DOCUMENT as separated responsibilities that can move through the dynamic flow."
+
+B: ["example coverage","rephrasing coverage","quality signal","curation decision"]
+
+Pair 1.3 - Rephrased
+
+A: "Prepare the work described by PRE-the user registration flow TASK DOCUMENT as separated responsibilities that can move through the dynamic flow."
+
+B: ["example coverage","rephrasing coverage","quality signal","curation decision"]
+
+## Pair 1.4 - Runtime Split
+
+A: "Find the review points, exceptions, and recovery needs in PRE-the user registration flow TASK DOCUMENT."
+
+B: ["node responsibility","quality signal","pre-the user registration flow task document","date: 2026-03-24 session: web planning"]
+
+Pair 1.4 - Rephrased
+
+A: "Identify the review points, exceptions, and recovery needs in PRE-the user registration flow TASK DOCUMENT."
+
+B: ["node responsibility","quality signal","pre-the user registration flow task document","date: 2026-03-24 session: web planning"]
+
+## Pair 1.5 - Runtime Split
+
+A: "Turn PRE-the user registration flow TASK DOCUMENT into learning examples for the node pipeline."
+
+B: ["training input","gap marker","how this document came to exist","task 1: complete the heyrovsky merge"]
+
+Pair 1.5 - Rephrased
+
+A: "Translate PRE-the user registration flow TASK DOCUMENT into learning examples for the node pipeline."
+
+B: ["training input","gap marker","how this document came to exist","task 1: complete the heyrovsky merge"]
+
+## Pair 1.6 - Runtime Split
+
+A: "Compare the source meaning of PRE-the user registration flow TASK DOCUMENT with related versions or session evidence."
+
+B: ["training input","pre-the user registration flow task document","how this document came to exist","what it is"]
+
+Pair 1.6 - Rephrased
+
+A: "Contrast the source meaning of PRE-the user registration flow TASK DOCUMENT with related versions or session evidence."
+
+B: ["training input","pre-the user registration flow task document","how this document came to exist","what it is"]
+
+## Pair 1.7 - Runtime Split
+
+A: "Prepare a user-facing answer from approved results about PRE-the user registration flow TASK DOCUMENT."
+
+B: ["gap marker","curation decision","task 1: complete the heyrovsky merge","why we need it"]
+
+Pair 1.7 - Rephrased
+
+A: "Prepare a user-facing answer from approved results about PRE-the user registration flow TASK DOCUMENT."
+
+B: ["gap marker","curation decision","task 1: complete the heyrovsky merge","why we need it"]
+
+## Pair 1.8 - Runtime Split
+
+A: "Check whether PRE-the user registration flow TASK DOCUMENT has enough evidence to be trusted by a reviewer."
+
+B: ["node responsibility","quality signal","date: 2026-03-24 session: web planning","how this document came to exist"]
+
+Pair 1.8 - Rephrased
+
+A: "Check whether PRE-the user registration flow TASK DOCUMENT has enough evidence to be trusted by a reviewer."
+
+B: ["node responsibility","quality signal","date: 2026-03-24 session: web planning","how this document came to exist"]
+
+## Pair 1.9 - Runtime Split
+
+A: "Show what would break if one responsibility in PRE-the user registration flow TASK DOCUMENT were skipped."
+
+B: ["example coverage","rephrasing coverage","quality signal","pre-the user registration flow task document"]
+
+Pair 1.9 - Rephrased
+
+A: "Show what would break if one responsibility in PRE-the user registration flow TASK DOCUMENT were skipped."
+
+B: ["example coverage","rephrasing coverage","quality signal","pre-the user registration flow task document"]
+
+## Pair 1.10 - Runtime Split
+
+A: "Build a simulation that proves the learning and teaching material content can pass through all nine nodes."
+
+B: ["training input","rephrasing coverage","gap marker","task 1: complete the heyrovsky merge"]
+
+Pair 1.10 - Rephrased
+
+A: "Build a simulation that proves the learning and teaching material content can pass through all nine nodes."
+
+B: ["training input","rephrasing coverage","gap marker","task 1: complete the heyrovsky merge"]
+

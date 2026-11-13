@@ -1,0 +1,877 @@
+Yes. For **advanced architecture/design-pattern learning sets**, I would use these free/public sources, grouped by the kind of knowledge they teach. I’m separating **core architecture sources** from **stack-specific sources**, because the core architecture material is more valuable for XIIGEN’s dynamic-flow/arbitration logic.
+
+## 1. Core architecture, distributed systems, reliability
+
+These are the strongest sources for real architecture challenges.
+
+| Source                                                | Use it for                                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **AWS Builders’ Library**                             | Timeouts, retries, backoff+jitter, dependency isolation, correlated failures, load shedding, caching challenges, avoiding fallback, overload behavior. Excellent for arbiter rows like `retryPolicyArbiter`, `dependencyIsolationArbiter`, `overloadProtectionArbiter`. AWS frames these as production lessons from building resilient distributed systems. ([Amazon Web Services, Inc.][1]) |
+| **Google SRE Book / SRE Workbook**                    | SLOs, monitoring, alerting, toil, automation, postmortems, incident response, production operations. Good for `observabilityArbiter`, `postmortemToRule`, `incidentLearning`, `reliabilityGate`. Google’s SRE material treats postmortems as root-cause learning and prevention, not blame. ([Google SRE][2])                                                                                |
+| **Azure Architecture Center — Cloud Design Patterns** | Circuit Breaker, Retry, Bulkhead, Queue-Based Load Leveling, Compensating Transaction, Event Sourcing, CQRS, Strangler Fig, Valet Key, Leader Election. Microsoft explicitly positions these patterns for reliable, secure, scalable cloud systems. ([Microsoft Learn][3])                                                                                                                   |
+| **microservices.io Pattern Language**                 | Saga, Database per Service, Transactional Outbox, Event Sourcing, CQRS, API Composition, API Gateway, service communication patterns. Very relevant for XIIGEN’s outbox, lifecycle registry, flow orchestration, and distributed consistency. ([microservices.io][4])                                                                                                                        |
+| **AWS Well-Architected Framework**                    | Operational excellence, security, reliability, performance efficiency, cost optimization, sustainability. Useful for architecture review checklists and cross-domain quality gates. ([Amazon Web Services, Inc.][5])                                                                                                                                                                         |
+| **Google Cloud Well-Architected Framework**           | Secure, efficient, resilient, high-performing, cost-effective, sustainable topology design. Good as a second cloud-provider perspective for the same quality attributes. ([Google Cloud Documentation][6])                                                                                                                                                                                   |
+
+## 2. Enterprise application patterns and architecture case studies
+
+| Source                                                                      | Use it for                                                                                                                                                                                                 |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Martin Fowler — Patterns of Enterprise Application Architecture catalog** | Layering, domain logic structure, data-source patterns, web presentation patterns, session-state patterns. Best as pattern vocabulary and decision-condition source. ([martinfowler.com][7])               |
+| **Martin Fowler architecture articles / Strangler Fig Application**         | Migration strategy, legacy replacement, version arbitration, gradual cutover, rollback-safe modernization. Good for XIIGEN’s static-pipeline → dynamic-topology migration rows.                            |
+| **The Architecture of Open Source Applications (AOSA)**                     | Real systems explained by their builders: component boundaries, interaction models, lessons learned. This is not beginner material; it teaches “why the architecture is shaped this way.” ([Aosa Book][8]) |
+| **Architecture Decision Records / ADR resources**                           | Context → decision → consequences. Good for Domain H governance, versioning, and `historyAndVersions_to_reprocessingDecision`.                                                                             |
+| **System Design Primer**                                                    | Scenario-based architecture tradeoffs: caches, queues, load balancing, scaling bottlenecks. Treat as Tier 3 scenario corpus, not constitutional truth.                                                     |
+
+## 3. Security, secure design, and supply-chain governance
+
+These are better than ordinary “security tutorials” because they define reusable arbiter rules.
+
+| Source                                                        | Use it for                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **OWASP ASVS**                                                | Security verification requirements for web apps/services. Excellent for generated-code security arbiters: authentication, session management, access control, validation, secrets, API security. OWASP describes ASVS as a basis for testing web-app technical security controls and secure-development requirements. ([OWASP Foundation][9]) |
+| **OWASP Top 10 + OWASP Cheat Sheet Series**                   | Vulnerability categories and practical mitigations. Use for negative examples and rejected-code rows.                                                                                                                                                                                                                                         |
+| **CWE / MITRE**                                               | Weakness taxonomy: injection, path traversal, insecure deserialization, broken access control, code injection, memory errors. CWE is a community-developed list of software/hardware weaknesses that can become vulnerabilities. ([CWE][10])                                                                                                  |
+| **NIST SSDF SP 800-218**                                      | Secure software development lifecycle, governance practices, vulnerability-risk mitigation. Good for Domain H governance and CI/CD security gates. ([NIST Computer Security Resource Center][11])                                                                                                                                             |
+| **SLSA / OpenSSF Supply-chain Levels for Software Artifacts** | Provenance, tamper resistance, artifact integrity, build pipeline trust. Use for CI/CD and supply-chain arbiters. SLSA describes itself as a checklist/framework to prevent tampering and improve package/build integrity. ([SLSA][12])                                                                                                       |
+
+## 4. .NET / ASP.NET Core / Windows-oriented backend
+
+| Source                                                                  | Use it for                                                                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Microsoft .NET Application Architecture Guides**                      | .NET microservices, containers, cloud-native architecture, modernization, DDD-style service boundaries. Microsoft’s .NET microservices guide discusses architectural design and implementation approaches with .NET and Docker containers. ([Microsoft][13]) |
+| **Microsoft eShop reference architecture / eShopOnContainers material** | Reference implementation ideas: service boundaries, event bus, integration events, containerized .NET services. Use as reference architecture, not blind code source.                                                                                        |
+| **ASP.NET Core performance best practices**                             | Hot paths, async, caching, pagination, blocking calls, thread-pool starvation, response size. Good for quality arbiters on generated backend code.                                                                                                           |
+| **ASP.NET Core security docs**                                          | Authentication, authorization, secrets, data protection, CORS, antiforgery, HTTPS, secure config.                                                                                                                                                            |
+| **EF Core performance/concurrency docs**                                | Query shape, change tracking, transactions, optimistic concurrency, migrations. Useful for storage and repository-pattern rows.                                                                                                                              |
+
+## 5. Python architecture
+
+| Source                                                | Use it for                                                                                                                                                                                                                                                                      |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Architecture Patterns with Python / Cosmic Python** | Repository, Unit of Work, domain model, service layer, events, message bus, TDD, DDD, event-driven services. It is free to read online, and the authors explicitly frame it around architectural patterns supporting TDD, DDD, and event-driven services. ([Cosmic Python][14]) |
+| **Python Packaging User Guide**                       | Packaging, dependency isolation, build/distribution practices. Good for toolchain and CI rows.                                                                                                                                                                                  |
+| **Pytest docs**                                       | Test fixtures, parametrization, test architecture, plugin model. Use for test automation patterns.                                                                                                                                                                              |
+| **FastAPI advanced docs**                             | Dependency injection, background tasks, security dependencies, testing, OpenAPI schema. Use if Python API generation is relevant.                                                                                                                                               |
+| **SQLAlchemy architecture docs**                      | Unit of Work, session lifecycle, identity map, transactions. Useful for persistence-pattern rows.                                                                                                                                                                               |
+
+## 6. Go architecture
+
+| Source                                          | Use it for                                                                                                                                       |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Effective Go**                                | Idiomatic Go, interfaces, error handling style, composition. Official Go docs say it gives tips for writing clear, idiomatic Go code. ([Go][15]) |
+| **Go Blog**                                     | Context cancellation, pipelines, concurrency patterns, error handling, modules. Good for advanced Go patterns.                                   |
+| **Go Code Review Comments**                     | Practical maintainability rules and anti-patterns.                                                                                               |
+| **Uber Go Style Guide**                         | Production-grade Go style and architecture conventions. Tier 2, not official language doctrine.                                                  |
+| **Go kit / go-zero / Encore architecture docs** | Service boundaries, transport separation, middleware, observability patterns. Use selectively as reference-architecture material.                |
+
+## 7. Rust architecture
+
+| Source                                            | Use it for                                                                                                                                                                                                                                                         |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **The Rust Book — advanced chapters**             | Ownership, traits, lifetimes, generics, smart pointers, concurrency, async traits. The official Rust Book’s async traits section discusses `Future`, `Stream`, `Pin`, and `Unpin`, which are important for advanced async architecture. ([Rust Documentation][16]) |
+| **Rust Async Book**                               | Async runtimes, futures, pinning, streams, executors, concurrency patterns. It explicitly covers async Rust and advanced topics. ([Rust Programming Language][17])                                                                                                 |
+| **Rust API Guidelines**                           | Crate API design, naming, traits, error types, flexibility, future-proofing.                                                                                                                                                                                       |
+| **Tokio docs / Tokio tutorial advanced sections** | Async runtime, tasks, channels, cancellation, backpressure.                                                                                                                                                                                                        |
+| **Rustonomicon**                                  | Unsafe Rust, memory model, advanced invariants. Use only for low-level/systems datasets.                                                                                                                                                                           |
+
+## 8. PHP architecture
+
+| Source                     | Use it for                                                                                                                                                                                                                                                                     |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **PHP-FIG PSR standards**  | PSR-1/4/7/11/12/14/15/18, interoperability, containers, HTTP messages, event dispatching, middleware. PHP-FIG records standards and their status; PSR-1 defines basic coding elements for interoperability, and PSR-12 extends coding style. ([php-fig.org][18])               |
+| **PHP: The Right Way**     | Modern PHP best practices and links to authoritative sources. Good as a navigation and normalization source; it explicitly aims to counter outdated/bad PHP information. ([PHP: The Right Way][19])                                                                            |
+| **Symfony Best Practices** | Configuration, business logic organization, controllers, security, tests. Symfony says the guide captures best practices aligned with the framework philosophy. ([Symfony][20])                                                                                                |
+| **Laravel advanced docs**  | Service container, queues, events, jobs, service providers, middleware. Laravel describes its service container as a dependency-management and dependency-injection tool; queues provide a unified API across backends such as SQS, Redis, and relational DBs. ([Laravel][21]) |
+
+## 9. NestJS / Node.js / TypeScript backend
+
+| Source                                                                                                            | Use it for                                                                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **NestJS Modules / Providers / Custom Providers / Lifecycle / Interceptors / Guards / Pipes / Exception Filters** | DI, module boundaries, request lifecycle, cross-cutting concerns, validation, auth, error handling. This is relevant to XIIGEN’s fabric-first and provider-registration style. |
+| **Node.js official docs — diagnostics, async hooks, worker threads, streams**                                     | Runtime behavior, async context, backpressure, performance diagnostics.                                                                                                        |
+| **TypeScript Handbook — advanced types**                                                                          | Type-level contracts, discriminated unions, generics, conditional/mapped types. Good for schema and contract generation.                                                       |
+| **TypeScript ESLint rules**                                                                                       | Static quality gates for generated TypeScript.                                                                                                                                 |
+| **Fastify architecture/docs**                                                                                     | Lifecycle hooks, plugins, schemas, validation, performance. Useful if using Fastify/Nest adapters.                                                                             |
+
+## 10. React / Angular / frontend architecture
+
+| Source                                                                                                | Use it for                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **React official advanced docs**                                                                      | State structure, effects, reducers, context, performance, component architecture. Use especially “You Might Not Need an Effect,” state structure, reducers/context, and composition.      |
+| **Angular official style guide**                                                                      | Angular syntax, conventions, file organization, application structure. Angular’s official style guide is explicitly opinionated about syntax, conventions, and structure. ([Angular][22]) |
+| **Angular docs — dependency injection, standalone components, RxJS interop, forms, routing, signals** | Angular-specific architecture and reactive state rules.                                                                                                                                   |
+| **MDN Web Docs**                                                                                      | Web platform truth: HTTP, browser APIs, accessibility, security headers, storage.                                                                                                         |
+| **WAI-ARIA Authoring Practices / WCAG**                                                               | Accessibility arbiters and rejected UI examples.                                                                                                                                          |
+| **web.dev**                                                                                           | Performance, Core Web Vitals, accessibility, PWA patterns.                                                                                                                                |
+
+## 11. Test automation and quality engineering
+
+| Source                                                    | Use it for                                                                                                                                                                      |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Playwright docs — Best Practices**                      | Resilient E2E tests, locators, assertions, isolation, test design. Playwright says its best-practices guide is for writing more resilient tests. ([Playwright][23])             |
+| **Playwright docs — assertions / running / tracing**      | Auto-waiting assertions, parallelism, debugging, CI test artifacts. Playwright docs describe async assertions that wait until the expected condition is met. ([Playwright][24]) |
+| **Testing Library docs**                                  | User-centered UI tests, avoid implementation-detail testing.                                                                                                                    |
+| **xUnit / NUnit / MSTest docs**                           | .NET test architecture.                                                                                                                                                         |
+| **Pytest docs**                                           | Fixtures, parametrization, test layering.                                                                                                                                       |
+| **Google Testing Blog**                                   | Test philosophy, flaky tests, test pyramid debates, hermeticity.                                                                                                                |
+| **Martin Fowler — Test Pyramid / Contract Test articles** | Test strategy and test architecture.                                                                                                                                            |
+
+## 12. Docker, containers, CI/CD, supply chain
+
+| Source                                   | Use it for                                                                                                                                                                                                                     |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Docker Build best practices**          | Minimal base images, layer caching, multi-stage builds, security surface, reproducibility. Docker explicitly recommends minimal base images to reduce image size and vulnerability surface. ([Docker Documentation][25])       |
+| **Docker minimal/distroless image docs** | Production image minimization, runtime-only dependencies, CI validation. Docker docs recommend multi-stage builds and validating image behavior in CI for minimal images. ([Docker Documentation][26])                         |
+| **GitHub Actions docs**                  | Workflow triggers, CI/CD, secrets, environments, matrix builds, reusable workflows.                                                                                                                                            |
+| **GitLab CI docs**                       | Pipeline design, stages, artifacts, caches, rules.                                                                                                                                                                             |
+| **SLSA / OpenSSF**                       | Build provenance, artifact integrity, supply-chain hardening.                                                                                                                                                                  |
+| **OpenTelemetry docs**                   | Traces, metrics, logs, context propagation, vendor-neutral observability. OpenTelemetry describes itself as a vendor-neutral framework/toolkit for generating, collecting, and exporting telemetry data. ([OpenTelemetry][27]) |
+
+## 13. Cloud and CLI knowledge
+
+| Source                                                             | Use it for                                                                                                          |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| **AWS Architecture Center + Well-Architected + Builders’ Library** | Architecture tradeoffs, reliability patterns, operational excellence.                                               |
+| **AWS CLI Command Reference**                                      | Exact command syntax only; not architecture. Use for `machineCommand_to_machineActionItems`.                        |
+| **Azure Architecture Center + Azure CLI Reference**                | Patterns + exact command syntax.                                                                                    |
+| **Google Cloud Architecture Framework + gcloud CLI Reference**     | Well-architected patterns + exact command syntax.                                                                   |
+| **Terraform docs / OpenTofu docs**                                 | Infrastructure as Code, state, modules, drift, provider constraints.                                                |
+| **Kubernetes docs**                                                | Only if Kubernetes is in scope: controllers, probes, deployments, services, config/secrets, RBAC, network policies. |
+
+## 14. Learning/evaluation/dataset quality sources
+
+For LlmFromScratch itself, these matter.
+
+| Source                                                            | Use it for                                                     |
+| ----------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Hugging Face dataset/model card docs**                          | Dataset metadata, intended use, limitations, bias, provenance. |
+| **EleutherAI lm-evaluation-harness docs**                         | Evaluation tasks, metrics, reproducibility.                    |
+| **HELM / Stanford CRFM**                                          | Model evaluation methodology and scenario taxonomy.            |
+| **Papers on DPO / RLHF / data contamination / benchmark leakage** | Training quality arbiters and rejected training examples.      |
+| **MLCommons / MLPerf**                                            | Benchmark discipline and reproducibility.                      |
+
+## Minimal first package for your project
+
+I would not start with all sources. I would start with this compact, high-value pack:
+
+```text
+LEARNING-SET-ARCHITECTURE-CHALLENGES-v1
+```
+
+| Pack section                         | Sources                                                                                                   |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------- |
+| `01-reliability-distributed-systems` | AWS Builders’ Library, Google SRE                                                                         |
+| `02-distributed-data-consistency`    | microservices.io, Azure patterns                                                                          |
+| `03-security-governance`             | OWASP ASVS, CWE, NIST SSDF, SLSA                                                                          |
+| `04-cloud-architecture-patterns`     | Azure Architecture Center, AWS Well-Architected, Google Cloud Well-Architected                            |
+| `05-stack-advanced-patterns`         | Microsoft .NET architecture guides, Cosmic Python, PHP-FIG/Symfony/Laravel, Rust Async Book, Effective Go |
+| `06-frontend-quality`                | React advanced docs, Angular style/DI docs, MDN/WAI-ARIA/web.dev                                          |
+| `07-ci-cd-observability`             | Docker best practices, GitHub Actions/GitLab CI, OpenTelemetry                                            |
+
+For each source, extract rows as:
+
+```json
+{
+  "sourceId": "AWS-BUILDERS-RETRY-JITTER",
+  "datasetFamily": "arbitrateResultI_with_resultsContext",
+  "domain": "E_ARBITER_QUALITY",
+  "subdomain": "distributed-failure-handling",
+  "input": "Generated design retries remote calls immediately and indefinitely.",
+  "acceptedOutput": "Bounded retry with timeout, backoff, jitter, idempotency, and overload protection.",
+  "rejectedOutput": "Infinite immediate retries from every caller.",
+  "arbiter": "retryAmplificationArbiter"
+}
+```
+
+That is the kind of source material worth teaching an LLM for XIIGEN.
+
+[1]: https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/?utm_source=chatgpt.com "Timeouts, retries and backoff with jitter"
+[2]: https://sre.google/sre-book/postmortem-culture/?utm_source=chatgpt.com "Blameless Postmortem for System Resilience"
+[3]: https://learn.microsoft.com/en-us/azure/architecture/patterns/?utm_source=chatgpt.com "Cloud Design Patterns - Azure Architecture Center"
+[4]: https://microservices.io/patterns/data/saga.html?utm_source=chatgpt.com "Pattern: Saga"
+[5]: https://aws.amazon.com/architecture/well-architected/?utm_source=chatgpt.com "AWS Well-Architected"
+[6]: https://docs.cloud.google.com/architecture/framework?utm_source=chatgpt.com "Google Cloud Well-Architected Framework"
+[7]: https://martinfowler.com/books/eaa.html?utm_source=chatgpt.com "Patterns of Enterprise Application Architecture"
+[8]: https://aosabook.org/en/?utm_source=chatgpt.com "The Architecture of Open Source Applications"
+[9]: https://owasp.org/www-project-application-security-verification-standard/?utm_source=chatgpt.com "OWASP Application Security Verification Standard (ASVS)"
+[10]: https://cwe.mitre.org/?utm_source=chatgpt.com "Common Weakness Enumeration: CWE - MITRE"
+[11]: https://csrc.nist.gov/pubs/sp/800/218/final?utm_source=chatgpt.com "Secure Software Development Framework (SSDF) Version 1.1 ..."
+[12]: https://slsa.dev/?utm_source=chatgpt.com "SLSA • Supply-chain Levels for Software Artifacts"
+[13]: https://dotnet.microsoft.com/en-us/learn/dotnet/architecture-guides?utm_source=chatgpt.com ".NET application architecture guides"
+[14]: https://www.cosmicpython.com/?utm_source=chatgpt.com "Cosmic Python"
+[15]: https://go.dev/doc/effective_go?utm_source=chatgpt.com "Effective Go"
+[16]: https://doc.rust-lang.org/book/ch17-05-traits-for-async.html?utm_source=chatgpt.com "A Closer Look at the Traits for Async"
+[17]: https://rust-lang.github.io/async-book/?utm_source=chatgpt.com "Introduction - Asynchronous Programming in Rust"
+[18]: https://www.php-fig.org/psr/?utm_source=chatgpt.com "PHP Standards Recommendations"
+[19]: https://phptherightway.com/?utm_source=chatgpt.com "PHP: The Right Way | Reference for PHP best practices"
+[20]: https://symfony.com/doc/current/best_practices.html?utm_source=chatgpt.com "The Symfony Framework Best Practices"
+[21]: https://laravel.com/docs/13.x/container?utm_source=chatgpt.com "Service Container | Laravel 13.x - The clean stack for ..."
+[22]: https://angular.dev/style-guide?utm_source=chatgpt.com "Style Guide"
+[23]: https://playwright.dev/docs/best-practices?utm_source=chatgpt.com "Best Practices"
+[24]: https://playwright.dev/docs/writing-tests?utm_source=chatgpt.com "Writing tests"
+[25]: https://docs.docker.com/build/building/best-practices/?utm_source=chatgpt.com "Building best practices"
+[26]: https://docs.docker.com/dhi/core-concepts/distroless/?utm_source=chatgpt.com "Minimal or distroless images"
+[27]: https://opentelemetry.io/docs/?utm_source=chatgpt.com "Documentation"
+
+Yes. Here is a **Codex execution plan** for continuing the work from your current research and turning advanced public technology sources into a proper document + dataset structure.
+
+The goal is **not** to collect tutorials. The goal is to build a source-backed architecture learning corpus:
+
+```text
+advanced source
+→ architecture challenge
+→ pattern / decision / anti-pattern
+→ XIIGEN domain mapping
+→ accepted output
+→ rejected output
+→ arbiter rule
+→ training row
+```
+
+Your current project already has the right 8-domain structure: topology/orchestration, routing, semantic translation, execution, arbiters, registry/storage, learning/training, and governance. 
+Your Codex/coding-agent research already identified candidate dataset families, but the rows are not final yet because exact spans, accepted/rejected examples, and verification are still missing. 
+
+---
+
+# Codex Plan: Open Technology Knowledge Learning Sets
+
+## Phase 0 — Load existing project context
+
+Codex should first read these existing files:
+
+```text
+DOMAIN-MAPPING-FINAL-v1.md
+DOMAIN-EXAMINATION-PLAN-v1.md
+DOMAIN-CODEX-RESEARCH-RESULT-v1.md
+DOMAIN-CODEX-RESEARCH-ALL-FILES-v1.md
+DOMAIN-CODEX-RESEARCH-DATASET-CANDIDATES-v1.json
+DOMAIN-CODEX-RESEARCH-SOURCE-ANCHORS-v1.json
+DOMAIN-CODEX-RESEARCH-ROWIZED-DRAFT-v1.json
+DYNAMIC-FLOW-ARCHITECTURE-PLAN-v1_0-DRAFT.md
+domain-A-topology-orchestration.md
+domain-B-routing-selection.md
+domain-C-semantic-translation.md
+domain-D-execution-applier.md
+domain-E-arbiter-quality.md
+domain-F-registry-storage.md
+domain-G-learning-training.md
+domain-H-governance-contracts.md
+```
+
+Codex should treat the existing 8-domain map as binding. The new public sources should be mapped into the same structure, not into a new taxonomy.
+
+Expected output of Phase 0:
+
+```text
+00-CONTEXT-LOAD-REPORT.md
+```
+
+Content:
+
+```text
+- files read
+- existing dataset families found
+- existing gaps found
+- current domain structure
+- source categories to add
+```
+
+Acceptance gate:
+
+```text
+Codex must explicitly state that the current rowized dataset is not final and still needs exact source spans + accepted/rejected examples.
+```
+
+This matches the current draft status. 
+
+---
+
+## Phase 1 — Create source registry
+
+Create:
+
+```text
+01-SOURCE-REGISTRY-ARCHITECTURE-CHALLENGES-v1.json
+```
+
+This file should contain only **trusted free/public sources**.
+
+Start with these source groups:
+
+### Group A — Reliability and distributed systems
+
+Sources:
+
+```text
+AWS Builders’ Library
+Google SRE Book / Workbook
+Azure Architecture Center reliability patterns
+```
+
+Why:
+
+AWS Builders’ Library contains production lessons on timeouts, retries, backoff, jitter, fallback, overload, and distributed failure behavior. AWS explicitly recommends backoff instead of immediate aggressive retries, and discusses capped exponential backoff and jitter as production resilience patterns. ([Amazon Web Services, Inc.][1])
+
+### Group B — Distributed data consistency
+
+Sources:
+
+```text
+microservices.io Saga
+microservices.io Transactional Outbox
+microservices.io Event Sourcing
+microservices.io Database per Service
+Azure Compensating Transaction
+Azure Event Sourcing
+Azure CQRS
+```
+
+Why:
+
+microservices.io defines Saga as a sequence of local transactions with compensating transactions on failure, which is directly useful for distributed consistency rows. ([microservices.io][2])
+It also defines Transactional Outbox as storing the message in the database as part of the business transaction before a separate process sends it to the broker, which maps strongly to XIIGEN’s outbox/DNA-8 thinking. ([microservices.io][3])
+Database per Service is also directly relevant because it says each microservice’s persistent data should be private and accessible only through its API. ([microservices.io][4])
+
+### Group C — Cloud design patterns
+
+Sources:
+
+```text
+Azure Architecture Center — Cloud Design Patterns
+AWS Well-Architected
+Google Cloud Architecture Framework
+```
+
+Why:
+
+Azure’s pattern catalog is explicitly for reliable, scalable, more secure cloud applications and includes pattern material for reliability, security, cost, operations, and performance. ([Microsoft Learn][5])
+
+### Group D — Security and governance
+
+Sources:
+
+```text
+OWASP ASVS
+OWASP Top 10
+OWASP Cheat Sheet Series
+CWE / MITRE
+NIST SSDF
+SLSA / OpenSSF
+```
+
+Why:
+
+OWASP ASVS provides a basis for testing web application technical security controls and gives developers security requirements for secure development. ([OWASP Foundation][6])
+
+### Group E — Architecture migration and decision records
+
+Sources:
+
+```text
+Martin Fowler — Strangler Fig Application
+Azure Strangler Fig Pattern
+Architecture Decision Records / ADR templates
+```
+
+Use for:
+
+```text
+static pipeline → dynamic topology runtime
+legacy flow → new flow
+old unit/cell → replacement cell
+version rollback
+shadow mode
+canary/cutover
+```
+
+### Group F — Stack-specific advanced architecture
+
+Sources:
+
+```text
+Microsoft .NET Architecture Guides
+ASP.NET Core performance and security docs
+EF Core concurrency/performance docs
+Cosmic Python / Architecture Patterns with Python
+Effective Go + Go Blog concurrency articles
+Rust Async Book + Rust API Guidelines
+PHP-FIG PSR standards + Symfony/Laravel architecture docs
+NestJS advanced docs: modules, providers, guards, interceptors, pipes, exception filters
+React advanced docs: state structure, effects, reducers, context, accessibility
+Angular style guide, DI, RxJS, signals, routing
+Docker build best practices
+GitHub Actions / GitLab CI
+OpenTelemetry docs
+```
+
+Codex should not process these as beginner tutorials. It should extract only:
+
+```text
+pattern
+anti-pattern
+decision condition
+quality gate
+security rule
+migration rule
+failure mode
+```
+
+Expected Phase 1 source registry schema:
+
+```json
+{
+  "sourceId": "AWS-BUILDERS-RETRY-BACKOFF-JITTER",
+  "title": "Timeouts, retries, and backoff with jitter",
+  "publisher": "AWS",
+  "sourceKind": "production-engineering-article",
+  "trustTier": 1,
+  "url": "...",
+  "targetDomains": ["A_TOPOLOGY", "E_ARBITER_QUALITY", "H_GOVERNANCE"],
+  "targetSubdomains": [
+    "distributed-failure-handling",
+    "retry-policy",
+    "overload-protection"
+  ],
+  "allowedUse": [
+    "architecture challenge rows",
+    "arbiter rules",
+    "accepted/rejected examples"
+  ],
+  "notAllowedUse": [
+    "copy long prose",
+    "treat as framework tutorial"
+  ],
+  "extractionStatus": "pending"
+}
+```
+
+---
+
+## Phase 2 — Create source examination documents
+
+For every source group, Codex should create one examination file.
+
+Folder:
+
+```text
+02-source-examinations/
+```
+
+Files:
+
+```text
+02-source-examinations/reliability-distributed-systems.md
+02-source-examinations/distributed-data-consistency.md
+02-source-examinations/cloud-design-patterns.md
+02-source-examinations/security-governance.md
+02-source-examinations/migration-versioning.md
+02-source-examinations/stack-advanced-patterns.md
+02-source-examinations/test-ci-observability.md
+```
+
+Each examination file should use this exact structure:
+
+```markdown
+# Source Examination: <Group Name>
+
+## 1. Sources examined
+
+| Source ID | Source | Trust tier | Why included |
+
+## 2. Architecture challenges found
+
+| Challenge ID | Challenge | Source anchor | Relevant XIIGEN domain |
+
+## 3. Patterns found
+
+| Pattern ID | Pattern | When to use | When not to use | Source anchor |
+
+## 4. Anti-patterns found
+
+| Anti-pattern ID | Bad design | Failure mode | Better design | Source anchor |
+
+## 5. Arbiter rules extracted
+
+| Arbiter ID | What it checks | Positive signal | Negative signal | Source anchor |
+
+## 6. Candidate training rows
+
+| Row ID | Dataset family | Domain | Status |
+
+## 7. Gaps / requires deeper source
+
+```
+
+Important rule:
+
+```text
+Every extracted claim must have a source anchor.
+```
+
+No “general knowledge” rows.
+
+---
+
+## Phase 3 — Create domain mapping document
+
+Create:
+
+```text
+03-OPEN-SOURCE-KNOWLEDGE-DOMAIN-MAP-v1.md
+```
+
+This document maps every public source to the 8 XIIGEN/LlmFromScratch domains.
+
+Structure:
+
+```markdown
+# Open Source Technology Knowledge Domain Map v1
+
+## Domain A — Topology & Orchestration
+
+Sources:
+- AWS Builders’ Library: retries, fallback, overload
+- Azure patterns: circuit breaker, queue-based load leveling, bulkhead
+- microservices.io: saga, choreography/orchestration
+
+Dataset row types:
+- topology decision rows
+- retry topology rows
+- saga orchestration rows
+- queue worker topology rows
+
+Arbiters:
+- retryAmplificationArbiter
+- dependencyIsolationArbiter
+- orchestrationVsChoreographyArbiter
+
+## Domain B — Routing & Selection
+
+Sources:
+...
+
+## Domain C — Semantic Translation
+
+Sources:
+...
+
+...
+```
+
+This document becomes the bridge between **external public technology knowledge** and the internal 8-domain architecture.
+
+Acceptance gate:
+
+```text
+Every sourceId from 01-SOURCE-REGISTRY must appear in at least one domain.
+No source may be mapped only vaguely as “general architecture.”
+```
+
+---
+
+## Phase 4 — Create rowized dataset candidates
+
+Create:
+
+```text
+04-ROWIZED-ARCHITECTURE-CHALLENGES-v1.json
+```
+
+This is the most important file.
+
+Every row should follow the dynamic-flow format:
+
+```json
+{
+  "rowId": "ARCH-RELIABILITY-RETRY-JITTER-001",
+  "sourceIds": ["AWS-BUILDERS-RETRY-BACKOFF-JITTER"],
+  "sourceTrustTier": 1,
+  "datasetFamily": "arbitrateResultI_with_resultsContext",
+  "domain": "E_ARBITER_QUALITY",
+  "subdomain": "distributed-failure-handling",
+  "architectureChallenge": "Generated service retries dependency calls immediately and indefinitely under load.",
+  "input": {
+    "a": "Generated service design includes remote dependency calls.",
+    "b": "Dependency may fail transiently or become overloaded.",
+    "c": "System must avoid retry amplification and correlated overload."
+  },
+  "function": "Judge retry policy under partial failure.",
+  "acceptedOutput": {
+    "decision": "Use bounded retries with timeout, capped exponential backoff, jitter, idempotency protection, and overload controls."
+  },
+  "rejectedOutput": {
+    "decision": "Retry immediately and indefinitely from every caller."
+  },
+  "arbiters": [
+    "retryAmplificationArbiter",
+    "timeoutPolicyArbiter",
+    "idempotencyArbiter",
+    "overloadProtectionArbiter"
+  ],
+  "whyAccepted": "Bounded and jittered retry behavior reduces synchronized retry storms and protects dependencies.",
+  "whyRejected": "Immediate unbounded retries can amplify overload and make partial failure worse.",
+  "sourceAnchors": [
+    {
+      "sourceId": "AWS-BUILDERS-RETRY-BACKOFF-JITTER",
+      "anchor": "section: Timeouts, retries, and backoff with jitter"
+    }
+  ],
+  "trainingStatus": "candidate"
+}
+```
+
+Mandatory row classes:
+
+```text
+pattern-selection
+anti-pattern-detection
+tradeoff-decision
+migration-decision
+arbiter-construction
+negative-example
+```
+
+Codex must not generate only positive rows. Each important source should produce both:
+
+```text
+acceptedOutput
+rejectedOutput
+whyAccepted
+whyRejected
+```
+
+---
+
+## Phase 5 — Create arbiter catalog
+
+Create:
+
+```text
+05-ARCHITECTURE-ARBITER-CATALOG-v1.json
+```
+
+Purpose:
+
+Turn public architecture knowledge into reusable XIIGEN arbiters.
+
+Example:
+
+```json
+{
+  "arbiterId": "transactionalOutboxArbiter",
+  "domain": "F_REGISTRY_STORAGE",
+  "sourceIds": [
+    "MICROSERVICES-TRANSACTIONAL-OUTBOX"
+  ],
+  "checks": [
+    "Does the design update business state and publish an event?",
+    "Is the message/event stored atomically with the business update?",
+    "Is there a separate relay or publisher process?",
+    "Are duplicate messages handled idempotently?"
+  ],
+  "positiveSignals": [
+    "business update and outbox insert in one transaction",
+    "event relay publishes after commit",
+    "consumer idempotency"
+  ],
+  "negativeSignals": [
+    "database update followed by direct broker publish without atomicity",
+    "no duplicate handling",
+    "event publish before state persistence"
+  ],
+  "datasetFamilies": [
+    "arbitrateResultI_with_resultsContext",
+    "machineCommand_to_machineActionItems"
+  ]
+}
+```
+
+Initial arbiter list:
+
+```text
+retryAmplificationArbiter
+timeoutPolicyArbiter
+idempotencyArbiter
+transactionalOutboxArbiter
+sagaCompensationArbiter
+databaseOwnershipArbiter
+eventSourcingFitArbiter
+cqrsFitArbiter
+circuitBreakerArbiter
+bulkheadIsolationArbiter
+queueLoadLevelingArbiter
+stranglerMigrationArbiter
+rollbackAvailabilityArbiter
+tenantIsolationArbiter
+accessControlArbiter
+secretManagementArbiter
+supplyChainProvenanceArbiter
+observabilityCoverageArbiter
+```
+
+---
+
+## Phase 6 — Create final document structure
+
+Create:
+
+```text
+06-FINAL-DOCUMENT-STRUCTURE-v1.md
+```
+
+This is the human-readable document that explains the dataset.
+
+Structure:
+
+```markdown
+# Architecture Challenge Learning Set v1
+
+## 1. Purpose
+
+This learning set teaches XIIGEN/LlmFromScratch to reason about advanced architecture challenges, not beginner framework usage.
+
+## 2. Source policy
+
+Official architecture, reliability, security, and production-engineering sources are used as evidence anchors. Sources are not copied wholesale.
+
+## 3. Trust tiers
+
+Tier 1:
+- official vendor architecture centers
+- security standards
+- public engineering libraries from major infrastructure providers
+
+Tier 2:
+- recognized architecture pattern catalogs
+- official reference architectures
+
+Tier 3:
+- scenario repositories and engineering blogs
+
+## 4. Mapping to XIIGEN domains
+
+| Domain | Source groups | Row types |
+
+## 5. Dataset families
+
+| Dataset family | Meaning | Example row IDs |
+
+## 6. Row classes
+
+| Row class | Purpose |
+
+## 7. Arbiter catalog
+
+| Arbiter | Source | What it rejects |
+
+## 8. Gaps
+
+| Missing area | Reason | Proposed source |
+
+## 9. Next extraction plan
+
+```
+
+This becomes the document you can give to future Codex/Claude sessions so they know exactly how to continue.
+
+---
+
+# Codex Task Prompt
+
+You can give Codex this exact instruction:
+
+```text
+You are continuing the XIIGEN / LlmFromScratch learning-set preparation work.
+
+Goal:
+Create a structured learning corpus from advanced public technology knowledge sources. Do not use beginner tutorials or simple code examples. Focus on architecture challenges, design patterns, failure modes, tradeoffs, security requirements, cloud reliability, distributed systems, CI/CD, containers, and stack-specific advanced architecture.
+
+First read:
+- DOMAIN-MAPPING-FINAL-v1.md
+- DOMAIN-EXAMINATION-PLAN-v1.md
+- DOMAIN-CODEX-RESEARCH-DATASET-CANDIDATES-v1.json
+- DOMAIN-CODEX-RESEARCH-ROWIZED-DRAFT-v1.json
+- DYNAMIC-FLOW-ARCHITECTURE-PLAN-v1_0-DRAFT.md
+- domain-A through domain-H markdown files
+
+Use the existing 8 domains and existing dataset families. Do not invent a new taxonomy.
+
+Create these artifacts:
+
+1. 00-CONTEXT-LOAD-REPORT.md
+2. 01-SOURCE-REGISTRY-ARCHITECTURE-CHALLENGES-v1.json
+3. 02-source-examinations/
+   - reliability-distributed-systems.md
+   - distributed-data-consistency.md
+   - cloud-design-patterns.md
+   - security-governance.md
+   - migration-versioning.md
+   - stack-advanced-patterns.md
+   - test-ci-observability.md
+4. 03-OPEN-SOURCE-KNOWLEDGE-DOMAIN-MAP-v1.md
+5. 04-ROWIZED-ARCHITECTURE-CHALLENGES-v1.json
+6. 05-ARCHITECTURE-ARBITER-CATALOG-v1.json
+7. 06-FINAL-DOCUMENT-STRUCTURE-v1.md
+
+Rules:
+- Use sources as evidence anchors, not as copied text.
+- Every dataset row must include sourceIds and sourceAnchors.
+- Every important pattern must include acceptedOutput and rejectedOutput.
+- Every row must map to one of the existing dynamic-flow dataset families.
+- Every row must map to one of the 8 XIIGEN/LlmFromScratch domains.
+- Do not include beginner tutorial material.
+- Prefer architecture challenge, pattern selection, anti-pattern detection, migration, rollback, reliability, and security rows.
+- Mark rows as candidate until exact source spans are attached.
+```
+
+---
+
+# First work order for Codex
+
+The first practical batch should be:
+
+```text
+Batch 1 — reliability + distributed data + security
+```
+
+Sources:
+
+```text
+AWS Builders’ Library
+Google SRE Book
+Azure Cloud Design Patterns
+microservices.io Saga / Outbox / Event Sourcing / Database per Service
+OWASP ASVS
+NIST SSDF
+CWE
+```
+
+Output target:
+
+```text
+Minimum 60 candidate rows:
+- 15 reliability rows
+- 15 distributed-data rows
+- 15 security/governance rows
+- 10 migration/versioning rows
+- 5 meta-arbiter rows
+```
+
+Acceptance gate:
+
+```text
+At least 70% of rows must include both acceptedOutput and rejectedOutput.
+At least 100% of rows must include sourceId, domain, datasetFamily, arbiter list.
+No row may be a beginner “how to use framework X” tutorial row.
+```
+
+This gives Codex a concrete continuation plan and a stable document structure for turning public architecture knowledge into training-ready learning sets.
+
+[1]: https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/?utm_source=chatgpt.com "Timeouts, retries and backoff with jitter"
+[2]: https://microservices.io/patterns/data/saga.html?utm_source=chatgpt.com "Pattern: Saga"
+[3]: https://microservices.io/patterns/data/transactional-outbox.html?utm_source=chatgpt.com "Pattern: Transactional outbox"
+[4]: https://microservices.io/patterns/data/database-per-service?utm_source=chatgpt.com "Pattern: Database per service"
+[5]: https://learn.microsoft.com/en-us/azure/architecture/patterns/?utm_source=chatgpt.com "Cloud Design Patterns - Azure Architecture Center"
+[6]: https://owasp.org/www-project-application-security-verification-standard/?utm_source=chatgpt.com "OWASP Application Security Verification Standard (ASVS)"
+

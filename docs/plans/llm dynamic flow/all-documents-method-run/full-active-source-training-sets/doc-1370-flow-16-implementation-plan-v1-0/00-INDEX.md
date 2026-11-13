@@ -1,0 +1,69 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\Missing gaps\FLOW-16-IMPLEMENTATION-PLAN-v1.0.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `Missing gaps\FLOW-16-IMPLEMENTATION-PLAN-v1.0.md`
+- Type: review and validation
+- Inventory type: not listed in attached MVP inventory
+- File size: 43429 bytes
+- Line count read for this round: 811
+- SHA256: A98523501EE537AFECCAA730C8FBF74C4DAE02F902AABFB619D903E87B7F53BC
+- First meaningful line: `the marketplace payments flow IMPLEMENTATION PLAN FOR CLAUDE CODE`
+- Last meaningful line: `same money-before-capacity principle in opposite directions forward vs compensation .`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- No exact duplicate was recorded in the manifest.
+
+Same-name files:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Missing gaps\FLOW-16-IMPLEMENTATION-PLAN-v1.0.md`
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Missing gaps\FLOW-16-IMPLEMENTATION-PLAN-v1.0.md`
+
+## Source Meaning Used For Training
+
+The marketplace payments flow IMPLEMENTATION PLAN FOR CLAUDE CODE
+
+## Domains This Document Teaches
+
+- review responsibility
+- rule coverage
+- conflict detection
+- impact explanation
+- reprocess instruction
+- approval boundary
+- the marketplace payments flow implementation plan for claude code
+- version 1 0 date 2026 04 13
+- covers marketplace payments a task type a task type
+- purpose why this plan exists
+- absolute gate applies before every stop
+- gate failures 0 count session start baseline
+- gate 0 typescript errors
+- design references read before every phase
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

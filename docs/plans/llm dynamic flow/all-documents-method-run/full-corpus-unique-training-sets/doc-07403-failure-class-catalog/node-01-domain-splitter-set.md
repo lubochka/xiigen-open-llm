@@ -1,0 +1,124 @@
+# Node-01 - Domain Splitter Set
+
+Runtime A is a human prompt. Runtime B is an array of domain labels.
+
+## Pair 1.1 - Runtime Split
+
+A: "Use this document to understand Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan and keep its main responsibilities visible."
+
+B: ["user intent","creation evidence","decision trail","version change"]
+
+Pair 1.1 - Rephrased
+
+A: "Apply this document to understand Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan and keep its main responsibilities visible."
+
+B: ["user intent","creation evidence","decision trail","version change"]
+
+## Pair 1.2 - Runtime Split
+
+A: "Explain how Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan should guide a human request without losing decisions, risks, or expected results."
+
+B: ["creation evidence","decision trail","resume state","validation note"]
+
+Pair 1.2 - Rephrased
+
+A: "Show how Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan should guide a human request without losing decisions, risks, or expected results."
+
+B: ["creation evidence","decision trail","resume state","validation note"]
+
+## Pair 1.3 - Runtime Split
+
+A: "Plan the work described by Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan as separated responsibilities that can move through the dynamic flow."
+
+B: ["decision trail","version change","open work","later use"]
+
+Pair 1.3 - Rephrased
+
+A: "Prepare the work described by Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan as separated responsibilities that can move through the dynamic flow."
+
+B: ["decision trail","version change","open work","later use"]
+
+## Pair 1.4 - Runtime Split
+
+A: "Find the review points, exceptions, and recovery needs in Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan."
+
+B: ["resume state","open work","failure class catalog — 23 real issues from xiigen skill migration plan","purpose"]
+
+Pair 1.4 - Rephrased
+
+A: "Identify the review points, exceptions, and recovery needs in Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan."
+
+B: ["resume state","open work","failure class catalog — 23 real issues from xiigen skill migration plan","purpose"]
+
+## Pair 1.5 - Runtime Split
+
+A: "Turn Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan into learning examples for the node pipeline."
+
+B: ["user intent","validation note","timeline: when each issue was found","issues by failure class"]
+
+Pair 1.5 - Rephrased
+
+A: "Translate Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan into learning examples for the node pipeline."
+
+B: ["user intent","validation note","timeline: when each issue was found","issues by failure class"]
+
+## Pair 1.6 - Runtime Split
+
+A: "Compare the source meaning of Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan with related versions or session evidence."
+
+B: ["user intent","failure class catalog — 23 real issues from xiigen skill migration plan","timeline: when each issue was found","flow check 1/flow check 6: wrong ground truth / stale numbers 6 issues"]
+
+Pair 1.6 - Rephrased
+
+A: "Contrast the source meaning of Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan with related versions or session evidence."
+
+B: ["user intent","failure class catalog — 23 real issues from xiigen skill migration plan","timeline: when each issue was found","flow check 1/flow check 6: wrong ground truth / stale numbers 6 issues"]
+
+## Pair 1.7 - Runtime Split
+
+A: "Prepare a user-facing answer from approved results about Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan."
+
+B: ["validation note","later use","issues by failure class","flow check 9: requirement ambiguity 2 issues"]
+
+Pair 1.7 - Rephrased
+
+A: "Prepare a user-facing answer from approved results about Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan."
+
+B: ["validation note","later use","issues by failure class","flow check 9: requirement ambiguity 2 issues"]
+
+## Pair 1.8 - Runtime Split
+
+A: "Check whether Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan has enough evidence to be trusted by a reviewer."
+
+B: ["resume state","open work","purpose","timeline: when each issue was found"]
+
+Pair 1.8 - Rephrased
+
+A: "Check whether Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan has enough evidence to be trusted by a reviewer."
+
+B: ["resume state","open work","purpose","timeline: when each issue was found"]
+
+## Pair 1.9 - Runtime Split
+
+A: "Show what would break if one responsibility in Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan were skipped."
+
+B: ["decision trail","version change","open work","failure class catalog — 23 real issues from xiigen skill migration plan"]
+
+Pair 1.9 - Rephrased
+
+A: "Show what would break if one responsibility in Failure Class Catalog — 23 Real Issues from XIIGen Skill Migration Plan were skipped."
+
+B: ["decision trail","version change","open work","failure class catalog — 23 real issues from xiigen skill migration plan"]
+
+## Pair 1.10 - Runtime Split
+
+A: "Build a simulation that proves the session and history evidence content can pass through all nine nodes."
+
+B: ["user intent","version change","validation note","issues by failure class"]
+
+Pair 1.10 - Rephrased
+
+A: "Build a simulation that proves the session and history evidence content can pass through all nine nodes."
+
+B: ["user intent","version change","validation note","issues by failure class"]
+

@@ -1,0 +1,58 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\Planning sessions\old\planning--screen-craft-audit-SKILL.md`
+
+- Relative path: `Planning sessions\old\planning--screen-craft-audit-SKILL.md`
+- Manifest category: undefined
+- Top folder: Planning sessions
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 9004 bytes
+- Line count read: 218
+- SHA256: 1AE44F53B90AB53A98F981CA58C86AF2E52BD6DBCC37E7DB6F8211D5446BACF4
+- First meaningful line: `the screen craft audit skill Screen Craft Audit — Four-layer review of captured Playwright PNGs`
+- Last meaningful line: `PNG gate: populated state for role using ?mock= state-key`
+
+## Related Versions And Duplicate Copies
+
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\skills_flat\planning--screen-craft-audit-SKILL.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\xiigen start session files\planning--screen-craft-audit-SKILL.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\xiigen start session files\xiigen-ext-skills-flat\planning--screen-craft-audit-SKILL.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\xiigen start session files\xiigen-ext-skills-flat\xiigen-ext-skills-flat\planning--screen-craft-audit-SKILL.md`
+
+## Source Meaning Used For Training
+
+the screen craft audit skill Screen Craft Audit — Four-layer review of captured Playwright PNGs
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- when to invoke
+- authoritative protocol reference
+- part 3 — decision tree: needs purpose built ui / needs error handling /
+- part 4 — build standard what a passing screen looks like
+- part 8 — what claude code must not do
+- companion documents
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

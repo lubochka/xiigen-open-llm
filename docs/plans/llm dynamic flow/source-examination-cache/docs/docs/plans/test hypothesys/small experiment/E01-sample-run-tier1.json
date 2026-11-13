@@ -1,0 +1,119 @@
+{
+  "meta": {
+    "experiment_id": "E01-AST-TOKENIZER-v1",
+    "experiment_name": "AST узлы Roslyn вместо BPE токенов",
+    "hypothesis": "Словарь AST (200 типов) вместо BPE (1000+) уменьшит ошибку предсказания и размер хранения",
+    "run_timestamp_utc": "2026-04-30T12:00:00Z",
+    "machine": {
+      "os": "описать свою платформу",
+      "cpu": "описать процессор",
+      "ram_total_mb": 16384,
+      "dotnet_version": "9.0"
+    }
+  },
+  "dataset": {
+    "tier": 1,
+    "tier_name": "micro — 01.Tokenizer + 02.DatasetPipeline + 05.Embeddings + 07.GraphEngine + 09.Inference + 10.LoRA",
+    "source": "llm_mvp_core (локальный проект)",
+    "files_count": 47,
+    "tokens_approx": 9100,
+    "size_bytes": 36600,
+    "subprojects_included": [
+      "01.Tokenizer", "02.DatasetPipeline", "05.Embeddings",
+      "07.GraphEngine", "09.Inference", "10.LoRA"
+    ]
+  },
+  "baseline": {
+    "name": "BPE-flat-tokens",
+    "description": "Стандартная BPE токенизация через BpeTokenizer из подпроекта 01. Словарь строится из символов кода.",
+    "metrics": {
+      "prediction_error": {
+        "metric_type": "ngram_hit_rate",
+        "absolute_error": 0.312,
+        "top1_accuracy": 0.688,
+        "top5_accuracy": 0.821,
+        "sample_size": 100
+      },
+      "time_ms": {
+        "total": 45,
+        "per_token_avg": 0.049,
+        "setup_ms": 12,
+        "inference_ms": 33
+      },
+      "memory_peak_mb": {
+        "peak": 87.4,
+        "baseline_process": 42.1,
+        "algorithm_only": 45.3
+      },
+      "cpu_avg_pct": {
+        "average": 23.1,
+        "peak": 41.2,
+        "cores_used": 1
+      },
+      "disk_write_bytes": {
+        "total_written": 49152,
+        "index_size": 47104,
+        "output_size": 2048
+      }
+    }
+  },
+  "improved": {
+    "name": "AST-roslyn-node-types",
+    "description": "CSharpSyntaxTree.ParseText → типы узлов как токены. Словарь: ~73 уникальных типа узлов вместо 347 BPE токенов.",
+    "change_applied": "Заменить BpeTokenizer.Encode() на обход SyntaxTree.GetRoot().DescendantNodes() с токеном = SyntaxKind.ToString()",
+    "metrics": {
+      "prediction_error": {
+        "metric_type": "ngram_hit_rate",
+        "absolute_error": 0.255,
+        "top1_accuracy": 0.745,
+        "top5_accuracy": 0.891,
+        "sample_size": 100
+      },
+      "time_ms": {
+        "total": 51,
+        "per_token_avg": 0.056,
+        "setup_ms": 18,
+        "inference_ms": 33
+      },
+      "memory_peak_mb": {
+        "peak": 68.2,
+        "baseline_process": 42.1,
+        "algorithm_only": 26.1
+      },
+      "cpu_avg_pct": {
+        "average": 21.4,
+        "peak": 38.7,
+        "cores_used": 1
+      },
+      "disk_write_bytes": {
+        "total_written": 15360,
+        "index_size": 13312,
+        "output_size": 2048
+      }
+    }
+  },
+  "delta": {
+    "prediction_error_pct": -18.27,
+    "time_ms_pct": 13.33,
+    "memory_peak_mb_pct": -22.0,
+    "cpu_avg_pct_pct": -7.4,
+    "disk_write_bytes_pct": -68.75,
+    "goal_met": false,
+    "_note": "время выросло на 13% — нужно кешировать AST разбор"
+  },
+  "verdict": {
+    "passed": false,
+    "summary": "4 из 5 метрик улучшились (ошибка -18%, память -22%, CPU -7%, диск -69%). Время выросло на 13% из-за Roslyn разбора. Цель +5% по всем не достигнута, но близко.",
+    "metrics_that_improved": [
+      "prediction_error (-18.3%)",
+      "memory_peak_mb (-22.0%)",
+      "cpu_avg_pct (-7.4%)",
+      "disk_write_bytes (-68.8%)"
+    ],
+    "metrics_that_regressed": [
+      "time_ms (+13.3%) — Roslyn разбор добавляет ~6мс на файл"
+    ],
+    "next_action": "TUNE_AND_RETRY",
+    "notes": "Добавить кеш AST: разобрать файлы один раз и сохранить дерево. Ожидаем что время сократится до +2-3%."
+  }
+}

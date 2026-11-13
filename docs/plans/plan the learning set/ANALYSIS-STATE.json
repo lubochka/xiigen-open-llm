@@ -1,0 +1,1369 @@
+{
+  "meta": {
+    "version": "1.0",
+    "goal": "Analyze all docs in docs.zip to build a Claude Code plan for: orchestrator model implementation + .NET dataset collection + training + testing",
+    "total_rounds": 116,
+    "total_files": 116,
+    "rule": "One file per round. No more than one plan of functionality OR one experiment group per round. Every file must be analyzed before the Claude Code plan is finalized.",
+    "output_target": "ORCHESTRATOR-TRAINING-CLAUDE-CODE-PLAN-v1.md",
+    "created": "2026-05-01"
+  },
+  "current_state": {
+    "last_completed_round": 15,
+    "rounds_remaining": 101,
+    "plan_sections_ready": [],
+    "plan_sections_blocked_on": [
+      "sections D/E/F need rounds 11, 12, 85-87, 92-94"
+    ],
+    "findings_so_far": "R1-R14 complete (R13 skipped). R15: SUBPROJECT-21-AGENT-INFRASTRUCTURE-PLAN-v1 — historical (21 already complete). ISessionStorage canonical definition confirmed: SaveAsync + LoadAsync + ListSessionsAsync. BaseService.cs, OperationResult.cs in 21.AgentInfrastructure/Core/. ConfigurationLoader reads AGENTS.md/CLAUDE.md as Layer 3 at runtime. BaseService constructor discrepancy: plan shows ILogger+IOperationContext, actual=ISessionStorage. No new plan sections affected — purely confirmatory round."
+  },
+  "rounds": [
+    {
+      "round": 1,
+      "group": "foundation",
+      "file": "EXPERIMENT-RESULTS-MAP.md",
+      "description": "Master results truth table — 59 runs, all statuses",
+      "status": "complete",
+      "analysis": {
+        "total_runs": 59,
+        "passed": 30,
+        "scale_up": 2,
+        "failed": 27,
+        "date": "2026-05-01",
+        "directly_relevant_to_goal": {
+          "orchestrator_model_15": [
+            "E32 +11% EpisodeDecomposer",
+            "E35 +30% DependencyDetector",
+            "E39 +20% QualityOrchestrator",
+            "E33 FAILED but algorithm sound — data was trivially solvable at Tier 2"
+          ],
+          "continuous_learning_14": [
+            "E40V2 +50% TrustScorer (StratifiedSplit fixed E40 seed-42 collapse)",
+            "E41 +100% IdleDetector",
+            "E43 +23% ReplayBuffer 70/30",
+            "E28-E31 FAILED — bigram cannot show gradient signal; real LoRA needed"
+          ],
+          "dataset_pipeline": [
+            "E40V2 confirms StratifiedSplit mandatory",
+            "E38V2 +100% SkillRetriever — 86% load reduction"
+          ],
+          "training": [
+            "E44 CRITICAL: max_weight = total/(classes*rare), NOT constant x10",
+            "E20 CRITICAL: StackDetector must run before normalization"
+          ]
+        },
+        "architectural_rules_for_plan": [
+          "E20: StackDetector first, before any normalization — non-negotiable in dataset pipeline",
+          "E44: max_weight formula = total_examples / (num_classes * rare_examples) — hardcode in DatasetWeighter",
+          "E40: StratifiedSplit required for every experiment with fixed seed",
+          "E34V2: BM25 + K-NN fusion confirmed as D-10 locked decision",
+          "E33: trivially-solvable synthetic data gives false PASSED — real data required for StopSignalDetector"
+        ],
+        "components_validated_for_production": [
+          "E01 AstTokenizer",
+          "E03 N-gram model",
+          "E04 BM25",
+          "E05 SyntaxFilter",
+          "E08 SyntaxRoles",
+          "E09 K-NN structural",
+          "E10 Regex prep",
+          "E11 Step speed",
+          "E12 Matrix opt",
+          "E15 SemanticTokenizer",
+          "E16 SynonymCollapse",
+          "E17 LogicPredicates",
+          "E18 PatternClassifier (95% domain accuracy)",
+          "E19 ComplexityRouter",
+          "E21 BoundaryDetect",
+          "E23 TemplateBeautifier (+833%)",
+          "E25/E26/E27 Translator suite",
+          "E32 EpisodeDecomposer",
+          "E34V2 HybridMatcher",
+          "E35 DependencyDetector",
+          "E38V2 SkillRetriever",
+          "E39 QualityOrchestrator",
+          "E40V2 TrustScorer",
+          "E41 IdleDetector",
+          "E43 ReplayBuffer",
+          "E49 OrchestratorExpander",
+          "E50 DomainGraphClosure"
+        ],
+        "known_failures_that_matter": {
+          "E22_DatasetRouter": "Only 3 languages at Tier 3 — will be relevant when adding TypeScript+Python datasets",
+          "E28_E31_ContinuousLearning": "Bigram cannot show gradient signal — E28 hypothesis (project adaptation improves accuracy) is UNPROVEN at experiment level; 14.ContinuousLearning is the real test",
+          "E33_StopSignalDetector": "Trivially solvable data gave 0% improvement — plan must use real corpus data, not synthetic",
+          "E44_DatasetWeighter": "x10 constant caused -98% — the formula fix is mandatory and must be tested before any training run"
+        }
+      },
+      "plan_impact": {
+        "section_A_pre_conditions": [
+          "Test baseline from build-state.json = 877 passing, 1 pre-existing failure",
+          "All 30 PASSED experiments are already promoted to production subprojects — no re-run needed",
+          "Pre-condition gate must verify: E20 rule enforced in dataset pipeline (StackDetector first)"
+        ],
+        "section_B_orchestrator": [
+          "E32/E35/E39 are the three validated experiments driving OrchestratorModel — plan v1.1 already uses all three",
+          "E33 is included with a ceiling note — its value is on real corpus data, not synthetic Tier 2"
+        ],
+        "section_C_continuous_learning": [
+          "E28-E31 FAILED at bigram level — 14.ContinuousLearning is the first real gradient test of the E28 hypothesis",
+          "E40V2/E41/E43 are the three experiments that survived — TrustScorer/IdleDetector/ReplayBuffer must use their validated configurations"
+        ],
+        "section_D_dataset_collection": [
+          "E20 rule is a HARD GATE in the collection pipeline: StackDetector on raw text before any normalization",
+          "E44 formula must be implemented exactly: max_weight = total/(classes*rare) — no approximations",
+          "E40V2 confirms: StratifiedSplit mandatory for all training splits — no seed-42"
+        ],
+        "section_E_training": [
+          "E28-E31 failure means the training hypothesis (project adaptation helps) is unproven — the training section must include a before/after accuracy measurement (E28-style) using real LoRA",
+          "E44 DatasetWeighter fix is a precondition — training cannot start without it"
+        ],
+        "section_F_integration": [
+          "E38V2 +100% SkillRetriever with 86% load reduction — integration test should verify this reduction holds on real .NET data"
+        ]
+      }
+    },
+    {
+      "round": 2,
+      "group": "foundation",
+      "file": "DECISIONS-LOCKED.md",
+      "description": "Locked architectural decisions D-01..D-12",
+      "status": "complete",
+      "analysis": {
+        "summary": "D-01..D-12 locked. D-11: no external ML."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 3,
+      "group": "foundation",
+      "file": "SUBPROJECT-MAP.md",
+      "description": "Subproject status map — what exists, what is planned",
+      "status": "complete",
+      "analysis": {
+        "summary": "STALE. build-state.json authoritative. 14/15/16/17 not built. Baseline=877."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 4,
+      "group": "foundation",
+      "file": "SESSION-START-PROMPT.md",
+      "description": "Session governance v1.0 — current state before adaptation",
+      "status": "complete",
+      "analysis": {
+        "summary": "v1.0. 4-step load correct. EXECUTOR. Missing RC/SF/cadence."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 5,
+      "group": "foundation",
+      "file": "HOW-TO-USE-SKILLS.md",
+      "description": "Skill activation rules — current state",
+      "status": "complete",
+      "analysis": {
+        "summary": "5 triggers absent from prompt. EXECUTOR→dev-safety+code-execution."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 6,
+      "group": "impl_plans",
+      "file": "plans/LLM-MVP-CORE-SUBPROJECTS-IMPLEMENTATION-PLAN-v1.md",
+      "description": "Master implementation plan v1",
+      "status": "complete",
+      "analysis": {
+        "summary": "Historical v1. All 12 done. Gate A/B/C. DPO format. HybridSearch k1=1.2 b=0.75 RRF k=60."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 7,
+      "group": "impl_plans",
+      "file": "plans/LLM-MVP-CORE-SUBPROJECTS-IMPLEMENTATION-PLAN-v2.md",
+      "description": "Master implementation plan v2",
+      "status": "complete",
+      "analysis": {
+        "summary": "v2: 9 rules + fabric. BaseService discrepancy. Pre-commit 8 items. DPO operationId."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 8,
+      "group": "orchestrator",
+      "file": "plans/ORCHESTRATOR-MODEL-SESSION-PLAN-v1.0.md",
+      "description": "OrchestratorModel plan v1.0 — has FC failures",
+      "status": "complete",
+      "analysis": {
+        "summary": "v1.0 — 5 FC failures. +3+5+3+3+2=16. Gate B: OrchestratorModel_DeployTask_ArchFirst."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 9,
+      "group": "orchestrator",
+      "file": "plans/ORCHESTRATOR-MODEL-SESSION-PLAN-v1.1.md",
+      "description": "OrchestratorModel plan v1.1 — all FC failures closed",
+      "status": "complete",
+      "analysis": {
+        "summary": "EXECUTION-READY. ISemanticCompiler: Compile(PipelineInput)→OperationResult<PipelineOutput>. 3 new files. Pre-condition: 6 checks. +17=894."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 10,
+      "group": "continuous_learning",
+      "file": "plans/CONTINUOUS-LEARNING-SESSION-PLAN-v1_0.md",
+      "description": "ContinuousLearning plan v1.0 — original",
+      "status": "complete",
+      "analysis": {
+        "summary": "8 components / 5 phases. +3+6+5+4+4=22→899. IContinuousLearningPipeline. REJECTED→DpoPair(chosen=\"[no preferred response]\"). LoRA rank=8 alpha=16. Gate B D-09: ComputeMaxWeight(1000,5,50)==4.0."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 11,
+      "group": "continuous_learning",
+      "file": "plans/CONTINUOUS-LEARNING-SESSION-PLAN-v1_1.md",
+      "description": "ContinuousLearning plan v1.1 — final, FC-reviewed",
+      "status": "complete",
+      "analysis": {
+        "summary": "EXECUTION-READY. IContinuousLearningPipeline→Fabric/Interfaces.cs Phase 1. Pre-condition: 7 checks (check 0=find actual .csproj)."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 12,
+      "group": "data",
+      "file": "plans/DATASET-COLLECTION-PLAN-DOTNET-v1_0.md",
+      "description": "Dataset collection plan — .NET sources, trust tiers, pipeline",
+      "status": "complete",
+      "analysis": {
+        "summary": "3 tiers, 6 pipeline steps, 4 quality gates. Step 5 calls FeedbackRouter.ComputeMaxWeight (D-09). Min 1400 total/500 CODE_Q. 3 new gaps."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 13,
+      "group": "data",
+      "file": "plans/LLM-MVP-CORE-LANGUAGE-PORTABILITY-PLAN-v1_0.md",
+      "description": "Language portability plan — how to move from .NET to other languages",
+      "status": "skipped",
+      "analysis": {
+        "summary": "SKIPPED per user instruction."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 14,
+      "group": "session_governance",
+      "file": "plans/SESSION-PROMPT-SKILLS-ADAPTATION-PLAN-v1.0.md",
+      "description": "Session prompt adaptation from XIIGEN to LlmFromScratch",
+      "status": "complete",
+      "analysis": {
+        "summary": "Closes 4 gaps: session governance, activation triggers, experiment-design-SKILL, BaseService discrepancy (governance). SESSION-START-PROMPT v2.0 + HOW-TO-USE-SKILLS v2.0 + FC-1..FC-12."
+      },
+      "plan_impact": {}
+    },
+    {
+      "round": 15,
+      "group": "agent_subprojects",
+      "file": "plans/SUBPROJECT-21-AGENT-INFRASTRUCTURE-PLAN-v1.md",
+      "description": "AgentInfrastructure subproject plan",
+      "status": "complete",
+      "analysis": {
+        "version": "v1.0",
+        "total_lines": 452,
+        "build_status": "COMPLETE per build-state.json — this is a historical plan document",
+        "project_scope": "21.AgentInfrastructure (class library) + 21.AgentInfrastructure.Desktop (Windows Forms host)",
+        "external_packages": {
+          "Microsoft.Data.Sqlite": "MIT license — session persistence in SQLite (Phase 7)",
+          "Microsoft.CodeAnalysis.CSharp": "MIT license — Roslyn for code indexing (Phase 2)",
+          "note": "Both are MIT. No ML frameworks (D-11 compliant). Windows Forms is built-in (.NET 8) — no additional package."
+        },
+        "seven_stages_mapping": {
+          "Stage_01": {
+            "component": "ConfigurationLoader",
+            "file": "Config/ConfigurationLoader.cs",
+            "phase": 0
+          },
+          "Stage_02": {
+            "component": "CodebaseIndexer + SymbolGraphBuilder",
+            "file": "Indexing/",
+            "phase": 2
+          },
+          "Stage_03": {
+            "component": "ContextAssembler + TokenCounter",
+            "file": "Context/",
+            "phase": 3
+          },
+          "Stage_04": {
+            "component": "AgentLoop + AgentState",
+            "file": "Loop/",
+            "phase": 4
+          },
+          "Stage_05": {
+            "component": "ToolRegistry + PermissionGate + 4 tools",
+            "file": "Tools/",
+            "phase": 5
+          },
+          "Stage_06": {
+            "component": "FileChangeApplier + DiffGenerator",
+            "file": "Editing/",
+            "phase": 6
+          },
+          "Stage_07": {
+            "component": "SessionStateStore",
+            "file": "State/",
+            "phase": 7
+          }
+        },
+        "fabric_interfaces_defined": {
+          "ILlmClient": "SendAsync(List<ConversationMessage>, List<ToolDefinition>, CancellationToken) → Task<OperationResult<LlmResponse>>",
+          "ISessionStorage": "SaveAsync(sessionId, AgentState) + LoadAsync(sessionId) + ListSessionsAsync() — all return OperationResult<T>",
+          "IConfigurationProvider": "ReadJsonAsync + ReadTextAsync",
+          "ICodeReader": "reads source files from disk",
+          "note": "ISessionStorage is the interface that OrchestratorModel and ContinuousLearning both extend BaseService with. This is the canonical definition."
+        },
+        "baseservice_constructor_confirmed": {
+          "from_phase_1": "ConfigurationLoader(IConfigurationProvider provider, ILogger logger, IOperationContext context) : base(logger, context)",
+          "note": "CRITICAL DISCREPANCY: Phase 1 shows BaseService(ILogger logger, IOperationContext context) — this is the v2.0 plan definition, NOT the actual implementation. The actual codebase uses BaseService(ISessionStorage) as confirmed by OrchestratorModel v1.1 FC-12 fix. This plan was written before the actual implementation existed.",
+          "resolution": "build-state.json shows 21.AgentInfrastructure is complete — grep actual signature before trusting this plan"
+        },
+        "key_components_detail": {
+          "ISessionStorage": {
+            "note": "THIS is the canonical ISessionStorage that all other subprojects inherit through BaseService. OrchestratorModel uses NullSessionStorage.Instance for tests. ContinuousLearning also uses ISessionStorage via BaseService.",
+            "methods": [
+              "SaveAsync(sessionId, AgentState)",
+              "LoadAsync(sessionId)",
+              "ListSessionsAsync()"
+            ]
+          },
+          "AgentLoop": {
+            "pattern": "ReAct: reason → act → observe → repeat",
+            "loop_steps": [
+              "Send state + tools to LLM",
+              "Text response → append history, continue",
+              "Tool call → check permissions, execute, append result, continue",
+              "Task complete → return result",
+              "Token overflow → summarize old history, trim, continue",
+              "Max iterations → return partial result"
+            ],
+            "termination": "task_complete signal OR max_iterations exceeded"
+          },
+          "ContextAssembler": {
+            "strategy": "(1) Semantic search in IVectorStorage (sub-06) top K chunks; (2) Graph traversal in IGraphStorage (sub-07) for neighbors; (3) Rank by PageRank descending; (4) Cut at token budget",
+            "depends_on": [
+              "06.VectorSearch (IVectorStorage)",
+              "07.GraphEngine (IGraphStorage)"
+            ]
+          },
+          "PermissionGate": {
+            "auto_approved": "read-only tools (read_file, list_directory, search)",
+            "requires_approval": "write tools (edit_file) — shows PermissionDialog in desktop host",
+            "always_denied": "destructive tools (delete, arbitrary shell) unless explicitly unlocked"
+          },
+          "SessionStateStore": {
+            "storage": "SQLite via Microsoft.Data.Sqlite — two tables: sessions + messages",
+            "no_orm": "plain SQL with parameterized queries only"
+          }
+        },
+        "phases_timeline": {
+          "Phase_0": "1 day — fabric interfaces only",
+          "Phase_1": "1 day — ConfigurationLoader (3-layer merge: global → project → AGENTS.md/CLAUDE.md)",
+          "Phase_2": "2 days — CodebaseIndexer + Roslyn + PageRank",
+          "Phase_3": "1.5 days — ContextAssembler + TokenCounter (1 token ≈ 0.75 words)",
+          "Phase_4": "2 days — AgentLoop + AgentState (ReAct pattern)",
+          "Phase_5": "1.5 days — ToolRegistry + PermissionGate + 4 tools",
+          "Phase_6": "1 day — FileChangeApplier (exact search-and-replace; fails on 0 or 2+ matches)",
+          "Phase_7": "1 day — SessionStateStore (SQLite)",
+          "Phase_8": "1.5 days — Windows Forms host (no business logic in Forms)",
+          "total": "13 days"
+        },
+        "relevance_to_current_plan": {
+          "already_complete": "21.AgentInfrastructure is complete per build-state.json. This plan is historical — no execution needed.",
+          "interfaces_available": "ISessionStorage, ILlmClient, IConfigurationProvider, ICodeReader are all in 21.AgentInfrastructure and available for injection.",
+          "baseservice_is_here": "BaseService.cs, OperationResult.cs, StandardEvent.cs are in 21.AgentInfrastructure/Core/ — this is the canonical location.",
+          "configloader_reads_agents_md": "ConfigurationLoader Layer 3 reads AGENTS.md and CLAUDE.md as systemInstructions — this is how the agent infrastructure picks up the project rules at runtime.",
+          "no_action_needed": "This plan does not add to sections B, C, D, E, F. It confirms interface availability (already recorded in round 3).",
+          "one_new_finding": "Phase 2 uses IGraphStorage from sub-project 07 and IVectorStorage from sub-project 06. Context assembly for 15.OrchestratorModel EpisodeClassifier uses the same two interfaces. This confirms the dependency chain is consistent."
+        },
+        "fc_discrepancy_note": "Plan Review Checks section at line 432 passes all 4 checks (Goal delivery, auth check, count accuracy, fabric-first). BaseService constructor discrepancy is NOT caught here because this plan was written before the actual codebase determined the correct constructor."
+      },
+      "plan_impact": {
+        "section_B_orchestrator": [
+          "ISessionStorage interface definition confirmed: SaveAsync + LoadAsync + ListSessionsAsync — all OperationResult<T>. This is what OrchestratorModel uses via BaseService.",
+          "ContextAssembler dependency chain confirmed: IVectorStorage (sub-06) + IGraphStorage (sub-07). EpisodeDecomposer in OrchestratorModel uses same dependency path.",
+          "No changes needed to plan v1.1 — all interfaces confirmed available."
+        ],
+        "section_C_continuous_learning": [
+          "ISessionStorage definition confirmed — same interface ContinuousLearning services extend BaseService with.",
+          "No changes needed to plan v1.1."
+        ],
+        "general": [
+          "BaseService constructor discrepancy still live: plan v1.0 shows BaseService(ILogger, IOperationContext). Actual codebase confirmed as BaseService(ISessionStorage). FC-2+FC-10+FC-12 from adaptation plan (R14) will catch this in any future plan author.",
+          "ConfigurationLoader reads AGENTS.md/CLAUDE.md as Layer 3 — means the runtime agent infrastructure inherits project rules automatically. Relevant for 16.AutonomousLearning agent loop design.",
+          "Historical document only — 21.AgentInfrastructure is complete. No execution required."
+        ]
+      }
+    },
+    {
+      "round": 16,
+      "group": "agent_subprojects",
+      "file": "plans/SUBPROJECT-22-AGENT-ALGORITHMS-PLAN-v1.md",
+      "description": "AgentAlgorithms subproject plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 17,
+      "group": "agent_subprojects",
+      "file": "plans/SUBPROJECT-23-OSS-EQUIVALENTS-PLAN-v1.md",
+      "description": "OssEquivalents subproject plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 18,
+      "group": "semantic_compiler",
+      "file": "plans/SEMANTIC-COMPILER-SESSION-PLAN-v1_0.md",
+      "description": "SemanticCompiler execution plan — subproject 29",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 19,
+      "group": "ml_infra",
+      "file": "plans/SEMANTIC-NLP-SUBPROJECTS-PLAN-v1.md",
+      "description": "SemanticNLP plan (subprojects 28-32)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 20,
+      "group": "ml_infra",
+      "file": "plans/MATRIX-ALGORITHMS-SUBPROJECTS-28-30-PLAN-v1.md",
+      "description": "MatrixAlgorithms subproject plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 21,
+      "group": "ml_infra",
+      "file": "plans/COMPRESSION-ALGORITHMS-SUBPROJECTS-PLAN-v1.md",
+      "description": "Compression algorithms plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 22,
+      "group": "ml_infra",
+      "file": "plans/COMPRESSION-SUBPROJECTS-24-27-IMPLEMENTATION-PLAN-v1.md",
+      "description": "Compression implementation plan (subprojects 24-27)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 23,
+      "group": "ml_infra",
+      "file": "plans/ML-ALGORITHMS-SUBPROJECTS-IMPLEMENTATION-PLAN-v1.md",
+      "description": "ML algorithms implementation plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 24,
+      "group": "early_plans",
+      "file": "plans/tensorcore-dotnet-plan.md",
+      "description": "TensorCore original plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 25,
+      "group": "early_plans",
+      "file": "plans/searchengine-dotnet-plan.md",
+      "description": "SearchEngine original plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 26,
+      "group": "early_plans",
+      "file": "plans/codeoptimizer-dotnet-plan.md",
+      "description": "CodeOptimizer original plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 27,
+      "group": "early_plans",
+      "file": "plans/llm-graphrag-dotnet-plan.md",
+      "description": "GraphRAG original plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 28,
+      "group": "early_plans",
+      "file": "plans/llm-graphrag-dotnet-plan v2.md",
+      "description": "GraphRAG plan v2",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 29,
+      "group": "skills",
+      "file": "skills/experiment-design-SKILL.md",
+      "description": "Experiment design skill — D-07/D-08/D-09 rules critical for training",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 30,
+      "group": "skills",
+      "file": "skills/plan-review-SKILL.md",
+      "description": "Plan review skill — FC-1..FC-12",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 31,
+      "group": "skills",
+      "file": "skills/code-execution-SKILL.md",
+      "description": "Code execution skill — Gate B format, BaseService, tier system",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 32,
+      "group": "skills",
+      "file": "skills/dev-safety-SKILL.md",
+      "description": "Dev safety skill — commit discipline, build gate",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 33,
+      "group": "skills",
+      "file": "skills/mental-debug-SKILL.md",
+      "description": "Mental debug skill — systematic failure diagnosis",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 34,
+      "group": "skills",
+      "file": "skills/no-product-decisions-SKILL.md",
+      "description": "No product decisions skill — when to stop vs proceed autonomously",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 35,
+      "group": "research_hypothesis",
+      "file": "plans/test hypothesys/RESEARCH-01-SEMANTIC-TRAINING-PLAN-v1.md",
+      "description": "Research 01 — semantic training original hypothesis",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 36,
+      "group": "research_hypothesis",
+      "file": "plans/test hypothesys/RESEARCH-02-THREE-TRACKS-PLAN-v1.md",
+      "description": "Research 02 — three tracks plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 37,
+      "group": "research_hypothesis",
+      "file": "plans/test hypothesys/RESEARCH-03-T9-TRAINING-ANALYSIS-v1.md",
+      "description": "Research 03 — T9 training analysis",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 38,
+      "group": "research_hypothesis",
+      "file": "plans/test hypothesys/THREE-SPECIALIZED-PIPELINES-PLAN-v1.md",
+      "description": "Three specialized pipelines plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 39,
+      "group": "research_hypothesis",
+      "file": "plans/test hypothesys/ACCELERATED-LLM-TRAINING-EXPERIMENT-PLAN-v1.md",
+      "description": "Accelerated LLM training experiment plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 40,
+      "group": "research_hypothesis",
+      "file": "plans/test hypothesys/ASTROCYTE-ANALOG-EXPERIMENT-PLAN-X03-v1.md",
+      "description": "Astrocyte analog experiment X03",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 41,
+      "group": "research_hypothesis",
+      "file": "plans/test hypothesys/PROGRESSIVE-TRAINING-CURRICULUM-PLAN-X04-v1.md",
+      "description": "Progressive training curriculum X04",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 42,
+      "group": "research_hypothesis",
+      "file": "plans/test hypothesys/CODE-COMPLETION-ALGORITHMS-PLAN-v1.md",
+      "description": "Code completion algorithms plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 43,
+      "group": "experiment_framework",
+      "file": "plans/test hypothesys/EXPERIMENT-HARNESS-v2-MARKOV-PROXY.md",
+      "description": "Experiment harness v2 — Markov proxy",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 44,
+      "group": "experiment_framework",
+      "file": "plans/test hypothesys/small experiment/MICRO-EXPERIMENT-FRAMEWORK-v1.md",
+      "description": "Micro-experiment framework — tier system, escalation rules",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 45,
+      "group": "experiment_framework",
+      "file": "plans/test hypothesys/small experiment/RESEARCH-04-UNIFIED-PREDICTION-FRAMEWORK-v1.md",
+      "description": "Research 04 — unified prediction framework",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 46,
+      "group": "experiment_framework",
+      "file": "plans/test hypothesys/small experiment/V1/EXPERIMENT-INDEX.md",
+      "description": "Experiment index — E01..E50 canonical index with status",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 47,
+      "group": "experiment_framework",
+      "file": "plans/test hypothesys/small experiment/progress-sample.md",
+      "description": "Progress sample — output format for experiment runs",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 48,
+      "group": "v2_infra",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/35-EXPERIMENTS-V2-INFRASTRUCTURE-PLAN-v1.md",
+      "description": "ExperimentsV2 infrastructure plan v1",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 49,
+      "group": "v2_infra",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/plans/35-EXPERIMENTS-V2-INFRASTRUCTURE-PLAN-v1.1.md",
+      "description": "ExperimentsV2 infrastructure plan v1.1",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 50,
+      "group": "v2_infra",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/RUNALL-AUTO-ESCALATION-FIX-PLAN-v1.0.md",
+      "description": "RunAll auto-escalation fix plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 51,
+      "group": "exp_E01_E06_v1",
+      "file": "plans/test hypothesys/small experiment/V1/E01-semantic-families.md",
+      "description": "E01 semantic families — V1 original plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 52,
+      "group": "exp_E01_E06_v1",
+      "file": "plans/test hypothesys/small experiment/V1/E02-shannon-compression.md",
+      "description": "E02 Shannon compression — V1 original",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 53,
+      "group": "exp_E01_E06_v1",
+      "file": "plans/test hypothesys/small experiment/V1/E03-sparse-window.md",
+      "description": "E03 sparse window — V1 original",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 54,
+      "group": "exp_E01_E06_v1",
+      "file": "plans/test hypothesys/small experiment/V1/E04-pmi-init.md",
+      "description": "E04 PMI init — V1 original",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 55,
+      "group": "exp_E01_E06_v1",
+      "file": "plans/test hypothesys/small experiment/V1/E05-hierarchical-prediction.md",
+      "description": "E05 hierarchical prediction — V1 original",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 56,
+      "group": "exp_E01_E06_v1",
+      "file": "plans/test hypothesys/small experiment/V1/E06-ast-roslyn.md",
+      "description": "E06 AST Roslyn — V1 original",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 57,
+      "group": "exp_E01_E06_v2",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/plans/E01/EXPERIMENT-E01-AST-TOKENIZER-PLAN-v1.md",
+      "description": "E01 AstTokenizer — V2 detailed plan (PASSED +93%)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 58,
+      "group": "exp_E01_E06_v2",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/plans/E02/EXPERIMENT-E02-FREQUENCY-RANKING-PLAN-v1.md",
+      "description": "E02 Frequency ranking — V2 detailed",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 59,
+      "group": "exp_E01_E06_v2",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/plans/E03/EXPERIMENT-E03-NGRAM-MODEL-PLAN-v1.md",
+      "description": "E03 N-gram model — V2 detailed (PASSED +64%)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 60,
+      "group": "exp_E01_E06_v2",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/plans/E04/EXPERIMENT-E04-BM25-CONTEXT-PLAN-v1.md",
+      "description": "E04 BM25 context — V2 detailed (PASSED +100%)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 61,
+      "group": "exp_E01_E06_v2",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/plans/E05/EXPERIMENT-E05-SYNTAX-FILTER-PLAN-v1.md",
+      "description": "E05 Syntax filter — V2 detailed (PASSED +30%)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 62,
+      "group": "exp_E01_E06_v2",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/plans/E06/EXPERIMENT-E06-PAGERANK-PLAN-v1.md",
+      "description": "E06 PageRank — V2 detailed (FAILED -22%)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 63,
+      "group": "exp_E07",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/plans/#U041507/EXPERIMENT-E07-STRUCTURAL-CONTEXT-TOKEN-PLAN-v1.md",
+      "description": "E07 structural context token — V2 (FAILED -13%)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 64,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V1/extracted_plans/E08-TEXT-SYNTAX-PLAN-v1.0.md",
+      "description": "E08 text syntax — V1 original plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 65,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V1/extracted_plans/E09-STRUCTURAL-KNN-PLAN-v1.0.md",
+      "description": "E09 structural KNN — V1 original",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 66,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V1/extracted_plans/E10-REGEX-PREPROCESSING-PLAN-v1.0.md",
+      "description": "E10 regex preprocessing — V1 original",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 67,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V1/extracted_plans/E11-STEP-TIME-MEASUREMENT-PLAN-v1.0.md",
+      "description": "E11 step time measurement — V1 original",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 68,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V1/extracted_plans/E12-MATRIX-OPTIMIZATION-PLAN-v1.0.md",
+      "description": "E12 matrix optimization — V1 original",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 69,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E08-NON-CODE-SYNTAX-DETAILED-PLAN-v2.0.md",
+      "description": "E08 non-code syntax — V2 updated plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 70,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/detailed/E08-TEXT-SYNTAX-DETAILED-PLAN-v1.0.md",
+      "description": "E08 text syntax — V2 detailed",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 71,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/detailed/E09-STRUCTURAL-KNN-DETAILED-PLAN-v1.0.md",
+      "description": "E09 structural KNN — V2 detailed",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 72,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/detailed/E10-REGEX-PREP-DETAILED-PLAN-v1.0.md",
+      "description": "E10 regex — V2 detailed",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 73,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/detailed/E11-STEP-TIME-DETAILED-PLAN-v1.0.md",
+      "description": "E11 step time — V2 detailed",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 74,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/detailed/E12-MATRIX-OPT-DETAILED-PLAN-v1.0.md",
+      "description": "E12 matrix optimization — V2 detailed",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 75,
+      "group": "exp_E08_E12",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E09-ROLE-PATCH-PLAN-v1.0.md",
+      "description": "E09 role patch fix plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 76,
+      "group": "exp_fixes_early",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E04-E06-E07-FIX-PLAN-v1.0.md",
+      "description": "E04/E06/E07 fix plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 77,
+      "group": "exp_fixes_early",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E07-RUNALL-E05-GRAMMAR-FIX-PLAN-v2.0.md",
+      "description": "E07 runall + E05 grammar fix",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 78,
+      "group": "exp_fixes_early",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E02-E03-SCALEUP-SIGNAL-FIX-PLAN-v1.0.md",
+      "description": "E02/E03 scale-up signal fix",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 79,
+      "group": "exp_fixes_early",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/PROMOTION-PLAN-E01-E02-E03-E05-v1.0.md",
+      "description": "E01/E02/E03/E05 promotion to production plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 80,
+      "group": "exp_E15_E17",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E15-E16-E17-SEMANTIC-COMPILER-PLANS-v1.0.md",
+      "description": "E15/E16/E17 SemanticCompiler experiment plans — all PASSED",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 81,
+      "group": "exp_E18_E20",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E18-E19-E20-ROUTER-DIMENSIONS-PLANS-v1.0.md",
+      "description": "E18/E19/E20 router dimension plans — E18/E19 PASSED, E20 SCALE_UP",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 82,
+      "group": "exp_E21_E24",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E21-E22-E23-ROUTING-PLANS-v1.0.md",
+      "description": "E21/E22/E23 routing plans — E21 PASSED, E22 FAILED, E23 PASSED",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 83,
+      "group": "exp_E21_E24",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E24-ATTRIBUTED-ROUTER-DETAILED-PLAN-v1.0.md",
+      "description": "E24 attributed router — detailed plan (FAILED -37%)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 84,
+      "group": "exp_E25_E27",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E25-E26-E27-TRANSLATOR-PLANS-v1.0.md",
+      "description": "E25/E26/E27 translator plans — all PASSED (+155%/+150%/+250%)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 85,
+      "group": "exp_E28_E31",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E28-E31-CONTINUOUS-LEARNING-PLANS-v1.0.md",
+      "description": "E28-E31 continuous learning experiments — all FAILED (bigram cannot show gradient signal)",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 86,
+      "group": "exp_E28_E31",
+      "file": "plans/test hypothesys/small experiment/V1/E28V2-E31V2-E44V2-E45V2-PROBE-NEURAL-NETWORK-PLANS-v1_0.md",
+      "description": "E28V2..E45V2 ProbeNeuralNetwork plans v1.0",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 87,
+      "group": "exp_E28_E31",
+      "file": "plans/test hypothesys/small experiment/V1/E28V2-E31V2-E44V2-E45V2-PROBE-NEURAL-NETWORK-PLANS-v1_1.md",
+      "description": "E28V2..E45V2 ProbeNeuralNetwork plans v1.1 — final",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 88,
+      "group": "exp_E28_E31",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E28-E31-E40-E45-V2-FIX-PLANS-v1.0.md",
+      "description": "E28-E31/E40-E45 V2 fix plans — what changed between runs",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 89,
+      "group": "exp_E32_E37",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E32-E37-ORCHESTRATOR-PLANS-v1.0.md",
+      "description": "E32-E37 OrchestratorModel experiment plans — E32/E35 PASSED, E33/E36/E37 FAILED",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 90,
+      "group": "exp_E38_E39",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E34V2-E38V2-FIX-PLANS-v1.0.md",
+      "description": "E34V2/E38V2 fix plans — diagnosis of original failures",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 91,
+      "group": "exp_E38_E39",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E38-E39-SKILL-RETRIEVER-QUALITY-PLANS-v1.0.md",
+      "description": "E38/E39 SkillRetriever + QualityOrchestrator — E38V2 PASSED +100%, E39 PASSED +20%",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 92,
+      "group": "exp_E40_E45",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E40-E45-AUTONOMOUS-LEARNING-PLANS-v1.0.md",
+      "description": "E40-E45 autonomous learning experiments — E40V2/E41/E43 PASSED, rest FAILED",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 93,
+      "group": "exp_E40_E45",
+      "file": "plans/test hypothesys/small experiment/V1/E40V2-E42V2-E32CHECK-E33CHECK-DATA-FIXES-PLANS-v1_0.md",
+      "description": "E40V2/E42V2/E32check/E33check data fixes v1.0",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 94,
+      "group": "exp_E40_E45",
+      "file": "plans/test hypothesys/small experiment/V1/E40V2-E42V2-E32CHECK-E33CHECK-DATA-FIXES-PLANS-v1_1.md",
+      "description": "E40V2/E42V2 data fixes v1.1 — final versions",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 95,
+      "group": "exp_E46_E50",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/E46-E50-DYNAMIC-DOMAINS-PLANS-v1.0.md",
+      "description": "E46-E50 dynamic domains V2 — E49/E50 PASSED, E46/E47/E48 FAILED",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 96,
+      "group": "exp_E46_E50",
+      "file": "plans/test hypothesys/small experiment/V1/E46-E50-DYNAMIC-DOMAINS-PLANS-v1_0.md",
+      "description": "E46-E50 dynamic domains V1 variant",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 97,
+      "group": "exp_E46_E50",
+      "file": "plans/test hypothesys/small experiment/V1/E46-E50-DYNAMIC-DOMAINS-PLANS-v1_1.md",
+      "description": "E46-E50 dynamic domains V1 v1.1",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 98,
+      "group": "agent_enhancement",
+      "file": "plans/test hypothesys/small experiment/V1/AGENT-ALGORITHMS-ENHANCEMENT-PLAN-v1.md",
+      "description": "AgentAlgorithms enhancement plan v1 — early version",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 99,
+      "group": "agent_enhancement",
+      "file": "plans/test hypothesys/small experiment/V1/AGENT-ALGORITHMS-ENHANCEMENT-PLAN-v4.md",
+      "description": "AgentAlgorithms enhancement plan v4",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 100,
+      "group": "agent_enhancement",
+      "file": "plans/test hypothesys/small experiment/V1/AGENT-ALGORITHMS-ENHANCEMENT-PLAN-v5_0.md",
+      "description": "AgentAlgorithms enhancement plan v5.0 — final",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 101,
+      "group": "agent_enhancement",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/AGENT-ALGORITHMS-ENHANCEMENT-SESSION-PLAN-v1.0.md",
+      "description": "AgentAlgorithms enhancement session plan — Claude Code format",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 102,
+      "group": "agent_enhancement",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/PROJECTS-21-23-IMPROVEMENT-SESSION-PLAN-v1.0.md",
+      "description": "Projects 21-23 improvement session plan — Claude Code format",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 103,
+      "group": "infra_fixes",
+      "file": "plans/test hypothesys/small experiment/V1/34-EXPERIMENTS-INFRASTRUCTURE-PLAN-v1.md",
+      "description": "34.Experiments infrastructure plan — original setup",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 104,
+      "group": "infra_fixes",
+      "file": "plans/test hypothesys/small experiment/V1/34-EXPERIMENTS-NEW-E07-E11-PLAN-v1.md",
+      "description": "34.Experiments new E07-E11 plan",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 105,
+      "group": "infra_fixes",
+      "file": "plans/test hypothesys/small experiment/V1/34-EXPERIMENTS-SCALE0-FIXES-PLAN-v2.md",
+      "description": "Scale-0 fixes v2 — first iteration",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 106,
+      "group": "infra_fixes",
+      "file": "plans/test hypothesys/small experiment/V1/34-EXPERIMENTS-SCALE0-FIXES-PLAN-v3.md",
+      "description": "Scale-0 fixes v3",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 107,
+      "group": "infra_fixes",
+      "file": "plans/test hypothesys/small experiment/V1/34-EXPERIMENTS-SCALE0-FIXES-PLAN-v4.md",
+      "description": "Scale-0 fixes v4",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 108,
+      "group": "infra_fixes",
+      "file": "plans/test hypothesys/small experiment/V1/34-EXPERIMENTS-SCALE0-FIXES-PLAN-v5.md",
+      "description": "Scale-0 fixes v5",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 109,
+      "group": "infra_fixes",
+      "file": "plans/test hypothesys/small experiment/V1/34-EXPERIMENTS-SCALE0-FIXES-PLAN-v6.md",
+      "description": "Scale-0 fixes v6 — final iteration",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 110,
+      "group": "misc_v2",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/CODE-EDITING-TEST-PLAN-v1.0.md",
+      "description": "Code editing test plan — integration testing",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 111,
+      "group": "misc_v2",
+      "file": "plans/test hypothesys/small experiment/V2-extracted/plans/README.md",
+      "description": "V2 plans README — index of V2 per-experiment plans",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 112,
+      "group": "five_new_directions",
+      "file": "plans/test hypothesys/small experiment/V1/FIVE-NEW-DIRECTIONS-PLAN-v2.md",
+      "description": "Five new directions plan v2 — post-E24 architectural pivot",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 113,
+      "group": "master_plan_copies",
+      "file": "plans/test hypothesys/small experiment/V1/LLM-MVP-CORE-MASTER-IMPLEMENTATION-PLAN-v1_0.md",
+      "description": "Master implementation plan v1.0 — test subfolder copy",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 114,
+      "group": "master_plan_copies",
+      "file": "plans/test hypothesys/small experiment/V1/LLM-MVP-CORE-MASTER-IMPLEMENTATION-PLAN-v1_1.md",
+      "description": "Master implementation plan v1.1 — test subfolder copy",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 115,
+      "group": "master_plan_copies",
+      "file": "plans/test hypothesys/small experiment/V1/LLM-MVP-CORE-SESSION-SKILLS-LIBRARY-PLAN-v1_0.md",
+      "description": "Session skills library plan v1.0",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    },
+    {
+      "round": 116,
+      "group": "master_plan_copies",
+      "file": "plans/test hypothesys/small experiment/V1/LLM-MVP-CORE-SESSION-SKILLS-LIBRARY-PLAN-v1_1.md",
+      "description": "Session skills library plan v1.1",
+      "status": "pending",
+      "analysis": null,
+      "plan_impact": null
+    }
+  ],
+  "plan_skeleton": {
+    "output_file": "ORCHESTRATOR-TRAINING-CLAUDE-CODE-PLAN-v1.md",
+    "sections": [
+      {
+        "id": "A",
+        "title": "Pre-conditions and baseline",
+        "status": "blocked — awaiting rounds 1, 2, 3, 9, 11",
+        "content": null
+      },
+      {
+        "id": "B",
+        "title": "Phase 1 — Run 15.OrchestratorModel (v1.1)",
+        "status": "draft exists — plan v1.1 is ready",
+        "content": "5 phases, +17 tests, Gate B per phase. Awaiting round 9 read to confirm no new FC issues."
+      },
+      {
+        "id": "C",
+        "title": "Phase 2 — Run 14.ContinuousLearning (v1.1)",
+        "status": "draft exists — plan v1.1 is ready",
+        "content": "5 phases, +22 tests, Gate B per phase. Awaiting round 11 read to confirm."
+      },
+      {
+        "id": "D",
+        "title": "Phase 3 — .NET dataset collection",
+        "status": "blocked — awaiting rounds 12, 29, 44",
+        "content": null
+      },
+      {
+        "id": "E",
+        "title": "Phase 4 — Training run and verification",
+        "status": "blocked — awaiting rounds 85, 86, 87, 92",
+        "content": null
+      },
+      {
+        "id": "F",
+        "title": "Phase 5 — Integration test (round-trip validation)",
+        "status": "blocked — awaiting all experiment rounds",
+        "content": null
+      }
+    ]
+  },
+  "rules": {
+    "round_discipline": "One file per round. Claude reads the file, writes analysis into the round entry, writes plan_impact, updates current_state.last_completed_round, then stops.",
+    "gate_before_plan": "The output plan is not written until all 116 rounds are complete.",
+    "format_for_analysis": "Each round produces: (1) what the file contains, (2) key facts relevant to the goal, (3) how it affects the plan sections.",
+    "early_exit": "If a round's file is a verbatim duplicate of an already-analyzed file, mark status as 'duplicate — skipped' and note which round covers it.",
+    "state_file_update": "After each round, the state file is updated with the completed round's analysis before starting the next round."
+  }
+}

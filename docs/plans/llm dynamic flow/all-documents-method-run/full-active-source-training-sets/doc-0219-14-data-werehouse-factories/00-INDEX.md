@@ -1,0 +1,74 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\business flows\14 - data werehouse_FACTORIES.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `business flows\14 - data werehouse_FACTORIES.md`
+- Type: skill and architecture rules
+- Inventory type: not listed in attached MVP inventory
+- File size: 47098 bytes
+- Line count read for this round: 683
+- SHA256: DEDD7DE42FF54AFAAA62DD8B8D4D127B5BD3995413B98669810CA3A793D752E2
+- First meaningful line: `XIIGen — the notifications flow PHASE 1: CONNECTION + INGESTION + RAW ZONE`
+- Last meaningful line: `- Design Records: design record 60–design record 65`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- `C:\Users\lubao\Documents\xiigen\business flows\14- data werehouse_P1_FACTORIES.md`
+- `C:\Users\lubao\Documents\xiigen\business-flows\business flows\14 - data werehouse_FACTORIES.md`
+- `C:\Users\lubao\Documents\xiigen\business-flows\business flows\14- data werehouse_P1_FACTORIES.md`
+
+Same-name files:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\business flows\14 - data werehouse_FACTORIES.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\business-flows\business flows\14 - data werehouse_FACTORIES.md`
+- `C:\Users\lubao\Documents\xiigen\business-flows\business flows\14 - data werehouse_FACTORIES.md`
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\business flows\14 - data werehouse_FACTORIES.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\business-flows\business flows\14 - data werehouse_FACTORIES.md`
+
+## Source Meaning Used For Training
+
+XIIGen — the notifications flow PHASE 1: CONNECTION + INGESTION + RAW ZONE
+
+## Domains This Document Teaches
+
+- architecture rule
+- skill responsibility
+- factory boundary
+- configuration choice
+- dependency rule
+- completion gate
+- merged 2026 02 26 source flow14 plan p0 md phase p1
+- prerequisite state entering the notifications flow p1
+- design records design record 58 design record 59
+- design record 58 immutable raw zone bronze layer
+- factory family 52 connector authentication management
+- f426 iconnectorregistryservice
+- f427 icredentialvaultservice
+- f428 itokenrefreshservice
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

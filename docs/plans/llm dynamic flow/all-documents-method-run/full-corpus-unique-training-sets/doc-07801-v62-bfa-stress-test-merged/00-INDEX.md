@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\old\V62_BFA_STRESS_TEST_MERGED.md`
+
+- Relative path: `old\V62_BFA_STRESS_TEST_MERGED.md`
+- Manifest category: undefined
+- Top folder: old
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 1172229 bytes
+- Line count read: 19656
+- SHA256: DCEF16A015BE23E593EA59FF1D11C2CF0580FFB6C67B4F75505BFAE7944A508B
+- First meaningful line: `<!-- P14 MIGRATION CERTIFICATE --`
+- Last meaningful line: `Expected: System boots to DEGRADED not crash , 4/5 AI providers availab`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+Migration Certificate — Phase 14 V62 BFA STRESS TEST MERGED
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- migration certificate — phase 14 v62 bfa stress test merged
+- migration: p14 complete — 2026-03-05 python→node.js syntax translated
+- scope: an iron rule–an iron rule, stress test 1–stress test 430, 31 flows
+- stack: node.js 20 lts + typescript 5 + nestjs 10 + react 18 + vite 5
+- supersedes: v62 bfa stress test merged.md .net/c reference — archived
+- ═══ consolidated master index post the design intelligence flow ═══
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

@@ -1,0 +1,56 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\skills_flat\skills_flat\INSTRUCTIONS.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\Planning sessions\skills_flat\skills_flat\INSTRUCTIONS.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 12482 bytes
+- Line count read: 286
+- SHA256: 5406A92C47DAA2A45D175BC0B6862BA53C9C3CD54D3476C2DDCE7A55C054000B
+- First meaningful line: `INSTRUCTIONS — Planning Skills Package v4.0`
+- Last meaningful line: `Copy from this package to the PROJECT ROOT not inside . Claude Code loads root-level AGENTS.md automatically before every session. Without it, the session-end protocol is skipped.`
+
+## Related Versions And Duplicate Copies
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\old\planning-skills-v4-unified\INSTRUCTIONS.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\skills_clean\skills_clean\INSTRUCTIONS.md`
+
+## Source Meaning Used For Training
+
+INSTRUCTIONS — Planning Skills Package v4.0
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- instructions — planning skills package v4.0
+- how to use these skills in every new xiigen planning session
+- what this package does
+- one-time setup
+- option a — project that already has
+- option b — new project or web session without project files
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

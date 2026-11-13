@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Design to Figma\better css 2\PLAN-COMPARISON.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\Design to Figma\better css 2\PLAN-COMPARISON.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 10225 bytes
+- Line count read: 242
+- SHA256: C917C2880FCD63386AED37582256BF9E2E6709DC27D8560C1D2B91DEFB181E3A
+- First meaningful line: `PLAN COMPARISON — All Documents vs Reality`
+- Last meaningful line: `SCENE-MEMORY-ARCHITECTURE.md Storage section clientStorage→setPluginData`
+
+## Related Versions And Duplicate Copies
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Design to Figma\better css 2\PLAN-COMPARISON ai context injection.md`
+
+## Source Meaning Used For Training
+
+PLAN COMPARISON — All Documents vs Reality
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- plan comparison — all documents vs reality
+- contradictions mapped, canonical decisions recorded
+- march 2026
+- document inventory
+- contradiction map
+- c1: storage backend for scene data
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

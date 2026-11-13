@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\old\XIIGEN-DESIGN-ARCHITECT-SESSION-GUIDE-v1.6.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\Planning sessions\old\XIIGEN-DESIGN-ARCHITECT-SESSION-GUIDE-v1.6.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 28745 bytes
+- Line count read: 422
+- SHA256: 046AD7FF1507008467D37375B4A0C60D0BC2DE4C69C3CE8A6922DF93342F9CB0
+- First meaningful line: `XIIGEN Design Architect Session Guide`
+- Last meaningful line: `Sessions that violate these properties at STOP are out of architect-guide compliance. The response is revised before STOP fires.`
+
+## Related Versions And Duplicate Copies
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\extracted\XIIGEN-DESIGN-ARCHITECT-SESSION-GUIDE-v1.6.md`
+
+## Source Meaning Used For Training
+
+XIIGEN Design Architect Session Guide
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- xiigen design architect session guide
+- version: 1.6
+- audience: claude, at the start of any architect session
+- purpose: know how to behave as the architect before producing anything
+- what this guide is for
+- session start checklist — q0 through q9
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

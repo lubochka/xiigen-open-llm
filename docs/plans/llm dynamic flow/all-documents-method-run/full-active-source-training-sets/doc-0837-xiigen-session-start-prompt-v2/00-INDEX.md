@@ -1,0 +1,80 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\fix key principles\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `fix key principles\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+- Type: session and state evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 10438 bytes
+- Line count read for this round: 195
+- SHA256: A64D5851105786291B6834766C11944047EAC4D2A6FFF16BCA5A63C40630CF33
+- First meaningful line: `XIIGEN SESSION START v2.0`
+- Last meaningful line: `Tell me: session type, flow/component, outcome. ENGINE PROGRESS will be first in output.`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\skills_v2.3.0_extracted\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+
+Same-name files:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\fix key principles\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\old\skills_v2.3.0_extracted\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\old\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\skills_clean\skills_clean\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\skills_flat\skills_flat\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\Planning sessions\old\skills_clean\skills_clean\XIIGEN-SESSION-START-PROMPT-v2.md`
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\fix key principles\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\fix key principles\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\old\skills_v2.3.0_extracted\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\old\united\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\skills_clean\skills_clean\XIIGEN-SESSION-START-PROMPT-v2.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Planning sessions\skills_flat\skills_flat\XIIGEN-SESSION-START-PROMPT-v2.md`
+
+## Source Meaning Used For Training
+
+XIIGEN SESSION START v2.0
+
+## Domains This Document Teaches
+
+- session intent
+- creation evidence
+- decision trail
+- resume state
+- open work
+- validation notes
+- xiigen session start v2 0
+- what xiigen builds toward read first
+- mission state query the search index never estimate
+- current state 2026 03 25
+- golden rule
+- session classification
+- always active rules
+- session exit protocol every session every stop
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

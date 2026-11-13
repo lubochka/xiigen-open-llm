@@ -1,0 +1,306 @@
+Let me check the git log and the master plan to give you an accurate answer.
+
+Ran
+Show what the latest commit contains and full log
+Commit 99b94d1 only added plan documents — no code. Let me read the master plan and skills library plan to check what's still missing.
+
+
+Read 2 files
+Let me check if the skills library files were created in the worktree.
+
+
+Ran 2 commands
+Here's the honest status:
+
+Plan	Status
+PROJECTS-21-23-IMPROVEMENT-SESSION-PLAN-v1.0 (Session 1)	✅ Done — commits 26eb62a / 833357a / ffcb68f
+AGENT-ALGORITHMS-ENHANCEMENT-SESSION-PLAN-v1.0 (Session 2)	✅ Done — commit 8a21d60
+LLM-MVP-CORE-SESSION-SKILLS-LIBRARY-PLAN-v1.1 (Session 3)	❌ Not done — CLAUDE.md, AGENTS.md, skill files don't exist
+LLM-MVP-CORE-MASTER-IMPLEMENTATION-PLAN-v1.1 — 12.SemanticCompiler onward	❌ Not started — no 12.SemanticCompiler/ directory
+The two SESSION plans that ran in parallel with each other are done. The skills library (Session 3) and the master implementation plan were never executed — the plan documents were committed (99b94d1 "latest") but the implementation wasn't.
+
+Do you want me to start the SESSION-SKILLS-LIBRARY plan now, then move on to the MASTER-IMPLEMENTATION-PLAN with 12.SemanticCompiler?
+
+Что запускать дальше в Claude Code:
+Сначала LLM-MVP-CORE-SESSION-SKILLS-LIBRARY-PLAN-v1.1 — это быстро (создать 13 файлов, нет компиляции, нет тестов). После того как файлы в репо — каждая следующая сессия стартует правильно.
+Затем 12.SemanticCompiler по LLM-MVP-CORE-MASTER-IMPLEMENTATION-PLAN-v1.1 — первый из шести подпроектов, от которого зависят все остальные треки.
+
+Начнём с Skills Library. Читаю план полностью.
+
+
+Read a file, ran a command
+Skills Library — 13 files
+Создаю все 13 файлов за один проход. Начну параллельно первые 4.
+
+
+Created 4 files
+Файлы 1-4 готовы. Создаю 6 скилов параллельно:
+
+
+Created 6 files
+10 файлов готовы. Создаю последние 3 reference-документа параллельно:
+
+
+Created 3 files
+Все 13 файлов созданы. Проверяю gates из плана:
+
+Ran
+Run all gates from the plan
+Все gates зелёные. Коммит:
+
+Committed
+15d5546
+Skills Library готова — commit 15d5546. Теперь читаю мастер-план для 12.SemanticCompiler.
+
+Read
+LLM-MVP-CORE-MASTER-IMPLEMENTATION-PLAN-v1_1.md
+Теперь читаю ключевые эксперименты чтобы портировать алгоритмы в 12.SemanticCompiler:
+
+
+Ran a command, found files, read 2 files
+Всё уже реализовано в 35.ExperimentsV2/Infrastructure/. 12.SemanticCompiler обернёт это в правильные интерфейсы. Читаю ключевые файлы:
+
+
+Read 16 files, ran a command
+12.SemanticCompiler implementation
+
+Created 12 files, found files, read 4 files
+Now I have all the source material. Creating the remaining 7 files in parallel.
+
+
+Created 6 files
+Now the main facade:
+
+Created
+SemanticCompilerFacade.cs
++121
+-0
+Now add the project reference to Tests and try to build:
+
+
+Read a file, ran 2 commands, edited a file
+Let me check the actual LogicExtractor constants:
+
+Read
+LogicExtractor.cs
+The CSharpBeautifier references constants that don't exist in LogicExtractor. Fixing it to use only the actual 22 constants:
+
+
+Edited a file, ran a command
+Build succeeded. Now write the tests:
+
+
+Found files, created a file, ran a command
+Build succeeded. Now run the tests:
+
+
+Ran a command
+The cycle test failed — the segments aren't mapping to distinct roles as expected. Let me check how FamilyCollapser works:
+
+
+Read 4 files
+Found the issue: "get" is a stopword so it gets filtered out, making both segments map to "coder". I'll fix the test to use "fetch users" instead:
+
+
+Edited a file, ran a command
+The test binary wasn't rebuilt after the change. Need to build first:
+
+Ran
+Build then run SemanticCompiler tests
+All 32 tests pass. Now commit:
+
+
+Ran 2 commands
+12.SemanticCompiler complete
+12.SemanticCompiler is done — 21 files committed, 32/32 tests passing. The full E01-E27 pipeline is in place: Compression → Routing → Planning → Translation → Beautification, wired through SemanticCompilerFacade. This is the foundation subproject that all other tracks depend on.
+
+@C:\Projects\llm_mvp_core\docs\plans\SEMANTIC-COMPILER-SESSION-PLAN-v1_0.md Одно изменение относительно мастер-плана: папка называется 29.SemanticCompiler вместо 12.SemanticCompiler — потому что 12.SearchEngine уже существует в решении. Все остальные ссылки на "12" в мастер-плане и треках A/Б/В остаются в силе, просто маппятся на эту папку.
+Три критических правила встроены прямо в код как комментарии, а не только в документацию: E20 порядок пайплайна проверяется grep-ом по номерам строк, E23 SUCCESS=RETURN проверяется grep-ом на слово "return", E44 формула весов есть в Phase 5 как константа для будущего подпроекта 16.
+Pre-condition gate проверяет четыре вещи до первой строки кода: BaseService существует, 820 тестов, папки нет, 12.SearchEngine отдельная.
+
+Running the pre-condition gate before touching any code.
+
+Ran
+Run all four pre-condition checks
+Pre-conditions:
+
+BaseService in 21.AgentInfrastructure/Core/Core.cs — PASS
+29.SemanticCompiler — CLEAN
+12.SearchEngine exists separately — PASS
+Test count — 852 (baseline shifted: 820 + 32 from 12.SemanticCompiler already in repo)
+Target becomes 852 + 25 = 877. Checking the BaseService and OperationResult shape before writing code:
+
+
+Read 7 files, ran 3 commands
+The pattern across all subprojects (28.SemanticNlp, 33.MatrixAlgorithms) is: self-contained, own OperationResult<T> + BaseService in local Core.cs, no external project references. The plan's csproj references are inconsistent with the codebase pattern — I'll follow the codebase pattern.
+
+ROUND CONTRACT:
+
+Baseline: 852 tests passing, 0 failing
+Current: 852 passing (just verified)
+Produced: Phase 1 — scaffold + Core.cs + Interfaces.cs (3 tests)
+Phase gate: dotnet build 29.SemanticCompiler clean + dotnet test --filter "SemanticCompiler_Domain" 3 pass
+Gap: 4 phases remaining after this one
+Starting Phase 1:
+
+Created
+SemanticCompiler.csproj
++11
+-0
+12.SemanticCompiler already occupies the SemanticCompiler namespace in the Tests project — both projects can't share it without type-name collisions (OperationResult<T>, ISemanticCompiler). Using SemanticCompiler29 namespace avoids all conflicts and lets the 32 existing tests keep passing.
+
+Now writing Phase 1 files:
+
+
+Created 2 files
+Now add the project reference to Tests.csproj:
+
+Edited
+LlmFromScratch.Tests.csproj
++1
+-0
+Now add the 3 Phase 1 tests to the existing test file:
+
+
+Read a file, created a file, ran 3 commands
+Phase 1 gate: 3/3 pass. Committing phase 1:
+
+Committed
+9a1a029
+ROUND CONTRACT:
+
+Baseline: 852 tests passing
+Current: 855 passing (852 + 3)
+Produced: Phase 1 committed — Core.cs, Interfaces.cs, csproj, 3 tests
+Phase gate: dotnet test --filter "SC29_Domain" → 3 pass ✓
+Gap: Phases 2-5 (compression → routing → planning → translation+beautification+pipeline)
+Phase 2 — Compression pipeline (E01, E08, E15, E16, E17) — +7 tests → 862
+
+
+Created 5 files
+Now add the 7 Phase 2 tests:
+
+
+Read a file, edited a file, ran 2 commands
+
+Background task completed
+Background command "Build and run Phase 2 tests" completed (exit code 0)
+Ran
+Run all SC29 tests after Phase 2
+10/10 pass. Gate B: VocabSize=22 verified in the test. Committing Phase 2:
+
+Committed
+6fd04df
+Phase 3 — Routing (E20, E18) — +5 tests → 867
+
+
+Created 2 files, edited a file, ran a command, read a file
+The edit placed Phase 3 tests outside the class body. Rewriting the complete file:
+
+
+Created a file, ran a command
+The TypeScript test is failing because the example only matches one marker ("Promise<") but MinMarkers=2. Adding "export async " and "(): " (TS return-type annotation) to the markers:
+
+
+Edited a file, ran 3 commands
+15/15 pass. Committing Phase 3:
+
+Committed
+757ca44
+Phase 4 — Planning (E21, E33, E35) — +5 tests → 872
+
+
+Created 3 files, edited a file, ran 3 commands
+The false-CONJ guard uses StartsWith but "them" appears mid-clause in "log them". Fixing to Contains:
+
+
+Edited a file, ran 2 commands
+20/20 pass. Committing Phase 4:
+
+Committed
+a3835fc
+Phase 5 — Translation + Beautification + Pipeline integration — +5 tests → 877
+
+
+Created 4 files
+Now the main pipeline:
+
+
+Created a file, edited a file, ran 2 commands
+
+Background task completed
+Background command "Build Tests with Phase 5 files" completed (exit code 0)
+Ran
+Run all SC29 tests
+25/25 pass. Running full suite gate:
+
+Ran
+Full test suite verification
+877/877 — exactly the target. Running the three critical verification checks from the plan:
+
+Ran
+Run three critical verification checks from the plan
+All three checks pass:
+
+VocabSize = 22 ✓
+return Validate({X}) (not the string "SUCCESS") ✓
+StackDetector line 18 < SemanticNormalizer line 22 ✓
+Committing Phase 5 and pushing:
+
+Committed
+7435932
+29.SemanticCompiler complete
+ROUND CONTRACT — final:
+
+Baseline: 852 tests passing
+Current: 877 passing, 0 failing
+Produced: 5 commits — 29.SemanticCompiler complete (Core, Compression, Routing, Planning, Translation, Beautification, Pipeline)
+Phase gate: all 3 critical checks pass ✓
+Gap: none — plan complete
+Summary of what was built:
+
+Phase	Files	Tests
+1	Core.cs, Interfaces.cs, .csproj	+3 → 855
+2	AstTokenizer, RoleAssigner, SemanticNormalizer, FamilyCollapser, LogicExtractor	+7 → 862
+3	StackDetector (E20 pre-norm), RouteClassifier (D-04)	+5 → 867
+4	Decomposer (false-CONJ guard), StopSignalDetector, DependencyGraph	+5 → 872
+5	PatternClassifier, ContextualDictionary, PatternReorderer, TemplateBeautifier, SemanticCompilerPipeline	+5 → 877
+Three critical rules embedded in code: E20 pipeline order (StackDetector line 18 < SemanticNormalizer line 22), E23 SUCCESS=RETURN (return Validate not string "SUCCESS"), E17 VocabSize=22. Namespace SemanticCompiler29 avoids collision with the standalone 12.SemanticCompiler.
+
+currently we have some dependency on project 21-23 so the code would be only on .Net, what are these?
+
+Let me look at what projects 21-23 are and what the Tests project depends on from them.
+
+
+Ran 4 commands, ran an agent
+Here's the answer:
+
+Projects 21-23 are the "agent runtime" layer — pure C# implementation of what OSS frameworks (LangGraph, LangChain, etc.) provide in Python. They contain no ML model weights, so the code dependency is on the algorithms and patterns, not on trained parameters.
+
+21.AgentInfrastructure — the execution substrate:
+
+ReAct (Reasoning + Acting) loop engine
+Tool registry with permission gates
+Session/context state management
+Token counting
+NuGet: Microsoft.CodeAnalysis.CSharp (Roslyn, for code analysis), Microsoft.Data.Sqlite (for session persistence)
+22.AgentAlgorithms — planning and routing:
+
+Context compaction (what to keep when the window fills)
+ComplexTaskDecomposer (the same false-CONJ guard logic referenced in 29.SemanticCompiler)
+Multi-agent orchestration (AgentOrchestrator)
+AST-based relevance ranking with K-NN
+NuGet: Microsoft.CodeAnalysis.CSharp only
+23.OssEquivalents — replacements for Python OSS libraries:
+
+MCP (Model Context Protocol) transport + tool dispatcher ← LangGraph equivalent
+Roslyn-based code analysis
+YAML skill-file parsing (YamlDotNet)
+Prompt translation and beautification
+State machine with SQLite checkpointing
+NuGet: Microsoft.CodeAnalysis.CSharp, Microsoft.Data.Sqlite, YamlDotNet
+The .NET constraint comes from two things:
+
+Roslyn (Microsoft.CodeAnalysis.CSharp) — used in all three for C# AST parsing. In Python/TypeScript you'd use tree-sitter or ast-grep. In a Java runtime you'd use JavaParser.
+SQLite via Microsoft.Data.Sqlite — the session state and MCP state machine use SQLite for persistence. This is purely a library choice, not a language-level constraint — Python has sqlite3 built-in and TypeScript has better-sqlite3.
+Everything else (the OperationResult<T> envelope, ReAct loop, tool registry, context compaction, task decomposition) is algorithmic — it's portable to any language. The patterns themselves are language-agnostic; the implementation is just C# because that's the project language

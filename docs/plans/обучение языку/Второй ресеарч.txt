@@ -1,0 +1,3081 @@
+Можешь поискать открытый код игр для изучения языка с дицензией mit / apache 2.0?
+Поищу именно репозитории с открытым кодом, где лицензия явно MIT или Apache-2.0, и отфильтрую то, что реально похоже на игры/тренажёры для изучения языка, а не просто словари или демо.
+Thought for 14s
+Да. Я нашла несколько подходящих репозиториев, где игровой или геймифицированный код для изучения языков опубликован под MIT или Apache-2.0. Я бы разделила их на “лучшие для изучения архитектуры” и “маленькие примеры”.
+Важно: GitHub сам напоминает, что публичный репозиторий без лицензии ещё не означает open source — для реального использования в датасетах/обучении лучше брать только проекты с явным LICENSE.
+Лучшие кандидаты
+Репозиторий	Лицензия	Технологии	Что полезно для обучения LLM
+bartekmp/osmosmjerka	Apache-2.0	React, FastAPI, PostgreSQL, Docker	Очень хороший пример современной full-stack игры: word-search puzzle + языковые пары/переводы/flashcard-style обучение. Есть live demo, backend, frontend, roadmap.
+clintonwoo/ciao	Apache-2.0	Swift, iOS, CoreData	Мобильная игра для повторения слов/фраз, 8 языков, режимы Intro/Phrase/Alphabet, голос, сложность, статистика. Хорошо для mobile language-learning patterns.
+language-apps/Acorns	Apache-2.0	JavaScript, Java	Не просто игра, а платформа языкового обучения с уроками: flashcards, missing word, magnet game, pictionary, story book, translate lessons. Особенно полезно для low-resource / indigenous languages.
+mathewthe2/Game2Text	Apache-2.0	Python	Не игра, а toolbox для “учить язык через игры”: OCR, visual novels text hooking, Anki flashcards со скриншотом и аудио. Очень полезно как источник для pipeline “игра → текст → словарь → карточки”.
+SalehHub/Fun-English-Learning-Games	MIT	C#, Visual Studio	Desktop English-learning game: spelling, pronunciation, synonyms, antonyms, homonyms, idioms, parts of speech, grammar, sentence structure, paragraph coherence. Хороший C# пример для структуры уровней.
+giovannimazzuoccolo/dutchfordevelopers	MIT	TypeScript / Nuxt / Prisma	Игра для изучения нидерландского: memory, word detective, passport, adjective game, de/het grammar article game; есть модули уроков по частям речи.
+monteroserra/chinese-learning-app	MIT	Python, Tkinter	Китайский vocabulary trainer с flashcards и matching games; 7 режимов Hanzi/Pinyin/Spanish/English. Хороший небольшой пример для desktop UI + языковые пары.
+Маленькие/нишевые примеры, тоже можно брать
+Репозиторий	Лицензия	Комментарий
+First-Peoples-Cultural-Council / fv-game-memory, fv-game-jigsaw, fv-games-quiz, fv-game-wordsearch	Нужно проверить каждый конкретный repo	Это архивные игры FirstVoices: memory, jigsaw, quiz, wordsearch для языкового обучения. В списке организации видны сами игровые репозитории, но не у всех прямо показана лицензия на странице списка, поэтому каждый надо открыть отдельно перед включением в датасет.
+MarouaneBenbetka/English-learning-game	лицензия не подтверждена в найденном фрагменте	JavaFX desktop game: dice/board game для изучения английских слов. Хороший по идее, но я бы не включала в “чистый MIT/Apache dataset”, пока не проверен LICENSE.
+seanred360/ESL-Game-Collection	лицензия не подтверждена в найденном фрагменте	Unity/C# коллекция 14 ESL игр для smartboard, но без явного MIT/Apache в найденном фрагменте. Можно изучать вручную, но осторожно для обучения модели.
+Что я бы включила в первую очередь в датасет
+Для code-learning / architecture / implementation:
+Osmosmjerka — лучший full-stack пример: React + FastAPI + PostgreSQL + игровая логика + языковые данные.
+Acorns — лучший пример “языковая педагогика → разные типы игровых уроков”.
+Fun-English-Learning-Games — хороший C# пример с grammar/sentence/word levels.
+dutchfordevelopers — хороший современный TypeScript пример с grammar games.
+Game2Text — не игра, но очень важный pipeline для immersion learning и генерации карточек из игр.
+Как искать дальше
+Используй такие GitHub-запросы:
+"language learning" "Apache-2.0 license" game
+"language learning" "MIT license" game
+"vocabulary game" "MIT license"
+"ESL game" "MIT license"
+"word search" "language learning" "Apache-2.0"
+"grammar game" "MIT license"
+"flashcard game" "Apache-2.0"
+И отдельно по технологиям:
+"language learning game" "React" "MIT license"
+"language learning game" "C#" "MIT license"
+"language learning game" "Unity" "MIT license"
+"language learning game" "Swift" "Apache-2.0"
+"vocabulary trainer" "Python" "MIT license"
+Для твоей задачи DPO/LLM я бы делала строгий фильтр: repo accepted only if LICENSE exists and GitHub shows MIT / Apache-2.0, а контентные ассеты, словари, аудио и картинки проверять отдельно, потому что код может быть MIT/Apache, а данные/медиа — другой лицензии.
+Разберу не как “список репозиториев”, а как набор архитектурных паттернов: game loop, визуальная сцена, аудио-пайплайн, проверка ответа, feedback/reward и генерация rejected/accepted примеров.
+Thought for 10s
+Да. Ниже — не “описание проектов”, а именно алгоритмические схемы реализации: как устроен цикл обучения, проверка ответа, визуализация, аудио и геймификация. Я опираюсь на найденные open-source проекты с MIT / Apache-2.0, но для части проектов анализ возможен на уровне README/описания, без полного code-audit каждого файла.
+
+Базовые типы алгоритмов
+
+Все найденные реализации можно разделить на 6 архитектурных типов:
+Тип	Примеры	Главная идея
+Puzzle-based vocabulary game	Osmosmjerka, WordMaster, word-search games	Игрок ищет/угадывает слово, система связывает слово с переводом, категорией, подсказкой и очками.
+Rule-drill grammar game	De of Het, DutchForDevelopers, Fun-English-Learning-Games	Одно языковое правило превращается в повторяемый игровой тест.
+Flashcard / spaced repetition game	Acorns, Ciao, Chinese Learning App	Карточка → ответ → проверка → повторение по сложности.
+Visual immersion / OCR overlay	Game2Text, Game2Text-Lightning	Игра или экран становится источником текста: OCR/text hook → словарь → карточка/перевод.
+Audio / pronunciation game	Discute, OpenPronounce, Say the Word on the Beat	Пользователь говорит или слушает → STT/phoneme alignment → оценка → feedback.
+AI conversational learning	Discute, OpenKoto, Duelingo-like apps	LLM генерирует диалог, урок, сцену или исправление ошибок.
+2. Osmosmjerka — word-search + flashcard learning
+Лицензия: Apache-2.0.
+Стек: React, FastAPI, PostgreSQL.
+Проект описан как multilingual word-search game для language learners: фразы сгруппированы по темам, имеют переводы и превращают puzzle в flashcard-style обучение.
+Алгоритм
+
+Выбрать язык A и язык B.
+Выбрать тему / категорию слов.
+Backend достаёт набор слов / фраз / переводов.
+Генератор puzzle размещает слова в сетке:
+   - горизонтально,
+   - вертикально,
+   - диагонально,
+   - в разных направлениях.
+Остальные клетки заполняются случайными буквами.
+Frontend показывает сетку и список target words.
+Пользователь выделяет последовательность букв.
+Система проверяет:
+   - совпадает ли выделенный путь с target word,
+   - не найдено ли слово уже раньше,
+   - корректное ли направление.
+Если верно:
+   - слово помечается найденным,
+   - показывается перевод / объяснение,
+   - начисляются очки / прогресс.
+После окончания puzzle можно показать summary:
+   - найденные слова,
+   - переводы,
+   - ошибки,
+   - слова для повторения.
+Что здесь ценно для LLM-обучения
+
+Это хороший пример binding algorithm:
+visual token on grid
+→ lexical unit
+→ translation
+→ topic
+→ progress state
+→ feedback
+То есть слово существует не просто как строка, а как объект:
+WordItem {
+  sourceText: string
+  targetText: string
+  category: string
+  difficulty: number
+  gridPositions: Cell[]
+  found: boolean
+}
+Чем отличается
+Osmosmjerka — это не speaking app и не AI-dialogue. Его сильная сторона — визуальная пространственная игра + словарь + перевод. Он хорош для vocabulary grounding: модель учится связывать слово, перевод, позицию, категорию и состояние игры.
+
+Acorns — модульная система уроков-игр
+
+Лицензия: Apache-2.0.
+ACORNS Lessons описан как система, где новые типы уроков легко писать и подключать; в репозитории указано, что доступно 12 lesson types, каждый как отдельный модуль Eclipse Java project.
+Алгоритм
+Acorns отличается тем, что это не одна игра, а framework для lesson types.
+
+Есть общий lesson engine.
+Каждый тип урока реализует общий контракт:
+   - load lesson data,
+   - render activity,
+   - receive user action,
+   - validate answer,
+   - give feedback,
+   - save progress.
+Учитель / автор создаёт контент:
+   - слова,
+   - картинки,
+   - аудио,
+   - переводы,
+   - истории,
+   - упражнения.
+Ученик запускает конкретный lesson type:
+   - flashcard,
+   - missing word,
+   - magnet game,
+   - pictionary,
+   - story book,
+   - translation activity.
+Engine не знает деталей каждого урока.
+Lesson module сам знает, как проверять ответ.
+Обобщённый интерфейс
+interface LessonActivity {
+  loadContent(): LessonData
+  render(state: LessonState): ViewModel
+  handleInput(input: UserInput): LessonState
+  validate(input: UserInput): ValidationResult
+  giveFeedback(result: ValidationResult): Feedback
+}
+Чем отличается
+
+Acorns ценен не как конкретная игра, а как архитектурный паттерн расширяемой платформы.
+Если Osmosmjerka — это один strong game loop, то Acorns — это:
+Lesson Engine
+  ├── Flashcards
+  ├── Missing Word
+  ├── Magnet Game
+  ├── Pictionary
+  ├── Story Book
+  └── Translation Lesson
+Для твоей задачи это очень полезно: можно обучать LLM не только “как сделать игру”, а “как проектировать новые типы языковых игр через общий lesson contract”.
+
+De of Het — грамматическое правило как игра
+
+Лицензия: MIT.
+Проект прямо описывает проблему: в голландском трудно запоминать артикли de и het, потому что для многих слов это неочевидно; игра помогает запоминать артикли и произношение.
+Алгоритм
+
+Система выбирает слово из словаря.
+Показывает слово игроку.
+Игрок выбирает один из вариантов:
+   - de
+   - het
+Система сравнивает ответ с correctArticle.
+Если правильно:
+   - увеличивает score,
+   - показывает positive feedback,
+   - возможно проигрывает произношение.
+Если неправильно:
+   - показывает correct answer,
+   - слово можно добавить в retry queue.
+Следующее слово выбирается:
+   - случайно,
+   - по ошибкам,
+   - по сложности,
+   - по частоте.
+Модель данных
+DutchWord {
+  word: string
+  article: "de" | "het"
+  pronunciation?: string
+  translation?: string
+  difficulty?: number
+  errorCount?: number
+}
+Чем отличается
+
+Это минималистичная grammar-game реализация. Она показывает важный паттерн:
+одно правило языка → бинарный выбор → мгновенная проверка → повторение ошибок
+Для DPO это идеально:
+Accepted	Rejected
+“Для слова X правильный артикль het, потому что...”	“Можно использовать любой артикль”
+“Покажи ошибку и правильный вариант”	“Просто скажи wrong без объяснения”
+“Верни слово в очередь повторения”	“Сразу забудь ошибку пользователя”
+5. Game2Text / Game2Text-Lightning — обучение из игр через OCR
+Лицензии: Game2Text — Apache-2.0; Game2Text-Lightning — найден как OCR-based popup dictionary, архивный, с указанием использовать YomiNinja; описание: выбрать окно игры/приложения, нажать Start, затем наводить мышь на текстовые элементы.
+Алгоритм
+Это не “игра для языка”, а алгоритм превращения любой игры в языковой материал.
+
+Пользователь выбирает окно игры / приложения.
+Система делает screen capture.
+Пользователь наводит мышь на область с текстом.
+Система вырезает region around cursor.
+OCR распознаёт текст.
+Текст нормализуется:
+   - удаление мусора,
+   - объединение строк,
+   - исправление OCR-ошибок,
+   - language detection.
+Система ищет слова в словаре.
+Показывает popup:
+   - reading,
+   - translation,
+   - dictionary meaning,
+   - grammar info.
+При необходимости создаёт flashcard:
+   - слово,
+   - предложение,
+   - скриншот,
+   - аудио,
+   - перевод.
+Ключевой pipeline
+Screen pixels
+→ OCR text
+→ tokenization
+→ dictionary lookup
+→ popup explanation
+→ optional Anki/card export
+Чем отличается
+
+Game2Text отличается от всех остальных тем, что контент не создан авторами приложения. Контент берётся из внешней игры, визуальной новеллы, субтитров или экрана.
+Это очень сильный паттерн для LLM:
+external visual context
+→ extracted text
+→ language analysis
+→ personalized learning artifact
+Для rejected DPO здесь можно строить ошибки такого типа:
+Accepted	Rejected
+Учитывать OCR uncertainty	Принимать любой OCR результат как истину
+Сохранять скриншот как контекст	Терять визуальный контекст
+Показывать несколько вариантов чтения	Давать один перевод без уверенности
+Отличать слово от UI-мусора	Учить пользователя на случайных кнопках/иконках
+6. Discute — voice conversation + STT/TTS + AI feedback
+Лицензия: Apache-2.0.
+Discute описан как open-source language learning app для speaking practice; использует AI для realistic conversations. В темах репозитория указаны Python, SQLite, Bark, Whisper, Streamlit, Ollama.
+Алгоритм
+
+Пользователь выбирает язык, тему, уровень.
+Система генерирует conversational scenario.
+TTS озвучивает реплику собеседника.
+Пользователь отвечает голосом.
+STT / Whisper распознаёт речь в текст.
+LLM анализирует:
+   - смысл ответа,
+   - грамматику,
+   - словарный запас,
+   - уместность,
+   - ошибки.
+Система генерирует:
+   - ответ персонажа,
+   - corrections,
+   - alternative better phrasing,
+   - score / feedback.
+Цикл повторяется как диалог.
+История сохраняется в local DB.
+Главный цикл
+AI prompt
+→ TTS
+→ user speech
+→ STT
+→ LLM correction
+→ next prompt
+Чем отличается
+
+Discute — это уже не simple game. Это conversational simulator.
+Главное отличие:
+Простая игра	Discute
+Проверяет один правильный ответ	Оценивает open-ended речь
+Input: click/text	Input: speech
+Feedback: correct/incorrect	Feedback: grammar + fluency + meaning
+Контент статичный	Контент генерируется AI
+Для твоей системы это особенно важно, потому что здесь можно строить DPO-пары:
+User speech transcript:
+"I go yesterday to shop."
+Accepted:
+"Better: I went to the shop yesterday. Explanation: use past simple 'went'."
+Rejected:
+"Good job, no mistakes."
+7. OpenPronounce — phoneme alignment + pronunciation scoring
+Лицензия: MIT.
+OpenPronounce описан как AI-powered open-source tool для анализа английского произношения; включает web app и CLI, сравнивает аудио с expected text, даёт feedback по phonemes/prosody, visualizes visemes, использует Wav2Vec 2.0 для audio feature extraction и DTW для phoneme alignment.
+Алгоритм
+
+Пользователь получает target sentence.
+Пользователь записывает аудио.
+Система извлекает acoustic features через Wav2Vec 2.0.
+Target text превращается в phoneme sequence.
+Audio phoneme/probability sequence сравнивается с expected phonemes.
+DTW выравнивает две последовательности:
+   - expected phonemes,
+   - actual pronounced audio segments.
+Система ищет расхождения:
+   - пропущенный звук,
+   - заменённый звук,
+   - слишком длинная/короткая гласная,
+   - неправильный stress/prosody.
+Генерируется визуальный feedback:
+   - phoneme-level errors,
+   - prosody hints,
+   - viseme visualization.
+Ключевой алгоритм DTW
+expected:  DH AH K AE T
+actual:    D  AH K EH T
+
+DTW ищет минимальную стоимость выравнивания:
+DH ↔ D    = ошибка/замена
+AH ↔ AH   = match
+K  ↔ K    = match
+AE ↔ EH   = vowel error
+T  ↔ T    = match
+Чем отличается
+Discute оценивает разговор семантически и грамматически, а OpenPronounce — фонетически.
+Discute	OpenPronounce
+“Ты правильно выразил мысль?”	“Ты правильно произнёс звуки?”
+LLM feedback	Acoustic/phoneme alignment
+Open dialogue	Fixed target sentence
+STT важен как transcript	Audio signal важен сам по себе
+Для rejected DPO это критично: модель не должна исправлять только грамматику, если пользователь тренирует произношение.
+
+Say the Word on the Beat — rhythm-based speaking game
+
+Лицензия: MIT.
+Проект описан как playful interactive web platform для “Say the Word on Beat”: можно создавать picture grids, синхронизировать их с beat и делиться. Темы включают game, language-learning, phonetics, party-game.
+Алгоритм
+
+Загружается сетка картинок.
+Загружается beat / tempo.
+Система вычисляет таймлайн:
+   beat_1 → image_1
+   beat_2 → image_2
+   beat_3 → image_3
+На каждом beat подсвечивается картинка.
+Игрок должен произнести слово в нужный момент.
+Возможны два режима:
+   A. Без распознавания речи:
+      - игра тренирует скорость, ритм, ассоциацию.
+   B. С распознаванием речи:
+      - speech input проверяется по expected word.
+Система оценивает:
+   - timing,
+   - правильное слово,
+   - скорость реакции.
+Чем отличается
+
+Это не vocabulary test в обычном смысле. Здесь главный параметр — time pressure.
+word knowledge + visual recognition + pronunciation + rhythm
+Для языкового обучения это полезно, потому что многие ученики знают слово пассивно, но не могут быстро его произнести.
+
+JLPT Reading Practice — reading scaffold
+
+Лицензия: Apache-2.0.
+Проект содержит reading passages по JLPT levels N5/N4, японские предложения с furigana над kanji, hidden English translations, kanji cards with readings, meanings and stroke diagrams.
+Алгоритм
+
+Пользователь выбирает уровень: N5 / N4.
+Система показывает Japanese sentence.
+Над kanji отображается furigana.
+Перевод скрыт.
+Пользователь пытается прочитать / понять.
+По клику раскрывается:
+   - English translation,
+   - kanji card,
+   - reading,
+   - meaning,
+   - stroke diagram.
+Возможна аудио-поддержка:
+   - playback sentence,
+   - repeat after audio.
+Progress может считаться по предложениям / kanji / уровню.
+Чем отличается
+
+Это не game-loop с очками, а scaffolding algorithm:
+native text
+→ partial support
+→ hidden translation
+→ kanji-level breakdown
+→ self-check
+То есть в отличие от De of Het, здесь нет бинарного “правильно/неправильно”. Пользователь сам постепенно раскрывает подсказки.
+
+OpenKoto — learning from real-world content
+
+Лицензия: Apache-2.0.
+OpenKoto описан как open-source AI-powered desktop app, который превращает любой интересный контент — песни, новости, статьи, блог-посты, любой текст — в immersive learning experience; также работает как reader и translation tool.
+Алгоритм
+
+Пользователь импортирует контент:
+   - текст,
+   - URL,
+   - песню,
+   - статью,
+   - другой real-world material.
+Система разбивает контент:
+   - paragraphs,
+   - sentences,
+   - tokens.
+Для каждого сегмента строится learning layer:
+   - translation,
+   - word explanation,
+   - grammar explanation,
+   - pronunciation/transcription if available.
+AI адаптирует объяснение под уровень пользователя.
+Пользователь читает в immersive reader.
+По клику получает:
+   - перевод,
+   - объяснение,
+   - примеры,
+   - возможно аудио/транскрипцию.
+Система может сохранять unknown words.
+Чем отличается
+
+OpenKoto похож на Game2Text по идее “учить из настоящего контента”, но источник другой:
+Game2Text	OpenKoto
+Источник — экран/игра/OCR	Источник — текст/URL/контент
+Главная технология — OCR/text extraction	Главная технология — AI reader/translator
+Контекст визуальный	Контекст текстовый/документный
+Popup dictionary	Immersive reading environment
+11. Audio Recognition / Voice Translator тип
+Пример: audio-recognition-system с Apache-2.0 описан как audio recognition and real-time translation system для transcription and translation of audio input.
+Алгоритм
+
+Захват аудио с микрофона.
+Voice activity detection:
+   - определить, где речь,
+   - убрать тишину.
+Audio chunking:
+   - разбить поток на короткие фрагменты.
+Speech-to-text:
+   - распознать речь.
+Translation:
+   - перевести transcript.
+Optional TTS:
+   - озвучить перевод.
+UI показывает:
+   - original transcript,
+   - translation,
+   - confidence,
+   - history.
+Чем отличается от Discute
+Audio translator	Discute
+Цель — перевести речь	Цель — обучить говорить
+Feedback не обязателен	Feedback центральный
+Нет game state	Есть learning state
+Может быть real-time stream	Обычно turn-based dialogue
+Главные отличия между реализациями
+Отличие 1: тип пользовательского ввода
+Input	Реализации	Что проверяется
+Click / choice	De of Het, grammar games	Правильный вариант
+Text input	translation games, vocabulary apps	Строковое совпадение / fuzzy match
+Mouse hover / screen region	Game2Text	OCR + dictionary lookup
+Voice input	Discute, OpenPronounce	Transcript / phonemes / pronunciation
+Reading interaction	JLPT, OpenKoto	Понимание через подсказки
+Timed response	Say the Word on the Beat	Скорость + слово + ритм
+Отличие 2: как определяется “правильность”
+Exact match:
+  word == targetWord
+
+Multiple choice:
+  selectedOption == correctOption
+Fuzzy text:
+  normalizedAnswer similar to expectedAnswer
+OCR:
+  confidence(text) > threshold
+Speech semantic:
+  LLM judges meaning and grammar
+Speech phonetic:
+  phoneme alignment score
+Reading scaffold:
+  no hard correctness, user self-checks
+Самое простое — De of Het.
+Самое сложное — OpenPronounce и Discute, потому что там голос, неопределённость, акцент, шум, грамматика и смысл.
+Отличие 3: static content vs generated content
+Static content	Generated / dynamic content
+De of Het	Discute
+JLPT Reading Practice	OpenKoto
+Osmosmjerka	Duelingo-like AI games
+Acorns lessons	AI-generated scenarios
+Static content проще проверять и лицензировать.
+Dynamic content лучше персонализируется, но сложнее тестировать и сложнее строить deterministic DPO.
+Отличие 4: visual learning vs audio learning
+Visual-first
+Osmosmjerka
+Game2Text
+JLPT Reading Practice
+OpenKoto
+Acorns Pictionary / Story Book
+Они учат через:
+текст → изображение → перевод → подсветка → card
+Audio-first
+Discute
+OpenPronounce
+Say the Word on the Beat
+Audio Recognition System
+Они учат через:
+звук → распознавание → фонемы/текст → feedback
+13. Как это переложить на твою KNN / DPO систему
+Я бы описала эти реализации как набор обучающих алгоритмических паттернов.
+Pattern A — Vocabulary Puzzle
+Input:
+  source word, target translation, category
+Game:
+  hide word in grid / card / image
+Check:
+  found / selected / matched
+Feedback:
+  translation + pronunciation + example
+DPO rejected:
+  wrong translation
+  no context
+  ignores category
+  accepts partial wrong answer
+Подходит для Osmosmjerka, WordMaster, flashcard games.
+Pattern B — Grammar Rule Drill
+Input:
+  grammar rule
+  examples
+  exceptions
+Game:
+  choose correct article / tense / case / preposition
+Check:
+  selected rule application
+Feedback:
+  rule + exception + corrected sentence
+DPO rejected:
+  ignores tense
+  ignores exception
+  gives generic explanation
+  says both variants are correct when not
+Подходит для De of Het, DutchForDevelopers, English grammar games.
+Pattern C — Visual Context Extraction
+Input:
+  screenshot / game window / OCR region
+Processing:
+  OCR
+  cleanup
+  tokenization
+  dictionary lookup
+Output:
+  popup explanation
+  flashcard with screenshot
+DPO rejected:
+  OCR hallucination
+  translation without visual context
+  wrong segmentation
+  no uncertainty handling
+Подходит для Game2Text.
+Pattern D — Pronunciation Alignment
+Input:
+  expected text
+  user audio
+Processing:
+  text → phonemes
+  audio → acoustic features
+  alignment via DTW
+  error detection
+Output:
+  phoneme-level feedback
+DPO rejected:
+  only grammar correction
+  ignores pronunciation
+  marks wrong phoneme as correct
+  gives feedback without evidence
+Подходит для OpenPronounce.
+Pattern E — AI Conversation
+Input:
+  level
+  target language
+  topic
+  user speech/text
+Processing:
+  STT
+  LLM dialogue state
+  grammar correction
+  next prompt generation
+  TTS
+Output:
+  realistic conversation + corrections
+DPO rejected:
+  no correction
+  too hard for level
+  switches language incorrectly
+  ignores user's error pattern
+Подходит для Discute.
+Pattern F — Immersive Reader
+Input:
+  real-world text
+Processing:
+  sentence split
+  translation
+  grammar explanation
+  vocabulary extraction
+  optional audio
+Output:
+  layered reading UI
+DPO rejected:
+  full translation too early
+  no sentence-level structure
+  ignores kanji/furigana/reading
+  explanation not adapted to level
+Подходит для OpenKoto и JLPT Reading Practice.
+
+Самая важная разница для архитектуры
+
+Если ты строишь систему обучения LLM, я бы не смешивала эти проекты в один тип. Лучше создать такую матрицу:
+Dimension	Значения
+input_mode	text, click, audio, image, OCR, mixed
+learning_goal	vocabulary, grammar, pronunciation, reading, conversation
+validation_type	exact, fuzzy, LLM-judge, phoneme-alignment, self-check
+feedback_type	correct/incorrect, explanation, correction, audio replay, visual highlight
+game_mechanic	puzzle, quiz, rhythm, dialogue, flashcard, exploration
+content_source	curated, generated, user-imported, external-game
+DPO_rejected_axis	wrong rule, wrong translation, missing context, ignored audio, hallucinated OCR
+Тогда каждая реализация становится не “примером кода”, а источником обучающих единиц.
+Например:
+{
+  "project_pattern": "pronunciation_alignment",
+  "input_mode": "audio",
+  "learning_goal": "pronunciation",
+  "validation_type": "phoneme_alignment",
+  "accepted_behavior": "detects vowel substitution and gives phoneme-level feedback",
+  "rejected_behavior": "only says grammar is correct and ignores pronunciation"
+}
+15. Коротко: чем они отличаются
+Osmosmjerka — визуальный word puzzle, хорош для vocabulary + translation grounding.
+Acorns — модульная lesson-platform architecture, хорош для разных типов упражнений.
+De of Het — rule-specific grammar drill, хорош для правил и исключений.
+Game2Text — OCR/visual extraction из внешних игр, хорош для real-world immersion.
+Discute — AI voice conversation, хорош для speaking + grammar feedback.
+OpenPronounce — phoneme-level pronunciation scoring, хорош для аудиоанализа.
+Say the Word on the Beat — rhythm/timing speaking game, хорош для speed recall.
+JLPT Reading Practice — layered reading scaffold, хорош для текста, furigana, kanji.
+OpenKoto — AI immersive reader, хорош для обучения из реального контента.
+Для твоей задачи я бы строила датасеты не по репозиториям, а по алгоритмическим паттернам: Puzzle, GrammarRule, VisualOCR, PronunciationAlignment, AIConversation, ImmersiveReader.
+Есть открытый код для моздания игр? Видео, картинок? Тоже лицензии mit/ apache?
+Да, тут лучше искать не только “готовые игры”, а движки и пайплайны: генерация/сборка сцен, визуальные novel/story tools, анимация, видео-композиция, asset-generation UI и редакторы уровней. Проверю именно permissive-лицензии MIT/Apache-2.0.
+Thought for 33s
+Да, есть. Для твоей задачи лучше разделить на 4 группы:
+движки для создания игр,
+визуальные редакторы сцен / уровней,
+код для генерации или редактирования картинок,
+код для генерации/сборки видео и анимации.
+Ниже — только то, что подходит под MIT / Apache-2.0 или близко к ним. Я отдельно отмечаю спорные случаи.
+
+Открытый код для создания игр
+Лучшие движки / framework’и
+Проект	Лицензия	Для чего подходит
+Godot Engine	MIT	Полный 2D/3D game engine, редактор сцен, анимация, физика, UI, export. Хорош для изучения архитектуры полноценного движка. Godot официально указывает permissive MIT license.
+Phaser	MIT	HTML5 / TypeScript / JavaScript 2D игры. Отличен для web-based educational games, language games, puzzle games. Phaser описан как 2D framework для HTML5 games с Canvas/WebGL.
+Bevy	MIT OR Apache-2.0	Rust ECS game engine. Очень полезен для изучения Entity-Component-System архитектуры. В репозитории есть MIT и Apache-2.0, официальный сайт тоже указывает MIT/Apache-2.0.
+Babylon.js	Apache-2.0	3D web engine, сцены, камеры, свет, материалы, WebGL/WebGPU. Очень хорош для браузерных 3D игр и визуализаций.
+Babylon.js Editor	Apache-2.0	Визуальный desktop editor для создания и редактирования 3D сцен на Babylon.js.
+Stride	MIT	C#/.NET game engine, 2D/3D, realistic rendering, VR, визуальный Game Studio editor. Хорош для .NET/C# датасетов.
+GDevelop	Open-source, license нужно проверять по конкретным частям	No-code / event-based 2D/3D game creation. Очень полезен как пример визуального “game logic without code”, но перед включением в строгий MIT/Apache датасет нужно проверить конкретные папки/лицензию.
+Что я бы брала в датасет в первую очередь
+
+Для LLM code learning:
+Godot       → полноценный game engine + scenes + nodes
+Phaser      → web/JS game loop + sprites + input + physics
+Bevy        → ECS architecture
+Babylon.js  → 3D scenes in browser
+Stride      → C#/.NET game engine architecture
+Особенно для тебя, как .NET/Angular developer, полезны:
+Phaser + Angular/React frontend patterns
+Babylon.js + TypeScript 3D scenes
+Stride + C# game architecture
+Bevy + ECS concepts
+2. Открытый код для visual scenes / level editors
+Проект	Лицензия	Что даёт
+Babylon.js Editor	Apache-2.0	Desktop editor для создания 3D сцен, templates, scene editing.
+bitcraftCoLtd/level-editor	MIT	Game-independent level editor, изначально сделан для уровней Jelly Arcade.
+OpenLevelEditor	не подтверждена в найденном фрагменте	Modernized Toontown Online level editor; интересен архитектурно, но лицензию надо проверять вручную.
+Excalidraw	MIT	Не game editor, но отличный редактор визуальных сцен, схем, storyboard, wireframes. Excalidraw released under MIT.
+Design Editor / FabricJS editor examples	MIT у ряда проектов	Canva-like image/design editor на React + Fabric.js, можно использовать как основу для scene/storyboard editor.
+Алгоритм таких редакторов
+Обычно они строятся так:
+
+Canvas / Scene root
+Object registry:
+   - sprite
+   - image
+   - text
+   - shape
+   - sound trigger
+   - animation
+User actions:
+   - drag
+   - resize
+   - rotate
+   - change properties
+Scene serialization:
+   - JSON scene graph
+Runtime loader:
+   - JSON → actual game objects
+Export:
+   - game scene
+   - image
+   - video
+   - HTML bundle
+
+Для LLM это очень ценный паттерн:
+{
+  "scene": "classroom",
+  "objects": [
+    { "type": "character", "x": 120, "y": 300, "state": "speaking" },
+    { "type": "text", "value": "Choose the correct word" },
+    { "type": "audio", "src": "question_01.mp3" }
+  ]
+}
+3. Открытый код для картинок / canvas / image editor
+Не AI, а программное создание и редактирование изображений
+Проект	Лицензия	Для чего подходит
+PixiJS	MIT	Быстрый 2D renderer для web games, sprites, particles, filters, animations. Хорош для визуальных игр.
+Konva.js	MIT	Canvas framework для интерактивных объектов: drag/drop, shapes, text, images, animation. Официальный FAQ говорит, что Konva MIT-licensed и free for commercial/personal use.
+React Konva	MIT	React bindings для Konva, удобно для editor UI.
+Fabric.js image editor examples	MIT у многих editor-проектов	Browser image editor: shapes, pen, lines, text, PNG/JPG/SVG import/export.
+Excalidraw	MIT	Hand-drawn style diagrams, scenes, storyboards, wireframes.
+Алгоритм image/canvas editor
+
+Создать canvas stage.
+Добавить слои:
+   - background
+   - objects
+   - selection overlay
+   - guides/grid
+Каждый элемент хранить как объект:
+   - id
+   - type
+   - x/y
+   - width/height
+   - rotation
+   - style
+   - asset reference
+Все изменения писать в history stack:
+   - undo
+   - redo
+Экспортировать:
+   - JSON
+   - PNG
+   - SVG
+   - game asset
+
+Для твоего проекта это можно использовать как основу для:
+AI lesson → scene JSON → canvas editor → game scene → video render
+4. Открытый код для видео / анимации
+Programmatic video creation
+Проект	Лицензия	Что делает
+MoviePy	MIT	Python video editing: cutting, concatenation, titles, compositing, effects. Документация прямо пишет MIT-licensed.
+Manim	MIT	Programmatic animation engine, особенно для объясняющих видео. Community site указывает MIT license.
+ffmpeg.wasm	MIT wrapper, но осторожно с FFmpeg LGPL/GPL	Video/audio record, convert, stream прямо в браузере через WebAssembly. Сам repo показывает MIT, но у FFmpeg есть LGPL/GPL нюансы.
+React Video Editor / a-react-video-editor	MIT	Open-source video editor на Next.js + Remotion.
+Remotion	не MIT/Apache для всех случаев; осторожно	Очень полезен для React-based video generation, но лицензия Remotion не классическая MIT/Apache для всех коммерческих случаев. Для строгого датасета лучше брать MIT examples вокруг него, но сам Remotion проверять отдельно.
+Алгоритм программной генерации видео
+
+Получить lesson / story / game scene.
+Разбить на timeline:
+   - scene 1: 0–5 sec
+   - scene 2: 5–12 sec
+   - scene 3: 12–20 sec
+Для каждой сцены:
+   - background image
+   - character sprite
+   - text overlay
+   - audio
+   - animation keyframes
+Render frames:
+   - frame 0
+   - frame 1
+   - frame 2
+Encode frames + audio into video.
+Export MP4/WebM/GIF.
+
+Это прямо подходит к твоему старому flow:
+lesson text
+→ split to scenes
+→ generate image prompt per scene
+→ generate movement prompt per character
+→ render scene
+→ compose video
+5. AI image/video generation — тут надо осторожнее
+Есть open-source код, но код, модели и веса могут иметь разные лицензии.
+Подходящие / почти подходящие
+Проект	Лицензия	Комментарий
+HuggingFace Diffusers	Apache-2.0	Библиотека для image/audio/video diffusion models. Отличный источник кода pipeline’ов: text-to-image, image-to-image, inpainting, LoRA, schedulers.
+InvokeAI	Apache-2.0	Creative engine для AI image generation, self-hosted, customizable. Документация прямо пишет Apache 2.0.
+Open-Sora	Apache-2.0 заявлен на сайте проекта	Text-to-video / image-to-video generation. Подходит для video generation research, но надо проверять конкретный repo, weights и datasets.
+FLUX.2 klein 4B	Apache-2.0 weights, по model card	Интересно как permissive open-weight image model, но нужно проверять каждую версию: 4B Apache-2.0, 9B может быть non-commercial.
+Не подходит под строгий MIT/Apache
+Проект	Почему осторожно
+ComfyUI	Очень полезен архитектурно, но лицензия GPL-3.0, не MIT/Apache.
+Automatic1111 Stable Diffusion WebUI	Обычно AGPL/GPL-зона, не MIT/Apache для твоего фильтра.
+Blender	Супер полезен для 3D/video, но GPL, не MIT/Apache.
+6. Практическая матрица: что брать для твоего проекта
+Если нужна игра
+Phaser     → 2D web game, language puzzle, quiz, drag-drop
+Godot      → полноценная 2D/3D игра с редактором
+Bevy       → ECS/game architecture
+Babylon.js → браузерная 3D сцена
+Stride     → C#/.NET game engine
+Если нужен редактор сцен
+Babylon.js Editor
+Konva.js / React Konva
+Fabric.js editors
+Excalidraw
+bitcraft level-editor
+Если нужны картинки
+PixiJS     → render sprites/animations
+Konva      → interactive canvas editor
+Fabric.js  → image/design editor
+Excalidraw → storyboard / diagram scene
+Diffusers  → AI image generation pipeline
+InvokeAI   → full AI image creative engine
+Если нужно видео
+MoviePy       → Python video assembly
+Manim         → educational/explainer animations
+ffmpeg.wasm   → browser video/audio conversion
+Open-Sora     → AI text-to-video / image-to-video
+React editor  → timeline video editor UI
+7. Лучшие источники именно для LLM training / DPO
+Я бы сделала такой whitelist:
+GAME_ENGINE_CORE:
+  - Godot
+  - Phaser
+  - Bevy
+  - Babylon.js
+  - Stride
+SCENE_EDITOR:
+  - Babylon.js Editor
+  - Konva.js
+  - React Konva
+  - Fabric.js image editor examples
+  - Excalidraw
+VIDEO_PIPELINE:
+  - MoviePy
+  - Manim
+  - ffmpeg.wasm cautiously
+  - a-react-video-editor
+AI_IMAGE_VIDEO:
+  - HuggingFace Diffusers
+  - InvokeAI
+  - Open-Sora cautiously
+И отдельно blacklist / caution:
+DO NOT INCLUDE WITHOUT SPECIAL REVIEW:
+  - Blender: GPL
+  - ComfyUI: GPL-3.0
+  - Automatic1111: AGPL/GPL
+  - Unity examples: licenses vary
+  - Unreal examples: Epic license, not MIT/Apache
+  - Cocos Creator newer engine: license may be modified / not clean MIT
+  - Any model weights without explicit permissive license
+8. Как искать ещё
+Лучшие GitHub-запросы:
+"game engine" "MIT license" "scene editor"
+"game framework" "Apache-2.0 license" "TypeScript"
+"level editor" "MIT license" "game"
+"visual novel engine" "MIT license"
+"canvas editor" "MIT license" "React"
+"image editor" "MIT license" "Fabric.js"
+"video editor" "MIT license" "React"
+"programmatic video" "MIT license"
+"text to video" "Apache-2.0" GitHub
+"image generation" "Apache-2.0" GitHub
+Для твоего направления — создание языковых игр с картинками/видео/аудио — самый сильный стек будет:
+Frontend/editor:
+  React / Angular + Konva or Fabric.js
+Game runtime:
+  Phaser or Babylon.js
+AI image:
+  Diffusers or InvokeAI
+Video:
+  MoviePy or Manim
+Audio:
+  Whisper / TTS pipeline
+Scene format:
+  JSON scene graph
+И тогда архитектура выглядит так:
+User topic
+→ AI lesson script
+→ scene splitter
+→ scene JSON
+→ image/video prompt generator
+→ asset generator
+→ canvas/scene editor
+→ Phaser/Babylon game runtime
+→ MoviePy/Manim video export
+→ DPO accepted/rejected examples
+Главное: код проекта может быть MIT/Apache, но assets, модели, датасеты, картинки, музыка, шрифты и голоса надо проверять отдельно. Для обучения LLM безопаснее брать сначала только код + README + docs + examples, а медиа-ассеты подключать только если у них явно permissive license.
+Проверь пожалуйста на данный момент какие платформы лучше всего распостраняют обучающие  игры органическим путем - возьми игры которые вышли с начала 2025 года сбольшим колличеством отзывов и хороших отметок, где их регистрировали, где о них писали / снимали видео, в каких репо они опубликованы с какой лицензиейДа, вот актуальная картина на конец мая 2026 года (я проверил свежие релизы с начала 2025 года, отзывы, органический рост, платформы распространения, медиа-покрытие и open-source статус с лицензиями MIT/Apache-2.0).
+Я отфильтровал именно обучающие игры (в первую очередь language-learning), которые вышли или сильно выросли с января 2025, набрали заметное количество положительных отзывов (от сотен до тысяч+), распространяются органически (без огромного маркетинга — через коммьюнити, джемы, YouTube/TikTok, Reddit, itch.io-теги и GitHub), имеют упоминания в видео/статьях и, где возможно, открытый код.
+Лучшие платформы для органического распространения в 2025–2026
+
+itch.io — лидер для инди- и open-source обучающих игр.
+Органика: теги (language-learning, educational), game jams (Game Off 2025, GMTK и др.), «New & Popular», YouTube-каналы itch.io с топами месяца.
+Много MIT-лицензированных игр (GDevelop — MIT-движок, Godot — MIT).
+Примеры: десятки language-learning игр 2025 года (Laga, Unolingo Too, Japanese immersion demos и т.д.). Многие с кодом под MIT прямо на странице.
+Отзывы: сотни–тысячи рейтингов в популярных джемах. Видео-обзоры и «Top 20 itch.io» регулярно снимают.
+Идеально для маленьких/нишевых игр — бесплатный дистрибьют, сообщество само продвигает.
+
+Steam — лучше всего для полноценных релизов с большим количеством отзывов.
+Органика: категория «Educational», Steam-алгоритм (если игра набирает positive reviews), Reddit/r/languagelearning, YouTube-геймплеи.
+Пример 2025–2026: Noun Town Language Learning 1.0 (вышел 20 мая 2026, вышел из Early Access). 590+ отзывов, 87% positive — один из самых высокооценённых educational games на платформе. Поддерживает 12 языков, 3D open-world + SRS + speech recognition.
+Медиа: пресс-релизы, блоги разработчика, YouTube-трейлеры и обзоры.
+Лицензия: закрытый код (коммерческий, $19.99 one-time, без подписки). VR-версия тоже на Steam/Meta Quest.
+
+GitHub + F-Droid / App Store / Google Play — идеально для open-source MIT.
+Органика: F-Droid (OSS-сообщество), GitHub-релизы, Reddit, прямые ссылки в статьях.
+Пример 2025: Wuxia Learn (китайский язык).
+Релизы в 2025 (v1.4.7 — март 2025).
+MIT license (полностью открытый код).
+Доступен на Google Play, App Store, F-Droid.
+Flashcards + SRS, 1000+ слов + предложения.
+Органика: GitHub-звёзды, F-Droid-коммьюнити, мобильные отзывы.
+
+
+YouTube / TikTok / Reddit / Kickstarter — драйверы вирусного роста.
+Speechbound (инди-RPG «Duolingo meets Final Fantasy») — демо + Kickstarter (начался ~2025, релиз запланирован 2027). Много свежих YouTube-обзоров (2026), Reddit-треды. Органика через видео и коммьюнити.
+Game jams 2025 (Game Off и др.) — сотни образовательных игр на itch.io + GitHub, с видео-разборами.
+
+
+Краткий топ игр 2025+ с органическим ростом
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Игра / AppПлатформаРелиз / пик 2025–2026Отзывы / РейтингМедиа / ОрганикаРепозиторий / ЛицензияNoun Town Language Learning 1.0Steam (+VR)Полный релиз 20 мая 2026 (Early Access с 2023)590+ отзывов, 87% positiveYouTube-трейлеры, пресс-релизы, Steam-алгоритм, RedditЗакрытый (коммерческий)Wuxia LearnGitHub + App Store / Google Play / F-DroidАктивные обновления 2025 (март)Положительные на F-Droid/Play (тысячи скачиваний)GitHub, F-Droid-коммьюнитиMIT (полный open-source)Speechbound (демо)YouTube / Kickstarter / будущий itch/SteamДемо + Kickstarter 2025Растущий хайп в видеоYouTube-обзоры, RedditНе указан (инди, вероятно закрытый пока)Много мелких на itch.io (Laga, Unolingo Too, Japanese demos и т.д.)itch.io2025 + game jamsСотни рейтингов в популярныхitch-теги, YouTube «Top itch.io», джемыЧасто MIT (GDevelop/Godot)
+Вывод и рекомендация для твоей задачи (open-source + DPO/LLM)
+
+Если ищешь открытый код MIT/Apache-2.0 → itch.io + GitHub (Wuxia Learn — готовый пример 2025 года; плюс сотни MIT-игр из Game Off 2025 и educational-тегов).
+Если хочешь игры с большим органическим охватом и отзывами → Steam (Noun Town — свежий 1.0-релиз 2026 с реальными отзывами).
+Самый органический и бесплатный путь — itch.io (особенно через game jams) + YouTube/TikTok для вирусности.
+
+Хочешь, я могу углубиться в конкретный репозиторий (например, посмотреть код Wuxia Learn или топ-игры с itch.io 2025), найти прямые ссылки на LICENSE или даже проанализировать архитектуру одной из них под твою предыдущую задачу? Просто скажи, какую именно.Проверь пожалуйста на данный момент какие платформы лучше всего распостраняют обучающие игры органическим путем - возьми игры которые вышли с начала 2025 года сбольшим колличеством отзывов и хороших отметок, где их регистрировали, где о них писали / снимали видео, в каких репо они опубликованы с какой лицензией
+ 
+ 
+Thought for 53s
+Да — проверила по текущей картине на 29 мая 2026. Вывод важный: лучше всего органически растут не “open-source educational games”, а коммерческие/закрытые обучающие игры на Steam + App Store/Google Play + itch.io demo + Reddit/YouTube/TikTok/press. У успешных игр почти всегда нет публичного MIT/Apache repo. А MIT/Apache open-source чаще используется как кодовая база/движок/платформа, но не как массово раскрученная игра с тысячами отзывов.
+Для XIIGen это важно разделять: у тебя в проектных правилах уже есть разделение Lite/open-source и DPO-learning; при этом “never train from raw source rows” и не смешивать внешние корпуса с внутренними учебными источниками — это надо сохранить как отдельный ingestion/evidence слой.
+
+Где сейчас лучше всего органически расходятся обучающие игры
+Steam — лучший канал для “игра сначала, обучение внутри”
+Steam сейчас выглядит самым сильным органическим каналом для обучающих игр, если игра ощущается как настоящая игра, а не как “курс с очками”.
+Почему:
+
+
+есть reviews / rating / wishlist / demo / Steam Next Fest;
+игроки активно пишут отзывы;
+YouTube и игровые медиа легче подхватывают Steam-игры;
+можно продавать paid game без подписки;
+работает нишевый поиск по тегам: Education, Language Learning, Typing, Programming, Puzzle, Simulation.
+
+Самый сильный пример — Wagotabi: A Japanese Journey. Это educational RPG для японского, вышедшая на Steam 13 августа 2025, с Overwhelmingly Positive, около 1.3K+ отзывов и 99% положительных по Steam/SteamDB-страницам. Steam-страница описывает игру как RPG, где японский учится через диалоги, квесты и головоломки.
+Органический путь Wagotabi:
+textitch.io demo
+→ Reddit language/game communities
+→ mobile App Store / Google Play
+→ Steam wishlist/demo
+→ Steam release
+→ YouTube reviews/playthroughs
+→ сильные Steam reviews
+У Wagotabi есть demo на itch.io, где прямо описана RPG-идея: Япония, практические слова, грамматика, concrete situations, hiragana/katakana/kanji, progression.
+ Также они активно заходили через Reddit: в постах упоминается Steam-релиз 13 августа 2025, цена $9.99, trailer, постепенная замена английского на японский и обучение через quests/dialogues.
+ На YouTube уже есть review/playthrough videos: “Can You Really Learn Japanese Through A Game…” и другие first-impression/playthrough ролики.
+Вывод: для XIIGen-игр Steam — лучший канал, если делать полноценную game-first механику: RPG, квесты, прогрессия, бои/головоломки/диалоги, а обучение встроено в механику.
+2. App Store + Google Play — лучший канал для детских/языковых microlearning игр
+Для языкового обучения мобильные сто́ры всё ещё очень сильны, но там органика хуже без бренда, ASO и коротких daily loops. Зато хорошо работают:
+textкороткие уроки
+streaks
+визуальные карточки
+audio/pronunciation
+детский UX
+низкий friction
+много отзывов
+Wagotabi хорошо показывает, что mobile + Steam вместе усиливают друг друга. На App Store у Wagotabi указано 4.9 / 1.3K ratings, категория Education, разработчик Wagotabi Limited.
+ На Google Play у demo указано 4.9, около 1.6K reviews и 50K+ downloads, а у платной версии на странице разработчика — 4.9, около 4.5K reviews, 10K+ downloads.
+Старые, но важные ориентиры:
+
+Drops — не новая игра 2025, но мощный пример mobile-first language gamification: App Store показывает 4.7 / 71K ratings, Google Play описывает её как visual language learning app with word games/vocabulary games.
+Falou — тоже не новый релиз, но хороший benchmark по отзывам: Google Play страница заявляет “1M+ 5-Star Ratings” и millions of students.
+
+Вывод: App Store/Google Play нужны, если XIIGen делает короткие daily language games. Но для органики “с нуля” лучше не только mobile — нужно добавлять Steam/itch/YouTube/Reddit.
+3. itch.io — лучший канал для demo, ранней аудитории и indie validation
+itch.io сам по себе редко даёт тысячи отзывов, но он отлично работает как:
+textdemo hosting
+browser-playable prototype
+link for Reddit posts
+link for YouTube creators
+community feedback
+pre-Steam validation
+Wagotabi использовала itch.io именно так: demo доступно как browser game / HTML5, с описанием “learn Japanese in immersion from zero while exploring Japan”.
+ В Reddit-постах Wagotabi прямо упоминала, что demo уже доступно на Steam, itch.io и mobile.
+Вывод: для XIIGen нужно обязательно делать itch.io demo или web demo. Это не главный marketplace, а “органический вход” для Reddit, YouTube, Discord, Product Hunt, Hacker News.
+4. Reddit — лучший organic discovery для нишевых learning games
+Reddit особенно хорошо работает для:
+textr/LearnJapanese
+r/Games
+r/IndieDev
+r/gamedev
+r/languagelearning
+r/Steam
+r/pcgaming
+r/learnprogramming
+Wagotabi получила заметность через Reddit-посты в r/Games и языковых сообществах, включая посты о Steam-релизе и обсуждения “learn Japanese with a video game”.
+Другой пример — Final Sentence, typing battle royale. Это не language-learning game, но очень важный пример органики для обучающей механики “typing skill”. Игра вышла на Steam 9 апреля 2026, имеет Very Positive и около 770–785 отзывов, а всплеск органики пришёл через Reddit/press после поста разработчика “don’t buy this yet, sale soon”. PC Gamer пишет, что пост получил более 33,000 upvotes, а игра имела почти 350,000 wishlists.
+Вывод: Reddit работает, когда есть история, а не просто “мы запустили игру”. История может быть: необычная механика, честный dev-post, demo, roadmap, challenge, community localization.
+5. YouTube / TikTok / Shorts — лучший канал для “понять механику за 20 секунд”
+Обучающие игры распространяются видео-клипами, если gameplay сам объясняет ценность:
+textя пишу код → робот двигается
+я набираю текст → персонаж выживает
+я отвечаю японским → RPG продвигается
+я говорю слово → игра реагирует
+Wagotabi получила organic YouTube coverage: review “Can You Really Learn Japanese Through A Game”, first impressions, gameplay series.
+ Final Sentence получила охват через клипы/вирусность: GamesRadar описывает её как “typing class from Hell” и отмечает, что она стала заметной благодаря клипам онлайн и бесплатному demo.
+Вывод: для XIIGen нужно проектировать механику так, чтобы она была clip-native: 10–30 секунд показывают “учусь и играю одновременно”.
+6. Product Hunt — полезен для AI-learning tools, но слабее для настоящих игр
+Product Hunt хорошо подходит для:
+textAI tutor
+flashcards
+language assistant
+teacher tool
+study productivity app
+Но для настоящих игр он слабее Steam/itch/Reddit. Примеры PH 2025 больше похожи на tools, а не games: Lingocat, Repeet, Polyglotta/Javu и т.п. Lingocat на Product Hunt позиционируется как AI language tutor, Repeet — flashcards app.
+Вывод: Product Hunt стоит использовать для XIIGen как AI education platform launch, но не как главный канал для “игры”.
+2. Примеры игр с 2025+, где видно органическое распространение
+ИграДата / статусГде зарегистрированаОтзывы / рейтингГде писали / снималиRepo / лицензияWagotabi: A Japanese JourneySteam release 13 Aug 2025Steam, App Store, Google Play, itch.io demoSteam ~1.3K reviews, 99%; App Store 4.9 / 1.3K; Google Play 4.9 / thousandsReddit r/Games, WaniKani/community forums, YouTube reviews/playthroughs, itch communityПубличный MIT/Apache repo не найден; продукт выглядит proprietary/closedFinal SentenceSteam release 9 Apr 2026SteamVery Positive, ~770–785 reviewsPC Gamer, GamesRadar, Reddit viral post, clips/demoПубличный MIT/Apache repo не найден; proprietaryThe Farmer Was Replaced2025 release / programming gameSteamOverwhelmingly Positive, thousands reviewsPC Gamer, GamingOnLinux, reviewsПубличный MIT/Apache repo не найден; proprietaryCarmen Sandiego 2025Global digital launch 4 Mar 2025Steam/PC, Switch, Xbox, PlayStation, App StoreApp Store 4.6 / 163 ratings; broader console/press coveragePolygon preview, Gamereactor, reviews, YouTubeПубличный repo нет; proprietary licensed IPWagotabi Lite / Demomobile/demoApp Store, Google Play, itch.ioApp Store Lite 4.9 / ~388–395 ratings; Google Play demo 50K+ downloadssame Wagotabi ecosystemno public permissive repo foundAntura / Learn with Anturaactive open-source, 2025 beta / 2026 v3 plannedGoogle Play, App Store, GitHub, websitePlay/App pages exist, but not same 2025 hype patternofficial docs, YouTube trailer, education/communityOpen-source, but not MIT/Apache in found sources; assets CC-BY 4.0, docs BSD-2, project licensing must be checked per repo
+3. Самый сильный кейс: Wagotabi
+Wagotabi — лучший пример именно для твоего направления: языковая игра, organic traction, multi-platform, много хороших отзывов.
+Что они сделали правильно
+
+Не “приложение для языка”, а RPG
+Steam description: educational RPG teaching Japanese through interactive dialogues, quest-solving, puzzles, exploration of Japan and culture.
+Это важно: игроки Steam покупают игру, не “курс”.
+Demo до релиза
+У них был itch.io demo и Steam demo. Reddit-посты прямо говорят, что demo был доступен на Steam, itch.io и mobile.
+Mobile + PC cross-channel
+FAQ Wagotabi говорит, что игра уже была на iOS/Android, а PC Windows/Mac/Linux запускался 13 Aug 2025.
+YouTube proof
+YouTube creators делают “can you really learn Japanese through a game?” — это идеальный organic hook.
+Community language audience
+Игра обсуждалась в language-learning communities, например WaniKani community и Reddit.
+Что важно для XIIGen
+Для XIIGen это модель:
+
+textweb demo / itch demo
+→ language community proof
+→ Steam page + wishlist
+→ YouTube creators
+→ mobile app store
+→ Steam launch
+→ reviews
+→ expansion packs/languages
+
+Второй сильный кейс: Final Sentence
+Final Sentence не про иностранные языки, но это важный пример educational mechanic → viral game.
+Она учит/тренирует typing, но упакована как battle royale horror/thriller. Steam указывает release date Apr 9, 2026, теги Typing, Text-Based, Education, рейтинг Very Positive.
+Почему разошлось органически:
+
+textпростая механика
++ экстремальная драматизация
++ demo
++ клипы
++ Reddit drama/honesty post
++ PC Gamer / GamesRadar coverage
+PC Gamer пишет, что developer post “don’t buy now, sale soon” получил Reddit love, больше 33K upvotes, а игра имела около 350K Steam wishlists.
+Урок для XIIGen
+Языковая игра не обязана выглядеть как школа. Можно сделать:
+texttyping / pronunciation / grammar
+→ survival challenge
+→ battle / escape / detective / RPG
+→ skill improves because game demands it
+
+Третий кейс: The Farmer Was Replaced
+Это programming/automation education. Steam показывает thousands reviews и Overwhelmingly Positive; gameplay — программирование дрона Python-like language для автоматизации фермы.
+GamingOnLinux описывает её как satisfying way to learn a little programming with automation; PC Gamer тоже включал её в “new Steam games you probably missed” и отметил actual Python-style programming.
+Урок для XIIGen
+Лучший образовательный дизайн:
+
+textне “прочитай урок”
+а “без знания правила ты не пройдёшь задачу”
+Для языка это значит:
+textне выучи падеж
+а выбери правильный падеж, чтобы NPC понял команду
+
+Четвёртый кейс: Carmen Sandiego 2025
+Это не indie/open-source, но важный пример educational game с сильной IP и press coverage.
+Gameloft/HarperCollins объявили global launch на digital platforms 4 March 2025, плюс physical 40th Anniversary edition.
+ Polygon писал, что новая Carmen Sandiego образовательна через world geography, clues, deduction, math/time calculations и reading comprehension.
+ App Store показывает 4.6 / 163 ratings.
+Урок для XIIGen
+Press любит формулу:
+
+textfamiliar genre/IP
++ educational value
++ “kids learn without noticing”
++ classroom/parent angle
+Для XIIGen без сильного IP нужно заменить IP на:
+textAI-generated worlds
+personalized quests
+language/coding/math adventure
+open-source/community angle
+
+Что с MIT / Apache репозиториями
+Здесь картина жёсткая:
+У успешных 2025+ consumer educational games почти нет открытого MIT/Apache кода
+Я не нашла публичных MIT/Apache репозиториев для:
+
+textWagotabi
+Final Sentence
+The Farmer Was Replaced
+Carmen Sandiego 2025
+WonderLang
+Noun Town
+То есть они распространяются как продукты, но код закрыт/proprietary.
+GitHub официально предупреждает: если repo публичный, но без лицензии, это не значит open-source; без лицензии default copyright остаётся у автора, и нельзя свободно воспроизводить/модифицировать/распространять код.
+Open-source educational games есть, но обычно не MIT/Apache и не новые viral launches
+Antura / Learn with Antura — сильный open-source literacy/language game, но по найденным данным лицензирование не чисто MIT/Apache: assets под CC-BY 4.0, docs BSD-2, отдельные language repos тоже BSD-2/other; нужно проверять конкретный repo перед использованием.
+Hanabira.org — MIT, open-source Japanese/Korean learning portal, self-hosted, но это скорее portal/SRS/learning app, не consumer game с Steam/App Store traction.
+8. Лучшие платформы по типу продукта
+Если XIIGen делает language RPG / visual adventure
+Лучший путь:
+text1. itch.io browser demo
+2. Steam Coming Soon page
+3. Reddit language communities
+4. YouTube creators
+5. Steam launch
+6. App Store / Google Play companion
+Главный пример: Wagotabi.
+Если XIIGen делает typing / grammar / pronunciation challenge
+Лучший путь:
+text1. Steam demo
+2. TikTok/YouTube Shorts clips
+3. Reddit “weird mechanic” post
+4. Steam launch
+5. leaderboard / multiplayer / challenge mode
+Главный пример: Final Sentence.
+Если XIIGen делает programming/coding educational game
+Лучший путь:
+text1. Steam
+2. YouTube devlog
+3. Reddit r/learnprogramming / r/programming / r/automation
+4. Linux/indie press
+5. demo + community puzzles
+Главный пример: The Farmer Was Replaced.
+Если XIIGen делает kids/classroom learning
+Лучший путь:
+text1. App Store / Google Play
+2. teacher/parent press
+3. YouTube trailer
+4. school/community partnerships
+5. optional web version
+Главный пример: Carmen Sandiego / Antura category, но Carmen закрытая, Antura open-source.
+9. Практический вывод для XIIGen
+Я бы не пыталась “скопировать open-source successful 2025 game”, потому что таких почти нет в чистом MIT/Apache виде. Вместо этого:
+Для распространения
+Делать как Wagotabi:
+textPlayable web demo
+→ itch.io
+→ Steam Coming Soon
+→ Steam demo
+→ Reddit language communities
+→ YouTube creators
+→ App Store / Google Play
+Для кода и обучения LLM
+Брать MIT/Apache не из consumer игр, а из:
+textPhaser / PixiJS / Konva / Babylon.js / Godot-style architecture
+open-source language portals
+open-source lesson engines
+open-source TTS/STT/OCR tools
+Для лицензий
+Разделить ingestion на 3 слоя:
+textA. Product evidence:
+   Steam/App Store/Google Play/press/videos/reviews.
+   Используется для маркетинговой логики, НЕ для code training.
+
+B. Open-source code:
+   Только repo с LICENSE MIT / Apache-2.0 / совместимой permissive.
+   Используется для architecture/code learning.
+
+C. Media/assets/models:
+   Проверяются отдельно.
+   Нельзя считать, что если код MIT, то аудио/картинки/модели тоже MIT.
+
+Рейтинг платформ для органики
+МестоПлатформаОрганическая силаПочему1SteamОчень высокаяreviews, wishlist, demo, Next Fest, press, YouTube, Reddit2YouTube / Shorts / TikTokОчень высокаяgameplay можно понять мгновенно3RedditВысокаянишевые learning/game communities, dev stories4itch.ioСредняя, но стратегически важнаяdemo, browser play, indie credibility5App Store / Google PlayВысокая для mobile, но тяжёлая органикаratings, ASO, mobile habit loops6Product HuntСредняялучше для AI/tools, слабее для игр7GitHubНизкая как consumer distribution, высокая как dev trustкод/комьюнити/contributors, но не массовые игроки
+Самая правильная стратегия для твоего проекта
+Для XIIGen я бы строила запуск так:
+
+textPhase 1 — Open demo
+  - web playable demo
+  - itch.io page
+  - GitHub repo with MIT/Apache code only if ready
+  - short gameplay clips
+
+Phase 2 — Community proof
+  - Reddit posts by niche:
+    language learning / programming / indie games
+  - YouTube micro-creators
+  - Discord communities
+  - demo feedback
+
+Phase 3 — Steam
+  - Coming Soon page
+  - wishlist campaign
+  - demo
+  - Steam Next Fest
+  - full release
+
+Phase 4 — Mobile companion
+  - App Store / Google Play
+  - daily practice
+  - audio/pronunciation
+  - notifications/streaks
+
+Phase 5 — Open-source credibility
+  - public engine/modules
+  - docs
+  - contribution guide
+  - datasets/license registry
+Главный вывод: для органического роста лучше всего Steam + itch.io demo + Reddit + YouTube. Для отзывов и mobile learning retention — App Store/Google Play. Для доверия разработчиков и LLM-training источников — GitHub, но не как главный discovery channel для игроков.
+Проверь пожалуста тренды и популярные слова для изучения языков
+Проверю свежую картину по 2025–2026: поисковые тренды, ASO/SEO-слова, популярные форматы приложений и игровые формулировки, которые реально используют Duolingo/Drops/Babbel/AI tutors/Steam-language games.
+Thought for 9s
+Да. По трендам на 2025–2026 картина такая: рынок сильно сдвинулся от “выучи слова и пройди тест” к AI speaking practice, pronunciation feedback, immersive scenarios, коротким игровым заданиям и персонализации под цель.
+Главный тренд: пользователи хотят не просто “language learning”, а говорить, понимать живую речь, готовиться к конкретной ситуации и получать мгновенный feedback. Это видно по позиционированию Speak — “talk out loud, get instant feedback” , по Google Translate, который в 2026 добавил AI pronunciation practice с анализом произношения , и по Duolingo, который расширяет AI-speaking features вроде Video Call with Lily на более дешёвые планы, чтобы увеличить engagement .
+
+Главные тренды в изучении языков
+AI speaking practice
+Самые сильные слова:
+
+textAI tutor
+AI language tutor
+AI conversation
+speaking practice
+real-life conversations
+talk out loud
+instant feedback
+conversation practice
+practice speaking
+become fluent
+Это сейчас ядро рынка. Даже классические приложения начали смещаться в сторону AI-разговоров. Reuters писал, что Duolingo поднял прогнозы на 2025 год благодаря спросу на AI-powered Max plan и расширению AI-функций . В 2026 Duolingo уже расширяет speaking features на более доступные планы, потому что speaking стал acquisition/retention driver .
+Для XIIGen это значит: в описании продукта лучше писать не “learn grammar”, а:
+textSpeak from day one
+Practice real conversations
+AI speaking coach
+Get instant feedback
+Train for real-life situations
+
+Pronunciation / accent feedback
+Популярные слова:
+
+textpronunciation
+accent coach
+speak clearly
+mispronounced words
+speech feedback
+voice practice
+fluency coach
+AI pronunciation
+repeat after me
+shadowing
+Google Translate в 2026 добавил Pronunciation Practice: пользователь произносит слова/фразы, AI анализирует речь, подсвечивает ошибочные сегменты и даёт повторение . ELSA Speak и похожие приложения тоже позиционируются вокруг AI-powered language coach / speaking confidence / pronunciation.
+Для обучающей игры это можно превратить в механику:
+textSay the spell correctly
+NPC understands only if pronunciation is clear
+Repeat the phrase to unlock the door
+Accent battle
+Voice quest
+
+Real-life scenarios вместо абстрактных уроков
+Сильные слова:
+
+texttravel
+business English
+job interview
+workplace English
+restaurant
+airport
+hotel
+small talk
+daily conversation
+relocation
+exam prep
+TOEFL
+IELTS
+Исследование 2026 по LLM-generated lessons на примере Duolingo отмечает, что обычные приложения часто дают общие сценарии вроде greetings, ordering food, asking directions, но пользователям нужны ещё и domain-specific / profession-specific scenarios для профессиональной fluency .
+Для XIIGen это очень важно: нужно не “курс английского”, а контекстные игры:
+textEnglish for developers
+English for job interviews
+Hebrew for bureaucracy
+Japanese for travel RPG
+Business English negotiation game
+English for immigration interview
+English for customer support
+
+Gamified micro-lessons
+Популярные слова:
+
+textdaily practice
+micro lessons
+5-minute lessons
+streak
+XP
+levels
+quests
+challenges
+leaderboard
+badges
+progress
+unlock
+daily goal
+Duolingo всё ещё силён как пример gamified learning, но есть и предупреждение: исследования по gamification misuse показывают, что баллы, badges и leaderboards могут отвлекать от реального обучения, если пользователь начинает играть ради streak/points, а не ради языка .
+Поэтому лучше использовать не просто “очки”, а learning-bound gamification:
+textправильно сказал фразу → NPC понял
+выбрал правильный падеж → дверь открылась
+перевёл диалог → получил новую clue
+услышал слово → победил монстра
+
+Immersive learning / learning through content
+Популярные слова:
+
+textimmersion
+learn with stories
+learn with videos
+native speakers
+real-world content
+interactive dialogues
+roleplay
+story mode
+RPG
+quests
+puzzles
+culture
+Wagotabi хорошо показывает этот тренд: Steam-страница описывает игру как educational RPG, где японский учится через interactive dialogues, quest-solving, puzzles и exploration .
+Для XIIGen это сильный формат:
+textLearn Japanese through an RPG
+Learn English through detective stories
+Learn Hebrew through city quests
+Learn Spanish through travel missions
+
+Персонализация и adaptive AI
+Слова:
+
+textpersonalized lessons
+adaptive learning
+your level
+your goals
+custom scenarios
+AI-generated lessons
+personalized feedback
+learn at your pace
+smart review
+weak words
+mistake-based practice
+AI-приложения сейчас продают не просто “мы используем AI”, а “AI подстраивается под тебя”. В статьях и обзорах 2025–2026 часто повторяются speaking practice, adaptive feedback, personalization, fluency .
+Для XIIGen это можно формулировать так:
+textThe game adapts to your mistakes
+Your quests are generated from your weak words
+Practice the phrases you actually need
+AI creates lessons from your goals
+
+Популярные keyword clusters
+A. Общие ASO/SEO слова
+
+textlanguage learning
+learn English
+learn Spanish
+learn Japanese
+learn Korean
+learn French
+learn German
+learn Hebrew
+learn Russian
+vocabulary builder
+grammar practice
+speaking practice
+listening practice
+pronunciation practice
+conversation practice
+AI language tutor
+language learning game
+B. Английский как самый коммерческий сегмент
+textlearn English
+English speaking practice
+speak English fluently
+English conversation
+business English
+English pronunciation
+English vocabulary
+English grammar
+IELTS speaking
+TOEFL practice
+job interview English
+English for work
+English for travel
+Growth/ASO анализы тоже подчёркивают long-tail intent вроде “learn Spanish for travel”, “IELTS vocabulary”, “English speaking practice” — такие конкретные кластеры лучше, чем просто “learn language” .
+C. AI-слова
+textAI tutor
+AI language tutor
+AI conversation partner
+AI speaking coach
+AI pronunciation coach
+AI roleplay
+AI feedback
+AI-generated lessons
+personalized AI lessons
+voice AI tutor
+chat with AI
+D. Игровые слова
+textlanguage learning game
+RPG language learning
+vocabulary game
+grammar game
+word game
+typing game
+quest
+challenge
+daily quest
+level up
+unlock words
+story mode
+interactive dialogue
+puzzle
+adventure
+E. Audio / speech words
+textvoice practice
+speak out loud
+speech recognition
+pronunciation feedback
+accent training
+listening comprehension
+shadowing
+repeat after me
+audio lessons
+native speaker audio
+conversation simulator
+F. Для родителей/детей
+textlearn English for kids
+language games for kids
+phonics
+alphabet game
+reading game
+spelling game
+kids vocabulary
+ESL games
+fun English
+learn with stories
+
+Какие слова лучше использовать в названии / subtitle
+Для App Store / Google Play
+Лучшие формулы:
+
+text[Language] Speaking Practice
+AI Language Tutor
+Learn [Language] with Games
+[Language] Vocabulary & Speaking
+AI English Speaking Coach
+Learn [Language]: Words & Grammar
+Примеры для XIIGen:
+textXIIGen Speak: AI Language Game
+XIIGen Quest: Learn Languages
+AI English Speaking Game
+Hebrew Quest: Speak & Learn
+Japanese RPG Language Tutor
+English for Work: AI Speaking
+Для Steam
+На Steam лучше работает не “app”, а “game genre + learning promise”:
+textJapanese Learning RPG
+Language Adventure Game
+Typing Battle Royale
+Grammar Puzzle Adventure
+AI Conversation RPG
+Learn English Through Quests
+Примеры:
+textWordQuest: Learn English RPG
+Grammar Dungeon
+SpeakQuest: AI Language Adventure
+Kana Heroes: Japanese RPG
+Fluent City: Language Learning Adventure
+
+Какие языки сейчас стоит выделять
+По популярности и коммерческому смыслу:
+
+textEnglish
+Spanish
+Japanese
+Korean
+French
+German
+Italian
+Chinese / Mandarin
+Portuguese
+Hebrew — нишево, но ценно для локального/иммиграционного рынка
+Russian — нишево, useful для bilingual/translation tools
+Arabic — большой рынок, но сложнее по диалектам
+Особенно сильные игровые направления:
+ЯзыкПочемуJapaneseanime/games/culture + сложная письменность + RPG хорошо ложитсяKoreanK-pop/K-drama/culture + pronunciation/listeningEnglishсамый коммерческий рынок: работа, интервью, IELTS/TOEFLSpanishtravel + US market + beginner-friendlyHebrewлокальная боль: бюрократия, работа, иммиграция, разговорная практика
+5. Самые перспективные форматы для XIIGen
+
+AI speaking RPG
+Ключевые слова:
+
+textAI language RPG
+speak to characters
+real conversations
+voice quests
+instant feedback
+Механика:
+textNPC задаёт вопрос
+→ пользователь отвечает голосом
+→ AI проверяет смысл/грамматику/произношение
+→ NPC реагирует
+→ квест продолжается
+
+Grammar as magic / rules as powers
+Ключевые слова:
+
+textgrammar game
+language rules
+spells
+quests
+unlock grammar
+sentence building
+Механика:
+textправильное время / падеж / артикль
+→ активирует действие в игре
+
+Vocabulary battle / word puzzle
+Ключевые слова:
+
+textvocabulary game
+word battle
+word puzzle
+memory game
+spaced repetition
+daily words
+Механика:
+textслово + картинка + звук + контекст
+→ пользователь выбирает/говорит/пишет
+→ игра возвращает слово в повторение, если ошибка
+
+Professional fluency simulator
+Ключевые слова:
+
+textbusiness English
+job interview English
+English for developers
+workplace conversations
+AI roleplay
+Это особенно перспективно, потому что исследования указывают на дефицит profession-specific contexts в LLM-generated lessons .
+5. Pronunciation quest
+Ключевые слова:
+textpronunciation practice
+accent coach
+speech feedback
+voice game
+repeat and unlock
+Google Translate и Speak показывают, что pronunciation/speaking становятся mainstream-фичами .
+6. Слова, которые лучше НЕ ставить в центр
+Эти слова уже слабее или слишком общие:
+textcourse
+lessons
+dictionary
+translator
+flashcards
+memorize
+grammar rules
+language app
+learn fast
+Они не плохие, но сами по себе звучат скучно. Лучше сочетать:
+textflashcards → smart review / word quests
+grammar rules → grammar magic / sentence puzzles
+dictionary → instant word help / popup meaning
+translator → real conversation support
+lessons → quests / missions / scenarios
+
+Готовая матрица ключевых слов для XIIGen
+НаправлениеPrimary keywordsSecondary keywordsAI speakingAI tutor, speaking practice, conversation practiceinstant feedback, real-life conversations, voice AIPronunciationpronunciation practice, accent coachmispronounced words, repeat after me, speech feedbackGamelanguage learning game, RPG, questspuzzles, levels, unlock, story modeVocabularyvocabulary builder, word gamedaily words, spaced repetition, memoryGrammargrammar game, sentence buildertenses, cases, articles, word orderProfessionalbusiness English, job interview Englishworkplace, meetings, developers, relocationImmersionlearn with stories, interactive dialoguesnative content, culture, travel scenariosKidsEnglish games for kids, phonicsspelling, alphabet, reading game
+Мой вывод для продукта
+Для органического продвижения сейчас самая сильная формула:
+
+textAI + speaking + game + specific goal
+Не просто:
+textLearn English
+А:
+textPractice English speaking with AI quests
+Не:
+textJapanese lessons
+А:
+textLearn Japanese through an RPG adventure
+Не:
+textGrammar trainer
+А:
+textSolve quests by building correct sentences
+Для XIIGen я бы использовала такие core-позиционирования:
+textAI Language Quest
+Speak to Learn
+Grammar Becomes Gameplay
+Practice Real Conversations in a Game
+Learn Languages Through Quests, Voice and Stories
+Personalized AI Speaking RPG
+Самый сильный набор слов для первой версии:
+textAI language game
+speaking practice
+real conversations
+instant feedback
+pronunciation
+quests
+RPG
+vocabulary
+grammar
+personalized lessons
+English for work
+Japanese RPG
+Hebrew speaking practice
+Из того что сказано если я хочу максимум охвата с тем же алгоритмон и минимумом усилий по маркетингу, какие платформы лучше всего подходят? Где лучше регистрироваться? Какие ключевые слова использовать?Для максимального органического охвата с минимальными усилиями по маркетингу (то есть почти без платной рекламы, фокус на встроенных алгоритмах платформ + вирусность через демо/клипы) идеальная связка на май 2026 — это itch.io + Steam + Reddit/YouTube/TikTok.
+Это именно тот путь, который показали успешные кейсы 2025–2026 (Wagotabi: A Japanese Journey — релиз 13 августа 2025, 1300+ отзывов, 99% положительных на Steam; Noun Town и другие образовательные RPG). Они начинали с демо на itch.io, собирали органику на Reddit и YouTube, а потом взлетали на Steam.
+1. Порядок запуска (минимум усилий, максимум охвата)
+
+itch.io — первый шаг (0–2 недели)
+Почему: самая низкая трение для инди-игр. Алгоритм itch.io хорошо продвигает по тегам (language-learning, educational, RPG, AI).
+Что делать: загрузи playable web-демо (браузерная версия). Добавь теги: language-learning, educational, RPG, AI tutor, speaking practice.
+Органика: YouTube-каналы itch.io регулярно делают «Top itch.io games of the month» — твоя игра может попасть туда бесплатно. Плюс Reddit и TikTok сами находят демо.
+Усилия: 1–2 дня на страницу + демо.
+
+Steam — главный драйвер охвата (после 500–1000 wishlist)
+Почему: Steam — №1 по органике для game-like educational проектов. Алгоритм (Discovery Queue, Next Fest, wishlist) даёт тысячи просмотров сам. Wagotabi вырос именно так.
+Что делать: создай «Coming Soon» страницу сразу после itch.io. Собирай wishlist через демо-ссылку. Потом релиз.
+Органика: отзывы игроков + Steam-алгоритм работают сами.
+
+App Store + Google Play — для retention и мобильного трафика
+Почему: Duolingo, Drops и аналоги показывают, что мобильные версии дают ежедневные привычки и тысячи отзывов. Steam + mobile вместе усиливают друг друга.
+Усилия: одна кодовая база (если у тебя React Native / Unity / Godot) — публикуешь как companion-app.
+
+Reddit + YouTube/TikTok — бесплатный вирусный усилитель
+Reddit (r/languagelearning, r/LearnJapanese, r/IndieDev, r/gamedev) — посты о демо дают органический трафик.
+YouTube/TikTok — короткие клипы 15–30 сек («Say the word → NPC reacts») работают лучше всего. Алгоритмы сами подхватывают, если механика клиповая.
+
+
+2. Где регистрироваться (конкретно)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ПлатформаСтоимостьВремя на запускЧто даёт (органика)Приоритетitch.ioБесплатно1 деньДемо + теги + YouTube-топы★★★★★Steam$100 (одноразово)1–2 неделиWishlist → отзывы → алгоритм★★★★★Google Play$25 (одноразово)1–3 дняМобильные отзывы + ASO★★★★App Store$99/год1–2 неделиВысокие рейтинги + retention★★★★GitHubБесплатно—Только если MIT/Apache (для доверия)★★
+Не трать время на Product Hunt (лучше для AI-tools, а не игр) и отдельные соцсети — они дают меньше органики.
+3. Ключевые слова (ASO + Steam + описания)
+Используй эти кластеры — они сейчас самые горячие (2025–2026 тренды: AI speaking + immersion + gamification).
+Основные (в заголовке/subtitle):
+
+AI language game
+speaking practice
+language learning RPG
+AI speaking coach
+learn [язык] through quests
+
+Дополнительные (в описании и тегах):
+
+real conversations
+instant feedback
+pronunciation practice
+immersive language learning
+vocabulary game
+grammar game
+AI tutor
+voice practice
+interactive dialogue
+personalized lessons
+
+Примеры названий, которые работают:
+
+«AI Language Quest: Speak to Learn»
+«SpeakQuest: AI Speaking RPG»
+«Japanese RPG: Learn by Talking»
+«Grammar Dungeon – AI Language Game»
+
+Для Steam — добавляй жанр + обещание: «Educational RPG», «Language Adventure Game».
+Итоговая стратегия «максимум охвата — минимум маркетинга»
+
+День 1–3 → itch.io demo + теги.
+Сразу → Steam Coming Soon + ссылка на демо.
+Неделя 2–4 → 3–5 коротких клипов на YouTube/TikTok + 2–3 поста на Reddit (с демо).
+Когда >500 wishlist → Steam-релиз.
+Параллельно → мобильная версия.
+
+Алгоритмы платформ (itch + Steam + YouTube) сделают 80–90 % работы сами, если механика клиповая и игра реально учит через игру (как в Wagotabi).
+Хочешь — могу помочь составить конкретный текст для Steam/itch страницы или список тегов под твой язык/механику. Просто скажи, на какой язык и какой тип игры ориентируешься (speaking RPG, pronunciation quest и т.д.).ссравни со своим ответом
+Из того что сказано если я хочу максимум охвата с тем же алгоритмон и минимумом усилий по маркетингу, какие платформы лучше всего подходят? Где лучше регистрироваться? Какие ключевые слова использовать?
+Соберу это как практическую стратегию запуска: где получить максимум органики без тяжёлого маркетинга, в каком порядке регистрироваться, и какие keywords использовать отдельно для Steam, mobile, itch/Product Hunt/GitHub.
+Thought for 7s
+Да. Если цель — максимум охвата при том же алгоритме и минимуме маркетинга, я бы не начинала с “везде сразу”. Лучший путь — сделать один web/desktop-ready продукт, который легко публикуется как demo, как Steam-игра и как мобильный companion.
+Главная формула сейчас:
+Steam + itch.io demo + Reddit/YouTube clips
+потом App Store / Google Play
+потом Product Hunt / GitHub для AI/open-source доверия
+
+Лучшие платформы по соотношению охват / усилия
+1 место — Steam
+
+Лучше всего для обучающей игры, если она выглядит как игра.
+Steam подходит, если у тебя:
+RPG
+quest game
+grammar dungeon
+word puzzle adventure
+typing/speaking challenge
+visual novel with language learning
+Почему Steam:
+люди ищут игры, а не только “приложения”;
+есть органика через wishlists, demos, reviews;
+Steam Next Fest даёт бесплатную витрину demo;
+YouTube и Reddit легче подхватывают Steam-игры;
+образовательная игра может быть платной без сложной подписки.
+Хороший ориентир — Wagotabi: A Japanese Journey: Steam описывает её как educational RPG для японского через dialogues, quests and puzzles; релиз был 13 августа 2025.
+Для XIIGen это значит: не позиционировать как “language app”, а как:
+AI Language RPG
+Grammar Quest Game
+Speak-to-Play Adventure
+Learn English Through Quests
+2 место — itch.io
+Лучшее место для demo с минимальными усилиями.
+itch.io не даст столько отзывов, как Steam, но он очень удобен как первая посадочная площадка:
+browser demo
+early prototype
+link for Reddit
+link for YouTube creators
+link for Discord
+feedback before Steam
+Для тебя это особенно подходит, потому что можно сделать web-demo на Phaser / Babylon / React и сразу дать людям играть без установки.
+Идеальный вариант:
+itch.io demo → Reddit post → YouTube clips → Steam Coming Soon
+3 место — YouTube Shorts / TikTok / Reels
+Не marketplace, но самый дешёвый органический двигатель.
+Тут выигрывают игры, где за 10–20 секунд понятно:
+я говорю фразу → персонаж реагирует
+я выбираю правильный падеж → дверь открылась
+я перевожу слово → прохожу квест
+я ошибаюсь в произношении → монстр меня не понимает
+То есть надо проектировать алгоритм не только как learning system, а как clip-native gameplay.
+Пример формата:
+"Can you survive this dungeon using only correct English tenses?"
+"Learn Hebrew by talking to NPCs in Tel Aviv"
+"Japanese RPG where every quest teaches real phrases"
+4 место — Reddit
+Лучший бесплатный канал для нишевого старта.
+Реддит работает, если пост не рекламный, а имеет историю:
+I built a language RPG where grammar unlocks quests
+I made an AI game that teaches Hebrew bureaucracy phrases
+I turned English speaking practice into a dungeon game
+Куда идти:
+r/languagelearning
+r/LearnJapanese
+r/learnEnglish
+r/EnglishLearning
+r/IndieDev
+r/gamedev
+r/playmygame
+r/webgames
+r/SideProject
+r/ArtificialInteligence
+r/ChatGPTCoding
+Для coding/programming learning games:
+r/learnprogramming
+r/programming
+r/opensource
+r/rust
+r/javascript
+r/typescript
+5 место — App Store / Google Play
+Лучше как второй этап, не первый.
+Mobile сто́ры хороши для retention:
+daily quests
+streaks
+voice practice
+5-minute lessons
+notifications
+micro-learning
+Но органический запуск “с нуля” там сложнее: высокая конкуренция, ASO, reviews, скриншоты, подписки, moderation, mobile UX.
+Поэтому я бы делала так:
+сначала web/Steam proof
+потом mobile companion
+Mobile-описание должно звучать не как “игра на 20 часов”, а как:
+5-minute AI speaking quests
+daily vocabulary adventure
+pronunciation practice with instant feedback
+6 место — Product Hunt
+Хорошо для AI-tool, слабее для игры.
+Product Hunt подходит, если ты упаковываешь XIIGen как:
+AI language tutor
+AI game generator for teachers
+personalized language quests
+AI speaking practice app
+Product Hunt прямо показывает категорию language learning, где в топе practical AI coaching, workplace coaching, translation and language-learning tools.
+Но если это именно игра, Product Hunt не заменит Steam/itch/Reddit.
+7 место — GitHub
+Не канал для игроков, но важен для доверия, open-source и dev-аудитории.
+GitHub нужен, если ты хочешь:
+open-source credibility
+contributors
+technical audience
+LLM-training/data transparency
+MIT/Apache repo
+developer trust
+Но GitHub почти не даст массовых учеников сам по себе.
+
+Где регистрироваться — порядок
+Минимальный путь с максимальным эффектом
+
+Я бы делала так:
+
+itch.io
+Steam Coming Soon
+YouTube Shorts / TikTok / Reels
+Reddit
+Steam Demo / Steam Next Fest
+App Store / Google Play
+Product Hunt
+GitHub public repo / docs
+Почему именно так
+Шаг 1 — itch.io
+
+Минимум усилий. Можно быстро выложить:
+browser demo
+screenshots
+short trailer
+description
+devlog
+Название страницы:
+AI Language Quest Demo
+Grammar Dungeon Demo
+SpeakQuest: AI Language Adventure
+Шаг 2 — Steam Coming Soon
+Нужен как можно раньше, потому что Steam работает через wishlist. Не ждать полной игры.
+Страница должна продавать жанр, не “обучение”:
+An AI language RPG where every dialogue, quest and puzzle teaches you to speak.
+Steam tags:
+Education
+Language Learning
+RPG
+Adventure
+Puzzle
+Story Rich
+Singleplayer
+Typing
+Text-Based
+Conversation
+Visual Novel
+Casual
+Cute
+Anime
+Simulation
+Не все теги существуют/подойдут одновременно, но логика такая: Education + реальный игровой жанр.
+Шаг 3 — видео-клипы
+Нужно 10–20 коротких роликов, не “трейлер на 2 минуты”.
+Форматы:
+NPC refuses to open the door until I use the correct tense
+I tried learning Hebrew through an AI quest game
+This RPG teaches Japanese without flashcards
+Every grammar mistake changes the story
+Can AI make speaking practice feel like a game?
+Шаг 4 — Reddit
+Постить не как рекламу, а как build-in-public:
+I’m building an AI language RPG where grammar is part of the gameplay
+Давать ссылку на itch demo + Steam wishlist.
+Шаг 5 — Steam Demo / Next Fest
+Steam Next Fest важен, потому что это отдельный discovery event с demo. PC Gamer также отмечает Steam Next Fest как событие, где игроки пробуют сотни upcoming games бесплатно через demo.
+Шаг 6 — mobile
+После того как понятно, какая механика цепляет, выносить в mobile:
+daily quest
+5-minute speaking practice
+word review
+pronunciation challenge
+Mobile не должен быть полной копией Steam. Он должен быть daily companion.
+Wagotabi на Google Play позиционируется именно как daily companion for learning Japanese with immersion and adventure progression.
+Шаг 7 — Product Hunt
+Запускать не как игру, а как:
+AI language game platform
+AI speaking RPG
+personalized language-learning quests
+Шаг 8 — GitHub
+Публиковать только тот код, который готов к open-source:
+MIT / Apache-2.0
+без ключей
+без приватных данных
+с contribution guide
+с license registry
+Это важно и для XIIGen: в ваших правилах уже разделены Lite/open-source и Enterprise/commercial, а DPO/learning должен быть отдельным проверенным источником, не “сырой код без фильтра”.
+
+Какие платформы выбрать, если ресурсов мало
+Вариант A — самый дешёвый и быстрый
+itch.io + Reddit + YouTube Shorts
+
+Подходит для MVP.
+Плюсы:
+почти бесплатно
+быстро
+можно проверить механику
+можно собрать первые отзывы
+Минусы:
+меньше доверия, чем Steam
+сложнее монетизация
+мало встроенной review-системы
+Вариант B — лучший баланс
+itch.io + Steam + Reddit + YouTube Shorts
+Это я считаю оптимальным.
+Плюсы:
+Steam даёт доверие и отзывы
+itch даёт быстрый demo
+Reddit даёт нишевый organic traffic
+YouTube/TikTok дают визуальный охват
+Вариант C — если продукт больше app, чем game
+App Store + Google Play + Product Hunt + TikTok
+Подходит, если основной loop:
+daily lessons
+speaking practice
+pronunciation feedback
+AI tutor
+Вариант D — если ты хочешь open-source/dev audience
+GitHub + Product Hunt + Hacker News + Reddit
+Подходит, если selling point:
+open-source AI language game generator
+MIT/Apache learning game engine
+AI lesson-to-game pipeline
+4. Какие ключевые слова использовать
+Главные слова для широкой аудитории
+AI language game
+AI language tutor
+speaking practice
+conversation practice
+pronunciation practice
+instant feedback
+real-life conversations
+learn through quests
+language RPG
+vocabulary game
+grammar game
+interactive dialogues
+personalized lessons
+Для Steam
+На Steam лучше использовать игровые слова первыми:
+Language RPG
+AI Adventure Game
+Grammar Dungeon
+Vocabulary Quest
+Speaking Adventure
+Story-rich Language Game
+Learn Japanese Through an RPG
+Learn English Through Quests
+Puzzle Adventure
+Conversation RPG
+Typing Challenge
+Steam short description example:
+An AI language RPG where you learn by speaking to characters, solving grammar puzzles, and completing real-life conversation quests.
+Steam tags/keywords:
+Education
+Language Learning
+RPG
+Adventure
+Puzzle
+Story Rich
+Visual Novel
+Typing
+Text-Based
+Casual
+Singleplayer
+Conversation
+Simulation
+Anime
+Cute
+Для App Store / Google Play
+Mobile users search more directly:
+learn English
+learn Japanese
+AI language tutor
+speaking practice
+English conversation
+pronunciation practice
+vocabulary builder
+grammar practice
+language learning game
+daily language lessons
+AI speaking coach
+learn Spanish
+learn Hebrew
+learn Korean
+Subtitle examples:
+AI Speaking Practice Game
+Learn Languages with Quests
+AI Tutor for Real Conversations
+Vocabulary & Pronunciation Game
+Description opening:
+Practice real conversations with an AI tutor inside a language adventure game. Complete daily quests, improve pronunciation, learn vocabulary, and get instant feedback.
+Для itch.io
+itch аудитория любит жанр + эксперимент:
+AI language RPG demo
+experimental language learning game
+educational RPG
+browser language game
+grammar puzzle adventure
+learn through dialogue
+interactive language quest
+Short pitch:
+A browser-playable AI language RPG where every quest teaches real conversation skills.
+Для Product Hunt
+Там лучше tool-words:
+AI language tutor
+AI speaking coach
+personalized language learning
+AI-generated lessons
+conversation practice
+learn by roleplay
+language learning for busy people
+Launch title:
+SpeakQuest — AI language practice through playable quests
+Tagline:
+Practice real conversations inside AI-generated language adventures.
+Для Reddit / YouTube
+Там нужны “story hooks”, не SEO:
+I made a language RPG where grammar mistakes change the story
+I built an AI tutor you can actually play
+I turned speaking practice into quests
+Can you learn Japanese through an RPG?
+I’m building a game where NPCs only understand correct sentences
+5. Как назвать продукт
+Я бы избегала слова “course” в названии. Лучше:
+Quest
+Speak
+RPG
+Adventure
+Fluent
+Word
+Grammar
+Story
+NPC
+AI
+Варианты:
+SpeakQuest
+LinguaQuest
+FluentQuest
+Grammar Dungeon
+WordQuest AI
+NPC English
+AI Language Adventure
+SpeakRPG
+Hebrew Quest
+English Quest AI
+Для XIIGen можно:
+XIIGen SpeakQuest
+XIIGen Language Quest
+XIIGen Grammar Dungeon
+XIIGen AI Language RPG
+6. Лучшее позиционирование для твоего алгоритма
+С учётом того, что у тебя алгоритм может генерировать lesson → scenes → prompts → characters → game/video/audio, я бы позиционировала не просто как language app, а как:
+AI-generated language games from any topic
+Но для обычных пользователей лучше проще:
+Learn languages through AI quests
+Для разработчиков/учителей:
+Turn any lesson into an interactive language game
+Для Steam:
+A story-rich AI language RPG where grammar, vocabulary and speaking become gameplay.
+Для mobile:
+Daily AI speaking quests for real-life conversations.
+Для Product Hunt:
+Generate playable language lessons with AI.
+7. Финальный выбор
+Если нужно максимум охвата и минимум маркетинга, я бы выбрала:
+Primary:
+  Steam + itch.io + Reddit + YouTube Shorts
+Secondary:
+  App Store / Google Play
+Support:
+  Product Hunt + GitHub
+Самый правильный порядок
+
+Сделать web demo
+Выложить на itch.io
+Открыть Steam Coming Soon
+Постить короткие gameplay clips
+Писать build-in-public на Reddit
+Подать demo на Steam Next Fest
+После traction — mobile companion
+После понятного positioning — Product Hunt
+После очистки лицензий — GitHub MIT/Apache repo
+Главные keywords
+AI language game
+speaking practice
+language RPG
+conversation practice
+pronunciation feedback
+grammar quests
+vocabulary adventure
+instant feedback
+real-life conversations
+personalized AI lessons
+learn through quests
+
+Самая сильная фраза для первого запуска:
+An AI language RPG where you learn by speaking to characters, solving grammar puzzles, and completing real-life quests.2 / 2Сравнение двух ответов (моего предыдущего + нового, который ты вставил)
+Оба ответа практически идентичны по сути (совпадение ~90 %). Мы оба пришли к одному и тому же выводу:
+максимум органики + минимум маркетинга = itch.io (demo) + Steam (Coming Soon) + короткие видео (YouTube Shorts/TikTok) + Reddit.
+Различия только в глубине и удобстве:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ПараметрМой предыдущий ответНовый текст (который ты вставил)Кто лучшеОсновная связкаitch.io + Steam + Reddit/YouTube/TikTokSteam + itch.io demo + Reddit + YouTube ShortsНовый (чуть точнее)Порядок запуска5 фаз (itch → Steam → видео → Reddit → mobile)8 чётких шагов + Steam Next FestНовый (детальнее)Ключевые словаОбщий список + примеры названийКлючевые слова отдельно под каждую платформу + Steam-tagsНовыйТактикаКоротко и по делуКонкретные примеры описаний, названий, постов для RedditНовыйДлина и готовностьКраткий планПолноценная пошаговая стратегияНовый
+Вывод: Новый текст лучше и детальнее. Он даёт готовые формулировки, которые можно копировать. Я объединил лучшее из обоих и сделал финальную практическую стратегию специально для тебя (максимум охвата при минимуме усилий).
+Финальная стратегия запуска 2026 (максимум органики, минимум маркетинга)
+Главный путь (рекомендую именно его):
+itch.io (demo) → Steam Coming Soon → короткие видео + Reddit → Steam-релиз → mobile companion
+1. Порядок регистрации (что делать по шагам)
+
+itch.io (1–2 дня, бесплатно)
+– Выложи playable web-demo (Phaser/Babylon/React).
+– Это твой «быстрый вход» для теста механики и первых отзывов.
+Steam Coming Soon (сразу после itch.io, $100 один раз)
+– Создай страницу как можно раньше — wishlist работает сам по себе.
+YouTube Shorts / TikTok / Reels (параллельно, 1 неделя)
+– 10–15 роликов по 10–20 секунд: «NPC не открывает дверь, пока я не скажу правильный падеж».
+Reddit (через 3–7 дней)
+– Посты в стиле build-in-public (не реклама):
+r/languagelearning, r/LearnJapanese, r/IndieDev, r/gamedev, r/playmygame.
+Steam Demo / Next Fest (когда >300–500 wishlist).
+– Бесплатная витрина для тысяч просмотров.
+App Store + Google Play (после первых отзывов на Steam).
+– Делай как daily companion (5-минутные квесты).
+Product Hunt (опционально, если хочешь AI-угол).
+– Запускай как «AI language game», а не просто игру.
+GitHub (только когда код чистый).
+– MIT/Apache-2.0 только для движка/модулей.
+
+2. Ключевые слова по платформам (готовые к копипасту)
+Steam (самое важное):
+
+Заголовок: SpeakQuest: AI Language RPG или Grammar Dungeon – Learn by Playing
+Короткое описание: «AI language RPG, где ты учишь язык, разговаривая с персонажами, решая грамматические пазлы и выполняя реальные разговорные квесты.»
+Теги: Education, Language Learning, RPG, Adventure, Puzzle, Story Rich, Conversation, Visual Novel, Casual, Singleplayer
+
+itch.io:
+
+Название страницы: «AI Language Quest Demo» / «Grammar Puzzle Adventure»
+Питч: «Browser-playable AI language RPG — every quest teaches real conversation skills.»
+
+App Store / Google Play:
+
+Subtitle: «AI Speaking Practice Game» или «Learn Languages with Quests»
+Первая строка описания: «Практикуй реальные разговоры с AI-тьютором внутри языкового приключения. Ежедневные квесты, мгновенная обратная связь по произношению и персональные уроки.»
+
+Reddit / YouTube / TikTok:
+
+Хуки: «Я сделал RPG, где грамматические ошибки меняют сюжет», «Можно ли выучить японский через игру?», «NPC понимает тебя только если ты правильно произносишь фразу»
+
+Общие горячие слова (вставляй везде):
+AI language game · speaking practice · language RPG · conversation practice · pronunciation feedback · grammar quests · vocabulary adventure · instant feedback · real-life conversations · learn through quests · AI speaking coach · personalized lessons
+3. Лучшие названия (выбирай одно)
+
+SpeakQuest / LinguaQuest
+Grammar Dungeon
+WordQuest AI
+AI Language Adventure
+FluentQuest
+NPC English / Hebrew Quest / Japanese RPG
+
+Самая сильная общая фраза для всех платформ:
+«An AI language RPG where you learn by speaking to characters, solving grammar puzzles, and completing real-life quests.»
+Эта стратегия уже доказала себя на Wagotabi (август 2025) и аналогичных играх 2025–2026. Алгоритмы Steam + itch + YouTube/TikTok сделают 80–90 % работы сами, если механика «клиповая» (10–20 секунд понятно, что происходит).
+Хочешь — прямо сейчас сделаю:
+
+готовый текст для Steam-страницы,
+список тегов,
+5 примеров Shorts-сценариев,
+или название + subtitle под конкретный язык (английский/японский/иврит и т.д.).
+
+Просто скажи, на какой язык и какой тип игры ты сейчас делаешь (speaking RPG / pronunciation quest / grammar game). Готово к запуску! 🚀посмотри пожалуйста как лучше всего адаптировать игру под популярные  платформыОтлично, я посмотрел всю игру из zip-файла.
+Это уже полностью рабочий standalone HTML5-тренажёр («Поймай ошибку») — чистый vanilla JS + Tailwind, single-file, без зависимостей. Механика супер: фраза + два перевода (правильный + типичная ошибка), объяснение «почему второй врёт», очки, серия, настройки направления и тем. Плюс готовый датасет 1849+ DPO-пар с why и Anki-колода.
+Это идеальная база для органического запуска. Вот самый эффективный план адаптации под популярные платформы в 2026 году (максимум охвата при минимуме усилий — именно то, о чём мы говорили раньше).
+1. itch.io — первый шаг (1–2 дня, бесплатно, максимальная скорость)
+Это лучшая стартовая площадка для твоей игры прямо сейчас.
+Что сделать:
+
+Переименуй translation-game.html → index.html (обязательно для itch.io).
+Запакуй в ZIP (если будут дополнительные файлы — картинки, JSON с парами).
+Создай новую игру → Kind of Game = HTML Game.
+Загрузи ZIP.
+Добавь теги: language-learning, educational, grammar-game, translation, russian, english, AI-language-game, spot-the-mistake.
+В описании используй наши проверенные ключевые слова:«Поймай ошибку в переводе — тренажёр, где ты учишь реальный английский/русский, разбирая типичные ошибки (кальки, ложные друзья, неправильный регистр). 1800+ DPO-пар с объяснениями.»
+
+Почему это работает:
+itch.io отлично продвигает educational HTML5-игры. Ты сразу получишь playable demo, который можно кидать в Reddit и YouTube Shorts. Многие инди-игры 2025–2026 именно так начинали путь на Steam.
+2. Steam — главный драйвер охвата (после 300–500 wishlist)
+Твоя игра идеально ложится под «Educational RPG / Puzzle / Language Learning».
+Самый простой и актуальный способ в 2026:
+
+Вариант A (самый быстрый) — Electron wrapper (рекомендую).
+Создай папку electron-app.
+package.json + main.js (стандартный шаблон для HTML5 → desktop).
+Electron Forge или BunJS — собирает .exe / .app / Linux за 5 минут.
+Готовый гайд 2025–2026: Phaser/Babylon/Electron → Steam (есть официальные туториалы).
+
+Вариант B — если хочешь оставить чистый HTML5 — Steam поддерживает HTML5 через Chromium, но Electron надёжнее для desktop.
+
+Название и описание на Steam:
+
+Название: «Поймай ошибку: Translation Mastery» или «Catch the Mistake: Real Translation Trainer»
+Subtitle: «AI-powered grammar & translation game»
+Ключевые слова/теги: Education, Language Learning, Puzzle, Grammar Game, Translation, Russian, English, Spot the Error
+
+Механика для Steam: добавь progression (уровни по темам: greetings → shopping → business → travel), daily quests и streaks — это сделает игру «игрой», а не просто тренажёром.
+3. Мобильные платформы (Google Play + App Store) — для retention
+Лучший и самый быстрый способ в 2026 — Capacitor (Ionic/Capacitor)
+
+Это современный преемник Cordova.
+Ты буквально берёшь свой HTML/JS и оборачиваешь в нативное приложение (iOS + Android).
+Добавляет доступ к уведомлениям, вибрации, offline-режиму, splash screen и т.д.
+Один код — два магазина.
+
+Альтернативы:
+
+PWA (прогрессивное веб-приложение) — бесплатно, работает сразу на телефоне (добавь manifest.json + service worker). Многие пользователи ставят PWA на главный экран.
+Если хочешь полный натив — React Native + WebView, но Capacitor проще.
+
+Название на мобильных:
+
+«Поймай ошибку в переводе» или «Translation Spotter: Catch Real Mistakes»
+
+4. Общий план запуска (максимум органики, минимум усилий)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ЭтапПлатформаЧто делатьВремяОжидаемый эффект1itch.ioЗагрузить index.html как HTML Game1–2 дняБыстрый демо + тесты2Steam Coming SoonСоздать страницу + wishlist1 деньСбор wishlist3YouTube Shorts / TikTok10–15 клипов «Поймал ошибку!»3–5 днейВирусность4RedditПосты в r/languagelearning и др.1 неделяНишевый трафик5Capacitor → MobileAndroid + iOS1 неделяDaily retention6Steam full releaseПосле 500+ wishlist—Основной рост
+Быстрые улучшения игры (чтобы лучше продавалась)
+
+Подключи полный JSON из build_dataset.py (у тебя уже есть скрипт).
+Добавь daily streak + daily quest (тренд 2025–2026).
+Сделай тёмную тему и fullscreen по умолчанию.
+Добавь голосовое произношение (Web Speech API — бесплатно и работает в браузере).
+Сделай AI-режим: пользователь вводит свой текст → игра генерирует ошибочный вариант (если хочешь добавить LLM).
+
+Хочешь — я прямо сейчас:
+
+подготовлю готовый ZIP для itch.io,
+дам код для Electron/Capacitor,
+напишу тексты для Steam/itch страницы,
+или сделаю список из 10 Shorts-сценариев.
+
+Скажи, с чего начнём (itch.io первым? Steam? Mobile?). Готов запускать! 🚀Моя задача что бы игры делали трафик нам на сайт xiigen и хороший пи ар - сейчас мы строим умный переводчик, и хотим добавить ему различные расширения. Нужно что бы такая игра вела на сайт  и помогала нам расширять аудиторию. Рассмотри свою стратегию с этой точки зренияОтлично, понял новую задачу чётко.
+Твоя главная цель теперь не «просто запустить крутую игру», а использовать игру как мощный бесплатный lead-magnet и PR-инструмент для сайта xiigen (умный переводчик + будущие расширения).
+Игра должна:
+
+Приводить прямой трафик на xiigen.com
+Создавать брендовую узнаваемость («это от тех же ребят, что делают умный переводчик»)
+Собирать email / аккаунты (lead generation)
+Работать как вирусный вход в экосистему Xiigen
+
+Пересмотренная стратегия (максимум трафика на xiigen + PR)
+1. Главный приоритет — собственный сайт / поддомен (это №1 изменение)
+Раньше я предлагал начинать с itch.io. Теперь первым шагом делаем:
+
+Хостим игру на play.xiigen.com или game.xiigen.com (или даже на главном домене в разделе /trainer).
+Это даёт 100% контроль: каждый пользователь уже находится в твоей экосистеме.
+В игре везде видимый брендинг Xiigen + большая кнопка «Попробовать полный умный переводчик →» (ведёт на главную или в личный кабинет).
+После каждого раунда / в конце раунда — CTA-блок:
+«Понравилось? Переводи сложные тексты в 2 раза быстрее с Xiigen AI» + кнопка на сайт.
+
+Почему это критично:
+Каждый игрок — это уже тёплый lead. Если он играет 10–15 минут, он уже видит ценность твоего AI-переводчика.
+2. itch.io и Steam — теперь вторичные каналы (с сильным брендингом)
+
+На itch.io и Steam игра публикуется под брендом Xiigen («Xiigen Catch the Mistake — официальный тренажёр от умного переводчика»).
+В описании и на всех скриншотах — логотип Xiigen + ссылка на сайт.
+В конце каждой сессии — обязательное предложение «Сохранить прогресс на xiigen.com» (через email / Google / GitHub login).
+Steam/itch — это не конечная точка, а воронка, которая гонит трафик обратно на твой сайт.
+
+3. Мобильная версия (PWA + Capacitor) — для ежедневного retention
+
+Делаем PWA (прогрессивное веб-приложение) — пользователь может «установить» игру на телефон прямо с play.xiigen.com.
+Добавляем push-уведомления: «Ежедневный раунд готов! Поймай 10 ошибок → получи бонус в Xiigen».
+Это создаёт привычку и плавно ведёт в основной продукт.
+
+4. Встроенные механики lead generation и виральности (добавляем в код)
+В текущий HTML нужно добавить (это быстро):
+
+Кнопка «Сохранить результат на Xiigen» после раунда (email capture или OAuth).
+Share button с предзаполненным текстом:
+«Я поймал 28 ошибок в переводе за 5 минут в тренажёре от Xiigen! Попробуй сам → play.xiigen.com»
+Referral-ссылка (пригласил друга → оба получаете бонус в переводчике).
+«Попробовать в реальном переводчике» — после объяснения ошибки кнопка «Перевести этот текст в Xiigen» (ведёт на ваш переводчик с предзаполненным текстом).
+
+5. PR и органический рост (как использовать игру для медиа)
+Игра идеально подходит под нарратив:
+
+«Бесплатный тренажёр от разработчиков умного AI-переводчика Xiigen»
+«Учим язык на реальных ошибках, которые делает даже ChatGPT»
+
+Куда отправлять:
+
+Reddit (r/languagelearning, r/russian, r/learnenglish, r/duolingo)
+YouTube-каналы про языки и AI-инструменты
+Telegram-каналы и VK-сообщества про изучение языков
+Product Hunt (как «new free extension from Xiigen AI translator»)
+
+Итоговая приоритизация запуска (с фокусом на трафик на xiigen)
+
+Сейчас (1–3 дня)
+Хостим игру на play.xiigen.com
+Добавляем брендинг Xiigen + мощные CTA на сайт
+Делаем PWA
+
+Неделя 1
+Запускаем на itch.io (как официальный демо от Xiigen)
+Делаем 8–10 коротких Shorts/TikTok («Поймал ошибку за 8 секунд»)
+
+Неделя 2–3
+Steam Coming Soon + wishlist-кампания
+Посты на Reddit + email-подписка в игре
+
+Дальше
+Мобильное приложение (Capacitor)
+Интеграция с основным переводчиком (например, «Экспорт ошибок в твой словарь Xiigen»)
+
+
+Хочешь — я прямо сейчас подготовлю:
+
+Конкретный список изменений в translation-game.html (куда вставить CTA, брендинг, share-кнопки)
+Готовый текст для itch.io / Steam страницы
+Примеры Shorts-сценариев под PR Xiigen
+
+Скажи, с чего начнём — с доработки HTML под твой сайт или с текстов для платформ? Готов сделать максимально эффективно под задачу трафика на xiigen.Ну нам на самом деле важно зарекомендовать xiigen smart assistant / tutor как бренд, так что даже если он не поведет напрямую , популярная игра всё равно сильно повышает цитируемостьПонял новую приоритетность на 100 %.
+Главная цель сейчас — не прямой трафик, а сильное брендирование Xiigen Smart Assistant / Tutor. Игра должна работать как вирусный PR-инструмент: чем популярнее она становится, тем чаще люди будут писать «это от тех же ребят, что делают Xiigen», тем выше цитируемость и узнаваемость бренда.
+Пересмотренная стратегия (с акцентом на бренд и цитируемость)
+
+Игра = официальное лицо Xiigen
+С самого первого экрана пользователь должен понимать:
+«Это не просто какая-то игрушка, а продукт от Xiigen Smart Assistant / Tutor».Что нужно добавить в игру (минимальные изменения в HTML):
+Логотип Xiigen + подпись «Smart Assistant & Tutor» в шапке и в футере.
+На стартовом экране: «Официальный тренажёр от Xiigen — умного AI-помощника и репетитора».
+После каждого раунда или в конце раунда — мягкий, но заметный блок:
+«Сделано командой Xiigen Smart Tutor.
+Хочешь переводить сложные тексты, диалоги и документы вживую? → xiigen.com»
+Share-кнопка с предзаполненным текстом:
+«Поймал 27 ошибок в переводе за 4 минуты в тренажёре от @XiigenAI! 🔥 play.xiigen.com»
+
+Платформы запуска — с максимальным брендингом
+itch.io — первое место (быстро и бесплатно).
+Название страницы: «Catch the Mistake — Official Trainer by Xiigen Smart Tutor»
+Теги: language-learning, xiigen, smart-tutor, ai-language-game и т.д.
+В описании сразу в первом абзаце: «От создателей Xiigen — умного AI-помощника и репетитора».
+Steam — второй этап (после того, как на itch.io наберётся 500–1000 игроков).
+Название: «Catch the Mistake: Xiigen Edition» или «Xiigen Translation Mastery».
+В описании и тегах обязательно указывать «by Xiigen Smart Assistant».
+Социальные сети и YouTube/TikTok — главный драйвер PR.
+Все видео и посты должны содержать #Xiigen #XiigenAI #SmartTutor.
+Цель — чтобы в комментариях и описаниях видео люди писали «это от Xiigen, круто!».
+
+Как именно игра повышает цитируемость
+Делаем игру clip-native (15–30 секунд): «Смотри, как я поймал эту ошибку за 8 секунд!» — идеально для Shorts/TikTok.
+Добавляем лёгкий leaderboard или «лучшие серии недели» — люди будут делиться своими результатами и упоминать Xiigen.
+В конце раунда — кнопка «Поделиться результатом» с готовым постом, где Xiigen упоминается автоматически.
+Можно добавить водяной знак / лёгкий брендинг на всех экранах (не навязчиво, но заметно).
+
+Порядок запуска, который даёт максимум бренд-PR при минимуме усилий
+Сегодня-завтра: дорабатываем HTML (логотип + подпись + share + CTA).
+1–2 дня: заливаем на play.xiigen.com (или game.xiigen.com) как официальную игру.
+Сразу после: публикуем на itch.io под брендом Xiigen.
+Параллельно: 8–10 коротких видео в TikTok/YouTube Shorts/Telegram с хэштегами Xiigen.
+Через 1–2 недели (когда появятся первые отзывы): Steam Coming Soon.
+
+
+Такой подход даёт двойной эффект:
+
+Игра сама по себе становится популярной и вирусной.
+Каждый раз, когда о ней говорят/пишут/снимают видео, автоматически упоминается бренд Xiigen Smart Assistant / Tutor.
+
+Хочешь, я прямо сейчас подготовлю:
+
+Конкретный список правок в translation-game.html (где и какие строки добавить для брендинга и share).
+Готовый текст описания для itch.io и Steam.
+5–7 готовых идей для Shorts, которые будут работать на узнаваемость Xiigen.
+
+Скажи, с чего начнём — с правок в коде игры или с текстов для платформ? Готов сделать максимально эффективно под задачу бренда.Посмотри на это мнение
+Да, тогда цель шире и сильнее:
+textне “игра как lead magnet”
+а “игра как бренд-медиа для XIIGen Smart Assistant / Tutor”
+То есть игра может не давать прямой переход в переводчик в каждом клике, но она должна делать другое:
+textлюди видят игру
+→ запоминают XIIGen
+→ обсуждают механику
+→ цитируют как пример AI tutor / smart language assistant
+→ доверяют бренду
+→ позже приходят за переводчиком, tutor, расширениями, API
+Это ближе к стратегии **Duolingo Owl**, **Wagotabi**, **Carmen Sandiego**, **Khanmigo**, только в вашей нише: AI assistant/tutor, который умеет превращать ошибки, правила и перевод в игру.
+
+# 1. Тогда бренд должен быть выше конкретного продукта
+Если бренд — **XIIGen Smart Assistant / Tutor**, то игра должна называться не просто Translation Trap, а так, чтобы XIIGen был частью памяти.
+Лучшие варианты:
+textXIIGen Translation Trap
+XIIGen Tutor: Translation Trap
+XIIGen Smart Tutor — Translation Trap
+Translation Trap by XIIGen
+XIIGen Language Quest
+XIIGen Tutor Games
+Я бы выбрала архитектуру бренда так:
+textXIIGen Smart Tutor
+  ├── Translation Trap
+  ├── Grammar Dungeon
+  ├── Pronunciation Quest
+  ├── False Friend Hunter
+  ├── Business Tone Challenge
+  └── AI Dialogue RPG
+Тогда первая игра — не одиночный эксперимент, а **первая игра в серии XIIGen Tutor Games**.
+
+# 2. Главный PR-message
+Не:
+textМы сделали игру для изучения перевода.
+А:
+textXIIGen builds smart AI tutors that turn language mistakes into playable learning experiences.
+По-русски:
+textXIIGen создаёт умных AI-наставников, которые превращают ошибки перевода, грамматики и речи в интерактивные обучающие игры.
+Это позиционирует не одну игру, а весь бренд.
+
+# 3. Игра должна работать как “демонстрация интеллекта”
+Если игра просто спрашивает “какой перевод лучше”, это quiz.
+Если игра объясняет:
+textпочему ошибка возникла
+какое правило нарушено
+какой тип ошибки
+как звучит живой вариант
+как бы это исправил smart tutor
+то она демонстрирует бренд:
+textXIIGen не просто даёт правильный ответ.
+XIIGen понимает ошибку, объясняет её и превращает её в тренировку.
+Это сильнее для PR, чем прямой переход на сайт.
+
+# 4. Платформенная стратегия при цели “бренд и цитируемость”
+Теперь приоритет платформ такой:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ПриоритетПлатформаРоль1**Steam**Легитимность: “это настоящая игра”, отзывы, пресса, YouTube2**itch.io**Быстрое демо, indie-комьюнити, early adopters3**YouTube / TikTok / Shorts**Вирусная демонстрация механики4**Reddit**Обсуждения, критика, organic proof5**Product Hunt**Бренд XIIGen как AI tutor/tool6**GitHub**Доверие: open-source/technical credibility7**Сайт XIIGen**Brand hub, портфолио игр, smart assistant/tutor8**App Store / Google Play**Retention и массовая привычка, но позже
+Если цель была бы только “лиды на переводчик”, сайт был бы №1.
+Но если цель — **бренд и цитируемость**, тогда **Steam снова становится очень важным**, потому что:
+textSteam reviews + YouTube videos + Reddit discussions
+= социальное доказательство, что XIIGen делает настоящие образовательные игры
+
+# 5. Как игра должна вести бренд, даже без прямого перехода
+Внутри игры должны быть не агрессивные CTA, а мягкое брендирование.
+## На стартовом экране
+textXIIGen Smart Tutor presents:
+Translation Trap
+## После ответа
+textXIIGen Tutor Insight:
+This is a literal translation trap.
+The sentence sounds unnatural because it copies Russian structure into English.
+## После раунда
+textYour XIIGen Tutor profile:
+Strong: idioms
+Weak: false friends
+Recommended next challenge: Business Tone
+## В меню
+textMore XIIGen Tutor Games:
+- Grammar Dungeon
+- Pronunciation Quest
+- AI Dialogue RPG
+Так пользователь запоминает не только игру, а **образ XIIGen как умного наставника**.
+
+# 6. Что важнее прямого трафика
+Для бренда главные KPI другие:
+textmentions of XIIGen
+Steam reviews mentioning “AI tutor”
+YouTube videos using XIIGen in title/description
+Reddit discussions
+wishlists
+shares
+searches for “XIIGen”
+newsletter signups
+GitHub stars
+press backlinks
+creator coverage
+Прямой переход на сайт — это хорошо, но не единственный успех.
+Например, если видео называется:
+text“Can XIIGen’s Translation Trap actually teach English?”
+даже если зритель не кликнул сразу, бренд уже начал работать.
+
+# 7. Как сделать игру цитируемой
+Цитируемой становится не просто полезная игра, а игра с **ясной идеей**.
+Нужен один сильный hook:
+textA game where the wrong translation teaches you more than the right one.
+или:
+textAn AI tutor game that turns translation mistakes into levels.
+или:
+textCan you catch the mistakes machine translators make?
+Лучший PR-angle для XIIGen:
+textXIIGen is building a smart tutor that learns from rejected translations.
+Это очень хорошо связано с вашей DPO-логикой: chosen/rejected пары становятся не только ML-данными, но и игровым контентом.
+
+# 8. Как упаковать серию
+Я бы не делала одну игру изолированно. Я бы сделала umbrella:
+textXIIGen Smart Tutor Games
+И первая линейка:
+## Game 1 — Translation Trap
+textЦель: отличить живой перевод от плохого.
+Бренд-смысл: XIIGen понимает natural language, idioms, tone.
+## Game 2 — Grammar Dungeon
+textЦель: использовать грамматику, чтобы проходить уровни.
+Бренд-смысл: XIIGen Tutor объясняет правила через действие.
+## Game 3 — False Friend Hunter
+textЦель: ловить ложных друзей.
+Бренд-смысл: XIIGen не переводит слово буквально.
+## Game 4 — Pronunciation Quest
+textЦель: сказать фразу так, чтобы NPC понял.
+Бренд-смысл: XIIGen Tutor работает с речью и аудио.
+## Game 5 — AI Dialogue RPG
+textЦель: говорить с персонажами.
+Бренд-смысл: XIIGen — не переводчик, а smart assistant/tutor.
+Даже если сначала реально есть только Translation Trap, на сайте можно показать:
+textXIIGen Tutor Games — playable language intelligence demos
+
+# 9. Что писать на сайте
+Сайт должен быть не только “попробуй переводчик”, а бренд-хаб:
+textXIIGen Smart Tutor
+AI-powered language assistant that explains, trains and turns mistakes into games.
+Разделы:
+text1. Play Translation Trap
+2. Try Smart Translator
+3. Explore Tutor Games
+4. For learners
+5. For teachers
+6. For developers
+7. Open-source / research / DPO datasets
+8. Browser extensions
+Главная идея:
+textXIIGen is not just a translator.
+It is a smart tutor that understands why language fails.
+
+# 10. Как распределить платформы
+## Для бренда и PR
+textSteam
+YouTube
+Reddit
+Product Hunt
+GitHub
+## Для демо и быстрых запусков
+textitch.io
+сайт XIIGen
+web/PWA
+## Для удержания
+textChrome extension
+mobile app
+email challenges
+daily translation trap
+
+# 11. Рекомендованный порядок теперь
+text1. Сделать web-версию Translation Trap by XIIGen.
+2. Разместить её на сайте XIIGen как часть Smart Tutor.
+3. Выложить демо на itch.io.
+4. Открыть Steam Coming Soon, если готовы позиционировать как игру.
+5. Делать короткие ролики: “Can you catch this translation trap?”
+6. Писать Reddit-посты как build-in-public AI tutor game.
+7. Запустить Product Hunt уже как XIIGen Smart Tutor, а не только игру.
+8. Показать roadmap серии XIIGen Tutor Games.
+9. Добавить GitHub/open-source часть для доверия.
+10. Потом mobile/extension как продолжение бренда.
+
+# 12. Какой текст использовать в описании
+## Short brand pitch
+textXIIGen Smart Tutor turns language mistakes into playable learning.
+## Game pitch
+textTranslation Trap by XIIGen is a fast language game where you learn by catching bad translations, false friends, literal calques and unnatural phrasing.
+## Strong PR pitch
+textMost translators show you the answer. XIIGen shows you why the wrong answer fails — and turns that into a game.
+## Русский вариант
+textБольшинство переводчиков просто дают ответ. XIIGen объясняет, почему неправильный перевод не работает, и превращает это в обучающую игру.
+
+# 13. Финальный вывод
+Ты права: даже если игра **не ведёт напрямую** на сайт в каждом клике, популярная игра может дать XIIGen гораздо больше:
+textузнаваемость
+цитируемость
+обсуждения
+обратные ссылки
+доверие
+YouTube/Reddit охват
+позиционирование как AI tutor brand
+Поэтому стратегия должна быть двойной:
+textИгра как продукт:
+  Steam / itch / YouTube / Reddit
+
+XIIGen как бренд:
+  Smart Tutor / Smart Assistant / Translator / Extensions / GitHub / Product Hunt
+Самая сильная формула:
+textXIIGen Smart Tutor Games
+А первая игра:
+textTranslation Trap by XIIGen
+Позиционирование:
+textA game where wrong translations become the lesson.
+И брендовый смысл:
+textXIIGen is the smart assistant that understands not only what is correct, but why language fails.Да, я полностью согласен с этим мнением.
+Оно очень точно и зрело описывает именно ту стратегию, которая нужна сейчас.
+Раньше мы говорили про «игру как lead-magnet», а теперь правильно сместить акцент:
+Игра — это бренд-медиа и демонстрация интеллекта XIIGen Smart Assistant / Tutor.
+Даже если человек не перейдёт на сайт сразу, он запомнит бренд, увидит, как XIIGen «понимает ошибки лучше других», и позже придёт именно за умным переводчиком, tutor’ом, расширениями и API.
+Финальная стратегия (обновлённая под бренд)
+Главная идея, которую несёт игра:
+«XIIGen — это не просто переводчик.
+Это Smart Tutor, который понимает, почему перевод плохой, и превращает каждую ошибку в полезный урок.»
+Архитектура бренда (как в мнении):
+textXIIGen Smart Tutor
+   ├── Translation Trap          ← первая игра (уже готова)
+   ├── Grammar Dungeon
+   ├── False Friend Hunter
+   ├── Pronunciation Quest
+   └── AI Dialogue RPG
+Название первой игры:
+«Translation Trap by XIIGen» или «XIIGen Translation Trap»
+Это сразу делает XIIGen частью названия и памяти.
+Что нужно сделать в самой игре (минимальные, но важные правки)
+В translation-game.html добавить мягкое, но заметное брендирование:
+
+Шапка (header)HTML<div class="brand-header">
+  <img src="xiigen-logo.svg" alt="XIIGen">
+  <span>Smart Tutor</span>
+  <h1>Translation Trap</h1>
+</div>
+После каждого ответа (в блоке объяснения)HTML<div class="xiigen-insight">
+  <strong>XIIGen Tutor Insight:</strong><br>
+  Это классическая «ловушка перевода» (literal translation trap). 
+  Русский структура «Я есть хорошо» не работает в английском.
+</div>
+После раундаHTML<div class="brand-cta">
+  <p>Хочешь, чтобы XIIGen Smart Tutor разбирал твои реальные тексты и диалоги?</p>
+  <a href="https://xiigen.com" class="btn-brand">Перейти в XIIGen Smart Assistant →</a>
+</div>
+Share-кнопка (самое важное для виральности и цитируемости)
+Предзаполненный текст:
+«Поймал 23 ошибки в переводе за 4 минуты в Translation Trap от XIIGen Smart Tutor 🔥 play.xiigen.com»
+
+Порядок запуска (приоритет на бренд и цитируемость)
+
+Сайт XIIGen (play.xiigen.com или /tutor-games) — №1
+Игра живёт на твоём домене как официальная часть Smart Tutor.
+itch.io — быстрый демо-запуск под брендом «Translation Trap by XIIGen».
+Steam — главный канал для легитимности и прессы (Coming Soon уже можно открыть).
+YouTube Shorts / TikTok — вирусные ролики с хуком «Can you catch the mistakes even AI translators make?»
+Reddit + Product Hunt — обсуждения и брендовое позиционирование.
+
+Главный PR-hook (готовый к использованию)
+Английский:
+“Most translators show you the right answer.
+XIIGen shows you why the wrong one fails — and turns it into a game.”
+Русский:
+«Большинство переводчиков просто дают правильный ответ.
+XIIGen объясняет, почему неправильный перевод не работает, и превращает это в игру.»
+Это идеально ложится в твою DPO-логику (chosen / rejected пары) и сразу выделяет XIIGen среди всех остальных AI-переводчиков.
+
+Хочешь, я прямо сейчас подготовлю:
+
+Конкретные правки в HTML (готовые строки кода для вставки)
+Полный текст описания для itch.io и Steam Coming Soon
+5–7 готовых идей Shorts с упоминанием XIIGen
+
+Скажи, что нужно первым — код для игры или тексты для платформ? Я сделаю максимально точно под бренд XIIGen Smart Tutor.Как тебе такой план? # XIIGen Smart Tutor Games — план запуска
+Игра — это бренд-медиа и демонстрация интеллекта XIIGen Smart Tutor. Не lead-magnet с переходом в каждом клике, а узнаваемость, цитируемость и доверие к бренду. Первая игра — **Translation Trap by XIIGen** — первая в серии, а не одиночный эксперимент.
+## 1. Бренд и наименование
+Зонтик: **XIIGen Smart Tutor Games**. Внутри — линейка, где первая игра уже готова, остальные обозначены как roadmap (показываются на сайте даже до релиза):
+
+**Translation Trap by XIIGen** — отличить живой перевод от плохого (готова)
+Grammar Dungeon — грамматика как механика прохождения уровней
+False Friend Hunter — ловля ложных друзей
+Pronunciation Quest — сказать фразу так, чтобы NPC понял
+AI Dialogue RPG — разговор с персонажами
+
+Имя XIIGen — часть названия каждой игры, не подпись сбоку.
+## 2. Позиционирование (PR-message)
+Несёт игра не «мы сделали тренажёр», а бренд целиком:
+**EN:** Most translators show you the right answer. XIIGen shows you *why* the wrong one fails — and turns it into a game.
+**RU:** Большинство переводчиков просто дают ответ. XIIGen объясняет, *почему* неправильный перевод не работает, и превращает это в игру.
+Главный hook для цитируемости: **«A game where wrong translations become the lesson.»** Он прямо связан с твоей DPO-логикой — chosen/rejected пары становятся и ML-данными, и игровым контентом. Это и есть отличие XIIGen от любого другого AI-переводчика.
+## 3. Правки в игре (брендирование)
+Минимальные изменения в текущем HTML, делают XIIGen частью памяти игрока:
+
+**Шапка:** логотип XIIGen + «Smart Tutor» над названием «Translation Trap».
+**Стартовый экран:** «XIIGen Smart Tutor presents: Translation Trap».
+**После каждого ответа** — блок «XIIGen Tutor Insight»: тип ошибки + почему живой вариант звучит естественнее (демонстрирует, что XIIGen понимает *причину*, а не просто знает ответ).
+**После раунда** — «профиль XIIGen Tutor»: сильные/слабые типы ошибок + рекомендованный следующий челлендж, и мягкий бренд-CTA на xiigen.com.
+**Share-кнопка** с автоупоминанием бренда (см. готовый текст ниже).
+**В меню** — «More XIIGen Tutor Games» с roadmap-списком.
+
+Плюс к этому — довести механику до clip-native (15–30 сек понятно, что происходит) и добавить «лучшие серии недели»: это то, чем делятся и что цитируют.
+## 4. Платформы: дом и каналы охвата
+**Дом игры — собственный домен** (play.xiigen.com или xiigen.com/tutor-games): это канон, на который ссылаются все остальные каналы, и место, где живёт вся серия.
+Каналы внешнего охвата под цель «бренд + цитируемость», по приоритету:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+№КаналРоль1**Steam**Легитимность: «это настоящая игра» → отзывы, пресса, YouTube2**itch.io**Быстрое демо, indie-комьюнити, early adopters3**YouTube / TikTok / Shorts**Вирусная демонстрация механики4**Reddit**Обсуждения, organic proof5**Product Hunt**Запуск именно как XIIGen Smart Tutor, не «игра»6**GitHub**Доверие: open-source / DPO-датасет7**App Store / Google Play**Retention, позже
+## 5. KPI (метрики бренда, не трафика)
+Упоминания XIIGen; Steam-отзывы со словами «AI tutor»; YouTube-видео с XIIGen в заголовке/описании; обсуждения на Reddit; wishlists; шеры; рост поиска «XIIGen»; подписки на рассылку; GitHub-звёзды; backlinks и упоминания в прессе. Прямой переход на сайт — приятный бонус, но не единственный успех.
+## 6. Порядок запуска
+
+Web-версия Translation Trap by XIIGen с брендированием (правки из §3).
+Разместить на сайте XIIGen как часть Smart Tutor + показать roadmap серии.
+Выложить демо на itch.io под брендом «Translation Trap by XIIGen».
+Открыть Steam Coming Soon, как только механика позиционируется как игра.
+8–10 коротких роликов с хуком «Can you catch the mistakes even AI translators make?».
+Reddit-посты в формате build-in-public AI tutor game.
+Product Hunt — запуск как XIIGen Smart Tutor (бренд, не одна игра).
+Опубликовать GitHub/open-source часть (DPO-датасет) для доверия.
+Mobile / Chrome-расширение как продолжение бренда.
+
+## 7. Готовые тексты (copy-paste)
+**Short brand pitch:** XIIGen Smart Tutor turns language mistakes into playable learning.
+**Game pitch:** Translation Trap by XIIGen is a fast language game where you learn by catching bad translations — false friends, literal calques and unnatural phrasing.
+**itch.io / Steam описание (первый абзац):** From the team behind XIIGen Smart Tutor — an AI assistant that understands not just *what* is correct, but *why* language fails. In Translation Trap you sharpen real English/Russian by catching the mistakes machine translators make.
+**Share-текст:** «Поймал 23 ошибки в переводе за 4 минуты в Translation Trap от XIIGen Smart Tutor 🔥 play.xiigen.com»
+**5 идей Shorts (хук → бренд):**
+
+«Even AI translators fall for this one» — показать ловушку-кальку, поймать, вывести XIIGen Tutor Insight.
+«False friend or real word?» — быстрый раунд на ложных друзьях.
+«Which translation is alive?» — два варианта на экране, 3 секунды на выбор.
+«I let XIIGen explain why this is wrong» — фокус на объяснении, не на ответе.
+«Can you beat the XIIGen streak?» — челлендж на серию, призыв повторить.
+
+## 8. Сайт как бренд-хаб
+Не «попробуй переводчик», а: **XIIGen Smart Tutor — AI-powered language assistant that explains, trains and turns mistakes into games.** Разделы: Play Translation Trap · Try Smart Translator · Explore Tutor Games · For learners · For teachers · For developers · Open-source / DPO datasets · Browser extensions.
+
+Первый исполняемый шаг по этому плану — внести брендирование §3 в текущий translation-game.html (шапка, Tutor Insight, профиль и CTA после раунда, share-кнопка, меню серии) и выдать готовый файл под размещение на твоём домене. Перехожу к нему.План — отличный.
+Я его полностью поддерживаю. Он зрелый, стратегически точный и точно отражает то, о чём мы говорили последние сообщения: игра как бренд-медиа и демонстрация интеллекта XIIGen Smart Tutor, а не просто очередной тренажёр или lead-magnet.
+Особенно сильные моменты:
+
+Зонтичная архитектура XIIGen Smart Tutor Games + roadmap — это сразу делает первую игру частью большой истории, а не одиночным экспериментом.
+Позиционирование и PR-message («Most translators show you the right answer. XIIGen shows you why the wrong one fails…») — очень сильный и запоминающийся hook.
+Правильный приоритет платформ (Steam → itch.io → Shorts → Reddit → Product Hunt).
+Понимание, что KPI — это mentions, цитируемость, Steam-отзывы со словами «AI tutor», YouTube-видео и т.д., а не только клики на сайт.
+Готовые тексты и идеи Shorts — можно сразу брать и использовать.
+
+Небольшие улучшения (чтобы сделать план ещё сильнее)
+
+Название первой игры
+Рекомендую сделать чуть короче и «брендовее» для вирусности:
+XIIGen Translation Trap (самый чистый вариант)
+Translation Trap by XIIGen (тоже хорошо, особенно на itch.io/Steam)
+XIIGen Trap (самый короткий и запоминающийся для Shorts/TikTok)
+
+В блоке «XIIGen Tutor Insight»
+Можно добавить одну строку, которая напрямую связывает игру с основным продуктом:«Именно так работает XIIGen Smart Tutor — он не просто исправляет, а объясняет почему перевод звучит неестественно.»
+В меню «More XIIGen Tutor Games»
+Даже если остальные игры ещё не готовы, добавь 2–3 «coming soon» карточки — это усиливает ощущение серии и большого продукта.
+
+В остальном план очень цельный. Можно запускать.
+Что делаем дальше (первый исполняемый шаг)
+Ты правильно написал: сначала вносим брендирование в translation-game.html.
+Я могу прямо сейчас подготовить для тебя:
+
+Конкретные правки (где и какой код вставить) — шапка, Tutor Insight, профиль после раунда, share-кнопка, меню серии.
+Или полный обновлённый файл (если хочешь просто заменить).
+
+Хочешь, я выдам готовый код для вставки прямо в твой translation-game.html (с учётом текущей структуры, которую я видел в zip-файле)?
+Напиши «да» — и я сразу дам точные вставки + готовые тексты для share/CTA.
+После этого можно сразу заливать на play.xiigen.com и itch.io. Готов?Уточнить формулировки для Steam описанияОтлично, давай сделаем Steam-описание максимально сильным, брендовым и продающим.
+Вот готовые, отполированные формулировки специально для Steam (на английском — это основной язык магазина). Я сделал их в трёх вариантах по длине и стилю, чтобы ты мог выбрать или смешать.
+1. Short Description (короткий текст — видно везде в магазине)
+Вариант A (самый сильный и лаконичный):
+XIIGen Translation Trap — the game where wrong translations teach you more than the right ones. Catch real mistakes, false friends, literal calques and unnatural phrasing with the official trainer from XIIGen Smart Tutor.
+(187 символов)
+Вариант B (более игровой):
+Can you spot the translation trap? Official language game from XIIGen Smart Tutor. Turn AI mistakes into real learning — one wrong answer at a time.
+2. Full Description (основной текст для раздела “About This Game”)
+Рекомендую этот вариант — он самый сильный:
+Markdown**Most translators show you the right answer.**
+
+**XIIGen shows you why the wrong one fails — and turns it into a game.**
+
+Welcome to **XIIGen Translation Trap** — the official language trainer from the team behind **XIIGen Smart Tutor**.
+
+In every round you’re given a real phrase and two translations. One feels natural and alive. The other is a classic trap: literal calque, false friend, wrong register, missing idiom or grammar error. Your job is simple — catch the mistake.
+
+Every wrong answer comes with a clear **XIIGen Tutor Insight**: why it sounds unnatural, what rule was broken, and how a native speaker would actually say it. No dry theory — just instant, practical understanding.
+
+**Why players love it:**
+- 1800+ hand-crafted DPO pairs based on real translation mistakes
+- Sharp, fast-paced rounds (perfect for 3–10 minute sessions)
+- Deep feedback that actually teaches you to think like a native
+- Beautiful minimal design focused on learning, not distractions
+- First game in the upcoming **XIIGen Smart Tutor Games** series
+
+Whether you’re learning English, Russian, or sharpening your translation skills as a professional — Translation Trap turns the most frustrating part of language learning into something genuinely fun and addictive.
+
+From the creators of XIIGen Smart Tutor — an AI assistant that doesn’t just translate, but truly understands language.
+3. Key Features (буллеты — очень важны для Steam)
+
+Catch real translation traps: literal calques, false friends, wrong register, missing idioms and more
+Learn from every mistake with clear XIIGen Tutor Insights
+1800+ carefully crafted pairs based on actual AI and human errors
+Fast, focused gameplay — perfect for daily training
+First official game in the XIIGen Smart Tutor Games series
+Built by the team that creates the XIIGen Smart Assistant & Tutor
+
+4. Рекомендуемые теги (для Steam)
+Education, Language Learning, Puzzle, Casual, Indie, Singleplayer, Translation, Grammar, Vocabulary, AI, Simulation, Word Game, Foreign Language, Trainer
+Дополнительно (по желанию)
+Если хочешь более «игровой» тон, могу сделать версию с акцентом на геймплей и вызов (типа «beat your streak», «challenge yourself»).
+Хочешь, чтобы я:
+
+Сделал русскую версию описания?
+Подготовил более короткий / более длинный вариант?
+Добавил упоминание roadmap серии игр?
+
+Скажи, какой из вариантов тебе ближе или что именно доработать — я сразу поправлю.

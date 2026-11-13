@@ -1,0 +1,101 @@
+# Node-03 - Scheme Planner Set
+
+Runtime A is the collection of translated domain statements.
+Runtime B is the plan of separated work pieces.
+
+## Pair 3.1 - Plan Work Pieces
+
+A: Translated domain statements for SESSION 3 OF 4 — Child Order + INSTANCE NONE Layout: session intent is present and needs its own handling; creation evidence is present and needs its own handling; decision trail is present and needs its own handling; resume state is present and needs its own handling.
+
+B: Create work pieces for session intent, creation evidence, decision trail, resume state. Keep session intent and creation evidence separate. Allow decision trail and resume state to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.1 - Rephrased
+
+A: The current request has translated responsibilities: session intent, creation evidence, decision trail, resume state.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.2 - Plan Work Pieces
+
+A: Translated domain statements for SESSION 3 OF 4 — Child Order + INSTANCE NONE Layout: creation evidence is present and needs its own handling; decision trail is present and needs its own handling; resume state is present and needs its own handling; open work is present and needs its own handling.
+
+B: Create work pieces for creation evidence, decision trail, resume state, open work. Keep creation evidence and decision trail separate. Allow resume state and open work to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.2 - Rephrased
+
+A: The current request has translated responsibilities: creation evidence, decision trail, resume state, open work.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.3 - Plan Work Pieces
+
+A: Translated domain statements for SESSION 3 OF 4 — Child Order + INSTANCE NONE Layout: decision trail is present and needs its own handling; resume state is present and needs its own handling; open work is present and needs its own handling; validation notes is present and needs its own handling.
+
+B: Create work pieces for decision trail, resume state, open work, validation notes. Keep decision trail and resume state separate. Allow open work and validation notes to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.3 - Rephrased
+
+A: The current request has translated responsibilities: decision trail, resume state, open work, validation notes.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.4 - Plan Work Pieces
+
+A: Translated domain statements for SESSION 3 OF 4 — Child Order + INSTANCE NONE Layout: resume state is present and needs its own handling; open work is present and needs its own handling; validation notes is present and needs its own handling; session 3 of 4 child order instance none layout is present and needs its own handling.
+
+B: Create work pieces for resume state, open work, validation notes, session 3 of 4 child order instance none layout. Keep resume state and open work separate. Allow validation notes and session 3 of 4 child order instance none layout to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.4 - Rephrased
+
+A: The current request has translated responsibilities: resume state, open work, validation notes, session 3 of 4 child order instance none layout.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.5 - Plan Work Pieces
+
+A: Translated domain statements for SESSION 3 OF 4 — Child Order + INSTANCE NONE Layout: open work is present and needs its own handling; validation notes is present and needs its own handling; session 3 of 4 child order instance none layout is present and needs its own handling; prerequisites sessions 1 2 complete yarn test 226 passing is present and needs its own handling.
+
+B: Create work pieces for open work, validation notes, session 3 of 4 child order instance none layout, prerequisites sessions 1 2 complete yarn test 226 passing. Keep open work and validation notes separate. Allow session 3 of 4 child order instance none layout and prerequisites sessions 1 2 complete yarn test 226 passing to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.5 - Rephrased
+
+A: The current request has translated responsibilities: open work, validation notes, session 3 of 4 child order instance none layout, prerequisites sessions 1 2 complete yarn test 226 passing.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.6 - Plan Work Pieces
+
+A: Translated domain statements for SESSION 3 OF 4 — Child Order + INSTANCE NONE Layout: validation notes is present and needs its own handling; session 3 of 4 child order instance none layout is present and needs its own handling; prerequisites sessions 1 2 complete yarn test 226 passing is present and needs its own handling; estimated time 3 hours is present and needs its own handling.
+
+B: Create work pieces for validation notes, session 3 of 4 child order instance none layout, prerequisites sessions 1 2 complete yarn test 226 passing, estimated time 3 hours. Keep validation notes and session 3 of 4 child order instance none layout separate. Allow prerequisites sessions 1 2 complete yarn test 226 passing and estimated time 3 hours to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.6 - Rephrased
+
+A: The current request has translated responsibilities: validation notes, session 3 of 4 child order instance none layout, prerequisites sessions 1 2 complete yarn test 226 passing, estimated time 3 hours.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.7 - Plan Work Pieces
+
+A: Translated domain statements for SESSION 3 OF 4 — Child Order + INSTANCE NONE Layout: session 3 of 4 child order instance none layout is present and needs its own handling; prerequisites sessions 1 2 complete yarn test 226 passing is present and needs its own handling; estimated time 3 hours is present and needs its own handling; context why this session is high risk is present and needs its own handling.
+
+B: Create work pieces for session 3 of 4 child order instance none layout, prerequisites sessions 1 2 complete yarn test 226 passing, estimated time 3 hours, context why this session is high risk. Keep session 3 of 4 child order instance none layout and prerequisites sessions 1 2 complete yarn test 226 passing separate. Allow estimated time 3 hours and context why this session is high risk to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.7 - Rephrased
+
+A: The current request has translated responsibilities: session 3 of 4 child order instance none layout, prerequisites sessions 1 2 complete yarn test 226 passing, estimated time 3 hours, context why this session is high risk.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+
+## Pair 3.8 - Plan Work Pieces
+
+A: Translated domain statements for SESSION 3 OF 4 — Child Order + INSTANCE NONE Layout: prerequisites sessions 1 2 complete yarn test 226 passing is present and needs its own handling; estimated time 3 hours is present and needs its own handling; context why this session is high risk is present and needs its own handling; step 1 fix g flex column children sorted by y position is present and needs its own handling.
+
+B: Create work pieces for prerequisites sessions 1 2 complete yarn test 226 passing, estimated time 3 hours, context why this session is high risk, step 1 fix g flex column children sorted by y position. Keep prerequisites sessions 1 2 complete yarn test 226 passing and estimated time 3 hours separate. Allow context why this session is high risk and step 1 fix g flex column children sorted by y position to move in parallel when they do not depend on each other. Add a wait state before merge, a review point before formatting, and a recovery path that sends only the failed fragment back through the flow.
+
+Pair 3.8 - Rephrased
+
+A: The current request has translated responsibilities: prerequisites sessions 1 2 complete yarn test 226 passing, estimated time 3 hours, context why this session is high risk, step 1 fix g flex column children sorted by y position.
+
+B: Plan one branch per responsibility. Preserve order only where one branch needs another branch's result. Keep the merge explicit. Do not hide review, waiting, or repair work inside a general summary.
+

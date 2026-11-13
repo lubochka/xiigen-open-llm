@@ -1,0 +1,302 @@
+﻿{
+    "generated":  "2026-05-07",
+    "floor":  1358,
+    "knn_matrix_current_state":  {
+                                     "class":  "TransformerEmbeddingKnnLogicalUnit.ScoreCandidates",
+                                     "file":  "21.AgentInfrastructure/Logical/LlmIngredientLogicalUnits.cs",
+                                     "components":  [
+                                                        {
+                                                            "signal":  "vector",
+                                                            "weight":  0.45,
+                                                            "source":  "HNSW cosine via EmbeddingModel+LlmModel"
+                                                        },
+                                                        {
+                                                            "signal":  "bm25",
+                                                            "weight":  0.35,
+                                                            "source":  "ComputeBm25LikeScore with E15/project-23 semantic root tokenization"
+                                                        },
+                                                        {
+                                                            "signal":  "pos_pattern",
+                                                            "weight":  0.2,
+                                                            "source":  "E25 PatternClassifier fusion, pure C#"
+                                                        }
+                                                    ],
+                                     "tokenizer_gap":  "Closed. TransformerEmbeddingKnnLogicalUnit.Tokenize() now uses project-23 TrainingVectorBuilder.NormalizeRoots, and HybridRanker uses E15 stop-word removal plus stemming.",
+                                     "pending_third_component":  {
+                                                                     "experiments":  [
+                                                                                         "E08TextSyntax",
+                                                                                         "E08NonCodeSyntax",
+                                                                                         "E25PatternClassifier"
+                                                                                     ],
+                                                                     "signal":  "Jaccard similarity on SVO/SOV/IMPERATIVE POS-pattern sequence",
+                                                                     "proposed_weights":  {
+                                                                                              "vector":  0.45,
+                                                                                              "bm25":  0.35,
+                                                                                              "pos":  0.2
+                                                                                          },
+                                                                     "implementation":  "Closed. PatternClassifier.Classify(tokens) from project 29 is wired into HybridRanker and TransformerEmbeddingKnnLogicalUnit pattern fusion."
+                                                                 }
+                                 },
+    "experiments":  [
+                        {
+                            "id":  "E01AstTokenizer",
+                            "what_it_checks":  "AST node types (Roslyn SyntaxKind ~200) vs BPE sub-words for 3-gram prediction on C# source",
+                            "input_type":  "csharp_source",
+                            "metric":  "perplexity_3gram + top1_accuracy",
+                            "proven_result":  "+93% perplexity reduction vs BPE",
+                            "result_source":  "Comment in 12.SemanticCompiler/Compression/AstTokenizer.cs",
+                            "knn_matrix":  false,
+                            "production_class":  "12.SemanticCompiler.AstTokenizer",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  false,
+                            "note":  "Input is C# source code, not developer prompt. Roslyn parses code structure."
+                        },
+                        {
+                            "id":  "E08NonCodeSyntax",
+                            "what_it_checks":  "Structural role tagging (English SVO roles, SQL roles, JSON roles) vs BPE bigram on natural language text. E08a=English prose, E08b=SQL, E08c=JSON.",
+                            "input_type":  "natural_language_text",
+                            "metric":  "average top1_accuracy across 3 sub-experiments",
+                            "proven_result":  "Positive â€” role tags beat BPE on all 3 sub-experiments. Exact % not in header.",
+                            "result_source":  "E08NonCodeSyntax.cs header comments",
+                            "knn_matrix":  true,
+                            "knn_matrix_role":  "Proves structural role signal is more stable than BPE for NL text â€” motivates 3rd fusion component",
+                            "production_class":  "22.AgentAlgorithms.RoleBasedTaskDecomposer",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  false,
+                            "note":  "SpaCy Python dependency in E08TextSyntax variant."
+                        },
+                        {
+                            "id":  "E08TextSyntax",
+                            "what_it_checks":  "POS tags (Universal Dependencies ~17 tags) vs BPE sub-words on English text. SpaCy via Python script.",
+                            "input_type":  "natural_language_text",
+                            "metric":  "perplexity_bigram + top1_accuracy",
+                            "proven_result":  "POS vocab ~17 vs BPE vocab 512. Structural signal dramatically more compact. Exact % not in file.",
+                            "result_source":  "E08TextSyntax.cs",
+                            "knn_matrix":  true,
+                            "knn_matrix_role":  "Intended as 3rd fusion component: posScore (Jaccard on POS sequence). Blocked by SpaCy. Substitute: PatternClassifier (E25).",
+                            "production_class":  "22.AgentAlgorithms.RoleBasedTaskDecomposer",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  false,
+                            "note":  "SpaCy blocks integration. PatternClassifier (E25) is the pure-C# drop-in."
+                        },
+                        {
+                            "id":  "E09StructuralKnn",
+                            "what_it_checks":  "SyntaxKind frequency bag vector + KNN vs BPE bigram on C# code completion",
+                            "input_type":  "csharp_source",
+                            "metric":  "top1_accuracy",
+                            "proven_result":  "Positive â€” exact % not in header",
+                            "knn_matrix":  true,
+                            "production_class":  "22.AgentAlgorithms.KnnSkillFilter",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  false
+                        },
+                        {
+                            "id":  "E13MethodLevelKnn",
+                            "what_it_checks":  "KNN k=5 on AST KindBag (SyntaxKind frequency per method) predicts canonical method type N+1 vs majority-class baseline",
+                            "input_type":  "csharp_source",
+                            "metric":  "top1_accuracy (6 canonical types)",
+                            "proven_result":  "Positive â€” exact % not in header",
+                            "knn_matrix":  true,
+                            "production_class":  "12.SemanticCompiler.NGramTransitionModel",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  false
+                        },
+                        {
+                            "id":  "E14ContextActionKnn",
+                            "what_it_checks":  "AST file summary vector predicts required change type (ADD_NULL_CHECK/ADD_LOOP/REFACTOR_EXTRACT/ADD_METHOD). Labels auto-assigned by ActionLabelGenerator â€” direct DPO pair source.",
+                            "input_type":  "csharp_source",
+                            "metric":  "top1_accuracy (4 classes)",
+                            "proven_result":  "Positive â€” exact % not in header",
+                            "knn_matrix":  true,
+                            "production_class":  "22.AgentAlgorithms.KnnSkillFilter",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  false
+                        },
+                        {
+                            "id":  "E18DomainClassifier",
+                            "what_it_checks":  "Predicate profile of developer prompt (E17 FamilyCollapser tags) classifies D-04 domain without relying on explicit keywords",
+                            "input_type":  "developer_prompt",
+                            "metric":  "top1_accuracy (5 classes, random=20%)",
+                            "proven_result":  "+15.2% domain accuracy",
+                            "result_source":  "Comment in 29.SemanticCompiler/Routing/RouteClassifier.cs",
+                            "knn_matrix":  true,
+                            "knn_matrix_role":  "Domain classification feeds domain adapter selection â€” which KNN pool to use",
+                            "production_class":  "23.SemanticCompilerAdapter.DomainClassifierUnit",
+                            "integration_status":  "wired_compiled_ILogicalUnit_trained_path",
+                            "integration_detail":  "DomainClassifierUnit implements ILogicalUnit directly. CompiledDomainClassifierUnit wrapper exists in project 21. DefaultLogicalCapabilityTrainer persists domain classifier examples to domain-classifier-training.json and registers a trained classifier from accumulated examples.",
+                            "dpc_applies":  true,
+                            "dpc_note":  "Closed for production path: AdaptiveLogicalOrchestrator compiles first, stores compiled prompt metadata, and ClassifyDomainAsync passes compiled predicate slots into DomainClassifierRequest."
+                        },
+                        {
+                            "id":  "E20StackDetector",
+                            "what_it_checks":  "Stack-specific tokens (C# task/ienumerable, TypeScript promise/injectable, Python def/yield) survive E15 normalisation and predict stack via KNN cosine",
+                            "input_type":  "developer_prompt",
+                            "metric":  "top1_accuracy (4 classes, random=25%)",
+                            "proven_result":  "Positive â€” wired in production pipeline",
+                            "knn_matrix":  true,
+                            "production_class":  "29.SemanticCompiler.StackDetector",
+                            "integration_status":  "wired_embedded_in_pipeline",
+                            "integration_detail":  "Wired in SemanticCompilerPipeline stage 2 before normalisation. Called from DevelopmentPromptCompiler. Not a separate ILogicalUnit.",
+                            "dpc_applies":  false,
+                            "dpc_note":  "Already inside the DPC pipeline â€” runs before DPC predicate extraction."
+                        },
+                        {
+                            "id":  "E22DatasetRouter",
+                            "what_it_checks":  "E17 predicate profile routes to relevant sub-datasets (binary vector across 6 buckets) vs always-return-all baseline",
+                            "input_type":  "csharp_source",
+                            "metric":  "macro-F1 across 6 dataset buckets",
+                            "proven_result":  "Positive vs 16.7% precision baseline",
+                            "knn_matrix":  true,
+                            "production_class":  "12.SemanticCompiler.DatasetRouter",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  true,
+                            "dpc_note":  "Predicate input should come from DPC PipelinePredicates, not ad-hoc local extraction."
+                        },
+                        {
+                            "id":  "E23Beautifier",
+                            "what_it_checks":  "Predicate sequence identifies correct code template via KNN. VALIDATE_OPâ†’SUCCESS must map to return Validate() not string \u0027SUCCESS\u0027 (Rule B critical).",
+                            "input_type":  "csharp_source",
+                            "metric":  "template_match_rate",
+                            "proven_result":  "+833.3% â€” 10.9% without Rule B, 100% with Rule B",
+                            "result_source":  "Comment in 29.SemanticCompiler/Compression/TemplateBeautifier.cs",
+                            "knn_matrix":  true,
+                            "production_class":  "29.SemanticCompiler.TemplateBeautifier",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  false,
+                            "note":  "Path C now served by CapabilityResultTranslator (A56). TemplateBeautifier remains available for code generation use case."
+                        },
+                        {
+                            "id":  "E25PatternClassifier",
+                            "what_it_checks":  "POS bigrams predict sentence word-order pattern (SVO/SOV/VSO/IMPERATIVE/TOPIC_OV) better than first-verb-position rules",
+                            "input_type":  "natural_language_text",
+                            "metric":  "top1_accuracy (8 classes, random=12.5%)",
+                            "proven_result":  "+154.6%",
+                            "result_source":  "Comment in 29.SemanticCompiler/Routing/PatternClassifier.cs",
+                            "knn_matrix":  true,
+                            "knn_matrix_role":  "Pure-C# substitute for E08TextSyntax SpaCy dependency. PatternClassifier.Classify(tokens) returns SVO/SOV/VSO/IMPERATIVE. Can be called in ScoreCandidates for posScore without Python.",
+                            "production_class":  "29.SemanticCompiler.PatternClassifier",
+                            "integration_status":  "wired_pattern_fusion",
+                            "dpc_applies":  false,
+                            "integration_detail":  "E25 is active as the 0.20 pattern component in HybridRanker and TransformerEmbeddingKnnLogicalUnit.ScoreCandidates."
+                        },
+                        {
+                            "id":  "E26ContextualDictionary",
+                            "what_it_checks":  "KNN on neighbouring POS tags selects correct word meaning (null: C# vs SQL vs Python) vs highest-priority dictionary entry",
+                            "input_type":  "natural_language_text",
+                            "metric":  "disambiguation_accuracy",
+                            "proven_result":  "+150.0%",
+                            "result_source":  "Comment in 29.SemanticCompiler/Translation/ContextualDictionary.cs",
+                            "knn_matrix":  true,
+                            "production_class":  "29.SemanticCompiler.ContextualDictionary",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  false
+                        },
+                        {
+                            "id":  "E32EpisodeDecomposer",
+                            "what_it_checks":  "KNN on FamilyCollapser tags predicts number of sub-episodes needed for a developer task",
+                            "input_type":  "developer_prompt",
+                            "metric":  "count_accuracy + Â±1_accuracy",
+                            "proven_result":  "Positive. 90 training examples (10 episodes Ã— 9 phrasings).",
+                            "knn_matrix":  true,
+                            "production_class":  "15.OrchestratorModel.EpisodeDecomposer",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  true,
+                            "dpc_note":  "FamilyCollapser tags should come from DPC compiled form, not raw prompt."
+                        },
+                        {
+                            "id":  "E33StopSignalDetector",
+                            "what_it_checks":  "KNN on family tags + hasIter/hasTech detects STOP vs CONTINUE decomposition signal vs keyword rules",
+                            "input_type":  "developer_prompt",
+                            "metric":  "binary_accuracy + false_continue_reduction",
+                            "proven_result":  "Positive",
+                            "knn_matrix":  true,
+                            "production_class":  "12.SemanticCompiler.StopSignalDetector",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  true
+                        },
+                        {
+                            "id":  "E34EpisodeQueryMatcher",
+                            "what_it_checks":  "KNN on FamilyCollapser tags matches prompt to closest known episode (10 types) vs keyword matching",
+                            "input_type":  "developer_prompt",
+                            "metric":  "hit@1 (10 classes, random=10%)",
+                            "proven_result":  "Positive. 90 training examples.",
+                            "knn_matrix":  true,
+                            "production_class":  "21.AgentInfrastructure.TransformerEmbeddingKnnLogicalUnit",
+                            "integration_status":  "wired_bm25_knn_pattern_fusion",
+                            "integration_detail":  "Fusion wired: vectorScore x0.45 + normalizedBm25 x0.35 + E25 patternScore x0.20. Tokenize() uses project-23 E15 semantic roots.",
+                            "dpc_applies":  true,
+                            "dpc_note":  "Closed in generated-capability flow path: prompts are compiled before training and before inference, so the KNN unit receives canonical compiled text."
+                        },
+                        {
+                            "id":  "E34HybridMatcher",
+                            "what_it_checks":  "BM25 (E15 normalised words) + KNN (E16 family tags) rank fusion with auto-tuned alpha",
+                            "input_type":  "developer_prompt",
+                            "metric":  "hit@1",
+                            "proven_result":  "+8% hit@1 vs BM25-only baseline",
+                            "result_source":  "SESSION-STATE-2026-05-06-v16 experiment gaps section",
+                            "knn_matrix":  true,
+                            "production_class":  "21.AgentInfrastructure.TransformerEmbeddingKnnLogicalUnit",
+                            "integration_status":  "wired",
+                            "integration_detail":  "Fusion implemented in ScoreCandidates with E15/project-23 roots and E25 pattern fusion.",
+                            "dpc_applies":  true
+                        },
+                        {
+                            "id":  "E35DependencyDetector",
+                            "what_it_checks":  "KNN on predicate overlap + produces/consumes signal detects sequential vs parallel sub-episode relationship",
+                            "input_type":  "developer_prompt",
+                            "metric":  "dependency_accuracy + parallel_opportunity_rate",
+                            "proven_result":  "Positive",
+                            "knn_matrix":  true,
+                            "production_class":  "29.SemanticCompiler.DependencyGraph",
+                            "integration_status":  "wired_opt_in_project21_ordering",
+                            "dpc_applies":  true,
+                            "integration_detail":  "AdaptiveLogicalOrchestrator references SemanticCompiler29.DependencyGraph and applies its domain order when routed decisions carry E35_DEPENDENCY_GRAPH evidence, preserving independent branch concurrency by default."
+                        },
+                        {
+                            "id":  "E36FeedbackCorrector",
+                            "what_it_checks":  "KNN on correction tags routes user feedback to correct component (E32/E33/E34/E35/E37) vs always-most-frequent heuristic",
+                            "input_type":  "developer_prompt",
+                            "metric":  "routing_accuracy (5 components)",
+                            "proven_result":  "Positive",
+                            "knn_matrix":  true,
+                            "production_class":  "15.OrchestratorModel.FeedbackCorrector",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  true
+                        },
+                        {
+                            "id":  "E38SkillRetriever",
+                            "what_it_checks":  "KNN top-5 on task tags + confidence fallback (max_sim\u003c0.40â†’load full category) vs alphabetical top-5",
+                            "input_type":  "developer_prompt",
+                            "metric":  "precision_at_5_fair + fallback_rate + load_reduction_vs_all",
+                            "proven_result":  "Positive",
+                            "knn_matrix":  true,
+                            "production_class":  "22.AgentAlgorithms.ContextWindowManager",
+                            "integration_status":  "not_wired",
+                            "dpc_applies":  true
+                        },
+                        {
+                            "id":  "E40TrustScorerV2",
+                            "what_it_checks":  "KNN k=5 on 7-dim source metadata vector classifies source trust (HIGH/MEDIUM/LOW). V1 failed due to seed-42 stratification â€” V2 fixes with StratifiedSplit.",
+                            "input_type":  "source_metadata",
+                            "metric":  "trust_accuracy (3 classes)",
+                            "proven_result":  "V2 positive after stratification fix",
+                            "knn_matrix":  true,
+                            "production_class":  "16.AutonomousLearning.TrustScorer",
+                            "integration_status":  "wired_reflection_trust_promotion",
+                            "dpc_applies":  false,
+                            "integration_detail":  "AutonomousLearningTrustPromotionScorer reflects project-16 TrustScorer, and ReflectionWiringTests cover the path."
+                        },
+                        {
+                            "id":  "E47ModelHubSearcher",
+                            "what_it_checks":  "BM25 on E15-normalised description words finds correct domain adapter in registry when query uses paraphrasing",
+                            "input_type":  "domain_description",
+                            "metric":  "hit@1 + hit@3",
+                            "proven_result":  "Positive vs exact tag match baseline",
+                            "knn_matrix":  true,
+                            "production_class":  "21.AgentInfrastructure.InMemoryLogicalUnitRegistry",
+                            "integration_status":  "wired_verify_impl",
+                            "integration_detail":  "Registry wired. Whether BM25 description search is active in current InMemoryLogicalUnitRegistry implementation needs verification.",
+                            "dpc_applies":  false
+                        }
+                    ]
+}

@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\old\V20_SKILLS_FACTORY.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\old\V20_SKILLS_FACTORY.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 10926 bytes
+- Line count read: 283
+- SHA256: 346A20CAD362D7945EDDD676E20E714DCAB6E3FF91E4DFF5FB55816858D4F5A0
+- First meaningful line: `XIIGen V20 — Skills Factory & Quick Execution Card`
+- Last meaningful line: `Every line of generated code earns its place.`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+XIIGen V20 — Skills Factory & Quick Execution Card
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- xiigen v20 — skills factory & quick execution card
+- date: 2026-02-23 architecture-first code injection
+- checksum: v20-52-25-8p-73s-cip12-la5
+- phase execution template
+- the three pillars + cip always remember
+- pillar 1: the brain resolution engine
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

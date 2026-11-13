@@ -1,0 +1,69 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\Flow files generator\GUIDE-B07-RAG-MD.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `Flow files generator\GUIDE-B07-RAG-MD.md`
+- Type: review and validation
+- Inventory type: not listed in attached MVP inventory
+- File size: 20876 bytes
+- Line count read for this round: 477
+- SHA256: 82E772067A9747163137AACABAAAAF494ABC41E7228324BBD9EA7FA724AA00B5
+- First meaningful line: `GUIDE-B07 — How to Produce`
+- Last meaningful line: `Next: GUIDE-B08 — FLOW-XX-GALLERY.html Round 18`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- No exact duplicate was recorded in the manifest.
+
+Same-name files:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Flow files generator\GUIDE-B07-RAG-MD.md`
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Flow files generator\GUIDE-B07-RAG-MD.md`
+
+## Source Meaning Used For Training
+
+GUIDE-B07 — How to Produce
+
+## Domains This Document Teaches
+
+- review responsibility
+- rule coverage
+- conflict detection
+- impact explanation
+- reprocess instruction
+- approval boundary
+- guide b07 how to produce
+- library guidance file flow prep library master plan v6 1 final
+- produced round 17 phase 4 guidance file authoring
+- date 2026 04 20
+- what this file is
+- list a sources for this guidance file
+- output file specification
+- step by step authoring instructions for claude code
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

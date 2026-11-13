@@ -1,0 +1,72 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\1st delivery tests\Test Rag\rag files files\CHANGELOG-v2.1.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `1st delivery tests\Test Rag\rag files files\CHANGELOG-v2.1.md`
+- Type: testing and simulation
+- Inventory type: not listed in attached MVP inventory
+- File size: 8002 bytes
+- Line count read for this round: 232
+- SHA256: F6CD5FA67578CB1473A6DA2E8AA4C468E94EC4E1430919F0824BF88D11ED2CF3
+- First meaningful line: `CHANGELOG — v2.0 → v2.1`
+- Last meaningful line: `END OF CHANGELOG`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- No exact duplicate was recorded in the manifest.
+
+Same-name files:
+
+- `C:\Users\lubao\Documents\xiigen\1st delivery tests\Test Rag\CHANGELOG-v2.1.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\1st delivery tests\Test Rag\CHANGELOG-v2.1.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\1st delivery tests\Test Rag\rag files files\CHANGELOG-v2.1.md`
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\1st delivery tests\Test Rag\CHANGELOG-v2.1.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\1st delivery tests\Test Rag\rag files files\CHANGELOG-v2.1.md`
+
+## Source Meaning Used For Training
+
+CHANGELOG — v2.0 → v2.1
+
+## Domains This Document Teaches
+
+- test objective
+- scenario setup
+- expected behavior
+- failure evidence
+- coverage decision
+- release gate
+- changelog v2 0 v2 1
+- xiigen the retrieval system benchmark strategy
+- gate b fixes applied date 2026 03 19
+- what changed
+- blocking issues fixed 4
+- b 1 session count mismatch fixed
+- b 2 skills count conflict documented
+- b 3 flow check 8 false positive fixed
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

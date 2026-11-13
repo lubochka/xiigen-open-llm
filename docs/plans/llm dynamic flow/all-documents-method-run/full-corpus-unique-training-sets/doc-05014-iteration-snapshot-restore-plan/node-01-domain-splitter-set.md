@@ -1,0 +1,124 @@
+# Node-01 - Domain Splitter Set
+
+Runtime A is a human prompt. Runtime B is an array of domain labels.
+
+## Pair 1.1 - Runtime Split
+
+A: "Use this document to understand Iteration Snapshot & Restore Plan and keep its main responsibilities visible."
+
+B: ["screen structure","component meaning","user action","data binding"]
+
+Pair 1.1 - Rephrased
+
+A: "Apply this document to understand Iteration Snapshot & Restore Plan and keep its main responsibilities visible."
+
+B: ["screen structure","component meaning","user action","data binding"]
+
+## Pair 1.2 - Runtime Split
+
+A: "Explain how Iteration Snapshot & Restore Plan should guide a human request without losing decisions, risks, or expected results."
+
+B: ["component meaning","user action","system type","visual evidence"]
+
+Pair 1.2 - Rephrased
+
+A: "Show how Iteration Snapshot & Restore Plan should guide a human request without losing decisions, risks, or expected results."
+
+B: ["component meaning","user action","system type","visual evidence"]
+
+## Pair 1.3 - Runtime Split
+
+A: "Plan the work described by Iteration Snapshot & Restore Plan as separated responsibilities that can move through the dynamic flow."
+
+B: ["user action","data binding","gap completion","learning feedback"]
+
+Pair 1.3 - Rephrased
+
+A: "Prepare the work described by Iteration Snapshot & Restore Plan as separated responsibilities that can move through the dynamic flow."
+
+B: ["user action","data binding","gap completion","learning feedback"]
+
+## Pair 1.4 - Runtime Split
+
+A: "Find the review points, exceptions, and recovery needs in Iteration Snapshot & Restore Plan."
+
+B: ["system type","gap completion","iteration snapshot & restore plan","single feature · 3 changes · 1 new css block"]
+
+Pair 1.4 - Rephrased
+
+A: "Identify the review points, exceptions, and recovery needs in Iteration Snapshot & Restore Plan."
+
+B: ["system type","gap completion","iteration snapshot & restore plan","single feature · 3 changes · 1 new css block"]
+
+## Pair 1.5 - Runtime Split
+
+A: "Turn Iteration Snapshot & Restore Plan into learning examples for the node pipeline."
+
+B: ["screen structure","visual evidence","what changes","change 1 — extend"]
+
+Pair 1.5 - Rephrased
+
+A: "Translate Iteration Snapshot & Restore Plan into learning examples for the node pipeline."
+
+B: ["screen structure","visual evidence","what changes","change 1 — extend"]
+
+## Pair 1.6 - Runtime Split
+
+A: "Compare the source meaning of Iteration Snapshot & Restore Plan with related versions or session evidence."
+
+B: ["screen structure","iteration snapshot & restore plan","what changes","change 2 — capture snapshot when appending to log"]
+
+Pair 1.6 - Rephrased
+
+A: "Contrast the source meaning of Iteration Snapshot & Restore Plan with related versions or session evidence."
+
+B: ["screen structure","iteration snapshot & restore plan","what changes","change 2 — capture snapshot when appending to log"]
+
+## Pair 1.7 - Runtime Split
+
+A: "Prepare a user-facing answer from approved results about Iteration Snapshot & Restore Plan."
+
+B: ["visual evidence","learning feedback","change 1 — extend","change 3 — render thumbnail + restore button in each log row"]
+
+Pair 1.7 - Rephrased
+
+A: "Prepare a user-facing answer from approved results about Iteration Snapshot & Restore Plan."
+
+B: ["visual evidence","learning feedback","change 1 — extend","change 3 — render thumbnail + restore button in each log row"]
+
+## Pair 1.8 - Runtime Split
+
+A: "Check whether Iteration Snapshot & Restore Plan has enough evidence to be trusted by a reviewer."
+
+B: ["system type","gap completion","single feature · 3 changes · 1 new css block","what changes"]
+
+Pair 1.8 - Rephrased
+
+A: "Check whether Iteration Snapshot & Restore Plan has enough evidence to be trusted by a reviewer."
+
+B: ["system type","gap completion","single feature · 3 changes · 1 new css block","what changes"]
+
+## Pair 1.9 - Runtime Split
+
+A: "Show what would break if one responsibility in Iteration Snapshot & Restore Plan were skipped."
+
+B: ["user action","data binding","gap completion","iteration snapshot & restore plan"]
+
+Pair 1.9 - Rephrased
+
+A: "Show what would break if one responsibility in Iteration Snapshot & Restore Plan were skipped."
+
+B: ["user action","data binding","gap completion","iteration snapshot & restore plan"]
+
+## Pair 1.10 - Runtime Split
+
+A: "Build a simulation that proves the design understanding content can pass through all nine nodes."
+
+B: ["screen structure","data binding","visual evidence","change 1 — extend"]
+
+Pair 1.10 - Rephrased
+
+A: "Build a simulation that proves the design understanding content can pass through all nine nodes."
+
+B: ["screen structure","data binding","visual evidence","change 1 — extend"]
+

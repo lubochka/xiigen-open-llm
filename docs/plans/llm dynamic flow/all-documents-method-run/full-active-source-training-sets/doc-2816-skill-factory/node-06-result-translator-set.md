@@ -1,0 +1,113 @@
+# Node-06 - Result Translator Set
+
+Runtime A is one formal result while the full result collection remains visible.
+Runtime B is readable language for that result.
+
+## Pair 6.1 - Translate factory boundary
+
+A: Formal result R1: factory boundary completed for XIIGen V16 — Skill Factory Template. The full result collection is visible for consistency.
+
+B: The factory boundary part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.1 - Rephrased
+
+A: Result R1: factory boundary is complete, waiting, or blocked in the formal collection.
+
+B: Explain factory boundary without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.2 - Translate configuration choice
+
+A: Formal result R2: configuration choice completed for XIIGen V16 — Skill Factory Template. The full result collection is visible for consistency.
+
+B: The configuration choice part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.2 - Rephrased
+
+A: Result R2: configuration choice is complete, waiting, or blocked in the formal collection.
+
+B: Explain configuration choice without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.3 - Translate dependency rule
+
+A: Formal result R3: dependency rule completed for XIIGen V16 — Skill Factory Template. The full result collection is visible for consistency.
+
+B: The dependency rule part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.3 - Rephrased
+
+A: Result R3: dependency rule is complete, waiting, or blocked in the formal collection.
+
+B: Explain dependency rule without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.4 - Translate completion gate
+
+A: Formal result R4: completion gate completed for XIIGen V16 — Skill Factory Template. The full result collection is visible for consistency.
+
+B: The completion gate part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.4 - Rephrased
+
+A: Result R4: completion gate is complete, waiting, or blocked in the formal collection.
+
+B: Explain completion gate without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.5 - Translate xiigen v16 skill factory template
+
+A: Formal result R5: xiigen v16 skill factory template completed for XIIGen V16 — Skill Factory Template. The full result collection is visible for consistency.
+
+B: The xiigen v16 skill factory template part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.5 - Rephrased
+
+A: Result R5: xiigen v16 skill factory template is complete, waiting, or blocked in the formal collection.
+
+B: Explain xiigen v16 skill factory template without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.6 - Translate copy this structure for every new skill fill in the placeholders
+
+A: Formal result R6: copy this structure for every new skill fill in the placeholders completed for XIIGen V16 — Skill Factory Template. The full result collection is visible for consistency.
+
+B: The copy this structure for every new skill fill in the placeholders part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.6 - Rephrased
+
+A: Result R6: copy this structure for every new skill fill in the placeholders is complete, waiting, or blocked in the formal collection.
+
+B: Explain copy this structure for every new skill fill in the placeholders without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.7 - Translate skill md template
+
+A: Formal result R7: skill md template completed for XIIGen V16 — Skill Factory Template. The full result collection is visible for consistency.
+
+B: The skill md template part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.7 - Rephrased
+
+A: Result R7: skill md template is complete, waiting, or blocked in the formal collection.
+
+B: Explain skill md template without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.8 - Translate skill xx skill name
+
+A: Formal result R8: skill xx skill name completed for XIIGen V16 — Skill Factory Template. The full result collection is visible for consistency.
+
+B: The skill xx skill name part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.8 - Rephrased
+
+A: Result R8: skill xx skill name is complete, waiting, or blocked in the formal collection.
+
+B: Explain skill xx skill name without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.9 - Translate one line description of what this skill does
+
+A: Formal result R9: one line description of what this skill does completed for XIIGen V16 — Skill Factory Template. The full result collection is visible for consistency.
+
+B: The one line description of what this skill does part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.9 - Rephrased
+
+A: Result R9: one line description of what this skill does is complete, waiting, or blocked in the formal collection.
+
+B: Explain one line description of what this skill does without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Поймай ошибку — тренажёр перевода</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4efe4; --paper2:#ece4d3; --ink:#23201a; --ink-soft:#5a5448;
+    --line:#d8cdb6; --accent:#b4541f; --accent-soft:#e9c9a8;
+    --good:#3d6b3a; --good-bg:#e3ecdb; --bad:#9b3328; --bad-bg:#f0dcd4;
+    --gold:#c08a2d; --shadow:rgba(50,40,25,.18);
+    --serif:"Spectral",Georgia,"Times New Roman",serif;
+    --sans:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--sans); color:var(--ink); background:var(--paper);
+    background-image:
+      radial-gradient(circle at 20% 12%,rgba(180,84,31,.05),transparent 45%),
+      radial-gradient(circle at 85% 88%,rgba(192,138,45,.06),transparent 45%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+    min-height:100%; display:flex; flex-direction:column; align-items:center;
+    -webkit-font-smoothing:antialiased; line-height:1.5;
+  }
+  .wrap{width:100%; max-width:680px; padding:28px 20px 80px; flex:1; display:flex; flex-direction:column}
+  /* ---- header ---- */
+  header{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:6px}
+  .brand{font-family:var(--serif); font-weight:700; font-size:1.45rem; letter-spacing:-.01em}
+  .brand .dot{color:var(--accent)}
+  .tag{font-size:.72rem; text-transform:uppercase; letter-spacing:.16em; color:var(--ink-soft)}
+  .rule{height:2px; background:linear-gradient(90deg,var(--ink),transparent); opacity:.25; margin:14px 0 22px}
+  /* ---- screens ---- */
+  .screen{display:none; animation:rise .45s cubic-bezier(.2,.7,.2,1) both}
+  .screen.on{display:flex; flex-direction:column; flex:1}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+  h1.lead{font-family:var(--serif); font-weight:600; font-size:2.1rem; line-height:1.12; letter-spacing:-.015em; margin-bottom:10px}
+  h1.lead em{font-style:italic; color:var(--accent)}
+  .sub{color:var(--ink-soft); font-size:1rem; max-width:46ch; margin-bottom:28px}
+  .field{margin-bottom:24px}
+  .field>label{display:block; font-size:.74rem; text-transform:uppercase; letter-spacing:.14em; color:var(--ink-soft); margin-bottom:10px}
+  .chips{display:flex; flex-wrap:wrap; gap:9px}
+  .chip{
+    font-family:var(--sans); font-size:.92rem; font-weight:600; cursor:pointer;
+    border:1.5px solid var(--line); background:transparent; color:var(--ink);
+    padding:9px 15px; border-radius:999px; transition:.18s; user-select:none;
+  }
+  .chip:hover{border-color:var(--ink-soft)}
+  .chip.sel{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+  .chip.skill.sel{background:var(--accent); border-color:var(--accent)}
+  .btn{
+    font-family:var(--sans); font-weight:700; font-size:1.02rem; cursor:pointer;
+    background:var(--accent); color:#fff; border:none; padding:15px 22px; border-radius:14px;
+    box-shadow:0 6px 0 #8a3f15, 0 10px 22px var(--shadow); transition:.12s; letter-spacing:.01em;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:0 2px 0 #8a3f15, 0 6px 14px var(--shadow)}
+  .btn.ghost{background:transparent; color:var(--ink); border:1.5px solid var(--line); box-shadow:none}
+  .btn.ghost:active{transform:translateY(2px)}
+  .start-row{margin-top:auto; display:flex; gap:12px; align-items:center}
+  .count{font-size:.84rem; color:var(--ink-soft)}
+  /* ---- play HUD ---- */
+  .hud{display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:18px}
+  .progress{flex:1; height:7px; background:var(--paper2); border-radius:999px; overflow:hidden; border:1px solid var(--line)}
+  .progress>span{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--gold),var(--accent)); transition:width .4s}
+  .stat{display:flex; gap:14px; font-size:.9rem; font-weight:700; white-space:nowrap}
+  .stat .lbl{font-weight:500; color:var(--ink-soft); margin-right:4px; font-size:.8rem}
+  .streak{color:var(--accent)}
+  /* ---- question card ---- */
+  .card{background:#fbf8f0; border:1px solid var(--line); border-radius:18px; padding:22px 20px;
+    box-shadow:0 10px 30px var(--shadow); position:relative; animation:pop .35s both}
+  .card::before{content:""; position:absolute; inset:6px; border:1px solid var(--line); border-radius:13px; pointer-events:none; opacity:.5}
+  .qmeta{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; position:relative}
+  .dirlabel{font-size:.72rem; text-transform:uppercase; letter-spacing:.13em; color:var(--ink-soft)}
+  .qprompt{font-size:.8rem; color:var(--ink-soft); margin-bottom:6px}
+  .source{font-family:var(--serif); font-size:1.7rem; line-height:1.25; font-weight:500; margin-bottom:4px; letter-spacing:-.01em}
+  .options{display:flex; flex-direction:column; gap:12px; margin-top:20px}
+  .opt{
+    font-family:var(--serif); font-size:1.18rem; text-align:left; cursor:pointer;
+    background:var(--paper); border:1.5px solid var(--line); color:var(--ink);
+    padding:15px 17px; border-radius:13px; transition:.15s; position:relative; line-height:1.35;
+  }
+  .opt:hover:not(:disabled){border-color:var(--accent); transform:translateY(-1px)}
+  .opt:disabled{cursor:default}
+  .opt .mk{position:absolute; right:14px; top:50%; transform:translateY(-50%); font-size:1.1rem; opacity:0; transition:.2s}
+  .opt.right{background:var(--good-bg); border-color:var(--good); color:var(--good)}
+  .opt.right .mk{opacity:1}
+  .opt.wrong{background:var(--bad-bg); border-color:var(--bad); color:var(--bad)}
+  .opt.wrong .mk{opacity:1}
+  .opt.dim{opacity:.45}
+  /* ---- feedback ---- */
+  .feedback{margin-top:18px; border-radius:14px; padding:16px 18px; border-left:5px solid; animation:rise .3s both; display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:var(--good-bg); border-color:var(--good)}
+  .feedback.no{background:var(--bad-bg); border-color:var(--bad)}
+  .fhead{font-weight:800; font-size:.95rem; display:flex; align-items:center; gap:8px; margin-bottom:8px}
+  .feedback.ok .fhead{color:var(--good)} .feedback.no .fhead{color:var(--bad)}
+  .skilltag{margin-left:auto; font-size:.7rem; text-transform:uppercase; letter-spacing:.1em;
+    background:rgba(0,0,0,.06); color:var(--ink-soft); padding:3px 9px; border-radius:999px; font-weight:700}
+  .why{font-size:.96rem; color:var(--ink); line-height:1.5}
+  .correct-note{font-family:var(--serif); font-size:1.02rem; margin-top:9px; color:var(--ink)}
+  .correct-note b{color:var(--good)}
+  .next-row{margin-top:18px; display:flex; gap:12px; align-items:center}
+  .hint{font-size:.82rem; color:var(--ink-soft)}
+  kbd{font-family:var(--sans); font-size:.72rem; background:var(--ink); color:var(--paper); padding:2px 7px; border-radius:5px; font-weight:700}
+  /* ---- summary ---- */
+  .big{font-family:var(--serif); font-size:4rem; font-weight:700; line-height:1; color:var(--accent)}
+  .summary-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:22px 0}
+  .scell{background:#fbf8f0; border:1px solid var(--line); border-radius:14px; padding:16px}
+  .scell .n{font-family:var(--serif); font-size:1.8rem; font-weight:700}
+  .scell .k{font-size:.78rem; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft)}
+  footer{font-size:.74rem; color:var(--ink-soft); text-align:center; padding:18px 0 4px; opacity:.8}
+  @media(max-width:480px){ .source{font-size:1.4rem} h1.lead{font-size:1.75rem} .summary-grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">Поймай ошибку<span class="dot">.</span></div>
+    <div class="tag">тренажёр перевода</div>
+  </header>
+  <div class="rule"></div>
+
+  <!-- ===== START ===== -->
+  <section id="start" class="screen on">
+    <h1 class="lead">Две версии перевода.<br>Только одна <em>живая</em>.</h1>
+    <p class="sub">Перед тобой фраза и два перевода. Один правильный, второй — типичная ошибка: калька, ложный друг, не тот регистр. Выбери верный — и узнай, почему второй врёт.</p>
+
+    <div class="field">
+      <label>Направление</label>
+      <div class="chips" id="dirChips">
+        <button class="chip sel" data-dir="RU_EN">Русский → English</button>
+        <button class="chip" data-dir="EN_RU">English → Русский</button>
+        <button class="chip" data-dir="ALL">Оба</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Чему учимся (можно выбрать несколько — или ничего, тогда всё подряд)</label>
+      <div class="chips" id="skillChips"></div>
+    </div>
+
+    <div class="start-row">
+      <button class="btn" id="startBtn">Начать раунд →</button>
+      <span class="count" id="poolCount"></span>
+    </div>
+  </section>
+
+  <!-- ===== PLAY ===== -->
+  <section id="play" class="screen">
+    <div class="hud">
+      <div class="stat"><span><span class="lbl">Очки</span><span id="score">0</span></span>
+        <span class="streak"><span class="lbl">Серия</span><span id="streak">0</span>🔥</span></div>
+      <div class="progress"><span id="bar"></span></div>
+    </div>
+    <div class="card">
+      <div class="qmeta"><span class="dirlabel" id="qdir"></span><span class="dirlabel" id="qnum"></span></div>
+      <div class="qprompt" id="qprompt">Переведите:</div>
+      <div class="source" id="qsource"></div>
+      <div class="options" id="opts"></div>
+      <div class="feedback" id="fb">
+        <div class="fhead" id="fhead"></div>
+        <div class="why" id="fwhy"></div>
+        <div class="correct-note" id="fcorrect"></div>
+      </div>
+      <div class="next-row" id="nextRow" style="display:none">
+        <button class="btn" id="nextBtn">Дальше →</button>
+        <span class="hint">или нажми <kbd>Enter</kbd></span>
+      </div>
+    </div>
+    <div class="start-row" style="margin-top:18px">
+      <button class="btn ghost" id="quitBtn">Завершить раунд</button>
+    </div>
+  </section>
+
+  <!-- ===== SUMMARY ===== -->
+  <section id="end" class="screen">
+    <h1 class="lead">Раунд <em>пойман</em>.</h1>
+    <div class="big" id="endPct">0%</div>
+    <div class="summary-grid">
+      <div class="scell"><div class="n" id="endRight">0</div><div class="k">верно</div></div>
+      <div class="scell"><div class="n" id="endTotal">0</div><div class="k">всего вопросов</div></div>
+      <div class="scell"><div class="n" id="endBest">0</div><div class="k">лучшая серия</div></div>
+      <div class="scell"><div class="n" id="endWeak">—</div><div class="k">слабое место</div></div>
+    </div>
+    <div class="start-row">
+      <button class="btn" id="againBtn">Ещё раунд →</button>
+      <button class="btn ghost" id="homeBtn">Настройки</button>
+    </div>
+  </section>
+
+  <footer>Данные: DPO-пары переводчика · открытый формат · 1849 заданий</footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/[]/*__END__*/;
+
+const SKILL_LABEL = {
+  wrong_word_choice:"Неверное слово", literal_translation:"Калька / дословно",
+  grammar_error:"Грамматика", missing_idiom:"Идиома", wrong_register:"Регистр / стиль",
+  omission:"Пропуск", false_friend:"Ложный друг", other:"Прочее"
+};
+const DIR_LABEL = { RU_EN:"Русский → English", EN_RU:"English → Русский" };
+const ROUND = 12; // вопросов в раунде
+
+const $ = s => document.querySelector(s);
+const show = id => document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===id));
+const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; };
+
+// ---- build skill chips ----
+const skillCounts = {};
+DATA.forEach(p=>{ skillCounts[p.type]=(skillCounts[p.type]||0)+1; });
+const skillWrap = $('#skillChips');
+Object.keys(SKILL_LABEL).filter(k=>skillCounts[k]).sort((a,b)=>skillCounts[b]-skillCounts[a])
+  .forEach(k=>{
+    const b=document.createElement('button');
+    b.className='chip skill'; b.dataset.skill=k;
+    b.textContent=`${SKILL_LABEL[k]} · ${skillCounts[k]}`;
+    skillWrap.appendChild(b);
+  });
+
+let dir='RU_EN', skills=new Set();
+
+function pool(){
+  return DATA.filter(p => (dir==='ALL'||p.dir===dir) && (skills.size===0||skills.has(p.type)));
+}
+function refreshCount(){
+  const n=pool().length;
+  $('#poolCount').textContent = n? `${n} заданий в выборке` : 'нет заданий — измени фильтр';
+  $('#startBtn').disabled = n===0;
+  $('#startBtn').style.opacity = n===0? .4:1;
+}
+$('#dirChips').addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b)return;
+  $('#dirChips').querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+  b.classList.add('sel'); dir=b.dataset.dir; refreshCount();
+});
+skillWrap.addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b)return;
+  b.classList.toggle('sel');
+  b.classList.contains('sel')? skills.add(b.dataset.skill) : skills.delete(b.dataset.skill);
+  refreshCount();
+});
+refreshCount();
+
+// ---- game state ----
+let queue=[], retry=[], cur=null, idx=0, total=0, score=0, streak=0, best=0, right=0;
+let wrongBySkill={}, answered=false;
+
+function startRound(){
+  const p=shuffle(pool().slice());
+  queue=p.slice(0, ROUND);
+  retry=[]; idx=0; total=queue.length; score=0; streak=0; best=0; right=0; wrongBySkill={};
+  $('#score').textContent=0; $('#streak').textContent=0;
+  show('play'); nextQ();
+}
+function nextQ(){
+  answered=false;
+  $('#fb').className='feedback'; $('#nextRow').style.display='none';
+  // due retries first (after a small gap), then fresh
+  let item=null;
+  if(retry.length && (idx>=queue.length || retry[0].due<=idx)) item=retry.shift().p;
+  else if(idx<queue.length) item=queue[idx++];
+  else if(retry.length) item=retry.shift().p;
+  if(!item){ endRound(); return; }
+  cur=item;
+  const done = idx + Math.max(0,total-queue.length);
+  $('#bar').style.width = Math.min(100, (right /(total))*100 + (idx/(total||1))*0) + '%';
+  $('#bar').style.width = Math.min(100, (idx/(total||1))*100) + '%';
+  $('#qdir').textContent = DIR_LABEL[cur.dir]||cur.dir;
+  $('#qnum').textContent = `№ ${Math.min(idx,total)} / ${total}`;
+  $('#qsource').textContent = cur.src;
+  const opts = shuffle([{t:cur.ok,ok:true},{t:cur.bad,ok:false}]);
+  const box=$('#opts'); box.innerHTML='';
+  opts.forEach(o=>{
+    const b=document.createElement('button');
+    b.className='opt'; b.innerHTML=`<span>${escapeHtml(o.t)}</span><span class="mk">${o.ok?'✓':'✕'}</span>`;
+    b.onclick=()=>answer(b,o.ok);
+    box.appendChild(b);
+  });
+}
+function answer(btn,isOk){
+  if(answered)return; answered=true;
+  const all=$('#opts').querySelectorAll('.opt');
+  all.forEach(b=>{ b.disabled=true; });
+  all.forEach(b=>{
+    const t=b.querySelector('span').textContent;
+    if(t===cur.ok) b.classList.add('right');
+    else if(t===cur.bad){ b.classList.add(isOk?'dim':'wrong'); }
+  });
+  const fb=$('#fb');
+  if(isOk){
+    right++; streak++; best=Math.max(best,streak); score+=10+Math.min(streak,10);
+    fb.className='feedback ok show';
+    $('#fhead').innerHTML=`✓ Верно <span class="skilltag">${SKILL_LABEL[cur.type]||cur.type}</span>`;
+    $('#fcorrect').innerHTML='';
+  }else{
+    streak=0; wrongBySkill[cur.type]=(wrongBySkill[cur.type]||0)+1;
+    retry.push({p:cur, due: idx+3}); // вернётся через ~3 вопроса
+    fb.className='feedback no show';
+    $('#fhead').innerHTML=`✕ Это калька-ловушка <span class="skilltag">${SKILL_LABEL[cur.type]||cur.type}</span>`;
+    $('#fcorrect').innerHTML=`Правильно: <b>${escapeHtml(cur.ok)}</b>`;
+  }
+  $('#fwhy').textContent = cur.why || '';
+  $('#score').textContent=score; $('#streak').textContent=streak;
+  $('#nextRow').style.display='flex';
+  $('#nextBtn').focus();
+}
+function endRound(){
+  show('end');
+  const pct = total? Math.round(right/total*100):0;
+  $('#endPct').textContent=pct+'%';
+  $('#endRight').textContent=right; $('#endTotal').textContent=total; $('#endBest').textContent=best;
+  const weak=Object.entries(wrongBySkill).sort((a,b)=>b[1]-a[1])[0];
+  $('#endWeak').textContent = weak? (SKILL_LABEL[weak[0]]||weak[0]) : 'нет 🎉';
+  $('#endWeak').style.fontSize = weak? '1.05rem':'1.8rem';
+}
+function escapeHtml(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+$('#startBtn').onclick=startRound;
+$('#nextBtn').onclick=nextQ;
+$('#againBtn').onclick=startRound;
+$('#quitBtn').onclick=endRound;
+$('#homeBtn').onclick=()=>show('start');
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && $('#play').classList.contains('on') && answered) nextQ();
+});
+</script>
+</body>
+</html>

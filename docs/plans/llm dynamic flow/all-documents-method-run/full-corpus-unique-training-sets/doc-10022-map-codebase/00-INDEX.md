@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\Wordpress integration\get-shit-done-main\get-shit-done-main\get-shit-done\workflows\map-codebase.md`
+
+- Relative path: `Wordpress integration\get-shit-done-main\get-shit-done-main\get-shit-done\workflows\map-codebase.md`
+- Manifest category: undefined
+- Top folder: Wordpress integration
+- Type: review and validation
+- Inventory type: not listed in attached MVP inventory
+- File size: 9200 bytes
+- Line count read: 317
+- SHA256: 130B183D4A4E05CFE432B5C819905CDF8068CB664B14D3A4D22B9288CF4F9B55
+- First meaningful line: `<purpose`
+- Last meaningful line: `</success criteria`
+
+## Related Versions And Duplicate Copies
+
+- `C:\Users\lubao\Documents\xiigen\Multimodel Orchestrator\skill builder\skill builder\get-shit-done-main\get-shit-done-main\get-shit-done\workflows\map-codebase.md`
+
+## Source Meaning Used For Training
+
+Mapping Complete
+
+## Domains This Document Teaches
+
+- review responsibility
+- rule coverage
+- conflict detection
+- impact explanation
+- approval boundary
+- reprocess instruction
+- evidence check
+- final verdict
+- mapping complete
+- check for common the programming interface key patterns in generated docs
+- ▶ next up
+- simulation check
+- source meaning
+- audience need
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

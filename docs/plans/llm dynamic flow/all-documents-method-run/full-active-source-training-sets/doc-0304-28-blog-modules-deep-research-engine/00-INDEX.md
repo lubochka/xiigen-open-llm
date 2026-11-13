@@ -1,0 +1,74 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\business flows\28-blog modules deep research engine.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `business flows\28-blog modules deep research engine.md`
+- Type: review and validation
+- Inventory type: not listed in attached MVP inventory
+- File size: 30405 bytes
+- Line count read for this round: 342
+- SHA256: 122C6E1D2F0386E8D67498DEEF84F94A0A3315F250C85B2474A711343A46D677
+- First meaningful line: `Extending the Engine to Support Flow Creation for the Project’s 09- Specifications`
+- Last meaningful line: `Extensibility: a hook/event template where extension handlers run under guardrails timeouts, retries, observability . fileciteturn0file1`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- `C:\Users\lubao\Documents\xiigen\business-flows\business flows\28-blog modules deep research engine.md`
+
+Same-name files:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\business flows\28-blog modules deep research engine.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\business-flows\business flows\28-blog modules deep research engine.md`
+- `C:\Users\lubao\Documents\xiigen\business-flows\business flows\28-blog modules deep research engine.md`
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\business flows\28-blog modules deep research engine multitenant.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\business flows\28-blog modules deep research engine.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\business-flows\business flows\28-blog modules deep research engine multitenant.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\business-flows\business flows\28-blog modules deep research engine.md`
+
+## Source Meaning Used For Training
+
+Extending the Engine to Support Flow Creation for the Project’s 09- Specifications
+
+## Domains This Document Teaches
+
+- review responsibility
+- rule coverage
+- conflict detection
+- impact explanation
+- reprocess instruction
+- approval boundary
+- executive summary
+- source derived requirements from the 09 documents
+- cross cutting non functional requirements implied by the document
+- mapping requirements to the current engine and gap analysis
+- inferred current architecture from the 09 materials
+- capability to engine mapping and missing components
+- design options and recommended approach
+- design options for runtime orchestration
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

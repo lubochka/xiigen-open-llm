@@ -1,0 +1,537 @@
+{
+  "core_ref": "f089a7d55d359ff103d0cdd9ddfb26eee346a16b",
+  "revision": "v2",
+  "revision_note": "Adds three pinned cardinality helpers (29 -> 32 inputs); narrows P58 partition to literal Source; preserves the separate v1 result.",
+  "execution": "Python recount and bounded source arithmetic; native C#/training UNRUN",
+  "inputs": {
+    "experiments-v2/RP01-MICRO/P5201/results/attempt-0002/metrics.json": {
+      "git_blob_sha1": "362f5b0f38cd4747003f37235918a4cf42bc67e4",
+      "sha256": "7d1f81e49abbc523f1cb4d50d2cdd4751203a11ffbaf0da39b630e0ced1d2889",
+      "bytes": 1095
+    },
+    "experiments-v2/RP01-MICRO/P4801/results/attempt-0003/arms.json": {
+      "git_blob_sha1": "85ec610ca093174d15964aa3c3e5324ad6016aae",
+      "sha256": "306a98c4ed3a84f8cea7f2c339ad24daaec04d264bb719be76be52d242222aa1",
+      "bytes": 12955
+    },
+    "experiments-v2/RP01-MICRO/P4801/results/attempt-0003/ceiling-and-overlap.json": {
+      "git_blob_sha1": "81c0c6c52646e7012b3642544cc5fd87b0187cfb",
+      "sha256": "71ca4e4f6a5fb3c666dde1bbb53fc191d272058f199cc4919a563be02c4c0bab",
+      "bytes": 2102
+    },
+    "experiments-v2/RP01-MICRO/P4801/results/attempt-0003/metrics.json": {
+      "git_blob_sha1": "08541731364aec2c1ccb41b808fe6d3fc4318d74",
+      "sha256": "d22e5f3af2bccd97c3c3ad3b7c8d6363084523dc266ea1b2fb5a4936bcaf7666",
+      "bytes": 4946
+    },
+    "experiments-v2/RP01-MICRO/P4801/results/attempt-0003/status.json": {
+      "git_blob_sha1": "2b6fece0ec1949f9500373f236f258df95cb3143",
+      "sha256": "51749bad06d2ed7aca4b4e8f6bf15f0a44324e6e74bc68e6b7a05ebb66e6bc7d",
+      "bytes": 1447
+    },
+    "experiments-v2/RP01-MICRO/P4901/results/attempt-0003/arms.json": {
+      "git_blob_sha1": "c7597cd9d12b6436460e1feca7f4bcb886097c2d",
+      "sha256": "71a9883ed222f8045fa4fc53ef16705cc97c6d09717800747896329612240b5f",
+      "bytes": 29457
+    },
+    "experiments-v2/RP01-MICRO/P4901/results/attempt-0003/metrics.json": {
+      "git_blob_sha1": "b9c31479b2891ff26440fc6af24cab39b60fcba2",
+      "sha256": "0768a0c76878aba59fa39e650fd919210dff7877958d3c98c69e155cc9b1d7a3",
+      "bytes": 13870
+    },
+    "experiments-v2/RP01-MICRO/P4901/results/attempt-0003/overlap-and-ceilings.json": {
+      "git_blob_sha1": "70981749f36ab06e0cbcdaa8011457767c3d643e",
+      "sha256": "59d390318e8afa25720e3dcfbdd49d9c96983f705f3d816cb986250cf6734da4",
+      "bytes": 3269
+    },
+    "experiments-v2/RP01-MICRO/P4901/results/attempt-0003/status.json": {
+      "git_blob_sha1": "5cdcdcbb746e50c1a3160b3a8b055a28cf01e242",
+      "sha256": "34dcb31b7b3b8ca259017fe9e192dabac78b80297799c4403087bc1febc0f8ea",
+      "bytes": 1358
+    },
+    "experiments-v2/RP01-MICRO/P5001/results/attempt-0002/before.json": {
+      "git_blob_sha1": "db1b3ae9d4e565666c94d8280d5f2576626143d9",
+      "sha256": "21f70ac6d6797e22a8db1830ec789bedf55c497d0e859ec8b6013b5176e3d465",
+      "bytes": 1840
+    },
+    "experiments-v2/RP01-MICRO/P5001/results/attempt-0002/arms.json": {
+      "git_blob_sha1": "41b7266f942c0a7c517798c86582d07b109f2e18",
+      "sha256": "9b96bc08715426b9d2319a6c1d086a994d7b4e9d5b91491cce7bc53b75b4c51c",
+      "bytes": 4142
+    },
+    "experiments-v2/RP01-MICRO/P5001/results/attempt-0002/after.json": {
+      "git_blob_sha1": "def5f83257c83a2614f61c4ba880b4769708d6f1",
+      "sha256": "7adcb7dcbd6eb27fb85c257b116786a310c584f126dbb209f3e6b3822358d769",
+      "bytes": 4753
+    },
+    "experiments-v2/RP01-MICRO/P5001/results/attempt-0002/restore.json": {
+      "git_blob_sha1": "8708fb8cd09fc4b10487587730e54703aed7a6b7",
+      "sha256": "85280311dcdf304cc79df8bcd22cdc148281b811cc31fec214da3a709d0333a4",
+      "bytes": 9282
+    },
+    "experiments-v2/RP01-MICRO/P5001/results/attempt-0002/metrics.json": {
+      "git_blob_sha1": "71f9fd3ef68968f54c17c728a8fbab6b2e9782c8",
+      "sha256": "e737e69b615d46e78c8898df874936e6d21e911abfb253b6b4d23f18729434e8",
+      "bytes": 16081
+    },
+    "experiments-v2/RP01-MICRO/P5001/results/attempt-0002/status.json": {
+      "git_blob_sha1": "c0976b62bce8ac5fba0b7fea664c3e60cc9ae4b4",
+      "sha256": "f29cd5d86ba5cdf504a5eea38bae53ca2a5a9af77d6619f3ba0f61a17e061265",
+      "bytes": 348
+    },
+    "experiments-v2/RP01-MICRO/P5201/results/attempt-0002/before.json": {
+      "git_blob_sha1": "b7f3ba7556fdf51080597e49ae52e82fc4b72752",
+      "sha256": "35b34f52766c1f0023b496e322e92c3b47457e83b79104e8cd0b69f77442f053",
+      "bytes": 2294
+    },
+    "experiments-v2/RP01-MICRO/P5201/results/attempt-0002/arms.json": {
+      "git_blob_sha1": "798a367c901b97e2ab1d0f05c56e2b8548d81007",
+      "sha256": "81fe45386511899888fc1ecf69012bfd115dfa68aab296f18ffc0dde822e2cb3",
+      "bytes": 5011
+    },
+    "experiments-v2/RP01-MICRO/P5201/results/attempt-0002/after.json": {
+      "git_blob_sha1": "ac5f90d3f28c15112b6ba345f44ca2313a693859",
+      "sha256": "60ddd0afea49f6ff40f15b273e49d2f89e093489d58195a8366d6338d4a31487",
+      "bytes": 405
+    },
+    "experiments-v2/RP01-MICRO/P5201/results/attempt-0002/status.json": {
+      "git_blob_sha1": "c828349b189cf9dc4cca0c805b15ad972f3647b9",
+      "sha256": "3f34c204c5bc1453e6ac9981f618624f48b1727cd581d6c3b365cf575a654c85",
+      "bytes": 502
+    },
+    "experiments-v2/RP01-MICRO/P5801/results/attempt-0002/before.json": {
+      "git_blob_sha1": "3f209e55639fe2fd8308852d6a41453ffa4a0ef6",
+      "sha256": "03d65b97fc06e59a07deac871b7978cc901ca28f4289d972d6b48ac88ec1e3b4",
+      "bytes": 5113
+    },
+    "experiments-v2/RP01-MICRO/P5801/results/attempt-0002/arms.json": {
+      "git_blob_sha1": "ee4b5569a1544b4ed2f115f043fc85eed274f8c2",
+      "sha256": "c74539cf68eab3d6c7e4871232c98537ec93fffcf49b734e88bd9f75a5b2c2fc",
+      "bytes": 22003
+    },
+    "experiments-v2/RP01-MICRO/P5801/results/attempt-0002/metrics.json": {
+      "git_blob_sha1": "8abe913705fd3df213701c0f2d0fdedf42214b25",
+      "sha256": "38da20ae0630bb25377c819432983296e5d81043a0c992298ddac8cf4397fc13",
+      "bytes": 3606
+    },
+    "experiments-v2/RP01-MICRO/P5801/results/attempt-0002/train-control.json": {
+      "git_blob_sha1": "9bb824ad80ef51b3ef7581377dc1ffcb637820f2",
+      "sha256": "da3672b98b28620805f1856cef00b30a05fbbfca91c369962a924227091fcc67",
+      "bytes": 4903
+    },
+    "experiments-v2/RP01-MICRO/P5801/results/attempt-0002/setup-probe.json": {
+      "git_blob_sha1": "7d0876f5efe43e95900e69697c0127530749b7e0",
+      "sha256": "b92884f3f8570a315feba5641350e54db335e478b3b18c0db22f67920e2edeb0",
+      "bytes": 4759
+    },
+    "experiments-v2/RP01-MICRO/P5801/results/attempt-0002/status.json": {
+      "git_blob_sha1": "e69428cf5e0213ece1677f9e34721b73a8b77de0",
+      "sha256": "60b1279c2835c2006021a19629a6a7fe7e5b9eda87ee375f1a35e10436c20079",
+      "bytes": 571
+    },
+    "Tests/ExperimentFixes/P5201RejectedAnnotationAddressArmsTests.cs": {
+      "git_blob_sha1": "db97f983f64bd8822c85213d8b5b8ba3b87abac5",
+      "sha256": "aab9640b8184e55655aa56b388b0515d9d8cafe6474bd4448074abbaa3d63bc2",
+      "bytes": 59557
+    },
+    "Tests/ExperimentFixes/P4901FinitenessGovernedWarmStartTests.cs": {
+      "git_blob_sha1": "b9fcddbcb2a5983c7d0bb04e6d8691d5bc83868e",
+      "sha256": "e13c4ac2cd64be5d239f367d572a3c8a22baeed5396ea93554bf395473fb6781",
+      "bytes": 95551
+    },
+    "Tests/ExperimentFixes/P5801CorrectiveLessonCounterExampleArmsTests.cs": {
+      "git_blob_sha1": "a0e4f9156e4b852c37fbf44a8c30df99577b0a1a",
+      "sha256": "20db6194f59911a44484dee88d81efd3fb24c34895cfcab717c84f75b56f4f4e",
+      "bytes": 130024
+    },
+    "experiments-v2/RP01-MICRO/P4901/src/FinitenessGovernedVerdict.cs": {
+      "git_blob_sha1": "1f95d7806ff2baed2c3a0e75b9235f46537010bc",
+      "sha256": "f7ca96bfab47775fc9813f3cfc817b935654a6847d71e68432be38e11782e392",
+      "bytes": 28615
+    },
+    "27.TranslationDomain/TranslationStructuredBatchBuilder.cs": {
+      "git_blob_sha1": "e0f8fb71e1c53059a225ab2562a789222266c463",
+      "sha256": "9a881dfbed9123b146c2b4ace95dd778d45790ccf31083c7eb4dabe80ceaa420",
+      "bytes": 36929
+    },
+    "experiments-v2/RP01-MICRO/P5801/src/CorrectiveLessonCounterExampleArms.cs": {
+      "git_blob_sha1": "82e37c8bf2ae126b8d466e4e8593f82297a4c508",
+      "sha256": "63b5ce641a33715bc87b98343a45f8c1d92ca74e0a20e7df88f046c6376a9a8b",
+      "bytes": 15962
+    },
+    "experiments-v2/RP01-MICRO/P5201/src/RejectedAnnotationAddressArms.cs": {
+      "git_blob_sha1": "9b450ae67bac8e2b94409cf52b6c4d66d7564501",
+      "sha256": "3aeb1d91a7bbee8327e100969e9adea5738c42d450c91752a80848e848fca48d",
+      "bytes": 16187
+    }
+  },
+  "P48": {
+    "correct": [
+      12,
+      12
+    ],
+    "rows": 16,
+    "answer_changes": 6,
+    "gained": [
+      "exam-t1",
+      "train-f1-00",
+      "train-f1-02"
+    ],
+    "lost": [
+      "exam-t3",
+      "train-f3-06",
+      "train-f3-08"
+    ]
+  },
+  "P49": {
+    "exposure": {
+      "cold_new_only": {
+        "rows": [
+          {
+            "row_id": "e-t1",
+            "input": 0,
+            "gold": 1,
+            "exposure": "input_seen_target_new"
+          },
+          {
+            "row_id": "e-t2",
+            "input": 2,
+            "gold": 3,
+            "exposure": "input_unseen"
+          },
+          {
+            "row_id": "e-t3",
+            "input": 0,
+            "gold": 3,
+            "exposure": "exact_pair_seen"
+          },
+          {
+            "row_id": "e-t4",
+            "input": 4,
+            "gold": 5,
+            "exposure": "exact_pair_seen"
+          }
+        ],
+        "counts": {
+          "input_seen_target_new": 1,
+          "input_unseen": 1,
+          "exact_pair_seen": 2
+        }
+      },
+      "warm_plus_new": {
+        "rows": [
+          {
+            "row_id": "e-t1",
+            "input": 0,
+            "gold": 1,
+            "exposure": "exact_pair_seen"
+          },
+          {
+            "row_id": "e-t2",
+            "input": 2,
+            "gold": 3,
+            "exposure": "exact_pair_seen"
+          },
+          {
+            "row_id": "e-t3",
+            "input": 0,
+            "gold": 3,
+            "exposure": "exact_pair_seen"
+          },
+          {
+            "row_id": "e-t4",
+            "input": 4,
+            "gold": 5,
+            "exposure": "exact_pair_seen"
+          }
+        ],
+        "counts": {
+          "exact_pair_seen": 4
+        }
+      }
+    },
+    "new_project_gains": [
+      {
+        "row_id": "c-f3-p2",
+        "input": 3,
+        "gold": 0,
+        "exposure": "exact_pair_seen"
+      }
+    ],
+    "target_only_negative_control": [
+      {
+        "row_id": "same-input-new-target",
+        "input": 1,
+        "gold": 5,
+        "exposure": "input_seen_target_new"
+      }
+    ]
+  },
+  "P52": {
+    "cold": 0,
+    "constant_ceiling": 2,
+    "rows": 4,
+    "arms": {
+      "плечо_до_исправления": {
+        "answer_correct": 4,
+        "tense_correct": 1
+      },
+      "плечо_после_исправления": {
+        "answer_correct": 4,
+        "tense_correct": 3
+      }
+    }
+  },
+  "P58": {
+    "chosen_correction": {
+      "Id": "e1",
+      "Source": "Anna opened the window",
+      "Gold": "Анна открыла окно",
+      "Answer": "Анна открыла дверь",
+      "Adapter": "executor-en_ru-ordinary-source-knn",
+      "Correct": false
+    },
+    "partition_rule": "Literal Source equality with the one corrective input; no normalization, alias, model-key or source-family exclusion is inferred.",
+    "arms": {
+      "плечо_A_строка_корпуса": {
+        "corrected_item_rows": 1,
+        "corrected_item_correct": 1,
+        "corrected_item_adapters": [
+          "executor-en_ru-exact-source"
+        ],
+        "other_literal_source_rows": 7,
+        "other_literal_source_correct": 0,
+        "other_literal_source_row_ids": [
+          "e2",
+          "e3",
+          "e4",
+          "e5",
+          "e6",
+          "e7",
+          "e8"
+        ]
+      },
+      "плечо_B_фактический_ошибочный_ответ": {
+        "corrected_item_rows": 1,
+        "corrected_item_correct": 1,
+        "corrected_item_adapters": [
+          "executor-en_ru-exact-source"
+        ],
+        "other_literal_source_rows": 7,
+        "other_literal_source_correct": 0,
+        "other_literal_source_row_ids": [
+          "e2",
+          "e3",
+          "e4",
+          "e5",
+          "e6",
+          "e7",
+          "e8"
+        ]
+      },
+      "контроль_измерителя_фразовая_пометка": {
+        "corrected_item_rows": 1,
+        "corrected_item_correct": 1,
+        "corrected_item_adapters": [
+          "executor-en_ru-exact-source"
+        ],
+        "other_literal_source_rows": 7,
+        "other_literal_source_correct": 0,
+        "other_literal_source_row_ids": [
+          "e2",
+          "e3",
+          "e4",
+          "e5",
+          "e6",
+          "e7",
+          "e8"
+        ]
+      }
+    }
+  },
+  "cardinality_derivation": {
+    "builder_path": "27.TranslationDomain/TranslationStructuredBatchBuilder.cs",
+    "examples_per_successful_pair": 3,
+    "P58": {
+      "test_path": "Tests/ExperimentFixes/P5801CorrectiveLessonCounterExampleArmsTests.cs",
+      "correction_helper_path": "experiments-v2/RP01-MICRO/P5801/src/CorrectiveLessonCounterExampleArms.cs",
+      "setup_pairs": 8,
+      "corrective_pairs": 1,
+      "setup_unit_lesson_calls": 24,
+      "corrective_unit_lesson_calls": 3,
+      "unit_lesson_calls_per_arm": 27,
+      "panel_rows": 8,
+      "train_control_rows": 8
+    },
+    "P52": {
+      "test_path": "Tests/ExperimentFixes/P5201RejectedAnnotationAddressArmsTests.cs",
+      "annotation_helper_path": "experiments-v2/RP01-MICRO/P5201/src/RejectedAnnotationAddressArms.cs",
+      "train_pairs_per_arm": 2,
+      "unit_lesson_calls_per_arm": 6,
+      "panel_rows": 4
+    },
+    "scope": "Hash-pinned, reviewed successful construction paths and explicit Unit TrainOnExample call sites only; no C# execution or transitive runtime call accounting."
+  },
+  "selected_class_costs": {
+    "P58": {
+      "source_fact_count": 16,
+      "facts": [
+        {
+          "method": "PreparedCorpusLineAndActualWrongOutputAreMeasuredOnBothAxesSeparately",
+          "fact_line": 584,
+          "run_arm_calls": 3,
+          "direct_setup_batches": 1,
+          "unit_lesson_calls": 105,
+          "direct_output_reads": 56
+        },
+        {
+          "method": "TheSameRejectedSourceAlwaysGivesTheSameLessonAndOnlyTheFactorChangesIt",
+          "fact_line": 1175,
+          "run_arm_calls": 4,
+          "direct_setup_batches": 1,
+          "unit_lesson_calls": 132,
+          "direct_output_reads": 40
+        },
+        {
+          "method": "ConstantAnswerCeilingIsOneBecauseEveryExpectedPanelAnswerIsDistinct",
+          "fact_line": 1314,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "ConstantAnswerCeilingIsNotZeroAndIsNotTheObservedColdPanelCount",
+          "fact_line": 1343,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 8
+        },
+        {
+          "method": "ConstantAnswerCeilingIsAnalyticalAndStableAcrossRepeatedComputation",
+          "fact_line": 1365,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 1,
+          "unit_lesson_calls": 24,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "ConstantAnswerCeilingUsesTheSameCorrectnessRuleAsThePanelScoring",
+          "fact_line": 1384,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "ReceiptReportsCompletedOnHealthyMeasurements",
+          "fact_line": 1406,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "ReceiptReportsIncompleteWhenTrainingDidNotHappen",
+          "fact_line": 1428,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "ReceiptReportsIncompleteWhenTheExamPanelIsEmpty",
+          "fact_line": 1444,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "ReceiptReportsIncompleteWhenTheCeilingComputationGaveNoCandidate",
+          "fact_line": 1466,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "ReceiptReportsIncompleteWhenACorrectCountIsOutsideThePanelRange",
+          "fact_line": 1490,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "ReceiptReportsIncompleteWhenTheEqualStartIsBroken",
+          "fact_line": 1509,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "ReceiptReportsIncompleteWhenTheInstrumentControlDidNotFire",
+          "fact_line": 1528,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "ReceiptHypothesisStatusIsDerivedFromTheFirstAxisAndNotFixed",
+          "fact_line": 1550,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "StatusDocumentReportsIncompleteWhenTheValidatorFoundAProblem",
+          "fact_line": 1583,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        },
+        {
+          "method": "StatusDocumentCarriesCompletedAndBothQuantitiesSeparatelyOnHealthyMeasurements",
+          "fact_line": 1629,
+          "run_arm_calls": 0,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 0,
+          "direct_output_reads": 0
+        }
+      ],
+      "unit_lesson_calls": 261,
+      "direct_output_reads": 104,
+      "scope": "Source-derived: each current Fact once, every path successful, no retry; not native observation or historical run total."
+    },
+    "P52": {
+      "source_fact_count": 2,
+      "facts": [
+        {
+          "method": "RejectedSideAnnotationAndVerifiedSideAnnotationAreMeasuredOnTheSamePanel",
+          "fact_line": 372,
+          "run_arm_calls": 2,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 12,
+          "direct_output_reads": 12
+        },
+        {
+          "method": "TheSameRuleTagSourceAlwaysGivesTheSameAddressAndOnlyTheFactorChangesIt",
+          "fact_line": 735,
+          "run_arm_calls": 4,
+          "direct_setup_batches": 0,
+          "unit_lesson_calls": 24,
+          "direct_output_reads": 16
+        }
+      ],
+      "unit_lesson_calls": 36,
+      "direct_output_reads": 28,
+      "scope": "Source-derived: each current Fact once, every path successful, no retry; not native observation or historical run total."
+    }
+  }
+}

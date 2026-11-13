@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "micro-experiment-result-v1",
+  "description": "Схема для результата одного микро-эксперимента. Один файл = одна пара (baseline vs improved).",
+
+  "type": "object",
+  "required": ["meta", "dataset", "baseline", "improved", "verdict"],
+
+  "properties": {
+
+    "meta": {
+      "description": "Кто, когда, что тестируем",
+      "type": "object",
+      "required": ["experiment_id", "experiment_name", "hypothesis", "run_timestamp_utc", "machine"],
+      "properties": {
+        "experiment_id":     { "type": "string", "description": "например: E01-AST-TOKENIZER-v1" },
+        "experiment_name":   { "type": "string", "description": "Человекочитаемое название" },
+        "hypothesis":        { "type": "string", "description": "Что проверяем одним предложением" },
+        "run_timestamp_utc": { "type": "string", "format": "date-time" },
+        "machine": {
+          "type": "object",
+          "properties": {
+            "os":         { "type": "string" },
+            "cpu":        { "type": "string" },
+            "ram_total_mb": { "type": "integer" },
+            "dotnet_version": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "dataset": {
+      "description": "Какой датасет использовался в этом прогоне",
+      "type": "object",
+      "required": ["tier", "source", "files_count", "tokens_approx", "size_bytes"],
+      "properties": {
+        "tier":          { "type": "integer", "minimum": 1, "maximum": 5,
+                           "description": "1=micro(9K tok), 2=small(61K), 3=medium(141K), 4=large, 5=full" },
+        "tier_name":     { "type": "string", "description": "например: micro-01-Tokenizer" },
+        "source":        { "type": "string", "description": "путь или имя датасета" },
+        "files_count":   { "type": "integer" },
+        "tokens_approx": { "type": "integer", "description": "примерное число BPE токенов" },
+        "size_bytes":    { "type": "integer" },
+        "subprojects_included": {
+          "type": "array", "items": { "type": "string" },
+          "description": "например: ['01.Tokenizer', '02.DatasetPipeline']"
+        }
+      }
+    },
+
+    "baseline": {
+      "description": "Стандартный подход без улучшений",
+      "type": "object",
+      "required": ["name", "description", "metrics"],
+      "properties": {
+        "name":        { "type": "string", "description": "например: BPE-flat-tokens" },
+        "description": { "type": "string", "description": "Что именно делает baseline" },
+        "metrics":     { "$ref": "#/$defs/MetricsBlock" }
+      }
+    },
+
+    "improved": {
+      "description": "Улучшенный подход который мы тестируем",
+      "type": "object",
+      "required": ["name", "description", "change_applied", "metrics"],
+      "properties": {
+        "name":           { "type": "string", "description": "например: AST-tree-tokens" },
+        "description":    { "type": "string", "description": "Что именно изменили" },
+        "change_applied": { "type": "string", "description": "Одна строка: суть изменения" },
+        "metrics":        { "$ref": "#/$defs/MetricsBlock" }
+      }
+    },
+
+    "delta": {
+      "description": "Разница improved vs baseline. Автоматически вычисляется из baseline и improved.",
+      "type": "object",
+      "description": "Все поля — процентное изменение. Отрицательное = лучше для ошибки, времени, памяти, CPU, диска",
+      "properties": {
+        "prediction_error_pct":  { "type": "number", "description": "- = ошибка уменьшилась (лучше)" },
+        "time_ms_pct":           { "type": "number", "description": "- = быстрее (лучше)" },
+        "memory_peak_mb_pct":    { "type": "number", "description": "- = меньше памяти (лучше)" },
+        "cpu_avg_pct_pct":       { "type": "number", "description": "- = меньше CPU (лучше)" },
+        "disk_write_bytes_pct":  { "type": "number", "description": "- = меньше дисковых записей (лучше)" },
+        "goal_met":              { "type": "boolean", "description": "true если ВСЕ метрики улучшились на >=5%" }
+      }
+    },
+
+    "verdict": {
+      "description": "Итог: прошёл ли эксперимент, что делать дальше",
+      "type": "object",
+      "required": ["passed", "summary", "next_action"],
+      "properties": {
+        "passed": {
+          "type": "boolean",
+          "description": "true = все метрики улучшились хотя бы на 5%"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Одно-два предложения на русском что произошло"
+        },
+        "metrics_that_improved": {
+          "type": "array", "items": { "type": "string" },
+          "description": "список метрик которые улучшились на >=5%"
+        },
+        "metrics_that_regressed": {
+          "type": "array", "items": { "type": "string" },
+          "description": "список метрик которые ухудшились"
+        },
+        "next_action": {
+          "type": "string",
+          "enum": [
+            "PROMOTE_TO_NEXT_TIER",
+            "TUNE_AND_RETRY",
+            "ABANDON_APPROACH",
+            "NEEDS_HUMAN_REVIEW"
+          ],
+          "description": "PROMOTE = прошёл, повысить уровень датасета. TUNE = не прошёл, но близко. ABANDON = подход не работает."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Любые наблюдения для следующего прогона"
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "MetricsBlock": {
+      "description": "Пять метрик которые измеряем для каждого подхода",
+      "type": "object",
+      "required": ["prediction_error", "time_ms", "memory_peak_mb", "cpu_avg_pct", "disk_write_bytes"],
+      "properties": {
+
+        "prediction_error": {
+          "type": "object",
+          "description": "Насколько точно модель/алгоритм предсказывает следующий токен",
+          "required": ["absolute_error", "top1_accuracy", "top5_accuracy", "metric_type"],
+          "properties": {
+            "metric_type": {
+              "type": "string",
+              "enum": ["token_prediction", "ngram_hit_rate", "bm25_recall", "perplexity"],
+              "description": "Что именно измеряли (зависит от уровня эксперимента)"
+            },
+            "absolute_error": {
+              "type": "number",
+              "description": "Абсолютная ошибка: среднее число неправильных предсказаний из 100"
+            },
+            "top1_accuracy": {
+              "type": "number", "minimum": 0, "maximum": 1,
+              "description": "Доля случаев когда первое предложение совпало с правильным"
+            },
+            "top5_accuracy": {
+              "type": "number", "minimum": 0, "maximum": 1,
+              "description": "Доля случаев когда правильный ответ был в топ-5 предложениях"
+            },
+            "sample_size": {
+              "type": "integer",
+              "description": "На скольких примерах измеряли"
+            }
+          }
+        },
+
+        "time_ms": {
+          "type": "object",
+          "required": ["total", "per_token_avg"],
+          "description": "Время выполнения в миллисекундах",
+          "properties": {
+            "total":         { "type": "number", "description": "Общее время от старта до конца" },
+            "per_token_avg": { "type": "number", "description": "Среднее время на один токен" },
+            "setup_ms":      { "type": "number", "description": "Время инициализации (загрузка словаря, индекса)" },
+            "inference_ms":  { "type": "number", "description": "Время собственно предсказания" }
+          }
+        },
+
+        "memory_peak_mb": {
+          "type": "object",
+          "required": ["peak", "baseline_process"],
+          "description": "Пиковое использование памяти в МБ",
+          "properties": {
+            "peak":             { "type": "number", "description": "Максимум RAM во время эксперимента" },
+            "baseline_process": { "type": "number", "description": "RAM процесса до старта (вычитаем для чистого замера)" },
+            "algorithm_only":   { "type": "number", "description": "peak - baseline_process = сколько взял сам алгоритм" }
+          }
+        },
+
+        "cpu_avg_pct": {
+          "type": "object",
+          "required": ["average", "peak"],
+          "description": "Загрузка CPU в процентах",
+          "properties": {
+            "average": { "type": "number", "minimum": 0, "maximum": 100 },
+            "peak":    { "type": "number", "minimum": 0, "maximum": 100 },
+            "cores_used": { "type": "integer", "description": "Сколько ядер использовалось" }
+          }
+        },
+
+        "disk_write_bytes": {
+          "type": "object",
+          "required": ["total_written", "index_size"],
+          "description": "Дисковая активность",
+          "properties": {
+            "total_written": { "type": "integer", "description": "Всего записано байт" },
+            "index_size":    { "type": "integer", "description": "Размер индекса/словаря после работы" },
+            "output_size":   { "type": "integer", "description": "Размер файлов результатов" }
+          }
+        }
+      }
+    }
+  }
+}

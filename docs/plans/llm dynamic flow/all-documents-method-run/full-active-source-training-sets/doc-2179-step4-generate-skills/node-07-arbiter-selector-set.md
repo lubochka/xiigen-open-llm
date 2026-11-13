@@ -1,0 +1,101 @@
+# Node-07 - Arbiter Selector Set
+
+Runtime A is the formal result collection.
+Runtime B is the required review units.
+
+## Pair 7.1 - Select Review
+
+A: Formal results for Step 4 · Generate Skills in the Primary Language include architecture rule, skill responsibility, factory boundary.
+
+B: Select review units: [ordering reviewer, consistency reviewer]. Reason: the formal result collection includes architecture rule, skill responsibility, factory boundary and must be checked before approved translations reach the formatter.
+
+Pair 7.1 - Rephrased
+
+A: R1...Rn contains branches about architecture rule, skill responsibility, factory boundary.
+
+B: Required review: ordering reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.2 - Select Review
+
+A: Formal results for Step 4 · Generate Skills in the Primary Language include skill responsibility, factory boundary, configuration choice.
+
+B: Select review units: [privacy reviewer, consistency reviewer]. Reason: the formal result collection includes skill responsibility, factory boundary, configuration choice and must be checked before approved translations reach the formatter.
+
+Pair 7.2 - Rephrased
+
+A: R1...Rn contains branches about skill responsibility, factory boundary, configuration choice.
+
+B: Required review: privacy reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.3 - Select Review
+
+A: Formal results for Step 4 · Generate Skills in the Primary Language include factory boundary, configuration choice, dependency rule.
+
+B: Select review units: [business-rule reviewer, consistency reviewer]. Reason: the formal result collection includes factory boundary, configuration choice, dependency rule and must be checked before approved translations reach the formatter.
+
+Pair 7.3 - Rephrased
+
+A: R1...Rn contains branches about factory boundary, configuration choice, dependency rule.
+
+B: Required review: business-rule reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.4 - Select Review
+
+A: Formal results for Step 4 · Generate Skills in the Primary Language include configuration choice, dependency rule, completion gate.
+
+B: Select review units: [evidence reviewer, consistency reviewer]. Reason: the formal result collection includes configuration choice, dependency rule, completion gate and must be checked before approved translations reach the formatter.
+
+Pair 7.4 - Rephrased
+
+A: R1...Rn contains branches about configuration choice, dependency rule, completion gate.
+
+B: Required review: evidence reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.5 - Select Review
+
+A: Formal results for Step 4 · Generate Skills in the Primary Language include dependency rule, completion gate, step 4 generate skills in the primary language.
+
+B: Select review units: [consistency reviewer, consistency reviewer]. Reason: the formal result collection includes dependency rule, completion gate, step 4 generate skills in the primary language and must be checked before approved translations reach the formatter.
+
+Pair 7.5 - Rephrased
+
+A: R1...Rn contains branches about dependency rule, completion gate, step 4 generate skills in the primary language.
+
+B: Required review: consistency reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.6 - Select Review
+
+A: Formal results for Step 4 · Generate Skills in the Primary Language include completion gate, step 4 generate skills in the primary language, the copy adapt rewrite classification.
+
+B: Select review units: [recovery reviewer, consistency reviewer]. Reason: the formal result collection includes completion gate, step 4 generate skills in the primary language, the copy adapt rewrite classification and must be checked before approved translations reach the formatter.
+
+Pair 7.6 - Rephrased
+
+A: R1...Rn contains branches about completion gate, step 4 generate skills in the primary language, the copy adapt rewrite classification.
+
+B: Required review: recovery reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.7 - Select Review
+
+A: Formal results for Step 4 · Generate Skills in the Primary Language include step 4 generate skills in the primary language, the copy adapt rewrite classification, how to classify a file.
+
+B: Select review units: [audience reviewer, consistency reviewer]. Reason: the formal result collection includes step 4 generate skills in the primary language, the copy adapt rewrite classification, how to classify a file and must be checked before approved translations reach the formatter.
+
+Pair 7.7 - Rephrased
+
+A: R1...Rn contains branches about step 4 generate skills in the primary language, the copy adapt rewrite classification, how to classify a file.
+
+B: Required review: audience reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+
+## Pair 7.8 - Select Review
+
+A: Formal results for Step 4 · Generate Skills in the Primary Language include the copy adapt rewrite classification, how to classify a file, real example from xiigen.
+
+B: Select review units: [completion reviewer, consistency reviewer]. Reason: the formal result collection includes the copy adapt rewrite classification, how to classify a file, real example from xiigen and must be checked before approved translations reach the formatter.
+
+Pair 7.8 - Rephrased
+
+A: R1...Rn contains branches about the copy adapt rewrite classification, how to classify a file, real example from xiigen.
+
+B: Required review: completion reviewer plus consistency reviewer. These reviews happen beside result translation and before final formatting.
+

@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\good skills to check\uiux-lib\impeccable-main\.codex\skills\distill\SKILL.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\good skills to check\uiux-lib\impeccable-main\.codex\skills\distill\SKILL.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 6359 bytes
+- Line count read: 121
+- SHA256: 1A5F897D6990F1DBCDFE46F16BA6AE376AB903CDF3809C01E8793D0DF570E04B
+- First meaningful line: `---`
+- Last meaningful line: `Remember: You have great taste and judgment. Simplification is an act of confidence - knowing what to keep and courage to remove the rest. As Antoine de Saint-Exupéry said: "Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away."`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+MANDATORY PREPARATION
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- mandatory preparation
+- assess current state
+- identify complexity sources :
+- too many elements : competing buttons, redundant information, visual clutter
+- excessive variation : too many colors, fonts, sizes, styles without purpose
+- information overload : everything visible at once, no progressive disclosure
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

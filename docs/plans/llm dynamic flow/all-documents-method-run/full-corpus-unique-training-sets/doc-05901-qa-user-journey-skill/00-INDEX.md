@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\llm mvp\project_skills_v4\all-skills\qa-user-journey-SKILL.md`
+
+- Relative path: `llm mvp\project_skills_v4\all-skills\qa-user-journey-SKILL.md`
+- Manifest category: undefined
+- Top folder: llm mvp
+- Type: testing and simulation
+- Inventory type: not listed in attached MVP inventory
+- File size: 3093 bytes
+- Line count read: 90
+- SHA256: 2E7CC1CA16BFB249FC5CDF60951B510A19A47DDF58F92E4744028CECBC7220A0
+- First meaningful line: `qa-user-journey-SKILL.md v1.0 — End-to-end user journey acceptance tests`
+- Last meaningful line: `Result: PASS / FAIL mark which step failed`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+qa-user-journey-SKILL.md v1.0 — End-to-end user journey acceptance tests
+
+## Domains This Document Teaches
+
+- test objective
+- scenario setup
+- expected behavior
+- failure evidence
+- coverage decision
+- release gate
+- simulation result
+- repair signal
+- qa-user-journey-skill.md v1.0 — end-to-end user journey acceptance tests
+- translated from: qa--user-journey-acceptance-testing-skill.md
+- the principle
+- when to run
+- journey acceptance test format
+- journey: "developer can classify c code using the semantic compiler"
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

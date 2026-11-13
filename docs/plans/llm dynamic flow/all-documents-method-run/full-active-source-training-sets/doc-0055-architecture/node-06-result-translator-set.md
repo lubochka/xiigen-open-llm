@@ -1,0 +1,113 @@
+# Node-06 - Result Translator Set
+
+Runtime A is one formal result while the full result collection remains visible.
+Runtime B is readable language for that result.
+
+## Pair 6.1 - Translate decision point
+
+A: Formal result R1: decision point completed for PK :E word/numbering.xml X 0 C @ FK Z ~ c M. s i OqH pH9 h Cx a 7q 6 rm3 ! 0 JK / o jR , e UR l X N f4 H ~ P 9 rg N xm n a IK w3 6D7m &v7ca f M D t h g WCv C 7 . The full result collection is visible for consistency.
+
+B: The decision point part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.1 - Rephrased
+
+A: Result R1: decision point is complete, waiting, or blocked in the formal collection.
+
+B: Explain decision point without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.2 - Translate dependency
+
+A: Formal result R2: dependency completed for PK :E word/numbering.xml X 0 C @ FK Z ~ c M. s i OqH pH9 h Cx a 7q 6 rm3 ! 0 JK / o jR , e UR l X N f4 H ~ P 9 rg N xm n a IK w3 6D7m &v7ca f M D t h g WCv C 7 . The full result collection is visible for consistency.
+
+B: The dependency part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.2 - Rephrased
+
+A: Result R2: dependency is complete, waiting, or blocked in the formal collection.
+
+B: Explain dependency without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.3 - Translate open question
+
+A: Formal result R3: open question completed for PK :E word/numbering.xml X 0 C @ FK Z ~ c M. s i OqH pH9 h Cx a 7q 6 rm3 ! 0 JK / o jR , e UR l X N f4 H ~ P 9 rg N xm n a IK w3 6D7m &v7ca f M D t h g WCv C 7 . The full result collection is visible for consistency.
+
+B: The open question part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.3 - Rephrased
+
+A: Result R3: open question is complete, waiting, or blocked in the formal collection.
+
+B: Explain open question without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.4 - Translate final outcome
+
+A: Formal result R4: final outcome completed for PK :E word/numbering.xml X 0 C @ FK Z ~ c M. s i OqH pH9 h Cx a 7q 6 rm3 ! 0 JK / o jR , e UR l X N f4 H ~ P 9 rg N xm n a IK w3 6D7m &v7ca f M D t h g WCv C 7 . The full result collection is visible for consistency.
+
+B: The final outcome part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.4 - Rephrased
+
+A: Result R4: final outcome is complete, waiting, or blocked in the formal collection.
+
+B: Explain final outcome without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.5 - Translate source meaning
+
+A: Formal result R5: source meaning completed for PK :E word/numbering.xml X 0 C @ FK Z ~ c M. s i OqH pH9 h Cx a 7q 6 rm3 ! 0 JK / o jR , e UR l X N f4 H ~ P 9 rg N xm n a IK w3 6D7m &v7ca f M D t h g WCv C 7 . The full result collection is visible for consistency.
+
+B: The source meaning part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.5 - Rephrased
+
+A: Result R5: source meaning is complete, waiting, or blocked in the formal collection.
+
+B: Explain source meaning without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.6 - Translate audience need
+
+A: Formal result R6: audience need completed for PK :E word/numbering.xml X 0 C @ FK Z ~ c M. s i OqH pH9 h Cx a 7q 6 rm3 ! 0 JK / o jR , e UR l X N f4 H ~ P 9 rg N xm n a IK w3 6D7m &v7ca f M D t h g WCv C 7 . The full result collection is visible for consistency.
+
+B: The audience need part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.6 - Rephrased
+
+A: Result R6: audience need is complete, waiting, or blocked in the formal collection.
+
+B: Explain audience need without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.7 - Translate version evidence
+
+A: Formal result R7: version evidence completed for PK :E word/numbering.xml X 0 C @ FK Z ~ c M. s i OqH pH9 h Cx a 7q 6 rm3 ! 0 JK / o jR , e UR l X N f4 H ~ P 9 rg N xm n a IK w3 6D7m &v7ca f M D t h g WCv C 7 . The full result collection is visible for consistency.
+
+B: The version evidence part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.7 - Rephrased
+
+A: Result R7: version evidence is complete, waiting, or blocked in the formal collection.
+
+B: Explain version evidence without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.8 - Translate edge condition
+
+A: Formal result R8: edge condition completed for PK :E word/numbering.xml X 0 C @ FK Z ~ c M. s i OqH pH9 h Cx a 7q 6 rm3 ! 0 JK / o jR , e UR l X N f4 H ~ P 9 rg N xm n a IK w3 6D7m &v7ca f M D t h g WCv C 7 . The full result collection is visible for consistency.
+
+B: The edge condition part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.8 - Rephrased
+
+A: Result R8: edge condition is complete, waiting, or blocked in the formal collection.
+
+B: Explain edge condition without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.9 - Translate training example
+
+A: Formal result R9: training example completed for PK :E word/numbering.xml X 0 C @ FK Z ~ c M. s i OqH pH9 h Cx a 7q 6 rm3 ! 0 JK / o jR , e UR l X N f4 H ~ P 9 rg N xm n a IK w3 6D7m &v7ca f M D t h g WCv C 7 . The full result collection is visible for consistency.
+
+B: The training example part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.9 - Rephrased
+
+A: Result R9: training example is complete, waiting, or blocked in the formal collection.
+
+B: Explain training example without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+

@@ -1,0 +1,70 @@
+# 00 - Index
+
+## Source Document
+
+One source document was used for this package:
+
+`C:\Users\lubao\Documents\xiigen\Flow files generator\GUIDE-B16-SESSION-RN-LABELS.md`
+
+Source facts recorded for this examination:
+
+- Relative path: `Flow files generator\GUIDE-B16-SESSION-RN-LABELS.md`
+- Type: session and state evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 26624 bytes
+- Line count read for this round: 642
+- SHA256: 010B80D815B98FC5F99752BFD85DBA529ACF0AB22BC43451DA63F92F33B23D4A
+- First meaningful line: `GUIDE-B16 — How to Produce Files`
+- Last meaningful line: `Round: 26 of 72`
+
+This package keeps the one-document rule. Related material is recorded below but not merged into the training pairs.
+
+## Related Versions Found
+
+Exact content duplicates:
+
+- No exact duplicate was recorded in the manifest.
+
+Same-name files:
+
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Flow files generator\GUIDE-B16-SESSION-RN-LABELS.md`
+
+Session or history candidates:
+
+- `C:\Users\lubao\Documents\xiigen\Flow files generator\GUIDE-B16-SESSION-RN-LABELS.md`
+- `C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\Flow files generator\GUIDE-B16-SESSION-RN-LABELS.md`
+
+## Source Meaning Used For Training
+
+GUIDE-B16 — How to Produce Files
+
+## Domains This Document Teaches
+
+- session intent
+- creation evidence
+- decision trail
+- resume state
+- open work
+- validation notes
+- guide b16 how to produce files
+- library guidance file flow prep library master plan v6 1 final
+- produced round 26 phase 4 guidance file authoring
+- date 2026 04 20
+- final goal re read before authoring any session rn label file
+- what this file is
+- list a sources for this guidance file
+- output file specification
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

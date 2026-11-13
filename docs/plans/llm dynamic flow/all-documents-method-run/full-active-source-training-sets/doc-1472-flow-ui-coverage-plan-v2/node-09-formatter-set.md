@@ -1,0 +1,101 @@
+# Node-09 - Formatter Set
+
+Runtime A is all approved translated results.
+Runtime B is one coherent answer for the selected audience.
+
+## Pair 9.1 - human requester
+
+A: Approved fragments for XIIGen Flow UI Coverage Plan — v2: test objective is approved; scenario setup is approved; expected behavior is approved; failure evidence is approved. Audience: human requester.
+
+B: Produce one answer for the human requester. Start with the practical result, then group test objective, scenario setup, expected behavior, failure evidence into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.1 - Rephrased
+
+A: Formatter receives approved readable fragments about test objective, scenario setup, expected behavior, failure evidence.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.2 - planner
+
+A: Approved fragments for XIIGen Flow UI Coverage Plan — v2: scenario setup is approved; expected behavior is approved; failure evidence is approved; coverage decision is approved. Audience: planner.
+
+B: Produce one answer for the planner. Start with the practical result, then group scenario setup, expected behavior, failure evidence, coverage decision into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.2 - Rephrased
+
+A: Formatter receives approved readable fragments about scenario setup, expected behavior, failure evidence, coverage decision.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.3 - reviewer
+
+A: Approved fragments for XIIGen Flow UI Coverage Plan — v2: expected behavior is approved; failure evidence is approved; coverage decision is approved; release gate is approved. Audience: reviewer.
+
+B: Produce one answer for the reviewer. Start with the practical result, then group expected behavior, failure evidence, coverage decision, release gate into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.3 - Rephrased
+
+A: Formatter receives approved readable fragments about expected behavior, failure evidence, coverage decision, release gate.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.4 - operator
+
+A: Approved fragments for XIIGen Flow UI Coverage Plan — v2: failure evidence is approved; coverage decision is approved; release gate is approved; xiigen flow ui coverage plan v2 is approved. Audience: operator.
+
+B: Produce one answer for the operator. Start with the practical result, then group failure evidence, coverage decision, release gate, xiigen flow ui coverage plan v2 into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.4 - Rephrased
+
+A: Formatter receives approved readable fragments about failure evidence, coverage decision, release gate, xiigen flow ui coverage plan v2.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.5 - teacher
+
+A: Approved fragments for XIIGen Flow UI Coverage Plan — v2: coverage decision is approved; release gate is approved; xiigen flow ui coverage plan v2 is approved; date 2026 04 17 branch claude vigorous margulis is approved. Audience: teacher.
+
+B: Produce one answer for the teacher. Start with the practical result, then group coverage decision, release gate, xiigen flow ui coverage plan v2, date 2026 04 17 branch claude vigorous margulis into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.5 - Rephrased
+
+A: Formatter receives approved readable fragments about coverage decision, release gate, xiigen flow ui coverage plan v2, date 2026 04 17 branch claude vigorous margulis.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.6 - product owner
+
+A: Approved fragments for XIIGen Flow UI Coverage Plan — v2: release gate is approved; xiigen flow ui coverage plan v2 is approved; date 2026 04 17 branch claude vigorous margulis is approved; version v2 fixes f1 f7 from design review v1 was partial is approved. Audience: product owner.
+
+B: Produce one answer for the product owner. Start with the practical result, then group release gate, xiigen flow ui coverage plan v2, date 2026 04 17 branch claude vigorous margulis, version v2 fixes f1 f7 from design review v1 was partial into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.6 - Rephrased
+
+A: Formatter receives approved readable fragments about release gate, xiigen flow ui coverage plan v2, date 2026 04 17 branch claude vigorous margulis, version v2 fixes f1 f7 from design review v1 was partial.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.7 - implementation lead
+
+A: Approved fragments for XIIGen Flow UI Coverage Plan — v2: xiigen flow ui coverage plan v2 is approved; date 2026 04 17 branch claude vigorous margulis is approved; version v2 fixes f1 f7 from design review v1 was partial is approved; changelog from v1 is approved. Audience: implementation lead.
+
+B: Produce one answer for the implementation lead. Start with the practical result, then group xiigen flow ui coverage plan v2, date 2026 04 17 branch claude vigorous margulis, version v2 fixes f1 f7 from design review v1 was partial, changelog from v1 into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.7 - Rephrased
+
+A: Formatter receives approved readable fragments about xiigen flow ui coverage plan v2, date 2026 04 17 branch claude vigorous margulis, version v2 fixes f1 f7 from design review v1 was partial, changelog from v1.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+
+## Pair 9.8 - auditor
+
+A: Approved fragments for XIIGen Flow UI Coverage Plan — v2: date 2026 04 17 branch claude vigorous margulis is approved; version v2 fixes f1 f7 from design review v1 was partial is approved; changelog from v1 is approved; complete flow scope the bundle activation flow 47 is approved. Audience: auditor.
+
+B: Produce one answer for the auditor. Start with the practical result, then group date 2026 04 17 branch claude vigorous margulis, version v2 fixes f1 f7 from design review v1 was partial, changelog from v1, complete flow scope the bundle activation flow 47 into a clear flow. Name what happens first, what can happen in parallel, what waits, what was reviewed, and what the audience should do next.
+
+Pair 9.8 - Rephrased
+
+A: Formatter receives approved readable fragments about date 2026 04 17 branch claude vigorous margulis, version v2 fixes f1 f7 from design review v1 was partial, changelog from v1, complete flow scope the bundle activation flow 47.
+
+B: Combine the fragments into one calm, readable answer. Preserve approved facts only, keep the branch relationships visible, and avoid adding anything unsupported by the reviewed results.
+

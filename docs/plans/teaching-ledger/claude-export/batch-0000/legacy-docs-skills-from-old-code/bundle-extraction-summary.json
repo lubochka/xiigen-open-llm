@@ -1,0 +1,300 @@
+{
+  "bundleId": "legacy-docs-skills-from-old-code",
+  "rows": 74,
+  "corrections": 25,
+  "firstPrompt": "I need a documentation on this project and skills for claude code",
+  "rowsSample": [
+    {
+      "RowId": "CEXP-B0000-LDS-0001",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "MessageIndex": 0,
+      "MessageUuid": "019cd865-a014-7524-b054-378d5a910089",
+      "Prompt": "I need a documentation on this project and skills for claude code",
+      "Predicates": [
+        "ARCHITECTURE",
+        "DOCUMENT",
+        "IMPLEMENT",
+        "LEARNING"
+      ],
+      "SubPhaseIds": [
+        "2.1",
+        "7.4",
+        "3.1",
+        "4.4",
+        "7.5"
+      ]
+    },
+    {
+      "RowId": "CEXP-B0000-LDS-0002",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "MessageIndex": 2,
+      "MessageUuid": "019cd94e-8a4b-7d40-ab46-1aeb31a5b607",
+      "Prompt": "I have some issue with my figma code\nit uses figmaBase64 of just generated frame. Since we use the dynamic document, the moment we need to use it , it is still null. We are missing some async call which wasn\u0027t really finished and do not know where a fix is required",
+      "Predicates": [
+        "DOCUMENT",
+        "IMPLEMENT",
+        "UI"
+      ],
+      "SubPhaseIds": [
+        "2.1",
+        "7.4",
+        "3.1",
+        "4.4"
+      ]
+    },
+    {
+      "RowId": "CEXP-B0000-LDS-0003",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "MessageIndex": 4,
+      "MessageUuid": "019cd953-5fb1-71fc-9c0b-35ff7ea7551e",
+      "Prompt": "how do I settup sonnet 4.6 extended s default model in claude code?",
+      "Predicates": [
+        "IMPLEMENT",
+        "LEARNING"
+      ],
+      "SubPhaseIds": [
+        "2.1",
+        "3.1",
+        "4.4",
+        "7.5"
+      ]
+    },
+    {
+      "RowId": "CEXP-B0000-LDS-0004",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "MessageIndex": 6,
+      "MessageUuid": "019cd954-5f6c-758b-85ba-6ab0ba18992d",
+      "Prompt": "To my regret this didn\u0027t help\nError \u2014 see log below\nFigma frame export returned no data. Make sure the AI Design Canvas frame exists and try again.",
+      "Predicates": [
+        "UI"
+      ],
+      "SubPhaseIds": [
+        "2.1"
+      ]
+    },
+    {
+      "RowId": "CEXP-B0000-LDS-0005",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "MessageIndex": 8,
+      "MessageUuid": "019cd955-f869-760f-9e0e-c05b788364cc",
+      "Prompt": "Check this out please:\nIt appears the issue stems from the asynchronous execution order and a missing document loading call in your plugin\u0027s entry point. Since your plugin uses \u0060documentAccess: \u0027dynamic-page\u0027\u0060, Figma doesn\u0027t guarantee that nodes in the selection (or their properties) are loaded into memory when the plugin script first runs.\nThe \u0022missing async call\u0022 is likely \u0060figma.loadAllPagesAsync()\u0060 at the very start of your controller, combined with the fact that your initial frame export for the AI Enhance tab is \u0022fire-and-forget\u0022 rather than being awaited alongside your scene scanning.\n1. The Root Cause\nIn \u0060src/plugin/core/controller.ts\u0060, the code that generates \u0060frameImageBase64\u0060 (via \u0060exportAsync\u0060) runs as a top-level un-awaited promise at the end of the script. Because it doesn\u0027t wait for the dynamic document to load, it often fails or returns an empty result. Meanwhile, the UI (in \u0060App.tsx\u0060) renders the AI Enhance panel as soon as it receives the scene data, finding \u0060frameImageBase64\u0060 still \u0060null\u0060.\n2. The Recommended Fix\nYou should wrap your initial plugin logic in an \u0060async\u0060 function and explicitly \u0060await\u0060 both the document loading and the initial frame export before sending data to the UI.\nIn \u0060src/plugin/core/controller.ts\u0060:\nTypeScript\n\n\u0060\u0060\u0060\n// 1. Wrap the entire entry logic in an async IIFE\n(async () =\u003E {\n    // 2. IMPORTANT: Await the dynamic document loading first\n    await figma.loadAllPagesAsync(); \n\n    if (selection.length \u003E= 1) {\n        const scenes: any = [];\n        \n        // 3. Move the frame export inside this flow and await it\n        let frameBase64: string | null = null;\n        try {\n            const bytes = await (selection[0] as any).exportAsync({\n                format: \u0027JPG\u0027,\n                constraint: {type: \u0027SCALE\u0027, value: 0.5},\n            });\n            // You can process bytes to base64 here or send raw\n            figma.ui.postMessage({type: \u0027frame-image-bytes\u0027, bytes: bytes});\n        } catch (e) {\n            console.error(\u0022Initial export failed\u0022, e);\n        }\n\n        // 4. Continue with your existing scanElements logic...\n        selection.map((scene) =\u003E {\n            // ... (your existing scanning and postMessage code)\n        });\n    }\n})();\n\n\u0060\u0060\u0060\n\n3. Why this fixes it\n* \u0060loadAllPagesAsync()\u0060: In dynamic documents, nodes aren\u0027t fully available until this is called. Calling it ensures \u0060exportAsync\u0060 has actual content to capture.\n* Sequential Logic: By awaiting the export (or ensuring it\u0027s part of the startup flow), you reduce the race condition where the UI tries to use the image before the background thread finishes processing it.\n* Design Generator Sync: For the Design Generator specifically, ensure that \u0060dg-canvas-ready\u0060 isn\u0027t sent until the canvas is fully initialized.\nSummary of required changes:\nFileChange\u0060controller.ts\u0060Wrap startup logic in \u0060async\u0060 and add \u0060await figma.loadAllPagesAsync()\u0060.\u0060controller.ts\u0060Ensure \u0060selection[0].exportAsync\u0060 is called after the document is loaded.\u0060App.tsx\u0060(Optional) Add a loading state to the \u0060AIEnhancePanel\u0060 so it waits for \u0060frameImageBase64\u0060.\nWould you like me to provide the full refactored version of your \u0060controller.ts\u0060 file with these fixes integrated?",
+      "Predicates": [
+        "DOCUMENT",
+        "IMPLEMENT",
+        "UI"
+      ],
+      "SubPhaseIds": [
+        "2.1",
+        "7.4",
+        "3.1",
+        "4.4"
+      ]
+    },
+    {
+      "RowId": "CEXP-B0000-LDS-0006",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "MessageIndex": 10,
+      "MessageUuid": "019cd95b-9101-77dc-93d4-196b7cab4138",
+      "Prompt": "The problem is that this is just generated new scene! How we can export this frame if the plugin has already loaded?",
+      "Predicates": [
+        "UI"
+      ],
+      "SubPhaseIds": [
+        "2.1"
+      ]
+    },
+    {
+      "RowId": "CEXP-B0000-LDS-0007",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "MessageIndex": 12,
+      "MessageUuid": "019cd95e-fb50-7e80-992c-d139fb36d9ca",
+      "Prompt": "nope still the same\nError \u2014 see log below\nFigma frame export returned no data. Make sure the AI Design Canvas frame exists and try again.\nReference Image \u00B7 gpt-image-1\nAI Reference\niter 1\nCurrent Figma\nAwaiting export\u2026\nIteration Log",
+      "Predicates": [
+        "UI"
+      ],
+      "SubPhaseIds": [
+        "2.1"
+      ]
+    },
+    {
+      "RowId": "CEXP-B0000-LDS-0008",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "MessageIndex": 14,
+      "MessageUuid": "019cd95f-85dd-71f4-9a88-6cedbccd6b25",
+      "Prompt": "Is there anything new or the same approach we already use?",
+      "Predicates": [],
+      "SubPhaseIds": [
+        "2.1"
+      ]
+    },
+    {
+      "RowId": "CEXP-B0000-LDS-0009",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "MessageIndex": 16,
+      "MessageUuid": "019cd96e-e759-7114-adec-2ae3d7e07a6b",
+      "Prompt": "1. Wonderfull, now the new generated design supposes to be the selected scene - so we need to generate an html \u002B css code by it - which means call the plugin with this selected scene without opening it.\n2. We need to give the option to the user to download the generated by ai image, and at later stages to upload image of what he liked online - which means skip the generation of the design and continue to the site refinement.\nPlease prepare detailed instructions of what to do side by side",
+      "Predicates": [
+        "IMPLEMENT",
+        "UI"
+      ],
+      "SubPhaseIds": [
+        "2.1",
+        "3.1",
+        "4.4"
+      ]
+    },
+    {
+      "RowId": "CEXP-B0000-LDS-0010",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "MessageIndex": 18,
+      "MessageUuid": "019cd97b-9f3a-7c09-9b80-512f019a1293",
+      "Prompt": "These files have been changed - what wasn\u0027t done yet?",
+      "Predicates": [],
+      "SubPhaseIds": [
+        "2.1"
+      ]
+    }
+  ],
+  "correctionsSample": [
+    {
+      "CorrectionId": "CEXP-B0000-LDS-CORR-0001",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "PromptIndex": 0,
+      "RejectedAssistantIndex": 1,
+      "CorrectionIndex": 2,
+      "ChosenAssistantIndex": 3,
+      "PromptUuid": "019cd865-a014-7524-b054-378d5a910089",
+      "RejectedAssistantUuid": "019cd865-a014-710c-aec6-aa6981eec47c",
+      "CorrectionUuid": "019cd94e-8a4b-7d40-ab46-1aeb31a5b607",
+      "ChosenAssistantUuid": "019cd94e-8a4b-71e9-9884-4c438b749c75"
+    },
+    {
+      "CorrectionId": "CEXP-B0000-LDS-CORR-0002",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "PromptIndex": 6,
+      "RejectedAssistantIndex": 7,
+      "CorrectionIndex": 8,
+      "ChosenAssistantIndex": 9,
+      "PromptUuid": "019cd954-5f6c-758b-85ba-6ab0ba18992d",
+      "RejectedAssistantUuid": "019cd954-5f6c-7920-b3a3-90ff99799ee9",
+      "CorrectionUuid": "019cd955-f869-760f-9e0e-c05b788364cc",
+      "ChosenAssistantUuid": "019cd955-f869-7a41-9206-480ffa81d33c"
+    },
+    {
+      "CorrectionId": "CEXP-B0000-LDS-CORR-0003",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "PromptIndex": 18,
+      "RejectedAssistantIndex": 20,
+      "CorrectionIndex": 21,
+      "ChosenAssistantIndex": 22,
+      "PromptUuid": "019cd97b-9f3a-7c09-9b80-512f019a1293",
+      "RejectedAssistantUuid": "5ef76e1b-b14e-4cd9-9098-b707e4a94386",
+      "CorrectionUuid": "019cd982-377a-78ec-94f2-9b7c43eff9f5",
+      "ChosenAssistantUuid": "019cd982-377a-7602-a952-569c69267afe"
+    },
+    {
+      "CorrectionId": "CEXP-B0000-LDS-CORR-0004",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "PromptIndex": 27,
+      "RejectedAssistantIndex": 28,
+      "CorrectionIndex": 29,
+      "ChosenAssistantIndex": 30,
+      "PromptUuid": "019cd990-4db6-707b-8d33-50549e814553",
+      "RejectedAssistantUuid": "019cd990-4db6-77dd-a3b6-6748cc79f14c",
+      "CorrectionUuid": "019cd99a-5197-7da9-9abb-2a01ad2f8f10",
+      "ChosenAssistantUuid": "019cd99a-5197-77ef-b1bd-326f9009f2b0"
+    },
+    {
+      "CorrectionId": "CEXP-B0000-LDS-CORR-0005",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "PromptIndex": 31,
+      "RejectedAssistantIndex": 32,
+      "CorrectionIndex": 33,
+      "ChosenAssistantIndex": 34,
+      "PromptUuid": "019cdc04-7033-7315-bdb7-2a2b4d33e2d2",
+      "RejectedAssistantUuid": "019cdc04-7033-7739-af1c-239423cb73f3",
+      "CorrectionUuid": "019cdc0b-a64f-76bf-8592-d1784b6791fc",
+      "ChosenAssistantUuid": "019cdc0b-a64f-7ba9-97ea-4510905b9720"
+    },
+    {
+      "CorrectionId": "CEXP-B0000-LDS-CORR-0006",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "PromptIndex": 46,
+      "RejectedAssistantIndex": 47,
+      "CorrectionIndex": 48,
+      "ChosenAssistantIndex": 49,
+      "PromptUuid": "019cdc25-0bb4-78b3-a6b2-bf7fa3123287",
+      "RejectedAssistantUuid": "019cdc25-0bb4-7628-ac1e-8d9c4f68403a",
+      "CorrectionUuid": "019cdc2d-c836-7256-813e-3844ea2506f6",
+      "ChosenAssistantUuid": "019cdc2d-c836-75d6-beed-38c069edcf4c"
+    },
+    {
+      "CorrectionId": "CEXP-B0000-LDS-CORR-0007",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "PromptIndex": 48,
+      "RejectedAssistantIndex": 50,
+      "CorrectionIndex": 51,
+      "ChosenAssistantIndex": 52,
+      "PromptUuid": "019cdc2d-c836-7256-813e-3844ea2506f6",
+      "RejectedAssistantUuid": "8613858d-27b8-4d4b-ac3f-022a7a0bee9b",
+      "CorrectionUuid": "019cdc3c-87d8-7ba4-83b6-4dd416250740",
+      "ChosenAssistantUuid": "019cdc3c-87d8-7238-987c-fa8c7e3dce99"
+    },
+    {
+      "CorrectionId": "CEXP-B0000-LDS-CORR-0008",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "PromptIndex": 55,
+      "RejectedAssistantIndex": 56,
+      "CorrectionIndex": 57,
+      "ChosenAssistantIndex": 58,
+      "PromptUuid": "019cdc45-5a19-7659-a35a-c8d0d0173e2c",
+      "RejectedAssistantUuid": "019cdc45-5a19-76c7-a4e1-0fcad37b6158",
+      "CorrectionUuid": "019cdc4b-d432-7123-8c77-6b7ec64b451b",
+      "ChosenAssistantUuid": "019cdc4b-d432-785d-9175-688401532582"
+    },
+    {
+      "CorrectionId": "CEXP-B0000-LDS-CORR-0009",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "PromptIndex": 59,
+      "RejectedAssistantIndex": 60,
+      "CorrectionIndex": 61,
+      "ChosenAssistantIndex": 62,
+      "PromptUuid": "019cdc57-aba1-7eec-bec7-c8f64805643b",
+      "RejectedAssistantUuid": "019cdc57-aba1-7bf1-b2c8-49cf80cc1eff",
+      "CorrectionUuid": "019cdc64-8357-7c25-8e60-3f078e4aee14",
+      "ChosenAssistantUuid": "019cdc64-8357-7f6e-a837-2a6378be7de8"
+    },
+    {
+      "CorrectionId": "CEXP-B0000-LDS-CORR-0010",
+      "ConversationUuid": "2b4b55b1-382f-4dc3-a235-70a813f7b8a1",
+      "ConversationName": "Documentation and skills for Claude Code",
+      "PromptIndex": 61,
+      "RejectedAssistantIndex": 62,
+      "CorrectionIndex": 63,
+      "ChosenAssistantIndex": 64,
+      "PromptUuid": "019cdc64-8357-7c25-8e60-3f078e4aee14",
+      "RejectedAssistantUuid": "019cdc64-8357-7f6e-a837-2a6378be7de8",
+      "CorrectionUuid": "019cdc66-efc2-7964-b52a-014829d67961",
+      "ChosenAssistantUuid": "019cdc66-efc2-72da-b4cc-8f1a86ba72bf"
+    }
+  ]
+}

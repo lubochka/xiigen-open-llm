@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\missing infrastructure\orchestrator gap\third round\xiigen-sessions-extracted\xiigen-sessions\SESSION-INDEX.md`
+
+- Relative path: `missing infrastructure\orchestrator gap\third round\xiigen-sessions-extracted\xiigen-sessions\SESSION-INDEX.md`
+- Manifest category: undefined
+- Top folder: missing infrastructure
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 9374 bytes
+- Line count read: 213
+- SHA256: 1D924E758A02297430BB63A3D20A9C2EEB5DB14D4069DDF0DCFF82D366B8148D
+- First meaningful line: `XIIGen — Claude Code Session Index`
+- Last meaningful line: `Expected: 0 hits`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+XIIGen — Claude Code Session Index
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- xiigen — claude code session index
+- date: 2026-03-26 covers: sprint 1 + sprint 2 track a + track b features
+- final corrections applied: r1-r4 + two additional review rounds
+- 13 sessions total. run one at a time. wait for ⛔ stop before next.
+- critical pre-execution checks
+- tests passing
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`

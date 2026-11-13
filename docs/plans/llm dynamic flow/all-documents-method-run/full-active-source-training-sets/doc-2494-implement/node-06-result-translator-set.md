@@ -1,0 +1,113 @@
+# Node-06 - Result Translator Set
+
+Runtime A is one formal result while the full result collection remains visible.
+Runtime B is readable language for that result.
+
+## Pair 6.1 - Translate expected behavior
+
+A: Formal result R1: expected behavior completed for Skill 30: E2E Testing — Implementation Prompt. The full result collection is visible for consistency.
+
+B: The expected behavior part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.1 - Rephrased
+
+A: Result R1: expected behavior is complete, waiting, or blocked in the formal collection.
+
+B: Explain expected behavior without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.2 - Translate failure evidence
+
+A: Formal result R2: failure evidence completed for Skill 30: E2E Testing — Implementation Prompt. The full result collection is visible for consistency.
+
+B: The failure evidence part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.2 - Rephrased
+
+A: Result R2: failure evidence is complete, waiting, or blocked in the formal collection.
+
+B: Explain failure evidence without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.3 - Translate coverage decision
+
+A: Formal result R3: coverage decision completed for Skill 30: E2E Testing — Implementation Prompt. The full result collection is visible for consistency.
+
+B: The coverage decision part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.3 - Rephrased
+
+A: Result R3: coverage decision is complete, waiting, or blocked in the formal collection.
+
+B: Explain coverage decision without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.4 - Translate release gate
+
+A: Formal result R4: release gate completed for Skill 30: E2E Testing — Implementation Prompt. The full result collection is visible for consistency.
+
+B: The release gate part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.4 - Rephrased
+
+A: Result R4: release gate is complete, waiting, or blocked in the formal collection.
+
+B: Explain release gate without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.5 - Translate skill 30 e2e testing implementation prompt
+
+A: Formal result R5: skill 30 e2e testing implementation prompt completed for Skill 30: E2E Testing — Implementation Prompt. The full result collection is visible for consistency.
+
+B: The skill 30 e2e testing implementation prompt part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.5 - Rephrased
+
+A: Result R5: skill 30 e2e testing implementation prompt is complete, waiting, or blocked in the formal collection.
+
+B: Explain skill 30 e2e testing implementation prompt without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.6 - Translate phase 1 the programming interface test client
+
+A: Formal result R6: phase 1 the programming interface test client completed for Skill 30: E2E Testing — Implementation Prompt. The full result collection is visible for consistency.
+
+B: The phase 1 the programming interface test client part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.6 - Rephrased
+
+A: Result R6: phase 1 the programming interface test client is complete, waiting, or blocked in the formal collection.
+
+B: Explain phase 1 the programming interface test client without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.7 - Translate phase 2 dynamic document roundtrip
+
+A: Formal result R7: phase 2 dynamic document roundtrip completed for Skill 30: E2E Testing — Implementation Prompt. The full result collection is visible for consistency.
+
+B: The phase 2 dynamic document roundtrip part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.7 - Rephrased
+
+A: Result R7: phase 2 dynamic document roundtrip is complete, waiting, or blocked in the formal collection.
+
+B: Explain phase 2 dynamic document roundtrip without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.8 - Translate phase 3 scope isolation e2e
+
+A: Formal result R8: phase 3 scope isolation e2e completed for Skill 30: E2E Testing — Implementation Prompt. The full result collection is visible for consistency.
+
+B: The phase 3 scope isolation e2e part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.8 - Rephrased
+
+A: Result R8: phase 3 scope isolation e2e is complete, waiting, or blocked in the formal collection.
+
+B: Explain phase 3 scope isolation e2e without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+
+## Pair 6.9 - Translate phase 4 event propagation
+
+A: Formal result R9: phase 4 event propagation completed for Skill 30: E2E Testing — Implementation Prompt. The full result collection is visible for consistency.
+
+B: The phase 4 event propagation part is ready in plain language. The user can see what was decided, what depends on it, what is still waiting, and whether another result contradicts it.
+
+Pair 6.9 - Rephrased
+
+A: Result R9: phase 4 event propagation is complete, waiting, or blocked in the formal collection.
+
+B: Explain phase 4 event propagation without internal wording. Preserve the fact, the dependency, the wait state, and the user-visible meaning.
+

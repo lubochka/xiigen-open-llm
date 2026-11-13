@@ -1,0 +1,55 @@
+# 00 - Index
+
+## Source Document
+
+`C:\Users\lubao\Documents\xiigen\.claude\worktrees\adoring-davinci-058d7f\extensions reasearch\FigmaToCode-design-gen-improve_group_css_user\FigmaToCode-design-gen-improve_group_css_user\.claude-skill\mental-debug-skill\rules\code-gen-output-audit.md`
+
+- Relative path: `.claude\worktrees\adoring-davinci-058d7f\extensions reasearch\FigmaToCode-design-gen-improve_group_css_user\FigmaToCode-design-gen-improve_group_css_user\.claude-skill\mental-debug-skill\rules\code-gen-output-audit.md`
+- Manifest category: undefined
+- Top folder: .claude
+- Type: session and history evidence
+- Inventory type: not listed in attached MVP inventory
+- File size: 7419 bytes
+- Line count read: 185
+- SHA256: 03CE04B7C91658C9BD66476C3A73F1EF3C21539A84FF5F016064F4BF80B3C1FB
+- First meaningful line: `---`
+- Last meaningful line: `- Regression tests exist for placeholder text with co-located label`
+
+## Related Versions And Duplicate Copies
+
+- No duplicate copy with the same content hash was recorded in the manifest.
+
+## Source Meaning Used For Training
+
+Audit Code Generator Output for Structural HTML Violations
+
+## Domains This Document Teaches
+
+- user intent
+- creation evidence
+- decision trail
+- version change
+- resume state
+- open work
+- validation note
+- later use
+- audit code generator output for structural html violations
+- category a — void element children audit
+- the problem
+- the audit procedure
+- void element checklist
+- category b — text extraction concatenation audit
+
+## Package Files
+
+- `01-UML-FRAME.md`
+- `node-01-domain-splitter-set.md`
+- `node-02-domain-translator-set.md`
+- `node-03-scheme-planner-set.md`
+- `node-04-domain-processor-set.md`
+- `node-05-applier-set.md`
+- `node-06-result-translator-set.md`
+- `node-07-arbiter-selector-set.md`
+- `node-08-arbiter-units-set.md`
+- `node-09-formatter-set.md`
+- `10-SIMULATION-CHECK.md`
