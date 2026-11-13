@@ -1,0 +1,66 @@
+{
+  "phase": "P17D_SKILLSELECTION_CHECKPOINT_REBUILD_RERUN",
+  "parent_review_verdict": "PASS_RUNTIME_IMPROVEMENT_ACCEPTED_AS_COMPONENT_EVIDENCE",
+  "sub_agent_verdict_reviewed": "PASS_RUNTIME_IMPROVEMENT_READY_FOR_PARENT_REVIEW",
+  "accepted_as": [
+    "SkillSelection component runtime improvement evidence",
+    "native runtime path evidence through SkillSelectionMachine.LoadCheckpointAsync and DecideFromTrainedState",
+    "candidate checkpoint rebuild/rerun evidence from parent-accepted P17C adaptive material"
+  ],
+  "not_accepted_as": [
+    "semantic quality",
+    "SkillSelection readiness",
+    "full API readiness",
+    "trained model readiness",
+    "final model readiness",
+    "host or dashboard runtime readiness"
+  ],
+  "counts_reviewed": {
+    "materialized_adaptive_candidate_rows": 6,
+    "positive_runtime_pass": 10,
+    "positive_runtime_fail": 0,
+    "diagnostics_only_gap": 2,
+    "control_rows": 36,
+    "shortcut_leaks": 0
+  },
+  "parent_checks": {
+    "focused_test_rerun": "passed: Failed=0, Passed=1, Skipped=0, Total=1",
+    "json_files_parsed": 5,
+    "jsonl_rows_parsed": 64,
+    "utf8_mojibake_scan": "passed",
+    "escaped_cyrillic_scan": "passed: 0 escaped Cyrillic sequences after writer repair",
+    "overclaim_true_flag_scan": "passed",
+    "eval_holdout_contamination_scan": "passed",
+    "git_diff_check": "passed",
+    "exact_required_review_file_name": "passed: p17d-review-cycles.jsonl exists"
+  },
+  "parent_repairs": [
+    {
+      "finding": "P17D writer escaped Russian JSON text, making report artifacts less human-readable.",
+      "repair": "Updated P17D test JsonSerializerOptions to use UnsafeRelaxedJsonEscaping and reran the focused test to regenerate artifacts."
+    },
+    {
+      "finding": "Review cycle artifact name did not match the bounded work order and state: p17d-code-review-cycles.jsonl vs p17d-review-cycles.jsonl.",
+      "repair": "Updated the P17D test writer to generate p17d-review-cycles.jsonl and reran the focused test."
+    },
+    {
+      "finding": "State verification text said 6 JSON files, while the P17D artifact folder contains 5 JSON files.",
+      "repair": "Parent state repair records the corrected parsed JSON count as 5."
+    }
+  ],
+  "required_next_phase": {
+    "phase_id": "P17E_SKILLSELECTION_LIFECYCLE_IMPORT_EXPORT_OR_FIREWALL_UPDATE",
+    "reason": "P17D proves component runtime improvement, but ImportAsync/export/locator lifecycle and API/firewall readiness are still not proven by this phase.",
+    "must_not_claim": [
+      "semantic quality",
+      "SkillSelection readiness",
+      "full API readiness",
+      "final model readiness"
+    ]
+  },
+  "semantic_quality_claimed": false,
+  "skill_selection_readiness_claimed": false,
+  "full_api_readiness_claimed": false,
+  "trained_model_readiness_claimed": false,
+  "final_model_ready_claimed": false
+}

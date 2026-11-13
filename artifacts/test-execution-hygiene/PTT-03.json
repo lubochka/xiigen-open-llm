@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "work_order_id": "PTT-03",
+  "normalized_by_work_order": "CM-31A1-EXISTING-TEST-EXECUTION-HYGIENE-SCHEMA-NORMALIZATION",
+  "normalization_scope": "CM-31A1 schema normalization for existing hygiene artifact only; missing hygiene artifacts are left for CM-31A2.",
+  "command_or_runtime_scope": "focused dotnet test",
+  "allowed_by_plan_or_luba": {
+    "status": "pass",
+    "evidence": "Existing hygiene artifact is in the CM-31 audit artifact_found=true/partial set; CM-31A1 does not run or authorize new commands."
+  },
+  "exact_command_or_probe_ref": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskMachine\" --nologo",
+      "source": "legacy_fields.commands"
+    },
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskMachine\" --nologo",
+      "source": "legacy_fields.commands"
+    }
+  ],
+  "exit_code_or_status": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskMachine\" --nologo",
+      "exit_code": 124,
+      "passed": null,
+      "failed": null,
+      "summary": null
+    },
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskMachine\" --nologo",
+      "exit_code": 0,
+      "passed": null,
+      "failed": null,
+      "summary": "Failed: 0, Passed: 13, Skipped: 0, Total: 13"
+    }
+  ],
+  "elapsed_or_timeout_recorded": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskMachine\" --nologo",
+      "elapsed_ms": null,
+      "elapsed_seconds": null,
+      "timeout": true
+    },
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskMachine\" --nologo",
+      "elapsed_ms": null,
+      "elapsed_seconds": null,
+      "timeout": false
+    }
+  ],
+  "pre_existing_red_vs_phase_regression_classification": {
+    "status": "not_applicable",
+    "evidence": "Normalization found no failed final verification claim requiring red/regression split; if a legacy command timed out or failed, the legacy_fields preserve it and later row-specific repair can classify deeper if needed."
+  },
+  "orphan_process_cleanup_or_not_applicable": {
+    "status": "pass",
+    "evidence": "Legacy artifact records an initial timeout followed by successful bounded rerun evidence; no exact orphan process root was recorded in the legacy artifact, so this normalization does not claim cleanup beyond preserved timeout/rerun evidence."
+  },
+  "heartbeat_or_replacement_worker_handoff_or_not_applicable": {
+    "status": "not_applicable",
+    "evidence": "No long-running replacement-worker handoff is claimed by this row; protocol/report/commit/push remain checkpoints, not stop reasons."
+  },
+  "test_only_or_smoke_claim_scope": {
+    "status": "pass",
+    "evidence": "This artifact records command hygiene only; test-only, smoke, static, or handler-level evidence cannot claim full UI/runtime acceptance or full plan completion."
+  },
+  "rerun_policy": {
+    "status": "pass",
+    "evidence": "Timeout is not treated as blocker by itself; the legacy artifact records follow-up bounded rerun evidence, preserved under legacy_fields."
+  },
+  "status": "pass",
+  "gaps": [],
+  "next_action": null,
+  "broad_tests_run": false,
+  "broad_tests_authorization_check": {
+    "status": "pass",
+    "evidence": "Legacy artifact does not record broad tests as run."
+  },
+  "completion_claim_allowed": false,
+  "full_plan_completion_claimed": false,
+  "runtime_or_host_invoked_by_this_artifact": false,
+  "external_ai_used": false,
+  "legacy_fields": {
+    "schema": "xiigen-test-execution-hygiene-v1",
+    "work_order": "PTT-03",
+    "status": "PASS_PENDING_PARENT_REVIEW_WITH_CAP_BREACH_RECORDED",
+    "commands": [
+      {
+        "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskMachine\" --nologo",
+        "exit_code": 124,
+        "classification": "phase-induced compile error plus command timeout during first run",
+        "repair": "Replaced ambiguous conditional collection expressions with explicit IReadOnlyList<string> arrays."
+      },
+      {
+        "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskMachine\" --nologo",
+        "exit_code": 0,
+        "summary": "Failed: 0, Passed: 13, Skipped: 0, Total: 13"
+      }
+    ],
+    "hard_cap_exceeded": true,
+    "parent_interrupt_required": true,
+    "cap_event": "PTT-03 exceeded the 15-minute active-work cap; parent interrupt stopped the work and required an immediate evidence packet.",
+    "process_repair_scope": "Recorded cap breach only; no production/test code edits and no test commands were run during this process-evidence repair.",
+    "broad_tests_run": false,
+    "host_runtime_run": false,
+    "training_run": false
+  }
+}

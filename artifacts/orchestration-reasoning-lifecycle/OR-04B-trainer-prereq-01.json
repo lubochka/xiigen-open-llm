@@ -1,0 +1,98 @@
+{
+  "schema": "xiigen-orchestration-reasoning-trainer-prereq-review-v1",
+  "schema_version": "1.0",
+  "work_order": "OR-04B-TRAINER-PREREQ-01",
+  "status": "NOT_READY_FOR_TRAINING_PENDING_PARENT_REVIEW",
+  "readiness_verdict": "NOT_READY",
+  "claim_scope": "admission/prerequisite review only for the next OrchestrationReasoning trainer implementation path; no trainer code, no build/test, no training, no model/checkpoint asset",
+  "readiness_02_parent_review_accepted": true,
+  "readiness_02_commit": "b4955a9b8a681d1e518a5dc863df38caf49ea40a",
+  "inputs": {
+    "payloads_ref": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-trainer-payloads.jsonl",
+    "payloads_manifest_ref": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-trainer-payloads-manifest.json",
+    "payloads_sha256": "50edb89ed35cd2613a15cad038445c26cf7f8487f4857a60b9d509f20d0f7c8e",
+    "pairs_ref": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-pairs.jsonl",
+    "pairs_manifest_ref": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-pairs-manifest.json",
+    "pairs_sha256": "f9f002a79e2bd7be569f56091b1c4e3bcdb9bc132ac0a020b952c90027fe2243",
+    "payload_row_count": 3,
+    "pair_row_count": 3,
+    "model_leg": "common",
+    "adaptive_rows_included": 0
+  },
+  "existing_trainer_path_verdict": "NOT_FOUND_FOR_SMARTSKILLSDOMAIN_ORCHESTRATION_REASONING_MACHINE",
+  "existing_trainer_path_evidence": [
+    "43.SmartSkillsDomain/OrchestrationReasoningMachine.cs exposes Plan, ExportLearnedState, ImportLearnedState, SaveCheckpointAsync, ImportAsync, LoadCheckpointAsync, and file-backed loading, but no trainer method that consumes the authored payload contracts.",
+    "43.SmartSkillsDomain/OrchestrationReasoningContracts.cs exposes OrchestrationReasoningTrainingPairContract and OrchestrationReasoningPlanPatternDpoSignalBuilder; TargetTrainingAdapter is a contract string, not an implemented trainer path.",
+    "27.TranslationDomain.Tools/Program.cs contains continue-orchestration-training, but that command targets the legacy OrchestrationPlanMachine and OrchestrationTrainingPair path, not SmartSkillsDomain.OrchestrationReasoningMachine.",
+    "No accepted read-only inspection hit showed a tool or test path that trains OrchestrationReasoningMachine from orchestration-reasoning-dpo-trainer-payloads.jsonl."
+  ],
+  "legacy_path_distinction": {
+    "legacy_orchestration_plan_machine_continue_command_found": true,
+    "legacy_command": "continue-orchestration-training",
+    "legacy_target": "OrchestrationPlanMachine",
+    "accepted_for_or_04b": false,
+    "reason": "OR-04B requires a new SmartSkillsDomain.OrchestrationReasoningMachine trainer path from authored ref-only payload contracts; the legacy command cannot stand in for that path."
+  },
+  "required_trainer_input_contract": {
+    "must_consume": [
+      "pair_id",
+      "source_row_id",
+      "approved_pair_ref",
+      "chosen_payload_ref",
+      "rejected_payload_ref",
+      "chosen_feature_contract_ref",
+      "rejected_feature_contract_ref",
+      "trainer_input_contract_ref",
+      "error_code",
+      "error_taxonomy_ref",
+      "source_ref",
+      "source_sha256",
+      "chosen_scenario_plan_features",
+      "rejected_scenario_plan_features"
+    ],
+    "must_preserve_as_metadata_only": [
+      "project_adapter_refs",
+      "excluded_technical_execution_refs"
+    ],
+    "must_emit": [
+      "OperationResult envelope",
+      "trainer report with row counts and accepted pair ids",
+      "learned pattern delta or learned guide state candidate",
+      "anti-leakage report",
+      "no checkpoint write unless later checkpoint writer gate accepts the trainer output"
+    ],
+    "must_not_consume": [
+      "raw private prompt text",
+      "raw private guide or analysis text",
+      "technical execution commands as trainable features",
+      "file name, route lookup, BM25, or exact-source memory as final authority"
+    ]
+  },
+  "before_dpo_train_ready_true": [
+    "A real trainer implementation must materialize trainable rows from the authored payload contracts without raw private text and without technical execution leakage.",
+    "The trainer must prove it changes OrchestrationReasoning learned state from accepted payload features, not from JSON presence or route/exact lookup.",
+    "Source rows must not be mutated to dpo_train_ready=true until the implementation gate validates payload schema, hashes, common/adaptive split, anti-leakage, OperationResult behavior, and parent review accepts the trainer path.",
+    "Checkpoint/model creation remains forbidden until a later writer guard accepts trainer output and lifecycle evidence."
+  ],
+  "tests_required_for_next_gate": [
+    "OrchestrationReasoningTrainer_MaterializesLearnedPatternsFromPayloads",
+    "OrchestrationReasoningTrainer_RejectsRawPrivateTextAndTechnicalExecutionLeakage",
+    "OrchestrationReasoningTrainer_DoesNotTrainFromExcludedTechnicalRefs",
+    "OrchestrationReasoningTrainer_ReturnsOperationResultAndReportNotStub",
+    "OrchestrationReasoningTrainer_Ablation_NoPayloadNoLearnedPatternDelta",
+    "OrchestrationReasoningTrainer_RejectsLegacyOrchestrationPlanMachineCommand",
+    "Focused filter to be created later: FullyQualifiedName~OrchestrationReasoningTrainer"
+  ],
+  "anti_fake_gates": {
+    "json_only_report_accepted_as_training": false,
+    "trainer_stub_accepted": false,
+    "exact_memory_or_route_lookup_accepted": false,
+    "legacy_command_substitution_accepted": false,
+    "checkpoint_written_from_unknown_gate": false,
+    "deterministic_shortcut_promoted": false
+  },
+  "legacy_command_accepted_for_or04b": false,
+  "next_bounded_action": "OR-04B-TRAINER-IMPLEMENTATION-01",
+  "verdict": "NOT_READY",
+  "exact_next_bounded_action": "OR-04B-TRAINER-IMPLEMENTATION-01"
+}

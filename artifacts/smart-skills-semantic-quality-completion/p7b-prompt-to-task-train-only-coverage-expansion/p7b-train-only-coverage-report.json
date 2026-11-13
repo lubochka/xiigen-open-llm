@@ -1,0 +1,46 @@
+{
+  "phase": "P7B_PROMPT_TO_TASK_TRAIN_ONLY_COVERAGE_EXPANSION",
+  "verdict": "P7B_FAIL_NEEDS_MORE_TRAIN_ONLY_SOURCE",
+  "branch_observed": "codex/chat-gpt-5.5",
+  "summary_ru": "P7B не создает новый checkpoint: безопасного нового train-only материала сверх двух строк P6 не найдено. Eval и holdout строки остаются закрытыми для обучения.",
+  "sources_read": [
+    "artifacts/smart-skills-semantic-quality-completion/p5l-prompt-to-task-training-row-promotion-review/prompt-to-task-training-ready-candidates.jsonl",
+    "artifacts/smart-skills-semantic-quality-completion/p7a-prompt-to-task-generalization-repair/p7a-parent-review.json",
+    "artifacts/smart-skills-semantic-quality-completion/p6-prompt-to-task-training-checkpoint-candidate/prompt-to-task-p6-candidate-checkpoint.json",
+    "artifacts/smart-skills-semantic-quality-completion/p5h-prompt-to-task-dpo-materialization/prompt-to-task-redacted-dpo-rows.jsonl",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-COMPLETION-PLAN-v1.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-COMPLETION-PLAN-v1-STATE.json"
+  ],
+  "counts": {
+    "p5l_dataset_rows_seen": 6,
+    "existing_train_only_rows": 2,
+    "p7_eval_rows_reserved": 2,
+    "holdout_rows_reserved": 2,
+    "newly_accepted_train_only_rows": 0,
+    "quarantined_or_evidence_only_rows": 6,
+    "p6_checkpoint_patterns_seen": 2
+  },
+  "checkpoint": {
+    "candidate_created": false,
+    "reason_ru": "Новый checkpoint без новых train-only rows был бы переименованием P6 или скрытой тренировкой на eval/holdout. Оба варианта недопустимы.",
+    "final_or_common_checkpoint_overwritten": false,
+    "p6_checkpoint_overwritten": false
+  },
+  "safety_flags": {
+    "training_allowed": false,
+    "eval_allowed": false,
+    "semantic_quality_claimed": false,
+    "p7_pass_claimed": false,
+    "trained_on_eval_rows": false,
+    "trained_on_holdout_rows": false,
+    "raw_private_prompt_text_copied": false,
+    "external_ai_used": false,
+    "production_code_changed": false,
+    "checkpoint_created": false,
+    "final_model_overwritten": false,
+    "commit_run": false,
+    "push_run": false,
+    "branch_switched": false
+  },
+  "next_action_ru": "Parent review должен решить следующую bounded phase: материализовать новые train-only PromptToTask rows из независимых source families либо утвердить pre-P7 common taxonomy как отдельный training artifact; только после этого создавать новый checkpoint candidate и rerun P7."
+}

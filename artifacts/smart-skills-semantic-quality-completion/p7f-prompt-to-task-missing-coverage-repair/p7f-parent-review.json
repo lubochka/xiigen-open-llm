@@ -1,0 +1,38 @@
+{
+  "phase": "P7F_PROMPT_TO_TASK_MISSING_COVERAGE_REPAIR",
+  "parent_review_status": "ACCEPTED_PENDING_PHASE_COMMIT",
+  "accepted_as_p7_pass": false,
+  "semantic_quality_claimed": false,
+  "p7_pass_claimed": false,
+  "api_ready_claimed": false,
+  "final_model_ready_claimed": false,
+  "review_summary_ru": "P7F принят только как repair-кандидат: добавлены две независимые train-only строки и новый checkpoint-кандидат, который проходит focused reserved-positive/ablation smoke. Это не финальный semantic-quality pass.",
+  "evidence": {
+    "checkpoint_pattern_count": 7,
+    "accepted_train_only_rows": 2,
+    "reserved_positive_rows": 4,
+    "reserved_positive_passes": 4,
+    "ablation_controls": 24,
+    "shortcut_leaks": 0,
+    "focused_test": {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskP7FMissingCoverageRepairTests\" --logger \"console;verbosity=minimal\"",
+      "result": "PASS",
+      "passed": 1,
+      "failed": 0
+    },
+    "checkpoint_leakage_scan": {
+      "source_or_path_signals": 0,
+      "row_id_or_eval_holdout_signals": 0,
+      "exact_failed_p7e_signal_combinations_copied": 0
+    },
+    "git_diff_check": "PASS",
+    "overclaim_scan": "PASS: only false/negative claim fields found; no true semantic-quality, P7 pass, API-ready, or final-model-ready claim"
+  },
+  "limitations": [
+    "P7F does not overwrite the final/common checkpoint.",
+    "P7F does not prove full PromptToTask semantic quality.",
+    "P7F does not prove extension/API semantic readiness.",
+    "A formal P7G source-disjoint eval and ablation confirmation is still required before any pass claim."
+  ],
+  "next_action_after_commit": "P7G formal PromptToTask eval/ablation confirmation against the P7F candidate checkpoint through the same bounded sub-agent; no additional training or model overwrite."
+}

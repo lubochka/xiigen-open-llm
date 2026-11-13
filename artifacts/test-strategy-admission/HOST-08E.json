@@ -1,0 +1,67 @@
+{
+    "schema_version":  1,
+    "work_order":  "HOST-08E-CLAUDE-HOOK-QA-AUTOMATION-AFTER-SOURCE-REPAIR",
+    "artifact_kind":  "test_strategy_admission",
+    "passed":  true,
+    "claim_scope":  "Claude hook-command/source QA only; not final/cross-host completion and not full Claude chat UI evidence.",
+    "plan_refs":  [
+                      "B15 HOST-08",
+                      "B20 CM-13",
+                      "B20 CM-16",
+                      "B20 CM-17",
+                      "B20 CM-18A",
+                      "B20 CM-18B",
+                      "B20 CM-22",
+                      "B20 CM-23"
+                  ],
+    "strategy_layers":  [
+                            {
+                                "layer":  "unit",
+                                "strategy":  "node --check for src/claude-entrypoint.js and PowerShell parser check for HOST-08E runner.",
+                                "status":  "covered"
+                            },
+                            {
+                                "layer":  "integration",
+                                "strategy":  "Invoke Claude JS source entrypoint, which is the manifest hook command target, through the accepted XIIGen core endpoint.",
+                                "status":  "covered_if_runner_exits_zero"
+                            },
+                            {
+                                "layer":  "e2e_host",
+                                "strategy":  "Hook-command QA only: inspect plugin hook command target and invoke the same JS source entrypoint. Claude CLI/full chat UI evidence is not claimed.",
+                                "status":  "hook_command_only"
+                            },
+                            {
+                                "layer":  "qa_automation",
+                                "strategy":  "Persist request/response/trace refs and machine-readable HOST-08E reports under Claude repo and core artifacts.",
+                                "status":  "covered"
+                            },
+                            {
+                                "layer":  "negative",
+                                "strategy":  "Assert sentinel appears only in request payload and not in visible display, response, host trace, or core trace.",
+                                "status":  "covered"
+                            },
+                            {
+                                "layer":  "untrained_honesty",
+                                "strategy":  "Assert Claude QA does not claim semantic quality or final extension completion.",
+                                "status":  "covered"
+                            },
+                            {
+                                "layer":  "trained",
+                                "strategy":  "Not applicable; HOST-08E makes no semantic quality claim.",
+                                "status":  "not_applicable_no_semantic_quality_claim"
+                            },
+                            {
+                                "layer":  "regression",
+                                "strategy":  "JSON parse reports and run git diff --check.",
+                                "status":  "covered"
+                            }
+                        ],
+    "anti_loopholes":  {
+                           "hook_command_qa_claimed_as_full_chat_ui":  false,
+                           "smoke_as_completion_allowed":  false,
+                           "json_ps1_report_substitute_allowed":  false,
+                           "host_semantic_ranking_allowed":  false,
+                           "external_ai_used":  false,
+                           "final_gate_started":  false
+                       }
+}

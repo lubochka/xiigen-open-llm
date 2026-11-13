@@ -1,0 +1,50 @@
+{
+  "phase": "P16B_SKILL_SELECTION_SOURCE_DPO_MATERIALIZATION",
+  "parent_review_status": "ACCEPTED_PENDING_PHASE_COMMIT",
+  "verdict": "PASS_AFTER_PARENT_REVIEW",
+  "accepted_as_source_dpo_candidate_materialization": true,
+  "accepted_as_training_ready_rows": false,
+  "accepted_as_training_run": false,
+  "accepted_as_checkpoint": false,
+  "accepted_as_skill_selection_positive_evidence": false,
+  "accepted_as_full_api_readiness": false,
+  "review_cycles": [
+    {
+      "cycle_id": "parent_p16b_001_goal_delivery",
+      "result": "pass",
+      "finding": "P16B created source, DPO candidate, quarantine, split, license, and review artifacts for SkillSelection without code, training, or checkpoint work."
+    },
+    {
+      "cycle_id": "parent_p16b_002_row_integrity",
+      "result": "pass",
+      "finding": "DPO candidate rows cover six unit targets with one train, one eval, and one holdout candidate per unit target."
+    },
+    {
+      "cycle_id": "parent_p16b_003_privacy_license",
+      "result": "pass_with_boundary",
+      "finding": "No row is training-ready; unverified public sources remain evidence-only and local/private rows remain adaptive/evidence-only."
+    },
+    {
+      "cycle_id": "parent_p16b_004_no_overclaim",
+      "result": "pass",
+      "finding": "P16B does not claim SkillSelection readiness, full semantic quality, final model readiness, training readiness, checkpoint readiness, dashboard readiness, or host runtime readiness."
+    }
+  ],
+  "verified_facts": {
+    "source_ledger_rows": 17,
+    "dpo_candidate_rows": 18,
+    "quarantine_rows": 6,
+    "license_ledger_rows": 12,
+    "candidate_training_ready_count": 0,
+    "unit_targets_with_train_eval_holdout": 6,
+    "json_jsonl_parse": "passed",
+    "utf8_mojibake_scan": "passed",
+    "true_flag_overclaim_scan": "passed",
+    "git_diff_check": "passed"
+  },
+  "next_gate_or_gap": {
+    "gate_id": "P16C_SKILL_SELECTION_FOCUSED_TESTS",
+    "summary": "Add focused SkillSelection unit/branch tests for candidate order, prompt understanding, task understanding, prompt context, intermediate checks, runtime chain, no shortcut authority, and no readiness overclaim.",
+    "immediate_next_action": "commit/push P16B accepted artifacts, then issue a bounded P16C sub-agent work order."
+  }
+}

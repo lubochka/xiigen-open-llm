@@ -1,0 +1,65 @@
+{
+  "phase": "P42",
+  "verdict": "PASS_AS_DASHBOARD_OVERCLAIM_FIREWALL_PENDING_COMMIT",
+  "accepted_scope": "dashboard/preview/smoke documentation and report-facing overclaim wording firewall only",
+  "parent_checks": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"ApiDashboard|SemanticQualityFixture|FixtureRunner|SourceDisjoint|Overclaim\" --nologo",
+      "result": "PASS",
+      "passed": 56,
+      "failed": 0
+    },
+    {
+      "command": "powershell.exe -ExecutionPolicy Bypass -File tools/api-dashboard-qa.ps1",
+      "result": "PASS"
+    },
+    {
+      "command": "node tools/semantic-quality-fixture-qa.js",
+      "result": "PASS",
+      "fixtures": 36,
+      "scenarios": 36,
+      "labels": 36,
+      "failures": 0
+    },
+    {
+      "command": "JSON/JSONL parse checks",
+      "result": "PASS",
+      "review_rows": 8
+    },
+    {
+      "command": "git diff --check -- .",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --exit-code -- models/skill-selection/skill-selection-v1 models/prompt-to-task models/orchestration-reasoning",
+      "result": "PASS",
+      "model_files_touched": false
+    }
+  ],
+  "subagent_boundary": {
+    "allowed_git_commands": "NONE",
+    "git_commands_reported": false,
+    "commit_reported": false,
+    "push_reported": false,
+    "branch_switch_reported": false,
+    "external_ai_or_network_reported": false,
+    "next_phase_derived_by_subagent": false
+  },
+  "non_claims": {
+    "model_evaluation_run": false,
+    "training_run": false,
+    "checkpoint_rewrite_complete": false,
+    "fresh_load_complete": false,
+    "continue_training_complete": false,
+    "semantic_quality_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "claude_cursor_codex_host_runtime_proven": false
+  },
+  "accepted_verification_side_effects": [
+    {
+      "file": "artifacts/smart-skills-semantic-quality-completion/p38-fixture-dashboard-qa-automation/p38-fixture-dashboard-qa-report.json",
+      "reason": "allowed fixture QA command refreshed checked_at only",
+      "new_p38_implementation_work": false
+    }
+  ]
+}

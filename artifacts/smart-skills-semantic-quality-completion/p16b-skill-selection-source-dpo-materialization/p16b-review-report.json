@@ -1,0 +1,74 @@
+{
+  "phase": "P16B_SKILL_SELECTION_SOURCE_DPO_MATERIALIZATION",
+  "verdict": "PASS_CANDIDATE_READY_FOR_PARENT_REVIEW",
+  "summary_ru": "P16B материализует конкретные SkillSelection source/DPO candidate rows и split/license ledgers. Это не обучение и не checkpoint. Все candidate rows остаются candidate_training_ready=false до parent review, license/source gates, P16C tests и P16E ablations.",
+  "counts": {
+    "source_ledger_rows": 17,
+    "dpo_candidate_rows": 18,
+    "quarantine_rows": 6,
+    "license_ledger_rows": 12,
+    "candidate_training_ready_count": 0
+  },
+  "counts_by_unit": {
+    "candidate_position_guard": 3,
+    "prompt_understanding": 3,
+    "task_understanding": 3,
+    "prompt_context": 3,
+    "intermediate_checks": 3,
+    "runtime_chain": 3
+  },
+  "accepted_for_parent_review_ru": "Приняты как материал для родительского review: конкретные SkillSelection boundaries для candidate position guard, prompt understanding, task understanding, prompt context, intermediate checks и runtime chain.",
+  "quarantined_ru": "Карантинные строки фиксируют candidate position, exact prompt/title, filename/path/source id, test marker и project stack execution leakage.",
+  "blocked_before_p16c_p16d_p16e_ru": [
+    "Нужна родительская проверка источников и split roles.",
+    "Нужна license verification для любых common-source кандидатов.",
+    "Нужны P16C focused tests для unit/branch behavior.",
+    "Нужны P16E source-disjoint eval и ablation controls.",
+    "Только после этого можно обсуждать checkpoint candidate в P16D."
+  ],
+  "review_cycles": [
+    {
+      "cycle_id": "p16b_review_1_goal_delivery",
+      "result": "pass",
+      "note_ru": "Созданы конкретные source/DPO/split/license артефакты для SkillSelection без кода, обучения и checkpoint."
+    },
+    {
+      "cycle_id": "p16b_review_2_source_license_privacy",
+      "result": "pass_with_blockers",
+      "note_ru": "Лицензии common-кандидатов не подтверждены локально; такие строки оставлены evidence_only/adaptive и candidate_training_ready=false."
+    },
+    {
+      "cycle_id": "p16b_review_3_dpo_concreteness_near_miss",
+      "result": "pass",
+      "note_ru": "Для каждого основного unit target есть concrete chosen/rejected near miss rows и quarantine row с причиной утечки."
+    },
+    {
+      "cycle_id": "p16b_review_4_no_shortcut_split_integrity",
+      "result": "pass_with_blockers",
+      "note_ru": "Train/eval/holdout роли назначены, но все строки остаются не training-ready до P16C/P16E и parent review."
+    }
+  ],
+  "artifacts": {
+    "source_ledger_jsonl": "artifacts/smart-skills-semantic-quality-completion/p16b-skill-selection-source-dpo-materialization/p16b-source-ledger.jsonl",
+    "dpo_candidate_rows_jsonl": "artifacts/smart-skills-semantic-quality-completion/p16b-skill-selection-source-dpo-materialization/p16b-dpo-candidate-rows.jsonl",
+    "quarantine_rows_jsonl": "artifacts/smart-skills-semantic-quality-completion/p16b-skill-selection-source-dpo-materialization/p16b-quarantine-rows.jsonl",
+    "split_ledger_json": "artifacts/smart-skills-semantic-quality-completion/p16b-skill-selection-source-dpo-materialization/p16b-split-ledger.json",
+    "license_ledger_jsonl": "artifacts/smart-skills-semantic-quality-completion/p16b-skill-selection-source-dpo-materialization/p16b-license-ledger.jsonl",
+    "review_report_md": "artifacts/smart-skills-semantic-quality-completion/p16b-skill-selection-source-dpo-materialization/p16b-review-report.md",
+    "review_report_json": "artifacts/smart-skills-semantic-quality-completion/p16b-skill-selection-source-dpo-materialization/p16b-review-report.json"
+  },
+  "safety_flags": {
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "training_run": false,
+    "checkpoint_or_model_changed": false,
+    "dashboard_or_host_changed": false,
+    "raw_private_text_copied": false,
+    "semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "commit_run": false,
+    "push_run": false
+  },
+  "next_action": "parent review P16B artifacts; if accepted, open P16C focused SkillSelection unit/branch tests or the next parent-derived phase"
+}

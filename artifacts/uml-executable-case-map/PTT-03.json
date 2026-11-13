@@ -1,0 +1,23 @@
+{
+  "schema": "xiigen-uml-executable-case-map-v1",
+  "work_order": "PTT-03",
+  "status": "PASS",
+  "cases": [
+    {
+      "uml_edge_or_algorithm_branch": "CoreApi --> PromptToTask / no loaded state",
+      "input_fixture": "PromptToTaskRequest with raw prompt identity and redacted constraints/context",
+      "expected_response_fields": ["ContractStatus=not_trained_no_loaded_state", "TaskType=not_ready_no_semantic_task"],
+      "expected_asset_touched": [],
+      "expected_asset_not_touched": ["training data", "checkpoint/model assets", "host repos"],
+      "negative_case": "must not fabricate semantic task"
+    },
+    {
+      "uml_edge_or_algorithm_branch": "PromptToTask learned-state pattern branch",
+      "input_fixture": "PromptToTaskRequest with ExplicitConstraints and ContextFields matching learned pattern signals",
+      "expected_response_fields": ["learned pattern id", "matched signal count", "structured requirements/deliverables/forbidden actions"],
+      "expected_asset_touched": [],
+      "expected_asset_not_touched": ["training data", "checkpoint/model assets", "host repos"],
+      "negative_case": "same raw prompt text is not required; different raw prompts with same signals produce same learned task"
+    }
+  ]
+}

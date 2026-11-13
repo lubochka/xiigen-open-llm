@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "work_order_id": "PTT-02V",
+  "normalized_by_work_order": "CM-31A1-EXISTING-TEST-EXECUTION-HYGIENE-SCHEMA-NORMALIZATION",
+  "normalization_scope": "CM-31A1 schema normalization for existing hygiene artifact only; missing hygiene artifacts are left for CM-31A2.",
+  "command_or_runtime_scope": "static/local command or artifact parse check",
+  "allowed_by_plan_or_luba": {
+    "status": "pass",
+    "evidence": "Existing hygiene artifact is in the CM-31 audit artifact_found=true/partial set; CM-31A1 does not run or authorize new commands."
+  },
+  "exact_command_or_probe_ref": [
+    {
+      "command": "static/local command or artifact parse check",
+      "source": "artifacts/test-execution-hygiene/PTT-02V.json"
+    }
+  ],
+  "exit_code_or_status": {
+    "status": "not_applicable",
+    "evidence": "No executable command entry was present in legacy artifact; this row is treated as static/local artifact hygiene evidence until a later source-specific repair says otherwise."
+  },
+  "elapsed_or_timeout_recorded": {
+    "status": "not_applicable",
+    "evidence": "Legacy artifact has no elapsed/timeout value; no timeout or long-running claim is made by this normalization artifact."
+  },
+  "pre_existing_red_vs_phase_regression_classification": {
+    "status": "not_applicable",
+    "evidence": "Normalization found no failed final verification claim requiring red/regression split; if a legacy command timed out or failed, the legacy_fields preserve it and later row-specific repair can classify deeper if needed."
+  },
+  "orphan_process_cleanup_or_not_applicable": {
+    "status": "not_applicable",
+    "evidence": "No timeout/orphan process condition is claimed for this row."
+  },
+  "heartbeat_or_replacement_worker_handoff_or_not_applicable": {
+    "status": "not_applicable",
+    "evidence": "No long-running replacement-worker handoff is claimed by this row; protocol/report/commit/push remain checkpoints, not stop reasons."
+  },
+  "test_only_or_smoke_claim_scope": {
+    "status": "pass",
+    "evidence": "This artifact records command hygiene only; test-only, smoke, static, or handler-level evidence cannot claim full UI/runtime acceptance or full plan completion."
+  },
+  "rerun_policy": {
+    "status": "pass",
+    "evidence": "No rerun required by this normalization; future rerun must stay within allowed focused command scope and record red/orphan handling."
+  },
+  "status": "pass",
+  "gaps": [],
+  "next_action": null,
+  "broad_tests_run": false,
+  "broad_tests_authorization_check": {
+    "status": "pass",
+    "evidence": "Legacy artifact does not record broad tests as run."
+  },
+  "completion_claim_allowed": false,
+  "full_plan_completion_claimed": false,
+  "runtime_or_host_invoked_by_this_artifact": false,
+  "external_ai_used": false,
+  "legacy_fields": {
+    "schema": "test-execution-hygiene-v1",
+    "schema_version": "1.0",
+    "work_order": "PTT-02V",
+    "status": "PASS",
+    "commands_run": [
+      {
+        "command": "PowerShell parser syntax check for tools/validate-prompt-to-task-corpus.ps1",
+        "exit_code": 0,
+        "purpose": "verify validator script parses before focused invocation"
+      },
+      {
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools\\validate-prompt-to-task-corpus.ps1",
+        "exit_code": 1,
+        "elapsed_ms": 1158,
+        "purpose": "first validator run exposed a strict-mode scalar Count bug before report acceptance"
+      },
+      {
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools\\validate-prompt-to-task-corpus.ps1",
+        "exit_code": 0,
+        "elapsed_ms": 1161,
+        "purpose": "focused validator command on existing PromptToTask corpus/summary/PTT-02U evidence"
+      },
+      {
+        "command": "PowerShell JSON/JSONL parse of state, PTT-02V report/artifacts, and PromptToTask corpus JSONL",
+        "exit_code": 0,
+        "purpose": "verify produced JSON artifacts and source JSONL are parseable"
+      },
+      {
+        "command": "rg forbidden raw payload fields and true train/finalization flags over PTT-02V artifacts/report",
+        "exit_code": 1,
+        "exit_code_meaning": "no matches",
+        "purpose": "verify no forbidden raw payload fields or true training/finalization flags"
+      },
+      {
+        "command": "git diff --check",
+        "exit_code": 0,
+        "purpose": "verify whitespace-safe diff"
+      },
+      {
+        "command": "git status --short --branch --untracked-files=all",
+        "exit_code": 0,
+        "purpose": "confirm final dirty scope is limited to PTT-02V state/tool/artifacts"
+      },
+      {
+        "command": "PowerShell parser syntax check for tools/validate-prompt-to-task-corpus.ps1 after absolute-path repair",
+        "exit_code": 0,
+        "purpose": "verify repaired validator syntax"
+      },
+      {
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools\\validate-prompt-to-task-corpus.ps1",
+        "exit_code": 0,
+        "elapsed_ms": 3095,
+        "purpose": "default validator command after absolute-path repair"
+      },
+      {
+        "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools\\validate-prompt-to-task-corpus.ps1 -ReportPath <absolute temp json path>",
+        "exit_code": 0,
+        "elapsed_ms": 3056,
+        "purpose": "parent-review absolute ReportPath reproduction after repair"
+      },
+      {
+        "command": "PowerShell parse of absolute temp report",
+        "exit_code": 0,
+        "purpose": "verify absolute temp report JSON status=PASS row_count=2 failed_check_count=0"
+      }
+    ],
+    "commands_to_run_before_final": [],
+    "forbidden_commands_not_run": [
+      "dotnet build",
+      "dotnet test",
+      "host runtime",
+      "training",
+      "checkpoint creation",
+      "external AI",
+      "browser/image tools",
+      "commit",
+      "push"
+    ],
+    "pre_existing_red_classification_needed": false,
+    "orphan_process_cleanup_needed": false,
+    "heartbeat_or_replacement_worker_needed": false,
+    "passed": true
+  }
+}

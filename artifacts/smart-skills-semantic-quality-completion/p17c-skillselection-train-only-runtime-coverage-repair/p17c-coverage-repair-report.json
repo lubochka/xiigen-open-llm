@@ -1,0 +1,57 @@
+{
+  "phase": "P17C_SKILLSELECTION_TRAIN_ONLY_RUNTIME_COVERAGE_REPAIR",
+  "verdict": "PASS_TRAIN_ONLY_COVERAGE_MATERIAL_READY_FOR_PARENT_REVIEW",
+  "summary_ru": "P17C подготовил шесть новых train-side/adaptive candidate rows для четырех runtime misses из P17B. Failed eval/holdout rows используются только как gap evidence и явно запрещены как training material.",
+  "failed_runtime_rows": [
+    {
+      "row_id": "P16B-SS-PROMPT-003",
+      "unit_target": "prompt_understanding",
+      "split_role": "holdout_candidate",
+      "expected_skill": "planning",
+      "selected_skill": "claim_verification",
+      "missing_boundary_ru": "runtime selector does not have enough train-side planning intent coverage to beat the claim-verification default"
+    },
+    {
+      "row_id": "P16B-SS-TASK-002",
+      "unit_target": "task_understanding",
+      "split_role": "eval_candidate",
+      "expected_skill": "planning_dpo_authoring",
+      "selected_skill": "claim_verification",
+      "missing_boundary_ru": "task-level DPO-authoring signals are too sparse and collapse into generic verification"
+    },
+    {
+      "row_id": "P16B-SS-TASK-003",
+      "unit_target": "task_understanding",
+      "split_role": "holdout_candidate",
+      "expected_skill": "trainable_architecture_decision",
+      "selected_skill": "claim_verification",
+      "missing_boundary_ru": "task-level trainable-architecture lifecycle signals are too sparse"
+    },
+    {
+      "row_id": "P16B-SS-CHAIN-003",
+      "unit_target": "runtime_chain",
+      "split_role": "holdout_candidate",
+      "expected_skill": "trainable_architecture_decision",
+      "selected_skill": "claim_verification",
+      "missing_boundary_ru": "runtime chain lacks enough train-side examples for architecture-before-implementation routing"
+    }
+  ],
+  "candidate_rows_total": 6,
+  "quarantine_or_gap_rows_total": 8,
+  "candidate_training_ready_rows": 0,
+  "common_training_ready_rows": 0,
+  "training_run": false,
+  "checkpoint_mutated": false,
+  "checkpoint_rebuilt": false,
+  "tests_run": false,
+  "state_updated": true,
+  "no_claim_flags": {
+    "semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "full_api_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "final_model_ready_claimed": false
+  },
+  "next_bounded_phase": "P17D_SKILLSELECTION_CHECKPOINT_REBUILD_FROM_P17C_REPAIR_MATERIAL",
+  "next_action_ru": "Родитель проверяет P17C rows. Если они приняты, следующий ограниченный этап - rebuild candidate checkpoint from accepted P17C adaptive train-side material and rerun runtime selector evidence."
+}

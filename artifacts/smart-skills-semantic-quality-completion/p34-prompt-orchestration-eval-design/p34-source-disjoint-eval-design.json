@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "p34.ptt-or.eval-design.v1",
+  "phase": "P34",
+  "createdAtLocalDate": "2026-06-15",
+  "sourceIndexHash": "sha256:7da903e9bc65ba272e9f10f2af5ded086d4a516b55f5c04654b27a8f5bee7dba",
+  "trainingRun": false,
+  "evalRun": false,
+  "checkpointMutated": false,
+  "semanticQualityClaimed": false,
+  "universalOnly": true,
+  "sourceFamilies": [
+    {
+      "family": "analysis_prompts_core",
+      "role": "train_candidate",
+      "machine": "PromptToTask",
+      "signal": "redacted user prompt becomes universal structured task, without project stack commands"
+    },
+    {
+      "family": "analysis_agents_authority",
+      "role": "train_candidate",
+      "machine": "PromptToTask",
+      "signal": "prompt contains authority/interrupt/order constraints that must become task constraints"
+    },
+    {
+      "family": "analysis_claude_rules",
+      "role": "dev_candidate",
+      "machine": "PromptToTask",
+      "signal": "old approvals and quoted transcripts are evidence, not current authorization"
+    },
+    {
+      "family": "reference_universal_orchestrator_plan",
+      "role": "train_candidate",
+      "machine": "OrchestrationReasoning",
+      "signal": "split work into independent branches, review before final formatting, repair only failed branch"
+    },
+    {
+      "family": "reference_universal_vs_project_specific_inventory",
+      "role": "dev_candidate",
+      "machine": "OrchestrationReasoning",
+      "signal": "separate universal skill/session/evidence discipline from adapter/project mechanics"
+    },
+    {
+      "family": "universal_nine_node_flow_concept",
+      "role": "eval_holdout_candidate",
+      "machine": "OrchestrationReasoning",
+      "signal": "phase/order/review chain without copying exact node labels or C# mechanics"
+    },
+    {
+      "family": "universal_dependency_concept",
+      "role": "eval_holdout_candidate",
+      "machine": "OrchestrationReasoning",
+      "signal": "root/dependency/relation reasoning without copying parser/code details"
+    }
+  ],
+  "sourceDisjointRules": [
+    "No source_family appears in both train_candidate and eval_holdout_candidate roles.",
+    "Stack/project mechanics are removed or quarantined before a row can become common DPO.",
+    "Eval prompts must not contain file paths, class names, method names, node ids, host names, or exact source titles as answer cues."
+  ],
+  "futureMetrics": [
+    "PromptToTask exact task-slot match on held-out source families",
+    "OrchestrationReasoning branch/gate coverage on held-out source families",
+    "Ablation fail rate when only path/file/class/source-id remains",
+    "Fresh-load and continue-training positive gates after checkpoint rewrite"
+  ]
+}

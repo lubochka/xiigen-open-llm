@@ -1,0 +1,38 @@
+{
+    "artifact":  "orchestration-reasoning-heldout-gap-backlog",
+    "work_order_id":  "Q4-02_ORCHESTRATION_REASONING_HELD_OUT_BUILD_REVIEW",
+    "status":  "CLOSED_BY_Q4_02R_REPAIR",
+    "created_at_utc":  "2026-06-10T16:17:57.469Z",
+    "branch":  "codex/chat-gpt-5.5",
+    "semantic_quality_claimed":  false,
+    "q4_complete":  false,
+    "gaps":  [
+                 {
+                     "gap_id":  "Q4-02-GAP-001",
+                     "heldout_case":  "heldout-case-1",
+                     "answer_labels_redacted":  true,
+                     "pair_and_source_refs_redacted":  true,
+                     "severity":  "blocks_q4_03",
+                     "failed_evidence":  "held-out prediction did not match the redacted expected answer label before the repair",
+                     "missing_family":  "source-disjoint split readiness gate family",
+                     "root_cause":  "The evaluated held-out signal set for heldout-case-1 mapped to verification/claim-scope reasoning rather than the source-disjoint held-out construction boundary. The checkpoint had no matching learned source-disjoint readiness pattern that could beat the closest train-side pattern for those signals.",
+                     "required_repair":  [
+                                             "Create or correct ref-only source-disjoint split readiness signals for heldout-case-1: source_disjoint_split_readiness_reasoning, split_train_and_heldout_by_source_manifest_before_readiness, do_not_count_reused_source_as_heldout, source_disjointness_and_leakage_gate_required.",
+                                             "Add a train-side approved common universal pattern or accepted aggregate model rule for the same source-disjoint readiness family, without using held-out SourceManifestRef, filename, path, guide title, BM25, or static route keys as final authority.",
+                                             "Rerun the held-out report and ablation controls; require heldout-case-1 pass, source overlap 0, exact title/path/filename control 0, BM25/title and static controls below trained state, semantic_quality_claimed=false."
+                                         ],
+                     "allowed_next_slice":  "bounded data/model-signal repair only; no Q4-03 ablation review, Q5, Q8, host/plugin/runtime, dashboard/API, commit, push, or broad tests",
+                     "expected_artifacts_after_repair":  [
+                                                             "updated Q4 held-out report",
+                                                             "updated Q4 ablation report",
+                                                             "state update with Q4-02R result"
+                                                         ],
+                     "status":  "CLOSED",
+                     "resolution":  "Focused runner repair added source-disjoint split readiness aggregate pattern and corrected heldout-case-1 signals; rerun held-out is 4/4 and deterministic controls remain degraded.",
+                     "repair_report":  "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-heldout-pair-009-repair-report.json"
+                 }
+             ],
+    "exact_next_action":  "Q4-03_ORCHESTRATION_ABLATION_REVIEW: reviewer sub-agent should review the updated Q4 held-out and deterministic-control ablation evidence; no Q5/Q8, host/plugin/runtime, dashboard/API, commit, push, or broad tests in this repair slice.",
+    "closed_at_utc":  "2026-06-10T16:31:51.730Z",
+    "q4_03_allowed_next":  true
+}

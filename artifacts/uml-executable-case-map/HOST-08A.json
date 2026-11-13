@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "work_order": "HOST-08A-QA-SCENARIO-AUTOMATION-ADMISSION-AND-FIRST-HARNESS",
+  "artifact_kind": "uml_executable_case_map",
+  "passed": true,
+  "claim_scope": "Executable case map for first QA harness only. Direct source-entrypoint evidence is not final extension completion.",
+  "fixture": {
+    "prompt": "HOST-08A synthetic non-private prompt: turn a small release note into a concrete task. HOST08A_SYNTHETIC_SENTINEL_DO_NOT_LEAK",
+    "raw_private_data_used": false,
+    "sentinel": "HOST08A_SYNTHETIC_SENTINEL_DO_NOT_LEAK"
+  },
+  "cases": [
+    {
+      "case_id": "HOST08A-PTT-CLAUDE-CODEX",
+      "branch": "prompt->task",
+      "hosts": [
+        "claude",
+        "codex"
+      ],
+      "execution": "tools/host-qa-HOST-08A.ps1 invokes real JS source entrypoints with Method=prompt-to-task.",
+      "expected": {
+        "request_method": "prompt-to-task",
+        "request_ref_exists": true,
+        "response_ref_exists": true,
+        "trace_ref_exists": true,
+        "sentinel_absent_from_response": true,
+        "sentinel_absent_from_trace": true,
+        "host_runtime_completion_claimed": false
+      }
+    },
+    {
+      "case_id": "HOST08A-OR-CLAUDE-CODEX",
+      "branch": "task->orchestration-plan",
+      "hosts": [
+        "claude",
+        "codex"
+      ],
+      "execution": "tools/host-qa-HOST-08A.ps1 invokes real JS source entrypoints with Method=orchestration-plan.",
+      "expected": {
+        "request_method": "orchestration-plan",
+        "request_ref_exists": true,
+        "response_ref_exists": true,
+        "trace_ref_exists": true,
+        "sentinel_absent_from_response": true,
+        "sentinel_absent_from_trace": true,
+        "host_semantic_ranking": false
+      }
+    },
+    {
+      "case_id": "HOST08A-SKILLS-CLAUDE-CODEX",
+      "branch": "task->skills",
+      "hosts": [
+        "claude",
+        "codex"
+      ],
+      "execution": "tools/host-qa-HOST-08A.ps1 invokes real JS source entrypoints with Method=skill-selection.",
+      "expected": {
+        "request_method": "skill-selection",
+        "request_ref_exists": true,
+        "response_ref_exists": true,
+        "trace_ref_exists": true,
+        "sentinel_absent_from_response": true,
+        "sentinel_absent_from_trace": true,
+        "host_skill_ranking_as_authority": false
+      }
+    },
+    {
+      "case_id": "HOST08A-DEBUG-DISABLED",
+      "branch": "debug disabled",
+      "hosts": [
+        "claude",
+        "codex",
+        "cursor"
+      ],
+      "execution": "Claude/Codex harness omits debug flags; Cursor static source/package check confirms default false.",
+      "expected": {
+        "debug_default_false": true,
+        "visible_debug_trace_required_now": false,
+        "later_debug_enabled_host_QA_required": true
+      }
+    },
+    {
+      "case_id": "HOST08A-DEBUG-ENABLED-LATER",
+      "branch": "debug enabled",
+      "hosts": [
+        "claude",
+        "cursor",
+        "codex"
+      ],
+      "execution": "HOST-08A records source-backed debug shape and defers visible real-host debug enabled QA to later HOST-08 rows.",
+      "expected": {
+        "debug_shape": "xiigen <method> :\\ninput: <redacted request sent to xiigen endpoint>\\noutput: <redacted response received from xiigen endpoint>",
+        "component_or_static_probe_is_not_completion": true
+      }
+    },
+    {
+      "case_id": "HOST08A-THIN-HOST",
+      "branch": "no host semantic ranking",
+      "hosts": [
+        "claude",
+        "cursor",
+        "codex"
+      ],
+      "execution": "Harness/report checks source metadata and request HostFacts for no semantic ranking, training, corpus parsing, external AI, DPO generation, or model mutation authority.",
+      "expected": {
+        "host_semantic_ranking": false,
+        "host_training": false,
+        "host_corpus_parsing": false,
+        "host_dpo_generation": false,
+        "host_model_mutation": false
+      }
+    },
+    {
+      "case_id": "HOST08A-NO-SUBSTITUTE",
+      "branch": "no JSON/PS1/report substitute",
+      "hosts": [
+        "claude",
+        "cursor",
+        "codex"
+      ],
+      "execution": "Harness uses real source entrypoints for Claude/Codex and explicitly refuses direct Cursor source invocation outside Extension Host.",
+      "expected": {
+        "json_report_as_implementation": false,
+        "ps1_as_accepted_implementation": false,
+        "static_probe_as_completion": false,
+        "later_real_host_QA_required": true
+      }
+    }
+  ],
+  "remaining_runtime_cases_after_HOST_08A": [
+    "Claude real hook/app path QA automation",
+    "Cursor Extension Host command/chat/panel QA automation",
+    "Codex plugin/app runtime QA automation",
+    "debug enabled visible trace through real host paths",
+    "trained semantic quality e2e only when model-backed quality is claimed"
+  ]
+}

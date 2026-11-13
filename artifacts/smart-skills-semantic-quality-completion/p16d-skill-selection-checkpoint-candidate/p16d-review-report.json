@@ -1,0 +1,115 @@
+{
+  "phase": "P16D_SKILL_SELECTION_CHECKPOINT_CANDIDATE",
+  "verdict": "PASS_CANDIDATE_READY_FOR_PARENT_REVIEW",
+  "checkpoint_candidate_created": true,
+  "checkpoint_path": "artifacts/smart-skills-semantic-quality-completion/p16d-skill-selection-checkpoint-candidate/skill-selection-p16d-candidate-checkpoint.json",
+  "checkpoint_sha256": "9238A1577A783E50AB910346B9C00F515005132EA5D09B7D3FFB5DF7BCB4C20F",
+  "counts": {
+    "p16b_rows_total": 18,
+    "train_candidate_rows_allowed_used": 5,
+    "materialized_profile_rows": 4,
+    "diagnostics_only_guard_rows": 1,
+    "evidence_only_train_candidate_rows_excluded": 1,
+    "eval_candidate_rows_excluded": 6,
+    "holdout_candidate_rows_excluded": 6,
+    "candidate_training_ready_rows": 0,
+    "units_included": 5,
+    "learned_profiles_materialized": 4
+  },
+  "split_proof": {
+    "allowed_train_candidate_row_ids_used": [
+      "P16B-SS-CANDPOS-001",
+      "P16B-SS-TASK-001",
+      "P16B-SS-CONTEXT-001",
+      "P16B-SS-CHECKS-001",
+      "P16B-SS-CHAIN-001"
+    ],
+    "materialized_profile_row_ids": [
+      "P16B-SS-TASK-001",
+      "P16B-SS-CONTEXT-001",
+      "P16B-SS-CHECKS-001",
+      "P16B-SS-CHAIN-001"
+    ],
+    "diagnostics_only_guard_row_ids": [
+      "P16B-SS-CANDPOS-001"
+    ],
+    "evidence_only_train_candidate_row_ids_excluded": [
+      "P16B-SS-PROMPT-001"
+    ],
+    "excluded_eval_holdout_row_ids": [
+      "P16B-SS-CANDPOS-002",
+      "P16B-SS-PROMPT-002",
+      "P16B-SS-TASK-002",
+      "P16B-SS-CONTEXT-002",
+      "P16B-SS-CHECKS-002",
+      "P16B-SS-CHAIN-002",
+      "P16B-SS-CANDPOS-003",
+      "P16B-SS-PROMPT-003",
+      "P16B-SS-TASK-003",
+      "P16B-SS-CONTEXT-003",
+      "P16B-SS-CHECKS-003",
+      "P16B-SS-CHAIN-003"
+    ],
+    "forbidden_rows_present_in_checkpoint_training_inputs": false,
+    "evidence_only_rows_present_in_checkpoint_training_inputs": false,
+    "top_level_candidate_position_weights_present": false,
+    "diagnostics_only_candidate_order_guard_present": true,
+    "contamination_check": "passed_adaptive_train_candidate_only_for_profiles_and_guard_diagnostics_only"
+  },
+  "license_boundary": {
+    "common_training_rows_allowed": 0,
+    "adaptive_user_cache_rows_used": 5,
+    "evidence_only_rows_excluded": 1,
+    "unverified_or_not_common_license_rows_observed": 6
+  },
+  "next_action": "parent review P16D artifacts; if accepted, open P16E source-disjoint eval/ablation; do not wire as final model",
+  "production_or_test_changes_needed_but_not_done": [
+    "P16E source-disjoint eval and ablation for SkillSelection",
+    "P16F fresh-load and continue-training lifecycle evidence if P16E passes",
+    "API firewall/dashboard boundary review after positive SkillSelection evidence exists"
+  ],
+  "safety_flags": {
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "training_run": false,
+    "eval_run": false,
+    "checkpoint_written_outside_p16d_artifacts": false,
+    "common_or_final_model_overwritten": false,
+    "eval_or_holdout_used_for_checkpoint": false,
+    "raw_private_text_copied": false,
+    "semantic_quality_claimed": false,
+    "full_api_readiness": false,
+    "skill_selection_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "dashboard_readiness_claimed": false,
+    "host_runtime_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "commit_run": false,
+    "push_run": false
+  },
+  "verification": {
+    "json_jsonl_parse": "passed: P16D JSON files, JSONL rows, and active state parsed",
+    "checksum_verification": "passed: updated checkpoint sha256 matched manifest",
+    "split_contamination_check": "passed: 0 eval/holdout ids in checkpoint training/profile inputs",
+    "evidence_only_exclusion_check": "passed: 0 evidence_only row ids in checkpoint training/profile inputs",
+    "top_level_candidate_position_weights_absence_check": "passed: candidate_position_weights absent from checkpoint top level",
+    "diagnostics_only_candidate_order_guard_check": "passed: candidate_order_leakage_guard has can_select_skill=false, authority=false, diagnostics_only, blocked feature ids, no numeric selection weights",
+    "utf8_mojibake_scan": "passed: U+00D0/U+00D1/U+FFFD/U+00E2/U+00C3/four-question markers absent",
+    "overclaim_scan": "passed: no readiness true flags found",
+    "git_diff_check": "passed: git diff --check on P16D artifacts and state returned exit code 0"
+  },
+  "parent_review_repair_1": {
+    "status": "repaired",
+    "finding": "Parent review found top-level numeric candidate_position_weights and evidence_only row materialized as learned profile.",
+    "repair": "Removed top-level candidate_position_weights, added diagnostics-only candidate_order_leakage_guard, excluded evidence-only row P16B-SS-PROMPT-001 from checkpoint training/profile state."
+  },
+  "json_parse_passed": true,
+  "checksum_verification_passed": true,
+  "split_contamination_check_passed": true,
+  "evidence_only_exclusion_check_passed": true,
+  "top_level_candidate_position_weights_absence_check_passed": true,
+  "diagnostics_only_candidate_order_guard_check_passed": true,
+  "utf8_mojibake_scan_passed": true,
+  "overclaim_scan_passed": true,
+  "git_diff_check_passed": true
+}

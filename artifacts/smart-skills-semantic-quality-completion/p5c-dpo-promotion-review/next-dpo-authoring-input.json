@@ -1,0 +1,63 @@
+{
+  "phase": "P5C_DPO_PROMOTION_REVIEW",
+  "artifact": "next-dpo-authoring-input",
+  "language": "ru",
+  "scope": "candidate input for later DPO authoring only",
+  "training_allowed": false,
+  "eval_allowed": false,
+  "semantic_quality_claimed": false,
+  "training_ready_rows": 0,
+  "rows": [
+    {
+      "row_id": "P3-PTT-DRAFT-001",
+      "target_machine": "PromptToTask",
+      "source_family_id": "sf-prompt-to-task-basic-prompt-77A175A9",
+      "source_ref": "C:\\Users\\lubao\\Documents\\xiigen\\basic prompt.txt",
+      "origin_phase": "P3",
+      "training_ready": false,
+      "authoring_requirement_ru": "Write a new redacted PromptToTask DPO row that teaches contract extraction before execution. Use P3-PTT-DRAFT-002 only as merge/drop support, not independent evidence.",
+      "chosen_rewrite_ru": "Chosen extracts goal, allowed/forbidden scope, expected artifacts, validation evidence and no-claim boundary.",
+      "rejected_rewrite_ru": "Rejected gives a plausible free-text paraphrase or execution-first interpretation without verification boundary.",
+      "redaction_requirements":["no raw private prompt text","no exact source path","no filename/title signal","source refs provenance-only"],
+      "required_ablation_controls":["exact prompt lookup","filename/path lookup","keyword-only classifier","source-title shortcut"],
+      "source_disjoint_grouping":"train_candidate_representative_only"
+    },
+    {
+      "row_id": "P4-ORCH-DPO-DRAFT-001",
+      "target_machine": "OrchestrationReasoning",
+      "source_family_id": "sf-orchestration-phase-transition-8CD45F23",
+      "source_ref": "C:\\Users\\lubao\\Documents\\xiigen\\Wordpress integration\\Worpdpress updated plugin\\update skills between phases\\PATCH-phase-transition-protocol-SKILL.md",
+      "origin_phase": "P4",
+      "training_ready": false,
+      "authoring_requirement_ru": "Write a new stack-free OrchestrationReasoning DPO row that teaches phase-boundary handoff after evidence and review. Use P4-ORCH-DPO-DRAFT-002 only as merge/drop support.",
+      "chosen_rewrite_ru": "Chosen keeps evidence collection, self-check, parent review and next-phase boundary separate.",
+      "rejected_rewrite_ru": "Rejected jumps to commit/next phase because draft artifact or source title exists.",
+      "redaction_requirements":["remove WordPress/plugin path","remove exact protocol text","remove source title cues","source refs provenance-only"],
+      "required_ablation_controls":["filename/path lookup","WordPress/plugin title shortcut","static phase keyword shortcut","exact protocol text lookup","source-title shortcut"],
+      "source_disjoint_grouping":"train_candidate_representative_only"
+    },
+    {
+      "row_id": "P5A-CAND-PTT-AUTHORITY-RULES-001",
+      "target_machine": "PromptToTask",
+      "source_family_id": "sf-p5a-prompt-to-task-authority-rules-54DF62A3",
+      "source_ref": "C:\\Users\\lubao\\Documents\\xiigen\\AGENTS.md",
+      "origin_phase": "P5A",
+      "training_ready": false,
+      "authoring_requirement_ru": "Write a new PromptToTask DPO row from a rules artifact where source state is done. The row must teach extraction of task contract and verification boundary, not stack execution.",
+      "chosen_rewrite_ru": "Chosen creates a stack-free task contract: inputs, public result, boundaries, forbidden actions, allowed verification and evidence scope.",
+      "rejected_rewrite_ru": "Rejected chooses a technical implementation by service/class/index/file names.",
+      "redaction_requirements":["remove AGENTS.md filename as signal","remove XIIGen/.NET/C# clues","remove service/class/index names","remove code snippets"],
+      "required_ablation_controls":["filename/path shortcut","XIIGen/.NET stack leakage","service/class-name leakage","exact code snippet replay","source_state shortcut"],
+      "source_disjoint_grouping":"independent_train_candidate_after_authoring"
+    }
+  ],
+  "excluded_rows": [
+    "P3-PTT-DRAFT-002",
+    "P4-ORCH-DPO-DRAFT-002",
+    "P5A-CAND-BOTH-SKILLS-INVENTORY-001",
+    "P5A-CAND-ORCH-DOC07956-001",
+    "P5A-CAND-ORCH-UNIVERSAL-DEPS-001",
+    "P5A-CAND-ORCH-NINE-NODE-FLOW-001",
+    "P5A-CAND-ORCH-FLOW-ISOLATION-001"
+  ]
+}

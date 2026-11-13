@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "work_order": "CM-26D-SKILL-SELECTION-HIERARCHY-PARITY-REPAIR",
+  "artifact_kind": "skill_selection_hierarchy_parity_repair",
+  "branch": "codex/chat-gpt-5.5",
+  "verdict": "PASS_SKILL_SELECTION_LOGICAL_HIERARCHY_CLOSED_BY_SOURCE_ADAPTER",
+  "passed": true,
+  "hierarchy_status": "closed_by_source_adapter",
+  "cm26d_closed": true,
+  "claim_scope": "SkillSelection five-level source hierarchy parity only. The new source adapter proves ILogicalFlow and ILogicalUnit evidence and distinguishes legacy contract-only orchestration, 11 checkpoint-backed semantic units, and non-final candidate-position scaffold evidence. It does not claim semantic quality, training, runtime, host, DPO authoring, external AI, aggregate CM-26 closure, or final completion.",
+  "source_refs": {
+    "learning_machine": "43.SmartSkillsDomain/SkillSelectionMachine.cs:10",
+    "legacy_contract_orchestrator_distinguished": "43.SmartSkillsDomain/SkillSelectionOrchestrator.cs:6",
+    "logical_orchestrator": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:6",
+    "logical_flow": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:47",
+    "logical_units": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:161",
+    "checkpoint_boundary_unit": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:174",
+    "decision_path_unit": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:219",
+    "authority_boundary_unit": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:234",
+    "logical_unit_base": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:249",
+    "tests": "Tests/SkillSelectionLogicalHierarchyTests.cs:7"
+  },
+  "input_output_types": {
+    "ILearningMachine": {
+      "type": "SkillSelectionMachine : ILearningMachine<SkillSelectionDomain>",
+      "input": "LearningBatch<SkillSelectionDomain> / LearningEvaluationSet<SkillSelectionDomain> / LearningMachineExport",
+      "output": "LearningBatchResult / LearningEvaluationResult / LearningMachineExport / ILogicalOrchestrator"
+    },
+    "ILogicalOrchestrator": {
+      "type": "SkillSelectionLogicalOrchestrator",
+      "input": "LogicalOrchestratorRequest with metadata.skill_selection_request as SkillSelectionRequest",
+      "output": "LogicalOrchestratorResult"
+    },
+    "ILogicalFlow": {
+      "type": "SkillSelectionLogicalFlow : ILogicalFlow<SkillSelectionRequest>",
+      "input": "LogicalFlowRequest<SkillSelectionRequest>",
+      "output": "LogicalFlowResult"
+    },
+    "ILogicalUnit": {
+      "type": "SkillSelectionLogicalUnitBase : ILogicalUnit<SkillSelectionRequest, SkillSelectionDecision>",
+      "input": "LogicalUnitRequest<SkillSelectionRequest>",
+      "output": "LogicalUnitResult<SkillSelectionDecision>"
+    },
+    "ILearningMachinePair_common_adaptive": {
+      "type": "SkillSelection common/adaptive pair evidence",
+      "input": "SkillSelectionMachinePair and user-local adaptive correction/result-gap signals",
+      "output": "common checkpoint plus user-local adaptive refs"
+    }
+  },
+  "hierarchy_levels": [
+    {
+      "level": "ILearningMachine",
+      "status": "pass",
+      "source_ref": "43.SmartSkillsDomain/SkillSelectionMachine.cs:10",
+      "evidence": "SkillSelectionMachine implements ILearningMachine<SkillSelectionDomain> and existing export/import/checkpoint lifecycle remains separate from this adapter."
+    },
+    {
+      "level": "ILogicalOrchestrator",
+      "status": "pass",
+      "source_ref": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:6",
+      "evidence": "SkillSelectionLogicalOrchestrator requires a typed SkillSelectionRequest metadata payload and returns LogicalOrchestratorResult. Legacy SkillSelectionOrchestrator remains distinct and contract-only."
+    },
+    {
+      "level": "ILogicalFlow",
+      "status": "pass",
+      "source_ref": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:47",
+      "evidence": "SkillSelectionLogicalFlow executes four logical units, delegates decisions to SkillSelectionMachine.DecideFromTrainedState, and emits semantic_quality_claimed=false."
+    },
+    {
+      "level": "ILogicalUnit",
+      "status": "pass",
+      "source_ref": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:161",
+      "evidence": "Four SkillSelection logical units cover semantic-unit inventory, checkpoint boundary, decision path, and authority boundary."
+    },
+    {
+      "level": "ILearningMachinePair_common_adaptive",
+      "status": "pass",
+      "source_ref": "artifacts/adaptive-learning/AD-09Z-final-two-leg-coverage-matrix.json",
+      "evidence": "Pair evidence remains AD-09Z/SS-13-backed; CM-26D did not mutate checkpoints or train."
+    }
+  ],
+  "semantic_unit_mapping": {
+    "count": 11,
+    "source_ref": "43.SmartSkillsDomain/SmartSkillsSemanticUnitCatalog.cs:10",
+    "checkpoint_boundary_ref": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:174",
+    "unit_ids": [
+      "prompt_understanding",
+      "task_understanding",
+      "task_type",
+      "routing",
+      "skill_candidates",
+      "skill_selection",
+      "prompt_context",
+      "result_gap",
+      "output_validation",
+      "task_completion",
+      "intermediate_checks"
+    ],
+    "claim": "The adapter maps all 11 unit ids to source-backed evidence and checkpoint section evidence, but does not convert lifecycle evidence into a full semantic quality claim."
+  },
+  "legacy_orchestrator_distinction": {
+    "legacy_contract_only_path": "43.SmartSkillsDomain/SkillSelectionOrchestrator.cs:6",
+    "new_logical_hierarchy_path": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:6",
+    "status": "pass_distinct_paths",
+    "claim": "The existing SkillSelectionMachine.GetOrchestratorAsync legacy path remains contract-only; CM-26D adds separate explicit hierarchy evidence rather than pretending the old orchestrator already had flow/unit source parity."
+  },
+  "deterministic_shortcut_review": {
+    "status": "pass",
+    "candidate_position_scaffold_final_authority": false,
+    "static_validators_final_authority": false,
+    "json_reports_final_authority": false,
+    "catalog_presence_final_authority": false,
+    "new_keyword_classifier_added": false,
+    "new_static_route_table_added": false,
+    "finding": "The adapter delegates to SkillSelectionMachine.DecideFromTrainedState and emits non-final scaffold evidence explicitly; it adds no new ranking, keyword classifier, BM25, regex, exact lookup, or static route table."
+  },
+  "counts": {
+    "total_levels": 5,
+    "pass": 5,
+    "partial": 0,
+    "open": 0,
+    "fail": 0,
+    "semantic_units_mapped": 11
+  },
+  "verification": {
+    "focused_test_command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter FullyQualifiedName~SkillSelectionLogicalHierarchyTests --no-restore --nologo",
+    "focused_test_exit_code": 0,
+    "focused_test_result": "Passed 4, Failed 0, Skipped 0",
+    "first_attempt_exit_code": 1,
+    "first_attempt_failure": "CS9176 collection expression missing target type in new adapter; fixed in scoped source file before final focused rerun."
+  },
+  "forbidden_scope_confirmed": {
+    "host_repo_edited": false,
+    "external_ai_used": false,
+    "dpo_authoring_started": false,
+    "model_training_started": false,
+    "runtime_or_host_invoked": false,
+    "broad_tests_run": false,
+    "re_audit_started": false,
+    "cm27_or_final_started": false
+  },
+  "semantic_quality_claimed": false,
+  "training_started": false,
+  "runtime_or_host_invoked": false,
+  "external_ai_used": false,
+  "completion_claim_allowed": false,
+  "first_actionable_gap": {
+    "id": "CM26-RE-AUDIT-AFTER-CM26D-01",
+    "gap_id": "CM_26_RE_AUDIT_REQUIRED_AFTER_SKILL_SELECTION_REPAIR",
+    "status": "open",
+    "next_bounded_action": "CM-26-RE-AUDIT-A5-TRAINABLE-HIERARCHY-PARITY-AFTER-SKILL-SELECTION-REPAIR"
+  },
+  "next_bounded_action": "CM-26-RE-AUDIT-A5-TRAINABLE-HIERARCHY-PARITY-AFTER-SKILL-SELECTION-REPAIR",
+  "required_next_action": "CM-26-RE-AUDIT-A5-TRAINABLE-HIERARCHY-PARITY-AFTER-SKILL-SELECTION-REPAIR",
+  "commit_hash": "850f60280d6ff0b59f64454fc1d171079e5f7ae0",
+  "push_status": "pushed_to_origin_codex_chat_gpt_5_5"
+}

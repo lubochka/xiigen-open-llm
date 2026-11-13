@@ -1,0 +1,89 @@
+{
+  "phase": "P5_SOURCE_DISJOINT_SPLIT",
+  "ablation_executable_now": false,
+  "reason": "No trained model and no source-disjoint train/eval split exist.",
+  "training_allowed": false,
+  "eval_allowed": false,
+  "semantic_quality_claimed": false,
+  "training_run": false,
+  "eval_run": false,
+  "checkpoint_or_model_changed": false,
+  "controls": [
+    {
+      "control_id": "P5-CTRL-001",
+      "name": "exact prompt lookup",
+      "applies_to": [
+        "PromptToTask"
+      ],
+      "risk": "The system memorizes exact source prompt wording instead of extracting a transferable task contract.",
+      "required_failure_condition": "A lookup-only baseline must not pass held-out rows once source-disjoint material exists."
+    },
+    {
+      "control_id": "P5-CTRL-002",
+      "name": "filename/path lookup",
+      "applies_to": [
+        "PromptToTask",
+        "OrchestrationReasoning"
+      ],
+      "risk": "The system routes by local path or filename rather than source-free task/orchestration structure.",
+      "required_failure_condition": "A filename/path-only baseline must fail held-out rows."
+    },
+    {
+      "control_id": "P5-CTRL-003",
+      "name": "keyword-only classifier",
+      "applies_to": [
+        "PromptToTask"
+      ],
+      "risk": "The system detects shallow prompt keywords and skips contract extraction.",
+      "required_failure_condition": "A keyword-only baseline must fail cases that require permission, validation, artifact, and no-claim boundaries."
+    },
+    {
+      "control_id": "P5-CTRL-004",
+      "name": "source-title shortcut",
+      "applies_to": [
+        "PromptToTask"
+      ],
+      "risk": "The system uses source title or provenance as the decision signal.",
+      "required_failure_condition": "A source-title-only baseline must fail rows with renamed or absent source titles."
+    },
+    {
+      "control_id": "P5-CTRL-005",
+      "name": "WordPress/plugin title shortcut",
+      "applies_to": [
+        "OrchestrationReasoning"
+      ],
+      "risk": "The system recognizes WordPress/plugin provenance instead of phase-boundary orchestration.",
+      "required_failure_condition": "A WordPress/plugin-title baseline must fail held-out rows from non-plugin sources."
+    },
+    {
+      "control_id": "P5-CTRL-006",
+      "name": "static phase keyword shortcut",
+      "applies_to": [
+        "OrchestrationReasoning"
+      ],
+      "risk": "The system reacts to words like phase, review, commit, or transition without reasoning about gate order.",
+      "required_failure_condition": "A static phase-keyword baseline must fail adversarial rows where keywords appear but the correct gate order differs."
+    },
+    {
+      "control_id": "P5-CTRL-007",
+      "name": "exact protocol text lookup",
+      "applies_to": [
+        "OrchestrationReasoning"
+      ],
+      "risk": "The system memorizes exact protocol wording from the source file.",
+      "required_failure_condition": "An exact-protocol-text lookup baseline must fail paraphrased or independently sourced phase-boundary examples."
+    }
+  ],
+  "execution_prerequisites": [
+    "at least two independent accepted source families per target machine",
+    "explicit train/eval source-family separation",
+    "trained or candidate model artifact authorized by a later phase",
+    "held-out fixtures whose source_family_id is absent from training rows"
+  ],
+  "current_rows_covered": [
+    "P3-PTT-DRAFT-001",
+    "P3-PTT-DRAFT-002",
+    "P4-ORCH-DPO-DRAFT-001",
+    "P4-ORCH-DPO-DRAFT-002"
+  ]
+}

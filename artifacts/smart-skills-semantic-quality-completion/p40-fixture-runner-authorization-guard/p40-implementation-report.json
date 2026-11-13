@@ -1,0 +1,81 @@
+{
+  "phase": "P40",
+  "status": "PASS_PENDING_PARENT_REVIEW",
+  "scope": "dashboard fixture runner authorization guard only",
+  "changed_files": [
+    "43.SmartSkillsDomain.Dashboard/ApiDashboardFixtureRunner.cs",
+    "Tests/ApiDashboardFixtureRunnerTests.cs",
+    "tools/api-dashboard-qa.ps1",
+    "docs/projects/43-smart-skills-domain-dashboard.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-COMPLETION-PLAN-v1-STATE.json",
+    "artifacts/smart-skills-semantic-quality-completion/p40-fixture-runner-authorization-guard/p40-review-cycles.jsonl",
+    "artifacts/smart-skills-semantic-quality-completion/p40-fixture-runner-authorization-guard/p40-implementation-report.json",
+    "artifacts/smart-skills-semantic-quality-completion/p40-fixture-runner-authorization-guard/p40-implementation-report.md",
+    "artifacts/smart-skills-semantic-quality-completion/p40-fixture-runner-authorization-guard/p40-self-check.json",
+    "artifacts/smart-skills-semantic-quality-completion/p40-fixture-runner-authorization-guard/p40-evidence-card.md"
+  ],
+  "guard_behavior": {
+    "loads_p36_fixture_rows": true,
+    "reads_p37_runner_gap_ledger": true,
+    "accepts_authorization_object": true,
+    "accepts_authorization_manifest_path": true,
+    "refuses_without_authorization": true,
+    "refuses_malformed_authorization": true,
+    "refuses_non_allowing_authorization": true,
+    "explicit_allow_changes_only_authorization_metadata": true
+  },
+  "non_claims": {
+    "training_run": false,
+    "eval_run": false,
+    "checkpoint_mutated": false,
+    "semantic_quality_claimed": false,
+    "host_runtime_proof_claimed": false,
+    "external_ai_used": false,
+    "model_or_machine_called": false
+  },
+  "tests_run": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"ApiDashboard|SemanticQualityFixture|FixtureRunner\" --nologo",
+      "result": "FAIL_THEN_FIXED",
+      "summary": "Initial run had 1 failing P40 assertion because P37 gap metadata lacked the explicit gap id; production metadata was fixed."
+    },
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"ApiDashboard|SemanticQualityFixture|FixtureRunner\" --nologo",
+      "result": "PASS",
+      "summary": "44 passed, 0 failed, 0 skipped."
+    },
+    {
+      "command": "powershell.exe -ExecutionPolicy Bypass -File tools/api-dashboard-qa.ps1",
+      "result": "PASS",
+      "summary": "passed=true; P40 source, test, false-claim, and documentation checks passed."
+    },
+    {
+      "command": "node tools/semantic-quality-fixture-qa.js",
+      "result": "PASS",
+      "summary": "fixtures=36; scenarios=36; labels=36; failures=0."
+    }
+  ],
+  "review_cycles": {
+    "code_review_fix_cycles": 4,
+    "execution_documentation_review_cycles": 4,
+    "evidence": "artifacts/smart-skills-semantic-quality-completion/p40-fixture-runner-authorization-guard/p40-review-cycles.jsonl"
+  },
+  "verification_side_effects": [
+    {
+      "file": "artifacts/smart-skills-semantic-quality-completion/p38-fixture-dashboard-qa-automation/p38-fixture-dashboard-qa-report.json",
+      "reason": "The allowed node tools/semantic-quality-fixture-qa.js verification command refreshed the historical P38 fixture QA report timestamp/check field.",
+      "last_write_observed": "2026-06-16T01:59:27.1247697+03:00",
+      "new_p38_implementation_work": false
+    }
+  ],
+  "git_or_external_actions": {
+    "git_commands_run": false,
+    "codex_subagent_commands_run": false,
+    "external_ai_or_network_used": false,
+    "commit_run": false,
+    "push_run": false
+  },
+  "parent_will_perform_commit_push_after_review": true,
+  "may_derive_next_phase": false,
+  "must_stop_after_report": true
+}

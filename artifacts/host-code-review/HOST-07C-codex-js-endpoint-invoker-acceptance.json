@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "work_order_id": "HOST-07C-CODEX-JS-ENDPOINT-INVOKER-REPAIR",
+  "artifact_kind": "codex_js_endpoint_invoker_acceptance",
+  "generated_at": "2026-06-07T13:55:43.417Z",
+  "status": "pass",
+  "verdict": "PASS_CODEX_JS_ENDPOINT_INVOKER_ACCEPTED_BY_SOURCE_REVIEW",
+  "claim_scope": "Codex host source-code review acceptance only. No Codex runtime smoke, QA/e2e, model training, semantic quality, Claude/Cursor work, or final completion claim.",
+  "host_repo": "C:/Projects/codex-xiigen-smart-skills",
+  "host_branch": "main",
+  "host_head": "e08db4f9789834f6d0dae95a3b6749708d8cc3f9",
+  "host_status_sb": "## main...origin/main",
+  "host_files_changed": "none; no-op verification because parent-observed host repair already exists and passes source checks",
+  "source_reports": [
+    "C:/Projects/codex-xiigen-smart-skills/reports/HOST-07C-codex-js-endpoint-invoker-repair.json",
+    "artifacts/host-code-review/HOST-07A-host-code-review-matrix.json"
+  ],
+  "package_main": "src/codex-entrypoint.js",
+  "source_entrypoint": "src/codex-entrypoint.js",
+  "sourceEntrypointInvokesCoreEndpoint": true,
+  "powershellEntrypointRole": "legacy_launcher_only",
+  "powershellEntrypointAcceptedAsImplementation": false,
+  "acceptance_checks": [
+    {
+      "id": "package_source_entrypoint_js",
+      "passed": true,
+      "evidence": [
+        "package.json main=src/codex-entrypoint.js",
+        "package.json codexXiigenSmartSkills.sourceEntrypoint=src/codex-entrypoint.js"
+      ]
+    },
+    {
+      "id": "package_marks_js_invokes_core",
+      "passed": true,
+      "evidence": [
+        "package.json codexXiigenSmartSkills.sourceEntrypointInvokesCoreEndpoint=true"
+      ]
+    },
+    {
+      "id": "ps1_legacy_launcher_only",
+      "passed": true,
+      "evidence": [
+        "package.json powershellEntrypointRole=legacy_launcher_only",
+        "package.json powershellEntrypointAcceptedAsImplementation=false",
+        "src/codex-entrypoint.ps1 delegates to node/source entrypoint"
+      ]
+    },
+    {
+      "id": "plugin_package_shape_points_codex_plugin",
+      "passed": true,
+      "evidence": [
+        ".codex-plugin/plugin.json name=codex-xiigen-smart-skills",
+        "package.json pluginManifest=.codex-plugin/plugin.json"
+      ]
+    },
+    {
+      "id": "xiigen_request_fields_present",
+      "passed": true,
+      "evidence": [
+        "src/codex-entrypoint.js contains HostName",
+        "src/codex-entrypoint.js contains HostType",
+        "src/codex-entrypoint.js contains Method",
+        "src/codex-entrypoint.js contains UserPromptOrTaskText",
+        "src/codex-entrypoint.js contains DebugEnabled",
+        "src/codex-entrypoint.js contains RequestedSkills",
+        "src/codex-entrypoint.js contains AvailableSkills",
+        "src/codex-entrypoint.js contains CheckSetInputs",
+        "src/codex-entrypoint.js contains Provenance",
+        "src/codex-entrypoint.js contains CorrelationId"
+      ],
+      "missing_fields": []
+    },
+    {
+      "id": "js_invokes_core_endpoint",
+      "passed": true,
+      "evidence": [
+        "src/codex-entrypoint.js invokeXiigenCore",
+        "src/codex-entrypoint.js spawnSync",
+        "src/codex-entrypoint.js -RequestPath/-ResponsePath/-TracePath",
+        "src/codex-entrypoint.js default core endpoint"
+      ]
+    },
+    {
+      "id": "cli_or_callable_entrypoint_present",
+      "passed": true,
+      "evidence": [
+        "src/codex-entrypoint.js exports invokeXiigenCore",
+        "src/codex-entrypoint.js runCli calls invokeXiigenCore(optionsFromCliArgs(process.argv.slice(2)))",
+        "src/codex-entrypoint.js direct module invocation guard calls runCli"
+      ],
+      "note": "Verifier corrected: source uses runCli plus direct module invocation guard rather than the earlier exact string pattern."
+    },
+    {
+      "id": "thin_host_no_semantic_authority",
+      "passed": true,
+      "evidence": [
+        "src/codex-entrypoint.js hostSemanticRanking=false",
+        "src/codex-entrypoint.js modelTrainingInHost=false",
+        "src/codex-entrypoint.js corpusParsingInHost=false",
+        "src/codex-entrypoint.js dpoGenerationInHost=false",
+        "src/codex-entrypoint.js learnedModelMutationInHost=false",
+        "package metadata thin-host flags false"
+      ]
+    },
+    {
+      "id": "debug_trace_source_backed_redacted",
+      "passed": true,
+      "evidence": [
+        "src/codex-entrypoint.js createDebugTraceDisplay",
+        "src/codex-entrypoint.js redacted debug payload",
+        "src/codex-entrypoint.js debug display shape"
+      ]
+    },
+    {
+      "id": "host_report_passed",
+      "passed": true,
+      "evidence": [
+        "reports/HOST-07C-codex-js-endpoint-invoker-repair.json"
+      ]
+    },
+    {
+      "id": "no_runtime_smoke_claim",
+      "passed": true,
+      "evidence": [
+        "host report claim_scope",
+        "package.json codexXiigenSmartSkills.runtimeSmokeClaimed=false"
+      ]
+    }
+  ],
+  "verification": {
+    "allowed_only": true,
+    "commands": [
+      {
+        "command": "node --check src/codex-entrypoint.js",
+        "repo": "C:/Projects/codex-xiigen-smart-skills",
+        "exit_code": 0,
+        "result": "passed"
+      },
+      {
+        "command": "ConvertFrom-Json package/plugin/HOST-07C host report",
+        "repo": "C:/Projects/codex-xiigen-smart-skills",
+        "exit_code": 0,
+        "result": "passed"
+      },
+      {
+        "command": "git diff --check",
+        "repo": "C:/Projects/codex-xiigen-smart-skills",
+        "exit_code": 0,
+        "result": "passed"
+      },
+      {
+        "command": "git status --short/status -sb",
+        "repo": "C:/Projects/codex-xiigen-smart-skills",
+        "exit_code": 0,
+        "result": "clean/tracking origin/main"
+      }
+    ],
+    "runtime_smoke_run": false,
+    "dotnet_or_build_or_test_run": false,
+    "external_ai_used": false
+  },
+  "residual_gap": null,
+  "next_bounded_action": "HOST-07D-RE-AUDIT-HOST-CODE-REVIEW-AFTER-REPAIRS",
+  "completion_claim_allowed": false,
+  "full_plan_completion_claimed": false,
+  "commit_hash": "da45fb743d3842aaf67dd9e6df7d2c8e08535747",
+  "push_status": "pushed_to_origin_codex_chat_gpt_5_5",
+  "verifier_correction": "cli_or_callable_entrypoint_present check updated from brittle exact string to actual runCli/direct-invocation source evidence.",
+  "reconciliation_required": false
+}

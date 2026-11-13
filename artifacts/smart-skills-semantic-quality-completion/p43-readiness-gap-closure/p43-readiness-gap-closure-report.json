@@ -1,0 +1,151 @@
+{
+  "schema_version": 2,
+  "phase": "P43_READINESS_GAP_CLOSURE",
+  "repaired_at_utc": "2026-06-16T00:03:09.462Z",
+  "status": "pass_pending_parent_review_after_readability_repair",
+  "verdict": "PASS_PENDING_PARENT_REVIEW_AFTER_REPAIR",
+  "current_authority_quote": "Continue plan execution through sub-agents",
+  "scope": "P37 readiness gap ledger only. Artifacts/state only. No production code, git, training, eval, checkpoint mutation, or host runtime.",
+  "parent_finding": "Parent review failed the first P43 version because human-facing Markdown/JSON fields were unreadable mojibake/question-mark placeholders.",
+  "repair": "Markdown report and evidence card were rewritten in Russian UTF-8 via patch. JSON human fields were rewritten as readable English ASCII to avoid shell encoding loss.",
+  "gaps": [
+    {
+      "gap_id": "P37-GAP-01",
+      "original_problem": "Dashboard/API surface for fixture/scenario rows was missing.",
+      "closed_by_phases": [
+        "P39"
+      ],
+      "status": "CLOSED",
+      "evidence_files": [
+        "artifacts/smart-skills-semantic-quality-completion/p39-dashboard-fixture-catalog-api-surface/p39-implementation-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p39-dashboard-fixture-catalog-api-surface/p39-parent-review.json"
+      ],
+      "proven": "P39 added dashboard/API fixture preview surface.",
+      "not_proven": "This does not prove model quality, does not run eval, does not train a model, and does not prove Claude/Cursor/Codex host runtime.",
+      "next_safe_action": "No separate action for this gap. Use P39 only as display/QA evidence."
+    },
+    {
+      "gap_id": "P37-GAP-02",
+      "original_problem": "A runner was needed to read fixture rows without silently running eval before authorization.",
+      "closed_by_phases": [
+        "P40"
+      ],
+      "status": "CLOSED_AS_NON_CLAIM",
+      "evidence_files": [
+        "artifacts/smart-skills-semantic-quality-completion/p40-fixture-runner-authorization-guard/p40-implementation-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p40-fixture-runner-authorization-guard/p40-parent-review.json"
+      ],
+      "proven": "P40 added an authorization guard; fixture preview cannot be treated as eval.",
+      "not_proven": "Eval did not run. This is not training, not a quality metric, and not readiness.",
+      "next_safe_action": "When authorized later, create an eval authorization manifest and dry-run validation work order."
+    },
+    {
+      "gap_id": "P37-GAP-03",
+      "original_problem": "Source-family overlap must be checked before any eval run.",
+      "closed_by_phases": [
+        "P41"
+      ],
+      "status": "CLOSED_AS_NON_CLAIM",
+      "evidence_files": [
+        "artifacts/smart-skills-semantic-quality-completion/p41-source-disjoint-pre-eval-guard/p41-implementation-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p41-source-disjoint-pre-eval-guard/p41-parent-review.json"
+      ],
+      "proven": "P41 added a pre-eval source-disjoint guard and keeps can_proceed_to_eval_runner=false.",
+      "not_proven": "The guard is not eval. Source-disjoint quality result is not available because eval did not run.",
+      "next_safe_action": "Use the guard as required preflight before future eval authorization."
+    },
+    {
+      "gap_id": "P37-GAP-04",
+      "original_problem": "Preview/dashboard smoke must not close model quality or host runtime readiness.",
+      "closed_by_phases": [
+        "P42"
+      ],
+      "status": "CLOSED",
+      "evidence_files": [
+        "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-implementation-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-parent-review.json"
+      ],
+      "proven": "P42 added a wording firewall for dashboard/docs/report-facing artifacts.",
+      "not_proven": "The firewall does not evaluate the model and does not run host runtime.",
+      "next_safe_action": "Keep P42 scan mandatory for future dashboard/API/report changes."
+    },
+    {
+      "gap_id": "P37-GAP-05",
+      "original_problem": "Checkpoint rewrite manifest was design-only; model file was not rewritten and not confirmed by fresh-load/continue-training.",
+      "closed_by_phases": [
+        "P10",
+        "P11",
+        "P12"
+      ],
+      "status": "PARTIAL",
+      "evidence_files": [
+        "artifacts/smart-skills-semantic-quality-completion/p10-checkpoint-rewrite/smart-skills-p10-checkpoint-rewrite-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p10-checkpoint-rewrite/p10-parent-review.json",
+        "artifacts/smart-skills-semantic-quality-completion/p11-fresh-load/smart-skills-p11-fresh-load-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p11-fresh-load/p11-parent-review.json",
+        "artifacts/smart-skills-semantic-quality-completion/p12-continue-training/smart-skills-p12-continue-training-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p12-continue-training/p12-parent-review.json"
+      ],
+      "proven": "P10/P11/P12 provide candidate checkpoint package, component fresh-load evidence, and no-op continue-training lifecycle evidence.",
+      "not_proven": "Common/final model checkpoint was not rewritten, delta training did not run, new checkpoint from new rows was not created, full API semantic quality is not proven, SkillSelection readiness is not closed.",
+      "next_safe_action": "Next safe step without training/eval: P44 authorization/readiness packet with exact candidate dataset, license/source gate, source-disjoint readiness, target checkpoint, metrics, and rollback plan."
+    },
+    {
+      "gap_id": "P37-GAP-06",
+      "original_problem": "Claude/Cursor/Codex host runtime is outside P37; dashboard/API evidence cannot claim extension host proof.",
+      "closed_by_phases": [
+        "P42"
+      ],
+      "status": "CLOSED_AS_NON_CLAIM",
+      "evidence_files": [
+        "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-implementation-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-parent-review.json"
+      ],
+      "proven": "P42 fixed the boundary: dashboard/API evidence cannot be called Claude/Cursor/Codex host runtime proof.",
+      "not_proven": "Real host runtime did not run and is outside this semantic-quality readiness scope.",
+      "next_safe_action": "If host runtime is needed, use a separate host-runtime work order with real entrypoints or an honest test-only adapter scope."
+    },
+    {
+      "gap_id": "P37-GAP-07",
+      "original_problem": "Training was not authorized in P37; rows are candidate/fixture material.",
+      "closed_by_phases": [
+        "P40",
+        "P41",
+        "P42"
+      ],
+      "status": "STILL_OPEN",
+      "evidence_files": [
+        "artifacts/smart-skills-semantic-quality-completion/p40-fixture-runner-authorization-guard/p40-implementation-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p40-fixture-runner-authorization-guard/p40-parent-review.json",
+        "artifacts/smart-skills-semantic-quality-completion/p41-source-disjoint-pre-eval-guard/p41-implementation-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p41-source-disjoint-pre-eval-guard/p41-parent-review.json",
+        "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-implementation-report.json",
+        "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-parent-review.json"
+      ],
+      "proven": "Guard/firewall layers prove fixtures/dashboard/report do not pretend to be training/eval/model claims.",
+      "not_proven": "Training authorization was not granted, training did not run, eval did not run, checkpoint mutation did not happen, common model was not updated.",
+      "next_safe_action": "No stop gate: create P44 non-training authorization dossier with exact candidate dataset, license/source evidence, source-disjoint readiness, target checkpoint, metrics, rollback plan, and explicit approval field. Do not run training/eval."
+    }
+  ],
+  "counts": {
+    "total_gaps": 7,
+    "closed": 2,
+    "closed_as_non_claim": 3,
+    "partial": 1,
+    "still_open": 1,
+    "review_cycle_rows": 8
+  },
+  "non_claim_flags": {
+    "semantic_quality_claimed": false,
+    "model_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "full_api_semantic_quality_claimed": false,
+    "host_runtime_claimed": false,
+    "claude_cursor_codex_host_runtime_proven": false,
+    "training_run": false,
+    "eval_run": false,
+    "checkpoint_mutated": false,
+    "common_model_updated": false
+  },
+  "next_recommendation": "P44 non-training authorization/readiness dossier with exact candidate dataset, license/source gate, source-disjoint readiness, target checkpoint, metrics, rollback, and explicit approval field. Do not run training/eval/checkpoint mutation."
+}

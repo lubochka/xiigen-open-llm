@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Smart skills Q1 source ledger row",
+  "type": "object",
+  "additionalProperties": false,
+  "audit_metadata_note": "path and file_name are audit metadata for traceability only; sha256 is a source-row metadata/version hash, not referenced file content.",
+  "content_version_note": "source_version_id is based on stable source-row content fields and excludes row state plus volatile mtime fields, so todo->done and mtime-only changes do not create a new content version.",
+  "required": [
+    "source_row_id",
+    "source_version_id",
+    "path",
+    "file_name",
+    "first_seen_state",
+    "last_seen_state",
+    "sha256",
+    "mtime",
+    "processed_version",
+    "processed_at",
+    "processing_decision"
+  ],
+  "properties": {
+    "source_row_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_version_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "path": {
+      "type": "string",
+      "description": "Audit metadata only; not model-learning content."
+    },
+    "file_name": {
+      "type": "string",
+      "description": "Audit metadata only; not model-learning content."
+    },
+    "first_seen_state": {
+      "type": "string",
+      "minLength": 1
+    },
+    "last_seen_state": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Stable source-row content hash; excludes state and volatile mtime fields."
+    },
+    "mtime": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Source state file mtime, recorded as audit metadata only."
+    },
+    "processed_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "processed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "processing_decision": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

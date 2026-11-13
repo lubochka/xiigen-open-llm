@@ -1,0 +1,35 @@
+{
+  "schema": "test-strategy-admission-v1",
+  "schema_version": "1.0",
+  "work_order": "PTT-02U",
+  "status": "PASS_STATIC_ARTIFACT_VALIDATION_ONLY",
+  "branch_type": "data_governance_artifact_only",
+  "allowed_verification": [
+    "git status/read-only checks",
+    "JSON/JSONL parse of changed PTT-02U artifacts and accepted PTT-02 source artifacts",
+    "rg scans over changed PTT-02U artifacts for forbidden raw payload fields and forbidden true flags",
+    "git diff --check"
+  ],
+  "forbidden_verification": [
+    "dotnet build",
+    "dotnet test",
+    "host runtime",
+    "training",
+    "checkpoint creation",
+    "browser/image tools",
+    "external AI",
+    "commit",
+    "push"
+  ],
+  "test_layers": {
+    "unit": "not_applicable_no_code_changed",
+    "integration": "not_applicable_no_code_changed",
+    "e2e_host": "not_applicable_no_host_work",
+    "qa_automation": "not_applicable_no_runtime_path",
+    "negative": "covered_by_static_forbidden_field_and_forbidden_flag_rg_scan",
+    "untrained_honesty": "covered_by false dpo_train_ready/training_started flags and no model claim",
+    "trained_acceptance": "not_applicable_training_forbidden",
+    "regression": "git diff --check plus JSON parse only"
+  },
+  "passed": true
+}

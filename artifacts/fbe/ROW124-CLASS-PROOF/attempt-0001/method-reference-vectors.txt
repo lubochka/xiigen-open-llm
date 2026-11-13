@@ -1,0 +1,36 @@
+REFERENCE-VECTOR VALIDATION OF THE TRANSFORM
+rule: remove 0x0D ONLY when immediately before 0x0A; keep lone 0x0D
+date: 2026-11-10T01:16:27Z
+
+=== TOOL: perl ===
+vector 1 in       : 41 0d 0a 42 0d 43 0d 0a
+vector 1 expected : 41 0a 42 0d 43 0a
+vector 1 observed : 41 0a 42 0d 43 0a
+vector 1 verdict  : PASS (lone 0x0D between 42 and 43 PRESERVED)
+
+vector 2 in       : 41 0a 42 0a 43
+vector 2 expected : 41 0a 42 0a 43
+vector 2 observed : 41 0a 42 0a 43
+vector 2 verdict  : PASS (identity when no 0x0D)
+
+vector 3 in       : 0d 0d 0a
+vector 3 expected : 0d 0a
+vector 3 observed : 0d 0a
+vector 3 verdict  : PASS (only the 0x0D adjacent to 0x0A removed)
+
+=== TOOL: python ===
+vector 1 in       : 41 0d 0a 42 0d 43 0d 0a
+vector 1 expected : 41 0a 42 0d 43 0a
+vector 1 observed : 41 0a 42 0d 43 0a
+vector 1 verdict  : PASS (lone 0x0D between 42 and 43 PRESERVED)
+
+vector 2 in       : 41 0a 42 0a 43
+vector 2 expected : 41 0a 42 0a 43
+vector 2 observed : 41 0a 42 0a 43
+vector 2 verdict  : PASS (identity when no 0x0D)
+
+vector 3 in       : 0d 0d 0a
+vector 3 expected : 0d 0a
+vector 3 observed : 0d 0a
+vector 3 verdict  : PASS (only the 0x0D adjacent to 0x0A removed)
+

@@ -1,0 +1,51 @@
+{
+  "phase": "P5L_PROMPT_TO_TASK_TRAINING_ROW_PROMOTION_REVIEW",
+  "verdict": "PASS_DATASET_READY_SPLIT_NOT_TRAINING",
+  "review_cycles": [
+    {
+      "cycle": 1,
+      "name": "semantic precision review",
+      "initial_result": "FAIL",
+      "finding": "Initial P5L mixed dataset-ready and training-ready by marking eval/holdout rows as training_ready.",
+      "repair": "Split semantics added: dataset-ready rows are separated from P6 training input rows, P7 eval rows and holdout rows.",
+      "final_result": "PASS"
+    },
+    {
+      "cycle": 2,
+      "name": "row/count review",
+      "dataset_ready_count": 6,
+      "p6_training_input_count": 2,
+      "p7_eval_candidate_count": 2,
+      "holdout_candidate_count": 2,
+      "eval_or_holdout_training_ready_true": 0,
+      "result": "PASS"
+    },
+    {
+      "cycle": 3,
+      "name": "safety review",
+      "p6_training_allowed_by_this_artifact_alone_true": 0,
+      "semantic_quality_claimed_true": 0,
+      "training_allowed_true": 0,
+      "eval_allowed_true": 0,
+      "training_run": false,
+      "eval_run": false,
+      "checkpoint_or_model_changed": false,
+      "result": "PASS"
+    },
+    {
+      "cycle": 4,
+      "name": "readability/state review",
+      "json_parse": "PASS",
+      "mojibake_scan": "PASS",
+      "state_split_semantics_present": true,
+      "human_readable_russian": true,
+      "result": "PASS"
+    }
+  ],
+  "accepted_scope": [
+    "P5L dataset/split readiness",
+    "PromptToTask row promotion artifacts",
+    "state update"
+  ],
+  "next_action": "commit/push P5L; then P6 bounded subagent may train only on used_for_training_in_p6=true rows and keep eval/holdout reserved"
+}

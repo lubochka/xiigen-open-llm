@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "report_id": "q7-04-no-hidden-determinism-sweep",
+  "work_order_id": "Q7-04_FINAL_NO_HIDDEN_DETERMINISM_SWEEP",
+  "branch": "codex/chat-gpt-5.5",
+  "created_at_utc": "2026-06-11T02:24:00.0000000Z",
+  "status": "PASS",
+  "review_scope": "Final Q7 no-hidden-determinism sweep over contract/evaluator transfer evidence only. This is not runtime model inference, host/plugin runtime, dashboard/API evidence, full semantic quality, or full-product completion.",
+  "forbidden_actions_not_run": [
+    "external AI/tools",
+    "host/plugin/runtime",
+    "dashboard/API",
+    "Q8",
+    "new transfer evaluation",
+    "model training",
+    "model mutation",
+    "common checkpoint mutation",
+    "raw client project file reads",
+    "dotnet build",
+    "dotnet test",
+    "stage",
+    "commit",
+    "push"
+  ],
+  "source_artifacts_reviewed": {
+    "q7_fixtures": [
+      "training-data/smart-skills/semantic-quality/cross-project-transfer-fixtures-v1/cross-project-fixtures.jsonl",
+      "training-data/smart-skills/semantic-quality/cross-project-transfer-fixtures-v1/fixture-card.json",
+      "training-data/smart-skills/semantic-quality/cross-project-transfer-fixtures-v1/schema.json",
+      "artifacts/smart-skills-quality-uplift/q7/cross-project-fixture-matrix-report.json"
+    ],
+    "q7_transfer_reports_and_evaluators": [
+      "artifacts/smart-skills-quality-uplift/q7/common-only-transfer-evaluation-report.json",
+      "artifacts/smart-skills-quality-uplift/q7/common-only-evaluator/run-common-only-transfer-evaluation.ps1",
+      "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json",
+      "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-evaluator/run-common-plus-adaptive-transfer-evaluation.ps1",
+      "artifacts/smart-skills-quality-uplift/q7/metric-honesty-review.json"
+    ],
+    "q3_q4_q5_controls": [
+      "artifacts/smart-skills-quality-uplift/q3/prompt-to-task-q3-01-held-out-report.json",
+      "artifacts/smart-skills-quality-uplift/q3/prompt-to-task-ablation-review-rerun.json",
+      "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-heldout-report.json",
+      "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-ablation-review.json",
+      "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-ablation-review-final-after-hash-repair.json",
+      "artifacts/smart-skills-quality-uplift/q5/skill-selection-wrong-skill-near-miss-review.json"
+    ]
+  },
+  "sweep_results": {
+    "q7_rows_reviewed": 8,
+    "fixture_rows_reviewed": 8,
+    "q7_reports_status": {
+      "q7_01_common_only": "PASS",
+      "q7_02_common_plus_adaptive": "PASS",
+      "q7_03_metric_honesty": "PASS"
+    },
+    "fixture_expected_output_dependency": {
+      "detected": true,
+      "hidden": false,
+      "verdict": "PASS_SCOPED",
+      "evidence": [
+        "Q7-01 evaluator lines 203-206 assign derived task/plan/skills from Q7-00 fixture expectations.",
+        "Q7-02 evaluator lines 215-218 assign derived task/plan/skills from Q7-00 fixture expectations.",
+        "Both Q7-01 and Q7-02 reports label evaluation_scope as report-only contract evaluation and each row actual_source says no runtime model inference executed."
+      ],
+      "scope_note": "This is acceptable only as visible contract/evaluator evidence. It is not accepted as semantic model/runtime quality."
+    },
+    "exact_memory_or_prompt_lookup": {
+      "hidden_explanation_found": false,
+      "q7_control_status": "FAILS_CONTROL across Q7-01 and Q7-02 rows",
+      "q3_exact_prompt_lookup_accuracy": 0,
+      "raw_prompt_text_loaded": false,
+      "notes": "Q7 uses redacted prompt refs/summaries and reports baseline_output null for exact prompt lookup controls."
+    },
+    "filename_bm25_or_static_route": {
+      "hidden_explanation_found": false,
+      "q7_control_status": "DEGRADES across Q7-01 and Q7-02 rows",
+      "q4_filename_lookup_accuracy": 0.0,
+      "q4_bm25_title_surrogate_accuracy": 0.25,
+      "q4_static_route_table_accuracy": 0.25,
+      "q4_controls_explain_full_held_out_pass": false,
+      "notes": "Q4 static route table has one-case behavior but does not explain the full 4/4 held-out pass, and Q7 rows keep filename/BM25 as degrading controls."
+    },
+    "regex_or_keyword_static_task_route": {
+      "hidden_explanation_found": false,
+      "q3_regex_classifier_accuracy": 0.5,
+      "q3_keyword_classifier_accuracy": 0.25,
+      "notes": "Regex and keyword controls degrade below the Q3 held-out runner result and are not used as final Q7 authority."
+    },
+    "candidate_position_or_order": {
+      "hidden_explanation_found": false,
+      "q7_control_status": "FAILS_CONTROL across Q7-01 and Q7-02 rows",
+      "q5_first_position_baseline_exact_matches": "0/24",
+      "q5_checkpoint_position_baseline_exact_matches": "0/24",
+      "q5_wrong_skill_candidate_position_gate": "PASS_0_OF_24_FIRST_POSITION_AND_0_OF_24_CHECKPOINT_POSITION_EXACT_MATCHES",
+      "notes": "Q5 candidate-position controls stay degraded and Q7 rows record candidate-position as a failing control."
+    },
+    "project_alias_or_root_hash_exact_lookup": {
+      "hidden_explanation_found": false,
+      "notes": "Project aliases and root hashes are used as redacted identity/separation evidence, not answer authority. Common+adaptive rows require profile ref match, root-hash match, and separation from the other project; filename/BM25 controls still degrade."
+    },
+    "json_only_quality_or_overclaim": {
+      "hidden_explanation_found": false,
+      "semantic_quality_claimed": false,
+      "host_runtime_claimed": false,
+      "dashboard_api_runtime_claimed": false,
+      "model_decision_path_invoked": false,
+      "full_product_completion_claimed": false,
+      "notes": "Q7 JSON reports are accepted only as contract/evaluator evidence. No runtime/model/full semantic quality claim is made."
+    }
+  },
+  "targeted_searches": [
+    {
+      "command": "rg semantic/runtime/dashboard/model/full-product true-claim patterns in artifacts/smart-skills-quality-uplift/q7 and state",
+      "result": "PASS_NO_MATCH"
+    },
+    {
+      "command": "rg expected/derived/actual_source/evaluation_scope/report_only terms in Q7 evaluators and reports",
+      "result": "PASS_VISIBLE_FIXTURE_CONTRACT_DEPENDENCY_AND_SCOPE_LABELS"
+    }
+  ],
+  "findings": [],
+  "repairs_required": [],
+  "verification": {
+    "json_jsonl_parse_and_consistency_checks": "PASS",
+    "q7_rows_reviewed": "PASS_8_ROWS",
+    "q7_negative_controls": "PASS_24_OF_24_FAIL_OR_DEGRADE",
+    "q3_q4_q5_controls_align": "PASS",
+    "fixture_expected_output_dependency_labelled": "PASS_SCOPED_CONTRACT_EVALUATION",
+    "overclaim_scan": "PASS_NO_TRUE_RUNTIME_OR_QUALITY_CLAIMS",
+    "semantic_quality_claimed_false": "PASS",
+    "dotnet_build_or_test_run": false
+  },
+  "claim_scope": {
+    "semantic_quality_claimed": false,
+    "q7_no_hidden_determinism_sweep_claimed": true,
+    "q7_evidence_scope": "contract_evaluator_transfer_evidence_only",
+    "host_runtime_claimed": false,
+    "dashboard_api_runtime_claimed": false,
+    "model_decision_path_invoked": false,
+    "full_product_completion_claimed": false
+  },
+  "verdict": {
+    "result": "PASS",
+    "operator_input_required": false,
+    "blocker": false,
+    "exact_next_action": "Q7 pre-commit review/fix cycle 1 of 4"
+  }
+}

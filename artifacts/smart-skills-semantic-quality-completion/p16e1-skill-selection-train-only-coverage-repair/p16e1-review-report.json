@@ -1,0 +1,78 @@
+{
+  "phase": "P16E1_SKILL_SELECTION_TRAIN_ONLY_COVERAGE_REPAIR",
+  "verdict": "PASS_CANDIDATE_WITH_GAPS_READY_FOR_PARENT_REVIEW",
+  "summary_ru": "P16E1 создает конкретный train-only repair material для слабых SkillSelection units после P16E. Это не обучение, не checkpoint rebuild и не readiness claim.",
+  "p16e_commit_ref": "b75b4fa1",
+  "counts": {
+    "p16e_eval_rows_mapped": 12,
+    "p16e_fail_rows": 8,
+    "p16e_gap_rows": 4,
+    "train_only_candidate_rows": 10,
+    "positive_skill_candidate_rows": 9,
+    "diagnostics_only_candidate_rows": 1,
+    "candidate_training_ready_rows": 0,
+    "common_training_ready_rows": 0,
+    "quarantine_rows": 5,
+    "source_license_rows": 5
+  },
+  "candidate_rows_by_unit": {
+    "prompt_understanding": 2,
+    "task_understanding": 2,
+    "prompt_context": 1,
+    "intermediate_checks": 2,
+    "runtime_chain": 2,
+    "candidate_position_guard": 1
+  },
+  "coverage_delta_ru": [
+    "Добавлены candidate rows для prompt_understanding: claim_verification и planning.",
+    "Добавлены candidate rows для task_understanding: planning_dpo_authoring и trainable_architecture_decision.",
+    "Добавлен prompt_context repair row для claim_verification.",
+    "Добавлены intermediate_checks rows для output_readability_gate и test_integrity.",
+    "Добавлены runtime_chain rows для claim_verification и trainable_architecture_decision.",
+    "Candidate-position rows оставлены diagnostics-only; это не positive selection training."
+  ],
+  "remaining_gaps_ru": [
+    "Все новые строки остаются candidate_training_ready=false до parent review source/license/provenance gates.",
+    "Некоторые local skill source families пересекаются с P16B eval/holdout source families; для checkpoint rebuild нужен отдельный parent source-disjoint decision.",
+    "Common training недоступен без MIT/Apache-2.0 или явного user-owned/common boundary approval.",
+    "P16E1 не доказывает runtime SkillSelection behavior; это только materialization for next candidate rebuild."
+  ],
+  "safety_flags": {
+    "semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "full_api_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "dashboard_readiness_claimed": false,
+    "host_runtime_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "training_run": false,
+    "checkpoint_or_model_written": false,
+    "eval_holdout_used_for_training": false,
+    "raw_private_text_copied": false,
+    "commit_run": false,
+    "push_run": false
+  },
+  "artifacts": {
+    "gap_to_coverage_map": "artifacts/smart-skills-semantic-quality-completion/p16e1-skill-selection-train-only-coverage-repair/p16e1-gap-to-coverage-map.jsonl",
+    "train_only_candidate_rows": "artifacts/smart-skills-semantic-quality-completion/p16e1-skill-selection-train-only-coverage-repair/p16e1-train-only-candidate-rows.jsonl",
+    "source_license_ledger": "artifacts/smart-skills-semantic-quality-completion/p16e1-skill-selection-train-only-coverage-repair/p16e1-source-license-ledger.jsonl",
+    "quarantine_ledger": "artifacts/smart-skills-semantic-quality-completion/p16e1-skill-selection-train-only-coverage-repair/p16e1-quarantine-ledger.jsonl",
+    "review_report_json": "artifacts/smart-skills-semantic-quality-completion/p16e1-skill-selection-train-only-coverage-repair/p16e1-review-report.json",
+    "review_report_md": "artifacts/smart-skills-semantic-quality-completion/p16e1-skill-selection-train-only-coverage-repair/p16e1-review-report.md",
+    "review_cycles": "artifacts/smart-skills-semantic-quality-completion/p16e1-skill-selection-train-only-coverage-repair/p16e1-review-cycles.jsonl",
+    "self_check": "artifacts/smart-skills-semantic-quality-completion/p16e1-skill-selection-train-only-coverage-repair/p16e1-self-check.json",
+    "evidence_card": "artifacts/smart-skills-semantic-quality-completion/p16e1-skill-selection-train-only-coverage-repair/p16e1-evidence-card.md"
+  },
+  "next_action": "parent review P16E1; if accepted, open P16D2 checkpoint candidate rebuild from accepted adaptive train-only rows; otherwise run another train-only coverage materialization pass",
+  "parent_review_required_before_commit": true,
+  "verification": {
+    "json_jsonl_state_parse": "passed: P16E1 JSON/JSONL artifacts and active state parsed; row counts gap=12, candidate=10, source_license=5, quarantine=5, review_cycles=4",
+    "eval_holdout_contamination_check": "passed: P16B eval/holdout ids are absent from p16e1-train-only-candidate-rows.jsonl",
+    "raw_private_prompt_exact_source_leakage_scan": "passed: no raw private prompt text flags or verbatim private prompt markers in train-only candidate rows",
+    "utf8_mojibake_scan": "passed: U+00D0, U+00D1, U+FFFD, U+00E2, U+00C3 and literal four-question markers absent from P16E1 artifacts and state",
+    "no_overclaim_true_flag_scan": "passed: no semantic/full API/SkillSelection/trained-model/dashboard/host/final readiness true flags in P16E1 artifacts or state",
+    "git_diff_check": "passed: git diff --check on P16E1 artifacts and state returned exit code 0"
+  }
+}

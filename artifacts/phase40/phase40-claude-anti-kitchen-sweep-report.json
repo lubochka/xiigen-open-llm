@@ -1,0 +1,96 @@
+{
+  "work_order": "P40-WO-05b",
+  "host": "Claude",
+  "repo_root": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\claude-xiigen-smart-skills",
+  "validation_only": true,
+  "sweep_scope": "static read-only sweep inside Claude host repo only",
+  "method": "rg --files --hidden -g !.git/** and rg -n --hidden -g !.git/** static pattern sweeps",
+  "files_scanned_count": 10,
+  "files_scanned": [
+    ".claude-plugin/plugin.json",
+    "README.md",
+    "hooks/hooks.json",
+    "package.json",
+    "phase40-claude-install-smoke-report.json",
+    "prompts/claude-smoke-prompts.jsonl",
+    "scripts/install-smoke.ps1",
+    "scripts/smoke.ps1",
+    "smoke-report.json",
+    "src/claude-entrypoint.ps1"
+  ],
+  "search_categories": {
+    "external_ai_image_network_web_api": {
+      "pattern_summary": "Invoke-RestMethod, Invoke-WebRequest, curl, http(s), OpenAI, Anthropic, Claude API, image generation, chat completions, v1/messages",
+      "hit_count": 0,
+      "actual_violations": []
+    },
+    "training_private_corpus_canonical_skill": {
+      "pattern_summary": "TrainBatch, DPO, Direct Preference, checkpoint, model_weights, private corpus, canonical skill, training implementation",
+      "hit_count": 0,
+      "actual_violations": []
+    },
+    "semantic_kitchen_or_deterministic_authority": {
+      "pattern_summary": "semantic ranking/selection, validation kitchen, completion kitchen, host semantic decision, deterministic/static decision authority",
+      "hit_count": 20,
+      "actual_violations": [],
+      "allowed_prohibition_hits": [
+        ".claude-plugin/plugin.json: semanticRankingInHostAllowed=false, validationCompletionKitchenInHostAllowed=false, deterministicStaticDecisionAuthorityAllowed=false",
+        "hooks/hooks.json: hostSemanticRankingAllowed=false, hostValidationCompletionKitchenAllowed=false, deterministicStaticDecisionAuthorityAllowed=false",
+        "src/claude-entrypoint.ps1: hostSemanticRankingAllowed=false, deterministicStaticDecisionAuthorityAllowed=false, hostSemanticDecisionAuthority=false",
+        "scripts/install-smoke.ps1: deterministic_static_decision_authority=false, semantic_ranking_in_host=false, validation_completion_kitchen_in_host=false",
+        "phase40-claude-install-smoke-report.json: semantic_ranking_in_host=false, validation_completion_kitchen_in_host=false, deterministic_static_decision_authority=false, anti-masquerade PASS text",
+        "README.md: explicit prohibition that the host must not embed semantic ranking, training, validation, completion kitchen, external AI, image generation, or deterministic/static decision authority"
+      ]
+    },
+    "broad_terms_reviewed": {
+      "hit_count": 23,
+      "allowed_categories": [
+        "prohibition text and false flags",
+        "llm_mvp_core common model/training-data manifest references",
+        "static prompt-suite rows that require core boundary and anti-masquerade evidence",
+        "legacy scripts/smoke.ps1 core-runtime smoke path that invokes llm_mvp_core, not host-side semantic logic"
+      ]
+    }
+  },
+  "legacy_smoke_script_review": {
+    "file": "scripts/smoke.ps1",
+    "status": "allowed_non_violation_for_this_sweep",
+    "reason": "The file invokes a llm_mvp_core dotnet trace command when run later and reads the core trace output; it does not implement host-side training, private corpus handling, external AI calls, semantic ranking, validation kitchen, completion kitchen, or deterministic/static decision authority. It was not executed in P40-WO-05b."
+  },
+  "legacy_smoke_report_review": {
+    "file": "smoke-report.json",
+    "status": "allowed_non_violation_for_this_sweep",
+    "reason": "The report records a prior core_runtime_trace and host_owns_no_training_logic=true; it is not used as Phase40 runtime completion evidence and does not embed host-side semantic logic."
+  },
+  "actual_violations": [],
+  "actual_violations_count": 0,
+  "allowed_prohibition_hits_count": 20,
+  "allowed_prohibition_hit_categories": [
+    "false semantic-kitchen flags in manifests/config",
+    "false host semantic authority flags in entrypoint/report/script",
+    "README prohibition text",
+    "external-tool prohibition evidence text",
+    "common/adaptive asset references pointing to llm_mvp_core or host-package-external state"
+  ],
+  "external_ai_or_unrelated_tool_used": false,
+  "deterministic_masquerade_found": false,
+  "host_semantic_kitchen_found": false,
+  "private_corpus_or_canonical_skill_embedded": false,
+  "training_implementation_found": false,
+  "external_ai_substitution_path_found": false,
+  "passed": true,
+  "first_repair_row": null,
+  "phase40_complete": false,
+  "next_bounded_action": "P40-WO-05c only",
+  "luba_nine_check_review": {
+    "check_1_plan_and_inventory_scope": "PASS scoped to P40-WO-05b: sweep covers only claude-xiigen-smart-skills and writes only the core artifacts/state report.",
+    "check_2_user_requirements_covered": "PASS scoped to row: files scanned, actual violations, allowed prohibition hits, external-tool status, anti-masquerade status, and next action are recorded.",
+    "check_3_mental_experiment": "PASS: if Claude host implementation is reviewed now, this sweep does not find host-side semantic kitchen or external AI substitution paths.",
+    "check_4_no_hidden_deterministic_algorithm": "PASS: deterministic/static decision authority hits are explicit false/prohibition evidence, not host decision code.",
+    "check_5_models_sets_assets": "PASS scoped to sweep: model/training-data hits are llm_mvp_core manifest references, not embedded host corpus/model assets.",
+    "check_6_user_workstyle": "PASS: bounded read-only sweep; no Claude edits, no P40-WO-05c, no runtime/install-smoke/dotnet/build/test/gates, no staging/commit/push.",
+    "check_7_logic_in_core": "PASS: inspected Claude files remain thin host/client/report surfaces and do not own semantic/trainable logic.",
+    "check_8_no_external_ai_or_unrelated_tools": "PASS: sweep used local rg/static reads only and found no external AI/image/network/web API paths.",
+    "check_9_extension_implementation_verification": "PASS with open scope: Claude anti-kitchen sweep passes, but Phase40 full implementation remains incomplete until later rows finish."
+  }
+}

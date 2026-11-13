@@ -1,0 +1,150 @@
+{
+    "schema_version":  1,
+    "report_id":  "q5-04-skill-selection-candidate-position-ablation-review",
+    "work_order_id":  "Q5-04_CANDIDATE_POSITION_ABLATION_REVIEW",
+    "branch":  "codex/chat-gpt-5.5",
+    "created_at_utc":  "2026-06-10T19:02:29.1889743+00:00",
+    "status":  "PASS",
+    "pass":  true,
+    "semantic_quality_claimed":  false,
+    "training_started":  false,
+    "model_files_mutated":  false,
+    "host_runtime_claimed":  false,
+    "dashboard_api_work_run":  false,
+    "external_ai_used":  false,
+    "review_scope":  "Q5-04 report-only candidate-position ablation review over Q5-02 held-out permutations and Q5-03 lifecycle evidence.",
+    "evidence_refs":  {
+                          "q5_01_inventory_report":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-inventory-refresh-report.json",
+                          "q5_02_heldout_report":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-heldout-build-report.json",
+                          "q5_02_heldout_jsonl":  "training-data/smart-skills/semantic-quality/skill-selection-heldout-v1/skill-selection-heldout.jsonl",
+                          "q5_03_readiness_report":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-q5-03-readiness-training-report.json",
+                          "q5_03_fresh_load_report":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-q5-03-fresh-load-report.json",
+                          "q5_03_import_probe_report":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-q5-03-import-probe-report.json",
+                          "q5_03_continue_report":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-q5-03-continue/skill-selection-v1-continued-report.json",
+                          "model_manifest":  "models/skill-selection/skill-selection-v1/manifest.json",
+                          "model_checkpoint":  "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json",
+                          "model_index":  "models/index.json",
+                          "runner_report":  "models/skill-selection/skill-selection-v1/runner-report.json",
+                          "skill_selection_code":  "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+                          "skill_selection_contracts":  "43.SmartSkillsDomain/SkillSelectionContracts.cs",
+                          "q5_04_executable_probe_report":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-executable-probe-report.json"
+                      },
+    "heldout_permutation_stats":  {
+                                      "heldout_rows":  12,
+                                      "rows_with_candidate_order_permutations_gte_2":  12,
+                                      "total_candidate_order_permutations":  24,
+                                      "expected_selected_total":  45,
+                                      "expected_rejected_total":  37,
+                                      "rows_selecting_first_candidate_in_original_order":  0,
+                                      "permutations_where_first_candidate_is_expected_selected":  0,
+                                      "rows_selecting_all_candidates":  0,
+                                      "rows_with_expected_selection_instability_across_permutations":  0,
+                                      "rows_with_selected_not_in_candidates":  0,
+                                      "rows_with_rejected_not_in_candidates":  0,
+                                      "raw_private_text_copied":  false,
+                                      "technical_execution_refs_excluded":  true,
+                                      "training_allowed":  false
+                                  },
+    "candidate_position_control":  {
+                                       "checkpoint_candidate_position_weights":  {
+                                                                                     "0":  588,
+                                                                                     "1":  144,
+                                                                                     "3":  144,
+                                                                                     "4":  36,
+                                                                                     "5":  108,
+                                                                                     "6":  84,
+                                                                                     "7":  12
+                                                                                 },
+                                       "control_interpretation":  "The persisted scaffold weight points to candidate index 0. On Q5-02 permutations this is equivalent to a first-position control.",
+                                       "first_position_baseline_correct_permutations":  0,
+                                       "candidate_position_weight_baseline_correct_permutations":  0,
+                                       "total_permutations":  24,
+                                       "baseline_degrades_against_expected_rows":  true,
+                                       "baseline_degradation_scope":  "Executable probe confirms first-position and checkpoint-position baselines fail all 24 permutations while the repaired model matches expected selected/rejected behavior."
+                                   },
+    "q5_03_lifecycle_review":  {
+                                   "readiness_status":  "PASS_NO_OP_CONTINUE_Q5_04_Q5_05_PENDING",
+                                   "fresh_load_passed":  true,
+                                   "import_probe_passed":  true,
+                                   "continue_probe_passed":  true,
+                                   "continue_no_op":  true,
+                                   "semantic_units_required":  11,
+                                   "semantic_units_covered":  11,
+                                   "semantic_quality_claimed":  false,
+                                   "candidate_position_ablation_review_was_pending":  true,
+                                   "wrong_skill_near_miss_review_was_pending":  true
+                               },
+    "executable_probe_review":  {
+                                    "focused_q5_02_permutation_probe_found":  true,
+                                    "focused_q5_02_permutation_probe_run":  true,
+                                    "executable_probe_report":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-executable-probe-report.json",
+                                    "existing_probe_scope":  "Q5-04 executable probe loads the repo SkillSelection checkpoint through the production snake_case common-asset adapter, invokes SkillSelectionMachine.LoadCheckpoint and DecideFromTrainedState for all Q5-02 row permutations, and writes row/permutation evidence.",
+                                    "model_decision_stability_across_permutations_proven":  true,
+                                    "model_backed_selection_wins_on_heldout_skill_tasks_proven":  true,
+                                    "no_over_select_all_proven":  true,
+                                    "candidate_position_controls_fail_all":  true,
+                                    "reason_pass_blocked":  ""
+                                },
+    "code_review_notes":  {
+                              "fallback_candidate_position_path":  "SkillSelectionMachine falls back to CandidatePositionScaffoldEvidence only after learned semantic sections fail; the fallback returns no selected skills and requires a second pass.",
+                              "learned_skill_selection_path":  "TryDecideWithSkillSelection scores available skills from learned signal profiles and orders ties by skill id, not by candidate position.",
+                              "remaining_evidence_gap":  "No report-only runner currently applies the loaded checkpoint to every Q5-02 row and permutation and records selected/rejected outputs against expected rows."
+                          },
+    "gates":  {
+                  "parse_q5_02_heldout_rows":  "PASS",
+                  "parse_q5_03_lifecycle_evidence":  "PASS",
+                  "selected_skills_not_always_first_candidate":  "PASS",
+                  "no_row_selects_all_candidates":  "PASS",
+                  "expected_selected_rejected_stable_across_permutations":  "PASS",
+                  "candidate_position_baseline_degrades":  "PASS_EXECUTABLE_CONTROLS_FAIL_ALL",
+                  "focused_executable_model_permutation_probe_exists":  "PASS",
+                  "model_decisions_stable_across_permutations":  "PASS",
+                  "model_backed_selection_wins_on_heldout_tasks":  "PASS",
+                  "semantic_quality_claimed_false":  "PASS",
+                  "model_selected_expected_exact_set":  "PASS",
+                  "model_rejected_expected_wrong_skills":  "PASS"
+              },
+    "verdict":  {
+                    "result":  "PASS",
+                    "reason_codes":  [
+
+                                     ],
+                    "can_advance_to_q5_05":  true
+                },
+    "exact_next_action":  "Q5-04 parent review rerun with executable probe PASS evidence; Q5-05 wrong-skill near-miss review only after parent review accepts Q5-04.",
+    "forbidden_actions_not_run":  [
+                                      "branch checkout",
+                                      "branch creation",
+                                      "staging",
+                                      "commit",
+                                      "push",
+                                      "training",
+                                      "model mutation",
+                                      "host/plugin/runtime work",
+                                      "dashboard/API work",
+                                      "Q6/Q7/Q8 work",
+                                      "broad dotnet test",
+                                      "broad dotnet build"
+                                  ],
+    "verification_results":  {
+                                 "executable_probe_report_json_parse":  "PASS",
+                                 "report_json_parse_after_write":  "PASS",
+                                 "backlog_json_parse_after_write":  "PASS",
+                                 "state_json_parse_after_write":  "PASS",
+                                 "git_diff_check":  "PASS"
+                             },
+    "executable_probe_summary":  {
+                                     "heldout_rows":  12,
+                                     "total_permutations":  24,
+                                     "exact_model_matches":  24,
+                                     "expected_rejected_present_count":  24,
+                                     "actual_selected_subset_of_expected_count":  24,
+                                     "first_position_baseline_exact_matches":  0,
+                                     "checkpoint_position_baseline_exact_matches":  0,
+                                     "first_position_baseline_fails_all_permutations":  true,
+                                     "checkpoint_position_baseline_fails_all_permutations":  true,
+                                     "permutation_stable_rows":  12,
+                                     "no_over_select_all":  true,
+                                     "no_candidate_position_scaffold_evidence":  true
+                                 }
+}

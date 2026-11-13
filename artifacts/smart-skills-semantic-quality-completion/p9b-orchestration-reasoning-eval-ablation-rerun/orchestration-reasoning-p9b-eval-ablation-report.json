@@ -1,0 +1,63 @@
+{
+  "phase": "P9B_ORCHESTRATION_REASONING_EVAL_ABLATION_RERUN",
+  "status": "ready_for_parent_review",
+  "verdict": "PASS_CANDIDATE_READY_FOR_PARENT_REVIEW",
+  "component_scope_only": true,
+  "checkpoint_under_review": {
+    "checkpoint_path": "artifacts/smart-skills-semantic-quality-completion/p9a-orchestration-reasoning-missing-coverage-repair/orchestration-reasoning-p9a-candidate-checkpoint.json",
+    "manifest_path": "artifacts/smart-skills-semantic-quality-completion/p9a-orchestration-reasoning-missing-coverage-repair/orchestration-reasoning-p9a-candidate-manifest.json",
+    "source_manifest_path": "artifacts/smart-skills-semantic-quality-completion/p9a-orchestration-reasoning-missing-coverage-repair/orchestration-reasoning-p9a-source-manifest.json"
+  },
+  "fresh_load": {
+    "passed": true,
+    "project_code_path": "OrchestrationReasoningMachine.LoadCheckpointAsync",
+    "learned_pattern_count": 5,
+    "accepted_train_rows": [
+      "P5E-DPO-ORCH-001",
+      "P5E-DPO-ORCH-002",
+      "P5E-DPO-ORCH-004",
+      "P9A-ORCH-TRAIN-001",
+      "P9A-ORCH-TRAIN-002"
+    ],
+    "forbidden_training_rows_absent": true
+  },
+  "reserved_positive_counts": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0
+  },
+  "ablation_control_counts": {
+    "total": 16,
+    "passed_as_blocked": 16,
+    "shortcut_leaks": 0
+  },
+  "summary": "P9B fresh-loads the P9A checkpoint candidate and reruns the P9-style source-disjoint eval/ablation gate. Both reserved positives are covered by train-only P9A repair patterns, and shortcut controls remain blocked. This is a PromptToTask-independent OrchestrationReasoning component evidence packet only.",
+  "limitations": [
+    "This does not claim full semantic quality.",
+    "This does not claim P8/full API/final model readiness.",
+    "The runtime authority remains a baseline nearest-signal overlap inside OrchestrationReasoningScenarioUnit, so parent review is required before any stronger claim."
+  ],
+  "safety_flags": {
+    "training_run": false,
+    "eval_holdout_rows_used_as_training": false,
+    "checkpoint_rewritten": false,
+    "final_common_model_overwritten": false,
+    "production_code_changed": false,
+    "semantic_quality_claimed": false,
+    "p8_pass_claimed": false,
+    "full_api_semantic_quality_claimed": false,
+    "extension_runtime_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "commit_run": false,
+    "push_run": false,
+    "parent_review_required_before_commit": true
+  },
+  "focused_test": {
+    "file": "Tests/OrchestrationReasoningP9BEvalAblationRerunTests.cs",
+    "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~OrchestrationReasoningP9BEvalAblationRerunTests\" --logger \"console;verbosity=minimal\"",
+    "expected_result": "PASS: focused test validates fresh-load, artifact counts, forbidden-row exclusions, and no-overclaim flags",
+    "result": "PASS: Failed=0, Passed=1, Skipped=0, Total=1"
+  },
+  "focused_test_passed": true
+}

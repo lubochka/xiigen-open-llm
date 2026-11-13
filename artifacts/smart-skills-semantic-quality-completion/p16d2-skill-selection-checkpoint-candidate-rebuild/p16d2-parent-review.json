@@ -1,0 +1,52 @@
+{
+  "phase": "P16D2_SKILL_SELECTION_CHECKPOINT_CANDIDATE_REBUILD",
+  "parent_review_status": "ACCEPTED_PENDING_PHASE_COMMIT",
+  "verdict": "PASS_AFTER_PARENT_REVIEW",
+  "accepted_as_checkpoint_candidate": true,
+  "accepted_as_training_run": false,
+  "accepted_as_final_or_common_checkpoint": false,
+  "accepted_as_skill_selection_positive_evidence": false,
+  "accepted_as_semantic_quality": false,
+  "review_cycles": [
+    {
+      "cycle_id": "parent_p16d2_001_goal_delivery",
+      "result": "pass",
+      "finding": "P16D2 rebuilt a no-claim checkpoint candidate from P16D plus P16E1 accepted adaptive train-side candidate material."
+    },
+    {
+      "cycle_id": "parent_p16d2_002_profile_coverage",
+      "result": "pass",
+      "finding": "The candidate now includes 13 materialized profile rows and two diagnostics-only candidate-order guard rows."
+    },
+    {
+      "cycle_id": "parent_p16d2_003_shortcut_and_contamination",
+      "result": "pass",
+      "finding": "No top-level candidate_position_weights are present, candidate-order guard cannot select skills, and P16B eval/holdout ids are absent from trained/materialized ids."
+    },
+    {
+      "cycle_id": "parent_p16d2_004_next_action",
+      "result": "pass",
+      "finding": "P16D2 is ready only for P16E2 source-disjoint eval/ablation rerun; it is not readiness evidence by itself."
+    }
+  ],
+  "verified_facts": {
+    "checkpoint_sha256": "2507AB0316A606E290BA4D6C66B298890344A1B52341B41702DE53181959250C",
+    "materialized_profile_rows": 13,
+    "diagnostics_only_guard_rows": 2,
+    "excluded_eval_holdout_rows": 12,
+    "common_training_ready_rows": 0,
+    "json_jsonl_parse": "passed",
+    "checksum_verification": "passed",
+    "contamination_check": "passed",
+    "candidate_position_top_level_absence": "passed",
+    "diagnostics_only_guard_check": "passed",
+    "utf8_mojibake_scan": "passed_with_explicit_utf8_decoder",
+    "true_flag_overclaim_scan": "passed",
+    "git_diff_check": "passed"
+  },
+  "next_gate_or_gap": {
+    "gate_id": "P16E2_SKILL_SELECTION_SOURCE_DISJOINT_EVAL_ABLATION_RERUN",
+    "summary": "Rerun source-disjoint eval/ablation against the P16D2 candidate before any positive component evidence or lifecycle work.",
+    "immediate_next_action": "commit/push P16D2 accepted checkpoint candidate, then issue a bounded P16E2 sub-agent work order."
+  }
+}

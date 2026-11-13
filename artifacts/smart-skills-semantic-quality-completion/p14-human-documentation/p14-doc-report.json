@@ -1,0 +1,73 @@
+{
+  "phase": "P14_HUMAN_DOCUMENTATION",
+  "verdict": "PASS_CANDIDATE_REPAIRED_FOR_PARENT_REVIEW",
+  "documentation_updated": true,
+  "updated_doc": "docs/projects/43-smart-skills-domain.md",
+  "language": "ru-human-readable",
+  "scope": "Documentation only. No production code, test code, training, DPO, checkpoint, model, dashboard, UI, or extension runtime change.",
+  "documented_boundaries": {
+    "component_level_evidence": "PromptToTask and OrchestrationReasoning have component lifecycle evidence from P11 and P12.",
+    "api_level_boundary": "XiigenExtensionApiService firewall still refuses full API semantic-quality claim because SkillSelection full positive evidence is missing/not full.",
+    "dashboard_boundary": "Dashboard QA is required only if API/result display surface changes; P13 changed no such surface.",
+    "host_runtime_boundary": "Claude/Cursor/Codex host runtime remains unproven by P11-P13.",
+    "code_layer_restored": "Project doc now includes compact code-working layer with algorithm descriptions and short method excerpts."
+  },
+  "evidence_references": [
+    {
+      "phase": "P11_FRESH_LOAD",
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SmartSkillsSemanticQualityP11FreshLoadTests\" --logger \"console;verbosity=minimal\"",
+      "result": "passed: Failed=0, Passed=1, Skipped=0, Total=1",
+      "evidence_ref": "artifacts/smart-skills-semantic-quality-completion/p11-fresh-load/p11-parent-review.json",
+      "claim_scope": "component lifecycle fresh-load evidence only"
+    },
+    {
+      "phase": "P12_CONTINUE_TRAINING",
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SmartSkillsSemanticQualityP12ContinueTrainingTests\" --logger \"console;verbosity=minimal\"",
+      "result": "passed: Failed=0, Passed=1, Skipped=0, Total=1",
+      "evidence_ref": "artifacts/smart-skills-semantic-quality-completion/p12-continue-training/p12-parent-review.json",
+      "claim_scope": "component lifecycle no-op continue evidence only"
+    },
+    {
+      "phase": "P13_API_FIREWALL_NO_CLAIM",
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SmartSkillsSemanticQualityP13ApiFirewallNoClaimTests\" --logger \"console;verbosity=minimal\"",
+      "result": "passed: Failed=0, Passed=1, Skipped=0, Total=1",
+      "evidence_ref": "artifacts/smart-skills-semantic-quality-completion/p13-api-firewall-no-claim/p13-parent-review.json",
+      "claim_scope": "API firewall no-claim evidence only"
+    }
+  ],
+  "remaining_weaknesses": [
+    "SkillSelection full unitization/positive evidence remains missing/not full.",
+    "Dashboard QA applies only when API/result display changes.",
+    "Claude/Cursor/Codex host runtime remains unproven.",
+    "Full semantic-quality claim remains blocked."
+  ],
+  "safety_flags": {
+    "implementation_authorized": false,
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "training_run": false,
+    "dpo_authoring_run": false,
+    "checkpoint_or_model_changed": false,
+    "dashboard_or_ui_changed": false,
+    "extension_runtime_changed": false,
+    "semantic_quality_claimed": false,
+    "full_api_semantic_quality_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "host_runtime_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "commit_run": false,
+    "push_run": false
+  },
+  "blocked_reason": "Full API semantic quality remains blocked pending SkillSelection full unitization/positive evidence and any required API/dashboard gates.",
+  "parent_review_required_before_commit": true,
+  "parent_review_repair_1": {
+    "status": "repaired",
+    "finding": "Parent review found that the first P14 update preserved the P11-P13 boundary but deleted too much detailed project documentation.",
+    "repair": "Kept the P14 no-claim boundary and added a compact detailed section with Russian no-code algorithms and short code quotations for ProcessHostExtensionRequest, Translate, Plan, DecideFromTrainedState, and ShouldClaimSemanticQuality.",
+    "doc_sections_added": [
+      "Как этот слой работает в коде",
+      "Короткие цитаты кода"
+    ],
+    "overclaim_boundary_preserved": true
+  }
+}

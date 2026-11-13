@@ -1,0 +1,124 @@
+{
+    "schemaVersion":  "p29.leakage-gate-plan.v1",
+    "phase":  "P29",
+    "createdAtLocalDate":  "2026-06-15",
+    "artifactType":  "future leakage gates only; not executed in P29",
+    "gates":  [
+                  {
+                      "gateId":  "LEAK-EXACT-PROMPT",
+                      "forbiddenShortcut":  "exact prompt",
+                      "signalBlocked":  "raw prompt or exact redacted summary string as lookup key",
+                      "p30Check":  "run paraphrased prompt-summary variants and exact-summary lookup ablation",
+                      "passCriterion":  "trained route must not pass solely by exact summary match",
+                      "p29Status":  "planned_not_run"
+                  },
+                  {
+                      "gateId":  "LEAK-SOURCE-ID",
+                      "forbiddenShortcut":  "source id",
+                      "signalBlocked":  "sourceSkillDocId, sourceRefOrHashedRedactedSourceRef, p24/p25/p26 ids",
+                      "p30Check":  "remove/mask source ids and compare decisions",
+                      "passCriterion":  "decision remains based on prompt features, not id",
+                      "p29Status":  "planned_not_run"
+                  },
+                  {
+                      "gateId":  "LEAK-PATH",
+                      "forbiddenShortcut":  "path",
+                      "signalBlocked":  "any local path or repository path lineage",
+                      "p30Check":  "assert no path fields enter training features or eval input",
+                      "passCriterion":  "path-only baseline fails",
+                      "p29Status":  "planned_not_run"
+                  },
+                  {
+                      "gateId":  "LEAK-FILENAME",
+                      "forbiddenShortcut":  "filename",
+                      "signalBlocked":  "skill doc filename/title or AGENTS/CLAUDE-like filename trigger",
+                      "p30Check":  "filename/title ablation with renamed sources",
+                      "passCriterion":  "filename-only route fails",
+                      "p29Status":  "planned_not_run"
+                  },
+                  {
+                      "gateId":  "LEAK-PAIR-ID",
+                      "forbiddenShortcut":  "pair id",
+                      "signalBlocked":  "pairId and derived P24/P25/P26 row ids",
+                      "p30Check":  "pair ids removed before feature extraction; pair-id lookup baseline must fail",
+                      "passCriterion":  "no pair-id dependent decision",
+                      "p29Status":  "planned_not_run"
+                  },
+                  {
+                      "gateId":  "LEAK-ROW-ORDINAL",
+                      "forbiddenShortcut":  "row ordinal",
+                      "signalBlocked":  "rowOrdinal order 1..8",
+                      "p30Check":  "shuffle rows and verify identical decisions",
+                      "passCriterion":  "order shuffle does not change skill choice except stochastic tie metadata",
+                      "p29Status":  "planned_not_run"
+                  },
+                  {
+                      "gateId":  "LEAK-CANDIDATE-ORDER",
+                      "forbiddenShortcut":  "candidate order",
+                      "signalBlocked":  "availableSkills list position",
+                      "p30Check":  "permute candidate skill order for every row",
+                      "passCriterion":  "selected skill remains stable by meaning",
+                      "p29Status":  "planned_not_run"
+                  },
+                  {
+                      "gateId":  "LEAK-SELECTED-SKILL-POSITION",
+                      "forbiddenShortcut":  "selected-skill position",
+                      "signalBlocked":  "positive skill index inside candidate list",
+                      "p30Check":  "move positive skill to first/middle/last positions",
+                      "passCriterion":  "position-only baseline fails and trained decision is invariant",
+                      "p29Status":  "planned_not_run"
+                  },
+                  {
+                      "gateId":  "LEAK-TARGET-ADAPTER",
+                      "forbiddenShortcut":  "target adapter shortcut",
+                      "signalBlocked":  "IPromptContextTraining vs ISkillSelectionTraining as answer selector",
+                      "p30Check":  "evaluate both adapters with adapter masked and with adapter-only baseline",
+                      "passCriterion":  "adapter-only baseline cannot select the skill",
+                      "p29Status":  "planned_not_run"
+                  }
+              ],
+    "futureP30TrainingEvalGates":  [
+                                       {
+                                           "gateId":  "P30-FRESH-LOAD",
+                                           "name":  "fresh-load",
+                                           "p29RunsIt":  false,
+                                           "requiredEvidence":  "fresh process loads candidate checkpoint and answers held-out rows without in-memory state"
+                                       },
+                                       {
+                                           "gateId":  "P30-CONTINUE",
+                                           "name":  "continue-training from existing checkpoint",
+                                           "p29RunsIt":  false,
+                                           "requiredEvidence":  "existing candidate checkpoint loaded, appended or no-op continue is recorded, lineage preserved"
+                                       },
+                                       {
+                                           "gateId":  "P30-EXPORT-IMPORT",
+                                           "name":  "export/import",
+                                           "p29RunsIt":  false,
+                                           "requiredEvidence":  "exported asset imports into fresh locator path and remains usable"
+                                       },
+                                       {
+                                           "gateId":  "P30-ABLATION",
+                                           "name":  "ablation",
+                                           "p29RunsIt":  false,
+                                           "requiredEvidence":  "exact prompt/source/path/filename/pair/order/adapter baselines fail or degrade"
+                                       },
+                                       {
+                                           "gateId":  "P30-DASHBOARD-RUNTIME",
+                                           "name":  "dashboard/runtime evidence",
+                                           "p29RunsIt":  false,
+                                           "requiredEvidence":  "runtime/dashboard evidence is labelled as candidate evidence only and does not claim semantic quality"
+                                       },
+                                       {
+                                           "gateId":  "P30-NO-PROMOTION",
+                                           "name":  "no promotion",
+                                           "p29RunsIt":  false,
+                                           "requiredEvidence":  "no common model replacement, no promotion marker, no semantic quality promotion"
+                                       }
+                                   ],
+    "noOverclaim":  {
+                        "p29DoesNotExecuteAblations":  true,
+                        "p29DoesNotEvaluateCheckpoints":  true,
+                        "p29DoesNotProveLeakageAbsence":  true,
+                        "p29OnlyDefinesGatePlan":  true
+                    }
+}

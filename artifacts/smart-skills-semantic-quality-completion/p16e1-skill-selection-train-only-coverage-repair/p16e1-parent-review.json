@@ -1,0 +1,51 @@
+{
+  "phase": "P16E1_SKILL_SELECTION_TRAIN_ONLY_COVERAGE_REPAIR",
+  "parent_review_status": "ACCEPTED_CANDIDATE_MATERIAL_PENDING_PHASE_COMMIT",
+  "verdict": "PASS_AS_ADAPTIVE_TRAIN_SIDE_CANDIDATE_MATERIAL_WITH_GAPS",
+  "accepted_as_train_side_candidate_material": true,
+  "accepted_as_training_ready_rows": false,
+  "accepted_as_common_training_material": false,
+  "accepted_as_checkpoint_input_candidate": true,
+  "accepted_as_semantic_quality": false,
+  "review_cycles": [
+    {
+      "cycle_id": "parent_p16e1_001_goal_delivery",
+      "result": "pass",
+      "finding": "P16E1 produced gap-to-coverage map, 10 train-only candidate rows, source/license ledger, quarantine ledger, reports, and state update."
+    },
+    {
+      "cycle_id": "parent_p16e1_002_row_concreteness",
+      "result": "pass",
+      "finding": "Rows include concrete unit target, chosen/rejected contrast, universal boundary, leakage risks, expected skill ids, and ablation controls."
+    },
+    {
+      "cycle_id": "parent_p16e1_003_contamination_and_license",
+      "result": "pass_with_boundary",
+      "finding": "No P16B eval/holdout ids appear in candidate rows. Rows remain candidate_training_ready=false and common_training_ready=false."
+    },
+    {
+      "cycle_id": "parent_p16e1_004_next_action",
+      "result": "pass",
+      "finding": "P16E1 is sufficient to open P16D2 checkpoint candidate rebuild as adaptive candidate material, not as common/final training material."
+    }
+  ],
+  "verified_facts": {
+    "train_only_candidate_rows": 10,
+    "positive_skill_candidate_rows": 9,
+    "diagnostics_only_candidate_rows": 1,
+    "candidate_training_ready_rows": 0,
+    "common_training_ready_rows": 0,
+    "quarantine_rows": 5,
+    "json_jsonl_parse": "passed",
+    "eval_holdout_contamination_check": "passed",
+    "raw_private_prompt_exact_source_leakage_scan": "passed",
+    "utf8_mojibake_scan": "passed_with_explicit_utf8_decoder",
+    "true_flag_overclaim_scan": "passed",
+    "git_diff_check": "passed"
+  },
+  "next_gate_or_gap": {
+    "gate_id": "P16D2_SKILL_SELECTION_CHECKPOINT_CANDIDATE_REBUILD",
+    "summary": "Rebuild a candidate checkpoint from P16D accepted material plus P16E1 accepted adaptive train-side candidate material, then rerun source-disjoint eval.",
+    "immediate_next_action": "commit/push P16E1 accepted candidate material, then issue a bounded P16D2 sub-agent work order."
+  }
+}

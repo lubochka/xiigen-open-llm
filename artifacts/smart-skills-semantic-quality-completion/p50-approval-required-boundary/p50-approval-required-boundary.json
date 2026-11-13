@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "phase": "P50_APPROVAL_REQUIRED_BOUNDARY",
+  "status": "approval_required_boundary_pending_parent_review",
+  "human_readable_ru": "После P49 безопасного non-training artifact work больше не осталось. Оставшиеся плановые шаги требуют training/eval/checkpoint mutation или fresh-load/continue-training probes, которые текущий пакет запрещает. Нужен свежий явный approval Luba с точными полями ниже.",
+  "remaining_safe_non_training_gap_exists": false,
+  "remaining_safe_non_training_gap": null,
+  "training_eval_checkpoint_boundary_required": true,
+  "remaining_plan_work_requires_forbidden_action": [
+    "source-disjoint eval runner",
+    "ablation execution",
+    "checkpoint rewrite or checkpoint mutation",
+    "fresh-load probe",
+    "continue-training probe",
+    "readiness or promotion claim based on those gates"
+  ],
+  "evidence_refs": {
+    "active_plan": "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-COMPLETION-PLAN-v1.md",
+    "state": "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-COMPLETION-PLAN-v1-STATE.json",
+    "p49_dossier": "artifacts/smart-skills-semantic-quality-completion/p49-checkpoint-binding-dossier/p49-checkpoint-binding-dossier.json",
+    "p49_parent_review": "artifacts/smart-skills-semantic-quality-completion/p49-checkpoint-binding-dossier/p49-parent-review.md",
+    "p47_authorization_packet": "artifacts/smart-skills-semantic-quality-completion/p47-training-eval-authorization-packet/p47-authorization-packet.json"
+  },
+  "exact_fields_required_before_execution": {
+    "from_p49_target_semantics": [
+      "fresh_luba_approval_quote",
+      "exact_machine_selection",
+      "operation_type",
+      "new_staged_checkpoint_path",
+      "new_or_staged_manifest_path",
+      "locator_ref_to_update_after_future_gates",
+      "created_from_dataset_sha256",
+      "fresh_load_probe_result",
+      "continue_training_probe_result",
+      "metrics_and_ablation_gate_result"
+    ],
+    "from_p49_rollback_semantics": [
+      "fresh_luba_approval_quote",
+      "exact_machine_selection",
+      "operation_type_being_rolled_back_or_guarded",
+      "rollback_checkpoint_path",
+      "rollback_manifest_path",
+      "rollback_locator_ref",
+      "rollback_checkpoint_sha256",
+      "post_rollback_verification"
+    ],
+    "from_p49_approval_packet_template": {
+      "approval_quote": "<fresh Luba quote explicitly authorizing named operation now>",
+      "operation_type": "<training|eval|checkpoint_mutation|rollback>",
+      "machine_selection": [
+        "<PromptToTaskMachine|OrchestrationReasoningMachine|SkillSelectionMachine>"
+      ],
+      "target_checkpoint_ref": {
+        "current_value": "INACTIVE/NONE",
+        "future_required_path": "<new staged checkpoint path, not an overwrite of current repo checkpoint>"
+      },
+      "rollback_checkpoint_ref": {
+        "current_value": "INACTIVE/NONE",
+        "future_candidate_must_be_selected_from_current_assets": true
+      },
+      "source_license_gate": {
+        "current_status": "missing_for_training",
+        "common_training_allowed_now": false,
+        "future_required_artifact": "<source/license/redaction/source-family review artifact>"
+      }
+    },
+    "from_p49_source_license_binding_p47": [
+      "fresh Luba approval",
+      "exact operation and machine list",
+      "source/license artifact",
+      "target staged checkpoint path",
+      "rollback candidate ref",
+      "metrics thresholds",
+      "ablation pass conditions"
+    ],
+    "from_p49_orchestration_reasoning_resolver": [
+      "choose locator_current rollback candidate or explicitly justify alternate historical candidate"
+    ],
+    "from_p47_target_checkpoint_ref": [
+      "checkpoint_path",
+      "manifest_path",
+      "locator_ref",
+      "sha256",
+      "created_from_dataset_sha256"
+    ],
+    "from_p47_rollback_checkpoint_ref": [
+      "checkpoint_path",
+      "manifest_path",
+      "locator_ref",
+      "sha256",
+      "rollback_activation_steps"
+    ],
+    "from_p47_source_license_gate": [
+      "artifact_path",
+      "row_count",
+      "source_family",
+      "license_or_approval_source",
+      "common_training_eligible",
+      "user_local_only",
+      "quarantine_reason",
+      "dataset_checksum",
+      "heldout_checksum"
+    ],
+    "from_p47_metrics_plan": [
+      "per_machine_metrics",
+      "heldout_accuracy_or_pass_rate_by_source_family",
+      "ablation_delta_exact_prompt_lookup",
+      "ablation_delta_source_id_path_filename_lookup",
+      "ablation_delta_title_static_route",
+      "ablation_delta_nearest_only_baseline",
+      "ablation_delta_no_trained_state",
+      "candidate_order_permutation_check_for_skillselection",
+      "false_positive_claim_scan",
+      "regression_check_against_previous_checkpoint",
+      "explicit_failure_examples"
+    ],
+    "from_p47_ablation_plan": [
+      "exact_prompt_lookup",
+      "source_id_path_filename_lookup",
+      "title_static_route",
+      "nearest_only_baseline",
+      "no_trained_state",
+      "candidate_order_permutation"
+    ],
+    "from_p47_future_work_order_template": {
+      "required_approval_quote": "<fresh Luba quote explicitly accepting P47 and authorizing the named action now>",
+      "allowed_actions_placeholder": "<training|eval|checkpoint_mutation>",
+      "candidate_dataset_placeholder": "<path sha256 row_count>",
+      "heldout_placeholder": "<path sha256 row_count>",
+      "target_checkpoint_placeholder": "<checkpoint path manifest locator sha256>",
+      "rollback_checkpoint_placeholder": "<checkpoint path manifest locator sha256>",
+      "source_license_gate_placeholder": "<license or approval evidence>",
+      "metrics_gate_placeholder": "<thresholds and ablation pass conditions>",
+      "must_remain_disabled_when_approval_quote_is_NONE": true
+    }
+  },
+  "current_boundary_values": {
+    "exact_luba_approval_quote": "NONE",
+    "target_checkpoint_ref": "INACTIVE/NONE",
+    "rollback_checkpoint_ref": "INACTIVE/NONE",
+    "source_license_gate_current_status": "missing_for_training",
+    "common_training_allowed_now": false,
+    "target_checkpoint_ref_can_be_named_now": false,
+    "rollback_checkpoint_ref_can_be_activated_now": false
+  },
+  "forbidden_actions_run": {
+    "training": false,
+    "eval_runner": false,
+    "checkpoint_mutation": false,
+    "checkpoint_rewrite": false,
+    "fresh_load_probe": false,
+    "continue_training_probe": false,
+    "host_runtime": false,
+    "external_ai_or_network": false,
+    "dotnet_tests": false,
+    "dotnet_build": false,
+    "git_stage_commit_push_switch": false,
+    "production_code_or_tests_edit": false
+  },
+  "semantic_quality_claimed": false,
+  "model_readiness_claimed": false,
+  "trained_model_readiness_claimed": false,
+  "parent_review_required": true,
+  "may_derive_next_phase": false,
+  "must_stop_after_report": true,
+  "next_action_for_parent": "Parent review P50 artifacts/state. If accepted, parent may perform the commit/push boundary for P50. No P51 or mutation work order may be derived without fresh explicit Luba approval containing the required fields."
+}
+

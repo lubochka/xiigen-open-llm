@@ -1,0 +1,46 @@
+{
+  "status": "ACCEPTED_FAIL_EVIDENCE_TRAINING_COVERAGE_REQUIRED",
+  "acceptedAsP7Pass": false,
+  "semanticQualityClaimed": false,
+  "p7PassClaimed": false,
+  "productionCodeDiffRetained": false,
+  "checkpointCreated": false,
+  "checkpointOverwritten": false,
+  "trainedOnEvalOrHoldoutRows": false,
+  "positiveReservedBehavior": 0,
+  "reservedRowsEvaluated": 4,
+  "ablationControlsRun": 24,
+  "shortcutLeaks": 0,
+  "focusedTests": {
+    "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskP7AGeneralizationRepairTests\" --logger \"console;verbosity=minimal\"",
+    "passed": 1,
+    "failed": 0
+  },
+  "reviewCycles": [
+    {
+      "cycle": 1,
+      "name": "goal_delivery",
+      "verdict": "accepted_fail_evidence",
+      "summary": "P7A is not a pass; it correctly proves train-only coverage is missing."
+    },
+    {
+      "cycle": 2,
+      "name": "leakage_no_shortcut",
+      "verdict": "pass",
+      "summary": "The eval-informed production mapping was removed and no P7 pass marker remains."
+    },
+    {
+      "cycle": 3,
+      "name": "trainable_architecture",
+      "verdict": "pass",
+      "summary": "No checkpoint was overwritten and no eval/holdout rows were used for training."
+    },
+    {
+      "cycle": 4,
+      "name": "verification_docs_no_claim",
+      "verdict": "pass",
+      "summary": "Focused test, artifact parse, overclaim scan, and documentation update are accepted for fail-evidence scope."
+    }
+  ],
+  "nextActionAfterCommit": "P7B add train-only source-disjoint PromptToTask coverage or pre-P7 common taxonomy, then create a new checkpoint candidate before rerunning P7"
+}

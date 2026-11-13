@@ -1,0 +1,99 @@
+{
+  "phase": "P16C_SKILL_SELECTION_FOCUSED_TESTS",
+  "status": "ready_for_parent_review",
+  "verdict": "PASS_CANDIDATE_READY_FOR_PARENT_REVIEW",
+  "scope": "Focused SkillSelection boundary tests and evidence only. No production code, training, checkpoint, dashboard, host runtime, or readiness claim.",
+  "parent_context": {
+    "p16b_commit": "1634cf27",
+    "current_branch": "codex/chat-gpt-5.5"
+  },
+  "tests": {
+    "test_file": "Tests/SkillSelectionP16CFocusedBoundaryTests.cs",
+    "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionP16CFocusedBoundaryTests\" --logger \"console;verbosity=minimal\"",
+    "result": "passed: Failed=0, Passed=6, Skipped=0, Total=6, Duration=335 ms",
+    "first_attempt": "timeout_after_126_seconds_without_result; rerun_with_longer_timeout_passed",
+    "passed_tests": 6,
+    "failed_tests": 0,
+    "skipped_tests": 0
+  },
+  "coverage": [
+    {
+      "boundary": "candidate_order_leakage_guard",
+      "tested": true,
+      "result": "order-sensitive probe detected; candidate-position remains diagnostics only",
+      "remaining_gap": "future checkpoint/eval gates required"
+    },
+    {
+      "boundary": "prompt_understanding_source_disjoint",
+      "tested": true,
+      "result": "source id, title, exact prompt, and candidate-position are absent from runtime evidence",
+      "remaining_gap": "unit test only, not source-disjoint eval package"
+    },
+    {
+      "boundary": "task_understanding_ablation",
+      "tested": true,
+      "result": "empty machine records not-ready evidence instead of hidden candidate-position fallback",
+      "remaining_gap": "positive training/eval remains future phase"
+    },
+    {
+      "boundary": "prompt_context_baseline",
+      "tested": true,
+      "result": "baseline counter evidence labelled and confidence degrades without context",
+      "remaining_gap": "not full SkillSelection readiness"
+    },
+    {
+      "boundary": "intermediate_checks_support_only",
+      "tested": true,
+      "result": "KNN support evidence remains support-only and source markers stay hidden",
+      "remaining_gap": "future source-disjoint ablation required"
+    },
+    {
+      "boundary": "runtime_chain_no_claim",
+      "tested": true,
+      "result": "logical flow reports 11 semantic units and no-claim boundary",
+      "remaining_gap": "private TryDecideWith* branch family still needs later checkpoint/eval coverage"
+    }
+  ],
+  "review_cycles": [
+    {
+      "cycle_id": "p16c_review_1_goal_delivery",
+      "result": "pass",
+      "note": "focused test/evidence slice created without production edits"
+    },
+    {
+      "cycle_id": "p16c_review_2_test_integrity",
+      "result": "pass",
+      "note": "tests invoke real SkillSelection units, machine, and flow"
+    },
+    {
+      "cycle_id": "p16c_review_3_trainable_architecture_boundary",
+      "result": "pass_with_remaining_gaps",
+      "note": "current units are baseline/no-claim, not trained readiness"
+    },
+    {
+      "cycle_id": "p16c_review_4_claim_readability_safety",
+      "result": "pass",
+      "note": "no semantic/full API/model readiness claims"
+    }
+  ],
+  "production_changes_needed_but_not_done": [
+    "P16D checkpoint candidate after parent review",
+    "P16E source-disjoint eval and ablation",
+    "P16F fresh-load and continue-training lifecycle evidence",
+    "P16G API firewall and dashboard-boundary review after positive SkillSelection evidence"
+  ],
+  "safety_flags": {
+    "production_code_changed": false,
+    "training_run": false,
+    "checkpoint_or_model_changed": false,
+    "dashboard_or_host_changed": false,
+    "dpo_rows_promoted_training_ready": false,
+    "semantic_quality_claimed": false,
+    "full_api_semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "commit_run": false,
+    "push_run": false
+  }
+}

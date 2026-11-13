@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "learnedState": {
+    "stateId": "prompt-to-task-p7d-candidate-state",
+    "manifestId": "artifacts/smart-skills-semantic-quality-completion/p7d-prompt-to-task-checkpoint-candidate/prompt-to-task-p7d-source-manifest.json",
+    "manifestSha256": "c4a36fb144241c5c679675153cc28d3d352a3316e6a680a9f77196138b38a09e",
+    "machineType": "PromptToTaskMachine",
+    "schemaVersion": "prompt-to-task-state-v1",
+    "sourceBaseCommit": "p7d-candidate-local-parent-review",
+    "stateSha256": "6054670dcb3233cad6da9372aa44009483ee341d0fc83da077e5b26af9ddb1da",
+    "learnedPatterns": [
+      {
+        "patternId": "p6-baseline-p5h-dpo-ptt-001",
+        "taskType": "task_contract_from_prior_evidence_boundary",
+        "learnedSignals": [
+          "task_contract",
+          "current_request",
+          "evidence_not_answer",
+          "acceptance_is_not_execution",
+          "verification_criteria",
+          "safe_next_layer"
+        ],
+        "explicitUserRequirements": [
+          "Сначала превратить просьбу в проверяемый контракт: цель, допустимые контекстные входы, ограничения, ожидаемые артефакты, критерий принятия и следующий безопасный слой работы."
+        ],
+        "constraints": [
+          "no raw private prompt text",
+          "no source id as authority",
+          "no filename or path shortcut",
+          "semantic_quality_claimed=false",
+          "eval and holdout rows excluded from training"
+        ],
+        "deliverables": [
+          "structured task contract",
+          "explicit constraints",
+          "expected artifacts",
+          "acceptance boundary"
+        ],
+        "forbiddenActions": [
+          "accepted_archive_label_used_instead_of_task_contract",
+          "exact prompt lookup",
+          "source family id shortcut",
+          "nearest-only retrieval as final authority"
+        ],
+        "requiredHosts": [
+          "common_prompt_to_task_runtime"
+        ],
+        "evidenceNeeds": [
+          "P7 source-disjoint evaluation",
+          "P7 ablation controls",
+          "fresh-load evidence",
+          "continue-training evidence"
+        ],
+        "splitId": "p6-train-split",
+        "confidence": 0.62
+      },
+      {
+        "patternId": "p6-baseline-p5h-dpo-ptt-003",
+        "taskType": "context_before_plan_task_contract",
+        "learnedSignals": [
+          "task_contract",
+          "context_inputs",
+          "plan_after_contract",
+          "requested_artifacts",
+          "review_gate",
+          "context_not_execution"
+        ],
+        "explicitUserRequirements": [
+          "Отделить исходную просьбу от контекстных материалов и будущего плана: что требуется, какие входы разрешены, какие артефакты нужны и где нужна проверка."
+        ],
+        "constraints": [
+          "no raw private prompt text",
+          "no source id as authority",
+          "no filename or path shortcut",
+          "semantic_quality_claimed=false",
+          "eval and holdout rows excluded from training"
+        ],
+        "deliverables": [
+          "structured task contract",
+          "explicit constraints",
+          "expected artifacts",
+          "acceptance boundary"
+        ],
+        "forbiddenActions": [
+          "topic_title_plan_before_task_contract",
+          "exact prompt lookup",
+          "source family id shortcut",
+          "nearest-only retrieval as final authority"
+        ],
+        "requiredHosts": [
+          "common_prompt_to_task_runtime"
+        ],
+        "evidenceNeeds": [
+          "P7 source-disjoint evaluation",
+          "P7 ablation controls",
+          "fresh-load evidence",
+          "continue-training evidence"
+        ],
+        "splitId": "p6-train-split",
+        "confidence": 0.62
+      },
+      {
+        "patternId": "p7d-pattern-phased-architecture-plan-contract",
+        "taskType": "phased_architecture_plan_contract",
+        "learnedSignals": [
+          "broad_product_request",
+          "task_contract_before_execution",
+          "phased_plan",
+          "coverage_verification",
+          "positive_negative_examples",
+          "state_recovery_plan",
+          "no_code_before_contract",
+          "small_recoverable_steps"
+        ],
+        "explicitUserRequirements": [
+          "Свободную продуктовую просьбу сначала превратить в проверяемый контракт задачи: цель, входы, ограничения, артефакты, проверку покрытия, примеры результата и восстановимое состояние.",
+          "Сохранить порядок работы: сначала понять задачу и границы, затем описать фазы и только после этого разрешать исполнение."
+        ],
+        "constraints": [
+          "Не использовать исходный текст, имя источника, путь, имя файла или идентификатор строки как основание решения.",
+          "Убирать проектные и стековые детали из обучающей поверхности.",
+          "Не объявлять семантическое качество и не смешивать этот материал с оценочными или holdout строками."
+        ],
+        "deliverables": [
+          "Структурированная задача с целью, входами, ограничениями, артефактами и проверками.",
+          "Разбиение на малые проверяемые шаги с восстановимым состоянием."
+        ],
+        "forbiddenActions": [
+          "Начинать реализацию до описания проверяемого контракта задачи.",
+          "Опускать ограничения, негативные примеры или план восстановления.",
+          "Подменять универсальную структуру ссылкой на источник или проектный путь."
+        ],
+        "requiredHosts": [
+          "common_prompt_to_task_runtime"
+        ],
+        "evidenceNeeds": [
+          "Свежая загрузка кандидата через PromptToTaskMachine.LoadCheckpointAsync.",
+          "P7 source-disjoint оценка на зарезервированных строках.",
+          "Ablation-контроли против точного prompt, имени файла/пути/заголовка, source-family-id и nearest-only маршрута."
+        ],
+        "splitId": "p7d-train-only-candidate",
+        "confidence": 0.58
+      },
+      {
+        "patternId": "p7d-pattern-dynamic-prompt-pattern-contract",
+        "taskType": "dynamic_prompt_pattern_contract",
+        "learnedSignals": [
+          "prompt_pattern_request",
+          "stable_principle",
+          "variable_slots",
+          "must_not_rules",
+          "positive_negative_examples",
+          "output_contract",
+          "no_example_value_authority"
+        ],
+        "explicitUserRequirements": [
+          "Паттерн-промпт разобрать на устойчивый принцип, переменные места, обязательные требования, запреты, формат результата и пару положительный/отрицательный пример.",
+          "Показать, что пример значения не становится правилом и не подменяет общий контракт."
+        ],
+        "constraints": [
+          "Не учить конкретные значения из примера как авторитет.",
+          "Не использовать имя источника, семейство, путь или идентификатор строки для выбора ответа.",
+          "Сохранять универсальную границу PromptToTask: просьба превращается в структуру задачи."
+        ],
+        "deliverables": [
+          "Контракт паттерна с переменными слотами, запретами и ожидаемым форматом результата.",
+          "Пара near-miss примеров для будущего DPO-контраста."
+        ],
+        "forbiddenActions": [
+          "Скопировать пример как готовый ответ.",
+          "Забыть переменные места и запреты.",
+          "Считать ключевые слова или название источника достаточным основанием."
+        ],
+        "requiredHosts": [
+          "common_prompt_to_task_runtime"
+        ],
+        "evidenceNeeds": [
+          "Свежая загрузка кандидата через PromptToTaskMachine.LoadCheckpointAsync.",
+          "P7 source-disjoint оценка на зарезервированных строках.",
+          "Ablation-контроли против точного prompt, имени файла/пути/заголовка, source-family-id и nearest-only маршрута."
+        ],
+        "splitId": "p7d-train-only-candidate",
+        "confidence": 0.58
+      },
+      {
+        "patternId": "p7d-pattern-phase-prompt-task-specification",
+        "taskType": "phase_prompt_task_specification",
+        "learnedSignals": [
+          "phase_prompt_request",
+          "input_contract",
+          "artifact_contract",
+          "allowed_scope",
+          "forbidden_actions",
+          "verification_plan",
+          "dependency_boundaries",
+          "technology_names_context_only"
+        ],
+        "explicitUserRequirements": [
+          "Длинный фазовый prompt сжать до структуры задачи: цель шага, входные зависимости, артефакты, ограничения, запреты и проверки.",
+          "Технические названия оставить только как контекст, а не как правило выбора или маршрут выполнения."
+        ],
+        "constraints": [
+          "Не превращать название технологии, файла, класса или шага в авторитет.",
+          "Не обучать проектный рецепт исполнения.",
+          "Сохранять оценочные и holdout строки вне обучения."
+        ],
+        "deliverables": [
+          "Сжатая спецификация фазы с входами, выходами и проверками.",
+          "Явный список запретов и границ области работы."
+        ],
+        "forbiddenActions": [
+          "Использовать заголовок фазы как готовую задачу.",
+          "Добавить команды запуска или проектные пути как обучающий сигнал.",
+          "Смешать происхождение строки с модельным основанием ответа."
+        ],
+        "requiredHosts": [
+          "common_prompt_to_task_runtime"
+        ],
+        "evidenceNeeds": [
+          "Свежая загрузка кандидата через PromptToTaskMachine.LoadCheckpointAsync.",
+          "P7 source-disjoint оценка на зарезервированных строках.",
+          "Ablation-контроли против точного prompt, имени файла/пути/заголовка, source-family-id и nearest-only маршрута."
+        ],
+        "splitId": "p7d-train-only-candidate",
+        "confidence": 0.58
+      }
+    ]
+  },
+  "acceptedRefIds": [
+    "p5l:P5H-DPO-PTT-001",
+    "p5l:P5H-DPO-PTT-003",
+    "p7c:P7C-PTT-TRAIN-001",
+    "p7c:P7C-PTT-TRAIN-002",
+    "p7c:P7C-PTT-TRAIN-003"
+  ],
+  "sourceManifestRef": "artifacts/smart-skills-semantic-quality-completion/p7d-prompt-to-task-checkpoint-candidate/prompt-to-task-p7d-source-manifest.json",
+  "semanticQualityClaimed": false,
+  "savedAtUtc": "2026-06-14T19:24:34.710Z"
+}

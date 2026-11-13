@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "p35.checkpoint-rewrite-manifest-design.v1",
+  "phase": "P35",
+  "createdAtLocalDate": "2026-06-16",
+  "scope": "non-training checkpoint rewrite manifest design only",
+  "trainingRun": false,
+  "evalRun": false,
+  "checkpointMutated": false,
+  "modelFilesTouched": false,
+  "semanticQualityClaimed": false,
+  "requiredManifestFields": [
+    {
+      "field": "manifest_id",
+      "meaning": "stable id for candidate rewrite"
+    },
+    {
+      "field": "machine",
+      "meaning": "PromptToTask, OrchestrationReasoning, or SkillSelection"
+    },
+    {
+      "field": "checkpoint_scope",
+      "meaning": "common_repo or user_adaptive"
+    },
+    {
+      "field": "source_pointers",
+      "meaning": "hashed source refs without raw private text"
+    },
+    {
+      "field": "training_dataset_checksum",
+      "meaning": "checksum of exact train-ready rows"
+    },
+    {
+      "field": "eval_fixture_checksum",
+      "meaning": "checksum of source-disjoint held-out fixtures"
+    },
+    {
+      "field": "ablation_report_ref",
+      "meaning": "future report proving shortcut controls fail"
+    },
+    {
+      "field": "dashboard_api_qa_ref",
+      "meaning": "human-readable dashboard/API validation examples"
+    },
+    {
+      "field": "fresh_load_probe_ref",
+      "meaning": "future clean-load proof after export/import"
+    },
+    {
+      "field": "continue_training_probe_ref",
+      "meaning": "future proof that training resumes from checkpoint"
+    },
+    {
+      "field": "backup_ref",
+      "meaning": "pre-mutation backup pointer"
+    },
+    {
+      "field": "export_import_ref",
+      "meaning": "portable package and import proof"
+    },
+    {
+      "field": "share_policy",
+      "meaning": "what can be shared from user-adaptive leg"
+    },
+    {
+      "field": "semantic_quality_gate",
+      "meaning": "numeric metric thresholds and no-overclaim rules"
+    }
+  ],
+  "lifecycleBeforeMutation": [
+    "load user/cache checkpoint first for user-adaptive scope",
+    "fallback to repo/common checkpoint when user state is absent",
+    "write backup metadata before mutation",
+    "apply only authorized train-ready rows",
+    "save candidate checkpoint under new candidate id",
+    "export candidate checkpoint package",
+    "import package into clean location",
+    "run fresh-load probe",
+    "run continue-training probe from imported checkpoint",
+    "run source-disjoint eval and shortcut ablations",
+    "accept or reject candidate manifest in later authorized phase"
+  ],
+  "gatesRepresented": {
+    "sourceDisjoint": "eval_fixture_checksum must be built from held-out source families",
+    "ablation": "ablation_report_ref must prove path, id, title, node, class, and stack-only controls fail",
+    "freshLoad": "fresh_load_probe_ref must load exported/imported checkpoint in clean state",
+    "continueTraining": "continue_training_probe_ref must update existing checkpoint rather than retrain from zero",
+    "exportImport": "export_import_ref must prove checkpoint portability",
+    "dashboardApiQa": "dashboard_api_qa_ref must expose human-readable examples and debug boundaries",
+    "noOverclaim": "semantic_quality_gate cannot pass from artifact presence or checkpoint existence alone"
+  },
+  "remainingGaps": [
+    "train-ready common dataset not authorized",
+    "eval fixtures not materialized as runner input yet",
+    "candidate checkpoint does not exist",
+    "fresh-load result does not exist",
+    "continue-training result does not exist",
+    "numeric semantic metrics do not exist"
+  ],
+  "notAuthorizedByP35": [
+    "training",
+    "eval execution",
+    "checkpoint rewrite",
+    "checkpoint mutation",
+    "promotion",
+    "semantic-quality claim"
+  ]
+}

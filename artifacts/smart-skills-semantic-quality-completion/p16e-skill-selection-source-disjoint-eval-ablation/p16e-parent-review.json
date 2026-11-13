@@ -1,0 +1,51 @@
+{
+  "phase": "P16E_SKILL_SELECTION_SOURCE_DISJOINT_EVAL_ABLATION",
+  "parent_review_status": "ACCEPTED_GAP_EVIDENCE_PENDING_PHASE_COMMIT",
+  "verdict": "PASS_AS_GAP_EVIDENCE_NOT_POSITIVE_EVAL",
+  "accepted_as_gap_evidence": true,
+  "accepted_as_positive_skill_selection_evidence": false,
+  "accepted_as_semantic_quality": false,
+  "accepted_as_lifecycle_gate_input_for_p16f": false,
+  "review_cycles": [
+    {
+      "cycle_id": "parent_p16e_001_goal_delivery",
+      "result": "pass",
+      "finding": "P16E produced eval input ledger, source-disjoint eval results, ablation results, contamination proof, reports, self-check, evidence card, and state entry."
+    },
+    {
+      "cycle_id": "parent_p16e_002_eval_truthfulness",
+      "result": "pass_with_gap",
+      "finding": "P16E honestly reports 0 positive passes, 8 failures, and 4 gaps. This is useful gap evidence, not positive semantic-quality evidence."
+    },
+    {
+      "cycle_id": "parent_p16e_003_shortcut_and_contamination",
+      "result": "pass",
+      "finding": "Ablation shortcut leaks are 0 and eval/holdout rows are absent from P16D checkpoint trained/materialized ids."
+    },
+    {
+      "cycle_id": "parent_p16e_004_next_action",
+      "result": "pass_after_parent_route_change",
+      "finding": "Because positive eval failed, next action is train-only SkillSelection coverage repair before rerunning checkpoint/eval; P16F lifecycle is not the next honest step."
+    }
+  ],
+  "verified_facts": {
+    "eval_holdout_rows_total": 12,
+    "eval_pass": 0,
+    "eval_fail": 8,
+    "eval_gap": 4,
+    "ablation_controls_total": 72,
+    "ablation_shortcut_leaks": 0,
+    "p16d_checkpoint_mutated": false,
+    "eval_holdout_used_for_training": false,
+    "json_jsonl_parse": "passed",
+    "contamination_check": "passed",
+    "utf8_mojibake_scan": "passed_with_explicit_utf8_decoder",
+    "true_flag_overclaim_scan": "passed",
+    "git_diff_check": "passed"
+  },
+  "next_gate_or_gap": {
+    "gate_id": "P16E1_SKILL_SELECTION_TRAIN_ONLY_COVERAGE_REPAIR",
+    "summary": "Add or materialize more train-only SkillSelection coverage for missing units/skills, then rebuild the checkpoint candidate and rerun source-disjoint eval.",
+    "immediate_next_action": "commit/push P16E accepted gap evidence, then issue a bounded P16E1 sub-agent work order."
+  }
+}

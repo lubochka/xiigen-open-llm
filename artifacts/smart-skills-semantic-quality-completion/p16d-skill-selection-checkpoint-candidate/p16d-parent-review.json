@@ -1,0 +1,54 @@
+{
+  "phase": "P16D_SKILL_SELECTION_CHECKPOINT_CANDIDATE",
+  "parent_review_status": "ACCEPTED_PENDING_PHASE_COMMIT",
+  "verdict": "PASS_AFTER_PARENT_REVIEW_REPAIR",
+  "accepted_as_checkpoint_candidate": true,
+  "accepted_as_training_run": false,
+  "accepted_as_final_or_common_checkpoint": false,
+  "accepted_as_skill_selection_positive_evidence": false,
+  "accepted_as_full_api_readiness": false,
+  "review_cycles": [
+    {
+      "cycle_id": "parent_p16d_001_goal_delivery",
+      "result": "pass_after_repair",
+      "finding": "P16D created a candidate checkpoint artifact, manifest, source manifest, locator, input rows, reports, and state entry."
+    },
+    {
+      "cycle_id": "parent_p16d_002_shortcut_review",
+      "result": "pass_after_repair",
+      "finding": "Parent rejected the first candidate because it had top-level candidate_position_weights. Repair removed that top-level state and kept candidate order only in diagnostics-only guard."
+    },
+    {
+      "cycle_id": "parent_p16d_003_source_license_review",
+      "result": "pass_after_repair",
+      "finding": "Parent rejected evidence-only row materialization. Repair excluded P16B-SS-PROMPT-001 from trained profiles and recorded it as excluded evidence-only material."
+    },
+    {
+      "cycle_id": "parent_p16d_004_validation",
+      "result": "pass",
+      "finding": "Parent verified JSON/JSONL parse, checksum, no eval/holdout contamination, no evidence-only trained profile, diagnostics-only guard, UTF-8, no-overclaim, and diff check."
+    }
+  ],
+  "verified_facts": {
+    "checkpoint_sha256": "9238A1577A783E50AB910346B9C00F515005132EA5D09B7D3FFB5DF7BCB4C20F",
+    "allowed_train_candidate_rows_used": 5,
+    "materialized_profile_rows": 4,
+    "diagnostics_only_guard_rows": 1,
+    "evidence_only_train_candidate_rows_excluded": 1,
+    "eval_candidate_rows_excluded": 6,
+    "holdout_candidate_rows_excluded": 6,
+    "top_level_candidate_position_weights_present": false,
+    "candidate_order_guard_authority": false,
+    "candidate_order_guard_can_select_skill": false,
+    "json_jsonl_parse": "passed",
+    "checksum_verification": "passed",
+    "utf8_mojibake_scan": "passed_with_explicit_utf8_decoder",
+    "true_flag_overclaim_scan": "passed",
+    "git_diff_check": "passed"
+  },
+  "next_gate_or_gap": {
+    "gate_id": "P16E_SKILL_SELECTION_SOURCE_DISJOINT_EVAL_ABLATION",
+    "summary": "Evaluate and ablate the P16D candidate without training on eval/holdout rows and without promoting readiness claims.",
+    "immediate_next_action": "commit/push P16D accepted checkpoint candidate, then issue a bounded P16E sub-agent work order."
+  }
+}

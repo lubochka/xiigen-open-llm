@@ -1,0 +1,61 @@
+{
+  "phase": "P19_SKILLSELECTION_PROMOTION_ELIGIBILITY",
+  "verdict": "PASS_PROMOTION_ELIGIBILITY_ACCEPTED_PENDING_COMMIT",
+  "eligibility_decision": "DIRECT_PROMOTION_BLOCKED_ARTIFACT_ONLY",
+  "summary_ru": "P17E SkillSelection production-export candidate нельзя безопасно продвигать напрямую в runtime/common model path. Он остаётся artifact-only candidate: manifest говорит accuracyAtExport=0 и semanticQualityClaimed=false, locator говорит runtime_wired=false и common/final paths не обновлены, а direct copy перетрёт более крупный existing common checkpoint.",
+  "runtime_behavior_changed": false,
+  "promotion_performed": false,
+  "common_model_files_modified": false,
+  "focused_test": {
+    "file": "Tests/SmartSkillsSemanticQualityP19PromotionEligibilityTests.cs",
+    "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SmartSkillsSemanticQualityP19PromotionEligibilityTests\" --logger \"console;verbosity=minimal\" --no-restore /p:UseSharedCompilation=false",
+    "result": "passed: Failed=0, Passed=1, Skipped=0, Total=1",
+    "first_attempt_note_ru": "Первый focused run завис на VBCSCompiler shared compiler; процесс был остановлен и тест перезапущен с UseSharedCompilation=false.",
+    "explicit_utf8_reads_preserved": true,
+    "explicit_utf8_reads_note_ru": "Focused test читает manifest/checkpoint/locator через File.ReadAllText(..., Encoding.UTF8); parent patch сохранён."
+  },
+  "comparison_ref": "artifacts/smart-skills-semantic-quality-completion/p19-skillselection-promotion-eligibility/p19-existing-vs-candidate-comparison.json",
+  "blocked_reasons_ref": "artifacts/smart-skills-semantic-quality-completion/p19-skillselection-promotion-eligibility/p19-blocked-or-eligible-reasons.jsonl",
+  "what_would_be_needed_before_promotion_ru": [
+    "A separate explicit promotion work order that is allowed to modify a versioned common model path or the existing common path.",
+    "Positive source-disjoint compatibility/non-regression eval comparing existing common model and candidate on common runtime behavior.",
+    "Rollback/load proof so replacing or versioning the common asset can be undone safely.",
+    "Manifest/locator rewrite with truthful accuracy/evidence fields and no semantic/full readiness overclaim.",
+    "Fresh-load through XiigenExtensionApiService common loader after promotion candidate path is updated.",
+    "API/firewall rerun proving unsupported claims remain blocked and any supported claim has positive evidence."
+  ],
+  "source_reviews": {
+    "p17d_parent_verdict": "PASS_RUNTIME_IMPROVEMENT_ACCEPTED_AS_COMPONENT_EVIDENCE",
+    "p17e_parent_verdict": "PASS_LIFECYCLE_IMPORT_EXPORT_ACCEPTED_AS_COMPONENT_EVIDENCE",
+    "p17f_parent_verdict": "PASS_API_FIREWALL_COMPONENT_EVIDENCE_ACCEPTED_NO_FULL_READINESS_PROMOTION",
+    "p18_parent_verdict": "PASS_HUMAN_DOCS_REFRESH_ACCEPTED_NO_READINESS_PROMOTION"
+  },
+  "safety_flags": {
+    "semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "full_api_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "dashboard_or_host_readiness_claimed": false,
+    "runtime_behavior_changed": false,
+    "promotion_performed": false
+  },
+  "parent_readability_repair": {
+    "reason_ru": "Parent review нашёл mojibake в human-facing P19 артефактах и state. Этот repair перезаписывает P19 Markdown/JSON/JSONL в читаемом UTF-8 русском тексте.",
+    "status_after_repair": "parent-accepted pending commit",
+    "focused_test_utf8_reads_preserved": true
+  },
+  "validation": {
+    "focused_test": "passed: Failed=0, Passed=1, Skipped=0, Total=1",
+    "focused_test_command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SmartSkillsSemanticQualityP19PromotionEligibilityTests\" --logger \"console;verbosity=minimal\" --no-restore /p:UseSharedCompilation=false",
+    "json_jsonl_parse": "passed: 4 JSON files, 2 JSONL files, 12 JSONL rows",
+    "utf8_mojibake_scan": "passed",
+    "escaped_cyrillic_scan": "passed",
+    "replacement_char_scan": "passed",
+    "crlf_scan": "passed",
+    "question_mark_replacement_scan": "passed",
+    "overclaim_true_flag_scan": "passed",
+    "common_model_path_modified": false,
+    "git_diff_check": "passed"
+  }
+}

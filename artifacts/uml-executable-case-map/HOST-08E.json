@@ -1,0 +1,79 @@
+{
+    "schema_version":  1,
+    "work_order":  "HOST-08E-CLAUDE-HOOK-QA-AUTOMATION-AFTER-SOURCE-REPAIR",
+    "artifact_kind":  "uml_executable_case_map",
+    "passed":  true,
+    "claim_scope":  "Executable case map for Claude hook-command/source QA only.",
+    "fixture":  {
+                    "prompt":  "HOST-08E synthetic non-private prompt with HOST08E_CLAUDE_QA_SENTINEL_DO_NOT_DISPLAY",
+                    "raw_private_data_used":  false,
+                    "sentinel":  "HOST08E_CLAUDE_QA_SENTINEL_DO_NOT_DISPLAY"
+                },
+    "cases":  [
+                  {
+                      "case_id":  "HOST08E-CLAUDE-HOOK-MANIFEST",
+                      "branch":  "Claude SessionStart hook command target",
+                      "execution":  "Inspect .claude-plugin/plugin.json SessionStart command and assert it invokes src/claude-entrypoint.js.",
+                      "expected":  {
+                                       "manifest_hook_points_to_js":  true,
+                                       "ps1_accepted_as_implementation":  false
+                                   }
+                  },
+                  {
+                      "case_id":  "HOST08E-CLAUDE-PROMPT-TO-TASK",
+                      "branch":  "Claude hook-command prompt-to-task request",
+                      "execution":  "Invoke node.exe src/claude-entrypoint.js with Method=prompt-to-task.",
+                      "expected":  {
+                                       "core_request_ref_exists":  true,
+                                       "core_response_ref_exists":  true,
+                                       "core_trace_ref_exists":  true,
+                                       "semantic_quality_claimed":  false,
+                                       "sentinel_absent_from_display_response_trace":  true
+                                   }
+                  },
+                  {
+                      "case_id":  "HOST08E-CLAUDE-ORCHESTRATION-PLAN",
+                      "branch":  "Claude hook-command orchestration-plan request",
+                      "execution":  "Invoke node.exe src/claude-entrypoint.js with Method=orchestration-plan.",
+                      "expected":  {
+                                       "core_request_ref_exists":  true,
+                                       "core_response_ref_exists":  true,
+                                       "core_trace_ref_exists":  true,
+                                       "semantic_quality_claimed":  false
+                                   }
+                  },
+                  {
+                      "case_id":  "HOST08E-CLAUDE-SKILL-SELECTION",
+                      "branch":  "Claude hook-command skill-selection request",
+                      "execution":  "Invoke node.exe src/claude-entrypoint.js with Method=skill-selection.",
+                      "expected":  {
+                                       "core_request_ref_exists":  true,
+                                       "core_response_ref_exists":  true,
+                                       "core_trace_ref_exists":  true,
+                                       "semantic_quality_claimed":  false
+                                   }
+                  },
+                  {
+                      "case_id":  "HOST08E-CLAUDE-DEBUG-OFF-ON",
+                      "branch":  "Claude debug disabled and enabled trace behavior",
+                      "execution":  "Run prompt-to-task with DebugEnabled=false and DebugEnabled=true.",
+                      "expected":  {
+                                       "debug_disabled_display_has_no_trace_shape":  true,
+                                       "debug_enabled_display_has_xiigen_input_output_shape":  true,
+                                       "sentinel_absent_from_visible_debug_trace":  true
+                                   }
+                  },
+                  {
+                      "case_id":  "HOST08E-CLAUDE-THIN-HOST",
+                      "branch":  "No host semantic authority",
+                      "execution":  "Inspect host trace and report fields.",
+                      "expected":  {
+                                       "host_semantic_ranking":  false,
+                                       "host_training":  false,
+                                       "host_corpus_parsing":  false,
+                                       "host_dpo_generation":  false,
+                                       "host_model_mutation":  false
+                                   }
+                  }
+              ]
+}

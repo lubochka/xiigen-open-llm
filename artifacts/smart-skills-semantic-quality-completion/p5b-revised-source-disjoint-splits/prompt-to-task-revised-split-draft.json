@@ -1,0 +1,121 @@
+{
+  "phase": "P5B_REVISED_SOURCE_DISJOINT_SPLIT_DRAFT",
+  "target_machine": "PromptToTask",
+  "language": "ru",
+  "artifact_status": "draft_only_pending_parent_review",
+  "explicit_verdict": "READY_FOR_DPO_PROMOTION_REVIEW",
+  "training_readiness_verdict": "INSUFFICIENT_TRAINING_READY_ROWS",
+  "training_allowed": false,
+  "eval_allowed": false,
+  "semantic_quality_claimed": false,
+  "training_run": false,
+  "eval_run": false,
+  "checkpoint_or_model_changed": false,
+  "source_families_considered": [
+    {
+      "family_id": "sf-prompt-to-task-basic-prompt-77A175A9",
+      "source_ref": "C:\\Users\\lubao\\Documents\\xiigen\\basic prompt.txt",
+      "origin": "P3 original PromptToTask draft rows",
+      "row_or_candidate_ids": [
+        "P3-PTT-DRAFT-001",
+        "P3-PTT-DRAFT-002"
+      ],
+      "source_state": "accepted_draft_source",
+      "analysis_state_observed_state": "not_rechecked_in_p5b",
+      "training_ready": false,
+      "dpo_status": "draft_not_training_ready",
+      "independent_reason_ru": "Это исходная PromptToTask family из P3. Две строки являются variants одного basic-prompt источника и не могут считаться независимыми друг от друга.",
+      "blocked_or_limited_by_ru": "Same-source variants; parent review должен выбрать максимум один representative row или доказать отдельную обучающую ценность до promotion."
+    },
+    {
+      "family_id": "sf-p5a-prompt-to-task-authority-rules-54DF62A3",
+      "source_ref": "C:\\Users\\lubao\\Documents\\xiigen\\AGENTS.md",
+      "origin": "P5A candidate-family expansion",
+      "row_or_candidate_ids": [
+        "P5A-CAND-PTT-AUTHORITY-RULES-001"
+      ],
+      "source_state": "done",
+      "analysis_state_observed_state": "done",
+      "training_ready": false,
+      "dpo_status": "accepted_candidate",
+      "independent_reason_ru": "Отдельный rules-документ: учит извлекать task contract из правил и ограничений, не derived от basic prompt.txt.",
+      "blocked_or_limited_by_ru": "Candidate-only: нужен parent review, redaction/source-hash acceptance and DPO promotion review before any training-ready claim."
+    },
+    {
+      "family_id": "sf-p5a-skills-inventory-universal-adapter-905F88B4",
+      "source_ref": "C:\\Users\\lubao\\Documents\\xiigen\\llm mvp\\skills loading as an ai extension\\skills-inventory-universal-vs-project-specific.md",
+      "origin": "P5A candidate-family expansion",
+      "row_or_candidate_ids": [
+        "P5A-CAND-BOTH-SKILLS-INVENTORY-001"
+      ],
+      "source_state": "named_reference",
+      "analysis_state_observed_state": "todo",
+      "training_ready": false,
+      "dpo_status": "accepted_candidate_for_split_draft_only",
+      "independent_reason_ru": "Отдельная family про границу universal core и project adapter; не derived от basic prompt.txt и не derived от AGENTS.md.",
+      "blocked_or_limited_by_ru": "Named-reference/todo source: нельзя повышать до training-ready, пока источник не analyzed/accepted или parent явно не примет его как named-reference evidence для promotion review."
+    }
+  ],
+  "proposed_split_draft": {
+    "train_candidate_families": [
+      {
+        "family_id": "sf-prompt-to-task-basic-prompt-77A175A9",
+        "candidate_role": "train_candidate_representative_only",
+        "representative_rows": [
+          "P3-PTT-DRAFT-001"
+        ],
+        "reason_ru": "Можно рассматривать как исходный representative seed только для DPO promotion review; второй same-source variant не добавляет независимый train count.",
+        "training_ready": false
+      },
+      {
+        "family_id": "sf-p5a-prompt-to-task-authority-rules-54DF62A3",
+        "candidate_role": "train_candidate_after_parent_promotion_review",
+        "representative_rows": [
+          "P5A-CAND-PTT-AUTHORITY-RULES-001"
+        ],
+        "reason_ru": "Независимый done-source candidate может стать train candidate только после parent promotion review.",
+        "training_ready": false
+      }
+    ],
+    "eval_candidate_families": [
+      {
+        "family_id": "sf-p5a-skills-inventory-universal-adapter-905F88B4",
+        "candidate_role": "eval_candidate_named_reference_only",
+        "representative_rows": [
+          "P5A-CAND-BOTH-SKILLS-INVENTORY-001"
+        ],
+        "reason_ru": "Смыслово независимая held-out family для проверки universal-core-vs-adapter reasoning, но источник сейчас named_reference/todo.",
+        "eval_ready": false
+      }
+    ],
+    "excluded_or_blocked_families": [
+      {
+        "family_id": "sf-prompt-to-task-basic-prompt-77A175A9",
+        "row_ids": [
+          "P3-PTT-DRAFT-002"
+        ],
+        "reason_ru": "Второй same-source variant не должен считаться отдельной source family; parent review должен merge/drop или отдельно доказать teaching value."
+      }
+    ]
+  },
+  "counts": {
+    "families_considered": 3,
+    "original_p3_families": 1,
+    "p5a_candidate_families": 2,
+    "source_state_done_families": 1,
+    "source_state_named_reference_families": 1,
+    "accepted_draft_source_families": 1,
+    "training_ready_rows": 0,
+    "eval_ready_rows": 0,
+    "train_candidate_families": 2,
+    "eval_candidate_families": 1,
+    "excluded_or_blocked_families": 1
+  },
+  "blockers": [
+    "All rows remain training_ready=false.",
+    "P5A named-reference/todo rows cannot be promoted without parent review and source acceptance.",
+    "No DPO promotion review has accepted any candidate row as training-ready.",
+    "No ablation, eval, training, checkpoint rewrite, fresh-load or continue-training gate has run."
+  ],
+  "parent_review_needed_ru": "Parent должен проверить, можно ли этот candidate split использовать как вход в DPO promotion review. Даже если ответ да, training_allowed и eval_allowed остаются false до отдельного принятия rows as training-ready."
+}

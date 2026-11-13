@@ -1,0 +1,100 @@
+{
+  "schema": "orchestration-reasoning-or04b-prerequisite-review-v1",
+  "work_order": "OR-04B-PREREQ-01",
+  "status": "PASS_PENDING_PARENT_REVIEW",
+  "verdict": "OR-04B asset materialization and continue-training are not allowed yet",
+  "claim_scope": "admission/prerequisite gate only; no checkpoint, model asset, training run, or continue-training execution",
+  "reason": "Current OrchestrationReasoning source rows and common corpus are ref-only scaffolds with dpo_finalized=false, dpo_train_ready=false, and training_started=false. OR-04A provides export/import/fresh-load lifecycle code, but no OrchestrationReasoning DPO pair binding, train-ready corpus, trainer, or continue-training path is locally ready.",
+  "source_evidence": {
+    "universalization_candidates": {
+      "path": "training-data/orchestration-reasoning/or-01u-universalization-candidates.jsonl",
+      "row_count": 4,
+      "common_row_count": 3,
+      "adaptive_row_count": 1,
+      "dpo_finalized_true_count": 0,
+      "dpo_train_ready_true_count": 0,
+      "training_started_true_count": 0
+    },
+    "common_corpus": {
+      "path": "training-data/orchestration-reasoning/orchestration-reasoning-common-corpus.jsonl",
+      "row_count": 3,
+      "non_common_row_count": 0,
+      "dpo_finalized_true_count": 0,
+      "dpo_train_ready_true_count": 0,
+      "training_started_true_count": 0
+    },
+    "common_manifest": {
+      "path": "training-data/orchestration-reasoning/orchestration-reasoning-common-corpus-manifest.json",
+      "row_count": 3,
+      "excluded_adaptive_row_count": 1,
+      "dpo_finalized": false,
+      "dpo_train_ready": false,
+      "training_started": false
+    },
+    "or_04a_lifecycle": {
+      "export_import_fresh_load_code_exists": true,
+      "continue_training_claimed": false,
+      "training_started": false,
+      "committed_model_assets_created": false,
+      "refs": [
+        "artifacts/orchestration-reasoning-lifecycle/OR-04A-export-import-fresh-load.json",
+        "artifacts/dpo-knowledge-map/OR-04A.json",
+        "artifacts/dpo-universalization/OR-04A.json",
+        "artifacts/completion-matrix/OR-04A.json"
+      ]
+    }
+  },
+  "local_trainer_continue_path_review": {
+    "orchestration_reasoning_trainer_exists": false,
+    "orchestration_reasoning_continue_path_exists": false,
+    "legacy_orchestration_plan_machine_continue_command_found": true,
+    "legacy_continue_command": "continue-orchestration-training",
+    "legacy_continue_command_ref": "27.TranslationDomain.Tools/Program.cs:56,1487-1545",
+    "legacy_continue_command_target": "OrchestrationPlanMachine",
+    "legacy_continue_command_pair_type": "OrchestrationTrainingPair",
+    "legacy_continue_command_load_ref": "OrchestrationPlanMachine.LoadCheckpointAsync",
+    "legacy_continue_command_accepted_for_or_04b": false,
+    "legacy_continue_command_distinction": "The command continue-orchestration-training exists, but it loads OrchestrationPlanMachine and reads OrchestrationTrainingPair gzip rows from the older orchestration-plan path. It is not a SmartSkillsDomain.OrchestrationReasoningMachine trainer or continue-training path and must not be used as OR-04B proof.",
+    "lifecycle_export_import_fresh_load_exists": true,
+    "searched_sources": [
+      "43.SmartSkillsDomain",
+      "Tests",
+      "tools",
+      "training-data/orchestration-reasoning",
+      "artifacts/orchestration-reasoning-lifecycle",
+      "artifacts/dpo-knowledge-map",
+      "artifacts/dpo-universalization"
+    ],
+    "commands": [
+      "rg -n \"OrchestrationReasoning.*(Train|Continue|Checkpoint|Export|Import|LoadCheckpoint|SaveCheckpoint)|ContinueTraining|TrainingPair|Dpo|DPO\" 43.SmartSkillsDomain Tests tools training-data artifacts/orchestration-reasoning-lifecycle artifacts/dpo-knowledge-map artifacts/dpo-universalization",
+      "rg -n \"dpo_train_ready|training_started|dpo_finalized|continue_training|ContinueTraining|trainer|Trainer\" training-data/orchestration-reasoning artifacts/orchestration-reasoning-lifecycle artifacts/dpo-knowledge-map artifacts/dpo-universalization artifacts/completion-matrix"
+    ],
+    "findings": [
+      "OR-04A lifecycle methods exist for ExportLearnedState, ImportLearnedState, SaveCheckpointAsync, ImportAsync, and LoadCheckpointAsync.",
+      "27.TranslationDomain.Tools/Program.cs contains continue-orchestration-training, but ContinueOrchestrationTrainingAsync calls OrchestrationPlanMachine.LoadCheckpointAsync and trains OrchestrationTrainingPair rows; this is legacy OrchestrationPlanMachine evidence, not OrchestrationReasoningMachine evidence.",
+      "tools/xiigen-extension-plan-gate.ps1 advertises DPO schema/binding/materialization/readiness modes, but this prerequisite slice did not run training or finalization.",
+      "No local OrchestrationReasoning trainer or continue-training execution path is accepted as ready for OR-04B asset materialization."
+    ]
+  },
+  "asset_materialization_guard": {
+    "json_only_model_placeholder_forbidden": true,
+    "fake_checkpoint_forbidden": true,
+    "continue_training_claim_forbidden_until_prereqs_pass": true,
+    "model_asset_materialization_allowed_now": false,
+    "continue_training_allowed_now": false,
+    "training_run_allowed_now": false,
+    "operator_input_required": false
+  },
+  "derived_next_bounded_action": {
+    "id": "OR-04B-DPO-BINDING-01",
+    "reason": "Local ref-only rows contain chosen_universal_ref, rejected_near_miss_ref, error_code, source refs, and hashes, so the next safe work is a bounded DPO binding/materialization prereq that creates approved ref-only chosen/rejected pair bindings without raw private text, external AI, training, checkpoint, or model materialization.",
+    "allowed_claim": "DPO binding/readiness evidence only",
+    "forbidden_claims": [
+      "train_ready=true before validator/readiness gate",
+      "training_started=true",
+      "checkpoint/model asset materialized",
+      "continue-training succeeded"
+    ]
+  },
+  "passed": true
+}

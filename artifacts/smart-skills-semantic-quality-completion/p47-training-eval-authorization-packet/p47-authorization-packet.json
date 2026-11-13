@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "phase": "P47_TRAINING_EVAL_AUTHORIZATION_PACKET",
+  "status": "pass_pending_parent_review",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "scope": "Non-training authorization packet and future work-order skeleton only.",
+  "training_authorized_now": false,
+  "eval_authorized_now": false,
+  "checkpoint_mutation_authorized_now": false,
+  "exact_luba_approval_quote": "NONE",
+  "implementation_authorized_now": "artifact_state_only_no_production_code",
+  "candidate_dataset_refs": [
+    {
+      "id": "p31_materialized_dpo_candidates",
+      "path": "artifacts/smart-skills-semantic-quality-completion/p31-skillselection-dpo-materialized-candidates/p31-materialized-dpo-candidates.jsonl",
+      "row_count": 12,
+      "sha256": "3FF9B59AE601E6DEE9F1741528F3C49018EA65FF84ECA76D5F77A125D1CA88A6",
+      "role": "candidate_training_material_not_authorized"
+    },
+    {
+      "id": "p27_dataset_card",
+      "path": "artifacts/smart-skills-semantic-quality-completion/p27-skillselection-repair-dataset-candidate/p27-dataset-card.json",
+      "row_count": 8,
+      "sha256": "6433774C85110843E7E9BFD14FFEC549D636DE1B43811823402E52AED7F7E8CF",
+      "role": "candidate_dataset_card"
+    }
+  ],
+  "heldout_refs": [
+    {
+      "id": "p36_eval_fixtures",
+      "path": "artifacts/smart-skills-semantic-quality-completion/p36-eval-fixture-rows/p36-eval-fixtures.jsonl",
+      "row_count": 36,
+      "sha256": "FA8419A529781CEDBFABBB9048553D5FD2833F6B71149B333107C42A0B60250E",
+      "role": "eval_fixture_material_not_authorized_for_eval_run"
+    },
+    {
+      "id": "p31_dashboard_qa_scenarios",
+      "path": "artifacts/smart-skills-semantic-quality-completion/p31-skillselection-dpo-materialized-candidates/p31-dashboard-qa-scenarios.jsonl",
+      "row_count": 6,
+      "sha256": "B3C8AE7A27ED53430937716AF6D506B0646EC6829F47F4BD959A4F96DC393AD5",
+      "role": "qa_scenarios_not_training_rows"
+    }
+  ],
+  "preflight_refs": [
+    {
+      "id": "p41_source_disjoint_guard",
+      "path": "artifacts/smart-skills-semantic-quality-completion/p41-source-disjoint-pre-eval-guard/p41-implementation-report.json",
+      "sha256": "5812CD40A7A808BC48539E3741FEC133AF331E2EC0DE315EFB002517B3FB6121",
+      "can_proceed_to_eval_runner": false
+    },
+    {
+      "id": "p44_readiness_dossier",
+      "path": "artifacts/smart-skills-semantic-quality-completion/p44-non-training-authorization-readiness/p44-authorization-readiness-dossier.json",
+      "sha256": "E2CDCAEBE654D16CA93FEA53EE2B0C9D5E5D0180D6AD937A30492EB4C8DA9438"
+    }
+  ],
+  "target_checkpoint_ref": {
+    "required_before_mutation": true,
+    "current_value": "NONE",
+    "status": "missing_for_future_training_or_mutation",
+    "future_required_fields": [
+      "checkpoint_path",
+      "manifest_path",
+      "locator_ref",
+      "sha256",
+      "created_from_dataset_sha256"
+    ]
+  },
+  "rollback_checkpoint_ref": {
+    "required_before_mutation": true,
+    "current_value": "NONE",
+    "status": "missing_for_future_training_or_mutation",
+    "future_required_fields": [
+      "checkpoint_path",
+      "manifest_path",
+      "locator_ref",
+      "sha256",
+      "rollback_activation_steps"
+    ]
+  },
+  "source_license_gate": {
+    "required": true,
+    "current_status": "missing_for_training",
+    "future_required_fields": [
+      "artifact_path",
+      "row_count",
+      "source_family",
+      "license_or_approval_source",
+      "common_training_eligible",
+      "user_local_only",
+      "quarantine_reason",
+      "dataset_checksum",
+      "heldout_checksum"
+    ],
+    "common_training_allowed_now": false
+  },
+  "metrics_plan": {
+    "required_before_claim": true,
+    "current_status": "plan_only_no_metrics_generated",
+    "required_metrics": [
+      "per_machine_metrics",
+      "heldout_accuracy_or_pass_rate_by_source_family",
+      "ablation_delta_exact_prompt_lookup",
+      "ablation_delta_source_id_path_filename_lookup",
+      "ablation_delta_title_static_route",
+      "ablation_delta_nearest_only_baseline",
+      "ablation_delta_no_trained_state",
+      "candidate_order_permutation_check_for_skillselection",
+      "false_positive_claim_scan",
+      "regression_check_against_previous_checkpoint",
+      "explicit_failure_examples"
+    ]
+  },
+  "ablation_plan": {
+    "required_before_claim": true,
+    "current_status": "plan_only_not_executed",
+    "negative_controls": [
+      "exact_prompt_lookup",
+      "source_id_path_filename_lookup",
+      "title_static_route",
+      "nearest_only_baseline",
+      "no_trained_state",
+      "candidate_order_permutation"
+    ],
+    "pass_condition_template": "Each shortcut control must be worse than the trained path by the future approved threshold and must not alone satisfy the held-out scenarios."
+  },
+  "rollback_plan": {
+    "required_before_mutation": true,
+    "steps": [
+      "Record rollback checkpoint path, manifest path, locator ref, and sha256 before mutation.",
+      "Write any new checkpoint to a staging path, never over the rollback checkpoint.",
+      "Create manifest before promotion.",
+      "Run future-authorized fresh-load probe against the staged checkpoint.",
+      "Run future-authorized continue-training probe from the staged checkpoint.",
+      "Promote only after probes and metrics pass.",
+      "On any failure, restore locator to rollback ref and leave staged checkpoint unpromoted."
+    ]
+  },
+  "future_work_order_template": {
+    "disabled_until_explicit_luba_approval": true,
+    "template_path": "artifacts/smart-skills-semantic-quality-completion/p47-training-eval-authorization-packet/p47-future-work-order-template.md",
+    "required_approval_quote": "<fresh Luba quote explicitly accepting P47 and authorizing the named action now>",
+    "allowed_actions_placeholder": "<training|eval|checkpoint_mutation>",
+    "candidate_dataset_placeholder": "<path sha256 row_count>",
+    "heldout_placeholder": "<path sha256 row_count>",
+    "target_checkpoint_placeholder": "<checkpoint path manifest locator sha256>",
+    "rollback_checkpoint_placeholder": "<checkpoint path manifest locator sha256>",
+    "source_license_gate_placeholder": "<license or approval evidence>",
+    "metrics_gate_placeholder": "<thresholds and ablation pass conditions>",
+    "must_remain_disabled_when_approval_quote_is_NONE": true
+  },
+  "non_claim_flags": {
+    "semantic_quality_claimed": false,
+    "model_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "training_run": false,
+    "eval_run": false,
+    "checkpoint_mutated": false,
+    "host_runtime_invoked": false,
+    "common_model_updated": false
+  },
+  "next_recommendation": "Parent review and commit boundary only. Do not launch training, eval, checkpoint mutation, host runtime, external AI, subagents, or git from this work order."
+}

@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "work_order": "HOST-07A-HOST-CODE-REVIEW-MATRIX",
+  "artifact_kind": "host_code_review_matrix",
+  "claim_scope": "Static source/package code review only. No host runtime smoke, production code edit, training, model/corpus/DPO work, or final/cross-host completion claim.",
+  "passed": false,
+  "verdict": "FAIL_PENDING_PARENT_REVIEW",
+  "review_rule": "Host smoke/static/report evidence is diagnostic only. A host implementation must be backed by real package/manifest entrypoint source, source-level XIIGen request invocation, source-backed debug trace, and no JSON/PS1/report/static substitute.",
+  "plan_refs": [
+    "B15 HOST-07 code review against real source entrypoints",
+    "B15 HOST-08 QA automation after smoke",
+    "B19 anti-loophole register: JSON/PowerShell/helper/smoke/static/report-only artifacts cannot substitute for completed host extension code",
+    "B20 CM-13..CM-18B host source, QA/e2e, thin-host, anti-determinism, and model-backed semantic evidence",
+    "B21 final acceptance gate"
+  ],
+  "required_checks": [
+    "real host entrypoint source exists and is the package/manifest entrypoint for that host",
+    "source sends XiigenExtensionRequest to the current core endpoint or accepted host hook path",
+    "host repo does not contain semantic ranking, training, corpus parsing, DPO generation, or model mutation as authority",
+    "JSON/PS1/report/static artifacts are not accepted as the implementation substitute",
+    "debug trace implementation is source-backed, not only component report",
+    "exact file/line evidence is recorded for pass/fail"
+  ],
+  "overall_summary": {
+    "hosts_reviewed": 3,
+    "hosts_passed": 1,
+    "hosts_failed": 2,
+    "passed_hosts": [
+      "cursor"
+    ],
+    "failed_hosts": [
+      "claude",
+      "codex"
+    ],
+    "first_bounded_fix": "HOST-07B-CLAUDE-REAL-SOURCE-ENTRYPOINT-REPAIR | code/check | Replace or wrap the Claude PowerShell-only hook implementation with a real non-PS1 Claude package source entrypoint while preserving the accepted thin XiigenExtensionRequest boundary | Claude host source/package only | <=15 min | core semantic logic, training, external AI, runtime smoke, final gates"
+  },
+  "hosts": [
+    {
+      "host": "claude",
+      "repo": "C:/Projects/claude-xiigen-smart-skills",
+      "passed": false,
+      "claim": "Thin current-request hook path exists, but the accepted implementation is still PowerShell-hook-only, so it cannot pass the repaired HOST-07 source-code gate as completed Claude extension code.",
+      "evidence": {
+        "package_entrypoint": {
+          "passed": true,
+          "refs": [
+            "package.json:14 entrypointPath=src/claude-entrypoint.ps1",
+            ".claude-plugin/plugin.json:9 SessionStart hooks",
+            ".claude-plugin/plugin.json:14 type=command",
+            ".claude-plugin/plugin.json:15 command invokes src/claude-entrypoint.ps1"
+          ]
+        },
+        "current_request_contract": {
+          "passed": true,
+          "refs": [
+            "src/claude-entrypoint.ps1:163 default core endpoint tools\\xiigen-extension-core-api.ps1",
+            "src/claude-entrypoint.ps1:186 HostName",
+            "src/claude-entrypoint.ps1:187 HostType",
+            "src/claude-entrypoint.ps1:188 Method",
+            "src/claude-entrypoint.ps1:189 UserPromptOrTaskText",
+            "src/claude-entrypoint.ps1:191 DebugEnabled",
+            "src/claude-entrypoint.ps1:192 RequestedSkills",
+            "src/claude-entrypoint.ps1:193 AvailableSkills",
+            "src/claude-entrypoint.ps1:194 CheckSetInputs",
+            "src/claude-entrypoint.ps1:195 Provenance",
+            "src/claude-entrypoint.ps1:196 CorrelationId",
+            "src/claude-entrypoint.ps1:201 invokes powershell core API",
+            "src/claude-entrypoint.ps1:202 -RequestPath",
+            "src/claude-entrypoint.ps1:203 -ResponsePath",
+            "src/claude-entrypoint.ps1:204 -TracePath"
+          ]
+        },
+        "thin_host_boundary": {
+          "passed": true,
+          "refs": [
+            "src/claude-entrypoint.ps1:247 host_semantic_ranking=false",
+            "src/claude-entrypoint.ps1:249 host_training=false",
+            "src/claude-entrypoint.ps1:250 corpus_parsing=false",
+            "src/claude-entrypoint.ps1:251 external_ai_used=false",
+            "xiigen-extension-contract.json:71 notes: no semantic ranking, training, model logic, corpus parsing, or external AI"
+          ]
+        },
+        "debug_trace_source_backed": {
+          "passed": true,
+          "refs": [
+            "src/claude-entrypoint.ps1:243 debug_enabled",
+            "src/claude-entrypoint.ps1:244 debug_trace_displayed",
+            "src/claude-entrypoint.ps1:247 debug_trace_shape"
+          ]
+        },
+        "json_ps1_report_static_not_substitute": {
+          "passed": false,
+          "refs": [
+            "package.json:14 entrypointPath=src/claude-entrypoint.ps1",
+            ".claude-plugin/plugin.json:15 command invokes PowerShell script as hook implementation"
+          ],
+          "gap": "Claude has a real hook command path, but the source implementation accepted by the package is PowerShell-only. Under the repaired smoke-not-acceptance rule, that is diagnostic/thin-hook evidence, not completed Claude extension code."
+        }
+      },
+      "actionable_gaps": [
+        {
+          "gap_id": "CL-HOST-REAL-SOURCE-ENTRYPOINT",
+          "description": "Provide a real Claude package source entrypoint beyond PowerShell helper/hook script, or repair the plan with a precise exception if Claude host packaging officially requires command-hook scripts as the implementation form.",
+          "next_bounded_fix": "HOST-07B-CLAUDE-REAL-SOURCE-ENTRYPOINT-REPAIR"
+        }
+      ]
+    },
+    {
+      "host": "cursor",
+      "repo": "C:/Projects/cursor-xiigen-smart-skills",
+      "passed": true,
+      "claim": "Cursor has package/manifest command, chat, and panel entrypoints backed by TypeScript source and compiled JS main, sends XiigenExtensionRequest to the current core endpoint, keeps host thin, and has source-backed debug trace.",
+      "evidence": {
+        "package_entrypoint": {
+          "passed": true,
+          "refs": [
+            "package.json:15 activationEvents",
+            "package.json:16 onCommand:xiigen.smartSkills.select",
+            "package.json:17 onCommand:xiigenSmartSkills.panel",
+            "package.json:18 onChatParticipant:xiigen-smart-skills",
+            "package.json:20 main=./dist/extension.js",
+            "package.json:21 contributes",
+            "src/extension.ts:43 registerCommand xiigen.smartSkills.select",
+            "src/extension.ts:75 createChatParticipant xiigen-smart-skills",
+            "src/extension.ts:83 registerCommand xiigenSmartSkills.panel"
+          ]
+        },
+        "current_request_contract": {
+          "passed": true,
+          "refs": [
+            "src/extension.ts:14 interface XiigenExtensionRequest",
+            "src/extension.ts:149 HostName",
+            "src/extension.ts:150 HostType",
+            "src/extension.ts:151 Method",
+            "src/extension.ts:152 UserPromptOrTaskText",
+            "src/extension.ts:165 DebugEnabled",
+            "src/extension.ts:166 RequestedSkills",
+            "src/extension.ts:167 AvailableSkills",
+            "src/extension.ts:168 CheckSetInputs",
+            "src/extension.ts:173 Provenance",
+            "src/extension.ts:180 CorrelationId",
+            "src/extension.ts:209 spawn powershell.exe",
+            "src/extension.ts:215 -RequestPath",
+            "src/extension.ts:217 -ResponsePath",
+            "src/extension.ts:219 -TracePath",
+            "dist/extension.js:172 spawn powershell.exe",
+            "dist/extension.js:178 -RequestPath",
+            "dist/extension.js:180 -ResponsePath",
+            "dist/extension.js:182 -TracePath"
+          ]
+        },
+        "thin_host_boundary": {
+          "passed": true,
+          "refs": [
+            "src/extension.ts:160 host_semantic_ranking=false",
+            "src/extension.ts:161 host_training=false",
+            "src/extension.ts:162 host_corpus_parsing=false",
+            "src/extension.ts:163 external_ai=false",
+            "src/extension.ts:192 core_request_contract=XiigenExtensionRequest",
+            "src/extension.ts:193 host_semantic_ranking=false",
+            "src/extension.ts:194 host_training=false",
+            "src/extension.ts:195 host_corpus_parsing=false"
+          ]
+        },
+        "debug_trace_source_backed": {
+          "passed": true,
+          "refs": [
+            "package.json:54 xiigenSmartSkills.debug default false",
+            "src/extension.ts:297 buildCursorDisplayText",
+            "src/extension.ts:306 exact xiigen <method> input/output display",
+            "src/extension.ts:309 redactRequestForDisplay",
+            "src/extension.ts:314 UserPromptOrTaskText redacted",
+            "dist/extension.js:391 exact xiigen <method> input/output display"
+          ]
+        },
+        "json_ps1_report_static_not_substitute": {
+          "passed": true,
+          "refs": [
+            "package.json:20 main=./dist/extension.js",
+            "src/extension.ts:43 command source entrypoint",
+            "src/extension.ts:75 chat source entrypoint",
+            "src/extension.ts:83 panel source entrypoint"
+          ]
+        }
+      },
+      "actionable_gaps": []
+    },
+    {
+      "host": "codex",
+      "repo": "C:/Projects/codex-xiigen-smart-skills",
+      "passed": false,
+      "claim": "Codex has a JS package entrypoint and current request-shape helpers, but active JS does not invoke the core endpoint; the invoking path is PowerShell. This fails HOST-07A because PowerShell/helper paths cannot substitute for completed Codex plugin/app source code.",
+      "evidence": {
+        "package_entrypoint": {
+          "passed": true,
+          "refs": [
+            "package.json:14 main=src/codex-entrypoint.js",
+            "package.json:19 pluginManifest=.codex-plugin/plugin.json",
+            "package.json:20 sourceEntrypoint=src/codex-entrypoint.js",
+            ".codex-plugin/plugin.json:17 describes a future thin XIIGen adapter"
+          ]
+        },
+        "current_request_contract": {
+          "passed": false,
+          "refs": [
+            "src/codex-entrypoint.js:2-12 request field list",
+            "src/codex-entrypoint.js:16 DEFAULT_CORE_ENDPOINT tools/xiigen-extension-core-api.ps1",
+            "src/codex-entrypoint.js:34 createXiigenExtensionRequest",
+            "src/codex-entrypoint.js:44 HostName",
+            "src/codex-entrypoint.js:45 HostType",
+            "src/codex-entrypoint.js:46 Method",
+            "src/codex-entrypoint.js:47 UserPromptOrTaskText",
+            "src/codex-entrypoint.js:49 DebugEnabled",
+            "src/codex-entrypoint.js:50 RequestedSkills",
+            "src/codex-entrypoint.js:51 AvailableSkills",
+            "src/codex-entrypoint.js:52 CheckSetInputs",
+            "src/codex-entrypoint.js:53 Provenance",
+            "src/codex-entrypoint.js:54 CorrelationId",
+            "src/codex-entrypoint.js:58 createCoreInvocationArgs",
+            "src/codex-entrypoint.js:69 -RequestPath",
+            "src/codex-entrypoint.js:71 -ResponsePath",
+            "src/codex-entrypoint.js:73 -TracePath",
+            "src/codex-entrypoint.ps1:135 invokes powershell core API",
+            "src/codex-entrypoint.ps1:136 -RequestPath",
+            "src/codex-entrypoint.ps1:137 -ResponsePath",
+            "src/codex-entrypoint.ps1:138 -TracePath"
+          ],
+          "gap": "The package main JS constructs the current request and invocation args, but the reviewed JS source has no source-level spawn/execFile/child_process invocation of the endpoint. Actual endpoint invocation is in the PowerShell path."
+        },
+        "thin_host_boundary": {
+          "passed": true,
+          "refs": [
+            "package.json:46 semanticRankingInHost=false",
+            "package.json:47 modelTrainingInHost=false",
+            "package.json:48 corpusParsingInHost=false",
+            "package.json:49 dpoGenerationInHost=false",
+            "package.json:50 learnedModelMutationInHost=false",
+            "src/codex-entrypoint.js:123 semanticRankingInHost=false",
+            "src/codex-entrypoint.js:124 modelTrainingInHost=false",
+            "src/codex-entrypoint.js:125 corpusParsingInHost=false",
+            "src/codex-entrypoint.js:126 dpoGenerationInHost=false",
+            "src/codex-entrypoint.js:127 learnedModelMutationInHost=false"
+          ]
+        },
+        "debug_trace_source_backed": {
+          "passed": true,
+          "refs": [
+            "package.json:55 debug sourceFlag=DebugEnabled",
+            "package.json:57 enabledDisplayShape xiigen <method>",
+            "src/codex-entrypoint.js:91 createDebugTraceDisplay",
+            "src/codex-entrypoint.js:105 exact xiigen <method> input/output display",
+            "src/codex-entrypoint.js:119 defaultDebugEnabled=false",
+            "src/codex-entrypoint.js:120 debugDisplayShape"
+          ]
+        },
+        "json_ps1_report_static_not_substitute": {
+          "passed": false,
+          "refs": [
+            "package.json:14 main=src/codex-entrypoint.js",
+            "package.json:21 powershellEntrypoint=src/codex-entrypoint.ps1",
+            "src/codex-entrypoint.js:58 createCoreInvocationArgs without invoking endpoint",
+            "src/codex-entrypoint.ps1:135 invokes powershell core API"
+          ],
+          "gap": "The non-PS1 active JS source is not yet the endpoint invoker; PowerShell remains the only reviewed invoking implementation path."
+        }
+      },
+      "actionable_gaps": [
+        {
+          "gap_id": "CX-HOST-JS-ENDPOINT-INVOKER",
+          "description": "Move/implement actual core endpoint invocation into Codex active JS plugin/app source, or repair Codex package manifest so a real supported Codex plugin runtime entrypoint invokes the JS source rather than relying on PowerShell as the implementation substitute.",
+          "next_bounded_fix": "HOST-07C-CODEX-JS-ENDPOINT-INVOKER-REPAIR"
+        }
+      ]
+    }
+  ],
+  "forbidden_scope_observed": {
+    "production_code_edited": false,
+    "host_repo_edited": false,
+    "runtime_smoke_run": false,
+    "training_or_model_mutation_started": false,
+    "corpus_or_dpo_work_started": false,
+    "final_or_cross_host_completion_claimed": false
+  },
+  "verification": {
+    "commands": [
+      {
+        "command": "rg --files in Claude/Cursor/Codex host repos",
+        "exit_code": 0,
+        "purpose": "Identify relevant package/source/manifest files."
+      },
+      {
+        "command": "Get-Content -Raw package/source/contract files for each host",
+        "exit_code": 0,
+        "purpose": "Read host files before review."
+      },
+      {
+        "command": "rg -n targeted entrypoint/request/thin/debug/source terms in each host repo",
+        "exit_code": 0,
+        "purpose": "Collect line evidence for review matrix."
+      }
+    ],
+    "post_write_validation": [
+      {
+        "command": "Get-Content -Raw artifacts\\host-code-review\\HOST-07A-host-code-review-matrix.json | ConvertFrom-Json; Get-Content -Raw docs\\plans\\ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json | ConvertFrom-Json",
+        "exit_code": 0,
+        "result": "report and state JSON parse succeeded"
+      },
+      {
+        "command": "git diff --check -- artifacts/host-code-review/HOST-07A-host-code-review-matrix.json docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json",
+        "exit_code": 0,
+        "result": "no whitespace errors after state JSON normalization"
+      }
+    ]
+  },
+  "next_bounded_action_if_parent_accepts_matrix": "HOST-07B-CLAUDE-REAL-SOURCE-ENTRYPOINT-REPAIR, then HOST-07C-CODEX-JS-ENDPOINT-INVOKER-REPAIR before HOST-08 QA/scenario/e2e gates.",
+  "created_at_utc": "2026-06-06T20:24:00Z"
+}

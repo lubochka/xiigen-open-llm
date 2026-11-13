@@ -1,0 +1,36 @@
+{
+  "status": "ACCEPTED_ROWS_FOR_P7D_CHECKPOINT_CANDIDATE",
+  "acceptedRows": 3,
+  "semanticQualityClaimed": false,
+  "p7PassClaimed": false,
+  "checkpointCreated": false,
+  "trainingRun": false,
+  "parentVerdictRu": "Три P7C строки принимаются как train-only input для следующей P7D checkpoint-candidate фазы. Это не P7 pass и не semantic quality.",
+  "reviewCycles": [
+    {
+      "cycle": 1,
+      "name": "goal_delivery",
+      "verdict": "pass",
+      "summary": "P7C found new independent PromptToTask source families instead of reusing P7 eval/holdout rows."
+    },
+    {
+      "cycle": 2,
+      "name": "universal_vs_stack",
+      "verdict": "pass",
+      "summary": "Accepted payloads teach prompt-to-task contracts; stack/project details are listed as removed and excluded from model authority."
+    },
+    {
+      "cycle": 3,
+      "name": "dpo_pair_quality",
+      "verdict": "pass_with_controls",
+      "summary": "Each row has chosen structured task, rejected near miss, error type, gates, and leakage controls. Parent-approved file marks provenance fields excluded from model input."
+    },
+    {
+      "cycle": 4,
+      "name": "source_disjoint_no_overclaim",
+      "verdict": "pass_with_p7d_ablation_required",
+      "summary": "Rows are source-family distinct from P6/P7 artifacts, but P7D must prove they do not create filename/path/source-family shortcuts before any P7 rerun claim."
+    }
+  ],
+  "nextActionAfterCommit": "P7D create PromptToTask checkpoint candidate from P6 train rows plus p7c-parent-approved-train-only-rows.jsonl, then run focused fresh-load/no-overclaim checks before P7 rerun."
+}

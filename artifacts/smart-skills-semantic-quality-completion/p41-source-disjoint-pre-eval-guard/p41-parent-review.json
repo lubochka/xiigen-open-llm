@@ -1,0 +1,67 @@
+{
+  "phase": "P41",
+  "verdict": "PASS_AS_SOURCE_DISJOINT_PRE_EVAL_GUARD_PENDING_COMMIT",
+  "accepted_scope": "source-disjoint parse/consistency guard only",
+  "parent_verification": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"ApiDashboard|SemanticQualityFixture|FixtureRunner|SourceDisjoint\" --nologo",
+      "result": "PASS",
+      "summary": "50 passed"
+    },
+    {
+      "command": "powershell.exe -ExecutionPolicy Bypass -File tools/api-dashboard-qa.ps1",
+      "result": "PASS"
+    },
+    {
+      "command": "node tools/semantic-quality-fixture-qa.js",
+      "result": "PASS",
+      "summary": "fixtures=36; scenarios=36; labels=36; failures=0"
+    },
+    {
+      "command": "git diff --check -- .",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --exit-code -- models/skill-selection/skill-selection-v1 models/prompt-to-task models/orchestration-reasoning",
+      "result": "PASS"
+    },
+    {
+      "command": "json/jsonl parse scan",
+      "result": "PASS"
+    }
+  ],
+  "accepted_behavior": {
+    "reads_manifest": true,
+    "reads_fixture_rows": true,
+    "detects_duplicate_fixture_ids": true,
+    "detects_missing_manifest_families": true,
+    "detects_unexpected_manifest_families": true,
+    "detects_train_eval_overlap": true,
+    "can_proceed_to_eval_runner": false
+  },
+  "not_claimed": {
+    "eval_execution": true,
+    "training": true,
+    "checkpoint_rewrite_or_mutation": true,
+    "semantic_quality": true,
+    "fresh_load_or_continue_training": true,
+    "extension_host_runtime": true,
+    "external_ai": true
+  },
+  "subagent_boundary": {
+    "git_write_or_ref_commands_run": false,
+    "git_diff_check_run": true,
+    "codex_subagent_commands_run": false,
+    "external_ai_or_network_used": false,
+    "commit_run": false,
+    "push_run": false,
+    "derived_p42": false,
+    "notification_checked": true
+  },
+  "scope_exception": {
+    "file": "artifacts/smart-skills-semantic-quality-completion/p38-fixture-dashboard-qa-automation/p38-fixture-dashboard-qa-report.json",
+    "reason": "Allowed fixture QA script rerun refreshed checked_at only.",
+    "accepted": true
+  },
+  "phase_commit_pending": true
+}

@@ -1,0 +1,224 @@
+{
+  "schema_version": 1,
+  "report_id": "q7-03-metric-honesty-review",
+  "work_order_id": "Q7-03_METRIC_HONESTY_REVIEW",
+  "branch": "codex/chat-gpt-5.5",
+  "created_at_utc": "2026-06-11T02:10:00.0000000Z",
+  "status": "PASS",
+  "review_scope": "Q7 metric honesty review only. Evidence scope is contract/evaluator transfer evidence, not production runtime, host/plugin runtime, dashboard/API, full semantic quality, or runtime model inference.",
+  "forbidden_actions_not_run": [
+    "external AI/tools",
+    "host/plugin/runtime",
+    "dashboard/API",
+    "Q8",
+    "new transfer evaluation",
+    "model training",
+    "model mutation",
+    "common checkpoint mutation",
+    "raw client project file reads",
+    "dotnet build",
+    "dotnet test",
+    "stage",
+    "commit",
+    "push"
+  ],
+  "source_reports_reviewed": {
+    "q7_fixture_matrix": [
+      "training-data/smart-skills/semantic-quality/cross-project-transfer-fixtures-v1/cross-project-fixtures.jsonl",
+      "training-data/smart-skills/semantic-quality/cross-project-transfer-fixtures-v1/schema.json",
+      "training-data/smart-skills/semantic-quality/cross-project-transfer-fixtures-v1/fixture-card.json",
+      "artifacts/smart-skills-quality-uplift/q7/cross-project-fixture-matrix-report.json"
+    ],
+    "q7_transfer_reports": [
+      "artifacts/smart-skills-quality-uplift/q7/common-only-transfer-evaluation-report.json",
+      "artifacts/smart-skills-quality-uplift/q7/common-only-evaluator/run-common-only-transfer-evaluation.ps1",
+      "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json",
+      "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-evaluator/run-common-plus-adaptive-transfer-evaluation.ps1"
+    ],
+    "q3_prompt_to_task_evidence": [
+      "artifacts/smart-skills-quality-uplift/q3/prompt-to-task-q3-01-training-report.json",
+      "artifacts/smart-skills-quality-uplift/q3/prompt-to-task-q3-01-held-out-report.json",
+      "artifacts/smart-skills-quality-uplift/q3/prompt-to-task-q3-01-fresh-load-report.json",
+      "artifacts/smart-skills-quality-uplift/q3/prompt-to-task-q3-01-export-import-report.json",
+      "artifacts/smart-skills-quality-uplift/q3/prompt-to-task-q3-01-continue-training-report.json",
+      "artifacts/smart-skills-quality-uplift/q3/prompt-to-task-ablation-review-rerun.json"
+    ],
+    "q4_orchestration_reasoning_evidence": [
+      "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-training-report.json",
+      "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-heldout-report.json",
+      "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-fresh-load-report.json",
+      "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-continue-report.json",
+      "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-ablation-review.json"
+    ],
+    "q5_skill_selection_evidence": [
+      "artifacts/smart-skills-quality-uplift/q5/skill-selection-q5-03-readiness-training-report.json",
+      "artifacts/smart-skills-quality-uplift/q5/skill-selection-q5-03-fresh-load-report.json",
+      "artifacts/smart-skills-quality-uplift/q5/skill-selection-q5-03-import-probe-report.json",
+      "artifacts/smart-skills-quality-uplift/q5/skill-selection-q5-03-continue/skill-selection-v1-continued-report.json",
+      "artifacts/smart-skills-quality-uplift/q5/skill-selection-heldout-build-report.json",
+      "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-ablation-review-final-after-hash-repair.json",
+      "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-executable-probe-report.json",
+      "artifacts/smart-skills-quality-uplift/q5/skill-selection-wrong-skill-near-miss-review.json"
+    ],
+    "q6_adaptive_evidence": [
+      "artifacts/smart-skills-quality-uplift/q6/user-local-adaptive-intake-xiigen-mvp-report.json",
+      "artifacts/smart-skills-quality-uplift/q6/user-local-adaptive-intake-xiigen-platform-dot-net-angular-report.json",
+      "artifacts/smart-skills-quality-uplift/q6/user-local-adaptive-test-profile/q6-04-local-adaptive-learning-loop-report.json",
+      "artifacts/smart-skills-quality-uplift/q6/user-local-adaptive-test-profile/common-hash-unchanged-report.json",
+      "artifacts/smart-skills-quality-uplift/q6/user-local-adaptive-portability-review.json"
+    ]
+  },
+  "metric_ledger": [
+    {
+      "metric_id": "q7_01_common_only_contract_rows_passed",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-only-transfer-evaluation-report.json#rows",
+      "numerator": 4,
+      "denominator": 4,
+      "value": 1.0,
+      "metric_scope": "common_only report-only transfer contract rows",
+      "honesty_note": "Rows compare Q7-00 expected task/plan/skill contracts to report-derived contract outputs; no runtime model inference is claimed."
+    },
+    {
+      "metric_id": "q7_01_common_only_project_alias_coverage",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-only-transfer-evaluation-report.json#fixture_counts.common_only_per_project_alias",
+      "numerator": 2,
+      "denominator": 2,
+      "value": 1.0,
+      "metric_scope": "project aliases covered by common-only rows",
+      "honesty_note": "Both redacted project aliases have 2 common-only rows each."
+    },
+    {
+      "metric_id": "q7_01_negative_controls_fail_or_degrade",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-only-transfer-evaluation-report.json#rows[*].negative_controls",
+      "numerator": 12,
+      "denominator": 12,
+      "value": 1.0,
+      "metric_scope": "common_only exact-prompt, filename/BM25, and candidate-position controls",
+      "honesty_note": "Exact prompt and candidate-position controls report FAILS_CONTROL; filename/BM25 reports DEGRADES. Controls are not omitted."
+    },
+    {
+      "metric_id": "q7_02_common_plus_adaptive_contract_rows_passed",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json#rows",
+      "numerator": 4,
+      "denominator": 4,
+      "value": 1.0,
+      "metric_scope": "common_plus_adaptive report-only transfer contract rows",
+      "honesty_note": "Rows add Q6 redacted adaptive profile refs/root hashes to the contract evidence; no production client sync or runtime model inference is claimed."
+    },
+    {
+      "metric_id": "q7_02_common_plus_adaptive_project_alias_coverage",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json#fixture_counts.common_plus_adaptive_per_project_alias",
+      "numerator": 2,
+      "denominator": 2,
+      "value": 1.0,
+      "metric_scope": "project aliases covered by common+adaptive rows",
+      "honesty_note": "Both redacted project aliases have 2 common+adaptive rows each."
+    },
+    {
+      "metric_id": "q7_02_adaptive_lift_rows",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json#rows[*].local_fit_comparison",
+      "numerator": 4,
+      "denominator": 4,
+      "value": 1.0,
+      "baseline_score_ref": "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json#rows[*].local_fit_comparison.common_only_baseline_score",
+      "baseline_score": 2,
+      "adaptive_score_ref": "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json#rows[*].local_fit_comparison.common_plus_adaptive_score",
+      "adaptive_score": 4,
+      "metric_scope": "adaptive local-fit lift on common+adaptive contract rows",
+      "honesty_note": "The lift is scoped to local-fit contract evidence: adaptive refs/root hashes/source counts are present, not a claim of full semantic quality."
+    },
+    {
+      "metric_id": "q7_02_negative_controls_fail_or_degrade",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json#rows[*].negative_controls",
+      "numerator": 12,
+      "denominator": 12,
+      "value": 1.0,
+      "metric_scope": "common_plus_adaptive exact-prompt, filename/BM25, and candidate-position controls",
+      "honesty_note": "Exact prompt and candidate-position controls report FAILS_CONTROL; filename/BM25 reports DEGRADES. Controls are not omitted."
+    },
+    {
+      "metric_id": "q7_02_common_checkpoint_hash_unchanged",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json#common_checkpoint_hash_guard",
+      "numerator": 3,
+      "denominator": 3,
+      "value": 1.0,
+      "metric_scope": "common checkpoint hash refs unchanged before/after Q7-02",
+      "honesty_note": "Common hashes are checked for PromptToTask, OrchestrationReasoning, and SkillSelection; adaptive evidence does not mutate common checkpoints."
+    },
+    {
+      "metric_id": "q3_q4_q5_model_evidence_refs_present",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-only-transfer-evaluation-report.json#common_asset_evidence",
+      "numerator": 3,
+      "denominator": 3,
+      "value": 1.0,
+      "metric_scope": "common model evidence refs for PromptToTask, OrchestrationReasoning, and SkillSelection",
+      "honesty_note": "Q7 traces to Q3/Q4/Q5 held-out, ablation/control, fresh-load, continue/import/export refs, but still keeps Q7 as report-only transfer contract evidence."
+    },
+    {
+      "metric_id": "q6_adaptive_refs_present_and_separated",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json#adaptive_profile_evidence",
+      "numerator": 2,
+      "denominator": 2,
+      "value": 1.0,
+      "metric_scope": "redacted adaptive profile refs for both project aliases",
+      "honesty_note": "Adaptive refs are Q6 test-profile artifacts with distinct root hashes/source-ref paths; raw client project files were not read."
+    },
+    {
+      "metric_id": "q7_claim_scope_firewall",
+      "source_ref": "artifacts/smart-skills-quality-uplift/q7/common-only-transfer-evaluation-report.json#claim_scope; artifacts/smart-skills-quality-uplift/q7/common-plus-adaptive-transfer-evaluation-report.json#claim_scope",
+      "numerator": 10,
+      "denominator": 10,
+      "value": 1.0,
+      "metric_scope": "no-overclaim booleans across Q7-01 and Q7-02",
+      "honesty_note": "Both reports keep semantic_quality_claimed=false, host_runtime_claimed=false, dashboard_api_runtime_claimed=false, full_product_completion_claimed=false, and model_decision_path_invoked=false."
+    }
+  ],
+  "review_checks": {
+    "every_q7_metric_has_source_ref_and_denominator_numerator": true,
+    "common_only_score_distinguished": true,
+    "common_plus_adaptive_score_distinguished": true,
+    "adaptive_lift_distinguished_from_common_only_score": true,
+    "negative_controls_reported_as_fail_or_degrade_not_omitted": true,
+    "fresh_load_common_adaptive_refs_included": true,
+    "common_hashes_and_adaptive_profile_refs_unchanged": true,
+    "semantic_quality_claimed_false_or_scoped_correctly": true,
+    "runtime_host_dashboard_api_full_product_claim_absent": true,
+    "model_inference_claim_absent": true
+  },
+  "overclaim_terms_review": {
+    "targeted_rg_scope": [
+      "artifacts/smart-skills-quality-uplift/q7",
+      "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-STATE.json"
+    ],
+    "positive_overclaim_found": false,
+    "allowed_matches": "Matches are false/negative scope fields or explicit not-runtime/not-dashboard/not-full-product text."
+  },
+  "verification": {
+    "json_jsonl_parse_and_consistency_checks": "PASS",
+    "q7_01_rows": "PASS_4_OF_4",
+    "q7_02_rows": "PASS_4_OF_4",
+    "q7_01_negative_controls": "PASS_12_OF_12_FAIL_OR_DEGRADE",
+    "q7_02_negative_controls": "PASS_12_OF_12_FAIL_OR_DEGRADE",
+    "adaptive_lift": "PASS_4_OF_4_ROWS_COMMON_ONLY_BASELINE_SCORE_2_COMMON_PLUS_ADAPTIVE_SCORE_4",
+    "common_checkpoint_hashes_unchanged": "PASS_3_OF_3",
+    "no_new_transfer_evaluation_run": true,
+    "dotnet_build_or_test_run": false
+  },
+  "findings": [],
+  "fixes_applied": [],
+  "claim_scope": {
+    "semantic_quality_claimed": false,
+    "q7_metric_honesty_claimed": true,
+    "q7_evidence_scope": "contract_evaluator_transfer_evidence_only",
+    "host_runtime_claimed": false,
+    "dashboard_api_runtime_claimed": false,
+    "model_decision_path_invoked": false,
+    "full_product_completion_claimed": false
+  },
+  "verdict": {
+    "result": "PASS",
+    "operator_input_required": false,
+    "blocker": false,
+    "exact_next_action": "Q7-04 final no-hidden-determinism sweep"
+  }
+}

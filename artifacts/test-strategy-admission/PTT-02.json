@@ -1,0 +1,46 @@
+{
+  "artifact_schema": "test-strategy-admission-v1",
+  "work_order": "PTT-02",
+  "status": "PASS_STATIC_SCHEMA_VERIFICATION_ONLY",
+  "allowed_verification": [
+    "static file/root existence checks",
+    "PowerShell JSON/JSONL parse",
+    "raw private text leakage and forbidden flag sweeps",
+    "git status",
+    "git diff --check"
+  ],
+  "forbidden_verification": [
+    "dotnet build",
+    "dotnet test",
+    "host runtime",
+    "model training",
+    "checkpoint creation",
+    "external AI",
+    "browser or image tools",
+    "commit or push"
+  ],
+  "commands_run": [
+    {
+      "command": "root and artifact existence PowerShell check",
+      "exit_code": 0
+    },
+    {
+      "command": "PowerShell JSON/JSONL parse and false-flag assertion",
+      "exit_code": 0
+    },
+    {
+      "command": "rg forbidden raw fields and true training/finalization flags",
+      "exit_code": 1,
+      "exit_code_meaning": "no matches"
+    },
+    {
+      "command": "git diff --check before edit",
+      "exit_code": 0
+    }
+  ],
+  "script_rerun": {
+    "ran": false,
+    "reason": "Existing corpus artifacts already satisfied PTT-02; rerunning the materialization script would rewrite satisfying artifacts."
+  },
+  "passed": true
+}

@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "phase": "P44_NON_TRAINING_AUTHORIZATION_READINESS",
+  "status": "pass_pending_parent_review",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "scope": "Authorization/readiness dossier only. No training, eval, checkpoint mutation, host runtime, production code, or model promotion.",
+  "current_authority_quote": "Continue plan execution through sub-agents",
+  "training_authorized_now": false,
+  "eval_authorized_now": false,
+  "checkpoint_mutation_authorized_now": false,
+  "exact_luba_approval_quote": "NONE",
+  "candidate_data": [
+    {
+      "artifact": "artifacts/smart-skills-semantic-quality-completion/p27-skillselection-repair-dataset-candidate/p27-dataset-card.json",
+      "description": "Checked SkillSelection repair dataset candidate.",
+      "row_count": 8,
+      "current_role": "candidate_dataset_only",
+      "can_train_now": false,
+      "reason": "P27 training ledger sets trainingAllowed=false, candidateTrainingAllowed=false, commonTrainingAllowed=false."
+    },
+    {
+      "artifact": "artifacts/smart-skills-semantic-quality-completion/p31-skillselection-dpo-materialized-candidates/p31-materialized-dpo-candidates.jsonl",
+      "description": "Materialized candidate DPO-style rows.",
+      "row_count": 12,
+      "current_role": "candidate_material_only",
+      "can_train_now": false,
+      "reason": "Needs explicit authorization, source/license gate, source-disjoint split, leakage checks, and eval plan."
+    },
+    {
+      "artifact": "artifacts/smart-skills-semantic-quality-completion/p31-skillselection-dpo-materialized-candidates/p31-dashboard-qa-scenarios.jsonl",
+      "description": "Dashboard QA scenarios.",
+      "row_count": 6,
+      "current_role": "dashboard_qa_evidence_only",
+      "can_train_now": false,
+      "reason": "QA scenarios are not training rows."
+    },
+    {
+      "artifact": "artifacts/smart-skills-semantic-quality-completion/p36-eval-fixture-rows/p36-eval-fixtures.jsonl",
+      "description": "Eval fixture material across PromptToTask, OrchestrationReasoning and SkillSelection.",
+      "row_count": 36,
+      "current_role": "eval_fixture_material_only",
+      "can_eval_now": false,
+      "reason": "P41 keeps can_proceed_to_eval_runner=false; eval runner still needs authorization."
+    }
+  ],
+  "source_license_gate_required": true,
+  "source_license_gate_fields_required": [
+    "artifact_path",
+    "row_count",
+    "source_family",
+    "license_or_approval_source",
+    "common_training_eligible",
+    "user_local_only",
+    "quarantine_reason",
+    "dataset_checksum",
+    "heldout_checksum"
+  ],
+  "source_disjoint_readiness": {
+    "p36_fixture_count": 36,
+    "p41_guard_present": true,
+    "p41_can_proceed_to_eval_runner": false,
+    "ready_for_eval_run_now": false,
+    "reason": "The guard exists, but a future eval run needs an authorization manifest over the exact candidate train/eval split."
+  },
+  "target_checkpoint_readiness": {
+    "p10_candidate_checkpoint_package_exists": true,
+    "p11_component_fresh_load_evidence_exists": true,
+    "p12_noop_continue_training_evidence_exists": true,
+    "new_trained_checkpoint_from_new_rows_exists": false,
+    "common_final_checkpoint_rewritten": false,
+    "checkpoint_mutated": false,
+    "ready_for_promotion": false
+  },
+  "metrics_required_before_claim": [
+    "per_machine_metrics",
+    "heldout_accuracy_or_pass_rate_by_source_family",
+    "ablation_delta_exact_prompt_lookup",
+    "ablation_delta_source_id_path_filename_lookup",
+    "ablation_delta_title_static_route",
+    "ablation_delta_nearest_only_baseline",
+    "ablation_delta_no_trained_state",
+    "candidate_order_permutation_check_for_skillselection",
+    "false_positive_claim_scan",
+    "regression_check_against_previous_checkpoint",
+    "explicit_failure_examples"
+  ],
+  "rollback_required_before_mutation": true,
+  "future_authorization_fields_required": {
+    "training_authorized_now": "required_true_in_future_approved_training_work_order",
+    "eval_authorized_now": "required_true_in_future_approved_eval_work_order",
+    "exact_luba_approval_quote": "fresh current quote required",
+    "candidate_dataset": "exact artifact path + checksum required",
+    "target_checkpoint": "exact checkpoint/manifest/locator required",
+    "rollback_checkpoint": "exact previous checkpoint/manifest/locator required"
+  },
+  "non_claim_flags": {
+    "semantic_quality_claimed": false,
+    "model_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "training_run": false,
+    "eval_run": false,
+    "checkpoint_mutated": false,
+    "host_runtime_invoked": false,
+    "common_model_updated": false
+  },
+  "next_safe_action": "Create a bounded work order for training/eval authorization manifest and dry-run validation only. Do not run training/eval/checkpoint mutation until explicit approval and preflight gates pass."
+}

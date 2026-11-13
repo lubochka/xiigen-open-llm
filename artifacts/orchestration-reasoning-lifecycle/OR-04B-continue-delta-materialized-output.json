@@ -1,0 +1,85 @@
+﻿{
+  "command": "materialize-orchestration-reasoning-state",
+  "passed": true,
+  "trainer_run_id": "or-04b-trainer-implementation-01",
+  "row_count": 1,
+  "accepted_pair_ids": [
+    "or-dpo-pair:or04b-continue-delta-evidence-boundary-001"
+  ],
+  "payload_sha256": "6dec44eebe9b46f0d1b34b0508f916393f797017d293c9766bdef447ce586f7f",
+  "source_pair_sha256": "392c7ceb7d63675735e3f75cd94405f4747eddc9e4bf0e7a01cfdeed0016ca44",
+  "learned_pattern_count": 1,
+  "learned_state_descriptor": {
+    "state_id": "orchestration-reasoning-state:common:or-04b-trainer-implementation-01",
+    "guide_state_ref": "guide-state:orchestration-reasoning:common:trainer-materialized:v1",
+    "manifest_id": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-continue-delta-payloads-manifest.json",
+    "manifest_sha256": "6dec44eebe9b46f0d1b34b0508f916393f797017d293c9766bdef447ce586f7f",
+    "machine_type": "OrchestrationReasoningMachine",
+    "schema_version": "orchestration-reasoning-state-v1",
+    "source_base_commit": "source-pairs-sha256:392c7ceb7d63675735e3f75cd94405f4747eddc9e4bf0e7a01cfdeed0016ca44",
+    "state_sha256": "bfd8c74e1a168c733c740815a7c74af22fcedfd41736b1d9266ded42f8b026e4",
+    "learned_patterns": [
+      {
+        "pattern_id": "or-learned-pattern:or-dpo-pair:or04b-continue-delta-evidence-boundary-001",
+        "scenario_ref": "or04b:chosen:evidence-boundary-before-checkpoint-writer",
+        "required_task_types": [
+          "universal_reasoning"
+        ],
+        "required_constraint_signals": [
+          "asset_evidence_boundary_detected",
+          "temporary_fixture_scope_detected",
+          "checkpoint_writer_precondition_detected"
+        ],
+        "required_requirement_signals": [
+          "distinguish_command_harness_evidence_from_training_delta",
+          "require_materialized_ref_only_delta_before_checkpoint_write",
+          "block_checkpoint_writer_when_source_is_temp_fixture",
+          "preserve_single_writer_checkpoint_guard"
+        ],
+        "required_deliverable_signals": [
+          "distinguish command harness evidence from actual ref-only training delta before allowing checkpoint writing",
+          "do_not_treat_temp_json_as_training_data",
+          "do_not_write_model_asset_from_command_fixture",
+          "require_parent_review_before_checkpoint_writer"
+        ],
+        "required_evidence_signals": [
+          "source_ref_present",
+          "delta_materialization_report_present",
+          "checkpoint_writer_authorization_explicitly_deferred"
+        ],
+        "phase_families": [
+          "orchestration-reasoning",
+          "dpo-materialization"
+        ],
+        "gate_families": [
+          "dpo-universalization",
+          "anti-leakage",
+          "ORCH-09"
+        ],
+        "asset_families": [
+          "llm_mvp_core",
+          "training-data/orchestration-reasoning"
+        ],
+        "host_check_sets": [
+          "core-only"
+        ],
+        "risk_flags": [
+          "no_checkpoint_claim",
+          "no_semantic_quality_metric_claim",
+          "excluded_technical_refs_metadata_only"
+        ],
+        "next_granularization_actions": [
+          "run parent review before train-ready mutation",
+          "implement checkpoint writer only in a later accepted gate"
+        ],
+        "confidence": 0.8
+      }
+    ]
+  },
+  "training_started": false,
+  "model_asset_created": false,
+  "checkpoint_created": false,
+  "semantic_quality_claimed": false,
+  "host_runtime_claimed": false,
+  "claim_scope": "local trainer state materialization report only; no checkpoint/model asset, no host runtime, no training command"
+}

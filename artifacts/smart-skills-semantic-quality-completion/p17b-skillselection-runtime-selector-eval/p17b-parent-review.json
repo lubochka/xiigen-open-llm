@@ -1,0 +1,29 @@
+{
+  "phase": "P17B_SKILLSELECTION_RUNTIME_SELECTOR_EVAL",
+  "parent_review_verdict": "PASS_RUNTIME_PATH_PROVEN_WITH_COVERAGE_GAP_ACCEPTED",
+  "accepted_as_runtime_path_evidence": true,
+  "accepted_as_runtime_positive_full_pass": false,
+  "accepted_as_semantic_quality": false,
+  "accepted_as_skill_selection_readiness": false,
+  "accepted_as_full_api_readiness": false,
+  "reason_ru": "P17B proves the real SkillSelection runtime path can execute after test-only native binding: LoadCheckpointAsync loads the bound candidate and DecideFromTrainedState returns decisions on source-disjoint rows. It also proves this is not ready: 6 positive rows pass, 4 positive rows fail, and 2 candidate-position rows remain diagnostics-only gaps.",
+  "focused_test": {
+    "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SmartSkillsSemanticQualityP17BRuntimeSelectorTests\" --logger \"console;verbosity=minimal\"",
+    "parent_rerun_result": "passed: Failed=0, Passed=1, Skipped=0, Total=1"
+  },
+  "runtime_counts": {
+    "positive_runtime_pass": 6,
+    "positive_runtime_fail": 4,
+    "diagnostics_only_gap": 2,
+    "control_rows": 36,
+    "shortcut_leaks": 0
+  },
+  "accepted_gaps": [
+    "P16B-SS-PROMPT-003 expected planning but selected claim_verification",
+    "P16B-SS-TASK-002 expected planning_dpo_authoring but selected claim_verification",
+    "P16B-SS-TASK-003 expected trainable_architecture_decision but selected claim_verification",
+    "P16B-SS-CHAIN-003 expected trainable_architecture_decision but selected claim_verification"
+  ],
+  "next_bounded_phase": "P17C_SKILLSELECTION_TRAIN_ONLY_RUNTIME_COVERAGE_REPAIR",
+  "next_phase_goal_ru": "Add or repair train-only SkillSelection coverage for the four failed runtime rows without using eval/holdout rows as training, then rebuild/rerun runtime selector evidence."
+}

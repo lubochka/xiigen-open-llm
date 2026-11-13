@@ -1,0 +1,49 @@
+{
+  "phase": "P8A_ORCHESTRATION_REASONING_TRAINING_ROW_PROMOTION_REVIEW",
+  "parent_review_status": "ACCEPTED_PENDING_PHASE_COMMIT",
+  "accepted_as_p8_pass": false,
+  "accepted_as_checkpoint_ready_input": true,
+  "accepted_train_ready_rows": [
+    "P5E-DPO-ORCH-001",
+    "P5E-DPO-ORCH-002",
+    "P5E-DPO-ORCH-004"
+  ],
+  "reserved_rows_forbidden_for_training": [
+    "P5E-DPO-ORCH-003",
+    "P5E-DPO-ORCH-005"
+  ],
+  "evidence_only_rows": [
+    "P4-ORCH-DPO-DRAFT-001",
+    "P4-ORCH-DPO-DRAFT-002"
+  ],
+  "counts": {
+    "train_ready": 3,
+    "eval_reserved": 1,
+    "holdout_reserved": 1,
+    "evidence_only": 2,
+    "quarantine": 0
+  },
+  "checks": {
+    "json_jsonl_parse_passed": true,
+    "mojibake_scan_passed": true,
+    "readability_token_scan_passed": true,
+    "overclaim_scan_passed": true,
+    "git_diff_check_passed": true,
+    "ledger_schema_checked": true,
+    "train_rows_have_source_family_and_boundary": true,
+    "reserved_rows_not_training_ready": true
+  },
+  "safety_flags": {
+    "checkpoint_created": false,
+    "training_run": false,
+    "eval_run": false,
+    "runtime_called": false,
+    "production_code_changed": false,
+    "semantic_quality_claimed": false,
+    "p8_pass_claimed": false,
+    "full_api_semantic_quality_claimed": false,
+    "final_model_ready_claimed": false
+  },
+  "parent_verdict": "P8A is accepted as row-role review evidence only: three rows may be used as train_ready input for the separate P8B phase, while eval and holdout rows remain protected from training. This is not a P8 pass, semantic-quality claim, full API readiness, or final model readiness.",
+  "next_action_after_commit": "commit/push P8A accepted row-promotion artifacts, then issue P8B bounded sub-agent work order to create an OrchestrationReasoning checkpoint candidate using only accepted train_ready rows"
+}

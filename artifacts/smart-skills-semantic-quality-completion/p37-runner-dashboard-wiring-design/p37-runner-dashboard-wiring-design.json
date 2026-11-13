@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "1.0",
+  "phase": "P37",
+  "scope": "non-training runner/dashboard wiring design only",
+  "createdAtLocalDate": "2026-06-16",
+  "implementationAuthorizedForProductCode": false,
+  "implementationAuthorizedForArtifactStateOnly": true,
+  "trainingRun": false,
+  "evalRun": false,
+  "checkpointMutated": false,
+  "semanticQualityClaimed": false,
+  "modelFilesTouched": false,
+  "sourceInputs": {
+    "p33Examples": "artifacts/smart-skills-semantic-quality-completion/p33-dashboard-api-validation-surface/p33-dashboard-api-validation-examples.jsonl",
+    "p33Report": "artifacts/smart-skills-semantic-quality-completion/p33-dashboard-api-validation-surface/p33-dashboard-api-validation-report.json",
+    "p35FixtureDesign": "artifacts/smart-skills-semantic-quality-completion/p35-eval-fixture-checkpoint-manifest-design/p35-eval-fixture-design.json",
+    "p35CheckpointManifestDesign": "artifacts/smart-skills-semantic-quality-completion/p35-eval-fixture-checkpoint-manifest-design/p35-checkpoint-rewrite-manifest-design.json",
+    "p36FixtureRows": "artifacts/smart-skills-semantic-quality-completion/p36-eval-fixture-rows/p36-eval-fixtures.jsonl",
+    "p36DashboardScenarios": "artifacts/smart-skills-semantic-quality-completion/p36-eval-fixture-rows/p36-dashboard-api-scenarios.jsonl",
+    "p36SourceDisjointManifest": "artifacts/smart-skills-semantic-quality-completion/p36-eval-fixture-rows/p36-source-disjoint-manifest.json"
+  },
+  "counts": {
+    "p33DashboardExamples": 6,
+    "p36FixtureRows": 36,
+    "p36DashboardScenarios": 36,
+    "p36FixtureRowsByMachine": {
+      "PromptToTask": 12,
+      "OrchestrationReasoning": 12,
+      "SkillSelection": 12
+    },
+    "p37HumanLabelRows": 36,
+    "p37FutureTestPlanRows": 12,
+    "p37ReadinessGapRows": 7,
+    "p37ReviewCycles": 7
+  },
+  "proposedLaterImplementationFiles": [
+    "43.SmartSkillsDomain.Dashboard/ApiEvalFixtureCatalog.cs",
+    "43.SmartSkillsDomain.Dashboard/ApiEvalFixtureCatalogItem.cs",
+    "43.SmartSkillsDomain.Dashboard/ApiEvalFixturePreviewService.cs",
+    "43.SmartSkillsDomain.Dashboard/ApiDashboardViewModel.cs",
+    "43.SmartSkillsDomain.Dashboard/ApiDashboardCatalog.cs",
+    "43.SmartSkillsDomain/EvalFixtureRunner.cs",
+    "43.SmartSkillsDomain/EvalFixtureRunnerRequest.cs",
+    "43.SmartSkillsDomain/EvalFixtureRunnerResult.cs",
+    "Tests.ApiDashboardWpf/ApiDashboardFixtureCatalogTests.cs",
+    "Tests/LlmFromScratch.Tests/SmartSkills/EvalFixtureRunnerTests.cs"
+  ],
+  "proposedLaterClasses": [
+    {
+      "className": "ApiEvalFixtureCatalog",
+      "responsibility": "loads P36/P37 fixture metadata for the dashboard without running model eval"
+    },
+    {
+      "className": "ApiEvalFixtureCatalogItem",
+      "responsibility": "typed row shown in dashboard list with human label and evidence boundary"
+    },
+    {
+      "className": "ApiEvalFixturePreviewService",
+      "responsibility": "returns preview response for a selected fixture row; does not invoke checkpoints"
+    },
+    {
+      "className": "EvalFixtureRunner",
+      "responsibility": "future runner that refuses execution until explicit eval authorization and source-disjoint checks pass"
+    }
+  ],
+  "proposedLaterTests": [
+    "ApiDashboardFixtureCatalog_LoadsP36Rows_ShowsHumanNames",
+    "ApiDashboardFixtureCatalog_RowSelection_PopulatesInputAndExpectedResult",
+    "ApiDashboardFixtureCatalog_RunDisabledForEvalWhenNotAuthorized",
+    "FutureEvalRunner_LoadsFixtureRows_RejectsTrainingOrEvalFalseRows",
+    "FutureEvalRunner_SourceDisjointManifest_RejectsFamilyOverlap",
+    "FutureEvalRunner_NegativeControls_AreReportedSeparately",
+    "ApiDashboardQaScript_VerifiesAllFixtureRowsHaveReadableLabels",
+    "ApiDashboardQaScript_VerifiesNoSmokeCompletionLanguage",
+    "ApiDashboardE2E_UserChoosesFixtureAndRunsPreview",
+    "ApiDashboardE2E_DebugPanelShowsSentAndReceivedPayload",
+    "FutureRunnerIntegration_RequiresExplicitEvalAuthorization",
+    "FutureRunnerIntegration_ProducesMetricsOnlyAfterRealExecution"
+  ],
+  "apiSurfaces": [
+    {
+      "humanNameRu": "Каталог проверочных примеров API",
+      "proposedMethod": "LoadFixtureCatalogAsync",
+      "input": "fixture artifact path or embedded resource id",
+      "output": "human-labeled catalog rows"
+    },
+    {
+      "humanNameRu": "Предпросмотр одного проверочного примера",
+      "proposedMethod": "PreviewFixtureAsync",
+      "input": "fixture_id plus optional redacted text override",
+      "output": "expected fields, warnings, evidence boundary"
+    },
+    {
+      "humanNameRu": "Будущий authorized eval runner",
+      "proposedMethod": "RunAuthorizedEvalAsync",
+      "input": "authorized eval manifest, checkpoint locator, fixture batch",
+      "output": "numeric metrics only after real machine invocation"
+    }
+  ],
+  "wiringAlgorithm": [
+    "Dashboard loads P37 label rows and P36 fixtures.",
+    "User selects a row and sees input example, expected output slots, and evidence boundary.",
+    "Preview path returns fixture metadata only while eval_execution_allowed=false.",
+    "Future runner parses the same fixture rows but refuses execution without authorization manifest.",
+    "Only a later authorized runner may call machines and emit metrics."
+  ],
+  "outOfScopeForP37": [
+    "product code changes",
+    "real dashboard implementation",
+    "runner implementation",
+    "training",
+    "eval execution",
+    "checkpoint rewrite",
+    "model promotion",
+    "Claude/Cursor/Codex host runtime"
+  ]
+}

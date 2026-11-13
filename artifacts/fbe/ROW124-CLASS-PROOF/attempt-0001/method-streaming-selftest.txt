@@ -1,0 +1,17 @@
+STREAMING TRANSFORM REFERENCE-VECTOR SELFTEST
+rule: remove 0x0D ONLY when immediately before 0x0A; keep lone 0x0D
+
+vector 1 chunk=1        in=41 0d 0a 42 0d 43 0d 0a expected=41 0a 42 0d 43 0a observed_len=6 removed=2 sha_match=True verdict=PASS
+vector 1 chunk=2        in=41 0d 0a 42 0d 43 0d 0a expected=41 0a 42 0d 43 0a observed_len=6 removed=2 sha_match=True verdict=PASS
+vector 1 chunk=3        in=41 0d 0a 42 0d 43 0d 0a expected=41 0a 42 0d 43 0a observed_len=6 removed=2 sha_match=True verdict=PASS
+vector 1 chunk=8388608  in=41 0d 0a 42 0d 43 0d 0a expected=41 0a 42 0d 43 0a observed_len=6 removed=2 sha_match=True verdict=PASS
+vector 2 chunk=1        in=41 0a 42 0a 43 expected=41 0a 42 0a 43 observed_len=5 removed=0 sha_match=True verdict=PASS
+vector 2 chunk=2        in=41 0a 42 0a 43 expected=41 0a 42 0a 43 observed_len=5 removed=0 sha_match=True verdict=PASS
+vector 2 chunk=3        in=41 0a 42 0a 43 expected=41 0a 42 0a 43 observed_len=5 removed=0 sha_match=True verdict=PASS
+vector 2 chunk=8388608  in=41 0a 42 0a 43 expected=41 0a 42 0a 43 observed_len=5 removed=0 sha_match=True verdict=PASS
+vector 3 chunk=1        in=0d 0d 0a expected=0d 0a observed_len=2 removed=1 sha_match=True verdict=PASS
+vector 3 chunk=2        in=0d 0d 0a expected=0d 0a observed_len=2 removed=1 sha_match=True verdict=PASS
+vector 3 chunk=3        in=0d 0d 0a expected=0d 0a observed_len=2 removed=1 sha_match=True verdict=PASS
+vector 3 chunk=8388608  in=0d 0d 0a expected=0d 0a observed_len=2 removed=1 sha_match=True verdict=PASS
+
+overall: PASS

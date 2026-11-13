@@ -1,0 +1,60 @@
+{
+  "phase": "P39",
+  "verdict": "PASS_AS_DASHBOARD_FIXTURE_CATALOG_API_SURFACE_PENDING_COMMIT",
+  "accepted_scope": "dashboard fixture catalog/API preview surface for P36/P37 rows only",
+  "fixture_examples_total": 36,
+  "fixture_examples_by_method": {
+    "PromptToTask": 12,
+    "OrchestrationReasoning": 12,
+    "SkillSelection": 12
+  },
+  "parent_verification": [
+    {
+      "command": "node tools/semantic-quality-fixture-qa.js",
+      "result": "PASS",
+      "summary": "fixtures=36; scenarios=36; labels=36; failures=0"
+    },
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"ApiDashboard|SemanticQualityFixture\" --nologo",
+      "result": "PASS",
+      "summary": "38 passed"
+    },
+    {
+      "command": "dotnet test Tests.ApiDashboardWpf/Tests.ApiDashboardWpf.csproj --nologo",
+      "result": "PASS",
+      "summary": "9 passed"
+    },
+    {
+      "command": "powershell.exe -ExecutionPolicy Bypass -File tools/api-dashboard-qa.ps1",
+      "result": "PASS",
+      "summary": "37 checks"
+    },
+    {
+      "command": "git diff --check -- .",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --exit-code -- models/skill-selection/skill-selection-v1 models/prompt-to-task models/orchestration-reasoning",
+      "result": "PASS"
+    },
+    {
+      "command": "json/jsonl parse scan",
+      "result": "PASS"
+    }
+  ],
+  "not_claimed": {
+    "semantic_quality": true,
+    "training": true,
+    "eval_execution": true,
+    "checkpoint_rewrite": true,
+    "fresh_load_or_continue_training": true,
+    "extension_host_runtime": true,
+    "external_ai": true
+  },
+  "scope_exception": {
+    "file": "artifacts/smart-skills-semantic-quality-completion/p38-fixture-dashboard-qa-automation/p38-fixture-dashboard-qa-report.json",
+    "reason": "Parent rerun of the accepted P38 QA script rewrote checked_at only.",
+    "accepted": true
+  },
+  "phase_commit_pending": true
+}

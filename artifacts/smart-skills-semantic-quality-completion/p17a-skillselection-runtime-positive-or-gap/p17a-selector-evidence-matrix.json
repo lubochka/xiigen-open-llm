@@ -1,0 +1,54 @@
+{
+  "phase": "P17A_SKILLSELECTION_RUNTIME_POSITIVE_OR_GAP",
+  "verdict": "PASS_EXACT_RUNTIME_GAP_READY_FOR_PARENT_REVIEW",
+  "summary_ru": "Матрица отделяет положительные selector rows от diagnostics-only rows. Положительные строки есть в artifact schema, но runtime-positive доказательство отсутствует, потому что они не прогнаны через fresh SkillSelectionMachine.DecideFromTrainedState после native load.",
+  "rows": [
+    {
+      "evidence_group": "p16d2_materialized_positive_profiles",
+      "row_count": 13,
+      "source_ref": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/skill-selection-p16d2-candidate-checkpoint.json",
+      "selector_quality_role": "positive_candidate_material",
+      "diagnostics_only": false,
+      "can_count_as_runtime_positive_now": false,
+      "why_ru": "Материализованы typed unit profiles, но P16E2 было artifact-level schema evaluation, а P16F было bytes readback. Runtime selector call не доказан.",
+      "required_runtime_proof_ru": "Создать native/loadable SkillSelectionCheckpoint или approved binder, загрузить через LoadCheckpointAsync/ImportAsync, затем вызвать DecideFromTrainedState на eval/holdout rows."
+    },
+    {
+      "evidence_group": "candidate_order_leakage_guard",
+      "row_count": 2,
+      "source_ref": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/skill-selection-p16d2-candidate-checkpoint.json",
+      "selector_quality_role": "diagnostics_only_guard",
+      "diagnostics_only": true,
+      "can_count_as_runtime_positive_now": false,
+      "why_ru": "Candidate-position guard должен запрещать shortcut. Он не может считаться качеством выбора навыка.",
+      "required_runtime_proof_ru": "В runtime test/evidence assert: evidence не содержит CANDIDATE_POSITION_WEIGHT_SCAFFOLD_ONLY, а candidate-order permutations не меняют semantic-unit selection."
+    },
+    {
+      "evidence_group": "p16e2_eval_ablation",
+      "row_count": 12,
+      "source_ref": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/p16e2-review-report.json",
+      "selector_quality_role": "component_schema_eval_candidate",
+      "diagnostics_only": false,
+      "can_count_as_runtime_positive_now": false,
+      "why_ru": "P16E2 parent accepted it as component evidence with runtime_evaluation=false.",
+      "required_runtime_proof_ru": "Повторить source-disjoint eval/ablation на real runtime selector path."
+    },
+    {
+      "evidence_group": "p16f_lifecycle",
+      "row_count": 13,
+      "source_ref": "artifacts/smart-skills-semantic-quality-completion/p16f-skill-selection-lifecycle-evidence/p16f-lifecycle-report.json",
+      "selector_quality_role": "artifact_lifecycle_evidence",
+      "diagnostics_only": false,
+      "can_count_as_runtime_positive_now": false,
+      "why_ru": "P16F fresh-load/export-import сохраняет sha bytes, но boundary_ru говорит, что это не production runtime SkillSelection.",
+      "required_runtime_proof_ru": "Проверить native load/import и selector output, не только byte identity."
+    }
+  ],
+  "candidate_position_guard_count": 2,
+  "positive_profile_rows_count": 13,
+  "runtime_evaluation_currently_proven": false,
+  "semantic_quality_claimed": false,
+  "skill_selection_readiness_claimed": false,
+  "full_api_readiness_claimed": false,
+  "final_model_ready_claimed": false
+}

@@ -1,0 +1,103 @@
+{
+  "report_id": "p40-wo-01d-core-api-check-set-verification",
+  "work_order": "P40-WO-01d",
+  "passed": true,
+  "validation_only": true,
+  "scope": "static core Phase40 API/check-set contract and gate-script readiness report",
+  "phase40_complete": false,
+  "full_host_implementation_evidence": false,
+  "gate_execution": {
+    "phase40_extension_prompt_suite_gate_executed": false,
+    "skill_selection_core_extension_boundary_gate_executed": false,
+    "dotnet_build_test_runner_executed": false,
+    "host_repo_commands_executed": false
+  },
+  "inspected_files": [
+    {
+      "path": "43.SmartSkillsDomain/Phase40ExtensionContracts.cs",
+      "kind": "core host-neutral contract",
+      "required_surfaces_found": [
+        "Phase40ExtensionHostKind",
+        "Phase40EvidenceScope",
+        "Phase40CoreDecisionSourceKind",
+        "Phase40ExtensionApiRequest",
+        "SkillSelectionResponse",
+        "Phase40PromptSuiteRequest",
+        "Phase40PromptSuiteResult",
+        "Phase40CheckSetItem",
+        "Phase40CheckSetResult",
+        "Phase40TraceLogReference",
+        "Phase40ContractStatus",
+        "Phase40ExternalToolUsageEvidence",
+        "Phase40AssetReferenceSet",
+        "Phase40CoreDecisionEvidence"
+      ],
+      "required_surfaces_missing": []
+    },
+    {
+      "path": "tools/phase40-extension-prompt-suite-gate.ps1",
+      "kind": "cross-host prompt-suite static report gate",
+      "parser_only_check": "PROMPT_SUITE_GATE_PARSER_OK",
+      "required_guards_found": [
+        "structured user-facing entrypoint evidence",
+        "string-only entrypoint evidence failure",
+        "report-level and prompt-level core request refs",
+        "report-level and prompt-level core response refs",
+        "per-prompt concrete task",
+        "per-prompt concrete answer/check result",
+        "trace/log refs",
+        "contract-only downgrade guard",
+        "external AI/unrelated tool explicit approval guard",
+        "common/adaptive asset split guard",
+        "deterministic masquerade guard",
+        "internal kitchen/training-state answer-surface guard"
+      ],
+      "required_guards_missing": []
+    },
+    {
+      "path": "tools/skill-selection-core-extension-boundary-gate.ps1",
+      "kind": "core/extension boundary static gate",
+      "parser_only_check": "BOUNDARY_GATE_PARSER_OK",
+      "required_flags_found": [
+        "CoreContractFile",
+        "RequireApiCheckSetContract",
+        "ForbidHostPackageCodeInCore",
+        "RequireImplementationFiles",
+        "ForbidHostSemanticKitchen",
+        "ForbidExternalAiOrUnrelatedToolUse",
+        "ForbidDeterministicMasquerade",
+        "RequireCommonAdaptiveSplit"
+      ],
+      "required_flags_missing": []
+    }
+  ],
+  "thin_client_contract_surfaces": {
+    "request_response": "FOUND: Phase40ExtensionApiRequest and SkillSelectionResponse carry concrete task/check-set inputs and concrete response/check results.",
+    "check_set": "FOUND: Phase40PromptSuiteRequest/Result and Phase40CheckSetItem/Result define prompt-suite and check-set surfaces.",
+    "trace_status": "FOUND: Phase40TraceLogReference and Phase40ContractStatus define trace refs and contract-only downgrade status.",
+    "external_tool_evidence": "FOUND: Phase40ExternalToolUsageEvidence records external AI/unrelated tool prohibition and approval evidence.",
+    "common_adaptive_assets": "FOUND: Phase40AssetReferenceSet separates common model/training/locator refs from adaptive/project-local state refs.",
+    "decision_evidence": "FOUND: Phase40CoreDecisionEvidence separates core trainable/check-set decisions from exact/static or host-provided evidence."
+  },
+  "missing_required_surfaces": [],
+  "first_repair_row": null,
+  "next_bounded_action": "P40-WO-02a only",
+  "luba_nine_check_review": {
+    "check_1": "PASS scoped to P40-WO-01d: core Phase40 contract and gate scripts support the unified v20 plan plus skills-inventory extension boundary.",
+    "check_2": "PASS scoped to P40-WO-01d: all current report requirements are represented in this static report; no code/script/plan edits and no P40-WO-02a were started.",
+    "check_3": "PASS mental experiment: future host work can send concrete tasks/check sets through core contracts and later gates can reject missing entrypoint/core refs/traces/downgrade/asset/decision evidence.",
+    "check_4": "PASS: no hidden deterministic algorithm is accepted; report and gates require deterministic/static masquerade guards and structured core decision evidence.",
+    "check_5": "PASS scoped to static readiness: common/adaptive asset separation surfaces and boundary flag exist; this report does not prove runtime import/export/upgrade/continue-training execution.",
+    "check_6": "PASS: AGENTS OP-4/OP-5/OP-17/OP-28/OP-45/OP-46 and CLAUDE.md were reread; this row only writes report/state evidence.",
+    "check_7": "PASS: logic remains in llm_mvp_core; host extensions remain thin API/check-set clients by contract and future boundary flags.",
+    "check_8": "PASS: no external AI, image-generation, unrelated tools, host SDKs, build/test, runner, or gate execution were used for this report.",
+    "check_9": "PASS scoped to core readiness: Claude/Codex/Cursor future validation is supported by the gates, but actual host implementation and runtime verification remain open."
+  },
+  "known_limits": [
+    "This is validation-only static evidence.",
+    "This is not full Claude, Codex, or Cursor host implementation evidence.",
+    "This does not execute prompt-suite or boundary gates.",
+    "This does not run host runtimes, build/test, or dotnet commands.",
+    "Phase40 remains incomplete."
+  ]
+}

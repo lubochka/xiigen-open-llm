@@ -1,0 +1,42 @@
+{
+  "phase": "P17F_SKILLSELECTION_API_FIREWALL_PROMOTION_GATE",
+  "verdict": "PASS_FIREWALL_UPDATED_READY_FOR_PARENT_REVIEW",
+  "summary_ru": "P17F обновляет API/firewall evidence после P17D и P17E. SkillSelection теперь имеет принятое component runtime improvement evidence и production load/export/import lifecycle evidence. Но это остается component evidence: artifact locator не подключен как common/final runtime, explicit semantic-quality positive signal не создан, поэтому full API semantic-quality claim остается false.",
+  "supported_claims": {
+    "skill_selection_component_runtime_improvement_evidence": true,
+    "skill_selection_component_lifecycle_import_export_evidence": true,
+    "api_firewall_no_claim_boundary_refreshed": true
+  },
+  "blocked_claims": {
+    "semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "full_api_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "dashboard_or_host_readiness_claimed": false
+  },
+  "focused_test": {
+    "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SmartSkillsSemanticQualityP17FApiFirewallTests\" --logger \"console;verbosity=minimal\"",
+    "result": "passed: Failed=0, Passed=1, Skipped=0, Total=1"
+  },
+  "firewall_scenarios": {
+    "scenarios_checked": 4,
+    "scenarios_passed": 4,
+    "unsupported_claims_allowed": 0
+  },
+  "inputs": {
+    "p17d_parent_review": "artifacts/smart-skills-semantic-quality-completion/p17d-skillselection-checkpoint-rebuild-rerun/p17d-parent-review.json",
+    "p17e_parent_review": "artifacts/smart-skills-semantic-quality-completion/p17e-skillselection-lifecycle-import-export/p17e-parent-review.json",
+    "p17e_locator_map": "artifacts/smart-skills-semantic-quality-completion/p17e-skillselection-lifecycle-import-export/p17e-manifest-locator-map.json",
+    "firewall_code": "43.SmartSkillsDomain/XiigenExtensionApiService.cs:ShouldClaimSemanticQuality"
+  },
+  "safety_flags": {
+    "semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "full_api_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "dashboard_or_host_readiness_claimed": false
+  },
+  "next_action_ru": "Родительский review P17F; если принято, следующий bounded phase должен быть derived from plan/state without promoting full readiness."
+}

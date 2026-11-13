@@ -1,0 +1,58 @@
+{
+  "schema": "xiigen-orchestration-reasoning-checkpoint-writer-v1",
+  "work_order": "OR-04B-CHECKPOINT-WRITER-01",
+  "status": "PASS_PENDING_PARENT_REVIEW",
+  "claim_scope": "checkpoint and manifest export only from committed trainer runner output; no fresh-load probe, no continue-training, no host runtime, no semantic quality claim, no adaptive/user model work",
+  "implementation_commit_ref": "7500ca4c14fcd7cefa742014691e62d537a0651f",
+  "command_added_to": "27.TranslationDomain.Tools/Program.cs",
+  "command_name": "export-orchestration-reasoning-model",
+  "production_path_used": "SmartSkillsDomain.OrchestrationReasoningMachine.SaveCheckpointAsync",
+  "source_report": "artifacts/orchestration-reasoning-lifecycle/OR-04B-trainer-runner-output.json",
+  "checkpoint": {
+    "path": "models/orchestration-reasoning/orchestration-reasoning-v1/checkpoint.json",
+    "sha256": "97d6de29d3f3b7aedd657c3ef9c819d23456ae5434a7f72e2b1752f5c3a4b119",
+    "learned_pattern_count": 3,
+    "accepted_pair_count": 3,
+    "accepted_pair_ids": [
+      "or-dpo-pair:or01u-sonnet-clinerules-001",
+      "or-dpo-pair:or01u-sonnet-gitignore-001",
+      "or-dpo-pair:or01u-sonnet-gitattributes-001"
+    ]
+  },
+  "manifest": {
+    "path": "models/orchestration-reasoning/orchestration-reasoning-v1/manifest.json",
+    "checkpoint_ref": "checkpoint.json",
+    "manifest_ref": "manifest.json",
+    "checkpoint_sha256": "97d6de29d3f3b7aedd657c3ef9c819d23456ae5434a7f72e2b1752f5c3a4b119",
+    "source_manifest_ref": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-trainer-payloads-manifest.json",
+    "learned_pattern_count": 3,
+    "portable_refs": true
+  },
+  "explicit_false_claims": {
+    "semantic_quality_claimed": false,
+    "continue_training_claimed": false,
+    "host_runtime_claimed": false,
+    "fresh_load_probe_claimed": false,
+    "adaptive_user_model_claimed": false
+  },
+  "verification": {
+    "focused_build": {
+      "command": "dotnet build 27.TranslationDomain.Tools/27.TranslationDomain.Tools.csproj --nologo",
+      "exit_code": 0,
+      "warnings": 0,
+      "errors": 0
+    },
+    "export_command": {
+      "command": "dotnet run --project 27.TranslationDomain.Tools -- export-orchestration-reasoning-model --learned-state-report \"C:\\Projects\\llm_mvp_core\\artifacts\\orchestration-reasoning-lifecycle\\OR-04B-trainer-runner-output.json\" --checkpoint \"C:\\Projects\\llm_mvp_core\\models\\orchestration-reasoning\\orchestration-reasoning-v1\\checkpoint.json\" --manifest \"C:\\Projects\\llm_mvp_core\\models\\orchestration-reasoning\\orchestration-reasoning-v1\\manifest.json\"",
+      "exit_code": 0
+    }
+  },
+  "evidence_drift_repair": {
+    "parent_rerun_recorded": true,
+    "export_command_rewrites_checkpoint_timestamps": true,
+    "current_hash_from_existing_checkpoint_json": "97d6de29d3f3b7aedd657c3ef9c819d23456ae5434a7f72e2b1752f5c3a4b119",
+    "current_manifest_checkpoint_sha256": "97d6de29d3f3b7aedd657c3ef9c819d23456ae5434a7f72e2b1752f5c3a4b119",
+    "fresh_load_will_validate_current_committed_files_in_next_gate": true
+  },
+  "next_bounded_action": "OR-04B-FRESH-LOAD-PROBE-01"
+}

@@ -1,0 +1,80 @@
+{
+  "schema": "orchestration-reasoning-inference-ablation-v1",
+  "schema_version": "1.0",
+  "work_order": "OR-03",
+  "status": "PASS_PENDING_PARENT_REVIEW_WITH_CAP_BREACH_RECORDED",
+  "validation_scope": "functional learned-state inference only; no training, no checkpoint lifecycle",
+  "machine": "OrchestrationReasoningMachine",
+  "learned_state_pattern_fields": [
+    "PatternId",
+    "ScenarioRef",
+    "RequiredTaskTypes",
+    "RequiredConstraintSignals",
+    "RequiredRequirementSignals",
+    "RequiredDeliverableSignals",
+    "RequiredEvidenceSignals",
+    "PhaseFamilies",
+    "GateFamilies",
+    "AssetFamilies",
+    "HostCheckSets",
+    "RiskFlags",
+    "NextGranularizationActions",
+    "Confidence"
+  ],
+  "ablation_cases": [
+    {
+      "case_id": "no_state",
+      "expected_status": "not_trained_no_learned_guide_state",
+      "semantic_plan_produced": false,
+      "passed": true
+    },
+    {
+      "case_id": "loaded_state_no_patterns",
+      "expected_status": "loaded_guide_state_ready_no_learned_patterns",
+      "semantic_plan_produced": false,
+      "passed": true
+    },
+    {
+      "case_id": "loaded_pattern_matching_structured_signals",
+      "expected_status": "loaded_guide_state_semantic_plan_produced",
+      "selected_pattern": "or-pattern-bounded-implementation-review",
+      "scenario_ref": "scenario:bounded-implementation-review-loop",
+      "semantic_plan_produced": true,
+      "passed": true
+    },
+    {
+      "case_id": "loaded_pattern_no_signal_match",
+      "expected_status": "loaded_guide_state_no_matching_learned_pattern",
+      "semantic_plan_produced": false,
+      "passed": true
+    },
+    {
+      "case_id": "partial_signal_overlap_no_match",
+      "expected_status": "loaded_guide_state_no_matching_learned_pattern",
+      "strict_required_signal_satisfaction": true,
+      "semantic_plan_produced": false,
+      "passed": true
+    },
+    {
+      "case_id": "different_raw_prompt_hash_same_structured_signals",
+      "same_pattern_selected": true,
+      "raw_prompt_hash_used_as_key": false,
+      "passed": true
+    },
+    {
+      "case_id": "nonmatching_structured_task_no_unrelated_pattern",
+      "expected_status": "loaded_guide_state_no_matching_learned_pattern",
+      "semantic_plan_produced": false,
+      "passed": true
+    }
+  ],
+  "inference_source": "loaded learned guide state pattern evaluation",
+  "selection_rule": "all non-empty Required* signal groups must be fully satisfied; any-overlap/score-only matching is rejected; patterns with no required signals do not match",
+  "semantic_quality_claimed": false,
+  "training_started": false,
+  "checkpoint_or_asset_claimed": false,
+  "host_runtime_claimed": false,
+  "hard_cap_exceeded": true,
+  "parent_interrupt_required": true,
+  "passed": true
+}

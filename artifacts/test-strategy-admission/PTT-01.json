@@ -1,0 +1,36 @@
+{
+  "work_order": "PTT-01",
+  "gate": "TEST-STRATEGY-ADMISSION",
+  "status": "PASS",
+  "changed_code": true,
+  "changed_tests": true,
+  "allowed_test_scope": "focused PromptToTask contract tests only",
+  "selected_layers": [
+    {
+      "layer": "unit/contract",
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskContracts\" --nologo",
+      "required": true,
+      "result": "PASS after one local repair"
+    },
+    {
+      "layer": "integration",
+      "required": false,
+      "not_applicable_reason": "PTT-01 adds DTO contracts only; no integration path or machine inference changed."
+    },
+    {
+      "layer": "e2e/host/runtime",
+      "required": false,
+      "not_applicable_reason": "Host/runtime probes are explicitly forbidden in PTT-01."
+    },
+    {
+      "layer": "training",
+      "required": false,
+      "not_applicable_reason": "Training runs and checkpoint asset materialization are explicitly forbidden in PTT-01."
+    }
+  ],
+  "negative_checks": [
+    "no deterministic classifier/trainer/lookup type added",
+    "raw private prompt text is not part of PromptToTaskTrainingPairContract"
+  ],
+  "untrained_honesty": "Only contract shape is claimed; no trained PromptToTask quality/readiness claim is made."
+}

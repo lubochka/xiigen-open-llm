@@ -1,0 +1,8 @@
+# P17 component evidence matrix
+
+| Component | Уровень evidence | Что доказано | Что остается открытым | Claim? |
+|---|---|---|---|---|
+| PromptToTask | component_lifecycle_candidate | Для PromptToTask есть кандидат checkpoint/manifest, fresh-load через проектный путь и continue-training lifecycle evidence. Это компонентная жизненная проверка, а не полный API claim. | Не доказывает SkillSelection, dashboard, host runtime или полный API firewall. | false |
+| OrchestrationReasoning | component_lifecycle_candidate | Для OrchestrationReasoning есть кандидат checkpoint/manifest, fresh-load через проектный путь и continue-training lifecycle evidence. Это компонентная жизненная проверка, а не полный API claim. | Не доказывает SkillSelection, dashboard, host runtime или полный API firewall. | false |
+| SkillSelection | component_candidate_with_scoped_gaps | P16E2 принят как component evidence candidate: 10 eval/holdout rows passed, 0 failed, 2 diagnostics-only gaps, 72 ablation controls without shortcut leaks. P16F принят как lifecycle evidence с сохранением sha, export/import metadata и no-op continue gap. | SkillSelection все еще не является full readiness: P16E2 был schema-level evaluation, runtime_evaluation=false; 2 candidate-position rows остаются diagnostics-only exclusions; P16F continue-training был no-op gap без нового delta. | false |
+| API/firewall | no_claim_firewall_refresh | P13 уже доказал no-claim firewall: без положительной evidence для всех компонентов API не должен заявлять semantic quality. P17 обновляет этот вывод после P16F. | Full API claim остается заблокирован, потому что SkillSelection не имеет полного runtime/final readiness proof, а dashboard/host runtime evidence отсутствуют. | false |

@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "work_order": "CM-26A-PROMPT-TO-TASK-HIERARCHY-PARITY-REPAIR",
+  "artifact_kind": "prompt_to_task_hierarchy_parity_repair",
+  "branch": "codex/chat-gpt-5.5",
+  "passed": true,
+  "verdict": "PASS_WITH_PROMPT_TO_TASK_HIERARCHY_STILL_PARTIAL",
+  "hierarchy_status": "partial",
+  "cm26a_closed": false,
+  "claim_scope": "Documentation/evidence parity repair only. This artifact maps PromptToTask Part A and Part B hierarchy evidence and gaps; it does not implement source, train, run runtime, or claim final completion.",
+  "completion_claim_allowed": false,
+  "training_started": false,
+  "runtime_or_host_invoked": false,
+  "external_ai_used": false,
+  "production_code_edited": false,
+  "plan_edited": false,
+  "part_a_prompt_to_task_refs": [
+    "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md lines 150-153",
+    "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md lines 336-349",
+    "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md lines 696-701"
+  ],
+  "part_b_prompt_to_task_refs": [
+    "PTT-01..PTT-04",
+    "PTT-AD-01..PTT-AD-Z",
+    "CM-25A6",
+    "CM-26/CM-26A"
+  ],
+  "hidden_part_b_branch": false,
+  "missing_part_b_branch": false,
+  "facts_preserved_from_cm26": {
+    "previous_gap_id": "PROMPTTOTASK_HIERARCHY_PARITY_PARTIAL",
+    "previous_report_path": "artifacts/trainable-hierarchy/CM-26-A5-trainable-hierarchy-parity-audit.json",
+    "previous_commit_hash": "1806ad01f0ce335091b01000d5b5a259930f9bc8"
+  },
+  "counts": {
+    "total_levels": 5,
+    "pass": 0,
+    "partial": 4,
+    "open": 1,
+    "fail": 0
+  },
+  "level_statuses": [
+    {
+      "level": "ILearningMachine",
+      "expected_interface": "AgentInfrastructure.Logical.ILearningMachine<PromptToTaskDomain>",
+      "component_name": "SmartSkillsDomain.PromptToTaskMachine",
+      "input_type": "PromptToTaskRequest plus loaded PromptToTaskLearnedStateDescriptor/checkpoint state",
+      "output_type": "PromptToTaskResponse / StructuredTaskContract",
+      "implemented_or_evidenced": "partial",
+      "status": "partial",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/PromptToTaskMachine.cs: PromptToTaskMachine exists with Translate, ImportLearnedState, SaveCheckpointAsync, LoadCheckpointAsync",
+        "43.SmartSkillsDomain/PromptToTaskContracts.cs: PromptToTaskDomain, PromptToTaskRequest, StructuredTaskContract, PromptToTaskResponse",
+        "models/prompt-to-task/prompt-to-task-v1/manifest.json",
+        "models/prompt-to-task/prompt-to-task-v1/prompt-to-task-v1-checkpoint.json"
+      ],
+      "gap": "PromptToTaskMachine does not currently implement ILearningMachine<PromptToTaskDomain> or expose GetOrchestratorAsync evidence.",
+      "next_action": "CM-26A1-PROMPT-TO-TASK-LOGICAL-HIERARCHY-IMPLEMENTATION-EVIDENCE-REPAIR"
+    },
+    {
+      "level": "ILogicalOrchestrator",
+      "expected_interface": "AgentInfrastructure.Logical.ILogicalOrchestrator",
+      "component_name": "PromptToTaskOrchestrator (expected, not found as source implementation)",
+      "input_type": "LogicalOrchestratorRequest carrying PromptToTaskDomain/PromptToTaskRequest context",
+      "output_type": "LogicalOrchestratorResult with PromptToTaskResponse/StructuredTaskContract evidence",
+      "implemented_or_evidenced": "not_implemented_found",
+      "status": "open",
+      "evidence_refs": [
+        "00.Core/LogicalContracts.cs: ILogicalOrchestrator contract exists",
+        "artifacts/trainable-hierarchy/CM-26-A5-trainable-hierarchy-parity-audit.json: PromptToTask orchestrator=false"
+      ],
+      "gap": "No PromptToTask-specific ILogicalOrchestrator implementation was found in source or accepted artifacts.",
+      "next_action": "CM-26A1-PROMPT-TO-TASK-LOGICAL-HIERARCHY-IMPLEMENTATION-EVIDENCE-REPAIR"
+    },
+    {
+      "level": "ILogicalFlow",
+      "expected_interface": "AgentInfrastructure.Logical.ILogicalFlow<PromptToTaskRequest or equivalent>",
+      "component_name": "PromptToTask flow path via PromptToTaskMachine.Translate (flow-like behavior, not interface implementation)",
+      "input_type": "PromptToTaskRequest",
+      "output_type": "PromptToTaskResponse / StructuredTaskContract",
+      "implemented_or_evidenced": "partial_contract_path_only",
+      "status": "partial",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/PromptToTaskMachine.cs: Translate(PromptToTaskRequest request)",
+        "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md A5.3 PromptToTask execution chain"
+      ],
+      "gap": "The behavior is represented by Translate and contracts, but no PromptToTask ILogicalFlow<TInput> implementation was found.",
+      "next_action": "CM-26A1-PROMPT-TO-TASK-LOGICAL-HIERARCHY-IMPLEMENTATION-EVIDENCE-REPAIR"
+    },
+    {
+      "level": "ILogicalUnit",
+      "expected_interface": "AgentInfrastructure.Logical.ILogicalUnit<TInput,TOutput>",
+      "component_name": "A5 named units: intent, constraint, deliverable, human-authority boundary",
+      "input_type": "PromptToTaskRequest or redacted prompt/context feature slice per unit",
+      "output_type": "StructuredTaskContract fields: task type, requirements, constraints, deliverables, forbidden actions, evidence needs",
+      "implemented_or_evidenced": "planned_and_dpo_evidenced_not_source_implemented",
+      "status": "partial",
+      "evidence_refs": [
+        "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md A5.3 names PromptToTask units",
+        "artifacts/prompt-to-task-dpo-binding-source-template.jsonl",
+        "artifacts/dpo-quality/CM-25A6-prompt-to-task-local-dpo-pair-authoring-from-mapped-refs.json"
+      ],
+      "gap": "PromptToTask unit taxonomy and DPO bindings exist, but no source classes implementing ILogicalUnit for the four named units were found.",
+      "next_action": "CM-26A1-PROMPT-TO-TASK-LOGICAL-HIERARCHY-IMPLEMENTATION-EVIDENCE-REPAIR"
+    },
+    {
+      "level": "ILearningMachinePair/common+adaptive legs",
+      "expected_interface": "AgentInfrastructure.Logical.ILearningMachinePair<TPersonal,TGlobal> or equivalent pair adapter",
+      "component_name": "PromptToTask common model asset plus user-local adaptive PromptToTask leg",
+      "input_type": "Common checkpoint/manifest refs plus user-local adaptive DPO/checkpoint refs",
+      "output_type": "Common PromptToTask response path plus user adaptive preference/profile state",
+      "common_leg_asset": "models/prompt-to-task/prompt-to-task-v1/manifest.json and prompt-to-task-v1-checkpoint.json",
+      "adaptive_leg_asset": "artifacts/adaptive-learning/PTT-AD-02/03/04 and PTT-AD-Z user-local adaptive evidence",
+      "implemented_or_evidenced": "partial_asset_evidence_without_typed_pair_adapter",
+      "status": "partial",
+      "evidence_refs": [
+        "artifacts/adaptive-learning/PTT-AD-Z-prompt-to-task-two-leg-matrix.json",
+        "artifacts/adaptive-learning/PTT-AD-03-prompt-to-task-backup-package.json",
+        "artifacts/adaptive-learning/PTT-AD-04-restore-share-report.json",
+        "00.Core/LearningMachineContracts.cs: ILearningMachinePair<TPersonal,TGlobal> contract"
+      ],
+      "gap": "Common/adaptive PromptToTask assets and portability evidence are present, but a PromptToTask-specific typed ILearningMachinePair adapter was not proven in source.",
+      "next_action": "CM-26A1-PROMPT-TO-TASK-LOGICAL-HIERARCHY-IMPLEMENTATION-EVIDENCE-REPAIR"
+    }
+  ],
+  "first_gap": {
+    "id": "CM26A-01",
+    "gap_id": "PROMPT_TO_TASK_LOGICAL_ORCHESTRATOR_LAYER_NOT_IMPLEMENTED",
+    "status": "open",
+    "description": "PromptToTaskMachine has Translate/checkpoint/load/export evidence and PromptToTask contracts, but it does not implement ILearningMachine<PromptToTaskDomain> and no PromptToTask ILogicalOrchestrator source layer was found. The hierarchy remains an honest Part A/Part B mapping, not a closed five-level implementation proof.",
+    "next_bounded_action": "CM-26A1-PROMPT-TO-TASK-LOGICAL-HIERARCHY-IMPLEMENTATION-EVIDENCE-REPAIR"
+  },
+  "first_actionable_gap": {
+    "id": "CM26A-01",
+    "gap_id": "PROMPT_TO_TASK_LOGICAL_ORCHESTRATOR_LAYER_NOT_IMPLEMENTED",
+    "status": "open",
+    "description": "PromptToTaskMachine has Translate/checkpoint/load/export evidence and PromptToTask contracts, but it does not implement ILearningMachine<PromptToTaskDomain> and no PromptToTask ILogicalOrchestrator source layer was found. The hierarchy remains an honest Part A/Part B mapping, not a closed five-level implementation proof.",
+    "next_bounded_action": "CM-26A1-PROMPT-TO-TASK-LOGICAL-HIERARCHY-IMPLEMENTATION-EVIDENCE-REPAIR"
+  },
+  "remaining_gaps": [
+    "PromptToTask ILearningMachine interface implementation evidence missing",
+    "PromptToTask ILogicalOrchestrator implementation evidence missing",
+    "PromptToTask ILogicalFlow implementation evidence missing",
+    "PromptToTask ILogicalUnit source classes for A5 units missing",
+    "PromptToTask typed ILearningMachinePair adapter evidence missing"
+  ],
+  "next_bounded_action": "CM-26A1-PROMPT-TO-TASK-LOGICAL-HIERARCHY-IMPLEMENTATION-EVIDENCE-REPAIR",
+  "required_next_action": "CM-26A1-PROMPT-TO-TASK-LOGICAL-HIERARCHY-IMPLEMENTATION-EVIDENCE-REPAIR",
+  "verification": {
+    "static_local_only": true,
+    "json_parse_required_after_write": true,
+    "git_diff_check_required_after_write": true
+  }
+}

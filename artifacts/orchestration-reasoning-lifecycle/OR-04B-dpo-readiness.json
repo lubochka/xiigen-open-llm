@@ -1,0 +1,95 @@
+{
+  "schema": "xiigen-orchestration-reasoning-dpo-readiness-review-v1",
+  "schema_version": "1.0",
+  "work_order": "OR-04B-DPO-READINESS-01",
+  "status": "NOT_READY_WITH_EXACT_NEXT_REPAIR_PENDING_PARENT_REVIEW",
+  "readiness_verdict": "NOT_READY",
+  "claim_scope": "honest readiness gate for ref-only OrchestrationReasoning DPO pair bundle; no training, no checkpoint, no model asset",
+  "source_pairs_ref": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-pairs.jsonl",
+  "source_pairs_manifest_ref": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-pairs-manifest.json",
+  "source_pairs_sha256": "f9f002a79e2bd7be569f56091b1c4e3bcdb9bc132ac0a020b952c90027fe2243",
+  "source_bindings_ref": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-bindings.jsonl",
+  "source_bindings_sha256": "630cb5cf42bcea0e669be7adb5cfa23496ab87e68ec43ab9baae5b1c4199d5b9",
+  "row_counts": {
+    "pair_rows": 3,
+    "common_rows": 3,
+    "adaptive_rows_included": 0,
+    "adaptive_rows_deferred": 1
+  },
+  "checks": [
+    {
+      "check_id": "OR04B-RDY-01",
+      "name": "required ref identity fields present",
+      "passed": true,
+      "evidence": "pair_id, source_row_id, approved_pair_ref, error_code, chosen_ref, rejected_ref, source_ref, source_sha256 present on all rows"
+    },
+    {
+      "check_id": "OR04B-RDY-02",
+      "name": "manifest hashes match current files",
+      "passed": true,
+      "evidence": "pairs and binding hashes match recorded manifests"
+    },
+    {
+      "check_id": "OR04B-RDY-03",
+      "name": "ORCH taxonomy refs present",
+      "passed": true,
+      "evidence": "all error_code values use ORCH-* taxonomy refs"
+    },
+    {
+      "check_id": "OR04B-RDY-04",
+      "name": "raw private text not copied",
+      "passed": true,
+      "evidence": "raw_private_text_copied=false on all rows; no raw private payload fields present"
+    },
+    {
+      "check_id": "OR04B-RDY-05",
+      "name": "technical execution refs excluded from trainable payload",
+      "passed": true,
+      "evidence": "excluded_technical_execution_refs are refs only and technical_execution_leakage=false on all rows"
+    },
+    {
+      "check_id": "OR04B-RDY-06",
+      "name": "common/adaptive split preserved",
+      "passed": true,
+      "evidence": "all materialized rows are model_leg=common; adaptive row remains deferred"
+    },
+    {
+      "check_id": "OR04B-RDY-07",
+      "name": "external AI and generated unreviewed negative text absent",
+      "passed": true,
+      "evidence": "no external AI output or new generated chosen/rejected prose was introduced in this gate"
+    },
+    {
+      "check_id": "OR04B-RDY-08",
+      "name": "concrete chosen/rejected trainer payload exists",
+      "passed": false,
+      "evidence": "rows contain chosen_ref/rejected_ref identifiers only; no concrete chosen/rejected feature contract or payload refs suitable for a trainer are present"
+    }
+  ],
+  "missing_fields": [
+    "chosen_payload_ref",
+    "rejected_payload_ref",
+    "chosen_feature_contract_ref",
+    "rejected_feature_contract_ref",
+    "chosen_scenario_plan_features",
+    "rejected_scenario_plan_features",
+    "trainer_input_contract_ref",
+    "payload_schema_version"
+  ],
+  "flags": {
+    "dpo_binding_ready": true,
+    "dpo_materialized": true,
+    "dpo_train_ready": false,
+    "training_started": false,
+    "dpo_finalized": false,
+    "model_asset_created": false,
+    "checkpoint_created": false,
+    "external_ai_used": false,
+    "raw_private_text_copied": false,
+    "technical_execution_leakage": false
+  },
+  "tools_changed": false,
+  "tool_change_reason": "not needed; static local schema/hash/readiness checks were sufficient to decide not-ready",
+  "next_bounded_action": "OR-04B-DPO-AUTHORING-01",
+  "next_action": "author or materialize ref-only concrete chosen/rejected feature contracts for the existing approved pairs, without raw private text and without training"
+}

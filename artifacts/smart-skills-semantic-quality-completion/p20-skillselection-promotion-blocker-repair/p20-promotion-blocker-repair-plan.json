@@ -1,0 +1,124 @@
+{
+  "phase": "P20_SKILLSELECTION_PROMOTION_BLOCKER_REPAIR",
+  "artifact_type": "promotion blocker repair gate and executable evidence plan",
+  "promotion_performed": false,
+  "runtime_behavior_changed": false,
+  "common_model_files_modified": false,
+  "readiness_claim_after_repair": false,
+  "source_phase_refs": {
+    "p19_report": "artifacts/smart-skills-semantic-quality-completion/p19-skillselection-promotion-eligibility/p19-promotion-eligibility-report.json",
+    "p19_comparison": "artifacts/smart-skills-semantic-quality-completion/p19-skillselection-promotion-eligibility/p19-existing-vs-candidate-comparison.json",
+    "p19_reasons": "artifacts/smart-skills-semantic-quality-completion/p19-skillselection-promotion-eligibility/p19-blocked-or-eligible-reasons.jsonl"
+  },
+  "blocked_direct_promotion_reason_ru": "P17E candidate is artifact-only and weaker/smaller than the existing common checkpoint. Direct copy would overwrite current runtime/common state without positive compatibility, rollback, fresh-load, manifest/locator, and API/firewall evidence.",
+  "blockers": [
+    {
+      "blocker_id": "candidate_manifest_accuracy_zero",
+      "current_evidence_ref": "artifacts/smart-skills-semantic-quality-completion/p17e-skillselection-lifecycle-import-export/production-export/skill-selection-manifest.json: accuracyAtExport=0",
+      "required_repair": "Produce a positive source-disjoint compatibility/non-regression eval where candidate metrics are explicitly compared with the existing common model.",
+      "allowed_files_to_touch_later": [
+        "artifacts/smart-skills-semantic-quality-completion/p21-skillselection-compatibility-non-regression/",
+        "Tests/SmartSkillsSemanticQualityP21CompatibilityNonRegressionTests.cs"
+      ],
+      "forbidden_shortcut": "Do not rewrite accuracyAtExport from 0 to a positive value without a runner-emitted eval artifact.",
+      "required_test_or_probe": "Focused compatibility/non-regression test must parse candidate metrics and assert candidate is not worse than existing common behavior on source-disjoint rows.",
+      "readiness_claim_after_repair": false
+    },
+    {
+      "blocker_id": "candidate_semantic_quality_false",
+      "current_evidence_ref": "artifacts/smart-skills-semantic-quality-completion/p17e-skillselection-lifecycle-import-export/production-export/skill-selection-manifest.json: semanticQualityClaimed=false",
+      "required_repair": "Keep semanticQualityClaimed false until source-disjoint eval, ablation, fresh-load, continue-training, and API/firewall gates all pass with positive evidence.",
+      "allowed_files_to_touch_later": [
+        "artifacts/smart-skills-semantic-quality-completion/p21-skillselection-compatibility-non-regression/",
+        "artifacts/smart-skills-semantic-quality-completion/p22-skillselection-promotion-candidate-rewrite/"
+      ],
+      "forbidden_shortcut": "Do not turn semanticQualityClaimed to true from manifest editing alone.",
+      "required_test_or_probe": "No-overclaim test must fail if semanticQualityClaimed=true appears before all promotion gates are passed.",
+      "readiness_claim_after_repair": false
+    },
+    {
+      "blocker_id": "locator_artifact_only_not_runtime_wired",
+      "current_evidence_ref": "artifacts/smart-skills-semantic-quality-completion/p17e-skillselection-lifecycle-import-export/p17e-manifest-locator-map.json: runtime_wired=false; common_model_path_updated=false; final_model_path_updated=false",
+      "required_repair": "Create a truthful locator rewrite plan for a versioned candidate or explicit common path update, with rollback path and exact runtime loader expectations.",
+      "allowed_files_to_touch_later": [
+        "artifacts/smart-skills-semantic-quality-completion/p22-skillselection-promotion-candidate-rewrite/",
+        "Tests/SmartSkillsSemanticQualityP22TruthfulLocatorRewriteTests.cs"
+      ],
+      "forbidden_shortcut": "Do not claim runtime wiring from artifact-only locator entries.",
+      "required_test_or_probe": "Locator rewrite test must assert runtime_wired and path update fields match the actual files selected for runtime loading.",
+      "readiness_claim_after_repair": false
+    },
+    {
+      "blocker_id": "candidate_would_overwrite_larger_common_asset",
+      "current_evidence_ref": "p19-existing-vs-candidate-comparison.json: existing checkpoint 1309772 bytes and 900 trained pair ids; candidate 17711 bytes and 19 trained pair ids",
+      "required_repair": "Run side-by-side comparison against existing common checkpoint and choose either no promotion, versioned side-by-side promotion, or overwrite only after positive non-regression and rollback proof.",
+      "allowed_files_to_touch_later": [
+        "artifacts/smart-skills-semantic-quality-completion/p21-skillselection-compatibility-non-regression/",
+        "artifacts/smart-skills-semantic-quality-completion/p23-skillselection-rollback-load-proof/"
+      ],
+      "forbidden_shortcut": "Do not overwrite models/skill-selection/skill-selection-v1 with the smaller candidate without comparison and rollback proof.",
+      "required_test_or_probe": "Non-regression test must compare existing common and candidate outputs on the same source-disjoint scenario set.",
+      "readiness_claim_after_repair": false
+    },
+    {
+      "blocker_id": "candidate_profile_coverage_smaller",
+      "current_evidence_ref": "p19-existing-vs-candidate-comparison.json: candidate has fewer prompt keys and zero profiles in multiple sections",
+      "required_repair": "Produce coverage gap report and either rebuild candidate with missing sections or explicitly choose versioned side-by-side promotion with narrower claim.",
+      "allowed_files_to_touch_later": [
+        "artifacts/smart-skills-semantic-quality-completion/p21-skillselection-compatibility-non-regression/",
+        "artifacts/smart-skills-semantic-quality-completion/p24-skillselection-coverage-repair/"
+      ],
+      "forbidden_shortcut": "Do not treat smaller section coverage as equivalent to existing common model coverage.",
+      "required_test_or_probe": "Coverage test must assert every promoted section has either positive evidence or an explicit no-promotion/narrow-scope decision.",
+      "readiness_claim_after_repair": false
+    },
+    {
+      "blocker_id": "missing_rollback_load_proof",
+      "current_evidence_ref": "P19 explicitly performed no promotion and no rollback/load probe",
+      "required_repair": "Before promotion, create backup manifest/checkpoint refs, load candidate, rollback to previous common refs, and prove both load paths work.",
+      "allowed_files_to_touch_later": [
+        "artifacts/smart-skills-semantic-quality-completion/p23-skillselection-rollback-load-proof/",
+        "Tests/SmartSkillsSemanticQualityP23RollbackLoadProofTests.cs"
+      ],
+      "forbidden_shortcut": "Do not call rollback supported because previous files still exist.",
+      "required_test_or_probe": "Rollback/load proof test must load candidate path and restored common path from disk with recorded hashes.",
+      "readiness_claim_after_repair": false
+    },
+    {
+      "blocker_id": "missing_fresh_load_through_runtime",
+      "current_evidence_ref": "P17E import/export was artifact lifecycle evidence, not XiigenExtensionApiService fresh-load through common runtime path",
+      "required_repair": "After any promotion candidate path is selected, run fresh-load through XiigenExtensionApiService common loader and record response boundaries.",
+      "allowed_files_to_touch_later": [
+        "artifacts/smart-skills-semantic-quality-completion/p25-skillselection-runtime-fresh-load/",
+        "Tests/SmartSkillsSemanticQualityP25RuntimeFreshLoadTests.cs"
+      ],
+      "forbidden_shortcut": "Do not substitute direct JSON parse or artifact import/export for runtime loader evidence.",
+      "required_test_or_probe": "Runtime fresh-load test must invoke the same loader path used by XiigenExtensionApiService for SkillSelection.",
+      "readiness_claim_after_repair": false
+    },
+    {
+      "blocker_id": "missing_api_firewall_rerun_after_promotion",
+      "current_evidence_ref": "P17F API/firewall evidence predates any promotion and P19 did not change runtime behavior",
+      "required_repair": "After promotion candidate rewrite and fresh-load, rerun API/firewall gates so unsupported readiness claims stay blocked and supported claims have positive evidence.",
+      "allowed_files_to_touch_later": [
+        "artifacts/smart-skills-semantic-quality-completion/p26-skillselection-api-firewall-rerun/",
+        "Tests/SmartSkillsSemanticQualityP26ApiFirewallRerunTests.cs"
+      ],
+      "forbidden_shortcut": "Do not reuse pre-promotion API/firewall evidence as post-promotion evidence.",
+      "required_test_or_probe": "API/firewall rerun test must fail if any semantic/full readiness claim is true without the promotion evidence chain.",
+      "readiness_claim_after_repair": false
+    },
+    {
+      "blocker_id": "missing_truthful_manifest_locator_rewrite",
+      "current_evidence_ref": "P17E manifest/locator are truthful for artifact-only state, but not a promotion manifest/locator",
+      "required_repair": "Create a new promotion-candidate manifest/locator that names actual wired paths, hashes, evidence refs, rollback refs, and claim boundaries.",
+      "allowed_files_to_touch_later": [
+        "artifacts/smart-skills-semantic-quality-completion/p22-skillselection-promotion-candidate-rewrite/",
+        "Tests/SmartSkillsSemanticQualityP22TruthfulLocatorRewriteTests.cs"
+      ],
+      "forbidden_shortcut": "Do not edit only labels while leaving path, hash, and evidence fields inconsistent.",
+      "required_test_or_probe": "Manifest/locator test must compare declared paths and hashes to actual files and fail on stale or unsupported readiness flags.",
+      "readiness_claim_after_repair": false
+    }
+  ]
+}

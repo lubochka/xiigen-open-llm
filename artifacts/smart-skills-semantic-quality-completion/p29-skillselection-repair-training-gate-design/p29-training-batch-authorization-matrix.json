@@ -1,0 +1,123 @@
+{
+    "schemaVersion":  "p29.training-batch-authorization-matrix.v1",
+    "phase":  "P29",
+    "createdAtLocalDate":  "2026-06-15",
+    "verdict":  "TRAINING_NOT_AUTHORIZED_BY_P29",
+    "rowCount":  12,
+    "trainingAuthorizedNow":  false,
+    "candidateTrainingAuthorizedNow":  false,
+    "commonTrainingAuthorizedNow":  false,
+    "evalAuthorizedNow":  false,
+    "matrix":  [
+                   {
+                       "gateId":  "AUTH-01",
+                       "requiredField":  "fresh_current_luba_acceptance_quote",
+                       "requiredValue":  "explicitly accepts P29 package and authorizes P30 candidate-only training/eval now",
+                       "currentP29Value":  "NONE",
+                       "stateFlag":  "training_authorized=false",
+                       "blocksTraining":  true
+                   },
+                   {
+                       "gateId":  "AUTH-02",
+                       "requiredField":  "bounded_p30_work_order_id",
+                       "requiredValue":  "present, separate from P29, max scope and allowed files named",
+                       "currentP29Value":  "missing by design",
+                       "stateFlag":  "candidate_training_authorized_now=false",
+                       "blocksTraining":  true
+                   },
+                   {
+                       "gateId":  "AUTH-03",
+                       "requiredField":  "training_allowed",
+                       "requiredValue":  true,
+                       "currentP29Value":  false,
+                       "stateFlag":  "training_allowed=false",
+                       "blocksTraining":  true
+                   },
+                   {
+                       "gateId":  "AUTH-04",
+                       "requiredField":  "eval_allowed",
+                       "requiredValue":  true,
+                       "currentP29Value":  false,
+                       "stateFlag":  "eval_allowed=false",
+                       "blocksTraining":  true
+                   },
+                   {
+                       "gateId":  "AUTH-05",
+                       "requiredField":  "commonTrainingAllowed",
+                       "requiredValue":  false,
+                       "currentP29Value":  false,
+                       "stateFlag":  "common_training_allowed=false",
+                       "blocksTraining":  false
+                   },
+                   {
+                       "gateId":  "AUTH-06",
+                       "requiredField":  "localPrivateCandidateOnly",
+                       "requiredValue":  true,
+                       "currentP29Value":  true,
+                       "stateFlag":  "local_private_candidate_only=true",
+                       "blocksTraining":  false
+                   },
+                   {
+                       "gateId":  "AUTH-07",
+                       "requiredField":  "source_disjoint_split_parent_accepted",
+                       "requiredValue":  true,
+                       "currentP29Value":  "design only, not parent accepted yet",
+                       "stateFlag":  "source_disjoint_split_accepted=false",
+                       "blocksTraining":  true
+                   },
+                   {
+                       "gateId":  "AUTH-08",
+                       "requiredField":  "batch_card_parent_accepted",
+                       "requiredValue":  true,
+                       "currentP29Value":  "design only, not parent accepted yet",
+                       "stateFlag":  "batch_card_accepted=false",
+                       "blocksTraining":  true
+                   },
+                   {
+                       "gateId":  "AUTH-09",
+                       "requiredField":  "checkpoint_writer_agent_id_and_candidate_checkpoint_path",
+                       "requiredValue":  "assigned by parent before P30",
+                       "currentP29Value":  "NONE",
+                       "stateFlag":  "checkpoint_mutation_authorized_now=false",
+                       "blocksTraining":  true
+                   },
+                   {
+                       "gateId":  "AUTH-10",
+                       "requiredField":  "p30_no_promotion_no_common_replacement",
+                       "requiredValue":  true,
+                       "currentP29Value":  true,
+                       "stateFlag":  "promotion_authorized=false; common_model_replacement_authorized=false",
+                       "blocksTraining":  false
+                   },
+                   {
+                       "gateId":  "AUTH-11",
+                       "requiredField":  "leakage_gate_plan_attached",
+                       "requiredValue":  true,
+                       "currentP29Value":  true,
+                       "stateFlag":  "leakage_gate_plan_ready=true",
+                       "blocksTraining":  false
+                   },
+                   {
+                       "gateId":  "AUTH-12",
+                       "requiredField":  "future_lifecycle_gates_named",
+                       "requiredValue":  "fresh-load, continue-training, export/import, ablation, dashboard/runtime evidence, no promotion",
+                       "currentP29Value":  "named for future only; not run",
+                       "stateFlag":  "p30_lifecycle_gates_required=true",
+                       "blocksTraining":  false
+                   }
+               ],
+    "requiredBeforeAnyP30Training":  [
+                                         "fresh explicit Luba approval quote after P29 delivery",
+                                         "separate P30 bounded work order",
+                                         "state flags training_allowed=true and eval_allowed=true for P30 only",
+                                         "parent-accepted source-disjoint split and local-private batch card",
+                                         "checkpoint writer id and isolated candidate checkpoint path",
+                                         "leakage gates attached as required verification",
+                                         "no common model replacement and no promotion"
+                                     ],
+    "noOverclaim":  {
+                        "p29IsAuthorizationDesignOnly":  true,
+                        "p29DoesNotRunTraining":  true,
+                        "p29DoesNotRunEval":  true
+                    }
+}

@@ -1,0 +1,71 @@
+{
+  "phase": "P16E_SKILL_SELECTION_SOURCE_DISJOINT_EVAL_ABLATION",
+  "verdict": "PASS_CANDIDATE_WITH_GAPS_READY_FOR_PARENT_REVIEW",
+  "candidate_schema_eval_only": true,
+  "runtime_evaluation": false,
+  "p16d_parent_review_verdict": "PASS_AFTER_PARENT_REVIEW_REPAIR",
+  "counts": {
+    "eval_holdout_rows_total": 12,
+    "eval_candidate_rows": 6,
+    "holdout_candidate_rows": 6,
+    "eval_pass": 0,
+    "eval_fail": 8,
+    "eval_gap": 4,
+    "ablation_controls_total": 72,
+    "ablation_shortcut_leaks": 0
+  },
+  "gaps": [
+    "P16D has no prompt_understanding learned profile because the only train candidate for that unit was evidence_only and correctly excluded.",
+    "candidate_position_guard rows cannot be positive skill-selection passes because candidate_order_leakage_guard is diagnostics-only by design.",
+    "several source-disjoint rows choose skills absent from the four materialized profile skills; more train-only source coverage is likely needed before positive SkillSelection evidence."
+  ],
+  "contamination_proof": {
+    "contamination_found": false,
+    "contamination_ids": []
+  },
+  "ablation_counts_by_control": {
+    "remove_prompt_signals": 12,
+    "remove_task_context_signals": 12,
+    "candidate_order_permutation": 12,
+    "remove_diagnostics_only_candidate_order_guard": 12,
+    "source_id_title_path_leakage_attempt": 12,
+    "exact_prompt_memorization_attempt": 12
+  },
+  "safety_flags": {
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "training_run": false,
+    "checkpoint_or_model_written": false,
+    "p16d_candidate_mutated": false,
+    "eval_holdout_used_for_training": false,
+    "semantic_quality_claimed": false,
+    "full_api_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "dashboard_readiness_claimed": false,
+    "host_runtime_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "commit_run": false,
+    "push_run": false
+  },
+  "artifacts": {
+    "eval_input_ledger": "artifacts/smart-skills-semantic-quality-completion/p16e-skill-selection-source-disjoint-eval-ablation/skill-selection-p16e-eval-input-ledger.jsonl",
+    "eval_results": "artifacts/smart-skills-semantic-quality-completion/p16e-skill-selection-source-disjoint-eval-ablation/skill-selection-p16e-source-disjoint-eval-results.jsonl",
+    "ablation_results": "artifacts/smart-skills-semantic-quality-completion/p16e-skill-selection-source-disjoint-eval-ablation/skill-selection-p16e-ablation-results.jsonl",
+    "contamination_proof": "artifacts/smart-skills-semantic-quality-completion/p16e-skill-selection-source-disjoint-eval-ablation/skill-selection-p16e-contamination-proof.json",
+    "eval_report_json": "artifacts/smart-skills-semantic-quality-completion/p16e-skill-selection-source-disjoint-eval-ablation/skill-selection-p16e-source-disjoint-eval-report.json",
+    "eval_report_md": "artifacts/smart-skills-semantic-quality-completion/p16e-skill-selection-source-disjoint-eval-ablation/skill-selection-p16e-source-disjoint-eval-report.md",
+    "ablation_report_json": "artifacts/smart-skills-semantic-quality-completion/p16e-skill-selection-source-disjoint-eval-ablation/skill-selection-p16e-ablation-report.json",
+    "ablation_report_md": "artifacts/smart-skills-semantic-quality-completion/p16e-skill-selection-source-disjoint-eval-ablation/skill-selection-p16e-ablation-report.md"
+  },
+  "next_action": "parent review P16E gap evidence; likely add train-only SkillSelection coverage before P16F or rerun P16E after repair",
+  "verification": {
+    "json_jsonl_parse": "passed: P16E JSON files, JSONL rows, and active state parsed",
+    "contamination_check": "passed: 0 eval/holdout ids in P16D checkpoint trained/materialized ids",
+    "ablation_consistency_check": "passed: 72 rows = 12 eval/holdout rows * 6 controls; no required controls missing; shortcut leak count matches report",
+    "p16d_checkpoint_stability_check": "passed: P16D checkpoint sha256 unchanged from manifest",
+    "utf8_mojibake_scan": "passed: U+00D0/U+00D1/U+FFFD/U+00E2/U+00C3/four-question markers absent",
+    "overclaim_scan": "passed: no readiness true flags found",
+    "git_diff_check": "passed: git diff --check on P16E artifacts and state returned exit code 0"
+  },
+  "git_diff_check_passed": true
+}

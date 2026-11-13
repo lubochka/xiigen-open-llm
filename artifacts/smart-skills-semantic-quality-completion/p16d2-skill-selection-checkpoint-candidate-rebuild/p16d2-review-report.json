@@ -1,0 +1,68 @@
+{
+  "phase": "P16D2_SKILL_SELECTION_CHECKPOINT_CANDIDATE_REBUILD",
+  "verdict": "PASS_CANDIDATE_READY_FOR_PARENT_REVIEW",
+  "summary_ru": "P16D2 rebuilt a no-claim SkillSelection checkpoint candidate from accepted P16D material and parent-accepted P16E1 adaptive material. It is candidate-only and must be evaluated in P16E2 before any stronger claim.",
+  "counts": {
+    "base_p16d_profile_rows": 4,
+    "p16e1_positive_profile_rows": 9,
+    "materialized_profile_rows": 13,
+    "diagnostics_only_guard_rows": 2,
+    "excluded_eval_holdout_rows": 12,
+    "excluded_p16e1_positive_rows": 0,
+    "common_training_ready_rows": 0
+  },
+  "artifacts": {
+    "checkpoint": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/skill-selection-p16d2-candidate-checkpoint.json",
+    "manifest": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/skill-selection-p16d2-candidate-manifest.json",
+    "source_manifest": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/skill-selection-p16d2-source-manifest.json",
+    "locator": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/skill-selection-p16d2-locator.json",
+    "candidate_input_rows": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/skill-selection-p16d2-candidate-input-rows.jsonl",
+    "exclusion_ledger": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/skill-selection-p16d2-exclusion-ledger.jsonl",
+    "review_report_json": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/p16d2-review-report.json",
+    "review_report_md": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/p16d2-review-report.md",
+    "review_cycles": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/p16d2-review-cycles.jsonl",
+    "self_check": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/p16d2-self-check.json",
+    "evidence_card": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/p16d2-evidence-card.md"
+  },
+  "what_changed_ru": [
+    "Prompt understanding now has adaptive candidate profiles for claim verification and planning.",
+    "Task understanding now includes planning DPO authoring and trainable architecture decision candidates in addition to the P16D code review baseline.",
+    "Prompt context, intermediate checks, and runtime chain received the P16E1 adaptive coverage rows.",
+    "Candidate-order material remains diagnostics-only and cannot select a skill."
+  ],
+  "remaining_gaps_ru": [
+    "P16D2 is not a training run and not a final/common checkpoint.",
+    "All P16E1 rows remain common_training_ready=false; they are parent-accepted adaptive candidate material only.",
+    "P16E2 must rerun source-disjoint eval and ablation before any positive component evidence claim."
+  ],
+  "safety_flags": {
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "training_run": false,
+    "eval_run": false,
+    "checkpoint_written_outside_p16d2": false,
+    "eval_holdout_used_as_training": false,
+    "common_training_promoted": false,
+    "semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "full_api_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "dashboard_readiness_claimed": false,
+    "host_runtime_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "commit_run": false,
+    "push_run": false
+  },
+  "verification": {
+    "json_jsonl_state_parse": "passed: P16D2 JSON/JSONL artifacts and active state parsed; rows input=15, exclusions=3, review_cycles=4",
+    "checksum_verification": "passed: checkpoint, input rows, source manifest, and exclusion ledger sha256 values match manifest",
+    "contamination_check": "passed: P16B eval/holdout row ids are absent from trained_pair_ids and materialized profile rows",
+    "candidate_position_top_level_absence": "passed: no top-level candidate_position_weights key in rebuilt checkpoint",
+    "diagnostics_only_guard_check": "passed: candidate_order_leakage_guard has authority=false, can_select_skill=false, and materialized_as_trained_profile=false",
+    "utf8_mojibake_scan": "passed: U+00D0, U+00D1, U+FFFD, U+00E2, U+00C3 and literal four-question markers absent from P16D2 artifacts and state",
+    "no_overclaim_true_flag_scan": "passed: no semantic/full API/SkillSelection/trained-model/dashboard/host/final readiness true flags in P16D2 artifacts or state",
+    "git_diff_check": "passed: git diff --check on P16D2 artifacts and state returned exit code 0"
+  },
+  "next_action": "parent review P16D2; if accepted, open P16E2 SkillSelection source-disjoint eval/ablation rerun against the P16D2 candidate",
+  "parent_review_required_before_commit": true
+}

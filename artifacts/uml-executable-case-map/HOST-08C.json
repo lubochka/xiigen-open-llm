@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "work_order": "HOST-08C-CURSOR-CHAT-PARTICIPANT-QA-PATH",
+  "artifact_kind": "uml_executable_case_map",
+  "passed": true,
+  "claim_scope": "Executable case map for Cursor chat participant QA path discovery only.",
+  "fixture": {
+    "prompt": "HOST-08C chat participant discovery fixture; no private corpus text.",
+    "raw_private_data_used": false,
+    "sentinel": "HOST08C_CURSOR_CHAT_SENTINEL_DO_NOT_DISPLAY"
+  },
+  "cases": [
+    {
+      "case_id": "HOST08C-CURSOR-CHAT-API-SURFACE",
+      "branch": "Cursor chat participant noninteractive API discovery",
+      "execution": "Run Cursor Extension Host test runner and inspect vscode.chat API surface plus available commands.",
+      "expected": {
+        "extension_host_started": true,
+        "extension_activated": true,
+        "chat_participant_registration_observed_if_api_allows_interception": true,
+        "safe_noninteractive_invocation_api_recorded_if_present": true,
+        "blocker_recorded_if_not_present": true
+      }
+    },
+    {
+      "case_id": "HOST08C-CURSOR-NO-COMMAND-SUBSTITUTE",
+      "branch": "No fake chat coverage through command or panel",
+      "execution": "Discovery runner must not use xiigen.smartSkills.select or xiigenSmartSkills.panel as proof of chat participant invocation.",
+      "expected": {
+        "command_path_used_as_chat_evidence": false,
+        "panel_path_used_as_chat_evidence": false,
+        "no_false_chat_completion_claim": true
+      }
+    },
+    {
+      "case_id": "HOST08C-CURSOR-THIN-HOST",
+      "branch": "No host semantic authority",
+      "execution": "Inspect source/API facts and report flags.",
+      "expected": {
+        "host_semantic_ranking": false,
+        "host_training": false,
+        "host_corpus_parsing": false,
+        "host_dpo_generation": false,
+        "host_model_mutation": false,
+        "semantic_quality_claimed": false
+      }
+    }
+  ]
+}

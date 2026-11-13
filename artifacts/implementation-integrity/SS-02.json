@@ -1,0 +1,223 @@
+{
+    "work_order":  "SS-02",
+    "created_at_utc":  "2026-06-05T10:15:20.804Z",
+    "branch":  "codex/chat-gpt-5.5",
+    "verdict":  "PASS_PENDING_PARENT_REVIEW",
+    "claim_scope":  "one trainable prompt_understanding semantic unit slice only; minimal learned token-signal profiles from training pairs; no full skill-selection semantic quality, no SS-03..SS-12, no host/adaptive/model asset export claim",
+    "semantic_unit":  "prompt_understanding",
+    "trained_unit_section_name":  "PromptUnderstandingUnitState",
+    "checkpoint_evidence_constant":  "PROMPT_UNDERSTANDING_CHECKPOINT_SECTION",
+    "implementation_summary":  {
+                                   "checkpoint_section":  "SkillSelectionCheckpoint.PromptUnderstanding",
+                                   "learned_state":  "per-skill learned prompt token-signal profiles and source pair ids",
+                                   "decision_path":  "DecideFromTrainedState tries prompt_understanding learned section before candidate-position scaffold fallback",
+                                   "ablation_path":  "fresh empty machine has no prompt_understanding profiles and returns no selected skills"
+                               },
+    "train_rows_used":  [
+                            "ss02-prompt-understanding-pair-001",
+                            "ss02-prompt-understanding-pair-002"
+                        ],
+    "held_out_prompts":  [
+                             "Please review the plan coverage before the next executor starts."
+                         ],
+    "held_out_result":  {
+                            "selected_skill":  "plan-review",
+                            "evidence":  "PROMPT_UNDERSTANDING_CHECKPOINT_SECTION",
+                            "candidate_position_scaffold_used":  false
+                        },
+    "ablation_result":  {
+                            "trained_selected_skill":  "plan-review",
+                            "empty_selected_skill_count":  0,
+                            "empty_confidence":  0,
+                            "trained_confidence_greater_than_empty":  true
+                        },
+    "no_deterministic_shortcut_review":  {
+                                             "candidate_position_final_authority":  false,
+                                             "regex_if_table_lookup_final_authority":  false,
+                                             "exact_prompt_memory_final_authority":  false,
+                                             "claim":  "minimal learned token-signal profile, bounded to diagnostic held-out evidence",
+                                             "scan_interpretation":  "Negative labels and boolean false fields are guard evidence, not forbidden final-authority claims.",
+                                             "real_forbidden_final_authority_claims":  0
+                                         },
+    "verification":  [
+                         {
+                             "command":  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+                             "exit_code":  0,
+                             "passed":  21,
+                             "failed":  0,
+                             "total":  21
+                         }
+                     ],
+    "changed_files":  [
+                          "43.SmartSkillsDomain/SkillSelectionContracts.cs",
+                          "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+                          "43.SmartSkillsDomain/README.md",
+                          "Tests/SkillSelectionMachineTests.cs",
+                          "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json",
+                          "artifacts/skill-selection-lifecycle/SS-02.json",
+                          "artifacts/completion-matrix/SS-02.json",
+                          "artifacts/dpo-knowledge-map/SS-02.json",
+                          "artifacts/dpo-universalization/SS-02.json",
+                          "artifacts/test-strategy-admission/SS-02.json",
+                          "artifacts/authority-self-reflection/SS-02.json",
+                          "artifacts/human-authority-boundary/SS-02.json",
+                          "artifacts/subagent-packet-quality/SS-02.json",
+                          "artifacts/test-execution-hygiene/SS-02.json",
+                          "artifacts/implementation-integrity/SS-02.json",
+                          "artifacts/metric-honesty/SS-02.json"
+                      ],
+    "sixteen_check_review":  [
+                                 {
+                                     "id":  "SS02-01",
+                                     "check":  "Current human instruction: SS-02 only",
+                                     "result":  "PASS",
+                                     "note":  "Only prompt_understanding was changed; no SS-03+ unit work."
+                                 },
+                                 {
+                                     "id":  "SS02-02",
+                                     "check":  "Checkpoint-backed unit section exists",
+                                     "result":  "PASS",
+                                     "note":  "SkillSelectionCheckpoint includes PromptUnderstandingUnitState."
+                                 },
+                                 {
+                                     "id":  "SS02-03",
+                                     "check":  "Fresh load can use learned section",
+                                     "result":  "PASS",
+                                     "note":  "Test loads exported checkpoint into fresh machine and selects held-out prompt via prompt_understanding evidence."
+                                 },
+                                 {
+                                     "id":  "SS02-04",
+                                     "check":  "Held-out prompt is not exact training row",
+                                     "result":  "PASS",
+                                     "note":  "Held-out prompt differs from training prompt but shares learned prompt-understanding signals."
+                                 },
+                                 {
+                                     "id":  "SS02-05",
+                                     "check":  "Ablation lowers decision",
+                                     "result":  "PASS",
+                                     "note":  "Empty machine returns no selected skills and 0 confidence while trained machine selects plan-review."
+                                 },
+                                 {
+                                     "id":  "SS02-06",
+                                     "check":  "Candidate-position not final authority",
+                                     "result":  "PASS",
+                                     "note":  "Learned decision omits candidate-position scaffold evidence; scaffold remains fallback when unit has no signal."
+                                 },
+                                 {
+                                     "id":  "SS02-07",
+                                     "check":  "No keyword/regex/table final authority",
+                                     "result":  "PASS",
+                                     "note":  "No regex/if/table lookup added; unit uses persisted learned token-signal profiles."
+                                 },
+                                 {
+                                     "id":  "SS02-08",
+                                     "check":  "No full semantic quality claim",
+                                     "result":  "PASS",
+                                     "note":  "PromptUnderstandingUnitState.SemanticQualityClaimed=false and artifact scope is one-unit only."
+                                 },
+                                 {
+                                     "id":  "SS02-09",
+                                     "check":  "SS-00U boundary preserved",
+                                     "result":  "PASS",
+                                     "note":  "Uses training-data boundary as source context only; no training-data edit in SS-02."
+                                 },
+                                 {
+                                     "id":  "SS02-10",
+                                     "check":  "No model/checkpoint asset export/import SS-13 scope",
+                                     "result":  "PASS",
+                                     "note":  "Only existing machine checkpoint contract section updated; no model asset files changed."
+                                 },
+                                 {
+                                     "id":  "SS02-11",
+                                     "check":  "Focused tests passed",
+                                     "result":  "PASS",
+                                     "note":  "SkillSelectionMachine filter passed 21/21."
+                                 },
+                                 {
+                                     "id":  "SS02-12",
+                                     "check":  "No host/adaptive/external AI",
+                                     "result":  "PASS",
+                                     "note":  "No host/adaptive/external AI work performed."
+                                 },
+                                 {
+                                     "id":  "SS02-13",
+                                     "check":  "Documentation updated",
+                                     "result":  "PASS",
+                                     "note":  "SmartSkillsDomain README records SS-02 scope and no full quality claim."
+                                 },
+                                 {
+                                     "id":  "SS02-14",
+                                     "check":  "Artifact evidence present",
+                                     "result":  "PASS",
+                                     "note":  "SS-02 lifecycle and cross-cutting artifacts produced."
+                                 },
+                                 {
+                                     "id":  "SS02-15",
+                                     "check":  "State updated",
+                                     "result":  "PASS",
+                                     "note":  "State records SS-02 PASS_PENDING_PARENT_REVIEW."
+                                 },
+                                 {
+                                     "id":  "SS02-16",
+                                     "check":  "Commit boundary not executed",
+                                     "result":  "PASS",
+                                     "note":  "No commit/push in executor slice."
+                                 }
+                             ],
+    "next_bounded_action":  "WO-COMMIT-SS-02-01",
+    "commit_push_performed":  false,
+    "artifact_path":  "artifacts/implementation-integrity/SS-02.json",
+    "no_other_semantic_units":  true,
+    "no_host_work":  true,
+    "no_external_ai":  true,
+    "static_contradiction_scan":  {
+                                      "scan_scope":  "changed SmartSkills code, README, tests, and SS-02 artifacts",
+                                      "real_forbidden_final_authority_claims":  0,
+                                      "real_forbidden_final_authority_terms":  [
+                                                                                   "old README candidate position learned-weight claim",
+                                                                                   "old README candidate position learning claim",
+                                                                                   "old README deterministic-authority wording claim"
+                                                                               ],
+                                      "allowed_negative_or_guard_labels":  [
+                                                                               "No keyword/regex/table final authority",
+                                                                               "candidate-position is scaffold only",
+                                                                               "not final authority",
+                                                                               "regex_if_table_lookup_final_authority=false"
+                                                                           ],
+                                      "negative_labels_are_not_failures":  true,
+                                      "readme_contradictions_repaired":  true
+                                  },
+    "parent_review":  {
+                          "parent_review_accepted":  true,
+                          "parent_review_verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+                          "claim_scope":  "one checkpoint-backed prompt_understanding semantic unit only; no full skill-selection semantic quality, no SS-03..SS-12, no host/adaptive/model export claim",
+                          "readme_old_phrase_check":  {
+                                                          "command":  "rg -n \"learned candidate-position weights|candidate-position weight learning|never deterministic algorithms as final authority\" 43.SmartSkillsDomain/README.md",
+                                                          "exit_code":  1,
+                                                          "no_hits":  true,
+                                                          "parent_treated_as_pass":  true
+                                                      },
+                          "json_parse_artifact_state":  {
+                                                            "exit_code":  0,
+                                                            "artifact_verdict":  "PASS_PENDING_PARENT_REVIEW",
+                                                            "state_current":  "SS-02",
+                                                            "next_action":  "WO-COMMIT-SS-02-01"
+                                                        },
+                          "git_diff_check":  {
+                                                 "exit_code":  0
+                                             },
+                          "focused_test_rerun":  {
+                                                     "command":  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+                                                     "exit_code":  0,
+                                                     "passed":  21,
+                                                     "failed":  0,
+                                                     "elapsed_seconds":  45.9,
+                                                     "ended_at_utc":  "2026-06-05T10:28:47.5528030Z"
+                                                 },
+                          "static_readability_checks":  {
+                                                            "real_final_authority_contradictions":  0,
+                                                            "mojibake_bad_count":  0
+                                                        },
+                          "next_bounded_action":  "WO-COMMIT-SS-02-01"
+                      }
+}

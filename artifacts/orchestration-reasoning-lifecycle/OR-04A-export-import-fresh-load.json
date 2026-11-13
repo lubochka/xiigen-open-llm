@@ -1,0 +1,71 @@
+{
+  "schema": "orchestration-reasoning-lifecycle-evidence-v1",
+  "schema_version": "1.0",
+  "work_order": "OR-04A",
+  "status": "PASS_PENDING_PARENT_REVIEW",
+  "claim_scope": "export/import/fresh-load lifecycle code and temp test evidence only",
+  "parent_review_gap": "persisted manifest refs were absolute, and manifest metadata was not cross-checked against checkpoint SourceManifestRef and learned pattern count",
+  "repair_applied": {
+    "portable_manifest_refs": true,
+    "manifest_refs_relative_to_manifest_directory": true,
+    "manifest_source_ref_matches_checkpoint_source_ref": true,
+    "manifest_learned_pattern_count_matches_checkpoint": true
+  },
+  "lifecycle_methods_added": [
+    "OrchestrationReasoningMachine.ExportLearnedState",
+    "OrchestrationReasoningMachine.ImportLearnedState",
+    "OrchestrationReasoningMachine.SaveCheckpointAsync",
+    "OrchestrationReasoningMachine.ImportAsync",
+    "OrchestrationReasoningMachine.LoadCheckpointAsync",
+    "FileBackedOrchestrationReasoningLearnedGuideStateLoader.Load"
+  ],
+  "lifecycle_types_added": [
+    "OrchestrationReasoningCheckpoint",
+    "OrchestrationReasoningCheckpointManifest",
+    "OrchestrationReasoningLifecycleExport",
+    "OrchestrationReasoningMachineLoadResult"
+  ],
+  "fresh_load_evidence": {
+    "test": "OrchestrationReasoningMachineAssetLifecycle_FileBackedLoaderFreshLoadsCheckpoint",
+    "fresh_machine_constructed_from_file_backed_loader": true,
+    "same_structured_signals_select_same_scenario": true,
+    "selected_scenario_ref": "scenario:bounded-implementation-review-loop",
+    "selected_pattern_id": "or-pattern-bounded-implementation-review",
+    "inference_source": "LOADED_LEARNED_GUIDE_STATE"
+  },
+  "export_import_evidence": {
+    "test": "OrchestrationReasoningMachineAssetLifecycle_ExportImportRoundTripsLearnedGuideState",
+    "checkpoint_written_to_temp_path_only": true,
+    "manifest_written_to_temp_path_only": true,
+    "imported_machine_selected_scenario": true,
+    "checkpoint_hash_verified_by_manifest_loader": true
+  },
+  "integrity_regression_evidence": {
+    "portable_ref_test": "OrchestrationReasoningMachineAssetLifecycle_PersistedManifestUsesPortableRefs",
+    "source_ref_mismatch_test": "OrchestrationReasoningMachineAssetLifecycle_MismatchedManifestSourceRefFailsLoad",
+    "learned_pattern_count_mismatch_test": "OrchestrationReasoningMachineAssetLifecycle_MismatchedManifestPatternCountFailsLoad",
+    "absolute_temp_root_persisted_in_manifest": false,
+    "mismatched_source_manifest_ref_rejected": true,
+    "mismatched_learned_pattern_count_rejected": true
+  },
+  "ablation_evidence": {
+    "test": "OrchestrationReasoningMachineAssetLifecycle_NoStateAndNoPatternAblationsRemainNoSemanticPlan",
+    "no_state_no_semantic_plan": true,
+    "no_pattern_no_semantic_plan": true,
+    "export_without_patterns_fails": true
+  },
+  "no_claim_fields": {
+    "training_started": false,
+    "continue_training_claimed": false,
+    "semantic_quality_claimed": false,
+    "host_runtime_claimed": false,
+    "final_model_readiness_claimed": false,
+    "committed_model_assets_created": false
+  },
+  "verification": {
+    "focused_test_command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~OrchestrationReasoningMachineAssetLifecycle\" --nologo",
+    "focused_test_exit_code": 0,
+    "focused_test_summary": "Passed 7/7"
+  },
+  "passed": true
+}

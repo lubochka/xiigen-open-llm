@@ -1,0 +1,45 @@
+{
+  "phase": "P34A",
+  "type": "subagent_boundary_protocol_repair",
+  "status": "parent_review_pending",
+  "what_happened": "P30 bounded sub-agent work order forbade commit/push and assigned only P30 artifacts, but the sub-agent continued through P31-P34 and committed/pushed multiple phases before parent review.",
+  "loophole": [
+    "STATE.json next_action and active plan could be treated as permission for the sub-agent to derive later phases.",
+    "Commit/push project obligation was not separated strongly enough from sub-agent authority.",
+    "Sub-agent parent-review files were not explicitly marked evidence-only."
+  ],
+  "files_patched": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/skills/planning-session-startup-SKILL.md",
+    "docs/skills/skill-injection-SKILL.md",
+    "docs/skills/plan-review-SKILL.md",
+    "docs/skills/phase-completion-packager-SKILL.md",
+    "docs/skills/implementation-integrity-SKILL.md",
+    "docs/skills/generated-code-review-SKILL.md",
+    "docs/skills/session-constitution-SKILL.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-COMPLETION-PLAN-v1-STATE.json"
+  ],
+  "rules_added": [
+    "A bounded sub-agent work order is a hard artifact/phase boundary.",
+    "A sub-agent must stop after its assigned artifact and return an evidence packet.",
+    "A sub-agent may not derive the next phase from state, plan, transcript, or its own review unless explicitly authorized.",
+    "A sub-agent may not commit/push unless the work order is commit/push-only or grants exact file-set commit/push.",
+    "Sub-agent parent-review/self-review files are evidence only; real parent review is created or accepted by parent session after reading artifacts.",
+    "If overrun happens, quarantine/validate artifacts, close dirty boundaries safely, record violation, patch protocol, then continue."
+  ],
+  "required_work_order_fields": {
+    "work_order_scope": "exact artifact/phase only",
+    "exact_allowed_files": "exact paths/directories",
+    "implementation_authorized": "true/false for this exact slice",
+    "commit_push_authorized": "true only for commit/push-only or exact file-set grant",
+    "may_derive_next_phase": "false unless explicitly granted",
+    "must_stop_after_report": true,
+    "parent_review_required_after_return": true
+  },
+  "no_product_code_changed": true,
+  "training_run": false,
+  "eval_run": false,
+  "checkpoint_mutated": false,
+  "model_files_touched": false
+}

@@ -1,0 +1,156 @@
+{
+  "artifact": "prompt-to-task-training-readiness-review",
+  "work_order_id": "Q3-00",
+  "review_mode": "REVIEW_INTERNAL",
+  "status": "PASS",
+  "reviewed_at_utc": "2026-06-10T13:05:00.000Z",
+  "branch": "codex/chat-gpt-5.5",
+  "requested_artifact_type": "PromptToTask training-readiness preflight review only",
+  "claim_scope": "Q3-00 preflight only. No training, model mutation, build, test, production code edit, commit, or push was performed.",
+  "fresh_luba_execution_quote": "Ок, выполняйте через агентов",
+  "authorization_review": {
+    "q3_01_plan_row_exists": true,
+    "q3_01_plan_row": "Train/continue common PromptToTask model from approved universal DPO rows",
+    "plan_gate_if_authorized": "Checkpoint, manifest, locator, export/import, fresh-load, continue-training",
+    "training_authorized_now": false,
+    "training_authorization_blockers": [
+      "Current seed manifest flags training_allowed=false.",
+      "Current seed dataset card flags training_allowed=false.",
+      "Current seed split flags training_allowed=false.",
+      "Current seed split flags seed_smoke_only=true.",
+      "Current seed split flags source_disjoint_model_quality_held_out_available=false.",
+      "Q2 review cycle 4 records training_remains_blocked=true and later training requires a separate gate.",
+      "AGENTS.md OP-10 requires export/import, manifest, checkpoint, locator, fresh-load, and resume-training evidence for trainable project assets.",
+      "AGENTS.md OP-21 forbids runtime or quality completion claims from JSON/static/validation-only evidence."
+    ],
+    "fresh_quote_effect": "The quote authorizes bounded execution through agents, but it does not override artifact flags, training gates, or model-quality evidence requirements."
+  },
+  "data_readiness_counts": {
+    "seed_jsonl_path": "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed.jsonl",
+    "seed_jsonl_rows": 8,
+    "seed_jsonl_rows_by_domain": {
+      "PromptToTask": 3,
+      "OrchestrationReasoning": 3,
+      "SkillSelection": 2
+    },
+    "prompt_to_task": {
+      "total_rows": 3,
+      "source_quality": {
+        "gold": 2,
+        "silver": 1
+      },
+      "seed_smoke_train_candidates_from_split": 2,
+      "seed_smoke_held_out_candidates_from_split": 1,
+      "model_quality_held_out_rows": 0,
+      "source_disjoint_model_quality_held_out_available": false,
+      "recommended_minimum_total_rows_before_training_quality_gate": 12,
+      "minimum_additional_reviewed_near_miss_rows_needed": 9
+    }
+  },
+  "readiness_verdicts": {
+    "seed_smoke_harness_only": {
+      "enough_data": true,
+      "scope": "JSONL parsing, schema loading, domain routing, split-role wiring, redaction flags, no-overclaim checks, and trainer input plumbing only.",
+      "must_not_claim": [
+        "training readiness",
+        "model quality",
+        "source-disjoint held-out quality",
+        "ablation pass",
+        "semantic quality improvement"
+      ]
+    },
+    "actual_common_model_training": {
+      "enough_data": false,
+      "reason": "Only three PromptToTask rows exist and the artifacts explicitly keep training_allowed=false and seed_smoke_only=true."
+    },
+    "held_out_or_ablation_claims": {
+      "enough_data": false,
+      "reason": "Only one PromptToTask seed-smoke held-out candidate exists, source-disjoint model-quality held-out evidence is unavailable, and no no-trained/exact-prompt/regex/keyword ablation can be claimed."
+    }
+  },
+  "if_training_were_later_authorized": {
+    "bounded_q3_01_artifacts_required": [
+      "PromptToTask training dataset card with approved universal DPO rows and source-disjoint held-out split",
+      "PromptToTask checkpoint asset",
+      "PromptToTask manifest",
+      "PromptToTask locator/registry entry",
+      "export/import evidence",
+      "fresh-load probe",
+      "continue-training probe",
+      "runner-emitted metrics with trained-vs-untrained and deterministic-control deltas"
+    ],
+    "bounded_q3_01_command": "Not named as runnable now because training is not authorized by current artifacts.",
+    "required_gates": [
+      "training_allowed=true from a later promotion/repair gate",
+      "seed_smoke_only=false or replaced by a training-ready dataset card",
+      "source-disjoint held-out rows available",
+      "no exact prompt lookup, regex, keyword, or static routing can explain the pass",
+      "OP-10 trainable asset lifecycle evidence present",
+      "OP-21 runtime/model-quality evidence scope matches the claim"
+    ]
+  },
+  "verdict": {
+    "training_authorized_now": false,
+    "data_ready_for_seed_smoke_harness_only": true,
+    "data_ready_for_actual_common_model_training": false,
+    "data_ready_for_held_out_or_ablation_claims": false,
+    "operator_input_required": false,
+    "blocker": false,
+    "exact_next_action": "Q3-00_PROMPT_TO_TASK_DPO_EXPANSION_PROMOTION_REPAIR: expand and promote PromptToTask approved universal DPO rows until training_allowed can be explicitly re-evaluated; minimum target is 12 PromptToTask rows with source-disjoint held-out construction, then rerun this preflight before any Q3-01 trainer command."
+  },
+  "read_sources": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-PLAN-v1.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-STATE.json",
+    "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed.jsonl",
+    "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed-manifest.json",
+    "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed-dataset-card.json",
+    "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed-split.json",
+    "artifacts/dpo-quality/smart-skills-dpo-materialized.jsonl",
+    "artifacts/dpo-quality/smart-skills-dpo-materialization-report.json",
+    "artifacts/dpo-quality/smart-skills-dpo-materialization-review.json",
+    "artifacts/dpo-quality/smart-skills-dpo-near-miss-coverage.json",
+    "artifacts/dpo-quality/smart-skills-dpo-promotion-manifest.json",
+    "artifacts/dpo-quality/smart-skills-dpo-promotion-repair-report.json",
+    "artifacts/dpo-quality/smart-skills-dpo-promotion-report.json",
+    "artifacts/dpo-quality/smart-skills-dpo-promotion-review.json",
+    "artifacts/dpo-quality/smart-skills-dpo-schema.json",
+    "artifacts/dpo-quality/smart-skills-dpo-seed-promotion-review.json",
+    "artifacts/dpo-quality/smart-skills-dpo-split-plan.json",
+    "artifacts/smart-skills-quality-uplift/code-reviews/q2/review-cycle-1.md",
+    "artifacts/smart-skills-quality-uplift/code-reviews/q2/review-cycle-2.md",
+    "artifacts/smart-skills-quality-uplift/code-reviews/q2/review-cycle-3.md",
+    "artifacts/smart-skills-quality-uplift/code-reviews/q2/review-cycle-4.md"
+  ],
+  "forbidden_scope_observed": {
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "dashboard_code_changed": false,
+    "model_artifacts_changed": false,
+    "training_command_run": false,
+    "dotnet_build_run": false,
+    "dotnet_test_run": false,
+    "commit_or_push_done": false
+  },
+  "verification": {
+    "json_parse": "PASS",
+    "jsonl_parse": "PASS",
+    "row_count_check": "PASS",
+    "split_count_check": "PASS",
+    "training_flag_check": "PASS",
+    "targeted_read_checks": "PASS",
+    "git_diff_check": "PASS",
+    "forbidden_verification_not_run": [
+      "dotnet build",
+      "dotnet test",
+      "training",
+      "model mutation",
+      "production code edits",
+      "test code edits",
+      "dashboard code edits",
+      "commit",
+      "push"
+    ]
+  }
+}

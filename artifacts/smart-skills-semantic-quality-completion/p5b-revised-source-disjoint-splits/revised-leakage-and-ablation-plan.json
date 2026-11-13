@@ -1,0 +1,162 @@
+{
+  "phase": "P5B_REVISED_SOURCE_DISJOINT_SPLIT_DRAFT",
+  "language": "ru",
+  "artifact_status": "draft_only_pending_parent_review",
+  "ablation_executable_now": false,
+  "reason": "No training-ready rows, no authorized model artifact, no source-accepted revised split, and no training/eval permission.",
+  "training_allowed": false,
+  "eval_allowed": false,
+  "semantic_quality_claimed": false,
+  "training_run": false,
+  "eval_run": false,
+  "checkpoint_or_model_changed": false,
+  "controls": [
+    {
+      "control_id": "P5B-CTRL-001",
+      "name": "exact prompt lookup",
+      "origin": "P5",
+      "applies_to": [
+        "PromptToTask"
+      ],
+      "risk_ru": "Модель запоминает точную prompt-формулировку вместо task contract.",
+      "required_failure_condition_ru": "Lookup-only baseline must fail paraphrased held-out rows."
+    },
+    {
+      "control_id": "P5B-CTRL-002",
+      "name": "filename/path lookup",
+      "origin": "P5",
+      "applies_to": [
+        "PromptToTask",
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "Решение строится по local path или filename.",
+      "required_failure_condition_ru": "Filename/path-only baseline must fail renamed or source-hidden rows."
+    },
+    {
+      "control_id": "P5B-CTRL-003",
+      "name": "keyword-only classifier",
+      "origin": "P5",
+      "applies_to": [
+        "PromptToTask"
+      ],
+      "risk_ru": "Поверхностные keywords заменяют extraction of permission, validation and no-claim boundaries.",
+      "required_failure_condition_ru": "Keyword baseline must fail rows with misleading keywords."
+    },
+    {
+      "control_id": "P5B-CTRL-004",
+      "name": "source-title shortcut",
+      "origin": "P5",
+      "applies_to": [
+        "PromptToTask",
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "Source title or provenance becomes the decision signal.",
+      "required_failure_condition_ru": "Title-only baseline must fail when titles are removed or swapped."
+    },
+    {
+      "control_id": "P5B-CTRL-005",
+      "name": "WordPress/plugin title shortcut",
+      "origin": "P5",
+      "applies_to": [
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "Модель узнает WordPress/plugin provenance instead of phase-boundary reasoning.",
+      "required_failure_condition_ru": "Plugin-title baseline must fail non-plugin phase-boundary examples."
+    },
+    {
+      "control_id": "P5B-CTRL-006",
+      "name": "static phase keyword shortcut",
+      "origin": "P5",
+      "applies_to": [
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "Модель реагирует на phase/review/commit words без reasoning about gate order.",
+      "required_failure_condition_ru": "Static keyword baseline must fail adversarial gate-order rows."
+    },
+    {
+      "control_id": "P5B-CTRL-007",
+      "name": "exact protocol text lookup",
+      "origin": "P5",
+      "applies_to": [
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "Модель запоминает exact protocol wording.",
+      "required_failure_condition_ru": "Exact-text baseline must fail paraphrased and independently sourced rows."
+    },
+    {
+      "control_id": "P5B-CTRL-008",
+      "name": "named-reference shortcut",
+      "origin": "P5A",
+      "applies_to": [
+        "PromptToTask",
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "Строка принимается как хорошая только потому, что Luba/current plan named the source.",
+      "required_failure_condition_ru": "A named-reference-only control must fail unless source content has an accepted universal boundary and parent promotion acceptance."
+    },
+    {
+      "control_id": "P5B-CTRL-009",
+      "name": "analysis-state-status shortcut",
+      "origin": "P5A",
+      "applies_to": [
+        "PromptToTask",
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "Observed state `done` or `todo` is treated as semantic signal instead of source lifecycle metadata.",
+      "required_failure_condition_ru": "Status-only control must fail; done/todo can gate eligibility but cannot answer the task."
+    },
+    {
+      "control_id": "P5B-CTRL-010",
+      "name": "source_state shortcut",
+      "origin": "P5A",
+      "applies_to": [
+        "PromptToTask",
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "source_state field is used as a label for chosen/rejected instead of real reasoning.",
+      "required_failure_condition_ru": "source_state-only baseline must fail all held-out examples."
+    },
+    {
+      "control_id": "P5B-CTRL-011",
+      "name": "source path/title shortcut",
+      "origin": "P5A",
+      "applies_to": [
+        "PromptToTask",
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "Модель использует path segments, directory titles, document titles or branded labels.",
+      "required_failure_condition_ru": "Path/title control must fail after removing or renaming source labels."
+    },
+    {
+      "control_id": "P5B-CTRL-012",
+      "name": "code filename/class/method shortcut",
+      "origin": "P5A",
+      "applies_to": [
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "Code-source candidates pass by `.cs`, class names, method names, namespace names, node ids or exact implementation symbols.",
+      "required_failure_condition_ru": "Code-identifier control must fail; correct answer must survive anonymized code-source examples."
+    },
+    {
+      "control_id": "P5B-CTRL-013",
+      "name": "test-framework shortcut",
+      "origin": "P5A",
+      "applies_to": [
+        "OrchestrationReasoning"
+      ],
+      "risk_ru": "Test-source candidate passes by xUnit, Assert, test method names, run ids or temp paths.",
+      "required_failure_condition_ru": "Test-framework control must fail; correct answer must rely on isolation/dedup/no-cross-contamination boundary."
+    }
+  ],
+  "execution_prerequisites": [
+    "parent accepts revised split as input to DPO promotion review",
+    "parent separately promotes rows from candidate-only to DPO-ready",
+    "no named-reference/todo row is treated as training-ready without explicit acceptance",
+    "train/eval families are source-disjoint and not near-duplicates",
+    "training and eval are explicitly authorized in a later work order"
+  ],
+  "current_artifacts_covered": [
+    "prompt-to-task-revised-split-draft.json",
+    "orchestration-revised-split-draft.json"
+  ]
+}

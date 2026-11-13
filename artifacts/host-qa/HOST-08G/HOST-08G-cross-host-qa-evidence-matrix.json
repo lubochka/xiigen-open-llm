@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "work_order": "HOST-08I-CROSS-HOST-QA-MATRIX-REFRESH-AFTER-CURSOR-SCENARIOS",
+  "artifact_kind": "cross_host_qa_evidence_matrix",
+  "passed": true,
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "claim_scope": "Aggregation/review matrix only. This matrix summarizes accepted source review, hook-command, Extension Host command/panel, handler-level, and component-level QA evidence. It does not claim final/cross-host completion.",
+  "completion_claim_allowed": false,
+  "full_extension_completion_claimed": false,
+  "anti_masquerade_rule": "JSON, PowerShell helper, smoke trace, static probe, component harness, handler-level adapter, or report evidence cannot substitute for completed Claude/Cursor/Codex extension code, full runtime/UI evidence, or final acceptance.",
+  "plan_refs": [
+    "B15 Cross-host gates: real entrypoint, thin host, prompt->task->plan->skills request, debug trace, no external AI, commits/pushes",
+    "B20 CM-13..CM-18B: host source, QA/e2e behavior, debug trace, thin-host, anti-determinism, model-backed semantic evidence",
+    "B20 CM-22/CM-23: per-branch test strategy and executable UML/case maps",
+    "B21 final acceptance: final requires all completion rows and explicit ARCHITECT_VERDICT_ALLOW_FINAL"
+  ],
+  "source_reports": {
+    "host_07a": "artifacts/host-code-review/HOST-07A-host-code-review-matrix.json",
+    "host_07b_claude": "C:/Projects/claude-xiigen-smart-skills/reports/HOST-07B-claude-real-source-entrypoint-repair.json",
+    "host_07c_codex": "C:/Projects/codex-xiigen-smart-skills/reports/HOST-07C-codex-js-endpoint-invoker-repair.json",
+    "host_08a_first_harness": "artifacts/host-qa/HOST-08A/HOST-08A-first-harness-report.json",
+    "host_08b_cursor_extension_host": "artifacts/host-qa/HOST-08B/20260606-184709/HOST-08B-cursor-extension-host-qa.json",
+    "host_08c_cursor_chat_discovery": "artifacts/host-qa/HOST-08C/20260606-190943/HOST-08C-cursor-chat-participant-qa.json",
+    "host_08d_cursor_handler": "artifacts/host-qa/HOST-08D/20260606-211417/HOST-08D-cursor-chat-handler-level-qa.json",
+    "host_08e_claude_hook": "artifacts/host-qa/HOST-08E/20260606-213928/HOST-08E-claude-hook-qa.json",
+    "host_08f_codex_component": "artifacts/host-qa/HOST-08F/20260607-005100/HOST-08F-codex-plugin-app-qa.json",
+    "host_08h_cursor_plan_skill_scenarios": "artifacts/host-qa/HOST-08H/20260606-221459/HOST-08H-cursor-plan-skill-scenario-qa.json"
+  },
+  "hosts": [
+    {
+      "host": "claude",
+      "repo": "C:/Projects/claude-xiigen-smart-skills",
+      "summary_pass_for_current_evidence_level": true,
+      "accepted_evidence_level": "real_js_source_entrypoint_plus_hook_command_qa",
+      "rows": {
+        "real_source_entrypoint": {
+          "proved": true,
+          "evidence_level": "source_review",
+          "refs": [
+            "HOST-07B real_source_entrypoint.path=src/claude-entrypoint.js",
+            "HOST-07B manifest_refs command invokes node.exe src/claude-entrypoint.js",
+            "HOST-07B ps1_launcher_scope.accepted_as_implementation=false"
+          ]
+        },
+        "hook_command_qa": {
+          "proved": true,
+          "evidence_level": "hook_command_source_qa",
+          "refs": [
+            "HOST-08E hook_command_qa=true",
+            "HOST-08E manifest_hook_points_to_js=true"
+          ]
+        },
+        "prompt_to_task": {
+          "proved": true,
+          "evidence_level": "hook_command_qa",
+          "refs": [
+            "HOST-08E cases prompt-to-task-debug-off passed",
+            "HOST-08E cases prompt-to-task-debug-on passed"
+          ]
+        },
+        "orchestration_plan": {
+          "proved": true,
+          "evidence_level": "hook_command_qa",
+          "refs": [
+            "HOST-08E cases orchestration-plan-debug-off passed"
+          ]
+        },
+        "skill_selection": {
+          "proved": true,
+          "evidence_level": "hook_command_qa",
+          "refs": [
+            "HOST-08E cases skill-selection-debug-off passed"
+          ]
+        },
+        "debug_off": {
+          "proved": true,
+          "evidence_level": "hook_command_qa",
+          "refs": [
+            "HOST-08E prompt-to-task-debug-off debug_shape_absent=true"
+          ]
+        },
+        "debug_on": {
+          "proved": true,
+          "evidence_level": "hook_command_qa",
+          "refs": [
+            "HOST-08E prompt-to-task-debug-on debug_shape_present=true"
+          ]
+        },
+        "redaction": {
+          "proved": true,
+          "evidence_level": "hook_command_qa",
+          "refs": [
+            "HOST-08E redaction.sentinel_absent_from_display_response_trace=true"
+          ]
+        },
+        "thin_host": {
+          "proved": true,
+          "evidence_level": "source_review_and_hook_qa",
+          "refs": [
+            "HOST-07B thin_host_anti_kitchen.passed=true",
+            "HOST-08E thin_host_sweep all forbidden host-kitchen flags false"
+          ]
+        },
+        "full_chat_ui_evidence": {
+          "proved": false,
+          "evidence_level": "not_proven",
+          "refs": [
+            "HOST-08E full_chat_ui_evidence=false",
+            "HOST-08E claude_cli_plugin_qa=false"
+          ],
+          "remaining_gap": "Full Claude chat UI evidence remains distinct from hook-command/source QA."
+        }
+      }
+    },
+    {
+      "host": "cursor",
+      "repo": "C:/Projects/cursor-xiigen-smart-skills",
+      "summary_pass_for_current_evidence_level": true,
+      "accepted_evidence_level": "real_source_entrypoint_plus_extension_host_command_panel_handler_level_chat_qa_and_HOST_08H_plan_skill_scenarios",
+      "rows": {
+        "real_source_entrypoint": {
+          "proved": true,
+          "evidence_level": "source_review",
+          "refs": [
+            "HOST-07A cursor passed package_entrypoint",
+            "HOST-07A cursor package.json main=./dist/extension.js",
+            "HOST-07A cursor src/extension.ts command/chat/panel source refs"
+          ]
+        },
+        "extension_host_command": {
+          "proved": true,
+          "evidence_level": "Extension Host command QA",
+          "refs": [
+            "HOST-08B extension_host_started=true",
+            "HOST-08B command_entrypoint_covered=true",
+            "HOST-08B command cases debug disabled/enabled passed"
+          ]
+        },
+        "panel": {
+          "proved": true,
+          "evidence_level": "Extension Host panel command invocation",
+          "refs": [
+            "HOST-08B panel_case.attempted=true",
+            "HOST-08B panel_case.passed=true"
+          ],
+          "not_claimed": "WebView visibility is not claimed by HOST-08B."
+        },
+        "handler_level_chat_adapter": {
+          "proved": true,
+          "evidence_level": "handler_level_test_only_qa",
+          "refs": [
+            "HOST-08D handler_level_chat_qa=true",
+            "HOST-08D full_chat_ui_evidence=false"
+          ]
+        },
+        "prompt_to_task": {
+          "proved": true,
+          "evidence_level": "Extension Host command and handler-level QA",
+          "refs": [
+            "HOST-08B command_debug_disabled passed",
+            "HOST-08B command_debug_enabled passed",
+            "HOST-08D handler_chat_debug_disabled passed",
+            "HOST-08D handler_chat_debug_enabled passed"
+          ]
+        },
+        "task_to_orchestration_plan": {
+          "proved": true,
+          "evidence_level": "handler_level_Extension_Host_test_adapter_QA",
+          "refs": [
+            "HOST-08H closes_gap=CURSOR_PLAN_AND_SKILL_SCENARIOS",
+            "HOST-08H case orchestration_plan_handler_level passed=true",
+            "HOST-08H scenario_coverage.orchestration_plan=true",
+            "HOST-08H full_chat_ui_evidence=false"
+          ],
+          "not_claimed": "HOST-08H proves handler-level/Extension Host test adapter scenario coverage, not full Cursor chat UI participant evidence."
+        },
+        "task_to_skills": {
+          "proved": true,
+          "evidence_level": "handler_level_Extension_Host_test_adapter_QA",
+          "refs": [
+            "HOST-08H closes_gap=CURSOR_PLAN_AND_SKILL_SCENARIOS",
+            "HOST-08H case skill_selection_handler_level passed=true",
+            "HOST-08H scenario_coverage.skill_selection=true",
+            "HOST-08H full_chat_ui_evidence=false"
+          ],
+          "not_claimed": "HOST-08H proves handler-level/Extension Host test adapter scenario coverage, not full Cursor chat UI participant evidence."
+        },
+        "debug_off": {
+          "proved": true,
+          "evidence_level": "Extension Host command and handler-level QA",
+          "refs": [
+            "HOST-08B command_debug_disabled display_has_debug_shape=false",
+            "HOST-08D handler_chat_debug_disabled markdown_has_debug_shape=false"
+          ]
+        },
+        "debug_on": {
+          "proved": true,
+          "evidence_level": "Extension Host command and handler-level QA",
+          "refs": [
+            "HOST-08B command_debug_enabled display_has_debug_shape=true",
+            "HOST-08D handler_chat_debug_enabled markdown_has_debug_shape=true"
+          ]
+        },
+        "redaction": {
+          "proved": true,
+          "evidence_level": "Extension Host command and handler-level QA",
+          "refs": [
+            "HOST-08B redaction.sentinel_absent_from_visible_display_response_trace=true",
+            "HOST-08D redaction.sentinel_absent_from_markdown_display_response_trace=true"
+          ]
+        },
+        "thin_host": {
+          "proved": true,
+          "evidence_level": "source_review_and_QA",
+          "refs": [
+            "HOST-07A cursor thin_host_boundary passed",
+            "HOST-08B thin_host_sweep all forbidden host-kitchen flags false",
+            "HOST-08D thin_host_sweep all forbidden host-kitchen flags false"
+          ]
+        },
+        "full_chat_ui_evidence": {
+          "proved": false,
+          "evidence_level": "not_proven",
+          "refs": [
+            "HOST-08C chat_participant_invoked=false",
+            "HOST-08D full_chat_ui_evidence=false",
+            "HOST-08D chat_ui_noninteractive_participant_invoked=false"
+          ],
+          "remaining_gap": "A safe noninteractive Cursor chat participant UI invocation path was not found; handler-level adapter is useful test-only evidence but not full chat UI evidence."
+        }
+      }
+    },
+    {
+      "host": "codex",
+      "repo": "C:/Projects/codex-xiigen-smart-skills",
+      "summary_pass_for_current_evidence_level": true,
+      "accepted_evidence_level": "real_js_endpoint_invoker_plus_component_source_entrypoint_qa",
+      "rows": {
+        "real_js_endpoint_invoker": {
+          "proved": true,
+          "evidence_level": "source_review",
+          "refs": [
+            "HOST-07C accepted_implementation.real_source_entrypoint=src/codex-entrypoint.js",
+            "HOST-07C accepted_implementation.source_invokes_core_endpoint=true",
+            "HOST-07C powershell_entrypoint_accepted_as_implementation=false"
+          ]
+        },
+        "component_source_qa": {
+          "proved": true,
+          "evidence_level": "handler_or_component_level_qa",
+          "refs": [
+            "HOST-08F booleans.handler_or_component_level_qa=true",
+            "HOST-08F booleans.full_plugin_ui_evidence=false"
+          ]
+        },
+        "prompt_to_task": {
+          "proved": true,
+          "evidence_level": "component_source_entrypoint_qa",
+          "refs": [
+            "HOST-08F prompt-to-task-debug-off passed",
+            "HOST-08F prompt-to-task-debug-on passed"
+          ]
+        },
+        "orchestration_plan": {
+          "proved": true,
+          "evidence_level": "component_source_entrypoint_qa",
+          "refs": [
+            "HOST-08F orchestration-plan-debug-off passed"
+          ]
+        },
+        "skill_selection": {
+          "proved": true,
+          "evidence_level": "component_source_entrypoint_qa",
+          "refs": [
+            "HOST-08F skill-selection-debug-off passed"
+          ]
+        },
+        "debug_off": {
+          "proved": true,
+          "evidence_level": "component_source_entrypoint_qa",
+          "refs": [
+            "HOST-08F prompt-to-task-debug-off exact_debug_shape=true with empty display"
+          ]
+        },
+        "debug_on": {
+          "proved": true,
+          "evidence_level": "component_source_entrypoint_qa",
+          "refs": [
+            "HOST-08F prompt-to-task-debug-on exact_debug_shape=true"
+          ]
+        },
+        "redaction": {
+          "proved": true,
+          "evidence_level": "component_source_entrypoint_qa",
+          "refs": [
+            "HOST-08F coverage.redaction=true",
+            "HOST-08F sentinel_leaked_outside_request=false for all cases"
+          ]
+        },
+        "thin_host": {
+          "proved": true,
+          "evidence_level": "source_review_and_component_qa",
+          "refs": [
+            "HOST-07C thin_host_boundary refs",
+            "HOST-08F forbidden_scope semantic/model/training/corpus/DPO/model mutation flags false"
+          ]
+        },
+        "full_plugin_app_runtime_evidence": {
+          "proved": false,
+          "evidence_level": "not_proven",
+          "refs": [
+            "HOST-08F booleans.codex_plugin_runtime_qa=false",
+            "HOST-08F booleans.codex_exec_model_backed_qa=false",
+            "HOST-08F booleans.full_plugin_ui_evidence=false"
+          ],
+          "remaining_gap": "Full Codex plugin/app runtime invocation evidence remains distinct from active JS component QA."
+        }
+      }
+    }
+  ],
+  "remaining_distinctions_and_gaps": [
+    {
+      "gap_id": "CLAUDE_FULL_CHAT_UI",
+      "host": "claude",
+      "status": "not_proven",
+      "description": "Claude has JS source + hook-command QA, but not full Claude chat UI/CLI plugin evidence.",
+      "classification": "decision_or_runtime_path_dependent"
+    },
+    {
+      "gap_id": "CURSOR_FULL_CHAT_UI_PARTICIPANT",
+      "host": "cursor",
+      "status": "not_proven",
+      "description": "Cursor chat participant could not be invoked through a safe noninteractive public Extension Host API; handler-level adapter is test-only evidence.",
+      "classification": "deferred_decision_or_runtime_api_gap"
+    },
+    {
+      "gap_id": "CODEX_FULL_PLUGIN_APP_RUNTIME",
+      "host": "codex",
+      "status": "not_proven",
+      "description": "Codex has real JS source invoker and component QA, but no full Codex plugin/app runtime invocation evidence.",
+      "classification": "decision_or_runtime_path_dependent"
+    },
+    {
+      "gap_id": "FINAL_COMPLETION_MATRIX",
+      "host": "all",
+      "status": "not_started",
+      "description": "Final/cross-host completion has not started and remains blocked by B20/B21 until all required rows pass and parent architect emits ARCHITECT_VERDICT_ALLOW_FINAL.",
+      "classification": "final_gate_forbidden_in_HOST_08G"
+    }
+  ],
+  "completion_gate_summary": {
+    "host_source_review_complete_for_all_three": true,
+    "qa_evidence_exists_for_all_three": true,
+    "qa_evidence_levels_are_mixed": true,
+    "all_required_full_runtime_ui_levels_proven": false,
+    "semantic_quality_claimed": false,
+    "model_backed_semantic_behavior_required_now": false,
+    "completion_claim_allowed": false,
+    "reason_completion_claim_forbidden": "Current matrix includes hook-command, Extension Host command/panel, handler-level, and component-level QA evidence, but it also records full chat UI/plugin runtime gaps. B20 CM-18A and B21 final acceptance cannot pass from these partial levels alone."
+  },
+  "forbidden_scope_confirmed": {
+    "host_repo_edited": false,
+    "runtime_smoke_run": false,
+    "training_model_corpus_dpo_started": false,
+    "model_backed_external_ai_used": false,
+    "final_cross_host_gate_started": false
+  },
+  "verification_plan": [
+    "JSON parse this matrix and state",
+    "Targeted field checks for completion_claim_allowed=false, full_plugin_ui_evidence=false, full_chat_ui_evidence=false, and final_cross_host_gate_started=false",
+    "git diff --check"
+  ],
+  "next_bounded_action_after_parent_review": "Parent review HOST-08I, then choose the next plan-derived bounded action from remaining host UI/runtime gaps or proceed to B16 only if parent accepts the recorded distinctions.",
+  "created_at": "2026-06-07T01:10:00+03:00",
+  "refreshed_at": "2026-06-07T01:30:00+03:00",
+  "refresh_reason": "HOST-08H parent accepted; Cursor orchestration-plan and skill-selection scenario coverage are now proved at handler-level/Extension Host test adapter level, while full Cursor chat UI evidence remains unproved."
+}

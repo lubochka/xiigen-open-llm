@@ -1,0 +1,46 @@
+{
+  "status": "ACCEPTED_CHECKPOINT_CANDIDATE_FOR_P7_RERUN",
+  "acceptedAsP7Pass": false,
+  "semanticQualityClaimed": false,
+  "p7PassClaimed": false,
+  "finalModelReadyClaimed": false,
+  "checkpointCandidateCreated": true,
+  "learnedPatternCount": 5,
+  "p6PatternCount": 2,
+  "p7cPatternCount": 3,
+  "p7EvalHoldoutRowsTrainedOn": 0,
+  "productionCodeChanged": false,
+  "finalModelOverwritten": false,
+  "focusedTest": {
+    "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskP7DCheckpointCandidateTests\" --logger \"console;verbosity=minimal\"",
+    "passed": 1,
+    "failed": 0
+  },
+  "reviewCycles": [
+    {
+      "cycle": 1,
+      "name": "goal_delivery",
+      "verdict": "pass",
+      "summary": "P7D created a new candidate checkpoint with 5 learned patterns."
+    },
+    {
+      "cycle": 2,
+      "name": "no_eval_holdout_leakage",
+      "verdict": "pass",
+      "summary": "No P7 eval/holdout rows or provenance fields are used as learned signal authority."
+    },
+    {
+      "cycle": 3,
+      "name": "checkpoint_lifecycle_no_overwrite",
+      "verdict": "pass",
+      "summary": "Candidate artifacts are isolated under P7D and no final/common/P6 checkpoint was overwritten."
+    },
+    {
+      "cycle": 4,
+      "name": "fresh_load_no_overclaim_readability",
+      "verdict": "pass",
+      "summary": "Focused fresh-load test passed and positive true-claim scans are empty."
+    }
+  ],
+  "nextActionAfterCommit": "P7E rerun PromptToTask source-disjoint eval and ablation gate against the P7D candidate checkpoint"
+}

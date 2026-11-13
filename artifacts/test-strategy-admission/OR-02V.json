@@ -1,0 +1,32 @@
+{
+  "schema": "test-strategy-admission-v1",
+  "schema_version": "1.0",
+  "work_order": "OR-02V",
+  "status": "PASS",
+  "claim_scope": "focused PowerShell validator execution only; no dotnet tests because no C# code changed",
+  "allowed_verification": [
+    "run tools/validate-orchestration-reasoning-corpus.ps1 against OR-02 corpus and manifest",
+    "run negative missing-corpus probe and require a JSON failure report",
+    "JSON parse validator report, OR-02V artifacts, and state",
+    "git diff --check",
+    "git status"
+  ],
+  "validator_command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools\\validate-orchestration-reasoning-corpus.ps1 -CorpusPath training-data\\orchestration-reasoning\\orchestration-reasoning-common-corpus.jsonl -ManifestPath training-data\\orchestration-reasoning\\orchestration-reasoning-common-corpus-manifest.json -ReportPath artifacts\\orchestration-reasoning-corpus\\OR-02V-validator-report.json",
+  "validator_exit_code": 0,
+  "validator_elapsed_ms": 1338,
+  "negative_missing_corpus_probe": {
+    "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools\\validate-orchestration-reasoning-corpus.ps1 -CorpusPath training-data\\orchestration-reasoning\\missing-or-02v-corpus.jsonl -ManifestPath training-data\\orchestration-reasoning\\orchestration-reasoning-common-corpus-manifest.json -ReportPath artifacts\\orchestration-reasoning-corpus\\OR-02V-negative-missing-corpus-report.json",
+    "exit_code": 1,
+    "expected_failure": true,
+    "report_emitted": true,
+    "failed_check_count": 1
+  },
+  "forbidden_verification": [
+    "dotnet test",
+    "training",
+    "host runtime",
+    "external AI",
+    "browser or image tools"
+  ],
+  "passed": true
+}

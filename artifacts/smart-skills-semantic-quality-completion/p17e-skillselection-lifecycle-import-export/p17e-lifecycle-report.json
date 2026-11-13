@@ -1,0 +1,43 @@
+{
+  "phase": "P17E",
+  "verdict": "PASS_LIFECYCLE_IMPORT_EXPORT_READY_FOR_PARENT_REVIEW",
+  "summary_ru": "P17E проверил жизненный цикл кандидата SkillSelection из P17D через существующие методы проекта: свежая загрузка, production export, import в новый экземпляр, повторная загрузка экспортированного checkpoint и контрольное решение на source-disjoint строке. Это компонентное lifecycle-доказательство, а не заявление о semantic quality или готовности модели.",
+  "source_checkpoint": {
+    "path": "artifacts/smart-skills-semantic-quality-completion/p17d-skillselection-checkpoint-rebuild-rerun/skill-selection-p17d-native-bound-checkpoint.json",
+    "sha256": "af98c06be4d96be2defef3f07a55603b88a6200512d3d896460558548ffd8320",
+    "load_method": "SkillSelectionMachine.LoadCheckpointAsync"
+  },
+  "exported_candidate": {
+    "checkpoint_ref": "artifacts/smart-skills-semantic-quality-completion/p17e-skillselection-lifecycle-import-export/production-export/skill-selection-checkpoint.json",
+    "manifest_ref": "artifacts/smart-skills-semantic-quality-completion/p17e-skillselection-lifecycle-import-export/production-export/skill-selection-manifest.json",
+    "checkpoint_sha256": "c23ee180af21e2a4f6ca31703b5ff2631b14c0781e84f866f76cc1eeffa5cd52",
+    "manifest_sha256": "cfa0d6d500075883f54f4e309d26d1a7ce87132720e07113bd93f5c6e096d1ec",
+    "export_method": "SkillSelectionMachine.ExportAsync",
+    "import_method": "SkillSelectionMachine.ImportAsync"
+  },
+  "counts": {
+    "lifecycle_checks": 6,
+    "lifecycle_checks_passed": 6,
+    "lifecycle_checks_failed": 0,
+    "heldout_nonregression_rows": 1,
+    "contamination_hits": 0
+  },
+  "limitations_ru": [
+    "P17E не менял production code и не подключал checkpoint к common/final runtime paths.",
+    "P17E не выполнял training и не создавал новые training rows.",
+    "Проверка подтверждает component lifecycle path, но не доказывает full API semantic quality, dashboard readiness или host runtime readiness."
+  ],
+  "focused_test": {
+    "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SmartSkillsSemanticQualityP17ELifecycleTests\" --logger \"console;verbosity=minimal\"",
+    "result": "passed: Failed=0, Passed=1, Skipped=0, Total=1"
+  },
+  "safety_flags": {
+    "semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "full_api_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "dashboard_or_host_readiness_claimed": false
+  },
+  "next_action_ru": "Родительский review P17E; при принятии можно переходить к следующему плановому firewall/API no-claim или promotion gate без заявлений о полной готовности."
+}

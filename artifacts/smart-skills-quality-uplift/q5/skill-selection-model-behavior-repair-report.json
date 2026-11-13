@@ -1,0 +1,84 @@
+{
+    "schema_version":  1,
+    "report_id":  "q5-04r-skill-selection-model-behavior-repair",
+    "work_order_id":  "Q5-04R_SKILL_SELECTION_MODEL_BEHAVIOR_REPAIR",
+    "branch":  "codex/chat-gpt-5.5",
+    "created_at_utc":  "2026-06-10T19:25:47.339Z",
+    "status":  "PASS",
+    "passed":  true,
+    "semantic_quality_claimed":  false,
+    "external_ai_used":  false,
+    "host_runtime_claimed":  false,
+    "dashboard_api_work_run":  false,
+    "q6_q7_q8_work_run":  false,
+    "staged_committed_pushed":  false,
+    "diagnosis":  {
+                      "exact_selected_matches_before":  "0/24",
+                      "expected_rejected_present_before":  "12/24",
+                      "root_cause":  "Q5 expectations were valid multi-skill semantic sets, but the trained common corpus had only single-primary skill rows and prompt_context production aggregation truncated learned scores to one top candidate.",
+                      "expectation_mapping_wrong":  false,
+                      "model_training_repair_needed":  true,
+                      "production_decision_bug":  "PromptContext learned decision path used top-one/tie-only aggregation instead of bounded small-set semantic selection."
+                  },
+    "repair_actions":  [
+                           "Added Q5-04R reviewed semantic training rows for multi-skill selected sets and wrong-skill near-miss rejection.",
+                           "Regenerated models/skill-selection/skill-selection-v1 from the focused skill-selection training runner.",
+                           "Updated models/index.json hashes for skill-selection-v1.",
+                           "Changed SkillSelectionMachine prompt_context aggregation to select all candidates above a learned semantic score floor, with top-score fallback, without candidate-position authority."
+                       ],
+    "artifacts":  {
+                      "supplemental_training_rows":  "training-data/smart-skills/semantic-quality/skill-selection-training-v1/skill-selection-q5-04r-semantic-training.jsonl",
+                      "training_corpus":  "training-data/skill-selection/skill-selection-v1/corpus-snapshot.jsonl",
+                      "training_manifest":  "training-data/skill-selection/skill-selection-v1/training-manifest.json",
+                      "checkpoint":  "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json",
+                      "manifest":  "models/skill-selection/skill-selection-v1/manifest.json",
+                      "model_index":  "models/index.json",
+                      "executable_probe_report":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-executable-probe-report.json",
+                      "continue_report":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-q5-04r-continue/skill-selection-v1-continued-report.json"
+                  },
+    "hashes":  {
+                   "checkpoint_sha256":  "b8a43af49b32302f6c4cbfb3259ee2bafdeeb83abe6adc2d242717f54ca7c905",
+                   "manifest_sha256":  "ed0950141a1408cf1b3fef19e8f1bf1d8afae8846cdcaebc13f24a3369a368b6",
+                   "model_index_sha256":  "b0e0f06930ec1b42d0b70234b3c91e7d0a9d3ebbc68ced8a173df120f6d654dd",
+                   "training_corpus_sha256":  "b18e1c3c94f78267da93c67bc986509566709f281c4fda02fc544250dca5cf01",
+                   "supplemental_training_rows_sha256":  "ba6d66bd6efc537a9f610d961ff3a59e49908af1a31b5d5d7e48542e6ea78645"
+               },
+    "acceptance":  {
+                       "heldout_rows":  12,
+                       "total_permutations":  24,
+                       "exact_model_matches":  24,
+                       "expected_rejected_present_count":  24,
+                       "permutation_stable_rows":  12,
+                       "first_position_baseline_exact_matches":  0,
+                       "checkpoint_position_baseline_exact_matches":  0,
+                       "no_over_select_all":  true,
+                       "no_candidate_position_scaffold_evidence":  true,
+                       "semantic_quality_claimed":  false,
+                       "can_advance_to_q5_05":  true
+                   },
+    "commands_run":  [
+                         "dotnet run --project artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-probe/SkillSelectionCandidatePositionProbe.csproj (pre-repair diagnostic after code tie fix)",
+                         "dotnet run --project 27.TranslationDomain.Tools -- regenerate-skill-selection-model-from-training-data --training-manifest training-data/skill-selection/skill-selection-v1/training-manifest.json --output models/skill-selection/skill-selection-v1",
+                         "dotnet run --no-build --project 27.TranslationDomain.Tools -- load-skill-selection-model --model-id skill-selection-v1",
+                         "dotnet run --no-build --project 27.TranslationDomain.Tools -- import-skill-selection-model --manifest models/skill-selection/skill-selection-v1/manifest.json --fixture-probe",
+                         "dotnet run --no-build --project 27.TranslationDomain.Tools -- continue-skill-selection-training --manifest models/skill-selection/skill-selection-v1/manifest.json --training-manifest training-data/skill-selection/skill-selection-v1/training-manifest.json --output artifacts/smart-skills-quality-uplift/q5/skill-selection-q5-04r-continue --max-cycles 1",
+                         "dotnet run --project artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-probe/SkillSelectionCandidatePositionProbe.csproj"
+                     ],
+    "forbidden_actions_not_run":  [
+                                      "branch checkout",
+                                      "branch creation",
+                                      "staging",
+                                      "commit",
+                                      "push",
+                                      "external AI/tools",
+                                      "host/plugin/runtime work",
+                                      "dashboard/API work",
+                                      "Q6/Q7/Q8 work",
+                                      "broad dotnet test",
+                                      "broad dotnet build"
+                                  ],
+    "verdict":  {
+                    "result":  "PASS",
+                    "exact_next_action":  "Q5-04 review rerun with executable probe evidence; Q5-05 wrong-skill near-miss review only after parent review accepts Q5-04."
+                }
+}

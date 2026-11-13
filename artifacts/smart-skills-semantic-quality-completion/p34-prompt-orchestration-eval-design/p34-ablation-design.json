@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "p34.ablation-design.v1",
+  "phase": "P34",
+  "trainingRun": false,
+  "evalRun": false,
+  "checkpointMutated": false,
+  "ablations": [
+    {
+      "name": "PTT_PathTitleOnlyMustFail",
+      "machine": "PromptToTask",
+      "removes": [
+        "user intent",
+        "constraints",
+        "deliverables"
+      ],
+      "leaves": [
+        "path",
+        "file title",
+        "source family"
+      ],
+      "expected": "cannot construct accepted task"
+    },
+    {
+      "name": "PTT_QuotedApprovalOnlyMustFail",
+      "machine": "PromptToTask",
+      "removes": [
+        "current unquoted instruction"
+      ],
+      "leaves": [
+        "old transcript approval"
+      ],
+      "expected": "must not authorize execution task"
+    },
+    {
+      "name": "OR_NodeIdOnlyMustFail",
+      "machine": "OrchestrationReasoning",
+      "removes": [
+        "reasoning boundary"
+      ],
+      "leaves": [
+        "node ids",
+        "phase labels",
+        "file names"
+      ],
+      "expected": "cannot build orchestration plan"
+    },
+    {
+      "name": "OR_StackMechanicsOnlyMustFail",
+      "machine": "OrchestrationReasoning",
+      "removes": [
+        "universal orchestration rule"
+      ],
+      "leaves": [
+        "C#/.NET/WPF/Cursor/Claude mechanics"
+      ],
+      "expected": "row quarantined"
+    }
+  ]
+}

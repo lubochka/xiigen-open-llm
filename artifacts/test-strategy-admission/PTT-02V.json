@@ -1,0 +1,38 @@
+{
+  "schema": "test-strategy-admission-v1",
+  "schema_version": "1.0",
+  "work_order": "PTT-02V",
+  "status": "PASS_FOCUSED_VALIDATOR_ONLY",
+  "branch_type": "tooling_and_validation_report",
+  "allowed_verification": [
+    "git status/read-only checks",
+    "PowerShell syntax/basic invocation for validator",
+    "one focused validator command on existing PromptToTask corpus/summary/PTT-02U evidence",
+    "JSON/JSONL parse of produced report and gate artifacts",
+    "rg forbidden field/true flag scan over changed artifacts and validator report",
+    "git diff --check"
+  ],
+  "forbidden_verification": [
+    "dotnet build",
+    "dotnet test",
+    "host runtime",
+    "training",
+    "checkpoint creation",
+    "model lifecycle",
+    "browser/image tools",
+    "external AI",
+    "commit",
+    "push"
+  ],
+  "test_layers": {
+    "unit": "PowerShell parser syntax check for tools/validate-prompt-to-task-corpus.ps1",
+    "integration": "focused validator command reads corpus JSONL, summary JSON, and PTT-02U evidence together",
+    "e2e_host": "not_applicable_no_host_work",
+    "qa_automation": "validator command is repeatable and writes artifacts/prompt-to-task-corpus-validation/PTT-02V.json",
+    "negative": "validator checks forbidden raw payload fields and false training/finalization flags",
+    "untrained_honesty": "validator report records validation_only=true and training_started=false",
+    "trained_acceptance": "not_applicable_training_forbidden",
+    "regression": "git diff --check plus JSON parse"
+  },
+  "passed": true
+}

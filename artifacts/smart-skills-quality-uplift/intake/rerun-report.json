@@ -1,0 +1,311 @@
+{
+  "artifact": "rerun-report",
+  "work_order_id": "Q1-03",
+  "generated_at_utc": "2026-06-10T08:13:45.607Z",
+  "status": "PASS",
+  "scope": "Fixture-level rerun semantics for the repeatable intake command.",
+  "evidence_scope": "Uses small synthetic fixture source-state files through build-source-ledger.mjs; this is not proof of model quality, DPO materialization, training, production runtime, dashboard behavior, or host behavior.",
+  "source_under_test": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\build-source-ledger.mjs",
+  "scenarios": [
+    {
+      "scenario": "first_done_run_processes_done_once",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "exit_code",
+          "actual": 0,
+          "expected": 0,
+          "pass": true
+        },
+        {
+          "name": "report_status",
+          "actual": "PASS",
+          "expected": "PASS",
+          "pass": true
+        },
+        {
+          "name": "new_processed_row_count",
+          "actual": 1,
+          "expected": 1,
+          "pass": true
+        },
+        {
+          "name": "new_content_version_count",
+          "actual": 2,
+          "expected": 2,
+          "pass": true
+        },
+        {
+          "name": "process_candidate_done_count",
+          "actual": 1,
+          "expected": 1,
+          "pass": true
+        }
+      ],
+      "failure_count": 0,
+      "failures": []
+    },
+    {
+      "scenario": "immediate_rerun_has_zero_new_processed_rows",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "exit_code",
+          "actual": 0,
+          "expected": 0,
+          "pass": true
+        },
+        {
+          "name": "report_status",
+          "actual": "PASS",
+          "expected": "PASS",
+          "pass": true
+        },
+        {
+          "name": "new_processed_row_count",
+          "actual": 0,
+          "expected": 0,
+          "pass": true
+        },
+        {
+          "name": "new_content_version_count",
+          "actual": 0,
+          "expected": 0,
+          "pass": true
+        },
+        {
+          "name": "already_processed_done_count",
+          "actual": 1,
+          "expected": 1,
+          "pass": true
+        }
+      ],
+      "failure_count": 0,
+      "failures": []
+    },
+    {
+      "scenario": "todo_backlog_is_recorded_not_processed",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "backlog_not_processed_count",
+          "actual": 1,
+          "expected": 1,
+          "pass": true
+        },
+        {
+          "name": "todo_row_count",
+          "actual": 1,
+          "expected": 1,
+          "pass": true
+        },
+        {
+          "name": "todo_new_processed_absent",
+          "actual": 0,
+          "expected": 0,
+          "pass": true
+        }
+      ],
+      "failure_count": 0,
+      "failures": []
+    },
+    {
+      "scenario": "todo_to_done_processes_first_time_with_same_hash",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "new_processed_row_count",
+          "actual": 1,
+          "expected": 1,
+          "pass": true
+        },
+        {
+          "name": "new_content_version_count",
+          "actual": 0,
+          "expected": 0,
+          "pass": true
+        },
+        {
+          "name": "first_seen_state_retained",
+          "actual": "todo",
+          "expected": "todo",
+          "pass": true
+        },
+        {
+          "name": "last_seen_state_updated",
+          "actual": "done",
+          "expected": "done",
+          "pass": true
+        },
+        {
+          "name": "processing_decision",
+          "actual": "process_candidate_done",
+          "expected": "process_candidate_done",
+          "pass": true
+        }
+      ],
+      "failure_count": 0,
+      "failures": []
+    },
+    {
+      "scenario": "changed_mtime_same_hash_has_no_new_content_version",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "new_processed_row_count",
+          "actual": 0,
+          "expected": 0,
+          "pass": true
+        },
+        {
+          "name": "new_content_version_count",
+          "actual": 0,
+          "expected": 0,
+          "pass": true
+        },
+        {
+          "name": "already_processed_done_count",
+          "actual": 1,
+          "expected": 1,
+          "pass": true
+        },
+        {
+          "name": "fixture_mtime_changed",
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      ],
+      "failure_count": 0,
+      "failures": []
+    },
+    {
+      "scenario": "changed_hash_creates_new_retained_version",
+      "status": "PASS",
+      "checks": [
+        {
+          "name": "new_processed_row_count",
+          "actual": 1,
+          "expected": 1,
+          "pass": true
+        },
+        {
+          "name": "new_content_version_count",
+          "actual": 1,
+          "expected": 1,
+          "pass": true
+        },
+        {
+          "name": "source_rows_with_multiple_versions",
+          "actual": 1,
+          "expected": 1,
+          "pass": true
+        },
+        {
+          "name": "versions_retained_for_same_source_row",
+          "actual": 2,
+          "expected": 2,
+          "pass": true
+        },
+        {
+          "name": "distinct_hashes_for_retained_versions",
+          "actual": 2,
+          "expected": 2,
+          "pass": true
+        }
+      ],
+      "failure_count": 0,
+      "failures": []
+    }
+  ],
+  "runs": [
+    {
+      "label": "first-done-run",
+      "command": "node \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\build-source-ledger.mjs\" \"--source\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\first-done-and-todo.json\" \"--out-dir\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\first-done-run\"",
+      "exit_code": 0,
+      "summary_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\first-done-run\\source-ledger-summary.json",
+      "report_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\first-done-run\\source-ledger-build-report.json",
+      "ledger_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\first-done-run\\source-ledger.jsonl",
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"row_count\": 2,\n  \"current_source_row_count\": 2,\n  \"unique_source_row_id_count\": 2,\n  \"unique_source_version_id_count\": 2,\n  \"state_counts\": {\n    \"todo\": 1,\n    \"done\": 1\n  },\n  \"new_processed_row_count\": 1,\n  \"new_content_version_count\": 2,\n  \"retained_previous_version_count\": 0,\n  \"referenced_file_content_hashed\": false,\n  \"source_state_row_hash\": true,\n  \"required_field_failures\": 0,\n  \"invalid_shape_rows\": 0,\n  \"elapsed_ms\": 51\n}",
+      "stderr": ""
+    },
+    {
+      "label": "immediate-rerun",
+      "command": "node \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\build-source-ledger.mjs\" \"--source\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\first-done-and-todo.json\" \"--out-dir\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\immediate-rerun\" \"--previous-ledger\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\first-done-run\\\\source-ledger.jsonl\"",
+      "exit_code": 0,
+      "summary_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\immediate-rerun\\source-ledger-summary.json",
+      "report_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\immediate-rerun\\source-ledger-build-report.json",
+      "ledger_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\immediate-rerun\\source-ledger.jsonl",
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"row_count\": 2,\n  \"current_source_row_count\": 2,\n  \"unique_source_row_id_count\": 2,\n  \"unique_source_version_id_count\": 2,\n  \"state_counts\": {\n    \"todo\": 1,\n    \"done\": 1\n  },\n  \"new_processed_row_count\": 0,\n  \"new_content_version_count\": 0,\n  \"retained_previous_version_count\": 0,\n  \"referenced_file_content_hashed\": false,\n  \"source_state_row_hash\": true,\n  \"required_field_failures\": 0,\n  \"invalid_shape_rows\": 0,\n  \"elapsed_ms\": 48\n}",
+      "stderr": ""
+    },
+    {
+      "label": "todo-initial",
+      "command": "node \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\build-source-ledger.mjs\" \"--source\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\todo-to-done-initial.json\" \"--out-dir\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\todo-initial\"",
+      "exit_code": 0,
+      "summary_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\todo-initial\\source-ledger-summary.json",
+      "report_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\todo-initial\\source-ledger-build-report.json",
+      "ledger_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\todo-initial\\source-ledger.jsonl",
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"row_count\": 1,\n  \"current_source_row_count\": 1,\n  \"unique_source_row_id_count\": 1,\n  \"unique_source_version_id_count\": 1,\n  \"state_counts\": {\n    \"todo\": 1\n  },\n  \"new_processed_row_count\": 0,\n  \"new_content_version_count\": 1,\n  \"retained_previous_version_count\": 0,\n  \"referenced_file_content_hashed\": false,\n  \"source_state_row_hash\": true,\n  \"required_field_failures\": 0,\n  \"invalid_shape_rows\": 0,\n  \"elapsed_ms\": 22\n}",
+      "stderr": ""
+    },
+    {
+      "label": "todo-to-done",
+      "command": "node \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\build-source-ledger.mjs\" \"--source\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\todo-to-done-current.json\" \"--out-dir\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\todo-to-done\" \"--previous-ledger\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\todo-initial\\\\source-ledger.jsonl\"",
+      "exit_code": 0,
+      "summary_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\todo-to-done\\source-ledger-summary.json",
+      "report_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\todo-to-done\\source-ledger-build-report.json",
+      "ledger_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\todo-to-done\\source-ledger.jsonl",
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"row_count\": 1,\n  \"current_source_row_count\": 1,\n  \"unique_source_row_id_count\": 1,\n  \"unique_source_version_id_count\": 1,\n  \"state_counts\": {\n    \"done\": 1\n  },\n  \"new_processed_row_count\": 1,\n  \"new_content_version_count\": 0,\n  \"retained_previous_version_count\": 0,\n  \"referenced_file_content_hashed\": false,\n  \"source_state_row_hash\": true,\n  \"required_field_failures\": 0,\n  \"invalid_shape_rows\": 0,\n  \"elapsed_ms\": 30\n}",
+      "stderr": ""
+    },
+    {
+      "label": "mtime-first",
+      "command": "node \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\build-source-ledger.mjs\" \"--source\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\mtime-same-hash.json\" \"--out-dir\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\mtime-first\"",
+      "exit_code": 0,
+      "summary_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\mtime-first\\source-ledger-summary.json",
+      "report_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\mtime-first\\source-ledger-build-report.json",
+      "ledger_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\mtime-first\\source-ledger.jsonl",
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"row_count\": 1,\n  \"current_source_row_count\": 1,\n  \"unique_source_row_id_count\": 1,\n  \"unique_source_version_id_count\": 1,\n  \"state_counts\": {\n    \"done\": 1\n  },\n  \"new_processed_row_count\": 1,\n  \"new_content_version_count\": 1,\n  \"retained_previous_version_count\": 0,\n  \"referenced_file_content_hashed\": false,\n  \"source_state_row_hash\": true,\n  \"required_field_failures\": 0,\n  \"invalid_shape_rows\": 0,\n  \"elapsed_ms\": 18\n}",
+      "stderr": ""
+    },
+    {
+      "label": "mtime-second",
+      "command": "node \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\build-source-ledger.mjs\" \"--source\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\mtime-same-hash.json\" \"--out-dir\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\mtime-second\" \"--previous-ledger\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\mtime-first\\\\source-ledger.jsonl\"",
+      "exit_code": 0,
+      "summary_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\mtime-second\\source-ledger-summary.json",
+      "report_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\mtime-second\\source-ledger-build-report.json",
+      "ledger_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\mtime-second\\source-ledger.jsonl",
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"row_count\": 1,\n  \"current_source_row_count\": 1,\n  \"unique_source_row_id_count\": 1,\n  \"unique_source_version_id_count\": 1,\n  \"state_counts\": {\n    \"done\": 1\n  },\n  \"new_processed_row_count\": 0,\n  \"new_content_version_count\": 0,\n  \"retained_previous_version_count\": 0,\n  \"referenced_file_content_hashed\": false,\n  \"source_state_row_hash\": true,\n  \"required_field_failures\": 0,\n  \"invalid_shape_rows\": 0,\n  \"elapsed_ms\": 32\n}",
+      "stderr": ""
+    },
+    {
+      "label": "hash-first",
+      "command": "node \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\build-source-ledger.mjs\" \"--source\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\hash-changed-v1.json\" \"--out-dir\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\hash-first\"",
+      "exit_code": 0,
+      "summary_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\hash-first\\source-ledger-summary.json",
+      "report_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\hash-first\\source-ledger-build-report.json",
+      "ledger_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\hash-first\\source-ledger.jsonl",
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"row_count\": 1,\n  \"current_source_row_count\": 1,\n  \"unique_source_row_id_count\": 1,\n  \"unique_source_version_id_count\": 1,\n  \"state_counts\": {\n    \"done\": 1\n  },\n  \"new_processed_row_count\": 1,\n  \"new_content_version_count\": 1,\n  \"retained_previous_version_count\": 0,\n  \"referenced_file_content_hashed\": false,\n  \"source_state_row_hash\": true,\n  \"required_field_failures\": 0,\n  \"invalid_shape_rows\": 0,\n  \"elapsed_ms\": 18\n}",
+      "stderr": ""
+    },
+    {
+      "label": "hash-second",
+      "command": "node \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\build-source-ledger.mjs\" \"--source\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\hash-changed-v2.json\" \"--out-dir\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\hash-second\" \"--previous-ledger\" \"C:\\\\Projects\\\\llm_mvp_core\\\\artifacts\\\\smart-skills-quality-uplift\\\\intake\\\\rerun-fixtures\\\\hash-first\\\\source-ledger.jsonl\"",
+      "exit_code": 0,
+      "summary_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\hash-second\\source-ledger-summary.json",
+      "report_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\hash-second\\source-ledger-build-report.json",
+      "ledger_path": "C:\\Projects\\llm_mvp_core\\artifacts\\smart-skills-quality-uplift\\intake\\rerun-fixtures\\hash-second\\source-ledger.jsonl",
+      "stdout": "{\n  \"status\": \"PASS\",\n  \"row_count\": 2,\n  \"current_source_row_count\": 1,\n  \"unique_source_row_id_count\": 1,\n  \"unique_source_version_id_count\": 2,\n  \"state_counts\": {\n    \"done\": 2\n  },\n  \"new_processed_row_count\": 1,\n  \"new_content_version_count\": 1,\n  \"retained_previous_version_count\": 1,\n  \"referenced_file_content_hashed\": false,\n  \"source_state_row_hash\": true,\n  \"required_field_failures\": 0,\n  \"invalid_shape_rows\": 0,\n  \"elapsed_ms\": 72\n}",
+      "stderr": ""
+    }
+  ],
+  "forbidden_verification_not_run": [
+    "dotnet build",
+    "dotnet test",
+    "training",
+    "host/runtime probes",
+    "production/test/dashboard code"
+  ],
+  "exact_next_action": "Q1 commit-boundary pre-commit reviews before any commit/push."
+}

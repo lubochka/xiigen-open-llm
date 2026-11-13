@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "report_id": "skill-selection-prompt-context-negative-rejection-repair",
+  "work_order_id": "Q5_PROMPT_CONTEXT_NEGATIVE_REJECTION_REPAIR",
+  "branch": "codex/chat-gpt-5.5",
+  "created_at_utc": "2026-06-10T22:40:38.4720594Z",
+  "status": "PASS",
+  "passed": true,
+  "semantic_quality_claimed": false,
+  "training_started": true,
+  "training_scope": "Regenerated SkillSelection common model assets from the existing repo-safe eligible corpus after production prompt_context learning was changed to use rejected-skill negative prompt evidence.",
+  "external_ai_used": false,
+  "host_runtime_claimed": false,
+  "dashboard_api_work_run": false,
+  "q6_q7_q8_work_run": false,
+  "staged_committed_pushed": false,
+  "production_repair": {
+    "file": "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+    "removed_hardcoded_gate": "IsPromptContextCandidateAllowed removed",
+    "hardcoded_skill_specific_allow_deny_gate_remaining": false,
+    "replacement_mechanism": "LearnPromptContextPair now applies generic negative prompt-signal weights to every rejected skill in a DPO row, and TryDecideWithPromptContext uses generic learned score floors and strong-score margin selection.",
+    "heldout_ids_hardcoded": false,
+    "expected_labels_hardcoded": false,
+    "skill_specific_table_hardcoded": false
+  },
+  "training_data_repair": {
+    "eligible_rows_source": "training-data/skill-selection/skill-selection-v1/corpus-snapshot.jsonl",
+    "training_manifest": "training-data/skill-selection/skill-selection-v1/training-manifest.json",
+    "eligible_pair_count": 75,
+    "adapter_routed_pair_count": 900,
+    "source_disjoint_negative_rows_used": [
+      "skill-selection-q5-04r-source-disjoint-003a",
+      "skill-selection-q5-04r-source-disjoint-003b",
+      "skill-selection-q5-04r-source-disjoint-008a",
+      "skill-selection-q5-04r-source-disjoint-008b",
+      "skill-selection-q5-04r-source-disjoint-012b"
+    ],
+    "source_disjoint_dashboard_user_journey_bridge_rows": [
+      "skill-selection-q5-04r-dashboard-journey-bridge-001",
+      "skill-selection-q5-04r-dashboard-journey-bridge-002"
+    ],
+    "held_out_answer_keys_copied_to_eligible_rows": false,
+    "leaked_heldout_rows_remain_ineligible_audit_only": true
+  },
+  "model_assets": {
+    "checkpoint": "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json",
+    "checkpoint_sha256": "737a5fad7c82851728a529dfc5890c22b4154cede7e639403a9e135d821e56ef",
+    "manifest": "models/skill-selection/skill-selection-v1/manifest.json",
+    "manifest_sha256": "7a9e517f5d821a47030f7817c8d1abde83261785b378d5789e8f47b3a16eb0fe",
+    "runner_report": "models/skill-selection/skill-selection-v1/runner-report.json",
+    "runner_report_sha256": "4caee990b4b8ce55571fdda6e450dc93aa38672e54587fb66bccb0b8e4d3ad07",
+    "model_index": "models/index.json",
+    "model_index_sha256": "8a20a0d2679659ad91ae64d0ccee6ff2337e7be346ed2625b1b074df54511681",
+    "corpus_snapshot_sha256": "31c83e19c22d5201717ca60b324494c79e842f6d1039bc08884d28b5dd90f413",
+    "training_manifest_sha256": "a63fb2601c0a8077a5d052f4563910b21e2b8abbed5b36ce4401eccc3d888fc1",
+    "corpus_pointer_sha256": "f349c37694aefc9ff6ad96f1efbb812d12141cf63de0f1b0506241c6d0da950c"
+  },
+  "focused_probe": {
+    "report_path": "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-executable-probe-report.json",
+    "report_sha256": "b5a3611ef752affb507fbee2dd99f9aafbb885af6bb8b10edd35bbecf9a96f49",
+    "status": "PASS",
+    "selected_exact": "24/24",
+    "expected_rejected_present": "24/24",
+    "permutation_stable_rows": "12/12",
+    "first_position_baseline_exact_matches": "0/24",
+    "checkpoint_position_baseline_exact_matches": "0/24",
+    "no_over_select_all": true,
+    "semantic_quality_claimed": false
+  },
+  "leakage_checks": {
+    "heldout_rows": 12,
+    "corpus_rows": 88,
+    "eligible_rows": 75,
+    "eligible_overlap_instances": 0,
+    "heldout_training_allowed_rows": 0,
+    "passed": true
+  },
+  "negative_rejection_diagnostic": {
+    "production_code_rg_for_hardcoded_gate": "PASS_NO_MATCH",
+    "ui_testing_profile_source_count": 8,
+    "ui_testing_negative_prompt_signals": {
+      "prompt:forbidden": -1,
+      "prompt:data": -2,
+      "prompt:dataonly": -1,
+      "prompt:alone": -1,
+      "prompt:cannot": -1
+    },
+    "ui_testing_positive_prompt_signals": {
+      "prompt:dashboard": 1,
+      "prompt:journey": 2,
+      "prompt:visible": 1
+    },
+    "diagnostic_conclusion": "Held-out rows ss-heldout-003, ss-heldout-008, and ss-heldout-012 now reject ui-testing through learned negative prompt-context weights, while ss-heldout-006 selects ui-testing and user-journey-testing through positive dashboard/user-journey evidence. No production allow/deny method remains."
+  },
+  "verification_results": {
+    "regenerate_skill_selection_model_from_training_data": "PASS",
+    "focused_q5_probe": "PASS",
+    "eligible_leakage_overlap": "PASS_ZERO",
+    "hardcoded_skill_gate_rg": "PASS_NO_MATCH",
+    "semantic_quality_claimed_false": "PASS",
+    "forbidden_scope_observed": "PASS_NO_STAGING_NO_COMMIT_NO_PUSH_NO_HOST_RUNTIME_NO_DASHBOARD_API_NO_Q6_Q7_Q8"
+  },
+  "exact_next_action": "Q5_PRE_COMMIT_REVIEW_FIX_CYCLE_2_RERUN"
+}

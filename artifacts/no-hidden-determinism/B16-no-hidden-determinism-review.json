@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "work_order": "B16-NO-HIDDEN-DETERMINISM-REVIEW",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "passed": true,
+  "claim_scope": "Review/report/state only. No code edit, runtime, training, model mutation, corpus/DPO work, final gate, or full extension completion claim.",
+  "plan_refs": [
+    "B16 no hidden determinism review",
+    "B20 CM-18 / CM-18B anti-masquerade and completion evidence requirements"
+  ],
+  "reviewed_sources": {
+    "core_api_endpoint": "tools/xiigen-extension-core-api.ps1",
+    "core_api_service": "43.SmartSkillsDomain/XiigenExtensionApiService.cs",
+    "core_api_contracts": "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs",
+    "skill_selection_machine": "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+    "claude_entrypoint": "C:/Projects/claude-xiigen-smart-skills/src/claude-entrypoint.js",
+    "cursor_entrypoint": "C:/Projects/cursor-xiigen-smart-skills/src/extension.ts",
+    "codex_entrypoint": "C:/Projects/codex-xiigen-smart-skills/src/codex-entrypoint.js",
+    "api_01_trained_asset_report": "artifacts/api-boundary/API-01-xiigen-extension-api-trained-assets.json",
+    "api_03_anti_determinism_report": "artifacts/api-boundary/API-03-anti-determinism-review.json",
+    "core_invocation_report": "artifacts/api-boundary/CORE-API-INVOCATION-01-xiigen-extension-core-api.json",
+    "host_07_matrix": "artifacts/host-code-review/HOST-07A-host-code-review-matrix.json",
+    "host_08_matrix": "artifacts/host-qa/HOST-08G/HOST-08G-cross-host-qa-evidence-matrix.json"
+  },
+  "allowed_deterministic_infrastructure": [
+    {
+      "component": "Request validation and method contract checks",
+      "classification": "allowed_infrastructure",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs: XiigenExtensionApiContract.ValidateRequest",
+        "API-02 method contracts forbid model internals, corpus data, host-side training, external AI, and host runtime claims"
+      ],
+      "not_final_semantic_authority": true
+    },
+    {
+      "component": "Prompt hashing and redacted provenance refs",
+      "classification": "allowed_infrastructure",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:72 promptSha256 = ComputeSha256(...)",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:509 ComputeSha256"
+      ],
+      "not_final_semantic_authority": true
+    },
+    {
+      "component": "JSON serialization, request/response files, and trace refs",
+      "classification": "allowed_infrastructure",
+      "evidence_refs": [
+        "tools/xiigen-extension-core-api.ps1 writes XiigenExtensionResponse and redacted trace files",
+        "CORE-API-INVOCATION-01 report records legacy_contract_substitution_used=false"
+      ],
+      "not_final_semantic_authority": true
+    },
+    {
+      "component": "Path resolution and manifest/checkpoint loading",
+      "classification": "allowed_infrastructure",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:553 LoadCommonAssets",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:575-614 records trained common asset manifest/checkpoint refs"
+      ],
+      "not_final_semantic_authority": true
+    },
+    {
+      "component": "Debug formatting and redaction",
+      "classification": "allowed_infrastructure",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:377 raw_prompt_redacted=true",
+        "C:/Projects/claude-xiigen-smart-skills/src/claude-entrypoint.js:206 debug_trace_shape",
+        "C:/Projects/cursor-xiigen-smart-skills/src/extension.ts:381 redacted xiigen/input/output display",
+        "C:/Projects/codex-xiigen-smart-skills/src/codex-entrypoint.js:222 redacted xiigen/input/output display"
+      ],
+      "not_final_semantic_authority": true
+    },
+    {
+      "component": "Host method normalization and CLI argument construction",
+      "classification": "allowed_infrastructure",
+      "evidence_refs": [
+        "C:/Projects/cursor-xiigen-smart-skills/src/extension.ts:212 normalizeMethod restricts method names",
+        "C:/Projects/codex-xiigen-smart-skills/src/codex-entrypoint.js:108 builds endpoint args"
+      ],
+      "not_final_semantic_authority": true
+    },
+    {
+      "component": "Semantic-quality claim gate",
+      "classification": "allowed_gate",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:111 semanticQualityClaimed = ShouldClaimSemanticQuality(...)",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:542 ShouldClaimSemanticQuality",
+        "API-01 report semantic quality rule: true only when all three trained assets load and learned-state/non-second-pass outputs are present"
+      ],
+      "not_final_semantic_authority": true
+    }
+  ],
+  "trained_semantic_decision_paths": [
+    {
+      "unit": "PromptToTask",
+      "path": "XiigenExtensionApiService.ProcessHostExtensionRequest -> PromptToTaskMachine.Translate",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:74",
+        "API-01 prompt_to_task hash 50bd20295e4729eab2366374890383a2959bf3fcb8b9114e46d74f8d6f85ad28"
+      ],
+      "claim_status": "trained asset loaded by default path; semantic quality still downgraded when learned-state gate conditions are not all satisfied"
+    },
+    {
+      "unit": "OrchestrationReasoning",
+      "path": "XiigenExtensionApiService.ProcessHostExtensionRequest -> OrchestrationReasoningMachine.Plan",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:87",
+        "API-01 orchestration_reasoning hash f66f256156bbc4ba278851f75a2ecd644160adbf676db29118640519e3c9805b"
+      ],
+      "claim_status": "trained asset loaded by default path; semantic quality still gated by learned-state output and no-second-pass rule"
+    },
+    {
+      "unit": "SkillSelection",
+      "path": "XiigenExtensionApiService.ProcessHostExtensionRequest -> SkillSelectionMachine.DecideFromTrainedState",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:257",
+        "43.SmartSkillsDomain/SkillSelectionMachine.cs:114 DecideFromTrainedState",
+        "API-01 skill_selection hash 884cfd350fa582211d6939ac8e2252b7044524701117a458cc6473d5c8f7b228"
+      ],
+      "claim_status": "trained checkpoint sections can make learned decisions; candidate-position fallback is scaffold-only and requires second pass"
+    }
+  ],
+  "skill_selection_scaffold_review": {
+    "candidate_position_weights_present": true,
+    "candidate_position_claimed_as_full_semantic_selector": false,
+    "evidence_refs": [
+      "43.SmartSkillsDomain/SkillSelectionMachine.cs:18 CandidatePositionScaffoldEvidence",
+      "43.SmartSkillsDomain/SkillSelectionMachine.cs:55 RouteMode = candidate_position_scaffold_not_final_semantic_authority",
+      "43.SmartSkillsDomain/SkillSelectionMachine.cs:186 CandidatePositionScaffoldEvidence emitted",
+      "43.SmartSkillsDomain/SkillSelectionMachine.cs:193 RequiresSecondPass: true",
+      "43.SmartSkillsDomain/SkillSelectionMachine.cs:1706-1747 rejects checkpoint unit SemanticQualityClaimed=true",
+      "43.SmartSkillsDomain/SkillSelectionMachine.cs:1778-1779 rejects manifest SemanticQualityClaimed=true"
+    ],
+    "finding": "Candidate-position/frequency-like scaffold is explicitly downgraded, selects no final skill IDs in that path, requires a second pass, and cannot claim semantic quality through checkpoint or manifest validation."
+  },
+  "host_thin_boundary_review": [
+    {
+      "host": "Claude",
+      "passed": true,
+      "evidence_refs": [
+        "C:/Projects/claude-xiigen-smart-skills/src/claude-entrypoint.js:151-179 builds XiigenExtensionRequest",
+        "C:/Projects/claude-xiigen-smart-skills/src/claude-entrypoint.js:163-165 host_semantic_ranking/host_training/host_corpus_parsing false",
+        "C:/Projects/claude-xiigen-smart-skills/src/claude-entrypoint.js:207-210 host trace flags false",
+        "C:/Projects/claude-xiigen-smart-skills/src/claude-entrypoint.js:232-234 current core endpoint"
+      ],
+      "semantic_ranking_or_training_in_host": false
+    },
+    {
+      "host": "Cursor",
+      "passed": true,
+      "evidence_refs": [
+        "C:/Projects/cursor-xiigen-smart-skills/src/extension.ts:18-31 XiigenExtensionRequest interface",
+        "C:/Projects/cursor-xiigen-smart-skills/src/extension.ts:168 current core endpoint setting",
+        "C:/Projects/cursor-xiigen-smart-skills/src/extension.ts:222-253 builds XiigenExtensionRequest and host facts false",
+        "C:/Projects/cursor-xiigen-smart-skills/src/extension.ts:268-270 downgrade path keeps host ranking/training/corpus false"
+      ],
+      "semantic_ranking_or_training_in_host": false
+    },
+    {
+      "host": "Codex",
+      "passed": true,
+      "evidence_refs": [
+        "C:/Projects/codex-xiigen-smart-skills/src/codex-entrypoint.js:7-16 required XiigenExtensionRequest fields",
+        "C:/Projects/codex-xiigen-smart-skills/src/codex-entrypoint.js:21 current core endpoint",
+        "C:/Projects/codex-xiigen-smart-skills/src/codex-entrypoint.js:64-89 creates XiigenExtensionRequest",
+        "C:/Projects/codex-xiigen-smart-skills/src/codex-entrypoint.js:187-190 host semantic/training/corpus/DPO flags false",
+        "C:/Projects/codex-xiigen-smart-skills/src/codex-entrypoint.js:231-248 metadata records source invokes core endpoint and host flags false"
+      ],
+      "semantic_ranking_or_training_in_host": false
+    }
+  ],
+  "forbidden_final_authority_review": [
+    {
+      "mechanism": "exact-source memory or static JSON/report artifact",
+      "used_as_final_learned_decision": false,
+      "evidence": "Reports and JSON files are used as evidence/refs only; HOST-08G/HOST-08I completion_claim_allowed=false."
+    },
+    {
+      "mechanism": "regex or keyword template as semantic classifier",
+      "used_as_final_learned_decision": false,
+      "evidence": "Targeted sweeps found regex use in harness redaction/assertion and plan tooling, not in core API final semantic authority."
+    },
+    {
+      "mechanism": "BM25, filename, path, or position lookup",
+      "used_as_final_learned_decision": false,
+      "evidence": "API-03 found no BM25/path lookup final authority; SkillSelection candidate-position fallback is scaffold-only with RequiresSecondPass=true."
+    },
+    {
+      "mechanism": "fixture/bootstrap smoke",
+      "used_as_final_learned_decision": false,
+      "evidence": "CORE-API-INVOCATION-01 and HOST-08 matrices keep semantic_quality_claimed=false and completion_claim_allowed=false."
+    },
+    {
+      "mechanism": "host-side DPO/model mutation/training/corpus parsing",
+      "used_as_final_learned_decision": false,
+      "evidence": "Claude, Cursor, and Codex source refs set host semantic ranking/training/corpus/DPO/model mutation flags false."
+    }
+  ],
+  "semantic_claim_status": {
+    "runtime_extension_claimed": false,
+    "semantic_quality_claimed_observed_in_current_probe_evidence": false,
+    "completion_claim_allowed": false,
+    "full_extension_completion_claimed": false,
+    "reason": "Current accepted API/host QA evidence remains partial or handler/component/hook-level in places; semantic quality is only claimable behind trained-model gate refs plus all learned-state/non-second-pass conditions."
+  },
+  "remaining_non_b16_gaps": [
+    "CLAUDE_FULL_CHAT_UI",
+    "CURSOR_FULL_CHAT_UI_PARTICIPANT",
+    "CODEX_FULL_PLUGIN_APP_RUNTIME",
+    "FINAL_COMPLETION_MATRIX"
+  ],
+  "result_summary": {
+    "hidden_deterministic_shortcut_found": false,
+    "host_semantic_authority_found": false,
+    "candidate_position_masquerade_found": false,
+    "static_report_or_smoke_masquerade_found": false,
+    "semantic_claims_downgraded_when_partial": true,
+    "completion_remains_false": true,
+    "passed": true
+  },
+  "verification": {
+    "commands_performed": [
+      "Select-String on XiigenExtensionApiService for trained calls, semantic gate, runtime flag, redaction, and asset loading",
+      "Select-String on Claude/Cursor/Codex entrypoints for XiigenExtensionRequest, core endpoint, debug, and thin-host flags",
+      "rg sweep for BM25/regex/keyword/dictionary/filename/CandidatePosition/frequency/fixture/bootstrap/Phase40/semantic ranking/DPO/corpus parsing/model mutation in core API, tools, and selected artifacts",
+      "Select-String on SkillSelectionMachine for CandidatePositionScaffoldEvidence, RouteMode, RequiresSecondPass, and SemanticQualityClaimed rejection",
+      "Select-String on HOST-08G matrix for completion_claim_allowed=false and remaining UI/runtime gaps"
+    ],
+    "json_parse_required_after_write": true,
+    "git_diff_check_required_after_write": true
+  },
+  "next_parent_action": "PARENT_REVIEW_B16_NO_HIDDEN_DETERMINISM_THEN_PLAN_DERIVED_NEXT_BOUNDED_ACTION"
+}

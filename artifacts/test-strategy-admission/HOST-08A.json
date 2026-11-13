@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "work_order": "HOST-08A-QA-SCENARIO-AUTOMATION-ADMISSION-AND-FIRST-HARNESS",
+  "artifact_kind": "test_strategy_admission",
+  "passed": true,
+  "claim_scope": "Admission strategy for first host QA/scenario harness only. This does not complete Claude/Cursor/Codex extensions and does not start final/cross-host gates.",
+  "plan_refs": [
+    "B15 HOST-08 QA automation after smoke",
+    "B20 CM-16 host debug trace",
+    "B20 CM-17 host repos are thin",
+    "B20 CM-18 no hidden deterministic shortcut",
+    "B20 CM-18A host scenario/e2e behavior",
+    "B20 CM-18B semantic behavior is model-backed when claimed",
+    "B20 CM-22 per-branch test strategy",
+    "B20 CM-23 executable case map"
+  ],
+  "strategy_layers": [
+    {
+      "layer": "unit",
+      "HOST_08A_strategy": "Node/PowerShell syntax and source-level function availability checks for host entrypoints and the core endpoint wrapper.",
+      "status": "covered_by_HOST_08A_static_checks"
+    },
+    {
+      "layer": "integration",
+      "HOST_08A_strategy": "Invoke Claude and Codex real JS source entrypoints with synthetic non-private fixtures; assert XiigenExtensionRequest files, core response files, and trace files exist.",
+      "status": "covered_by_first_harness"
+    },
+    {
+      "layer": "e2e_host",
+      "HOST_08A_strategy": "Direct source-entrypoint harness is an admission slice only. Real Claude/Cursor/Codex host runtime/app/plugin paths remain later HOST-08 work.",
+      "status": "partially_covered_later_runtime_harness_required"
+    },
+    {
+      "layer": "qa_automation",
+      "HOST_08A_strategy": "tools/host-qa-HOST-08A.ps1 creates repeatable artifacts under artifacts/host-qa/HOST-08A and produces a machine-readable report.",
+      "status": "covered_by_first_harness"
+    },
+    {
+      "layer": "negative",
+      "HOST_08A_strategy": "Assert raw synthetic sentinel is absent from response and trace; assert Cursor direct invocation is not faked outside Extension Host.",
+      "status": "covered_by_first_harness_and_case_map"
+    },
+    {
+      "layer": "untrained_honesty",
+      "HOST_08A_strategy": "Assert no host semantic quality or runtime completion claim is made by the host harness. Core responses may be successful without host claiming trained semantic quality.",
+      "status": "covered_for_host_boundary_only"
+    },
+    {
+      "layer": "trained",
+      "HOST_08A_strategy": "Not claimed in HOST-08A. Any future semantic quality claim must cite accepted trained-unit/model-backed evidence and e2e host QA.",
+      "status": "not_applicable_no_semantic_quality_claim"
+    },
+    {
+      "layer": "regression",
+      "HOST_08A_strategy": "JSON parse and diff-check all produced artifacts; no broad test suite. Later HOST-08 rows should add host-specific regression automation.",
+      "status": "covered_for_artifact_integrity_only"
+    }
+  ],
+  "host_coverage": {
+    "claude": {
+      "first_harness": "direct JS source entrypoint through core endpoint",
+      "later_required": "real Claude hook/app QA scenario beyond direct source"
+    },
+    "cursor": {
+      "first_harness": "static source/package admission only",
+      "later_required": "VS Code/Cursor Extension Host command/chat/panel QA automation"
+    },
+    "codex": {
+      "first_harness": "direct JS source entrypoint through core endpoint",
+      "later_required": "Codex plugin/app runtime QA scenario beyond direct source"
+    }
+  },
+  "anti_loopholes": {
+    "smoke_is_completion": false,
+    "json_ps1_report_substitute_allowed": false,
+    "host_semantic_ranking_allowed": false,
+    "model_training_in_host_allowed": false,
+    "external_ai_used": false,
+    "final_gate_started": false
+  },
+  "next_bounded_action_if_parent_accepts": "HOST-08B host-runtime QA automation harness for real Claude/Cursor/Codex app/plugin command/chat paths, beginning with Cursor Extension Host or the next plan-derived host path."
+}

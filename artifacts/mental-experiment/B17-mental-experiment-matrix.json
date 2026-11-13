@@ -1,0 +1,401 @@
+{
+  "schema_version": 1,
+  "work_order": "B17-MENTAL-EXPERIMENT-MATRIX-REVIEW",
+  "artifact_kind": "mental_experiment_matrix",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "passed": true,
+  "claim_scope": "Review/matrix/state only. No host repo edits, runtime, training, model/corpus/DPO work, final acceptance, or full extension completion claim.",
+  "plan_refs": [
+    "B17 Mental Experiment Matrix lines 1334-1358",
+    "B20 CM-18 / CM-18A / CM-18B / CM-20..CM-31",
+    "B21 Final acceptance gate"
+  ],
+  "completion_claim_allowed": false,
+  "full_extension_completion_claimed": false,
+  "source_evidence": {
+    "state": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json",
+    "host_08i_matrix": "artifacts/host-qa/HOST-08G/HOST-08G-cross-host-qa-evidence-matrix.json",
+    "b16_no_hidden_determinism": "artifacts/no-hidden-determinism/B16-no-hidden-determinism-review.json",
+    "ad_09z_pair_coverage": "accepted_slice_summaries.ad_09z in state",
+    "api_asset_boundary": "accepted_slice_summaries.api_01/api_02/api_03 in state",
+    "host_qa_summaries": "state host_08a..host_08i"
+  },
+  "scenario_rows": [
+    {
+      "id": "B17-01",
+      "scenario": "Luba asks to write a plan for full extension",
+      "expected_behavior": "Extension sends request; PromptToTask extracts plan-only constraints; Reasoning chooses planning workflow; SkillSelection chooses planning/review skills.",
+      "covered_by_plan": "PTT, OR, SS, host gates",
+      "status": "partial_covered",
+      "evidence_refs": [
+        "API-01 default service loads PromptToTask, OrchestrationReasoning, and SkillSelection common assets",
+        "HOST-08I matrix proves host source/QA evidence for prompt-to-task, orchestration-plan, and skill-selection at mixed evidence levels",
+        "B16 report finds no hidden deterministic shortcut"
+      ],
+      "gap_or_distinction": "Full extension completion is not claimed because full Claude chat UI, Cursor full chat UI participant, Codex full plugin/app runtime, and final completion matrix remain open."
+    },
+    {
+      "id": "B17-02",
+      "scenario": "Host has no matching skills",
+      "expected_behavior": "ResultGap after AI output writes missing-pattern DPO and adaptive model trains.",
+      "covered_by_plan": "AD-01, AD-02",
+      "status": "covered_narrow",
+      "evidence_refs": [
+        "state accepted_slice_summaries.ad_01 user-local missing-pattern ResultGap adaptive DPO signal writer",
+        "state accepted_slice_summaries.ad_02 adaptive training metric improved 0->1",
+        "state accepted_slice_summaries.ad_09z final adaptive pair coverage includes ResultGap"
+      ],
+      "gap_or_distinction": "Covered as user-local adaptive ResultGap evidence; no full semantic quality or final extension claim."
+    },
+    {
+      "id": "B17-03",
+      "scenario": "Luba corrects chosen skills",
+      "expected_behavior": "Feedback writer creates chosen/rejected adaptive DPO and updates user model.",
+      "covered_by_plan": "AD-03, AD-04",
+      "status": "covered_narrow",
+      "evidence_refs": [
+        "state accepted_slice_summaries.ad_03 user-local correction/change DPO writer",
+        "state accepted_slice_summaries.ad_04 correction-signal adaptive continuation metric improved 1->2"
+      ],
+      "gap_or_distinction": "Covered for scoped adaptive correction flow; no common checkpoint mutation or full semantic quality claim."
+    },
+    {
+      "id": "B17-04",
+      "scenario": "Common skill library upgraded",
+      "expected_behavior": "Common model loads new version; user .xiigen state preserved; patch proposals created.",
+      "covered_by_plan": "AD-05",
+      "status": "covered_narrow",
+      "evidence_refs": [
+        "state accepted_slice_summaries.ad_05 common model upgrade preservation fixture/probe",
+        "AD-05 scope records adaptive checkpoint hash unchanged and rollback/load probe passed"
+      ],
+      "gap_or_distinction": "Covered as upgrade preservation fixture/probe, not deployment upgrade or final runtime claim."
+    },
+    {
+      "id": "B17-05",
+      "scenario": "User wants to back up or move adaptive behavior to another device",
+      "expected_behavior": "User-model package exports, restores into a fresh profile/device path, verifies checkpoint hash, and continues training without changing common model.",
+      "covered_by_plan": "AD-06, AD-07, AD-09",
+      "status": "covered",
+      "evidence_refs": [
+        "state accepted_slice_summaries.ad_06 export package",
+        "state accepted_slice_summaries.ad_07 restore/import fresh profile",
+        "state accepted_slice_summaries.ptt_ad_z PromptToTask portability matrix",
+        "state accepted_slice_summaries.or_ad_z OrchestrationReasoning portability matrix",
+        "state accepted_slice_summaries.ad_09z final adaptive pair coverage"
+      ],
+      "gap_or_distinction": "Covered for the accepted adaptive two-leg portability scope; no host/runtime/final extension claim."
+    },
+    {
+      "id": "B17-06",
+      "scenario": "User wants to share adaptive learning safely",
+      "expected_behavior": "System creates only user-approved local copy or anonymised signal package; raw private prompts/corpus/secrets stay local.",
+      "covered_by_plan": "AD-08, AD-09",
+      "status": "covered",
+      "evidence_refs": [
+        "state accepted_slice_summaries.ad_08 user-approved anonymised share/copy package",
+        "state accepted_slice_summaries.ptt_ad_04 share evidence",
+        "state accepted_slice_summaries.or_ad_04 share evidence",
+        "state accepted_slice_summaries.ad_09z final adaptive pair coverage"
+      ],
+      "gap_or_distinction": "Covered for approved/anonymised local package evidence; external transfer and silent sync remain false."
+    },
+    {
+      "id": "B17-07",
+      "scenario": "Programmer debug enabled",
+      "expected_behavior": "Chat shows xiigen <method> :, input:, output: with redaction.",
+      "covered_by_plan": "CL/CU/CX debug gates",
+      "status": "partial_covered",
+      "evidence_refs": [
+        "state host_08e Claude hook-command QA debug off/on passed",
+        "state host_08d and host_08h Cursor handler-level QA debug distinction",
+        "state host_08f Codex component QA debug off/on passed",
+        "HOST-08I completion matrix full chat/plugin UI evidence remains not proven"
+      ],
+      "gap_or_distinction": "Debug shape is proved at accepted source/hook/handler/component levels, but full Claude/Cursor/Codex UI evidence remains distinct."
+    },
+    {
+      "id": "B17-08",
+      "scenario": "Host repo contains only JSON/PS1 evidence",
+      "expected_behavior": "Gate fails; not accepted as extension implementation.",
+      "covered_by_plan": "HOST-01, anti-loophole",
+      "status": "covered",
+      "evidence_refs": [
+        "state host_07b accepted Claude JS source entrypoint repair; PS1 not accepted implementation",
+        "state host_07c accepted Codex JS endpoint invoker repair; PS1 not accepted implementation",
+        "HOST-08I anti_masquerade_rule forbids JSON/PS1/report/static substitute"
+      ],
+      "gap_or_distinction": "Covered by source repair/code-review gates; smoke/report evidence remains diagnostic only."
+    },
+    {
+      "id": "B17-09",
+      "scenario": "Implementation tries BM25 guide selection",
+      "expected_behavior": "Parent no-hidden-determinism review fails.",
+      "covered_by_plan": "B16",
+      "status": "covered",
+      "evidence_refs": [
+        "B16 report hidden_deterministic_shortcut_found=false",
+        "B16 forbidden_final_authority_review BM25/path/position lookup not used as learned decision",
+        "B16 candidate_position_masquerade_found=false"
+      ],
+      "gap_or_distinction": "Covered for current core/host path; future changes still require B16-like review before final claims."
+    },
+    {
+      "id": "B17-10",
+      "scenario": "External AI requested for data generation",
+      "expected_behavior": "Plan requires explicit Luba approval before use.",
+      "covered_by_plan": "B18",
+      "status": "deferred_next",
+      "evidence_refs": [
+        "Plan B18 is the next explicit audit section after B17",
+        "state and host reports record model_backed_external_ai_used=false for current QA slices except explicitly authorized diagnostic runtime scopes"
+      ],
+      "gap_or_distinction": "External AI/tool audit has not yet been produced as a B18 artifact; next bounded action should be B18 if parent accepts B17."
+    },
+    {
+      "id": "B17-11",
+      "scenario": "Trainable/adaptive work order mentions DPO but has no DPO map artifact",
+      "expected_behavior": "Parent review fails before execution; work order must name loaded skills, guide paths, chosen/rejected schema, taxonomy, registry fields and validation evidence.",
+      "covered_by_plan": "B0.3.1, CM-20",
+      "status": "partial_policy_covered",
+      "evidence_refs": [
+        "Plan B0.2/B20 CM-20 require DPO knowledge map artifacts",
+        "state accepted DPO/adaptive summaries record scoped DPO rows and no training/full-quality overclaim"
+      ],
+      "gap_or_distinction": "This B17 matrix does not globally audit every historic DPO map artifact; CM-20 remains a final-matrix requirement."
+    },
+    {
+      "id": "B17-12",
+      "scenario": "Mixed reference document contains universal reasoning plus code-bound execution",
+      "expected_behavior": "Parent review fails until DPO universalization splits chosen/rejected learning rows from project adapter refs and excluded technical execution refs.",
+      "covered_by_plan": "B0.3.2, CM-21",
+      "status": "partial_policy_covered",
+      "evidence_refs": [
+        "Plan B0.2/B20 CM-21 require DPO universalization",
+        "state accepted summaries preserve common/adaptive split and avoid host/code/training overclaim"
+      ],
+      "gap_or_distinction": "No new DPO universalization audit is performed in B17; CM-21 remains a final-matrix requirement."
+    },
+    {
+      "id": "B17-13",
+      "scenario": "UML simulation exists only as prose",
+      "expected_behavior": "Parent review fails; each UML edge and algorithm branch must appear in executable case artifact before implementation.",
+      "covered_by_plan": "A0.1.1, B0.3.4, CM-23",
+      "status": "partial_covered",
+      "evidence_refs": [
+        "HOST-08A/HOST-08B/HOST-08D/HOST-08E/HOST-08F/HOST-08H case-map artifacts recorded in state",
+        "HOST-08I maps prompt-to-task, orchestration-plan, skill-selection, debug, and thin-host scenarios by host"
+      ],
+      "gap_or_distinction": "Executable case maps exist for recent host QA; global CM-23 still requires every UML edge/algorithm branch before final acceptance."
+    },
+    {
+      "id": "B17-14",
+      "scenario": "Host or model work order has no QA/e2e/negative/untrained/trained test strategy",
+      "expected_behavior": "Parent review fails before execution; tests later is not accepted.",
+      "covered_by_plan": "B0.3.3, CM-22",
+      "status": "partial_covered",
+      "evidence_refs": [
+        "HOST-08A/HOST-08B/HOST-08D/HOST-08E/HOST-08F/HOST-08H test-strategy artifacts recorded in state",
+        "HOST-08I matrix keeps full UI/runtime gaps open"
+      ],
+      "gap_or_distinction": "Recent host QA has strategy artifacts; global CM-22 remains a final-matrix requirement for all applicable branches."
+    },
+    {
+      "id": "B17-15",
+      "scenario": "Architect/worker tries to repair or execute to relieve discomfort instead of answering/analyzing",
+      "expected_behavior": "Authority/self-reflection artifact must catch action-as-relief, defensive freeze, executor drift, focus loss and entropy tolerance before work order execution.",
+      "covered_by_plan": "B0.3.5, CM-24",
+      "status": "policy_defined_not_globally_audited",
+      "evidence_refs": [
+        "AGENTS OP-5/OP-21/OP-22 and plan CM-24 require authority/self-reflection evidence",
+        "State records protocol repairs for smoke-not-acceptance and test-only-not-stop-gate"
+      ],
+      "gap_or_distinction": "B17 does not prove every work order has an authority/self-reflection artifact; CM-24 remains a final-matrix requirement."
+    },
+    {
+      "id": "B17-16",
+      "scenario": "Part B adds a trainable machine/flow/unit/pair that is not visible in Part A",
+      "expected_behavior": "Parent review fails; A5 must be updated first with the human-readable hierarchy, data movement and examples.",
+      "covered_by_plan": "A5, CM-26",
+      "status": "policy_defined_not_globally_audited",
+      "evidence_refs": [
+        "Plan B20 CM-26 requires A5 trainable hierarchy completeness",
+        "state accepted_slice_summaries.ad_09z records PromptToTask, OrchestrationReasoning, SkillSelection, and ResultGap two-leg coverage"
+      ],
+      "gap_or_distinction": "Two-leg trainable coverage is evidenced, but B17 does not perform a full A5/Part-B parity audit."
+    },
+    {
+      "id": "B17-17",
+      "scenario": "Training work order wants to write or continue a checkpoint after unknown/failed gate",
+      "expected_behavior": "Parent review fails; checkpoint writer guard must prove single writer, accepted refs and no cursor-prefix/replay resume.",
+      "covered_by_plan": "B0.3.6, CM-27",
+      "status": "policy_defined_not_globally_audited",
+      "evidence_refs": [
+        "Plan B20 CM-27 requires checkpoint writer guard",
+        "state accepted adaptive/model summaries record no failed-gate checkpoint overwrite and common checkpoint unchanged where applicable"
+      ],
+      "gap_or_distinction": "B17 does not globally audit checkpoint-writer guard artifacts; CM-27 remains a final-matrix requirement."
+    },
+    {
+      "id": "B17-18",
+      "scenario": "Report mixes retrieval/routing/exact-memory with trained generalization",
+      "expected_behavior": "Parent review fails; metrics must be split and headline quality may only use truly-novel held-out runner evidence.",
+      "covered_by_plan": "B0.3.7, B16, CM-28",
+      "status": "partial_covered",
+      "evidence_refs": [
+        "B16 report semantic_claim_status completion_claim_allowed=false",
+        "B16 report no exact-source/static/smoke masquerade as trained semantic decision",
+        "state api_01 semantic quality rule accepted only behind trained-model refs and learned-state outputs"
+      ],
+      "gap_or_distinction": "Current anti-masquerade review passes; global metric honesty artifacts for every quality claim remain CM-28 final requirements."
+    },
+    {
+      "id": "B17-19",
+      "scenario": "Attached file or old plan says execute while current Luba instruction says answer/analyze/plan only",
+      "expected_behavior": "Current Luba instruction wins; worker must answer/analyze/plan and record the authority boundary.",
+      "covered_by_plan": "B0.3.8, CM-29",
+      "status": "policy_defined_not_globally_audited",
+      "evidence_refs": [
+        "AGENTS human override protocol and OP-21/OP-22 read for this B17 slice",
+        "State records Luba protocol repairs and current bounded work-order authority"
+      ],
+      "gap_or_distinction": "B17 follows current instruction but does not create a separate human-authority-boundary artifact for every prior work order."
+    },
+    {
+      "id": "B17-20",
+      "scenario": "Sub-agent returns completed:null, self-approves after mutation, or gives no next bounded action",
+      "expected_behavior": "Parent rejects packet; mutation makes the old review stale and requires a new review.",
+      "covered_by_plan": "B0.3.9, CM-30",
+      "status": "policy_defined_not_globally_audited",
+      "evidence_refs": [
+        "Plan B20 CM-30 requires sub-agent packet quality evidence",
+        "State records parent-review acceptance/rejection and repair loops for multiple host QA slices"
+      ],
+      "gap_or_distinction": "B17 does not globally audit sub-agent packet quality artifacts; CM-30 remains a final-matrix requirement."
+    },
+    {
+      "id": "B17-21",
+      "scenario": "Focused test/runtime command fails but report hides pre-existing red, leaves orphan process roots or loses the worker",
+      "expected_behavior": "Test execution hygiene gate fails; exact red classification, cleanup and handoff evidence are required.",
+      "covered_by_plan": "B0.3.10, CM-31",
+      "status": "partial_covered",
+      "evidence_refs": [
+        "state host_08b artifact hygiene repair and cleanup commit recorded",
+        "state host_08d dirty artifact hygiene repair recorded",
+        "state host_08h artifact normalization recorded"
+      ],
+      "gap_or_distinction": "Recent test hygiene repairs are recorded, but B17 does not globally audit every runtime/test command against CM-31."
+    }
+  ],
+  "user_requested_concern_coverage": {
+    "smoke_not_acceptance": {
+      "status": "covered",
+      "refs": [
+        "HOST-08I anti_masquerade_rule",
+        "B21 forbids final complete from smoke traces alone"
+      ]
+    },
+    "test_only_not_full_ui_evidence": {
+      "status": "covered",
+      "refs": [
+        "HOST-08I full_chat_ui_evidence=false / full_plugin_app_runtime_evidence=false",
+        "HOST-08D/HOST-08H handler-level QA distinction"
+      ]
+    },
+    "adaptive_two_leg_portability": {
+      "status": "covered",
+      "refs": [
+        "state accepted_slice_summaries.ad_09z",
+        "state accepted_slice_summaries.ptt_ad_z",
+        "state accepted_slice_summaries.or_ad_z"
+      ]
+    },
+    "dpo_map_and_universalization": {
+      "status": "partial_policy_covered",
+      "refs": [
+        "Plan CM-20",
+        "Plan CM-21",
+        "B17 rows 11 and 12"
+      ],
+      "gap": "Global artifact audit deferred to final CM-20/CM-21 review."
+    },
+    "authority_self_reflection": {
+      "status": "policy_defined_not_globally_audited",
+      "refs": [
+        "Plan CM-24",
+        "B17 row 15"
+      ]
+    },
+    "checkpoint_writer": {
+      "status": "policy_defined_not_globally_audited",
+      "refs": [
+        "Plan CM-27",
+        "B17 row 17"
+      ]
+    },
+    "metric_honesty": {
+      "status": "partial_covered",
+      "refs": [
+        "B16 report",
+        "Plan CM-28",
+        "B17 row 18"
+      ]
+    },
+    "subagent_quality": {
+      "status": "policy_defined_not_globally_audited",
+      "refs": [
+        "Plan CM-30",
+        "B17 row 20"
+      ]
+    },
+    "test_hygiene": {
+      "status": "partial_covered",
+      "refs": [
+        "HOST-08B artifact hygiene repair",
+        "HOST-08D dirty artifact hygiene repair",
+        "HOST-08H artifact normalization",
+        "Plan CM-31"
+      ]
+    }
+  },
+  "counts": {
+    "total_scenarios": 21,
+    "covered": 4,
+    "covered_narrow": 3,
+    "partial_covered": 5,
+    "partial_policy_covered": 2,
+    "policy_defined_not_globally_audited": 6,
+    "deferred_next": 1,
+    "failed": 0,
+    "not_started": 0
+  },
+  "top_gaps": [
+    {
+      "gap_id": "B18_EXTERNAL_AI_TOOL_AUDIT_NOT_YET_PRODUCED",
+      "status": "next_bounded_action",
+      "reason": "B17 row 10 maps external AI requests to B18; no B18 audit artifact exists in this slice."
+    },
+    {
+      "gap_id": "FULL_UI_RUNTIME_DISTINCTIONS_REMAIN",
+      "status": "deferred_distinction",
+      "reason": "HOST-08I preserves Claude full chat UI, Cursor full chat UI participant, and Codex full plugin/app runtime as not proven."
+    },
+    {
+      "gap_id": "FINAL_COMPLETION_MATRIX_NOT_STARTED",
+      "status": "final_gate_not_started",
+      "reason": "B20/B21 final matrix and ARCHITECT_VERDICT_ALLOW_FINAL are not started and are forbidden in this slice."
+    },
+    {
+      "gap_id": "GLOBAL_GOVERNANCE_ARTIFACT_AUDITS_DEFERRED",
+      "status": "final_matrix_requirement",
+      "reason": "CM-20/CM-21/CM-24/CM-27/CM-30/CM-31 remain final-matrix/global-audit requirements; B17 records the distinction rather than claiming global closure."
+    }
+  ],
+  "final_claim_firewall": {
+    "completion_claim_allowed": false,
+    "reason": "Several B17 scenarios are partial, policy-defined, or deferred; smoke/test-only/handler-level/component evidence remains diagnostic or intermediate only.",
+    "no_final_acceptance_started": true
+  },
+  "next_bounded_action_if_parent_accepts": "B18-EXTERNAL-AI-AND-TOOL-AUDIT",
+  "created_at": "2026-06-07T00:00:00+03:00"
+}

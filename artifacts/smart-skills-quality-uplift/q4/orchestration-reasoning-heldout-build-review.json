@@ -1,0 +1,138 @@
+{
+    "artifact":  "orchestration-reasoning-heldout-build-review",
+    "work_order_id":  "Q4-02_ORCHESTRATION_REASONING_HELD_OUT_BUILD_REVIEW",
+    "status":  "PASS_AFTER_Q4_02R_REPAIR",
+    "reviewed_at_utc":  "2026-06-10T16:31:51.730Z",
+    "branch":  "codex/chat-gpt-5.5",
+    "q4_complete":  false,
+    "q4_03_allowed_next":  true,
+    "semantic_quality_claimed":  false,
+    "allowed_verification":  [
+                                 "PowerShell JSON and JSONL parse/report consistency checks",
+                                 "targeted rg/find in Q4 artifacts",
+                                 "git diff --check"
+                             ],
+    "forbidden_actions_not_run":  [
+                                      "dotnet build",
+                                      "dotnet test",
+                                      "training",
+                                      "model mutation",
+                                      "checkpoint mutation",
+                                      "training-data mutation",
+                                      "host/plugin/runtime work",
+                                      "dashboard/API work",
+                                      "Q5/Q8 work",
+                                      "staging",
+                                      "commit",
+                                      "push"
+                                  ],
+    "evidence_refs":  {
+                          "training_report":  "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-training-report.json",
+                          "heldout_report":  "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-heldout-report.json",
+                          "ablation_report":  "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-ablation-report.json",
+                          "fresh_load_report":  "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-fresh-load-report.json",
+                          "continue_report":  "artifacts/smart-skills-quality-uplift/q4/orchestration-reasoning-continue-report.json",
+                          "manifest":  "models/orchestration-reasoning/orchestration-reasoning-v1/manifest.json",
+                          "checkpoint":  "models/orchestration-reasoning/orchestration-reasoning-v1/orchestration-reasoning-v1-checkpoint.json",
+                          "split":  "training-data/smart-skills/semantic-quality/orchestration-reasoning-expanded-v1/split.json",
+                          "dataset_card":  "training-data/smart-skills/semantic-quality/orchestration-reasoning-expanded-v1/dataset-card.json",
+                          "expanded_training_data":  "training-data/smart-skills/semantic-quality/orchestration-reasoning-expanded-v1/orchestration-reasoning-expanded-dpo.jsonl",
+                          "machine_contract":  "43.SmartSkillsDomain/OrchestrationReasoningMachine.cs",
+                          "trainer_contract":  "43.SmartSkillsDomain/OrchestrationReasoningTrainer.cs"
+                      },
+    "source_disjoint_review":  {
+                                   "status":  "PASS",
+                                   "split_source_disjoint":  true,
+                                   "source_manifest_ref_overlap_count":  0,
+                                   "held_out_row_count":  4,
+                                   "held_out_rows":  [
+                                                         "heldout-case-1",
+                                                         "heldout-case-2",
+                                                         "heldout-case-3",
+                                                         "heldout-case-4"
+                                                     ],
+                                   "finding":  "Held-out cases are separated by source manifest boundary and the reports mark every held-out case source_disjoint_from_train=true without storing held-out pair ids or source refs."
+                               },
+    "filename_path_guide_title_review":  {
+                                             "status":  "PASS",
+                                             "heldout_report_flag":  true,
+                                             "row_flags_all_false":  true,
+                                             "exact_guide_title_path_filename_lookup_accuracy":  0,
+                                             "finding":  "The held-out result is not explained by filename, path, or exact guide-title lookup."
+                                         },
+    "universal_reasoning_review":  {
+                                       "status":  "PASS_AFTER_REPAIR",
+                                       "required_dimensions":  [
+                                                                   "audience_or_intent",
+                                                                   "evidence_links",
+                                                                   "contradiction_or_consequence",
+                                                                   "gate_family",
+                                                                   "next_safe_action"
+                                                               ],
+                                       "finding":  "All four held-out rows now use ref-only universal task-to-plan boundaries. Pair-009 passes via source-disjoint split readiness signals and aggregate common gate metadata, not filename/path/guide-title lookup or held-out row memorization."
+                                   },
+    "row_results":  [
+                        {
+                            "heldout_case":  "heldout-case-1",
+                            "answer_labels_redacted":  true,
+                            "pair_and_source_refs_redacted":  true,
+                            "matched_pattern_id":  "or-q4-02r-aggregate-pattern:source-disjoint-split-readiness-from-common-gates",
+                            "matched_signal_count":  5,
+                            "source_disjoint_from_train":  true,
+                            "filename_path_or_guide_title_lookup_used":  false,
+                            "passed":  true
+                        },
+                        {
+                            "heldout_case":  "heldout-case-2",
+                            "answer_labels_redacted":  true,
+                            "pair_and_source_refs_redacted":  true,
+                            "matched_pattern_id":  "or-q4-01-aggregate-pattern:common-adaptive-boundary-from-train-metadata",
+                            "matched_signal_count":  5,
+                            "source_disjoint_from_train":  true,
+                            "filename_path_or_guide_title_lookup_used":  false,
+                            "passed":  true
+                        },
+                        {
+                            "heldout_case":  "heldout-case-3",
+                            "answer_labels_redacted":  true,
+                            "pair_and_source_refs_redacted":  true,
+                            "matched_pattern_id":  "or-q4-01-aggregate-pattern:bounded-subagent-evidence-parent-review",
+                            "matched_signal_count":  5,
+                            "source_disjoint_from_train":  true,
+                            "filename_path_or_guide_title_lookup_used":  false,
+                            "passed":  true
+                        },
+                        {
+                            "heldout_case":  "heldout-case-4",
+                            "answer_labels_redacted":  true,
+                            "pair_and_source_refs_redacted":  true,
+                            "matched_pattern_id":  "or-q4-01-aggregate-pattern:product-decision-gap-from-authority-train-rows",
+                            "matched_signal_count":  5,
+                            "source_disjoint_from_train":  true,
+                            "filename_path_or_guide_title_lookup_used":  false,
+                            "passed":  true
+                        }
+                    ],
+    "deterministic_control_comparison":  {
+                                             "trained_state_accuracy":  1,
+                                             "no_trained_state_accuracy":  0,
+                                             "exact_guide_title_path_filename_lookup_accuracy":  0,
+                                             "bm25_or_title_surrogate_accuracy":  0.25,
+                                             "static_route_table_accuracy":  0.25,
+                                             "controls_explain_three_passes":  false,
+                                             "finding":  "After Q4-02R, trained state is 4/4 while no-trained and exact title/path/filename lookup remain 0/4; BM25/title and static route remain 1/4 each and below trained state."
+                                         },
+    "quality_claim":  {
+                          "semantic_quality_claimed":  false,
+                          "q4_complete":  false,
+                          "q4_02_gate_result":  "PASS_AFTER_Q4_02R_REPAIR",
+                          "q4_03_allowed_next":  true,
+                          "reason_codes":  [
+                                               "SEMANTIC_QUALITY_CLAIM_REMAINS_FALSE",
+                                               "Q4_03_ABLATION_REVIEW_PENDING",
+                                               "Q7_TRANSFER_GATES_PENDING",
+                                               "HOST_RUNTIME_EVIDENCE_NOT_PROVIDED"
+                                           ]
+                      },
+    "exact_next_action":  "Q4-03_ORCHESTRATION_ABLATION_REVIEW: reviewer sub-agent should review the updated Q4 held-out and deterministic-control ablation evidence; no Q5/Q8, host/plugin/runtime, dashboard/API, commit, push, or broad tests in this repair slice."
+}

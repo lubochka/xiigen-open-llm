@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "work_order": "HOST-08B-CURSOR-EXTENSION-HOST-QA-AUTOMATION",
+  "artifact_kind": "uml_executable_case_map",
+  "passed": true,
+  "claim_scope": "Executable case map for Cursor Extension Host QA only.",
+  "fixture": {
+    "prompt": "HOST-08B command debug-enabled/disabled fixtures with HOST08B_CURSOR_QA_SENTINEL_DO_NOT_DISPLAY",
+    "raw_private_data_used": false,
+    "sentinel": "HOST08B_CURSOR_QA_SENTINEL_DO_NOT_DISPLAY"
+  },
+  "cases": [
+    {
+      "case_id": "HOST08B-CURSOR-COMMAND-DEBUG-OFF",
+      "branch": "Cursor command prompt->task request with debug disabled",
+      "execution": "vscode.commands.executeCommand('xiigen.smartSkills.select', fixturePrompt) inside Cursor Extension Host.",
+      "expected": {
+        "entrypoint_invoked": true,
+        "core_request_ref_exists": true,
+        "core_response_ref_exists": true,
+        "core_trace_ref_exists": true,
+        "visible_debug_trace_present": false,
+        "sentinel_absent_from_display_response_trace": true,
+        "semantic_quality_claimed": false
+      }
+    },
+    {
+      "case_id": "HOST08B-CURSOR-COMMAND-DEBUG-ON",
+      "branch": "Cursor command debug trace",
+      "execution": "Set xiigenSmartSkills.debug=true and execute xiigen.smartSkills.select.",
+      "expected": {
+        "debug_shape": "xiigen prompt-to-task :\\ninput: <redacted request>\\noutput: <redacted response>",
+        "sentinel_absent_from_visible_debug_trace": true,
+        "semantic_quality_claimed": false
+      }
+    },
+    {
+      "case_id": "HOST08B-CURSOR-PANEL",
+      "branch": "Cursor panel command path",
+      "execution": "vscode.commands.executeCommand('xiigenSmartSkills.panel') inside Cursor Extension Host.",
+      "expected": {
+        "panel_command_no_exception": true,
+        "latest_response_ref_exists": true,
+        "webview_visibility_not_claimed": true
+      }
+    },
+    {
+      "case_id": "HOST08B-CURSOR-CHAT-GAP",
+      "branch": "Cursor chat participant",
+      "execution": "Record as bounded gap if no safe noninteractive chat participant invocation API is available.",
+      "expected": {
+        "gap_recorded_if_not_invoked": true,
+        "no_false_chat_completion_claim": true
+      }
+    },
+    {
+      "case_id": "HOST08B-CURSOR-THIN-HOST",
+      "branch": "No host semantic authority",
+      "execution": "Inspect runner result and source flags.",
+      "expected": {
+        "host_semantic_ranking": false,
+        "host_training": false,
+        "host_corpus_parsing": false,
+        "host_dpo_generation": false,
+        "host_model_mutation": false
+      }
+    }
+  ]
+}

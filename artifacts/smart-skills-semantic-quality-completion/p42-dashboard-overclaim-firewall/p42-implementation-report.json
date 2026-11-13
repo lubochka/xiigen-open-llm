@@ -1,0 +1,83 @@
+{
+  "phase": "P42",
+  "work_order_scope": "dashboard/preview overclaim firewall for P37-GAP-04",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "evidence_scope": "dashboard documentation/source/report-facing wording guard only",
+  "guard_behavior": {
+    "allows_negative_examples": [
+      "not semantic quality proof",
+      "not host runtime proof"
+    ],
+    "rejects_positive_examples": [
+      { "rejected_example": "semantic quality proven by dashboard smoke" },
+      { "rejected_example": "Claude host runtime proven by dashboard" },
+      { "rejected_example": "trained model readiness proven by preview" },
+      { "rejected_example": "checkpoint rewrite complete after smoke test" }
+    ],
+    "scans_dashboard_docs": true,
+    "scans_dashboard_source": true,
+    "scans_p37_gap_ledger": true,
+    "scans_p42_report_facing_artifacts": true
+  },
+  "changed_files": [
+    "tools/api-dashboard-qa.ps1",
+    "Tests/ApiDashboardOverclaimFirewallTests.cs",
+    "docs/projects/43-smart-skills-domain-dashboard.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-COMPLETION-PLAN-v1-STATE.json",
+    "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-review-cycles.jsonl",
+    "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-implementation-report.json",
+    "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-implementation-report.md",
+    "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-self-check.json",
+    "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-evidence-card.md"
+  ],
+  "tests_run": [
+    {
+      "command": "JSON/JSONL parse checks for P42 artifacts/state",
+      "result": "PASS",
+      "summary": "State JSON, P42 report JSON, P42 self-check JSON, and 8 P42 review-cycle JSONL rows parsed."
+    },
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"ApiDashboard|SemanticQualityFixture|FixtureRunner|SourceDisjoint|Overclaim\" --nologo",
+      "result": "TIMEOUT_THEN_RERUN_PASS",
+      "summary": "First run timed out before a pass/fail signal; rerun passed with 56 passed, 0 failed, 0 skipped."
+    },
+    {
+      "command": "powershell.exe -ExecutionPolicy Bypass -File tools/api-dashboard-qa.ps1",
+      "result": "PASS",
+      "summary": "passed=true; P42 example, scan, test, and documentation checks passed."
+    },
+    {
+      "command": "node tools/semantic-quality-fixture-qa.js",
+      "result": "PASS",
+      "summary": "fixtures=36; scenarios=36; labels=36; failures=0."
+    }
+  ],
+  "review_cycles": {
+    "code_review_fix_cycles": 4,
+    "execution_documentation_review_cycles": 4,
+    "evidence": "artifacts/smart-skills-semantic-quality-completion/p42-dashboard-overclaim-firewall/p42-review-cycles.jsonl"
+  },
+  "training_run": false,
+  "eval_run": false,
+  "checkpoint_mutated": false,
+  "semantic_quality_claimed": false,
+  "trained_model_readiness_claimed": false,
+  "host_runtime_proof_claimed": false,
+  "model_files_touched": false,
+  "extension_runtime_called": false,
+  "external_ai_or_network_used": false,
+  "git_commands_run": false,
+  "codex_subagent_commands_run": false,
+  "commit_run": false,
+  "push_run": false,
+  "verification_side_effects": [
+    {
+      "file": "artifacts/smart-skills-semantic-quality-completion/p38-fixture-dashboard-qa-automation/p38-fixture-dashboard-qa-report.json",
+      "reason": "The allowed node tools/semantic-quality-fixture-qa.js verification command refreshed the historical P38 fixture QA report checked_at field.",
+      "checked_at_observed": "2026-06-15T23:40:18.205Z",
+      "new_p38_implementation_work": false
+    }
+  ],
+  "next_phase_derived": false,
+  "honest_scope": "P42 adds a language/report firewall only. It does not run model evaluation, train, mutate checkpoints, prove semantic quality, prove trained-model readiness, or prove Claude/Cursor/Codex host runtime."
+}

@@ -1,0 +1,111 @@
+{
+    "work_order":  "SS-06",
+    "unit":  "skill_candidates",
+    "plan_row":  "B9 SS-06",
+    "verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+    "claim_scope":  "one checkpoint-backed trainable skill_candidates semantic unit slice only; no full SkillSelection semantic quality, no SS-07+ units, no host/adaptive/export/import lifecycle claim",
+    "branch":  "codex/chat-gpt-5.5",
+    "skills_guides_loaded_and_applied":  [
+                                             "docs/skills/conversation-intent-and-self-reflection-SKILL.md",
+                                             "docs/skills/architect-behavior-classifier-SKILL.md",
+                                             "docs/skills/plan-review-SKILL.md",
+                                             "docs/skills/skill-injection-SKILL.md",
+                                             "docs/skills/implementation-integrity-SKILL.md",
+                                             "docs/skills/generated-code-review-SKILL.md",
+                                             "docs/skills/phase-completion-packager-SKILL.md",
+                                             "docs/plans/DPO-KNOWLEDGE-MAP-v1.md"
+                                         ],
+    "changed_files":  [
+                          "43.SmartSkillsDomain/SkillSelectionContracts.cs",
+                          "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+                          "43.SmartSkillsDomain/README.md",
+                          "Tests/SkillSelectionMachineTests.cs",
+                          "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json",
+                          "artifacts/dpo-knowledge-map/SS-06.json",
+                          "artifacts/dpo-universalization/SS-06.json",
+                          "artifacts/test-strategy-admission/SS-06.json",
+                          "artifacts/authority-self-reflection/SS-06.json",
+                          "artifacts/implementation-integrity/SS-06.json",
+                          "artifacts/metric-honesty/SS-06.json",
+                          "artifacts/human-authority-boundary/SS-06.json",
+                          "artifacts/subagent-packet-quality/SS-06.json",
+                          "artifacts/test-execution-hygiene/SS-06.json",
+                          "artifacts/completion-matrix/SS-06.json",
+                          "artifacts/skill-selection-lifecycle/SS-06.json"
+                      ],
+    "test_evidence":  {
+                          "command":  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+                          "initial_exit_code":  124,
+                          "initial_result":  "tool_timeout; recent dotnet children stopped before rerun",
+                          "final_exit_code":  0,
+                          "passed":  29,
+                          "failed":  0,
+                          "total":  29,
+                          "elapsed_seconds_observed_by_tool":  49.5
+                      },
+    "no_hidden_determinism_scan":  {
+                                       "command":  "rg -n \u0027ExtractSkillCandidate|hardcoded skill_candidates|hardcoded skill candidates|skill candidate keyword whitelist|candidate keyword whitelist|token is \"skill\"|token is \"candidate\"|token is \"coverage\"|token is \"review\"|BM25|filename lookup\u0027 43.SmartSkillsDomain/SkillSelectionMachine.cs",
+                                       "normalized_result":  "PASS_ZERO_HITS",
+                                       "exit_code":  0
+                                   },
+    "held_out_evidence":  {
+                              "test_name":  "SkillSelectionMachine_SkillCandidatesUsesCheckpointSectionForHeldOutCandidatePrompt",
+                              "training_pair_id":  "ss06-skill-candidates-pair-001",
+                              "training_adapter":  "ISkillCandidateTraining",
+                              "held_out_prompt":  "Find candidate skills for coverage validation before plan acceptance.",
+                              "selected_skill_id":  "coverage-completeness-gate",
+                              "rejected_skill_id":  "image-generation",
+                              "evidence_feature":  "SKILL_CANDIDATES_CHECKPOINT_SECTION",
+                              "candidate_position_scaffold_used_as_final_authority":  false
+                          },
+    "ablation_evidence":  {
+                              "test_name":  "SkillSelectionMachine_SkillCandidatesAblationLowersDecisionWithoutUnitSection",
+                              "trained_selected_skill_id":  "coverage-completeness-gate",
+                              "empty_baseline_selected_count":  0,
+                              "confidence_lower_without_unit_section":  true,
+                              "empty_baseline_evidence":  "NO_TRAINED_STATE_AVAILABLE"
+                          },
+    "false_claims":  {
+                         "full_skill_selection_semantic_quality_claimed":  false,
+                         "host_runtime_claimed":  false,
+                         "adaptive_work_claimed":  false,
+                         "external_ai_used":  false,
+                         "model_export_import_claimed":  false,
+                         "checkpoint_asset_mutated":  false,
+                         "ss_07_plus_units_claimed":  false
+                     },
+    "next_action_if_parent_accepts":  "WO-COMMIT-SS-06-01",
+    "parent_review_accepted":  true,
+    "parent_review_verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+    "pending_commit_boundary":  true,
+    "parent_review_evidence":  {
+                                   "parent_review_accepted":  true,
+                                   "parent_review_verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+                                   "reviewed_at_utc":  "2026-06-05T12:55:10.2693819Z",
+                                   "focused_test_rerun":  {
+                                                              "command":  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+                                                              "exit_code":  0,
+                                                              "passed":  29,
+                                                              "failed":  0,
+                                                              "total":  29,
+                                                              "elapsed_seconds":  49.1,
+                                                              "started_utc":  "2026-06-05T12:54:21.2015270Z",
+                                                              "ended_utc":  "2026-06-05T12:55:10.2693819Z"
+                                                          },
+                                   "json_parse":  {
+                                                      "files":  "11 SS-06 artifacts + state",
+                                                      "parsed_ok":  true
+                                                  },
+                                   "anti_hardcode_scan":  {
+                                                              "command":  "rg -n \u0027ExtractSkillCandidate|hardcoded skill_candidates|hardcoded skill candidates|skill candidate keyword whitelist|candidate keyword whitelist|token is \"skill\"|token is \"candidate\"|token is \"coverage\"|token is \"review\"|BM25|filename lookup\u0027 43.SmartSkillsDomain/SkillSelectionMachine.cs",
+                                                              "normalized_result":  "PASS_ZERO_HITS"
+                                                          },
+                                   "diff_check":  {
+                                                      "scope":  "SS-06 files/artifacts",
+                                                      "exit_code":  0
+                                                  },
+                                   "code_review_finding":  "skill_candidates uses learned checkpoint/profile state populated only via TargetTrainingAdapter == ISkillCandidateTraining; deterministic helper is neutral tokenization/load/save/reporting, not skill candidate decision. Ablation test proves empty state returns no selected candidate.",
+                                   "model_asset_scope_note":  "Existing committed model asset compatibility is outside SS-06 narrow claim; no export/import readiness claimed."
+                               },
+    "next_bounded_action":  "WO-COMMIT-SS-06-01"
+}

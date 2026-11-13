@@ -1,0 +1,57 @@
+{
+  "phase": "P5_SOURCE_DISJOINT_SPLIT",
+  "language": "ru",
+  "split_status": "INSUFFICIENT_SOURCE_FAMILIES",
+  "training_allowed": false,
+  "eval_allowed": false,
+  "semantic_quality_claimed": false,
+  "training_run": false,
+  "eval_run": false,
+  "checkpoint_or_model_changed": false,
+  "summary_ru": "Source-disjoint train/eval split сейчас невозможен: в PromptToTask есть две draft-строки из basic prompt.txt, а в OrchestrationReasoning две draft-строки из PATCH-phase-transition-protocol-SKILL.md. Внутри каждой машины это same-source variants, а не независимые source families.",
+  "machines": [
+    {
+      "machine": "PromptToTask",
+      "draft_rows": 2,
+      "source_family_count": 1,
+      "source_family_ids": [
+        "sf-prompt-to-task-basic-prompt-77A175A9"
+      ],
+      "row_ids": [
+        "P3-PTT-DRAFT-001",
+        "P3-PTT-DRAFT-002"
+      ],
+      "can_form_source_disjoint_train_eval_split": false,
+      "leakage_reason_ru": "Обе строки происходят из одной source family basic prompt.txt; одна не может быть train, а другая held-out eval, потому что это проверяло бы запоминание или варианты одного источника.",
+      "next_required_material": "Нужна дополнительная независимая PromptToTask source family или демоция/слияние одного варианта."
+    },
+    {
+      "machine": "OrchestrationReasoning",
+      "draft_rows": 2,
+      "source_family_count": 1,
+      "source_family_ids": [
+        "sf-orchestration-phase-transition-8CD45F23"
+      ],
+      "row_ids": [
+        "P4-ORCH-DPO-DRAFT-001",
+        "P4-ORCH-DPO-DRAFT-002"
+      ],
+      "can_form_source_disjoint_train_eval_split": false,
+      "leakage_reason_ru": "Обе строки происходят из одной source family PATCH-phase-transition-protocol-SKILL.md; это same-source variants, а не независимый train/eval split.",
+      "next_required_material": "Нужна дополнительная независимая OrchestrationReasoning source family или демоция/слияние одного варианта."
+    }
+  ],
+  "effect_on_later_phases_ru": "P6/P8 training and eval must wait for more accepted independent rows, or explicitly take a no-training/no-op path. These P5 artifacts are evidence of blockage, not a semantic quality PASS.",
+  "no_claim_boundary": {
+    "code_changed": false,
+    "tests_run": false,
+    "build_run": false,
+    "training_run": false,
+    "eval_run": false,
+    "checkpoint_or_model_changed": false,
+    "commit_run": false,
+    "push_run": false,
+    "branch_switched": false,
+    "semantic_quality_claimed": false
+  }
+}

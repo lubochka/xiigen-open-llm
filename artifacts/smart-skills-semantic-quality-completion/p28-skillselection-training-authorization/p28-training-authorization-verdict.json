@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "p28.training-authorization-verdict.v1",
+  "phase": "P28",
+  "artifactType": "training authorization verification only",
+  "createdAtLocalDate": "2026-06-15",
+  "branchObserved": "codex/chat-gpt-5.5",
+  "training_authorized_now": false,
+  "candidate_training_authorized_now": false,
+  "common_training_authorized_now": false,
+  "eval_authorized_now": false,
+  "training_run": false,
+  "checkpoint_mutated": false,
+  "promotion_performed": false,
+  "common_model_replacement_performed": false,
+  "semantic_quality_claimed": false,
+  "skill_selection_readiness_claimed": false,
+  "full_api_readiness_claimed": false,
+  "verdict": "TRAINING_NOT_AUTHORIZED_NOW",
+  "reason": "Current P28 work order requires authorization verification first and says to assume training is not permitted unless proven. The active state keeps training_authorized=false, training_allowed=false, eval_allowed=false. P27 authorization ledger and parent review accept only a checked repair dataset candidate and require a separate future training slice with gates before any training. No current source explicitly authorizes training now.",
+  "authorityLedger": [
+    {
+      "source": "delegated_p28_work_order",
+      "quote": "P28 bounded work order for C:\\Projects\\llm_mvp_core. Role: EXECUTOR_INTERNAL under parent architect/reviewer. You are not alone in the codebase; do not revert others' edits. Do not commit or push. Parent will review, commit, and push if accepted.",
+      "bindingRequirements": [
+        "execute P28 only",
+        "do not commit or push",
+        "do not revert others' edits"
+      ],
+      "trainingEffect": "does not authorize training",
+      "sourceClarification": "This is the parent-issued bounded sub-agent work order, not Luba direct speech."
+    },
+    {
+      "source": "current_unquoted_luba_instruction",
+      "quote": "Current Luba quote: \"Продолжай исполнение плана через суб агентов\". This authorizes continuing the active plan through subagents. It does NOT by itself authorize training if AGENTS.md/state/plan require a stricter training gate. Your first job is authorization verification.",
+      "bindingRequirements": [
+        "continue plan through subagents",
+        "verify authorization before any training",
+        "the quote alone does not authorize training under stricter gates"
+      ],
+      "trainingEffect": "requires proof before training; no proof found"
+    },
+    {
+      "source": "delegated_p28_work_order",
+      "quote": "No training unless the active plan/state/current unquoted Luba instruction explicitly permits it after your verification; assume it is NOT permitted unless proven.",
+      "bindingRequirements": [
+        "training is forbidden unless explicitly permitted by active sources",
+        "default assumption is not permitted"
+      ],
+      "trainingEffect": "blocks training",
+      "sourceClarification": "This is the parent-issued bounded sub-agent work order, not Luba direct speech."
+    },
+    {
+      "source": "AGENTS.md",
+      "quote": "For model work, \"saved checkpoint\" is not enough. The model deliverable must include model export, model import, current checkpoint asset, training-data asset or hashed training-data pointer, manifest, locator/marketplace entry, fresh-load probe, and resume-training probe.",
+      "bindingRequirements": [
+        "trainable units need full asset lifecycle evidence",
+        "fresh-load and resume-training probes are part of done criteria"
+      ],
+      "trainingEffect": "requires gated training lifecycle, not ad hoc training"
+    },
+    {
+      "source": "AGENTS.md",
+      "quote": "Plans must name candidate source examples and the verification required before use. Examples are candidates, not pre-approved material.",
+      "bindingRequirements": [
+        "candidate examples are not pre-approved training material",
+        "verification is required before use"
+      ],
+      "trainingEffect": "P27 candidate rows cannot be used as training rows without a later gate"
+    },
+    {
+      "source": "active_state",
+      "quote": "training_authorized=false; training_allowed=false; eval_allowed=false",
+      "bindingRequirements": [
+        "training is not authorized in state",
+        "eval is not authorized in state"
+      ],
+      "trainingEffect": "blocks training"
+    },
+    {
+      "source": "active_plan",
+      "quote": "Until all relevant rows exist and pass, semantic quality remains not claimed.",
+      "bindingRequirements": [
+        "source-disjoint eval",
+        "ablations",
+        "checkpoint rewrite",
+        "fresh-load",
+        "continue-training",
+        "no claim until gates pass"
+      ],
+      "trainingEffect": "requires gates before any quality claim; does not itself authorize P28 training"
+    },
+    {
+      "source": "p27_training_authorization_ledger",
+      "quote": "trainingAllowed=false; candidateTrainingAllowed=false; commonTrainingAllowed=false; notUsedForTrainingYet=true; nextTrainingSliceMustBeSeparate=true",
+      "bindingRequirements": [
+        "P27 rows are not used for training yet",
+        "candidate training was not authorized in P27",
+        "next training slice must be separate"
+      ],
+      "trainingEffect": "blocks P28 training unless a new current authorization exists"
+    },
+    {
+      "source": "p27_parent_review",
+      "quote": "P27 принят как checked repair dataset candidate. Это не training set, не common training, не checkpoint mutation и не promotion.",
+      "bindingRequirements": [
+        "P27 is a dataset candidate only",
+        "training and promotion remain unclosed"
+      ],
+      "trainingEffect": "requires a separate later gate"
+    }
+  ],
+  "whatWouldAuthorizeTraining": [
+    "A fresh bounded parent work order that explicitly authorizes candidate-only SkillSelection training and eval after P28 authorization review",
+    "State flags updated by parent/architect to allow candidate training/eval for the named slice",
+    "A source-disjoint repair train/eval split and family ledger for P27 rows",
+    "A training batch card that keeps commonTrainingAllowed=false and states local-private candidate-only use",
+    "No common model replacement and no promotion in the training slice",
+    "Fresh-load, continue-training-from-existing-checkpoint, export/import, ablation, candidate-order permutation, source-id/path/filename/pair-id leakage gates",
+    "Runtime/dashboard evidence labelled as runtime evidence only, not semantic quality proof",
+    "Parent review acceptance after the slice"
+  ],
+  "nextSafeNonTrainingSlice": {
+    "phase": "P29",
+    "name": "SkillSelection repair source-disjoint training batch gate design",
+    "training": false,
+    "checkpointMutation": false,
+    "purpose": "Design the source-disjoint split, authorization gates, leakage controls, and batch card required before a later candidate-only training/eval executor can be issued."
+  },
+  "noOverclaim": {
+    "p28_is_authorization_work_order_slice_only": true,
+    "no_training_checkpoint_or_promotion": true,
+    "no_semantic_quality_or_skill_selection_completion_claim": true
+  }
+}

@@ -1,0 +1,51 @@
+{
+    "schema_version":  1,
+    "backlog_id":  "q5-04-skill-selection-candidate-position-gap-backlog",
+    "created_at_utc":  "2026-06-10T19:02:29.1889743+00:00",
+    "branch":  "codex/chat-gpt-5.5",
+    "status":  "RESOLVED_Q5_04R_PASS",
+    "semantic_quality_claimed":  false,
+    "gaps":  [
+                 {
+                     "gap_id":  "Q5-04-GAP-001",
+                     "severity":  "BLOCKS_Q5_04_PASS",
+                     "title":  "Executable Q5-02 permutation probe is missing",
+                     "evidence":  "Q5-02 held-out JSONL has 12 rows and 24 candidate-order permutations with stable expected labels, but no focused report-only runner was found that executes the loaded SkillSelection checkpoint across those permutations.",
+                     "required_repair":  "Create or run a bounded report-only probe that loads the existing SkillSelection checkpoint and evaluates every Q5-02 row/permutation through the production decision path without training or model mutation.",
+                     "acceptance_gate":  "Probe report records per-row/permutation selected skills, rejected skills, evidence features, confidence, RequiresSecondPass, exact expected comparison, first-position baseline, candidate-position-weight baseline, no over-select-all assertion, and semantic_quality_claimed=false.",
+                     "status":  "RESOLVED_BY_EXECUTABLE_PROBE_REPORT",
+                     "resolved_by":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-executable-probe-report.json"
+                 },
+                 {
+                     "gap_id":  "Q5-04-GAP-002",
+                     "severity":  "BLOCKS_Q5_05_ADVANCE",
+                     "title":  "Model decision stability is not proven",
+                     "evidence":  "The current review can prove expected selected/rejected labels are order-stable, but cannot prove the model emits the same semantic decision across permutations.",
+                     "required_repair":  "After the executable probe exists, rerun Q5-04 review and compare model outputs across the original and permuted candidate orders for each held-out row.",
+                     "acceptance_gate":  "For every held-out row, model selected/rejected sets are invariant under candidate-order permutation and do not contain CandidatePositionScaffoldEvidence as final authority.",
+                     "status":  "RESOLVED_STABILITY_PROVEN",
+                     "resolved_by":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-executable-probe-report.json"
+                 },
+                 {
+                     "gap_id":  "Q5-04-GAP-003",
+                     "severity":  "BLOCKS_MODEL_BACKED_SELECTION_CLAIM",
+                     "title":  "Model-vs-candidate-position ablation is not executable evidence yet",
+                     "evidence":  "Artifact-level control shows candidate-position weight index 0 is wrong on 24/24 permutations, but no executable report compares this control against actual model decisions on Q5-02.",
+                     "required_repair":  "The same bounded probe must compute first-position and persisted candidate-position-weight baselines and compare them with model outputs.",
+                     "acceptance_gate":  "Candidate-position control fails or degrades versus model outputs on Q5-02 held-out tasks, with row-level evidence and no semantic-quality overclaim.",
+                     "status":  "RESOLVED_CONTROLS_COMPUTED_AND_FAIL_ALL",
+                     "resolved_by":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-executable-probe-report.json"
+                 },
+                 {
+                     "gap_id":  "Q5-04-GAP-004",
+                     "severity":  "BLOCKS_Q5_04_PASS_AND_Q5_05_ADVANCE",
+                     "title":  "Executable probe shows model output does not match Q5-02 expected selected/rejected sets",
+                     "evidence":  "Probe ran 12 held-out rows and 24 candidate-order permutations through the loaded SkillSelectionMachine. Decisions were permutation-stable, no over-select-all occurred, and candidate-position scaffold evidence was not used, but exact expected selected-set matches were 0/24 and expected rejected wrong skills were present for only 12/24 permutations.",
+                     "required_repair":  "Repair SkillSelection model behavior or decision aggregation so Q5-02 held-out rows return the expected small multi-skill selected set and reject the expected wrong-skill near misses without candidate-position authority.",
+                     "acceptance_gate":  "Rerun artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-executable-probe-report.json and require model_selected_expected_exact_set=PASS, model_rejected_expected_wrong_skills=PASS, permutation_stability=PASS, no_over_select_all=PASS, semantic_quality_claimed=false, and no_training_or_model_mutation unless a separate training work order authorizes model mutation.",
+                     "status":  "RESOLVED_BY_Q5_04R_MODEL_BEHAVIOR_REPAIR",
+                     "resolved_by":  "artifacts/smart-skills-quality-uplift/q5/skill-selection-model-behavior-repair-report.json"
+                 }
+             ],
+    "exact_next_action":  "Q5-04 parent review rerun with executable probe PASS evidence; Q5-05 wrong-skill near-miss review only after parent review accepts Q5-04."
+}

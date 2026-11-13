@@ -1,0 +1,70 @@
+{
+  "phase": "P3_PROMPT_TO_TASK_DPO",
+  "language": "ru",
+  "status": "draft_not_training_ready_pending_parent_review",
+  "target_machine": "PromptToTask",
+  "source_seed_used": {
+    "seed_id": "P2-REPAIRED-SEED-001",
+    "source_id": "77A175A9143E61CF9424968B1B42D3BA731A3998678EB80ECE4352F3BA3F1747",
+    "source_ref": "C:\\Users\\lubao\\Documents\\xiigen\\basic prompt.txt",
+    "path_hash": "2A5635F0B38014DA50B0E35D47B71DF4F856787AB20F7F1DE2881DC506BB96E3",
+    "decomposition_ref": "D-P1-S-BASIC-PROMPT-PTT-001",
+    "source_refs_used_as_provenance_only": true
+  },
+  "excluded_seed": {
+    "seed_id": "P2-REPAIRED-SEED-002",
+    "reason_ru": "Это OrchestrationReasoning phase-transition seed, не accepted PromptToTask source. В P3 PromptToTask он не использован как источник accepted row."
+  },
+  "draft_row_count": 2,
+  "training_ready_row_count": 0,
+  "dpo_ready_row_count": 0,
+  "semantic_quality_claimed": false,
+  "same_source_warning": {
+    "same_source_variant_count": 2,
+    "source_family_independent_evidence_count": 0,
+    "warning_ru": "Обе draft rows происходят из одного PromptToTask seed/basic prompt.txt и одной source family. Они не могут считаться двумя независимыми training examples.",
+    "promotion_rule_ru": "Только один same-source variant может быть повышен, если source-disjoint eval и parent review не докажут независимую обучающую ценность.",
+    "parent_review_required_before_dpo_ready": true
+  },
+  "universal_boundary_ru": "Prompt превращается в проверяемый контракт задачи: цель, фазы, запреты, артефакты, validation, примеры и recovery/state должны быть выделены до исполнения.",
+  "rows": [
+    {
+      "pair_id": "P3-PTT-DRAFT-001",
+      "same_source_family_variant": true,
+      "source_family_independent_evidence": false,
+      "why_not_training_ready_ru": "Это только draft authoring row: нужен parent review, source-disjoint split, ablation evidence и проверка near miss. Raw prompt не копировался.",
+      "chosen_example_ru": "Структурный task contract с goal, constraints, forbidden actions, expected artifacts, validation evidence, no-claim и execution-permission boundary.",
+      "rejected_near_miss_ru": "Свободный пересказ prompt без constraints/evidence gates и с риском exact prompt/path shortcut."
+    },
+    {
+      "pair_id": "P3-PTT-DRAFT-002",
+      "same_source_family_variant": true,
+      "source_family_independent_evidence": false,
+      "why_not_training_ready_ru": "Это вариант той же source-grounded boundary для parent review; он не доказывает train readiness и не запускал обучение.",
+      "chosen_example_ru": "Контракт, который отделяет PromptToTask authoring от execution authorization и фиксирует allowed verification/forbidden actions.",
+      "rejected_near_miss_ru": "Execution-first interpretation: принять prompt как разрешение сразу выполнять техническое действие."
+    }
+  ],
+  "excluded_content_ru": [
+    "raw private prompt text",
+    "local paths and filenames as model signals",
+    "host/tool/project-stack commands",
+    "tests/build/training/checkpoint/model mechanics"
+  ],
+  "parent_must_review_ru": [
+    "Достаточно ли chosen/rejected отличается именно по PromptToTask boundary.",
+    "Нет ли hidden exact prompt, filename/path, keyword-only или source-title shortcut.",
+    "Можно ли оставить две вариации или надо сократить до одной строки.",
+    "Можно ли после будущих source-disjoint и ablation gates повышать row до DPO-ready."
+  ],
+  "no_action_boundary": {
+    "code_changed": false,
+    "tests_run": false,
+    "build_run": false,
+    "training_run": false,
+    "checkpoint_or_model_changed": false,
+    "commit_run": false,
+    "push_run": false,
+    "branch_switched": false
+  }
+}

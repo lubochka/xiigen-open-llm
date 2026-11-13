@@ -1,0 +1,1204 @@
+{
+  "phase": "P26_SKILL_SELECTION_FAILURE_REPAIR_SLICE_PLAN",
+  "artifact_type": "failure analysis plus bounded SkillSelection repair/training/eval slice plan",
+  "language": "ru",
+  "source_inputs": {
+    "p24_rows": "artifacts/smart-skills-semantic-quality-completion/p24-skillselection-runtime-holdout-rows/p24-runtime-holdout-rows.jsonl",
+    "p25_results": "artifacts/smart-skills-semantic-quality-completion/p25-skillselection-runtime-holdout-comparison/p25-scenario-results.jsonl",
+    "p25_report": "artifacts/smart-skills-semantic-quality-completion/p25-skillselection-runtime-holdout-comparison/p25-runtime-holdout-comparison-report.json",
+    "code": "43.SmartSkillsDomain/SkillSelectionMachine.cs and SkillSelectionLogicalHierarchy.cs"
+  },
+  "no_overclaim_boundaries": {
+    "p26_plan_data_design_only": true,
+    "training_run": false,
+    "checkpoint_mutated": false,
+    "promotion_performed": false,
+    "common_model_replacement_performed": false,
+    "external_ai_or_network_used": false,
+    "semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "full_api_readiness_claimed": false
+  },
+  "p25_summary": {
+    "scenario_count": 4,
+    "common_expected_match_count": 0,
+    "candidate_expected_match_count": 0,
+    "verdict": "both checkpoints failed all accepted P24 runtime holdout rows; next action is repair/training/eval planning, not promotion"
+  },
+  "failure_map": [
+    {
+      "row_id": "P24-SS-HOLDOUT-E2E-MATRIX-001",
+      "source_family": "p24_local_skill_doc_e2e_test_matrix",
+      "expected_skill_ids": [
+        "e2e-test-matrix"
+      ],
+      "available_skill_ids": [
+        "e2e-test-matrix",
+        "test-integrity",
+        "implementation-integrity",
+        "plan-review"
+      ],
+      "common_selected_skill_ids": [
+        "implementation-integrity",
+        "plan-review",
+        "test-integrity"
+      ],
+      "candidate_selected_skill_ids": [],
+      "common_rejected_skill_ids": [
+        "e2e-test-matrix"
+      ],
+      "candidate_rejected_skill_ids": [
+        "e2e-test-matrix",
+        "test-integrity",
+        "implementation-integrity",
+        "plan-review"
+      ],
+      "common_pass": false,
+      "candidate_pass": false,
+      "common_confidence": 0.95,
+      "candidate_confidence": 0,
+      "observed_mechanism_evidence": {
+        "common_decision_text": "prompt_context selected from the typed PromptContextSkillSelectionUnit; candidate-position scaffold was not used as final authority.",
+        "candidate_decision_text": "No trained SkillSelection state is available.",
+        "common_evidence_features": [
+          "PROMPT_CONTEXT_SKILL_SELECTION_UNIT_EXECUTED",
+          "PROMPT_CONTEXT_BASELINE_COUNTER_ONLY",
+          "SEMANTIC_SKILL_SELECTION_PIPELINE_BOUNDARY",
+          "PROMPT_CONTEXT_CHECKPOINT_SECTION",
+          "prompt_context:semantic_quality_claimed=false",
+          "prompt_context:decision_features=separated_prompt_and_context_feature_weights",
+          "prompt_context:prompt_score=2",
+          "prompt_context:context_score=4",
+          "prompt_context:total_score=10",
+          "prompt_context:source_profile_count=6",
+          "prompt_context:prompt_vocabulary_size=333",
+          "prompt_context:context_vocabulary_size=3"
+        ],
+        "candidate_evidence_features": [
+          "NO_TRAINED_STATE_AVAILABLE",
+          "SEMANTIC_SKILL_SELECTION_PIPELINE_BOUNDARY"
+        ],
+        "code_anchors": {
+          "learnPairDispatch": "43.SmartSkillsDomain/SkillSelectionMachine.cs:462",
+          "promptContextDecision": "43.SmartSkillsDomain/SkillSelectionMachine.cs:719",
+          "promptContextScoring": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1022",
+          "promptContextSelection": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1064",
+          "promptContextStateUpdate": "43.SmartSkillsDomain/SkillSelectionMachine.cs:1820",
+          "skillSelectionDecision": "43.SmartSkillsDomain/SkillSelectionMachine.cs:684",
+          "skillSelectionScoring": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1408",
+          "skillSelectionStateUpdate": "43.SmartSkillsDomain/SkillSelectionMachine.cs:1694",
+          "contracts": "43.SmartSkillsDomain/SkillSelectionContracts.cs:54"
+        },
+        "leakage_flags": {
+          "exact_prompt": false,
+          "source_id": false,
+          "path": false,
+          "filename": false,
+          "pair_id": false,
+          "candidate_order": false
+        }
+      },
+      "likely_missing_learned_unit_signal_state": [
+        {
+          "skill": "e2e-test-matrix",
+          "neededSignalsFromP24": [
+            "scenario matrix",
+            "success",
+            "idempotency",
+            "delayed behavior",
+            "recovery",
+            "boundary",
+            "security checks",
+            "before implementation"
+          ],
+          "missingUnitOrState": [
+            "PromptContextSkillSelectionUnitState lacks positive prompt/context support strong enough for e2e-test-matrix and negative support against implementation-integrity, plan-review, test-integrity.",
+            "SkillSelectionSkillUnitState lacks final-selection DPO support for e2e-test-matrix; current runtime never reaches it when prompt_context returns a broad baseline decision.",
+            "Candidate checkpoint has no trained SkillSelection state available for this row family."
+          ]
+        }
+      ],
+      "repair_implication": "Next slice must build source-disjoint DPO repair rows and then train/evaluate a candidate checkpoint; P26 itself does not train, mutate checkpoints, or promote."
+    },
+    {
+      "row_id": "P24-SS-HOLDOUT-NO-PRODUCT-DECISION-001",
+      "source_family": "p24_local_skill_doc_no_product_decisions",
+      "expected_skill_ids": [
+        "no-product-decisions"
+      ],
+      "available_skill_ids": [
+        "no-product-decisions",
+        "implementation-integrity",
+        "planning-session-startup",
+        "claim-verification"
+      ],
+      "common_selected_skill_ids": [
+        "claim-verification",
+        "implementation-integrity",
+        "planning-session-startup"
+      ],
+      "candidate_selected_skill_ids": [],
+      "common_rejected_skill_ids": [
+        "no-product-decisions"
+      ],
+      "candidate_rejected_skill_ids": [
+        "no-product-decisions",
+        "implementation-integrity",
+        "planning-session-startup",
+        "claim-verification"
+      ],
+      "common_pass": false,
+      "candidate_pass": false,
+      "common_confidence": 0.95,
+      "candidate_confidence": 0,
+      "observed_mechanism_evidence": {
+        "common_decision_text": "prompt_context selected from the typed PromptContextSkillSelectionUnit; candidate-position scaffold was not used as final authority.",
+        "candidate_decision_text": "No trained SkillSelection state is available.",
+        "common_evidence_features": [
+          "PROMPT_CONTEXT_SKILL_SELECTION_UNIT_EXECUTED",
+          "PROMPT_CONTEXT_BASELINE_COUNTER_ONLY",
+          "SEMANTIC_SKILL_SELECTION_PIPELINE_BOUNDARY",
+          "PROMPT_CONTEXT_CHECKPOINT_SECTION",
+          "prompt_context:semantic_quality_claimed=false",
+          "prompt_context:decision_features=separated_prompt_and_context_feature_weights",
+          "prompt_context:prompt_score=-3",
+          "prompt_context:context_score=24",
+          "prompt_context:total_score=45",
+          "prompt_context:source_profile_count=21",
+          "prompt_context:prompt_vocabulary_size=333",
+          "prompt_context:context_vocabulary_size=3"
+        ],
+        "candidate_evidence_features": [
+          "NO_TRAINED_STATE_AVAILABLE",
+          "SEMANTIC_SKILL_SELECTION_PIPELINE_BOUNDARY"
+        ],
+        "code_anchors": {
+          "learnPairDispatch": "43.SmartSkillsDomain/SkillSelectionMachine.cs:462",
+          "promptContextDecision": "43.SmartSkillsDomain/SkillSelectionMachine.cs:719",
+          "promptContextScoring": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1022",
+          "promptContextSelection": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1064",
+          "promptContextStateUpdate": "43.SmartSkillsDomain/SkillSelectionMachine.cs:1820",
+          "skillSelectionDecision": "43.SmartSkillsDomain/SkillSelectionMachine.cs:684",
+          "skillSelectionScoring": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1408",
+          "skillSelectionStateUpdate": "43.SmartSkillsDomain/SkillSelectionMachine.cs:1694",
+          "contracts": "43.SmartSkillsDomain/SkillSelectionContracts.cs:54"
+        },
+        "leakage_flags": {
+          "exact_prompt": false,
+          "source_id": false,
+          "path": false,
+          "filename": false,
+          "pair_id": false,
+          "candidate_order": false
+        }
+      },
+      "likely_missing_learned_unit_signal_state": [
+        {
+          "skill": "no-product-decisions",
+          "neededSignalsFromP24": [
+            "choose between alternatives",
+            "change user behavior",
+            "public interface shape",
+            "architecture direction"
+          ],
+          "missingUnitOrState": [
+            "PromptContextSkillSelectionUnitState lacks positive prompt/context support strong enough for no-product-decisions and negative support against claim-verification, implementation-integrity, planning-session-startup.",
+            "SkillSelectionSkillUnitState lacks final-selection DPO support for no-product-decisions; current runtime never reaches it when prompt_context returns a broad baseline decision.",
+            "Candidate checkpoint has no trained SkillSelection state available for this row family."
+          ]
+        }
+      ],
+      "repair_implication": "Next slice must build source-disjoint DPO repair rows and then train/evaluate a candidate checkpoint; P26 itself does not train, mutate checkpoints, or promote."
+    },
+    {
+      "row_id": "P24-SS-HOLDOUT-OUTPUT-SKEPTICISM-001",
+      "source_family": "p24_local_skill_doc_output_skepticism",
+      "expected_skill_ids": [
+        "output-skepticism"
+      ],
+      "available_skill_ids": [
+        "output-skepticism",
+        "phase-completion-packager",
+        "verification-before-completion",
+        "plan-review"
+      ],
+      "common_selected_skill_ids": [
+        "plan-review",
+        "verification-before-completion"
+      ],
+      "candidate_selected_skill_ids": [],
+      "common_rejected_skill_ids": [
+        "output-skepticism",
+        "phase-completion-packager"
+      ],
+      "candidate_rejected_skill_ids": [
+        "output-skepticism",
+        "phase-completion-packager",
+        "verification-before-completion",
+        "plan-review"
+      ],
+      "common_pass": false,
+      "candidate_pass": false,
+      "common_confidence": 0.95,
+      "candidate_confidence": 0,
+      "observed_mechanism_evidence": {
+        "common_decision_text": "prompt_context selected from the typed PromptContextSkillSelectionUnit; candidate-position scaffold was not used as final authority.",
+        "candidate_decision_text": "No trained SkillSelection state is available.",
+        "common_evidence_features": [
+          "PROMPT_CONTEXT_SKILL_SELECTION_UNIT_EXECUTED",
+          "PROMPT_CONTEXT_BASELINE_COUNTER_ONLY",
+          "SEMANTIC_SKILL_SELECTION_PIPELINE_BOUNDARY",
+          "PROMPT_CONTEXT_CHECKPOINT_SECTION",
+          "prompt_context:semantic_quality_claimed=false",
+          "prompt_context:decision_features=separated_prompt_and_context_feature_weights",
+          "prompt_context:prompt_score=6",
+          "prompt_context:context_score=8",
+          "prompt_context:total_score=22",
+          "prompt_context:source_profile_count=6",
+          "prompt_context:prompt_vocabulary_size=333",
+          "prompt_context:context_vocabulary_size=3"
+        ],
+        "candidate_evidence_features": [
+          "NO_TRAINED_STATE_AVAILABLE",
+          "SEMANTIC_SKILL_SELECTION_PIPELINE_BOUNDARY"
+        ],
+        "code_anchors": {
+          "learnPairDispatch": "43.SmartSkillsDomain/SkillSelectionMachine.cs:462",
+          "promptContextDecision": "43.SmartSkillsDomain/SkillSelectionMachine.cs:719",
+          "promptContextScoring": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1022",
+          "promptContextSelection": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1064",
+          "promptContextStateUpdate": "43.SmartSkillsDomain/SkillSelectionMachine.cs:1820",
+          "skillSelectionDecision": "43.SmartSkillsDomain/SkillSelectionMachine.cs:684",
+          "skillSelectionScoring": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1408",
+          "skillSelectionStateUpdate": "43.SmartSkillsDomain/SkillSelectionMachine.cs:1694",
+          "contracts": "43.SmartSkillsDomain/SkillSelectionContracts.cs:54"
+        },
+        "leakage_flags": {
+          "exact_prompt": false,
+          "source_id": false,
+          "path": false,
+          "filename": false,
+          "pair_id": false,
+          "candidate_order": false
+        }
+      },
+      "likely_missing_learned_unit_signal_state": [
+        {
+          "skill": "output-skepticism",
+          "neededSignalsFromP24": [
+            "result claim",
+            "refuting evidence",
+            "scope validity",
+            "proxy-measure risk",
+            "before reporting"
+          ],
+          "missingUnitOrState": [
+            "PromptContextSkillSelectionUnitState lacks positive prompt/context support strong enough for output-skepticism and negative support against plan-review, verification-before-completion.",
+            "SkillSelectionSkillUnitState lacks final-selection DPO support for output-skepticism; current runtime never reaches it when prompt_context returns a broad baseline decision.",
+            "Candidate checkpoint has no trained SkillSelection state available for this row family."
+          ]
+        }
+      ],
+      "repair_implication": "Next slice must build source-disjoint DPO repair rows and then train/evaluate a candidate checkpoint; P26 itself does not train, mutate checkpoints, or promote."
+    },
+    {
+      "row_id": "P24-SS-HOLDOUT-SELF-VERIFICATION-001",
+      "source_family": "p24_local_skill_doc_self_verification",
+      "expected_skill_ids": [
+        "self-verification"
+      ],
+      "available_skill_ids": [
+        "self-verification",
+        "test-integrity",
+        "output-skepticism",
+        "implementation-integrity"
+      ],
+      "common_selected_skill_ids": [
+        "implementation-integrity",
+        "test-integrity"
+      ],
+      "candidate_selected_skill_ids": [],
+      "common_rejected_skill_ids": [
+        "self-verification",
+        "output-skepticism"
+      ],
+      "candidate_rejected_skill_ids": [
+        "self-verification",
+        "test-integrity",
+        "output-skepticism",
+        "implementation-integrity"
+      ],
+      "common_pass": false,
+      "candidate_pass": false,
+      "common_confidence": 0.95,
+      "candidate_confidence": 0,
+      "observed_mechanism_evidence": {
+        "common_decision_text": "prompt_context selected from the typed PromptContextSkillSelectionUnit; candidate-position scaffold was not used as final authority.",
+        "candidate_decision_text": "No trained SkillSelection state is available.",
+        "common_evidence_features": [
+          "PROMPT_CONTEXT_SKILL_SELECTION_UNIT_EXECUTED",
+          "PROMPT_CONTEXT_BASELINE_COUNTER_ONLY",
+          "SEMANTIC_SKILL_SELECTION_PIPELINE_BOUNDARY",
+          "PROMPT_CONTEXT_CHECKPOINT_SECTION",
+          "prompt_context:semantic_quality_claimed=false",
+          "prompt_context:decision_features=separated_prompt_and_context_feature_weights",
+          "prompt_context:prompt_score=1",
+          "prompt_context:context_score=4",
+          "prompt_context:total_score=9",
+          "prompt_context:source_profile_count=4",
+          "prompt_context:prompt_vocabulary_size=333",
+          "prompt_context:context_vocabulary_size=3"
+        ],
+        "candidate_evidence_features": [
+          "NO_TRAINED_STATE_AVAILABLE",
+          "SEMANTIC_SKILL_SELECTION_PIPELINE_BOUNDARY"
+        ],
+        "code_anchors": {
+          "learnPairDispatch": "43.SmartSkillsDomain/SkillSelectionMachine.cs:462",
+          "promptContextDecision": "43.SmartSkillsDomain/SkillSelectionMachine.cs:719",
+          "promptContextScoring": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1022",
+          "promptContextSelection": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1064",
+          "promptContextStateUpdate": "43.SmartSkillsDomain/SkillSelectionMachine.cs:1820",
+          "skillSelectionDecision": "43.SmartSkillsDomain/SkillSelectionMachine.cs:684",
+          "skillSelectionScoring": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs:1408",
+          "skillSelectionStateUpdate": "43.SmartSkillsDomain/SkillSelectionMachine.cs:1694",
+          "contracts": "43.SmartSkillsDomain/SkillSelectionContracts.cs:54"
+        },
+        "leakage_flags": {
+          "exact_prompt": false,
+          "source_id": false,
+          "path": false,
+          "filename": false,
+          "pair_id": false,
+          "candidate_order": false
+        }
+      },
+      "likely_missing_learned_unit_signal_state": [
+        {
+          "skill": "self-verification",
+          "neededSignalsFromP24": [
+            "verify own changed artifact",
+            "fresh fixtures",
+            "blast-radius classification",
+            "cascade tracing",
+            "prediction matching"
+          ],
+          "missingUnitOrState": [
+            "PromptContextSkillSelectionUnitState lacks positive prompt/context support strong enough for self-verification and negative support against implementation-integrity, test-integrity.",
+            "SkillSelectionSkillUnitState lacks final-selection DPO support for self-verification; current runtime never reaches it when prompt_context returns a broad baseline decision.",
+            "Candidate checkpoint has no trained SkillSelection state available for this row family."
+          ]
+        }
+      ],
+      "repair_implication": "Next slice must build source-disjoint DPO repair rows and then train/evaluate a candidate checkpoint; P26 itself does not train, mutate checkpoints, or promote."
+    }
+  ],
+  "dpo_repair_rows_to_build_next": [
+    {
+      "row_id": "P26-DPO-PROMPT-CONTEXT-E2E-MATRIX",
+      "derived_from_p24_row_id": "P24-SS-HOLDOUT-E2E-MATRIX-001",
+      "derived_from_p25_result_row_id": "P24-SS-HOLDOUT-E2E-MATRIX-001",
+      "source_family": "p24_local_skill_doc_e2e_test_matrix",
+      "source_skill_doc_id": "e2e-test-matrix",
+      "target_training_adapter": "IPromptContextTraining",
+      "selected_skill": "e2e-test-matrix",
+      "rejected_skills": [
+        "test-integrity",
+        "implementation-integrity",
+        "plan-review"
+      ],
+      "available_skill_ids": [
+        "e2e-test-matrix",
+        "test-integrity",
+        "implementation-integrity",
+        "plan-review"
+      ],
+      "prompt_or_task_text_redacted_summary": "Task asks for a scenario matrix covering success, idempotency, delayed behavior, recovery, boundary, and security checks before implementation.",
+      "chosen_behavior": "Select e2e-test-matrix for the P24 redacted summary: Task asks for a scenario matrix covering success, idempotency, delayed behavior, recovery, boundary, and security checks before implementation.",
+      "rejected_behavior": "Do not select the P25 common wrong set [implementation-integrity, plan-review, test-integrity] and do not return the P25 candidate empty selection.",
+      "chosen_decision_rejected_skill_ids": [
+        "test-integrity",
+        "implementation-integrity",
+        "plan-review"
+      ],
+      "rejected_decision_selected_skill_ids": [
+        "implementation-integrity",
+        "plan-review",
+        "test-integrity"
+      ],
+      "universal_only_rationale": "Universal SkillSelection boundary: choose the skill that designs coverage shape before code, not a project-stack execution recipe.",
+      "learned_signal_to_add_next": {
+        "positive_skill": "e2e-test-matrix",
+        "positive_features_from_p24_summary_only": [
+          "scenario matrix",
+          "success",
+          "idempotency",
+          "delayed behavior",
+          "recovery",
+          "boundary",
+          "security checks",
+          "before implementation"
+        ],
+        "negative_skills_from_same_available_set": [
+          "test-integrity",
+          "implementation-integrity",
+          "plan-review"
+        ],
+        "forbidden_features": [
+          "exact prompt",
+          "source id",
+          "path",
+          "filename",
+          "pair id",
+          "candidate position/order"
+        ]
+      },
+      "leakage_controls": {
+        "exactPrompt": false,
+        "sourceId": false,
+        "path": false,
+        "filename": false,
+        "candidateOrder": false,
+        "pairId": false,
+        "exactPromptBlocked": true,
+        "sourceIdBlocked": true,
+        "pathBlocked": true,
+        "filenameBlocked": true,
+        "candidateOrderBlocked": true,
+        "pairIdBlocked": true
+      },
+      "quarantine_rule": "Use only as repair-draft/eval-design until a later authorized slice proves source-family disjointness, writes a dataset card, and keeps this local-private source out of common training unless Luba separately approves redacted reuse.",
+      "source_license_or_local_private_status": "local_private_user_approved_holdout",
+      "common_training_allowed": false,
+      "local_private_holdout_status": "approved_holdout_source_for_failure_analysis_only",
+      "external_ai_or_network_used": false,
+      "training_run_in_p26": false,
+      "checkpoint_mutated_in_p26": false
+    },
+    {
+      "row_id": "P26-DPO-FINAL-SELECTION-E2E-MATRIX",
+      "derived_from_p24_row_id": "P24-SS-HOLDOUT-E2E-MATRIX-001",
+      "derived_from_p25_result_row_id": "P24-SS-HOLDOUT-E2E-MATRIX-001",
+      "source_family": "p24_local_skill_doc_e2e_test_matrix",
+      "source_skill_doc_id": "e2e-test-matrix",
+      "target_training_adapter": "ISkillSelectionTraining",
+      "selected_skill": "e2e-test-matrix",
+      "rejected_skills": [
+        "test-integrity",
+        "implementation-integrity",
+        "plan-review"
+      ],
+      "available_skill_ids": [
+        "e2e-test-matrix",
+        "test-integrity",
+        "implementation-integrity",
+        "plan-review"
+      ],
+      "prompt_or_task_text_redacted_summary": "Task asks for a scenario matrix covering success, idempotency, delayed behavior, recovery, boundary, and security checks before implementation.",
+      "chosen_behavior": "Select e2e-test-matrix for the P24 redacted summary: Task asks for a scenario matrix covering success, idempotency, delayed behavior, recovery, boundary, and security checks before implementation.",
+      "rejected_behavior": "Do not select the P25 common wrong set [implementation-integrity, plan-review, test-integrity] and do not return the P25 candidate empty selection.",
+      "chosen_decision_rejected_skill_ids": [
+        "test-integrity",
+        "implementation-integrity",
+        "plan-review"
+      ],
+      "rejected_decision_selected_skill_ids": [
+        "implementation-integrity",
+        "plan-review",
+        "test-integrity"
+      ],
+      "universal_only_rationale": "Universal SkillSelection boundary: choose the skill that designs coverage shape before code, not a project-stack execution recipe.",
+      "learned_signal_to_add_next": {
+        "positive_skill": "e2e-test-matrix",
+        "positive_features_from_p24_summary_only": [
+          "scenario matrix",
+          "success",
+          "idempotency",
+          "delayed behavior",
+          "recovery",
+          "boundary",
+          "security checks",
+          "before implementation"
+        ],
+        "negative_skills_from_same_available_set": [
+          "test-integrity",
+          "implementation-integrity",
+          "plan-review"
+        ],
+        "forbidden_features": [
+          "exact prompt",
+          "source id",
+          "path",
+          "filename",
+          "pair id",
+          "candidate position/order"
+        ]
+      },
+      "leakage_controls": {
+        "exactPrompt": false,
+        "sourceId": false,
+        "path": false,
+        "filename": false,
+        "candidateOrder": false,
+        "pairId": false,
+        "exactPromptBlocked": true,
+        "sourceIdBlocked": true,
+        "pathBlocked": true,
+        "filenameBlocked": true,
+        "candidateOrderBlocked": true,
+        "pairIdBlocked": true
+      },
+      "quarantine_rule": "Use only as repair-draft/eval-design until a later authorized slice proves source-family disjointness, writes a dataset card, and keeps this local-private source out of common training unless Luba separately approves redacted reuse.",
+      "source_license_or_local_private_status": "local_private_user_approved_holdout",
+      "common_training_allowed": false,
+      "local_private_holdout_status": "approved_holdout_source_for_failure_analysis_only",
+      "external_ai_or_network_used": false,
+      "training_run_in_p26": false,
+      "checkpoint_mutated_in_p26": false
+    },
+    {
+      "row_id": "P26-DPO-PROMPT-CONTEXT-NO-PRODUCT-DECISION",
+      "derived_from_p24_row_id": "P24-SS-HOLDOUT-NO-PRODUCT-DECISION-001",
+      "derived_from_p25_result_row_id": "P24-SS-HOLDOUT-NO-PRODUCT-DECISION-001",
+      "source_family": "p24_local_skill_doc_no_product_decisions",
+      "source_skill_doc_id": "no-product-decisions",
+      "target_training_adapter": "IPromptContextTraining",
+      "selected_skill": "no-product-decisions",
+      "rejected_skills": [
+        "implementation-integrity",
+        "planning-session-startup",
+        "claim-verification"
+      ],
+      "available_skill_ids": [
+        "no-product-decisions",
+        "implementation-integrity",
+        "planning-session-startup",
+        "claim-verification"
+      ],
+      "prompt_or_task_text_redacted_summary": "Task asks the agent to choose between alternatives that change user behavior, public interface shape, or architecture direction.",
+      "chosen_behavior": "Select no-product-decisions for the P24 redacted summary: Task asks the agent to choose between alternatives that change user behavior, public interface shape, or architecture direction.",
+      "rejected_behavior": "Do not select the P25 common wrong set [claim-verification, implementation-integrity, planning-session-startup] and do not return the P25 candidate empty selection.",
+      "chosen_decision_rejected_skill_ids": [
+        "implementation-integrity",
+        "planning-session-startup",
+        "claim-verification"
+      ],
+      "rejected_decision_selected_skill_ids": [
+        "claim-verification",
+        "implementation-integrity",
+        "planning-session-startup"
+      ],
+      "universal_only_rationale": "Universal SkillSelection boundary: identify a decision-approval skill when the task is a product or architecture choice, not stack-specific implementation.",
+      "learned_signal_to_add_next": {
+        "positive_skill": "no-product-decisions",
+        "positive_features_from_p24_summary_only": [
+          "choose between alternatives",
+          "change user behavior",
+          "public interface shape",
+          "architecture direction"
+        ],
+        "negative_skills_from_same_available_set": [
+          "implementation-integrity",
+          "planning-session-startup",
+          "claim-verification"
+        ],
+        "forbidden_features": [
+          "exact prompt",
+          "source id",
+          "path",
+          "filename",
+          "pair id",
+          "candidate position/order"
+        ]
+      },
+      "leakage_controls": {
+        "exactPrompt": false,
+        "sourceId": false,
+        "path": false,
+        "filename": false,
+        "candidateOrder": false,
+        "pairId": false,
+        "exactPromptBlocked": true,
+        "sourceIdBlocked": true,
+        "pathBlocked": true,
+        "filenameBlocked": true,
+        "candidateOrderBlocked": true,
+        "pairIdBlocked": true
+      },
+      "quarantine_rule": "Use only as repair-draft/eval-design until a later authorized slice proves source-family disjointness, writes a dataset card, and keeps this local-private source out of common training unless Luba separately approves redacted reuse.",
+      "source_license_or_local_private_status": "local_private_user_approved_holdout",
+      "common_training_allowed": false,
+      "local_private_holdout_status": "approved_holdout_source_for_failure_analysis_only",
+      "external_ai_or_network_used": false,
+      "training_run_in_p26": false,
+      "checkpoint_mutated_in_p26": false
+    },
+    {
+      "row_id": "P26-DPO-FINAL-SELECTION-NO-PRODUCT-DECISION",
+      "derived_from_p24_row_id": "P24-SS-HOLDOUT-NO-PRODUCT-DECISION-001",
+      "derived_from_p25_result_row_id": "P24-SS-HOLDOUT-NO-PRODUCT-DECISION-001",
+      "source_family": "p24_local_skill_doc_no_product_decisions",
+      "source_skill_doc_id": "no-product-decisions",
+      "target_training_adapter": "ISkillSelectionTraining",
+      "selected_skill": "no-product-decisions",
+      "rejected_skills": [
+        "implementation-integrity",
+        "planning-session-startup",
+        "claim-verification"
+      ],
+      "available_skill_ids": [
+        "no-product-decisions",
+        "implementation-integrity",
+        "planning-session-startup",
+        "claim-verification"
+      ],
+      "prompt_or_task_text_redacted_summary": "Task asks the agent to choose between alternatives that change user behavior, public interface shape, or architecture direction.",
+      "chosen_behavior": "Select no-product-decisions for the P24 redacted summary: Task asks the agent to choose between alternatives that change user behavior, public interface shape, or architecture direction.",
+      "rejected_behavior": "Do not select the P25 common wrong set [claim-verification, implementation-integrity, planning-session-startup] and do not return the P25 candidate empty selection.",
+      "chosen_decision_rejected_skill_ids": [
+        "implementation-integrity",
+        "planning-session-startup",
+        "claim-verification"
+      ],
+      "rejected_decision_selected_skill_ids": [
+        "claim-verification",
+        "implementation-integrity",
+        "planning-session-startup"
+      ],
+      "universal_only_rationale": "Universal SkillSelection boundary: identify a decision-approval skill when the task is a product or architecture choice, not stack-specific implementation.",
+      "learned_signal_to_add_next": {
+        "positive_skill": "no-product-decisions",
+        "positive_features_from_p24_summary_only": [
+          "choose between alternatives",
+          "change user behavior",
+          "public interface shape",
+          "architecture direction"
+        ],
+        "negative_skills_from_same_available_set": [
+          "implementation-integrity",
+          "planning-session-startup",
+          "claim-verification"
+        ],
+        "forbidden_features": [
+          "exact prompt",
+          "source id",
+          "path",
+          "filename",
+          "pair id",
+          "candidate position/order"
+        ]
+      },
+      "leakage_controls": {
+        "exactPrompt": false,
+        "sourceId": false,
+        "path": false,
+        "filename": false,
+        "candidateOrder": false,
+        "pairId": false,
+        "exactPromptBlocked": true,
+        "sourceIdBlocked": true,
+        "pathBlocked": true,
+        "filenameBlocked": true,
+        "candidateOrderBlocked": true,
+        "pairIdBlocked": true
+      },
+      "quarantine_rule": "Use only as repair-draft/eval-design until a later authorized slice proves source-family disjointness, writes a dataset card, and keeps this local-private source out of common training unless Luba separately approves redacted reuse.",
+      "source_license_or_local_private_status": "local_private_user_approved_holdout",
+      "common_training_allowed": false,
+      "local_private_holdout_status": "approved_holdout_source_for_failure_analysis_only",
+      "external_ai_or_network_used": false,
+      "training_run_in_p26": false,
+      "checkpoint_mutated_in_p26": false
+    },
+    {
+      "row_id": "P26-DPO-PROMPT-CONTEXT-OUTPUT-SKEPTICISM",
+      "derived_from_p24_row_id": "P24-SS-HOLDOUT-OUTPUT-SKEPTICISM-001",
+      "derived_from_p25_result_row_id": "P24-SS-HOLDOUT-OUTPUT-SKEPTICISM-001",
+      "source_family": "p24_local_skill_doc_output_skepticism",
+      "source_skill_doc_id": "output-skepticism",
+      "target_training_adapter": "IPromptContextTraining",
+      "selected_skill": "output-skepticism",
+      "rejected_skills": [
+        "phase-completion-packager",
+        "verification-before-completion",
+        "plan-review"
+      ],
+      "available_skill_ids": [
+        "output-skepticism",
+        "phase-completion-packager",
+        "verification-before-completion",
+        "plan-review"
+      ],
+      "prompt_or_task_text_redacted_summary": "Task asks for a result claim to be checked against refuting evidence, scope validity, and proxy-measure risk before reporting.",
+      "chosen_behavior": "Select output-skepticism for the P24 redacted summary: Task asks for a result claim to be checked against refuting evidence, scope validity, and proxy-measure risk before reporting.",
+      "rejected_behavior": "Do not select the P25 common wrong set [plan-review, verification-before-completion] and do not return the P25 candidate empty selection.",
+      "chosen_decision_rejected_skill_ids": [
+        "phase-completion-packager",
+        "verification-before-completion",
+        "plan-review"
+      ],
+      "rejected_decision_selected_skill_ids": [
+        "plan-review",
+        "verification-before-completion"
+      ],
+      "universal_only_rationale": "Universal SkillSelection boundary: choose the skill that validates whether evidence supports a claim, independent of the repository stack.",
+      "learned_signal_to_add_next": {
+        "positive_skill": "output-skepticism",
+        "positive_features_from_p24_summary_only": [
+          "result claim",
+          "refuting evidence",
+          "scope validity",
+          "proxy-measure risk",
+          "before reporting"
+        ],
+        "negative_skills_from_same_available_set": [
+          "phase-completion-packager",
+          "verification-before-completion",
+          "plan-review"
+        ],
+        "forbidden_features": [
+          "exact prompt",
+          "source id",
+          "path",
+          "filename",
+          "pair id",
+          "candidate position/order"
+        ]
+      },
+      "leakage_controls": {
+        "exactPrompt": false,
+        "sourceId": false,
+        "path": false,
+        "filename": false,
+        "candidateOrder": false,
+        "pairId": false,
+        "exactPromptBlocked": true,
+        "sourceIdBlocked": true,
+        "pathBlocked": true,
+        "filenameBlocked": true,
+        "candidateOrderBlocked": true,
+        "pairIdBlocked": true
+      },
+      "quarantine_rule": "Use only as repair-draft/eval-design until a later authorized slice proves source-family disjointness, writes a dataset card, and keeps this local-private source out of common training unless Luba separately approves redacted reuse.",
+      "source_license_or_local_private_status": "local_private_user_approved_holdout",
+      "common_training_allowed": false,
+      "local_private_holdout_status": "approved_holdout_source_for_failure_analysis_only",
+      "external_ai_or_network_used": false,
+      "training_run_in_p26": false,
+      "checkpoint_mutated_in_p26": false
+    },
+    {
+      "row_id": "P26-DPO-FINAL-SELECTION-OUTPUT-SKEPTICISM",
+      "derived_from_p24_row_id": "P24-SS-HOLDOUT-OUTPUT-SKEPTICISM-001",
+      "derived_from_p25_result_row_id": "P24-SS-HOLDOUT-OUTPUT-SKEPTICISM-001",
+      "source_family": "p24_local_skill_doc_output_skepticism",
+      "source_skill_doc_id": "output-skepticism",
+      "target_training_adapter": "ISkillSelectionTraining",
+      "selected_skill": "output-skepticism",
+      "rejected_skills": [
+        "phase-completion-packager",
+        "verification-before-completion",
+        "plan-review"
+      ],
+      "available_skill_ids": [
+        "output-skepticism",
+        "phase-completion-packager",
+        "verification-before-completion",
+        "plan-review"
+      ],
+      "prompt_or_task_text_redacted_summary": "Task asks for a result claim to be checked against refuting evidence, scope validity, and proxy-measure risk before reporting.",
+      "chosen_behavior": "Select output-skepticism for the P24 redacted summary: Task asks for a result claim to be checked against refuting evidence, scope validity, and proxy-measure risk before reporting.",
+      "rejected_behavior": "Do not select the P25 common wrong set [plan-review, verification-before-completion] and do not return the P25 candidate empty selection.",
+      "chosen_decision_rejected_skill_ids": [
+        "phase-completion-packager",
+        "verification-before-completion",
+        "plan-review"
+      ],
+      "rejected_decision_selected_skill_ids": [
+        "plan-review",
+        "verification-before-completion"
+      ],
+      "universal_only_rationale": "Universal SkillSelection boundary: choose the skill that validates whether evidence supports a claim, independent of the repository stack.",
+      "learned_signal_to_add_next": {
+        "positive_skill": "output-skepticism",
+        "positive_features_from_p24_summary_only": [
+          "result claim",
+          "refuting evidence",
+          "scope validity",
+          "proxy-measure risk",
+          "before reporting"
+        ],
+        "negative_skills_from_same_available_set": [
+          "phase-completion-packager",
+          "verification-before-completion",
+          "plan-review"
+        ],
+        "forbidden_features": [
+          "exact prompt",
+          "source id",
+          "path",
+          "filename",
+          "pair id",
+          "candidate position/order"
+        ]
+      },
+      "leakage_controls": {
+        "exactPrompt": false,
+        "sourceId": false,
+        "path": false,
+        "filename": false,
+        "candidateOrder": false,
+        "pairId": false,
+        "exactPromptBlocked": true,
+        "sourceIdBlocked": true,
+        "pathBlocked": true,
+        "filenameBlocked": true,
+        "candidateOrderBlocked": true,
+        "pairIdBlocked": true
+      },
+      "quarantine_rule": "Use only as repair-draft/eval-design until a later authorized slice proves source-family disjointness, writes a dataset card, and keeps this local-private source out of common training unless Luba separately approves redacted reuse.",
+      "source_license_or_local_private_status": "local_private_user_approved_holdout",
+      "common_training_allowed": false,
+      "local_private_holdout_status": "approved_holdout_source_for_failure_analysis_only",
+      "external_ai_or_network_used": false,
+      "training_run_in_p26": false,
+      "checkpoint_mutated_in_p26": false
+    },
+    {
+      "row_id": "P26-DPO-PROMPT-CONTEXT-SELF-VERIFICATION",
+      "derived_from_p24_row_id": "P24-SS-HOLDOUT-SELF-VERIFICATION-001",
+      "derived_from_p25_result_row_id": "P24-SS-HOLDOUT-SELF-VERIFICATION-001",
+      "source_family": "p24_local_skill_doc_self_verification",
+      "source_skill_doc_id": "self-verification",
+      "target_training_adapter": "IPromptContextTraining",
+      "selected_skill": "self-verification",
+      "rejected_skills": [
+        "test-integrity",
+        "output-skepticism",
+        "implementation-integrity"
+      ],
+      "available_skill_ids": [
+        "self-verification",
+        "test-integrity",
+        "output-skepticism",
+        "implementation-integrity"
+      ],
+      "prompt_or_task_text_redacted_summary": "Task asks the implementer to verify its own changed artifact with fresh fixtures, blast-radius classification, cascade tracing, and prediction matching.",
+      "chosen_behavior": "Select self-verification for the P24 redacted summary: Task asks the implementer to verify its own changed artifact with fresh fixtures, blast-radius classification, cascade tracing, and prediction matching.",
+      "rejected_behavior": "Do not select the P25 common wrong set [implementation-integrity, test-integrity] and do not return the P25 candidate empty selection.",
+      "chosen_decision_rejected_skill_ids": [
+        "test-integrity",
+        "output-skepticism",
+        "implementation-integrity"
+      ],
+      "rejected_decision_selected_skill_ids": [
+        "implementation-integrity",
+        "test-integrity"
+      ],
+      "universal_only_rationale": "Universal SkillSelection boundary: select a self-check skill for post-change verification behavior, not a project-stack command path.",
+      "learned_signal_to_add_next": {
+        "positive_skill": "self-verification",
+        "positive_features_from_p24_summary_only": [
+          "verify own changed artifact",
+          "fresh fixtures",
+          "blast-radius classification",
+          "cascade tracing",
+          "prediction matching"
+        ],
+        "negative_skills_from_same_available_set": [
+          "test-integrity",
+          "output-skepticism",
+          "implementation-integrity"
+        ],
+        "forbidden_features": [
+          "exact prompt",
+          "source id",
+          "path",
+          "filename",
+          "pair id",
+          "candidate position/order"
+        ]
+      },
+      "leakage_controls": {
+        "exactPrompt": false,
+        "sourceId": false,
+        "path": false,
+        "filename": false,
+        "candidateOrder": false,
+        "pairId": false,
+        "exactPromptBlocked": true,
+        "sourceIdBlocked": true,
+        "pathBlocked": true,
+        "filenameBlocked": true,
+        "candidateOrderBlocked": true,
+        "pairIdBlocked": true
+      },
+      "quarantine_rule": "Use only as repair-draft/eval-design until a later authorized slice proves source-family disjointness, writes a dataset card, and keeps this local-private source out of common training unless Luba separately approves redacted reuse.",
+      "source_license_or_local_private_status": "local_private_user_approved_holdout",
+      "common_training_allowed": false,
+      "local_private_holdout_status": "approved_holdout_source_for_failure_analysis_only",
+      "external_ai_or_network_used": false,
+      "training_run_in_p26": false,
+      "checkpoint_mutated_in_p26": false
+    },
+    {
+      "row_id": "P26-DPO-FINAL-SELECTION-SELF-VERIFICATION",
+      "derived_from_p24_row_id": "P24-SS-HOLDOUT-SELF-VERIFICATION-001",
+      "derived_from_p25_result_row_id": "P24-SS-HOLDOUT-SELF-VERIFICATION-001",
+      "source_family": "p24_local_skill_doc_self_verification",
+      "source_skill_doc_id": "self-verification",
+      "target_training_adapter": "ISkillSelectionTraining",
+      "selected_skill": "self-verification",
+      "rejected_skills": [
+        "test-integrity",
+        "output-skepticism",
+        "implementation-integrity"
+      ],
+      "available_skill_ids": [
+        "self-verification",
+        "test-integrity",
+        "output-skepticism",
+        "implementation-integrity"
+      ],
+      "prompt_or_task_text_redacted_summary": "Task asks the implementer to verify its own changed artifact with fresh fixtures, blast-radius classification, cascade tracing, and prediction matching.",
+      "chosen_behavior": "Select self-verification for the P24 redacted summary: Task asks the implementer to verify its own changed artifact with fresh fixtures, blast-radius classification, cascade tracing, and prediction matching.",
+      "rejected_behavior": "Do not select the P25 common wrong set [implementation-integrity, test-integrity] and do not return the P25 candidate empty selection.",
+      "chosen_decision_rejected_skill_ids": [
+        "test-integrity",
+        "output-skepticism",
+        "implementation-integrity"
+      ],
+      "rejected_decision_selected_skill_ids": [
+        "implementation-integrity",
+        "test-integrity"
+      ],
+      "universal_only_rationale": "Universal SkillSelection boundary: select a self-check skill for post-change verification behavior, not a project-stack command path.",
+      "learned_signal_to_add_next": {
+        "positive_skill": "self-verification",
+        "positive_features_from_p24_summary_only": [
+          "verify own changed artifact",
+          "fresh fixtures",
+          "blast-radius classification",
+          "cascade tracing",
+          "prediction matching"
+        ],
+        "negative_skills_from_same_available_set": [
+          "test-integrity",
+          "output-skepticism",
+          "implementation-integrity"
+        ],
+        "forbidden_features": [
+          "exact prompt",
+          "source id",
+          "path",
+          "filename",
+          "pair id",
+          "candidate position/order"
+        ]
+      },
+      "leakage_controls": {
+        "exactPrompt": false,
+        "sourceId": false,
+        "path": false,
+        "filename": false,
+        "candidateOrder": false,
+        "pairId": false,
+        "exactPromptBlocked": true,
+        "sourceIdBlocked": true,
+        "pathBlocked": true,
+        "filenameBlocked": true,
+        "candidateOrderBlocked": true,
+        "pairIdBlocked": true
+      },
+      "quarantine_rule": "Use only as repair-draft/eval-design until a later authorized slice proves source-family disjointness, writes a dataset card, and keeps this local-private source out of common training unless Luba separately approves redacted reuse.",
+      "source_license_or_local_private_status": "local_private_user_approved_holdout",
+      "common_training_allowed": false,
+      "local_private_holdout_status": "approved_holdout_source_for_failure_analysis_only",
+      "external_ai_or_network_used": false,
+      "training_run_in_p26": false,
+      "checkpoint_mutated_in_p26": false
+    }
+  ],
+  "trainable_unit_repair_design": [
+    {
+      "expected_skill": "e2e-test-matrix",
+      "failed_row_id": "P24-SS-HOLDOUT-E2E-MATRIX-001",
+      "current_wrong_common_selection": [
+        "implementation-integrity",
+        "plan-review",
+        "test-integrity"
+      ],
+      "needed_ilogical_units_or_state_updates": [
+        {
+          "unit": "PromptContextSkillSelectionUnit",
+          "state_record": "PromptContextSkillSelectionUnitState",
+          "update": "Add positive prompt/context weights for e2e-test-matrix using only P24 redacted summary features and add negative weights for test-integrity, implementation-integrity, plan-review.",
+          "reason": "P25 common returned from prompt_context before later units could decide; this unit must stop over-selecting broad generic skills."
+        },
+        {
+          "unit": "SkillSelectionSkillUnit",
+          "state_record": "SkillSelectionSkillUnitState",
+          "update": "Add final-selection support for e2e-test-matrix with KNN memory examples from the same redacted P24 meaning, not exact prompt/source replay.",
+          "reason": "A final semantic skill selector must be able to pick the specific skill when candidate skills are semantically close."
+        },
+        {
+          "unit": "SkillSelectionMachine runtime decision path",
+          "state_record": "decision arbitration rule, future code change only",
+          "update": "Later code should require prompt_context to abstain or defer when its selected set excludes a high-support exact final-selection skill, and must report this as arbitration evidence rather than promotion evidence.",
+          "reason": "P25 shows prompt_context broad baseline can mask the more specific skill-selection unit because it is evaluated earlier."
+        }
+      ],
+      "p24_features_to_teach": [
+        "scenario matrix",
+        "success",
+        "idempotency",
+        "delayed behavior",
+        "recovery",
+        "boundary",
+        "security checks",
+        "before implementation"
+      ],
+      "leakage_and_quarantine": "No exact prompt hash, source family id, source path, filename, pair id, or candidate order may become a feature. Local-private P24 rows remain held-out/evidence unless later redacted training use is explicitly approved."
+    },
+    {
+      "expected_skill": "no-product-decisions",
+      "failed_row_id": "P24-SS-HOLDOUT-NO-PRODUCT-DECISION-001",
+      "current_wrong_common_selection": [
+        "claim-verification",
+        "implementation-integrity",
+        "planning-session-startup"
+      ],
+      "needed_ilogical_units_or_state_updates": [
+        {
+          "unit": "PromptContextSkillSelectionUnit",
+          "state_record": "PromptContextSkillSelectionUnitState",
+          "update": "Add positive prompt/context weights for no-product-decisions using only P24 redacted summary features and add negative weights for implementation-integrity, planning-session-startup, claim-verification.",
+          "reason": "P25 common returned from prompt_context before later units could decide; this unit must stop over-selecting broad generic skills."
+        },
+        {
+          "unit": "SkillSelectionSkillUnit",
+          "state_record": "SkillSelectionSkillUnitState",
+          "update": "Add final-selection support for no-product-decisions with KNN memory examples from the same redacted P24 meaning, not exact prompt/source replay.",
+          "reason": "A final semantic skill selector must be able to pick the specific skill when candidate skills are semantically close."
+        },
+        {
+          "unit": "SkillSelectionMachine runtime decision path",
+          "state_record": "decision arbitration rule, future code change only",
+          "update": "Later code should require prompt_context to abstain or defer when its selected set excludes a high-support exact final-selection skill, and must report this as arbitration evidence rather than promotion evidence.",
+          "reason": "P25 shows prompt_context broad baseline can mask the more specific skill-selection unit because it is evaluated earlier."
+        }
+      ],
+      "p24_features_to_teach": [
+        "choose between alternatives",
+        "change user behavior",
+        "public interface shape",
+        "architecture direction"
+      ],
+      "leakage_and_quarantine": "No exact prompt hash, source family id, source path, filename, pair id, or candidate order may become a feature. Local-private P24 rows remain held-out/evidence unless later redacted training use is explicitly approved."
+    },
+    {
+      "expected_skill": "output-skepticism",
+      "failed_row_id": "P24-SS-HOLDOUT-OUTPUT-SKEPTICISM-001",
+      "current_wrong_common_selection": [
+        "plan-review",
+        "verification-before-completion"
+      ],
+      "needed_ilogical_units_or_state_updates": [
+        {
+          "unit": "PromptContextSkillSelectionUnit",
+          "state_record": "PromptContextSkillSelectionUnitState",
+          "update": "Add positive prompt/context weights for output-skepticism using only P24 redacted summary features and add negative weights for phase-completion-packager, verification-before-completion, plan-review.",
+          "reason": "P25 common returned from prompt_context before later units could decide; this unit must stop over-selecting broad generic skills."
+        },
+        {
+          "unit": "SkillSelectionSkillUnit",
+          "state_record": "SkillSelectionSkillUnitState",
+          "update": "Add final-selection support for output-skepticism with KNN memory examples from the same redacted P24 meaning, not exact prompt/source replay.",
+          "reason": "A final semantic skill selector must be able to pick the specific skill when candidate skills are semantically close."
+        },
+        {
+          "unit": "SkillSelectionMachine runtime decision path",
+          "state_record": "decision arbitration rule, future code change only",
+          "update": "Later code should require prompt_context to abstain or defer when its selected set excludes a high-support exact final-selection skill, and must report this as arbitration evidence rather than promotion evidence.",
+          "reason": "P25 shows prompt_context broad baseline can mask the more specific skill-selection unit because it is evaluated earlier."
+        }
+      ],
+      "p24_features_to_teach": [
+        "result claim",
+        "refuting evidence",
+        "scope validity",
+        "proxy-measure risk",
+        "before reporting"
+      ],
+      "leakage_and_quarantine": "No exact prompt hash, source family id, source path, filename, pair id, or candidate order may become a feature. Local-private P24 rows remain held-out/evidence unless later redacted training use is explicitly approved."
+    },
+    {
+      "expected_skill": "self-verification",
+      "failed_row_id": "P24-SS-HOLDOUT-SELF-VERIFICATION-001",
+      "current_wrong_common_selection": [
+        "implementation-integrity",
+        "test-integrity"
+      ],
+      "needed_ilogical_units_or_state_updates": [
+        {
+          "unit": "PromptContextSkillSelectionUnit",
+          "state_record": "PromptContextSkillSelectionUnitState",
+          "update": "Add positive prompt/context weights for self-verification using only P24 redacted summary features and add negative weights for test-integrity, output-skepticism, implementation-integrity.",
+          "reason": "P25 common returned from prompt_context before later units could decide; this unit must stop over-selecting broad generic skills."
+        },
+        {
+          "unit": "SkillSelectionSkillUnit",
+          "state_record": "SkillSelectionSkillUnitState",
+          "update": "Add final-selection support for self-verification with KNN memory examples from the same redacted P24 meaning, not exact prompt/source replay.",
+          "reason": "A final semantic skill selector must be able to pick the specific skill when candidate skills are semantically close."
+        },
+        {
+          "unit": "SkillSelectionMachine runtime decision path",
+          "state_record": "decision arbitration rule, future code change only",
+          "update": "Later code should require prompt_context to abstain or defer when its selected set excludes a high-support exact final-selection skill, and must report this as arbitration evidence rather than promotion evidence.",
+          "reason": "P25 shows prompt_context broad baseline can mask the more specific skill-selection unit because it is evaluated earlier."
+        }
+      ],
+      "p24_features_to_teach": [
+        "verify own changed artifact",
+        "fresh fixtures",
+        "blast-radius classification",
+        "cascade tracing",
+        "prediction matching"
+      ],
+      "leakage_and_quarantine": "No exact prompt hash, source family id, source path, filename, pair id, or candidate order may become a feature. Local-private P24 rows remain held-out/evidence unless later redacted training use is explicitly approved."
+    }
+  ],
+  "eval_plan": {
+    "source_disjoint_split": "Build train/dev/holdout so P24 source families remain held out or become quarantined repair examples only after explicit approval; any future train rows must have source_family and pair_id disjointness against evaluation rows and prior checkpoints.",
+    "ablations": [
+      "no trained state must return RequiresSecondPass=true and no selected skills",
+      "candidate-order permutation must keep selected_skill stable",
+      "exact prompt/source id/path/filename/pair id removed must not change a correct decision",
+      "prompt_context-only ablation must not over-select broad generic skills on P24 near-miss rows",
+      "final-selection-only ablation must select the exact expected skill on each repaired row",
+      "wrong rejected-skill ablation must fail when only generic implementation/test/plan signals are present"
+    ],
+    "lifecycle": [
+      "fresh-load probe: export candidate checkpoint, import into a new SkillSelectionMachine, rerun P24/P26 eval without in-memory training leftovers",
+      "continue-training probe: load existing candidate checkpoint first, append bounded repair rows, prove old accepted rows are not forgotten",
+      "export/import manifest: manifest, checkpoint, locator, source manifest and training-data card must reference exact hashes and no semantic_quality_claimed until all gates pass"
+    ],
+    "runtime_api_dashboard_evidence": [
+      "runtime API evidence must call SkillSelectionMachine.DecideFromTrainedState through the same boundary used in P25",
+      "dashboard/API row may show visible selected skill, rejected skills, evidence features, and no-overclaim flags, but dashboard evidence is not semantic-quality proof by itself",
+      "before any readiness claim, report must include source-disjoint runtime pass, ablation pass, fresh-load pass, continue-training pass, export/import pass, and unchanged common model until promotion is separately authorized"
+    ],
+    "no_candidate_position_or_order_leakage": "Every eval row must be rerun with at least two candidate order permutations; selected_skill must remain the same and evidence must show candidate-position scaffold was not final authority."
+  },
+  "next_bounded_executor_slice": {
+    "requested_artifact_type": "authorized future training/eval slice, not authorized by P26 itself",
+    "steps": [
+      "materialize reviewed repair dataset card from P26 draft rows",
+      "verify local-private/common-training license boundary and quarantine status",
+      "train candidate checkpoint only if fresh Luba/parent authorization permits training",
+      "run source-disjoint eval, ablations, fresh-load, continue-training, export/import and runtime API evidence",
+      "keep promotion/common replacement blocked until a separate parent gate accepts all evidence"
+    ]
+  }
+}

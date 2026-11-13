@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "report_id": "q5-04-skill-selection-candidate-position-ablation-review-rerun",
+  "work_order_id": "Q5-04_RERUN_REVIEW_AFTER_MODEL_BEHAVIOR_REPAIR",
+  "branch": "codex/chat-gpt-5.5",
+  "created_at_utc": "2026-06-10T20:10:00Z",
+  "status": "FAIL_HELDOUT_LEAKAGE",
+  "pass": false,
+  "semantic_quality_claimed": false,
+  "training_started_by_this_review": false,
+  "model_files_mutated_by_this_review": false,
+  "host_runtime_claimed": false,
+  "dashboard_api_work_run": false,
+  "external_ai_used": false,
+  "q6_q7_q8_work_run": false,
+  "staged_committed_pushed": false,
+  "review_scope": "Independent Q5-04 rerun review after Q5-04R model behavior repair, limited to report/state artifacts and local JSON/JSONL/hash/code-diff checks.",
+  "verdict": {
+    "result": "FAIL",
+    "can_advance_to_q5_05": false,
+    "primary_reason": "Q5-04R supplemental training rows exactly duplicate Q5-02 held-out prompts, candidate order, expected selected sets, and expected rejected sets for 12/12 held-out rows while marked training_eligible=true. The executable probe PASS is therefore contaminated by held-out answer leakage and cannot close Q5-04.",
+    "reason_codes": [
+      "Q5_04R_SUPPLEMENTAL_ROWS_EMBED_HELDOUT_EXPECTED_ANSWERS",
+      "Q5_04_EXECUTABLE_PROBE_CONTAMINATED_BY_TRAIN_EVAL_LEAKAGE",
+      "Q5_05_BLOCKED_UNTIL_SOURCE_DISJOINT_Q5_04_REPAIR"
+    ]
+  },
+  "mandatory_check_results": {
+    "executable_probe_report": {
+      "status": "PASS_AS_REPORTED_BUT_NOT_ACCEPTED_AS_Q5_04_PASS",
+      "exact_model_matches": "24/24",
+      "expected_rejected_present": "24/24",
+      "permutation_stable_rows": "12/12",
+      "first_position_baseline_exact_matches": "0/24",
+      "checkpoint_position_baseline_exact_matches": "0/24",
+      "no_over_select_all": true,
+      "semantic_quality_claimed": false,
+      "reviewer_interpretation": "The probe proves the current checkpoint reproduces the Q5-02 expected labels, but those labels were added to training in Q5-04R, so this cannot prove candidate-position ablation readiness."
+    },
+    "production_code_review": {
+      "status": "PASS_NARROW_CODE_CHANGE_WITH_LEAKAGE_BLOCKING_ACCEPTANCE",
+      "changed_file": "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+      "diff_summary": "PromptContext aggregation changed from one top skill to a learned score-floor selected set with top-score fallback.",
+      "candidate_position_final_authority_found": false,
+      "hardcoded_heldout_ids_or_expected_labels_in_production_code": false,
+      "candidate_position_fallback_behavior": "Fallback still emits CandidatePositionScaffoldEvidence, selected skills empty, confidence 0.0, RequiresSecondPass=true.",
+      "code_review_note": "The code change is narrow and not candidate-order based, but the model behavior evidence is invalid until the training/evaluation split is repaired."
+    },
+    "supplemental_training_rows_review": {
+      "status": "FAIL",
+      "path": "training-data/smart-skills/semantic-quality/skill-selection-training-v1/skill-selection-q5-04r-semantic-training.jsonl",
+      "supplemental_rows": 12,
+      "heldout_rows": 12,
+      "exact_prompt_candidate_chosen_rejected_overlap": "12/12",
+      "training_eligible_rows_with_overlap": "12/12",
+      "raw_private_text_copied": false,
+      "technical_execution_refs_excluded": true,
+      "source_skill_ref_points_to_heldout_jsonl": true,
+      "finding": "The rows do not copy raw private text, but they do embed held-out expected answers and are marked eligible for training."
+    },
+    "model_hash_review": {
+      "status": "PASS",
+      "checkpoint_sha256": "b8a43af49b32302f6c4cbfb3259ee2bafdeeb83abe6adc2d242717f54ca7c905",
+      "manifest_sha256": "ed0950141a1408cf1b3fef19e8f1bf1d8afae8846cdcaebc13f24a3369a368b6",
+      "corpus_snapshot_sha256": "b18e1c3c94f78267da93c67bc986509566709f281c4fda02fc544250dca5cf01",
+      "supplemental_rows_sha256": "ba6d66bd6efc537a9f610d961ff3a59e49908af1a31b5d5d7e48542e6ea78645",
+      "manifest_index_repair_report_hashes_consistent": true
+    },
+    "candidate_position_baseline_review": {
+      "status": "PASS_AS_CONTROL_ONLY",
+      "first_position_baseline_exact_matches": "0/24",
+      "checkpoint_position_baseline_exact_matches": "0/24",
+      "candidate_position_baseline_degraded": true,
+      "reviewer_interpretation": "The baseline remains degraded, but the model-vs-baseline win is not admissible because the model trained on the held-out labels."
+    },
+    "overclaim_review": {
+      "semantic_quality_claimed": false,
+      "host_runtime_claimed": false,
+      "dashboard_api_work_run": false,
+      "q6_q7_q8_work_run": false,
+      "status": "PASS"
+    }
+  },
+  "findings": [
+    {
+      "id": "Q5-04-RERUN-F001",
+      "severity": "BLOCKER",
+      "title": "Q5-04R trained on the Q5-02 held-out answer key",
+      "evidence": "PowerShell JSONL comparison found 12/12 Q5-04R supplemental rows with same prompt, same candidate order, same chosen set, and same rejected set as Q5-02 held-out rows. Each matching supplemental row is training_eligible=true.",
+      "impact": "The 24/24 executable probe result can be explained by training/evaluation leakage, so Q5-04 cannot prove candidate-position ablation readiness.",
+      "required_repair": "Remove Q5-02 held-out answer-key rows from eligible training, create source-disjoint supplemental semantic training rows that do not reuse held-out prompt/candidate/expected labels, regenerate the SkillSelection checkpoint/manifest/index from the repaired corpus, rerun the executable Q5-04 probe on Q5-02 held-out rows, and rerun this review."
+    }
+  ],
+  "evidence_refs": {
+    "q5_02_heldout_jsonl": "training-data/smart-skills/semantic-quality/skill-selection-heldout-v1/skill-selection-heldout.jsonl",
+    "q5_04r_supplemental_rows": "training-data/smart-skills/semantic-quality/skill-selection-training-v1/skill-selection-q5-04r-semantic-training.jsonl",
+    "q5_04r_repair_report": "artifacts/smart-skills-quality-uplift/q5/skill-selection-model-behavior-repair-report.json",
+    "q5_04_executable_probe_report": "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-executable-probe-report.json",
+    "q5_04_previous_ablation_review": "artifacts/smart-skills-quality-uplift/q5/skill-selection-candidate-position-ablation-review.json",
+    "production_code": "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+    "model_manifest": "models/skill-selection/skill-selection-v1/manifest.json",
+    "model_checkpoint": "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json",
+    "model_index": "models/index.json"
+  },
+  "commands_run": [
+    "git branch --show-current",
+    "git status --short",
+    "git diff -- 43.SmartSkillsDomain/SkillSelectionMachine.cs",
+    "PowerShell JSONL comparison between Q5-02 held-out rows and Q5-04R supplemental training rows",
+    "PowerShell SHA256 consistency checks for checkpoint, manifest, model index, corpus snapshot, and supplemental rows",
+    "rg hardcoded held-out ids/expected-label terms in SkillSelection production code",
+    "git diff --check"
+  ],
+  "forbidden_actions_not_run": [
+    "branch checkout",
+    "branch creation",
+    "staging",
+    "commit",
+    "push",
+    "external AI/tools",
+    "host/plugin/runtime work",
+    "dashboard/API work",
+    "Q6/Q7/Q8 work",
+    "broad dotnet test",
+    "broad dotnet build",
+    "training or model mutation by this review"
+  ],
+  "verification_results": {
+    "json_parse_after_write": "PASS",
+    "state_json_parse_after_write": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "exact_next_action": "Q5-04R_LEAKAGE_REPAIR: replace or mark ineligible the 12 Q5-04R supplemental rows that duplicate Q5-02 held-out prompt/candidate/chosen/rejected labels, regenerate SkillSelection model assets from a source-disjoint training corpus, rerun the focused Q5-04 executable probe on unchanged Q5-02 held-out rows, then rerun Q5-04 review. Q5-05 must not start until that review passes."
+}

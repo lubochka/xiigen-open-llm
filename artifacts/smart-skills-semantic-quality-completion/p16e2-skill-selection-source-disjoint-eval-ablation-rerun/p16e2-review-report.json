@@ -1,0 +1,85 @@
+{
+  "phase": "P16E2_SKILL_SELECTION_SOURCE_DISJOINT_EVAL_ABLATION_RERUN",
+  "verdict": "PASS_CANDIDATE_WITH_GAPS_READY_FOR_PARENT_REVIEW",
+  "summary_ru": "P16E2 показывает существенное улучшение после P16D2: 10 из 12 eval/holdout строк имеют ожидаемый профиль в правильном блоке checkpoint candidate. Две строки candidate-position остаются gap, потому что этот блок является только диагностическим guard и не выбирает навык.",
+  "comparison": {
+    "phase": "P16E2_SKILL_SELECTION_SOURCE_DISJOINT_EVAL_ABLATION_RERUN",
+    "baseline_phase": "P16E_SKILL_SELECTION_SOURCE_DISJOINT_EVAL_ABLATION",
+    "baseline_counts": {
+      "eval_pass": 0,
+      "eval_fail": 8,
+      "eval_gap": 4,
+      "ablation_controls_total": 72,
+      "ablation_shortcut_leaks": 0
+    },
+    "p16e2_counts": {
+      "eval_pass": 10,
+      "eval_fail": 0,
+      "eval_gap": 2,
+      "ablation_controls_total": 72,
+      "ablation_shortcut_leaks": 0
+    },
+    "delta": {
+      "eval_pass": 10,
+      "eval_fail": -8,
+      "eval_gap": -2,
+      "ablation_shortcut_leaks": 0
+    },
+    "interpretation_ru": "P16D2 materially improves schema-level reserved-row coverage: positive profile coverage rises from 0 to 10 rows, failures fall from 8 to 0, and two candidate-position rows remain intentional diagnostics-only gaps. Shortcut leaks remain zero in artifact controls.",
+    "p16f_reachability_ru": "P16F is reachable only as lifecycle evidence for the candidate if parent accepts the two candidate-position rows as diagnostics-only exclusions; otherwise another focused coverage/role repair is needed before lifecycle work.",
+    "semantic_quality_claimed": false
+  },
+  "counts": {
+    "eval_holdout_rows_total": 12,
+    "eval_candidate_rows": 6,
+    "holdout_candidate_rows": 6,
+    "eval_pass": 10,
+    "eval_fail": 0,
+    "eval_gap": 2,
+    "ablation_controls_total": 72,
+    "ablation_shortcut_leaks": 0
+  },
+  "p16f_reachability_ru": "P16F is reachable only as lifecycle evidence for the candidate if parent accepts the two candidate-position rows as diagnostics-only exclusions; otherwise another focused coverage/role repair is needed before lifecycle work.",
+  "remaining_gaps_ru": [
+    "Две candidate-position строки нельзя считать положительным выбором навыка: guard должен запрещать shortcut, а не выбирать skill.",
+    "P16E2 остается artifact-level schema evaluation; production runtime SkillSelection не вызывался.",
+    "Полная semantic quality, SkillSelection readiness, API readiness и final model readiness не заявляются."
+  ],
+  "artifacts": {
+    "eval_input_ledger": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/skill-selection-p16e2-eval-input-ledger.jsonl",
+    "eval_results": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/skill-selection-p16e2-source-disjoint-eval-results.jsonl",
+    "eval_report_json": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/skill-selection-p16e2-source-disjoint-eval-report.json",
+    "eval_report_md": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/skill-selection-p16e2-source-disjoint-eval-report.md",
+    "ablation_results": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/skill-selection-p16e2-ablation-results.jsonl",
+    "ablation_report_json": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/skill-selection-p16e2-ablation-report.json",
+    "ablation_report_md": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/skill-selection-p16e2-ablation-report.md",
+    "comparison_report_json": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/skill-selection-p16e2-comparison-report.json",
+    "contamination_proof": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/skill-selection-p16e2-contamination-proof.json",
+    "review_report_json": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/p16e2-review-report.json",
+    "review_report_md": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/p16e2-review-report.md",
+    "review_cycles": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/p16e2-review-cycles.jsonl",
+    "self_check": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/p16e2-self-check.json",
+    "evidence_card": "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/p16e2-evidence-card.md"
+  },
+  "safety_flags": {
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "training_run": false,
+    "checkpoint_or_model_written": false,
+    "p16d2_candidate_mutated": false,
+    "eval_holdout_used_for_training": false,
+    "runtime_evaluation": false,
+    "candidate_schema_eval_only": true,
+    "semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "full_api_readiness_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "dashboard_readiness_claimed": false,
+    "host_runtime_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "commit_run": false,
+    "push_run": false
+  },
+  "next_action": "parent review P16E2 artifacts; if accepted, decide whether P16F lifecycle can proceed with candidate-position diagnostics-only gaps explicitly scoped, or require another repair.",
+  "semantic_quality_claimed": false
+}

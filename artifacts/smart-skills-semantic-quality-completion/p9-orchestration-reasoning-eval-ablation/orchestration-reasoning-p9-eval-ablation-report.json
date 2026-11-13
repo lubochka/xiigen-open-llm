@@ -1,0 +1,53 @@
+{
+  "phase": "P9_ORCHESTRATION_REASONING_EVAL_ABLATION",
+  "status": "fail_ready_for_parent_review",
+  "verdict": "FAIL_EVIDENCE_READY_FOR_PARENT_REVIEW",
+  "checkpoint_under_review": {
+    "checkpoint_path": "artifacts/smart-skills-semantic-quality-completion/p8b-orchestration-reasoning-checkpoint-candidate/orchestration-reasoning-p8b-candidate-checkpoint.json",
+    "manifest_path": "artifacts/smart-skills-semantic-quality-completion/p8b-orchestration-reasoning-checkpoint-candidate/orchestration-reasoning-p8b-candidate-manifest.json",
+    "source_manifest_path": "artifacts/smart-skills-semantic-quality-completion/p8b-orchestration-reasoning-checkpoint-candidate/orchestration-reasoning-p8b-source-manifest.json"
+  },
+  "fresh_load": {
+    "passed": true,
+    "project_code_path": "OrchestrationReasoningMachine.LoadCheckpointAsync",
+    "learned_pattern_count": 3,
+    "accepted_train_rows": [
+      "P5E-DPO-ORCH-001",
+      "P5E-DPO-ORCH-002",
+      "P5E-DPO-ORCH-004"
+    ],
+    "forbidden_training_rows_absent": true
+  },
+  "reserved_positive_counts": {
+    "total": 2,
+    "passed": 0,
+    "failed": 2
+  },
+  "ablation_control_counts": {
+    "total": 14,
+    "passed_as_blocked": 14,
+    "shortcut_leaks": 0
+  },
+  "failure_reason_ru": "P8B checkpoint свежо загружается, но не покрывает две зарезервированные source-disjoint положительные строки: ветвление с обзором риска и изоляцию независимых потоков.",
+  "next_repair_ru": "Нужна отдельная train-only фаза: добавить независимое покрытие для ветвления/точечного ремонта и изоляции потоков, затем сформировать новый checkpoint-кандидат и повторить P9-проверку.",
+  "safety_flags": {
+    "training_run": false,
+    "eval_holdout_rows_used_as_training": false,
+    "checkpoint_rewritten": false,
+    "final_common_model_overwritten": false,
+    "production_code_changed": false,
+    "semantic_quality_claimed": false,
+    "p8_pass_claimed": false,
+    "full_api_semantic_quality_claimed": false,
+    "extension_runtime_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "commit_run": false,
+    "push_run": false
+  },
+  "focused_test": {
+    "file": "Tests/OrchestrationReasoningP9EvalAblationTests.cs",
+    "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --no-build --filter \"FullyQualifiedName~OrchestrationReasoningP9EvalAblationTests\" --logger \"console;verbosity=minimal\"",
+    "result": "PASS: Failed=0, Passed=1, Skipped=0, Total=1"
+  }
+}

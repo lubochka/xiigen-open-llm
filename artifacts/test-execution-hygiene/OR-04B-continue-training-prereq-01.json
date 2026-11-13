@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "work_order_id": "OR-04B-CONTINUE-TRAINING-PREREQ-01",
+  "normalized_by_work_order": "CM-31A1-EXISTING-TEST-EXECUTION-HYGIENE-SCHEMA-NORMALIZATION",
+  "normalization_scope": "CM-31A1 schema normalization for existing hygiene artifact only; missing hygiene artifacts are left for CM-31A2.",
+  "command_or_runtime_scope": "static/local command or artifact parse check",
+  "allowed_by_plan_or_luba": {
+    "status": "pass",
+    "evidence": "Existing hygiene artifact is in the CM-31 audit artifact_found=true/partial set; CM-31A1 does not run or authorize new commands."
+  },
+  "exact_command_or_probe_ref": [
+    {
+      "command": "static/local command or artifact parse check",
+      "source": "artifacts/test-execution-hygiene/OR-04B-continue-training-prereq-01.json"
+    }
+  ],
+  "exit_code_or_status": {
+    "status": "not_applicable",
+    "evidence": "No executable command entry was present in legacy artifact; this row is treated as static/local artifact hygiene evidence until a later source-specific repair says otherwise."
+  },
+  "elapsed_or_timeout_recorded": {
+    "status": "not_applicable",
+    "evidence": "Legacy artifact has no elapsed/timeout value; no timeout or long-running claim is made by this normalization artifact."
+  },
+  "pre_existing_red_vs_phase_regression_classification": {
+    "status": "not_applicable",
+    "evidence": "Normalization found no failed final verification claim requiring red/regression split; if a legacy command timed out or failed, the legacy_fields preserve it and later row-specific repair can classify deeper if needed."
+  },
+  "orphan_process_cleanup_or_not_applicable": {
+    "status": "not_applicable",
+    "evidence": "No timeout/orphan process condition is claimed for this row."
+  },
+  "heartbeat_or_replacement_worker_handoff_or_not_applicable": {
+    "status": "not_applicable",
+    "evidence": "No long-running replacement-worker handoff is claimed by this row; protocol/report/commit/push remain checkpoints, not stop reasons."
+  },
+  "test_only_or_smoke_claim_scope": {
+    "status": "pass",
+    "evidence": "This artifact records command hygiene only; test-only, smoke, static, or handler-level evidence cannot claim full UI/runtime acceptance or full plan completion."
+  },
+  "rerun_policy": {
+    "status": "pass",
+    "evidence": "No rerun required by this normalization; future rerun must stay within allowed focused command scope and record red/orphan handling."
+  },
+  "status": "pass",
+  "gaps": [],
+  "next_action": null,
+  "broad_tests_run": false,
+  "broad_tests_authorization_check": {
+    "status": "pass",
+    "evidence": "Legacy artifact does not record broad tests as run."
+  },
+  "completion_claim_allowed": false,
+  "full_plan_completion_claimed": false,
+  "runtime_or_host_invoked_by_this_artifact": false,
+  "external_ai_used": false,
+  "legacy_fields": {
+    "work_order": "OR-04B-CONTINUE-TRAINING-PREREQ-01",
+    "artifact_kind": "test-execution-hygiene",
+    "status": "NOT_READY_PENDING_PARENT_REVIEW",
+    "readiness_verdict": "NOT_READY",
+    "claim_scope": "continue-training prerequisite/admission gate only; no continue-training implementation, run, checkpoint rewrite, host work, adaptive work, or semantic quality claim",
+    "fresh_load_commit_ref": "f1b4915dddf644cbf4f61bf89ccddb182ea73a59",
+    "existing_continue_path_verdict": {
+      "orchestration_reasoning_machine_continue_method_exists": false,
+      "accepted_orchestration_reasoning_cli_continue_command_exists": false,
+      "legacy_continue_orchestration_training_command_found": true,
+      "legacy_command_accepted_for_or04b": false,
+      "legacy_rejection_reason": "continue-orchestration-training targets the older OrchestrationPlanMachine path, not SmartSkillsDomain.OrchestrationReasoningMachine, so it is not accepted as OR-04B continue-training evidence.",
+      "machine_supported_lifecycle_today": [
+        "ExportLearnedState",
+        "ImportLearnedState",
+        "SaveCheckpointAsync",
+        "ImportAsync",
+        "LoadCheckpointAsync",
+        "FileBackedOrchestrationReasoningLearnedGuideStateLoader"
+      ],
+      "missing_or04b_continue_capabilities": [
+        "load existing checkpoint and append only new learned pattern delta",
+        "preserve old learned patterns while adding delta patterns",
+        "write new checkpoint/manifest with updated hashes",
+        "fresh-load the continued checkpoint",
+        "CLI command for OrchestrationReasoningMachine continue path"
+      ]
+    },
+    "anti_fake_gates": {
+      "json_only_reports_forbidden": true,
+      "trainer_stub_forbidden": true,
+      "exact_memory_lookup_forbidden": true,
+      "route_lookup_or_bm25_substitution_forbidden": true,
+      "legacy_orchestration_plan_machine_substitution_forbidden": true,
+      "checkpoint_timestamp_rewrite_without_hash_update_forbidden": true,
+      "source_data_train_ready_mutation_forbidden_in_this_gate": true
+    },
+    "exact_next_bounded_action": "OR-04B-CONTINUE-TRAINING-IMPLEMENTATION-01",
+    "dotnet_tests_run": false,
+    "build_run": false,
+    "continue_training_run": false,
+    "verification_allowed": [
+      "rg/read-only code inspection",
+      "JSON parse/hash static checks",
+      "git diff --check",
+      "scoped git status"
+    ],
+    "verification": {
+      "json_parse_and_hash_check": {
+        "command": "Node JSON parse of state, 10 OR-04B continue prereq artifacts, checkpoint, manifest, and fresh-load output; checkpoint sha256 equals manifest checkpointSha256",
+        "exit_code": 0,
+        "parsed_file_count": 14,
+        "checkpoint_sha256": "97d6de29d3f3b7aedd657c3ef9c819d23456ae5434a7f72e2b1752f5c3a4b119",
+        "manifest_checkpoint_sha256": "97d6de29d3f3b7aedd657c3ef9c819d23456ae5434a7f72e2b1752f5c3a4b119"
+      },
+      "static_inspection": {
+        "command": "rg -n \"continue-orchestration-training|OrchestrationPlanMachine.LoadCheckpointAsync|OrchestrationReasoningMachine.LoadCheckpointAsync|SaveCheckpointAsync|MaterializeAsync|AddPattern|UpdateLearned|AppendPattern\" 43.SmartSkillsDomain/OrchestrationReasoningMachine.cs 43.SmartSkillsDomain/OrchestrationReasoningTrainer.cs 27.TranslationDomain.Tools/Program.cs",
+        "exit_code": 0,
+        "summary": "Found OrchestrationReasoning load/save/materialize paths and legacy continue-orchestration-training hits; no accepted OrchestrationReasoningMachine continue/add-pattern/update path. Legacy hits point to OrchestrationPlanMachine and are rejected for OR-04B."
+      },
+      "git_diff_check": {
+        "command": "git diff --check",
+        "exit_code": 0
+      },
+      "scoped_git_status": {
+        "command": "git status --short --branch --untracked-files=all -- <OR-04B continue prereq files>",
+        "exit_code": 0,
+        "summary": "state file modified; 10 OR-04B continue prereq artifacts untracked as expected for this no-commit subphase"
+      }
+    },
+    "no_build_test_continue_training": true
+  }
+}

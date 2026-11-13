@@ -1,0 +1,65 @@
+{
+  "phase": "P12_CONTINUE_TRAINING",
+  "parent_review_status": "BLOCKED_PENDING_ORCHESTRATION_PROVENANCE_REBUILD",
+  "verdict": "PARTIAL_PROMPT_TO_TASK_PASS_ORCHESTRATION_REBUILD_REQUIRED",
+  "accepted_as_continue_training_lifecycle_evidence": false,
+  "accepted_as_prompt_to_task_no_op_continue_evidence": true,
+  "accepted_as_delta_training_evidence": false,
+  "accepted_as_full_api_semantic_quality": false,
+  "accepted_as_skill_selection_readiness": false,
+  "accepted_as_extension_runtime_readiness": false,
+  "accepted_as_final_model_ready": false,
+  "review_cycles": [
+    {
+      "cycle_id": "parent_p12_001_goal_delivery",
+      "result": "partial",
+      "finding": "P12 currently verifies PromptToTask only. OrchestrationReasoning P9A is blocked by ORCHESTRATION_REASONING_CHECKPOINT_SOURCE_PROVENANCE_REBUILD_REQUIRED until provenance rebuild/admission proof exists."
+    },
+    {
+      "cycle_id": "parent_p12_002_delta_vs_no_op_integrity",
+      "result": "partial",
+      "finding": "PromptToTask uses explicit no-op continue because no approved delta material is present. OrchestrationReasoning cannot enter no-op continue because its checkpoint fails current provenance admission."
+    },
+    {
+      "cycle_id": "parent_p12_003_lineage_hash_non_regression",
+      "result": "blocked",
+      "finding": "PromptToTask checkpoint hash remains stable with a no-op marker. OrchestrationReasoning hash remains stable only as blocked evidence; held-out non-regression is not run for that component."
+    },
+    {
+      "cycle_id": "parent_p12_004_overclaim_readability_safety",
+      "result": "pass",
+      "finding": "P12 artifacts contain no pending final-run marker, no mojibake markers, and no true semantic/full/API/SkillSelection/extension/final-model readiness flags."
+    }
+  ],
+  "verified_facts": {
+    "component_count": 2,
+    "component_pass_count": 1,
+    "component_blocked_count": 1,
+    "delta_path_component_count": 0,
+    "no_op_path_component_count": 1,
+    "approved_delta_material_found": false,
+    "new_training_rows_created": false,
+    "dpo_authoring_run": false,
+    "continued_checkpoint_created": false,
+    "checkpoint_sha_stable_with_no_op_marker": true,
+    "held_out_non_regression_passed": false,
+    "orchestration_reasoning_provenance_rebuild_required": true,
+    "orchestration_reasoning_blocked_error_code": "ORCHESTRATION_REASONING_CHECKPOINT_SOURCE_PROVENANCE_REBUILD_REQUIRED",
+    "focused_test_command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --configuration Release --filter \"FullyQualifiedName~SmartSkillsSemanticQualityP12ContinueTrainingTests\" --logger \"console;verbosity=minimal\"",
+    "focused_test_result": "passed isolated OutDir build: Failed=0, Passed=1, Skipped=0, Total=1",
+    "p12_artifact_pending_final_run_absent": true,
+    "p12_artifact_mojibake_scan_passed": true,
+    "p12_artifact_true_readiness_flag_scan_passed": true,
+    "diff_check_scope": "bounded P11/P12/P7 artifact and test paths only; repository-wide git diff has unrelated open merge work"
+  },
+  "remaining_boundaries": {
+    "semantic_quality_claimed": false,
+    "full_api_semantic_quality_claimed": false,
+    "skill_selection_readiness_claimed": false,
+    "extension_runtime_readiness_claimed": false,
+    "final_model_ready_claimed": false,
+    "delta_continue_training_still_requires_future_approved_delta_material": true,
+    "orchestration_reasoning_still_requires_provenance_rebuild": true
+  },
+  "next_action_after_commit": "rebuild OrchestrationReasoning P9A/P10/P11 provenance-admitted checkpoint material before claiming P12 two-component continue-training lifecycle pass"
+}

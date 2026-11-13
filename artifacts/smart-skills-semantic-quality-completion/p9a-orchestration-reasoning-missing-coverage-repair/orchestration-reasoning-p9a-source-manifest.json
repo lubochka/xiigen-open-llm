@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "phase": "P9A_ORCHESTRATION_REASONING_MISSING_COVERAGE_REPAIR",
+  "lineage": {
+    "p8bCheckpoint": "artifacts/smart-skills-semantic-quality-completion/p8b-orchestration-reasoning-checkpoint-candidate/orchestration-reasoning-p8b-candidate-checkpoint.json",
+    "p9ParentReview": "artifacts/smart-skills-semantic-quality-completion/p9-orchestration-reasoning-eval-ablation/p9-parent-review.json"
+  },
+  "acceptedTrainRows": [
+    {
+      "row_id": "P5E-DPO-ORCH-001",
+      "source_family_id": "sf-orchestration-phase-transition-8CD45F23",
+      "source": "P8B carried forward",
+      "training_ready": true
+    },
+    {
+      "row_id": "P5E-DPO-ORCH-002",
+      "source_family_id": "sf-p5a-both-skills-inventory-905F88B4",
+      "source": "P8B carried forward",
+      "training_ready": true
+    },
+    {
+      "row_id": "P5E-DPO-ORCH-004",
+      "source_family_id": "sf-p5a-orch-dependency-relations-7DB3DAB0",
+      "source": "P8B carried forward",
+      "training_ready": true
+    },
+    {
+      "row_id": "P9A-ORCH-TRAIN-001",
+      "source_family_id": "sf-p9a-node-repair-5f5b56d4",
+      "source_ref_safe": "analysis-state done ref: node-repair.md",
+      "source_hash_or_pointer": "file-sha256:07a1628e5a1ff96bf8a90b49a9d9c3a0ef0b843aff79ffc0162c7b7026f6a61b",
+      "training_ready": true,
+      "universal_boundary_ru": "After verification fails, compare expected and observed evidence, choose one bounded repair strategy, and change only the affected part.",
+      "required_ablation_controls": [
+        "exact_prompt",
+        "filename_path_title",
+        "source_family_id",
+        "row_id_marker",
+        "nearest_only_retrieval",
+        "repair_label_only"
+      ]
+    },
+    {
+      "row_id": "P9A-ORCH-TRAIN-002",
+      "source_family_id": "sf-p9a-scope-isolation-5ad05981",
+      "source_ref_safe": "analysis-state done ref: planning--scope-isolation-arbiter-SKILL.md",
+      "source_hash_or_pointer": "file-sha256:0fe9dd87aab863f12eb4ee49ee5619317a3581fa24e775c9779077f1b16eb6dc",
+      "training_ready": true,
+      "universal_boundary_ru": "When multiple scopes or flows are present, reads, writes, and decisions must preserve scope boundaries; one context must not become evidence for another.",
+      "required_ablation_controls": [
+        "exact_prompt",
+        "filename_path_title",
+        "source_family_id",
+        "row_id_marker",
+        "nearest_only_retrieval",
+        "scope_marker_only"
+      ]
+    }
+  ],
+  "forbiddenRowExclusions": [
+    {
+      "row_id": "P5E-DPO-ORCH-003",
+      "forbidden_for_training": true,
+      "reason": "reserved_or_evidence_only_not_checkpoint_input"
+    },
+    {
+      "row_id": "P5E-DPO-ORCH-005",
+      "forbidden_for_training": true,
+      "reason": "reserved_or_evidence_only_not_checkpoint_input"
+    },
+    {
+      "row_id": "P4-ORCH-DPO-DRAFT-001",
+      "forbidden_for_training": true,
+      "reason": "reserved_or_evidence_only_not_checkpoint_input"
+    },
+    {
+      "row_id": "P4-ORCH-DPO-DRAFT-002",
+      "forbidden_for_training": true,
+      "reason": "reserved_or_evidence_only_not_checkpoint_input"
+    }
+  ],
+  "consideredSources": [
+    {
+      "source_family_id": "sf-p9a-node-repair-5f5b56d4",
+      "file_name": "node-repair.md",
+      "path_sha256": "be70a930c046d5b83a440ee4f38315505c87f4401a11fe41d81e51150dff09ae",
+      "file_sha256": "07a1628e5a1ff96bf8a90b49a9d9c3a0ef0b843aff79ffc0162c7b7026f6a61b",
+      "analysis_state": "done",
+      "considered_for": "branch-review-targeted-repair",
+      "decision": "accepted_train_only_repair",
+      "reason_ru": "The source independently describes failure diagnosis, one bounded repair strategy, and targeted repair after verification. It covers repair behavior without using the reserved eval row.",
+      "raw_private_text_copied": false
+    },
+    {
+      "source_family_id": "sf-p9a-scope-isolation-5ad05981",
+      "file_name": "planning--scope-isolation-arbiter-SKILL.md",
+      "path_sha256": "e7cdd9f2f93a65e49db6aa7f0db7045a71f8bf80d8ed37ec9db0c4dc23075fca",
+      "file_sha256": "0fe9dd87aab863f12eb4ee49ee5619317a3581fa24e775c9779077f1b16eb6dc",
+      "analysis_state": "done",
+      "considered_for": "flow-isolation-no-state-bleed",
+      "decision": "accepted_train_only_repair",
+      "reason_ru": "The source independently describes scope boundaries and protection against context mixing. It covers flow isolation behavior without using the holdout row.",
+      "raw_private_text_copied": false
+    },
+    {
+      "source_family_id": "sf-p9a-cross-flow-dependency-3fa0ef7c",
+      "file_name": "planning--cross-flow-dependency-design-SKILL.md",
+      "path_sha256": "5eaedb02f9aeaa80041b6d34cb7e000067aa1730f7b64e7e3fff997ac31528f3",
+      "file_sha256": "8075619691e039f92b079cfe3ce5dfdd844e5fa6ffecce1f913dd64907ff7221",
+      "analysis_state": "done",
+      "considered_for": "dependency-and-wave-gate",
+      "decision": "evidence_only",
+      "reason_ru": "The source is useful for cross-flow dependency reasoning, but it is close to the already trained dependency boundary. P9A does not need it as checkpoint input.",
+      "raw_private_text_copied": false
+    }
+  ],
+  "safetyFlags": {
+    "rawPrivateTextCopied": false,
+    "evalHoldoutRowsUsedAsTraining": false,
+    "evidenceOnlyRowsUsedAsTraining": false,
+    "sourceFamilyUsedAsRuntimeAuthority": false,
+    "rowIdUsedAsRuntimeAuthority": false,
+    "semanticQualityClaimed": false,
+    "p8PassClaimed": false,
+    "fullApiSemanticQualityClaimed": false,
+    "finalModelReadyClaimed": false
+  }
+}

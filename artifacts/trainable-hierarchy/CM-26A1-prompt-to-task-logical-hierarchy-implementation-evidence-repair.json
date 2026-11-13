@@ -1,0 +1,112 @@
+{
+  "work_order": "CM-26A1-PROMPT-TO-TASK-LOGICAL-HIERARCHY-IMPLEMENTATION-EVIDENCE-REPAIR",
+  "passed": true,
+  "hierarchy_status": "closed_by_source_adapter",
+  "cm26a1_closed": true,
+  "completion_claim_allowed": false,
+  "training_started": false,
+  "runtime_or_host_invoked": false,
+  "external_ai_used": false,
+  "semantic_quality_claimed": false,
+  "commit_hash": "85ef11f40c3b5104a8cb86566399ee6f9369d647",
+  "push_status": "pushed_to_origin_codex_chat_gpt_5_5",
+  "claim_scope": "PromptToTask logical hierarchy source/evidence repair only. This adds real ILearningMachine/ILogicalOrchestrator/ILogicalFlow/ILogicalUnit adapters around PromptToTaskMachine.Translate and does not claim trained semantic quality.",
+  "source_refs": {
+    "learning_machine_adapter": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:6",
+    "logical_orchestrator": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:99",
+    "logical_flow": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:140",
+    "intent_unit": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:240",
+    "constraint_unit": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:247",
+    "deliverable_unit": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:254",
+    "authority_boundary_unit": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:261",
+    "focused_tests": "Tests/PromptToTaskLogicalHierarchyTests.cs:4"
+  },
+  "hierarchy_levels": [
+    {
+      "level": "ILearningMachine",
+      "class_or_component": "PromptToTaskLearningMachineAdapter",
+      "input_type": "LearningBatch<PromptToTaskDomain> / LearningEvaluationSet<PromptToTaskDomain> / LearningMachineExport",
+      "output_type": "OperationResult<LearningBatchResult> / OperationResult<LearningEvaluationResult> / OperationResult<LearningMachineExport>",
+      "status": "pass",
+      "evidence_ref": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:6",
+      "honesty_note": "TrainBatchAsync fails explicitly as not implemented in this adapter; EvaluateAsync returns PassesGate=false and Accuracy=0.0."
+    },
+    {
+      "level": "ILogicalOrchestrator",
+      "class_or_component": "PromptToTaskLogicalOrchestrator",
+      "input_type": "LogicalOrchestratorRequest with PromptToTaskRequest metadata",
+      "output_type": "OperationResult<LogicalOrchestratorResult>",
+      "status": "pass",
+      "evidence_ref": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:99",
+      "honesty_note": "Missing PromptToTaskRequest metadata fails with PROMPT_TO_TASK_REQUEST_METADATA_REQUIRED instead of fabricating a request."
+    },
+    {
+      "level": "ILogicalFlow",
+      "class_or_component": "PromptToTaskLogicalFlow",
+      "input_type": "LogicalFlowRequest<PromptToTaskRequest>",
+      "output_type": "OperationResult<LogicalFlowResult>",
+      "status": "pass",
+      "evidence_ref": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:140",
+      "honesty_note": "Flow evidence records semantic_quality_claimed=false and training_run=false."
+    },
+    {
+      "level": "ILogicalUnit",
+      "class_or_component": "PromptToTaskIntentUnit, PromptToTaskConstraintUnit, PromptToTaskDeliverableUnit, PromptToTaskAuthorityBoundaryUnit",
+      "input_type": "LogicalUnitRequest<PromptToTaskRequest>",
+      "output_type": "OperationResult<LogicalUnitResult<PromptToTaskResponse>>",
+      "status": "pass",
+      "evidence_ref": "43.SmartSkillsDomain/PromptToTaskLogicalHierarchy.cs:240",
+      "honesty_note": "Each unit delegates to PromptToTaskMachine.Translate and records NO_ADDITIONAL_SEMANTIC_CLASSIFICATION."
+    },
+    {
+      "level": "ILearningMachinePair/common-adaptive legs",
+      "class_or_component": "Existing PromptToTask common/adaptive lifecycle artifacts plus this adapter bridge",
+      "input_type": "PromptToTask learned-state/common assets and user-local adaptive DPO refs",
+      "output_type": "Existing checkpoint/load/export and adaptive portability evidence refs",
+      "status": "pass",
+      "evidence_ref": "CM-26A report plus PTT_AD accepted state refs",
+      "honesty_note": "This slice does not mutate common/adaptive assets; it only exposes the logical source hierarchy around existing PromptToTask behavior."
+    }
+  ],
+  "counts": {
+    "total_levels": 5,
+    "pass": 5,
+    "partial": 0,
+    "open": 0,
+    "fail": 0
+  },
+  "direct_machine_implements_interface": false,
+  "direct_machine_implements_interface_note": "PromptToTaskMachine itself remains the existing translate/checkpoint component. The accepted source implementation path is PromptToTaskLearningMachineAdapter implementing ILearningMachine<PromptToTaskDomain> over PromptToTaskMachine.",
+  "deterministic_shortcut_review": {
+    "hidden_semantic_ranking_added": false,
+    "regex_or_dictionary_classifier_added": false,
+    "exact_prompt_lookup_added": false,
+    "model_training_or_mutation_added": false,
+    "translate_delegation_only": true
+  },
+  "verification": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter FullyQualifiedName~PromptToTaskLogicalHierarchyTests --no-restore",
+      "exit_code": 1,
+      "elapsed_summary": "93.5s",
+      "result": "initial focused compile failed on LogicalUnitRequest/LogicalUnitResult constructor shape; patched adapter constructor usage only"
+    },
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter FullyQualifiedName~PromptToTaskLogicalHierarchyTests --no-restore",
+      "exit_code": 0,
+      "elapsed_summary": "31.8s",
+      "result": "Passed 4, Failed 0"
+    }
+  ],
+  "remaining_gap": null,
+  "first_gap": null,
+  "first_actionable_gap": {
+    "id": "CM26B-01",
+    "gap_id": "ORCHESTRATION_REASONING_HIERARCHY_PARITY_REVIEW_PENDING",
+    "status": "open",
+    "description": "PromptToTask hierarchy source evidence is closed by adapter in CM-26A1; next CM-26 branch should audit/repair OrchestrationReasoning hierarchy parity.",
+    "next_bounded_action": "CM-26B-ORCHESTRATION-REASONING-HIERARCHY-PARITY-REPAIR"
+  },
+  "next_bounded_action": "CM-26B-ORCHESTRATION-REASONING-HIERARCHY-PARITY-REPAIR",
+  "required_next_action": "CM-26B-ORCHESTRATION-REASONING-HIERARCHY-PARITY-REPAIR"
+}

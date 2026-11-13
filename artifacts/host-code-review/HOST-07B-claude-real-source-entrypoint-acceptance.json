@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "work_order_id": "HOST-07B-CLAUDE-REAL-SOURCE-ENTRYPOINT-REPAIR",
+  "artifact_kind": "claude_real_source_entrypoint_acceptance",
+  "generated_at": "2026-06-07T13:41:18.645Z",
+  "status": "pass",
+  "verdict": "PASS_CLAUDE_REAL_SOURCE_ENTRYPOINT_ACCEPTED_BY_SOURCE_REVIEW",
+  "claim_scope": "Claude host source-code review acceptance only. No host runtime smoke, QA/e2e, model training, semantic quality, Codex repair, or final completion claim.",
+  "host_repo": "C:/Projects/claude-xiigen-smart-skills",
+  "host_branch": "main",
+  "host_head": "69977f0c08af06c0c2a5e8a1bbe4834e8f7cb863",
+  "host_status_sb": "## main...origin/main",
+  "host_files_changed": "none; no-op verification because parent-observed host repair already exists and passes source checks",
+  "source_reports": [
+    "C:/Projects/claude-xiigen-smart-skills/reports/HOST-07B-claude-real-source-entrypoint-repair.json",
+    "artifacts/host-code-review/HOST-07A-host-code-review-matrix.json"
+  ],
+  "package_entrypoint": "src/claude-entrypoint.js",
+  "source_entrypoint": "src/claude-entrypoint.js",
+  "powershell_launcher": "src/claude-entrypoint.ps1",
+  "ps1AcceptedAsImplementation": false,
+  "plugin_command_ref": ".claude-plugin/plugin.json hooks.SessionStart[0].hooks[0].command",
+  "acceptance_checks": [
+    {
+      "id": "package_source_entrypoint_js",
+      "passed": true,
+      "evidence": [
+        "package.json xiigenPhase40.entrypointPath",
+        "package.json xiigenPhase40.sourceEntrypoint"
+      ]
+    },
+    {
+      "id": "plugin_invokes_js",
+      "passed": true,
+      "evidence": [
+        ".claude-plugin/plugin.json hooks.SessionStart command"
+      ]
+    },
+    {
+      "id": "ps1_launcher_only",
+      "passed": true,
+      "evidence": [
+        "package.json xiigenPhase40.ps1AcceptedAsImplementation=false",
+        "src/claude-entrypoint.ps1 delegates to node/source entrypoint"
+      ]
+    },
+    {
+      "id": "xiigen_request_fields_present",
+      "passed": true,
+      "evidence": [
+        "src/claude-entrypoint.js contains HostName",
+        "src/claude-entrypoint.js contains HostType",
+        "src/claude-entrypoint.js contains Method",
+        "src/claude-entrypoint.js contains UserPromptOrTaskText",
+        "src/claude-entrypoint.js contains DebugEnabled",
+        "src/claude-entrypoint.js contains RequestedSkills",
+        "src/claude-entrypoint.js contains AvailableSkills",
+        "src/claude-entrypoint.js contains CheckSetInputs",
+        "src/claude-entrypoint.js contains Provenance",
+        "src/claude-entrypoint.js contains CorrelationId"
+      ],
+      "missing_fields": []
+    },
+    {
+      "id": "js_invokes_core_endpoint",
+      "passed": true,
+      "evidence": [
+        "src/claude-entrypoint.js spawnSync powershell.exe",
+        "src/claude-entrypoint.js -RequestPath/-ResponsePath/-TracePath",
+        "src/claude-entrypoint.js core endpoint path"
+      ]
+    },
+    {
+      "id": "thin_host_no_semantic_authority",
+      "passed": true,
+      "evidence": [
+        "src/claude-entrypoint.js host_semantic_ranking=false",
+        "src/claude-entrypoint.js host_training=false",
+        "src/claude-entrypoint.js corpus_parsing=false",
+        "src/claude-entrypoint.js external_ai_used=false"
+      ]
+    },
+    {
+      "id": "debug_trace_source_backed_redacted",
+      "passed": true,
+      "evidence": [
+        "src/claude-entrypoint.js debug_trace_shape",
+        "src/claude-entrypoint.js redaction/unsafe trace suppression"
+      ]
+    },
+    {
+      "id": "host_report_passed",
+      "passed": true,
+      "evidence": [
+        "reports/HOST-07B-claude-real-source-entrypoint-repair.json"
+      ]
+    },
+    {
+      "id": "no_runtime_smoke_claim",
+      "passed": true,
+      "evidence": [
+        "host report claim_scope",
+        "package.json xiigenPhase40.runtimeEvidence=false"
+      ]
+    }
+  ],
+  "verification": {
+    "allowed_only": true,
+    "commands": [
+      {
+        "command": "node --check src/claude-entrypoint.js",
+        "repo": "C:/Projects/claude-xiigen-smart-skills",
+        "exit_code": 0,
+        "result": "passed"
+      },
+      {
+        "command": "ConvertFrom-Json package/plugin/HOST-07B host report",
+        "repo": "C:/Projects/claude-xiigen-smart-skills",
+        "exit_code": 0,
+        "result": "passed"
+      },
+      {
+        "command": "git diff --check",
+        "repo": "C:/Projects/claude-xiigen-smart-skills",
+        "exit_code": 0,
+        "result": "passed"
+      },
+      {
+        "command": "git status --short/status -sb",
+        "repo": "C:/Projects/claude-xiigen-smart-skills",
+        "exit_code": 0,
+        "result": "clean/tracking origin/main"
+      }
+    ],
+    "runtime_smoke_run": false,
+    "dotnet_or_build_or_test_run": false,
+    "external_ai_used": false
+  },
+  "residual_gap": null,
+  "next_bounded_action": "HOST-07C-CODEX-JS-ENDPOINT-INVOKER-REPAIR",
+  "completion_claim_allowed": false,
+  "full_plan_completion_claimed": false,
+  "commit_hash": "917bbab2e93e92c9bff17405598b72e544b0e207",
+  "push_status": "pushed_to_origin_codex_chat_gpt_5_5",
+  "reconciliation_required": false
+}

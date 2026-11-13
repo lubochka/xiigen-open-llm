@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "work_order": "HOST-08C-CURSOR-CHAT-PARTICIPANT-QA-PATH",
+  "artifact_kind": "test_strategy_admission",
+  "passed": true,
+  "claim_scope": "Cursor chat participant QA path discovery only; no final/cross-host completion claim.",
+  "plan_refs": [
+    "B15 HOST-08",
+    "B20 CM-16",
+    "B20 CM-17",
+    "B20 CM-18",
+    "B20 CM-18A",
+    "B20 CM-18B",
+    "B20 CM-22",
+    "B20 CM-23"
+  ],
+  "strategy_layers": [
+    {
+      "layer": "unit",
+      "strategy": "node --check for the Cursor HOST-08C Extension Host discovery runner.",
+      "status": "covered"
+    },
+    {
+      "layer": "integration",
+      "strategy": "Start Cursor Extension Host with extensionDevelopmentPath and extensionTestsPath pointing to HOST-08C discovery runner.",
+      "status": "covered_if_runner_executes"
+    },
+    {
+      "layer": "e2e_host",
+      "strategy": "Inspect whether a safe noninteractive Cursor/VS Code chat participant invocation API exists; do not substitute command or panel execution for chat.",
+      "status": "discovery_gate"
+    },
+    {
+      "layer": "qa_automation",
+      "strategy": "Persist machine-readable discovery report, stdout/stderr, command summary, and exact blocker/remediation if no API exists.",
+      "status": "covered"
+    },
+    {
+      "layer": "negative",
+      "strategy": "Assert command/panel paths are not accepted as chat participant evidence.",
+      "status": "covered"
+    },
+    {
+      "layer": "untrained_honesty",
+      "strategy": "Assert Cursor does not claim semantic quality, full extension completion, or chat coverage without actual chat invocation evidence.",
+      "status": "covered"
+    },
+    {
+      "layer": "trained",
+      "strategy": "Not applicable; HOST-08C makes no semantic quality claim.",
+      "status": "not_applicable_no_semantic_quality_claim"
+    },
+    {
+      "layer": "regression",
+      "strategy": "JSON parse reports and run git diff --check.",
+      "status": "covered"
+    }
+  ],
+  "anti_loopholes": {
+    "command_path_as_chat_substitute_allowed": false,
+    "panel_path_as_chat_substitute_allowed": false,
+    "json_ps1_report_substitute_allowed": false,
+    "external_ai_used": false,
+    "final_gate_started": false
+  }
+}

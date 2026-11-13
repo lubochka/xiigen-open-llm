@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "work_order": "CM-29-HUMAN-AUTHORITY-BOUNDARY-AUDIT",
+  "artifact_kind": "human_authority_boundary_audit_matrix",
+  "branch": "codex/chat-gpt-5.5",
+  "verdict": "PASS_WITH_HUMAN_AUTHORITY_BOUNDARY_COVERAGE_GAPS",
+  "passed": true,
+  "cm29_status": "partial",
+  "cm29_closed": false,
+  "claim_scope": "Static/local audit only. This report checks whether in-scope plan-review, PromptToTask, OrchestrationReasoning, API, host-facing, HOST-07/08, and recent CM review rows have human-authority-boundary artifacts or documented not-applicable reasons. It does not backfill or repair missing artifacts, edit code/tests/host repos/plans/skills/AGENTS/CLAUDE, run build/test/runtime/host commands, invoke external AI, start CM-30, or claim final completion.",
+  "completion_claim_allowed": false,
+  "full_plan_completion_claimed": false,
+  "runtime_or_host_invoked": false,
+  "external_ai_used": false,
+  "required_fields": [
+    "work_order_id",
+    "current_explicit_luba_instruction",
+    "authority_source_order",
+    "attachment_old_plan_state_report_override_check",
+    "direct_question_priority_check",
+    "plan_only_vs_execution_boundary_check",
+    "parent_architect_not_executor_check",
+    "external_ai_or_unrelated_tool_approval_check",
+    "subagent_required_when_applicable",
+    "status",
+    "gaps",
+    "next_action"
+  ],
+  "counts": {
+    "total": 46,
+    "pass": 0,
+    "partial": 24,
+    "open": 21,
+    "not_applicable": 1,
+    "fail": 0,
+    "artifacts_found": 24,
+    "artifacts_missing": 21,
+    "required_field_schema_gaps": 24
+  },
+  "scope_rationale": {
+    "plan_review_rows": "Included WO-00 and recent CM-26/CM-27/CM-28 review rows because CM-29 requires plan-review coverage.",
+    "prompt_to_task_rows": "Included PTT-01..PTT-04, PTT-02U/02V, PTT-AD-01..PTT-AD-04, and PTT-AD-Z.",
+    "orchestration_reasoning_rows": "Included OR-01..OR-04, OR-01U/OR-02V, OR-04A, OR-AD-01..OR-AD-04, and OR-AD-Z. OR-04 is marked not_applicable because local state/artifacts split it into OR-04A and OR-04B rows rather than an exact OR-04 aggregate artifact.",
+    "host_api_rows": "Included API-01/API-02/API-03, CORE-API-INVOCATION-01, CL-01..CL-04, CU-01..CU-04, CX-01..CX-04, HOST-07, and HOST-08."
+  },
+  "negative_scenario_tests": {
+    "attachment_or_old_plan_says_execute_current_luba_says_answer_analyze_plan_only": {
+      "status": "covered_by_governing_rules_but_artifact_backfill_required",
+      "result": "AGENTS/CLAUDE and plan B0.3.8 say current unquoted Luba instruction wins; row-level artifacts are missing or schema-incomplete for many rows."
+    },
+    "state_or_report_next_action_but_luba_asks_direct_question": {
+      "status": "covered_by_governing_rules_but_artifact_backfill_required",
+      "result": "GOLD GATE and answer-first rules require answering Luba first; CM-29 row artifacts must expose this field parent-readably."
+    },
+    "protocol_or_plan_edit_as_stop_reason": {
+      "status": "covered_by_current_instruction_but_artifact_backfill_required",
+      "result": "Current instruction and AGENTS/CLAUDE say protocol/report/commit/push are checkpoints, not stop reasons while next action is known."
+    },
+    "test_only_or_handler_level_as_full_runtime_completion": {
+      "status": "covered_by_runtime_firewall_but_host_artifacts_missing",
+      "result": "OP-21/CLAUDE preserve narrow evidence scope, but API/host/HOST authority-boundary artifacts are missing."
+    },
+    "external_ai_or_unrelated_tool_without_current_approval": {
+      "status": "covered_by_governing_rules_but_artifact_backfill_required",
+      "result": "AGENTS OP-46 and CLAUDE R7 require current explicit approval; CM-29 artifacts must expose approval checks per row."
+    }
+  },
+  "matrix": [
+    {
+      "work_order_id": "WO-00",
+      "category": "plan_review_authority",
+      "artifact_path": "artifacts/human-authority-boundary/WO-00.json",
+      "artifact_found": true,
+      "status": "partial",
+      "gap": "Existing artifact predates CM-29 parent-readable required field schema.",
+      "next_action": "CM-29A1-PLAN-PTT-OR-AUTHORITY-BOUNDARY-SCHEMA-NORMALIZATION"
+    },
+    {
+      "work_order_id": "PTT-01..PTT-04/PTT-02U/PTT-02V",
+      "category": "prompt_to_task",
+      "artifact_paths": [
+        "artifacts/human-authority-boundary/PTT-01.json",
+        "artifacts/human-authority-boundary/PTT-02.json",
+        "artifacts/human-authority-boundary/PTT-02U.json",
+        "artifacts/human-authority-boundary/PTT-02V.json",
+        "artifacts/human-authority-boundary/PTT-03.json",
+        "artifacts/human-authority-boundary/PTT-04.json"
+      ],
+      "rows_represented": 6,
+      "artifact_found": true,
+      "status": "partial",
+      "gap": "Artifacts exist but are missing required CM-29 field names such as current_explicit_luba_instruction, authority_source_order, direct_question_priority_check, gaps, and next_action.",
+      "next_action": "CM-29A1-PLAN-PTT-OR-AUTHORITY-BOUNDARY-SCHEMA-NORMALIZATION"
+    },
+    {
+      "work_order_id": "PTT-AD-01..PTT-AD-04/PTT-AD-Z",
+      "category": "prompt_to_task_adaptive",
+      "artifact_paths": [
+        "artifacts/human-authority-boundary/PTT-AD-01.json",
+        "artifacts/human-authority-boundary/PTT-AD-02.json",
+        "artifacts/human-authority-boundary/PTT-AD-03.json",
+        "artifacts/human-authority-boundary/PTT-AD-04.json",
+        "artifacts/human-authority-boundary/PTT-AD-Z.json"
+      ],
+      "rows_represented": 5,
+      "artifact_found": true,
+      "status": "partial",
+      "gap": "Artifacts exist but do not expose the CM-29 required field schema.",
+      "next_action": "CM-29A1-PLAN-PTT-OR-AUTHORITY-BOUNDARY-SCHEMA-NORMALIZATION"
+    },
+    {
+      "work_order_id": "OR-01..OR-03/OR-01U/OR-02V/OR-04A",
+      "category": "orchestration_reasoning",
+      "artifact_paths": [
+        "artifacts/human-authority-boundary/OR-01.json",
+        "artifacts/human-authority-boundary/OR-01U.json",
+        "artifacts/human-authority-boundary/OR-02.json",
+        "artifacts/human-authority-boundary/OR-02V.json",
+        "artifacts/human-authority-boundary/OR-03.json",
+        "artifacts/human-authority-boundary/OR-04A.json"
+      ],
+      "rows_represented": 6,
+      "artifact_found": true,
+      "status": "partial",
+      "gap": "Artifacts exist but are missing required CM-29 parent-readable field names.",
+      "next_action": "CM-29A1-PLAN-PTT-OR-AUTHORITY-BOUNDARY-SCHEMA-NORMALIZATION"
+    },
+    {
+      "work_order_id": "OR-04",
+      "category": "orchestration_reasoning",
+      "artifact_path": null,
+      "artifact_found": false,
+      "status": "not_applicable",
+      "not_applicable_reason": "State/artifact history uses split OR-04A and OR-04B rows rather than an exact OR-04 aggregate work order. OR-04A plus OR-04B subrows require schema normalization separately.",
+      "gap": null,
+      "next_action": null
+    },
+    {
+      "work_order_id": "OR-AD-01..OR-AD-04/OR-AD-Z",
+      "category": "orchestration_reasoning_adaptive",
+      "artifact_paths": [
+        "artifacts/human-authority-boundary/OR-AD-01.json",
+        "artifacts/human-authority-boundary/OR-AD-02.json",
+        "artifacts/human-authority-boundary/OR-AD-03.json",
+        "artifacts/human-authority-boundary/OR-AD-04.json",
+        "artifacts/human-authority-boundary/OR-AD-Z.json"
+      ],
+      "rows_represented": 5,
+      "artifact_found": true,
+      "status": "partial",
+      "gap": "Artifacts exist but do not expose the CM-29 required field schema.",
+      "next_action": "CM-29A1-PLAN-PTT-OR-AUTHORITY-BOUNDARY-SCHEMA-NORMALIZATION"
+    },
+    {
+      "work_order_id": "API-01/API-02/API-03/CORE-API-INVOCATION-01",
+      "category": "api_facing",
+      "rows_represented": 4,
+      "artifact_found": false,
+      "status": "open",
+      "gap": "No human-authority-boundary artifacts found for API/core host-facing request boundary rows.",
+      "next_action": "CM-29A2-API-HOST-AUTHORITY-BOUNDARY-BACKFILL"
+    },
+    {
+      "work_order_id": "CL-01..CL-04",
+      "category": "claude_host_facing",
+      "rows_represented": 4,
+      "artifact_found": false,
+      "status": "open",
+      "gap": "No human-authority-boundary artifacts found for Claude host-facing rows.",
+      "next_action": "CM-29A2-API-HOST-AUTHORITY-BOUNDARY-BACKFILL"
+    },
+    {
+      "work_order_id": "CU-01..CU-04",
+      "category": "cursor_host_facing",
+      "rows_represented": 4,
+      "artifact_found": false,
+      "status": "open",
+      "gap": "No human-authority-boundary artifacts found for Cursor host-facing rows, including CU-03 debug-display row present in state.",
+      "next_action": "CM-29A2-API-HOST-AUTHORITY-BOUNDARY-BACKFILL"
+    },
+    {
+      "work_order_id": "CX-01..CX-04",
+      "category": "codex_host_facing",
+      "rows_represented": 4,
+      "artifact_found": false,
+      "status": "open",
+      "gap": "No human-authority-boundary artifacts found for Codex host-facing rows.",
+      "next_action": "CM-29A2-API-HOST-AUTHORITY-BOUNDARY-BACKFILL"
+    },
+    {
+      "work_order_id": "HOST-07/HOST-08",
+      "category": "host_review_and_qa",
+      "rows_represented": 2,
+      "artifact_found": false,
+      "status": "open",
+      "gap": "State contains HOST-07 and HOST-08 review/QA rows, but no umbrella CM-29 human-authority-boundary artifacts were found.",
+      "next_action": "CM-29A3-HOST-07-08-AUTHORITY-BOUNDARY-BACKFILL"
+    },
+    {
+      "work_order_id": "CM-26/CM-27/CM-28",
+      "category": "late_stage_plan_review",
+      "rows_represented": 3,
+      "artifact_found": false,
+      "status": "open",
+      "gap": "Recent completion-matrix review rows are in scope as plan-review rows but have no human-authority-boundary artifacts.",
+      "next_action": "CM-29A4-LATE-STAGE-REVIEW-AUTHORITY-BOUNDARY-BACKFILL"
+    }
+  ],
+  "top_gaps": [
+    "WO/PTT/OR human-authority artifacts exist but require CM-29 schema normalization for parent-readable required fields.",
+    "API/core host-facing request boundary rows lack human-authority-boundary artifacts.",
+    "CL/CU/CX host-facing rows lack human-authority-boundary artifacts.",
+    "HOST-07/HOST-08 review and QA rows lack umbrella human-authority-boundary artifacts.",
+    "CM-26/CM-27/CM-28 plan-review rows lack human-authority-boundary artifacts."
+  ],
+  "remaining_gaps": [
+    "PLAN_PTT_OR_AUTHORITY_BOUNDARY_SCHEMA_NORMALIZATION_REQUIRED",
+    "API_HOST_AUTHORITY_BOUNDARY_BACKFILL_REQUIRED",
+    "HOST_07_08_AUTHORITY_BOUNDARY_BACKFILL_REQUIRED",
+    "LATE_STAGE_REVIEW_AUTHORITY_BOUNDARY_BACKFILL_REQUIRED"
+  ],
+  "first_actionable_gap": {
+    "id": "CM29A1-01",
+    "gap_id": "PLAN_PTT_OR_AUTHORITY_BOUNDARY_SCHEMA_NORMALIZATION_REQUIRED",
+    "status": "partial",
+    "next_bounded_action": "CM-29A1-PLAN-PTT-OR-AUTHORITY-BOUNDARY-SCHEMA-NORMALIZATION"
+  },
+  "next_bounded_action": "CM-29A1-PLAN-PTT-OR-AUTHORITY-BOUNDARY-SCHEMA-NORMALIZATION",
+  "required_next_action": "CM-29A1-PLAN-PTT-OR-AUTHORITY-BOUNDARY-SCHEMA-NORMALIZATION",
+  "commit_hash": "27f27b32ee337cb891b225fb71763893a02fb93b",
+  "push_status": "pushed_to_origin_codex_chat_gpt_5_5"
+}

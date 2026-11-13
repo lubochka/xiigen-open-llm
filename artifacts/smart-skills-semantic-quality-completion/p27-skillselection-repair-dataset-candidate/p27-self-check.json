@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "p27.self-check.v1",
+  "phase": "P27",
+  "artifactType": "checked SkillSelection repair dataset candidate/materialization only",
+  "rowCount": 8,
+  "p26DraftRowsRead": 8,
+  "allRowsMaterialized": true,
+  "commonTrainingAllowedAllFalse": true,
+  "notUsedForTrainingYetAllTrue": true,
+  "trainingAllowed": false,
+  "trainingRun": false,
+  "checkpointMutated": false,
+  "commonModelReplacementPerformed": false,
+  "promotionPerformed": false,
+  "externalAiOrNetworkUsed": false,
+  "focusedTestCreated": false,
+  "focusedTestReason": "No code path changed; data-only JSON/JSONL/schema validation is the focused gate requested for P27.",
+  "reviewCyclesCount": 7,
+  "validationCommands": [
+    {
+      "command": "node JSON/JSONL parse over P27 JSON/JSONL artifacts plus state",
+      "result": "passed: 4 JSON files parsed including state, 3 JSONL files parsed, 23 JSONL rows parsed"
+    },
+    {
+      "command": "node UTF-8/mojibake scan over P27 artifacts plus state",
+      "result": "passed: no U+FFFD, U+00D0, U+00D1, U+00E2, escaped Cyrillic, CRLF, or three-question-mark runs"
+    },
+    {
+      "command": "node schema/no-overclaim and row flag scan",
+      "result": "passed: 8 dataset rows, required fields present, commonTrainingAllowed=false and notUsedForTrainingYet=true on every row, no forbidden positive claims"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --exit-code -- models/skill-selection/skill-selection-v1",
+      "result": "passed: no model/checkpoint/common SkillSelection model files changed"
+    }
+  ],
+  "validationStatus": "passed",
+  "acceptanceVerdict": "PASS_AS_CHECKED_REPAIR_DATASET_CANDIDATE_NO_TRAINING"
+}

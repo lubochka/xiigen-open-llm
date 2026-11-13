@@ -1,0 +1,51 @@
+{
+  "status": "ACCEPTED_FAIL_EVIDENCE_NEEDS_MORE_REPAIR",
+  "acceptedAsP7Pass": false,
+  "semanticQualityClaimed": false,
+  "p7PassClaimed": false,
+  "fullApiReadinessClaimed": false,
+  "reservedRowsEvaluated": 4,
+  "positiveReservedBehavior": 2,
+  "ablationControlsRun": 24,
+  "shortcutLeaks": 0,
+  "focusedTest": {
+    "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskP7EEvalAblationRerunTests\" --logger \"console;verbosity=minimal\"",
+    "passed": 1,
+    "failed": 0
+  },
+  "failingReservedRows": [
+    "P5H-DPO-PTT-002",
+    "P5H-DPO-PTT-005"
+  ],
+  "passingReservedRows": [
+    "P5H-DPO-PTT-004",
+    "P5H-DPO-PTT-006"
+  ],
+  "reviewCycles": [
+    {
+      "cycle": 1,
+      "name": "goal_delivery",
+      "verdict": "pass_as_fail_evidence",
+      "summary": "P7E reran the P7D candidate and honestly reported 2/4 positives."
+    },
+    {
+      "cycle": 2,
+      "name": "source_disjoint_positive_behavior",
+      "verdict": "fail_for_component_pass",
+      "summary": "Two reserved rows still produce no learned output."
+    },
+    {
+      "cycle": 3,
+      "name": "ablation_no_shortcut",
+      "verdict": "pass",
+      "summary": "No shortcut leaks were detected across 24 controls."
+    },
+    {
+      "cycle": 4,
+      "name": "no_overclaim_readability_test_integrity",
+      "verdict": "pass",
+      "summary": "Focused test and artifacts are accepted for fail-evidence scope."
+    }
+  ],
+  "nextActionAfterCommit": "P7F repair missing PromptToTask coverage for P5H-DPO-PTT-002 and P5H-DPO-PTT-005 without training on eval/holdout or weakening shortcut controls"
+}

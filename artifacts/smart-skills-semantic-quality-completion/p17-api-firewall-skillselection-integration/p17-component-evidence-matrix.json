@@ -1,0 +1,58 @@
+{
+  "phase": "P17_API_FIREWALL_SKILLSELECTION_INTEGRATION",
+  "verdict": "PASS_NO_CLAIM_FIREWALL_READY_FOR_PARENT_REVIEW",
+  "rows": [
+    {
+      "component_id": "PromptToTask",
+      "evidence_level": "component_lifecycle_candidate",
+      "positive_evidence_refs": [
+        "artifacts/smart-skills-semantic-quality-completion/p10-checkpoint-rewrite/smart-skills-p10-component-manifests.json",
+        "artifacts/smart-skills-semantic-quality-completion/p11-fresh-load/smart-skills-p11-per-component-results.jsonl",
+        "artifacts/smart-skills-semantic-quality-completion/p12-continue-training/smart-skills-p12-per-component-results.jsonl"
+      ],
+      "what_is_proven_ru": "Для PromptToTask есть кандидат checkpoint/manifest, fresh-load через проектный путь и continue-training lifecycle evidence. Это компонентная жизненная проверка, а не полный API claim.",
+      "remaining_gap_ru": "Не доказывает SkillSelection, dashboard, host runtime или полный API firewall.",
+      "semantic_quality_claimed": false,
+      "readiness_claimed": false
+    },
+    {
+      "component_id": "OrchestrationReasoning",
+      "evidence_level": "component_lifecycle_candidate",
+      "positive_evidence_refs": [
+        "artifacts/smart-skills-semantic-quality-completion/p10-checkpoint-rewrite/smart-skills-p10-component-manifests.json",
+        "artifacts/smart-skills-semantic-quality-completion/p11-fresh-load/smart-skills-p11-per-component-results.jsonl",
+        "artifacts/smart-skills-semantic-quality-completion/p12-continue-training/smart-skills-p12-per-component-results.jsonl"
+      ],
+      "what_is_proven_ru": "Для OrchestrationReasoning есть кандидат checkpoint/manifest, fresh-load через проектный путь и continue-training lifecycle evidence. Это компонентная жизненная проверка, а не полный API claim.",
+      "remaining_gap_ru": "Не доказывает SkillSelection, dashboard, host runtime или полный API firewall.",
+      "semantic_quality_claimed": false,
+      "readiness_claimed": false
+    },
+    {
+      "component_id": "SkillSelection",
+      "evidence_level": "component_candidate_with_scoped_gaps",
+      "positive_evidence_refs": [
+        "artifacts/smart-skills-semantic-quality-completion/p16e2-skill-selection-source-disjoint-eval-ablation-rerun/p16e2-parent-review.json",
+        "artifacts/smart-skills-semantic-quality-completion/p16f-skill-selection-lifecycle-evidence/p16f-parent-review.json"
+      ],
+      "what_is_proven_ru": "P16E2 принят как component evidence candidate: 10 eval/holdout rows passed, 0 failed, 2 diagnostics-only gaps, 72 ablation controls without shortcut leaks. P16F принят как lifecycle evidence с сохранением sha, export/import metadata и no-op continue gap.",
+      "remaining_gap_ru": "SkillSelection все еще не является full readiness: P16E2 был schema-level evaluation, runtime_evaluation=false; 2 candidate-position rows остаются diagnostics-only exclusions; P16F continue-training был no-op gap без нового delta.",
+      "semantic_quality_claimed": false,
+      "readiness_claimed": false
+    },
+    {
+      "component_id": "API/firewall",
+      "evidence_level": "no_claim_firewall_refresh",
+      "positive_evidence_refs": [
+        "artifacts/smart-skills-semantic-quality-completion/p13-api-firewall-no-claim/p13-parent-review.json",
+        "artifacts/smart-skills-semantic-quality-completion/p17-api-firewall-skillselection-integration/p17-firewall-report.json"
+      ],
+      "what_is_proven_ru": "P13 уже доказал no-claim firewall: без положительной evidence для всех компонентов API не должен заявлять semantic quality. P17 обновляет этот вывод после P16F.",
+      "remaining_gap_ru": "Full API claim остается заблокирован, потому что SkillSelection не имеет полного runtime/final readiness proof, а dashboard/host runtime evidence отсутствуют.",
+      "semantic_quality_claimed": false,
+      "readiness_claimed": false
+    }
+  ],
+  "final_api_claim_allowed": false,
+  "reason_ru": "Есть полезные component artifacts, но full claim требует положительной evidence для всех компонентов и живого API/firewall boundary. SkillSelection пока не закрыт как runtime-ready/full-ready компонент, а lifecycle/no-op evidence не равно semantic quality."
+}

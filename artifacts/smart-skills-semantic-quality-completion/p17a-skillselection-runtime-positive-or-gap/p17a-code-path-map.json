@@ -1,0 +1,117 @@
+{
+  "phase": "P17A_SKILLSELECTION_RUNTIME_POSITIVE_OR_GAP",
+  "verdict": "PASS_EXACT_RUNTIME_GAP_READY_FOR_PARENT_REVIEW",
+  "summary_ru": "Runtime path для SkillSelection существует, но текущая принятая P16D2/P16F evidence не доказывает, что P16D2 candidate загружается и выбирает навыки через этот path.",
+  "inspected_code_paths": [
+    {
+      "class": "SkillSelectionMachine",
+      "file": "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+      "methods": [
+        "LoadCheckpointAsync",
+        "ImportAsync",
+        "LoadCheckpoint",
+        "DecideFromTrainedState",
+        "TryDecideWithSemanticUnitsOnly",
+        "EvaluateCandidateOrderLeakage",
+        "ProbeWithoutCandidatePositionAuthority"
+      ],
+      "finding_ru": "Native load/select path есть. Он должен быть использован будущим P17B доказательством.",
+      "runtime_positive_possible_after_repair": true
+    },
+    {
+      "class": "XiigenExtensionApiService",
+      "file": "43.SmartSkillsDomain/XiigenExtensionApiService.cs",
+      "methods": [
+        "LoadSkillSelectionCommonCheckpoint",
+        "ShouldClaimSemanticQuality"
+      ],
+      "finding_ru": "API common-asset loader десериализует SkillSelectionCheckpoint, а firewall требует positive SkillSelection evidence.",
+      "runtime_positive_possible_after_repair": true
+    }
+  ],
+  "code_quotes": [
+    {
+      "ref": "43.SmartSkillsDomain/SkillSelectionMachine.cs:103-107",
+      "method": "SkillSelectionMachine.DecideFromTrainedState",
+      "quote": "DecideFromTrainedState calls TryDecideWithSemanticUnitsOnly and returns that decision when present.",
+      "meaning_ru": "Runtime сначала пытается выбрать навык через typed semantic units, а не через порядок кандидатов."
+    },
+    {
+      "ref": "43.SmartSkillsDomain/SkillSelectionMachine.cs:124-136",
+      "method": "SkillSelectionMachine.DecideFromTrainedState",
+      "quote": "EvaluateCandidateOrderLeakage is used only after semantic units fail and returns no selected skills.",
+      "meaning_ru": "Candidate-position fallback является диагностикой и не выбирает навык."
+    },
+    {
+      "ref": "43.SmartSkillsDomain/SkillSelectionMachine.cs:146-158",
+      "method": "SkillSelectionMachine.ProbeWithoutCandidatePositionAuthority",
+      "quote": "ProbeWithoutCandidatePositionAuthority calls semantic units or reports NO_SEMANTIC_UNIT_DECISION_AVAILABLE.",
+      "meaning_ru": "Есть проверка без candidate-position authority для будущих shortcut controls."
+    },
+    {
+      "ref": "43.SmartSkillsDomain/SkillSelectionMachine.cs:169-211",
+      "method": "SkillSelectionMachine.TryDecideWithSemanticUnitsOnly",
+      "quote": "PromptContext, ResultGap, OutputValidation, TaskCompletion, IntermediateChecks, SkillSelection, SkillCandidates, Routing, TaskType, TaskUnderstanding, PromptUnderstanding.",
+      "meaning_ru": "Runtime chain содержит typed unit branches, которые должны быть проверены после native load."
+    },
+    {
+      "ref": "43.SmartSkillsDomain/SkillSelectionMachine.cs:443-456",
+      "method": "SkillSelectionMachine.LoadCheckpointAsync",
+      "quote": "ReadCheckpointAsync, create new SkillSelectionMachine, LoadCheckpoint(checkpoint).",
+      "meaning_ru": "Есть настоящий project load path для SkillSelection checkpoint."
+    },
+    {
+      "ref": "43.SmartSkillsDomain/SkillSelectionMachine.cs:2564-2575",
+      "method": "SkillSelectionMachine.ValidateCheckpoint",
+      "quote": "Requires schema version 1, route mode, CandidatePositionWeights, TrainedPairIds, TrainedPromptKeys and trained-state sections.",
+      "meaning_ru": "Native loader ожидает schema version 1 и полный native checkpoint contract."
+    },
+    {
+      "ref": "43.SmartSkillsDomain/XiigenExtensionApiService.cs:560-575",
+      "method": "XiigenExtensionApiService.ShouldClaimSemanticQuality",
+      "quote": "Requires all assets loaded, no second pass, no no-trained-state, no candidate-position scaffold, and positive evidence from all components.",
+      "meaning_ru": "API firewall требует положительное SkillSelection evidence и запрещает no-claim/candidate-position evidence."
+    }
+  ],
+  "artifact_schema_observation": {
+    "p16d2_checkpoint_ref": "artifacts/smart-skills-semantic-quality-completion/p16d2-skill-selection-checkpoint-candidate-rebuild/skill-selection-p16d2-candidate-checkpoint.json",
+    "p16d2_checkpoint_sha256": "2507AB0316A606E290BA4D6C66B298890344A1B52341B41702DE53181959250C",
+    "p16d2_top_level_keys": [
+      "schema_version",
+      "candidate_order_leakage_guard",
+      "trained_pair_ids",
+      "trained_prompt_keys",
+      "prompt_understanding",
+      "task_understanding",
+      "task_type",
+      "routing",
+      "skill_candidates",
+      "skill_selection",
+      "prompt_context",
+      "route_mode",
+      "result_gap",
+      "output_validation",
+      "task_completion",
+      "intermediate_checks",
+      "saved_at_utc",
+      "semantic_quality_claimed",
+      "skill_selection_readiness_claimed",
+      "full_api_readiness_claimed",
+      "trained_model_readiness_claimed",
+      "dashboard_readiness_claimed",
+      "host_runtime_readiness_claimed",
+      "final_model_ready_claimed"
+    ],
+    "p16d2_schema_version": 2,
+    "has_diagnostics_only_candidate_order_guard": true,
+    "top_level_candidate_position_weights_present": false,
+    "native_loader_expected_schema_version": 1,
+    "native_load_proven_by_existing_artifacts": false,
+    "reason_ru": "P16D2 хранит artifact-level schema_version=2 и diagnostics-only guard. Native LoadCheckpointAsync валидирует SkillSelectionCheckpoint schema version 1 и route mode. Без bounded binder/native rebuild/test нельзя считать P16D2 runtime-positive evidence."
+  },
+  "tests_or_probes_run": [],
+  "semantic_quality_claimed": false,
+  "skill_selection_readiness_claimed": false,
+  "full_api_readiness_claimed": false,
+  "final_model_ready_claimed": false
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "xiigen-test-strategy-admission-v1",
+  "work_order": "OR-04B-TRAINER-PREREQ-01",
+  "status": "PASS_AS_FUTURE_TRAINER_TEST_STRATEGY",
+  "tests_run_in_this_slice": [],
+  "tests_forbidden_in_this_slice": [
+    "dotnet build",
+    "dotnet test",
+    "training commands"
+  ],
+  "future_trainer_implementation_tests": [
+    "OrchestrationReasoningTrainer_MaterializesLearnedPatternsFromPayloads",
+    "OrchestrationReasoningTrainer_RejectsRawPrivateTextAndTechnicalExecutionLeakage",
+    "OrchestrationReasoningTrainer_DoesNotTrainFromExcludedTechnicalRefs",
+    "OrchestrationReasoningTrainer_ReturnsOperationResultAndReportNotStub",
+    "OrchestrationReasoningTrainer_Ablation_NoPayloadNoLearnedPatternDelta",
+    "OrchestrationReasoningTrainer_RejectsLegacyOrchestrationPlanMachineCommand"
+  ],
+  "future_allowed_filter": "FullyQualifiedName~OrchestrationReasoningTrainer",
+  "qa_layers_required_later": {
+    "unit": "payload row to learned-pattern delta mapping",
+    "integration": "trainer consumes committed payload manifest and emits report",
+    "negative": "reject raw text, technical execution leakage, invalid hashes, legacy command substitution",
+    "untrained_honesty": "no learned state delta without accepted payload rows",
+    "trained_acceptance": "only later with checkpoint, held-out, ablation, fresh-load and continue evidence",
+    "regression": "existing OrchestrationReasoningMachine focused tests remain green in implementation slice"
+  },
+  "next_bounded_action": "OR-04B-TRAINER-IMPLEMENTATION-01"
+}

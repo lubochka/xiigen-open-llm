@@ -1,0 +1,70 @@
+{
+  "phase": "P8_ORCHESTRATION_REASONING_TRAINING_READINESS",
+  "verdict": "FAIL_EVIDENCE_READY_FOR_PARENT_REVIEW",
+  "status": "fail_ready_for_parent_review",
+  "target_machine": "OrchestrationReasoning",
+  "checkpoint_created": false,
+  "checkpoint_creation_refused_reason": "P5E/P5F provide five OrchestrationReasoning authored source-disjoint draft rows, but no row is training_ready=true; ablation controls are planned/not_run_yet; no dedicated Orchestration training-row promotion gate has accepted train rows.",
+  "source_dpo_counts": {
+    "ledger_rows": 7,
+    "p5e_orchestration_rows": 5,
+    "legacy_p4_evidence_only_rows": 2,
+    "independent_p5e_source_families": 5,
+    "draft_train_candidates_from_p5f": 3,
+    "draft_eval_candidates_from_p5f": 1,
+    "draft_holdout_candidates_from_p5f": 1,
+    "training_ready_rows": 0,
+    "checkpoint_input_allowed_rows": 0
+  },
+  "gates": {
+    "real_source_or_stable_hash_present": true,
+    "source_acceptance_for_authoring_present": true,
+    "chosen_rejected_present": true,
+    "universal_boundary_present": true,
+    "stack_project_execution_removed": true,
+    "source_disjoint_draft_split_possible": true,
+    "training_row_promotion_done": false,
+    "ablation_controls_executed": false,
+    "train_eval_holdout_roles_parent_accepted_for_training": false,
+    "checkpoint_candidate_allowed": false
+  },
+  "missing_gaps_ru": [
+    "Нужен отдельный OrchestrationReasoning promotion review, аналогичный PromptToTask P5L: какие строки становятся обучающими входами, какие остаются eval/holdout, и почему.",
+    "Нужно выполнить или хотя бы подготовить фазу ablation execution для OrchestrationReasoning shortcut controls; P5F оставил их not_run_yet.",
+    "Нужно явно запретить тренировать eval/holdout строки P5E-DPO-ORCH-003 и P5E-DPO-ORCH-005.",
+    "Нужно создать checkpoint candidate только после accepted train-only rows; текущий P8 не имеет разрешенных training rows."
+  ],
+  "concrete_repair_actions": [
+    {
+      "action_id": "P8A_ORCHESTRATION_TRAINING_ROW_PROMOTION_REVIEW",
+      "action_ru": "Провести promotion review для пяти P5E OrchestrationReasoning строк: выбрать train/eval/holdout, оставить training_ready=true только у train rows, подтвердить dataset_ready отдельно от training_input."
+    },
+    {
+      "action_id": "P8B_ORCHESTRATION_CHECKPOINT_CANDIDATE",
+      "action_ru": "Если P8A примет train-only rows, создать checkpoint candidate только под отдельной P8B/P9 artifact directory, без финального overwrite и без semantic-quality claim."
+    },
+    {
+      "action_id": "P8C_ORCHESTRATION_EVAL_ABLATION",
+      "action_ru": "После checkpoint candidate запустить source-disjoint eval/ablation на eval/holdout rows и shortcut controls."
+    }
+  ],
+  "safety_flags": {
+    "training_run": false,
+    "eval_run": false,
+    "focused_test_added": false,
+    "production_code_changed": false,
+    "checkpoint_or_model_created": false,
+    "checkpoint_or_model_overwritten": false,
+    "prompt_to_task_rerun": false,
+    "skill_selection_claimed": false,
+    "external_ai_used": false,
+    "semantic_quality_claimed": false,
+    "p8_pass_claimed": false,
+    "full_api_semantic_quality_claimed": false,
+    "extension_runtime_ready_claimed": false,
+    "final_model_ready_claimed": false,
+    "commit_run": false,
+    "push_run": false
+  },
+  "parent_review_required_before_commit": true
+}

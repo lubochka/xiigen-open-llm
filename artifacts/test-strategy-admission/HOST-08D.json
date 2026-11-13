@@ -1,0 +1,66 @@
+{
+    "schema_version":  1,
+    "work_order":  "HOST-08D-CURSOR-CHAT-HANDLER-LEVEL-QA-ADAPTER",
+    "artifact_kind":  "test_strategy_admission",
+    "passed":  true,
+    "claim_scope":  "Cursor chat handler-level QA adapter only; full chat UI evidence remains separate.",
+    "plan_refs":  [
+                      "B15 HOST-08",
+                      "B20 CM-16",
+                      "B20 CM-17",
+                      "B20 CM-18",
+                      "B20 CM-18A",
+                      "B20 CM-18B",
+                      "B20 CM-22",
+                      "B20 CM-23"
+                  ],
+    "strategy_layers":  [
+                            {
+                                "layer":  "unit",
+                                "strategy":  "node --check for changed Cursor JS and handler-level QA runner.",
+                                "status":  "covered"
+                            },
+                            {
+                                "layer":  "integration",
+                                "strategy":  "Run Cursor Extension Host with test-only adapter invoking the same handler used by chat participant registration.",
+                                "status":  "covered_if_runner_passes"
+                            },
+                            {
+                                "layer":  "e2e_host",
+                                "strategy":  "Handler-level chat path only; not full chat UI or noninteractive participant invocation evidence.",
+                                "status":  "handler_level_only"
+                            },
+                            {
+                                "layer":  "qa_automation",
+                                "strategy":  "Persist request/response/trace refs, disabled/enabled debug assertions, and blocker distinction in HOST-08D reports.",
+                                "status":  "covered"
+                            },
+                            {
+                                "layer":  "negative",
+                                "strategy":  "Assert full_chat_ui_evidence=false and sentinel absent outside request payload.",
+                                "status":  "covered"
+                            },
+                            {
+                                "layer":  "untrained_honesty",
+                                "strategy":  "Assert no semantic quality, final extension completion, or trained feature claim.",
+                                "status":  "covered"
+                            },
+                            {
+                                "layer":  "trained",
+                                "strategy":  "Not applicable; HOST-08D makes no semantic quality claim.",
+                                "status":  "not_applicable_no_semantic_quality_claim"
+                            },
+                            {
+                                "layer":  "regression",
+                                "strategy":  "JSON parse reports and run git diff --check.",
+                                "status":  "covered"
+                            }
+                        ],
+    "anti_loopholes":  {
+                           "handler_level_equals_full_chat_ui_allowed":  false,
+                           "json_ps1_report_substitute_allowed":  false,
+                           "host_semantic_ranking_allowed":  false,
+                           "external_ai_used":  false,
+                           "final_gate_started":  false
+                       }
+}
