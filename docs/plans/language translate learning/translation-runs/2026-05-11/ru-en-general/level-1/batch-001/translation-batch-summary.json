@@ -1,0 +1,53 @@
+{
+  "stream_id": "ru-en-general-l1",
+  "batch_index": 1,
+  "cycle_kind": "translator",
+  "direction": "RU_EN",
+  "topic_domain": "general",
+  "translation_level": 1,
+  "adapter_id": "adapter-ru-en-general",
+  "source_id": "synthetic-seed-tatoeba-style",
+  "source_license_state": "SYNTHETIC_SEED",
+  "date": "2026-05-11",
+  "train_pairs": 50,
+  "heldout_pairs": 50,
+  "repair_required": 0,
+  "blocked": 0,
+  "bpe_vocab": 2048,
+  "model_config": {
+    "hidden_dim": 64,
+    "num_layers": 1,
+    "num_heads": 4,
+    "context_len": 128
+  },
+  "training_metrics": {
+    "batch_count": 5,
+    "batch_size": 10,
+    "avg_loss": 0.690297,
+    "final_loss": 0.692118,
+    "avg_dpo_accuracy": 0.580,
+    "final_dpo_accuracy": 0.500,
+    "avg_reward_margin": 0.005860,
+    "final_reward_margin": 0.002245
+  },
+  "evaluation_metrics": {
+    "metric_mode": "partial",
+    "bleu": "not_run",
+    "chrf": "not_run",
+    "target_script_accuracy": "not_run",
+    "copied_source_rate": "not_run",
+    "wrong_direction_rate": "not_run",
+    "named_entity_preservation": "not_run",
+    "completeness_score": "not_run",
+    "note": "Inference evaluator for BLEU/chrF/script accuracy not yet implemented. DPO training metrics from InternalTrainReadyDpoRunner are actual measured values."
+  },
+  "gate_b_dotnet_test": {
+    "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --no-build | tail -5",
+    "output": "Passed: 1526, Failed: 0",
+    "floor_before": 1526,
+    "floor_after": 1526,
+    "verdict": "PASS"
+  },
+  "verdict": "REPAIR_BATCH",
+  "verdict_reason": "DPO accuracy 0.580 below gate threshold 0.60. Avg reward margin +0.005860 is positive (learning signal exists) but below target >0.05. Source is SYNTHETIC_SEED not ACCEPT. BLEU/chrF not measured (no inference evaluator). Next batch should use batch-size 5 for more gradient updates per epoch."
+}
