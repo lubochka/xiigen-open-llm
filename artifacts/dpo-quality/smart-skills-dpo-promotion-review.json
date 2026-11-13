@@ -1,0 +1,122 @@
+{
+  "artifact": "smart-skills-dpo-promotion-review",
+  "work_order_id": "Q2-03",
+  "review_mode": "REVIEW_INTERNAL",
+  "status": "PASS_WITH_REPAIR_ACCEPTED",
+  "reviewed_at_utc": "2026-06-10T12:00:00.000Z",
+  "branch": "codex/chat-gpt-5.5",
+  "requested_artifact_type": "Q2-03 promotion gate review only",
+  "review_scope": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-PLAN-v1.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-STATE.json",
+    "artifacts/dpo-quality/smart-skills-dpo-dataset-card.json",
+    "artifacts/dpo-quality/smart-skills-dpo-promotion-report.json",
+    "artifacts/dpo-quality/smart-skills-dpo-promotion-manifest.json",
+    "artifacts/dpo-quality/smart-skills-dpo-materialized.jsonl",
+    "artifacts/dpo-quality/smart-skills-dpo-schema.json",
+    "artifacts/dpo-quality/smart-skills-dpo-materialization-report.json",
+    "artifacts/dpo-quality/smart-skills-dpo-materialization-review.json"
+  ],
+  "findings": [
+    {
+      "id": "Q2-03-REVIEW-001",
+      "severity": "P3",
+      "status": "FIXED",
+      "path": "artifacts/dpo-quality/smart-skills-dpo-dataset-card.json",
+      "finding": "The dataset card had adequate limitations but did not explicitly name the exact next repair as Q2-04 near-miss/split/held-out promotion repair.",
+      "fix": "Added exact_next_repair_required_before_promotion and a matching limitation line. Aligned promotion report and manifest wording to the same Q2-04 repair label."
+    }
+  ],
+  "fixes_applied": [
+    "Added Q2-04_NEAR_MISS_SPLIT_HELD_OUT_PROMOTION_REPAIR to the dataset card.",
+    "Updated promotion report repair_id and description to require Q2-04 near-miss/split/held-out promotion repair.",
+    "Updated promotion manifest exact_next_repair to require Q2-04 near-miss/split/held-out promotion repair before any training-data write or training."
+  ],
+  "promotion_honesty_review": {
+    "promoted_false_is_honest": true,
+    "promoted": false,
+    "training_allowed": false,
+    "training_readiness_claimed": false,
+    "semantic_quality_claimed": false,
+    "model_training_or_mutation_performed": false,
+    "training_data_asset_written": false,
+    "claim_scope": "eight reviewed seed rows remain artifact candidates only"
+  },
+  "dataset_card_review": {
+    "status": "PASS_AFTER_REPAIR",
+    "limitations_sufficient": true,
+    "q2_04_exact_next_repair_present": true,
+    "split_ids_present": false,
+    "held_out_construction_present": false,
+    "source_disjoint_held_out_present": false,
+    "near_miss_repair_required_before_promotion": true
+  },
+  "row_and_checksum_review": {
+    "row_count": 8,
+    "row_ids": [
+      "q2-02-dpo-001",
+      "q2-02-dpo-002",
+      "q2-02-dpo-003",
+      "q2-02-dpo-004",
+      "q2-02-dpo-005",
+      "q2-02-dpo-006",
+      "q2-02-dpo-007",
+      "q2-02-dpo-008"
+    ],
+    "domains": {
+      "PromptToTask": 3,
+      "OrchestrationReasoning": 3,
+      "SkillSelection": 2
+    },
+    "source_quality": {
+      "gold": 5,
+      "silver": 3
+    },
+    "checksums_match_materialized_artifacts": true,
+    "checksums": {
+      "materialized_jsonl": "8863253716696615922de2250421344708e9e2492169e61f17736e8d841f036d",
+      "schema": "e66abd111d3cda53185a8257d02e565b28e1d2a632021515e79bada7ceb89f3d",
+      "materialization_report": "200529986ae7699247a7a675cc49609151d5f17d750a4539d55a45d7a642ba15",
+      "materialization_review": "f8a4797544d6c597123fc1352f3581aa99d2c7ff0cfca6fe37248f659a8f13b7"
+    },
+    "post_repair_artifact_hashes": {
+      "dataset_card": "dfdb75fcfcebdd0b5081de4fd035ea666fc7d3cadca0b5e0f543873dfc9a65da",
+      "promotion_report": "b42ef97521c5665559a741f3f6fc4e01d33754f79d246c32197b0e1ae7faa655",
+      "promotion_manifest": "2c72b31b7e020d7a05693027205018bc39af3565ff4fa90dc38b4cef41eddae5"
+    }
+  },
+  "hidden_stop_review": {
+    "status": "PASS",
+    "operator_input_required": false,
+    "state_next_action_actionable": true,
+    "exact_next_action": "Q2-04 near-miss/split/held-out promotion repair before any training-data promotion or training."
+  },
+  "verification": {
+    "json_parse": "PASS",
+    "jsonl_parse": "PASS",
+    "row_count_check": "PASS",
+    "checksum_read_checks": "PASS",
+    "git_diff_check": "PASS",
+    "forbidden_verification_not_run": [
+      "dotnet build",
+      "dotnet test",
+      "training",
+      "model mutation",
+      "production code edits",
+      "test code edits",
+      "dashboard code edits",
+      "commit",
+      "push"
+    ]
+  },
+  "review_path": [
+    "Read AGENTS.md and CLAUDE.md governance.",
+    "Read active Q2 plan and state.",
+    "Read Q2-03 dataset card, promotion report, and promotion manifest.",
+    "Read DPO materialized rows, schema, materialization report, and materialization review.",
+    "Parsed JSON and JSONL, computed SHA-256 checksums, checked row counts, checked promotion honesty, repaired exact Q2-04 next-action wording, and updated state."
+  ],
+  "exact_next_action": "Q2-04 near-miss/split/held-out promotion repair before any training-data promotion or training."
+}

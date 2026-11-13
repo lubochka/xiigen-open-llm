@@ -1,0 +1,82 @@
+﻿{
+  "schemaVersion": 1,
+  "learnedState": {
+    "stateId": "phase14-prompt-to-task-state:base:continue:p14-ptt-delta-ref",
+    "manifestId": "phase14-prompt-to-task-manifest:base",
+    "manifestSha256": "sha256:fac533b4eb3f1b79834021e0d3c4dff51b18c57b18d5919f9783437b9d140753",
+    "machineType": "PromptToTaskMachine",
+    "schemaVersion": "prompt-to-task-state-v1",
+    "sourceBaseCommit": "staged-phase14-no-git",
+    "stateSha256": "8a6992db83391982c3214b2cecfd436bee9994f530daea0cc839d1a54c543964",
+    "learnedPatterns": [
+      {
+        "patternId": "p14-ptt-base-lifecycle",
+        "taskType": "phase14_lifecycle_proof",
+        "learnedSignals": [
+          "phase14_lifecycle",
+          "work_order:P14-FIX-03"
+        ],
+        "explicitUserRequirements": [
+          "produce full-machine PromptToTask lifecycle proof"
+        ],
+        "constraints": [
+          "staged_artifacts_only",
+          "no_common_checkpoint_mutation"
+        ],
+        "deliverables": [
+          "lifecycle proof packet"
+        ],
+        "forbiddenActions": [
+          "final readiness claim",
+          "git"
+        ],
+        "requiredHosts": [
+          "llm_mvp_core"
+        ],
+        "evidenceNeeds": [
+          "checkpoint manifest load",
+          "fresh load",
+          "rollback"
+        ],
+        "splitId": "p14-ptt-base-heldout",
+        "confidence": 0.95
+      },
+      {
+        "patternId": "p14-ptt-delta-continue",
+        "taskType": "phase14_continue_training_delta",
+        "learnedSignals": [
+          "phase14_continue_delta",
+          "work_order:P14-FIX-03-DELTA"
+        ],
+        "explicitUserRequirements": [
+          "continue from imported PromptToTask checkpoint"
+        ],
+        "constraints": [
+          "preserve imported base pattern"
+        ],
+        "deliverables": [
+          "continued checkpoint"
+        ],
+        "forbiddenActions": [
+          "retrain from scratch"
+        ],
+        "requiredHosts": [
+          "llm_mvp_core"
+        ],
+        "evidenceNeeds": [
+          "delta present after continue",
+          "delta absent after rollback"
+        ],
+        "splitId": "p14-ptt-delta-heldout",
+        "confidence": 0.91
+      }
+    ]
+  },
+  "acceptedRefIds": [
+    "p14-ptt-base-ref",
+    "p14-ptt-delta-ref"
+  ],
+  "sourceManifestRef": "phase14/prompt-to-task/continued-source-manifest.json",
+  "semanticQualityClaimed": false,
+  "savedAtUtc": "2026-06-23T19:48:00.8577405+00:00"
+}

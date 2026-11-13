@@ -1,0 +1,25 @@
+# Codex runtime proof review
+
+Вердикт: PASS.
+
+## Что доказано
+
+Codex proof packet присутствует и проходит независимую проверку файлов evidence. Positive trace с correlation id $(@{schema=xiigen.docs_qa.codex_runtime.positive_request_trace.v1; work_order_id=DOCS-QA-CODEX-RUNTIME-PROOF-EXECUTION-NO-SCORING-NO-TRAINING-01; run_id=codex-runtime-proof-execution-no-scoring-no-training-20260622-024755; scenario=positive_request; command_exit_code=0; method=prompt-to-task; correlation_id=codex-runtime-proof-execution-no-scoring-no-training-20260622-024755-positive; request_path=artifacts/extension-runtime-token-quality-learnability/codex-runtime-proof-execution-no-scoring-no-training/codex-runtime-proof-execution-no-scoring-no-training-20260622-024755/positive/request.json; response_path=artifacts/extension-runtime-token-quality-learnability/codex-runtime-proof-execution-no-scoring-no-training/codex-runtime-proof-execution-no-scoring-no-training-20260622-024755/positive/response.json; trace_path=artifacts/extension-runtime-token-quality-learnability/codex-runtime-proof-execution-no-scoring-no-training/codex-runtime-proof-execution-no-scoring-no-training-20260622-024755/positive/trace.json; launched_from_plugin_root=C:/Users/lubao/.codex/plugins/cache/xiigen-local/codex-xiigen-smart-skills/0.1.0+codex.runtime04e-20260616-231500; entrypoint=C:/Users/lubao/.codex/plugins/cache/xiigen-local/codex-xiigen-smart-skills/0.1.0+codex.runtime04e-20260616-231500/src/codex-entrypoint.js; core_root=C:/Projects/llm_mvp_core; core_api=C:/Projects/llm_mvp_core/tools/xiigen-extension-core-api.ps1; host_name=Codex; host_type=codex; requested_skills=System.Object[]; available_skills=System.Object[]; requested_available_skills_binding_present=True; redacted_prompt_present=True; response_success=True; response_status=core_boundary_partial_no_semantic_quality_claim; core_boundary_executed=True; reached_llm_mvp_core=True; raw_private_prompt_persisted=False; contains_secrets=False; semantic_quality_claimed=False; runtime_extension_claimed=False; external_ai_used=False; training_started=False; summary=Positive redacted prompt-to-task request reached llm_mvp_core through installed Codex adapter and returned core_boundary_partial_no_semantic_quality_claim.}.correlation_id) дошел от установленного Codex plugin surface $installedPluginPath через src/codex-entrypoint.js к 	ools/xiigen-extension-core-api.ps1, а core trace указывает $callTarget. Negative trace использовал тот же adapter/core путь и получил локальную ошибку invalid_request / 	arget_locator_required, то есть error path тоже дошел до llm_mvp_core validation boundary.
+
+Проверены свежие артефакты того же run id $(@{schema=xiigen.docs_qa.codex_runtime.fresh_artifacts_manifest.v1; work_order_id=DOCS-QA-CODEX-RUNTIME-PROOF-EXECUTION-NO-SCORING-NO-TRAINING-01; run_id=codex-runtime-proof-execution-no-scoring-no-training-20260622-024755; generated_at_local=2026-06-22T02:50:20+03:00; fresh_artifacts_written=True; artifact_root=artifacts/extension-runtime-token-quality-learnability/codex-runtime-proof-execution-no-scoring-no-training/codex-runtime-proof-execution-no-scoring-no-training-20260622-024755; artifacts=System.Object[]}.run_id): request/response/trace файлы существуют, correlation id positive и negative совпадают между request, trace и summary files. RequestedSkills и AvailableSkills содержат xiigen-smart-skills в обоих сценариях. Input/output следы редактированы: raw private prompt не сохранен, secrets не отмечены, debug trace не содержит raw private content.
+
+## Что не доказано
+
+Этот packet не доказывает token savings. Этот packet не доказывает quality improvement. Этот packet не доказывает learnability. Этот packet не доказывает semantic quality. Этот packet не доказывает model readiness. Этот packet не доказывает full Codex chat/app readiness.
+
+Также packet не доказывает common model readiness, target promotion, locator update, checkpoint promotion или full product readiness. Никакая метрика качества, экономии токенов или обучаемости здесь не измерялась.
+
+## Риски и границы
+
+Доказательство ограничено локальным installed Codex skill/plugin adapter smoke через llm_mvp_core core API. Это не proof полноценного Codex chat UI и не proof всего приложения. В positive response видны существующие core assets/checkpoint refs как загруженные для boundary execution, но review не трактует это как готовность модели или улучшение качества.
+
+Side-effect audit подтверждает отсутствие git-команд, scoring/eval/token savings measurement, training/DPO, model mutation, locator/target mutation, checkpoint promotion, external AI/web/model calls, repo-wide tests, Claude runtime proof и Cursor runtime proof в Codex execution packet.
+
+## Следующий шаг
+
+Так как review PASS и runtime proof lane теперь 3/3 только для runtime proof, следующий безопасный bounded step: $nextWorkOrderId. Это должен быть финальный cross-host runtime proof summary/review без scoring, training, runtime/plugin launch, model/checkpoint mutation, external AI/web/model calls и без readiness claims.

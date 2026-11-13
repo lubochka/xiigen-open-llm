@@ -1,0 +1,57 @@
+{
+  "pass": 7,
+  "name": "P49/P50 boundary, approval packet, source/license, target/rollback binding",
+  "verdict": "PASS_WITH_FIX",
+  "ledger_rows_are_evidence": false,
+  "overall_complete_claimed": false,
+  "scope": {
+    "product_code_changed": false,
+    "runtime_run": false,
+    "training_run": false,
+    "tests_or_build_run": false,
+    "git_commands_run": false
+  },
+  "question": "Does the plan preserve P49/P50 source/license, approval, target and rollback boundaries while allowing safe independent tracks to continue when one track lacks approval?",
+  "finding_before": [
+    "Approval packet was broad instead of track-separated.",
+    "The packet did not explicitly reject old quoted transcript or state approvals.",
+    "Source/license rules were not fully bound to the approval packet.",
+    "Target and rollback did not bind dataset sha, held-out sha, checkpoint shas, manifest, locator, fresh-load, continue-training, held-out, ablation and rollback probes in one place.",
+    "Missing approval for one track could accidentally become a global stop.",
+    "Final full-extension claim was not explicitly tied to packet-backed runtime/eval/training evidence."
+  ],
+  "fix_refs": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 4.5.1",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 8",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 10",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-07.md",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-07.json"
+  ],
+  "tracks_bound": [
+    "host_runtime_probe",
+    "token_metrics",
+    "quality_eval",
+    "local_dpo_creation",
+    "local_continue_training",
+    "common_training",
+    "checkpoint_mutation",
+    "target_promotion",
+    "rollback_probe"
+  ],
+  "required_packet_guards": {
+    "current_luba_approval_quote_required": true,
+    "quote_source_current_unquoted_message_only": true,
+    "old_transcript_or_state_approval_reused_must_be_false": true,
+    "mit_or_apache_or_explicit_permissive_license_required_for_common_training": true,
+    "private_project_user_rows_route_user_local_only": true,
+    "training_dataset_sha_required": true,
+    "held_out_dataset_sha_required": true,
+    "base_target_rollback_checkpoint_binding_required": true,
+    "manifest_and_locator_candidate_required": true,
+    "fresh_load_continue_training_held_out_ablation_rollback_probes_bound_to_named_target": true,
+    "missing_track_approval_goes_to_deferred_decision_queue": true,
+    "safe_independent_tracks_may_continue": true,
+    "final_full_extension_claim_requires_packet_backed_evidence": true
+  },
+  "recheck_evidence": "Patched sections now separate approval tracks, reject reused approvals, bind source/license and target/rollback fields, add deferred_decision_queue, and prevent full-extension completion claims without packet-backed runtime/eval/training evidence."
+}

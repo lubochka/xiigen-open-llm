@@ -1,0 +1,81 @@
+{
+    "work_order":  "CORE-API-INVOCATION-01",
+    "passed":  true,
+    "verdict":  "PASS_PENDING_PARENT_REVIEW",
+    "scope":  "core-owned XiigenExtensionRequest invocation endpoint only; no host runtime, no training, no external AI",
+    "endpoint":  {
+                     "path":  "tools/xiigen-extension-core-api.ps1",
+                     "command":  "powershell -NoProfile -ExecutionPolicy Bypass -File tools/xiigen-extension-core-api.ps1 -RequestPath \u003crequest.json\u003e -ResponsePath \u003cresponse.json\u003e -TracePath \u003ctrace.json\u003e",
+                     "call_target":  "SmartSkillsDomain.XiigenExtensionApiService.ProcessHostExtensionRequest",
+                     "accepts_request_fields":  [
+                                                    "HostName",
+                                                    "HostType",
+                                                    "Method",
+                                                    "UserPromptOrTaskText",
+                                                    "HostFacts",
+                                                    "DebugEnabled",
+                                                    "RequestedSkills",
+                                                    "AvailableSkills",
+                                                    "CheckSetInputs",
+                                                    "Provenance",
+                                                    "CorrelationId"
+                                                ],
+                     "returns":  "XiigenExtensionResponse",
+                     "legacy_phase40_substitution_used":  false,
+                     "semantic_ranking_in_script":  false,
+                     "core_asset_loader":  "XiigenExtensionApiService common asset root constructor"
+                 },
+    "probe":  {
+                  "request_ref":  "artifacts/api-boundary/CORE-API-INVOCATION-01-probe/request.json",
+                  "response_ref":  "artifacts/api-boundary/CORE-API-INVOCATION-01-probe/response.json",
+                  "trace_ref":  "artifacts/api-boundary/CORE-API-INVOCATION-01-probe/trace.json",
+                  "response_success":  true,
+                  "response_status":  "core_boundary_partial_no_semantic_quality_claim",
+                  "runtime_extension_claimed":  "false",
+                  "semantic_quality_claimed":  "false",
+                  "raw_prompt_absent_from_response":  true,
+                  "raw_prompt_absent_from_trace":  true,
+                  "trace_redacted":  true,
+                  "raw_private_prompt_persisted":  false
+              },
+    "trained_asset_evidence":  {
+                                   "trained_model_gate_ref":  "API-01",
+                                   "all_common_assets_loaded":  "true",
+                                   "prompt_to_task":  {
+                                                          "loaded":  "true",
+                                                          "manifest_ref":  "models/prompt-to-task/prompt-to-task-v1/manifest.json",
+                                                          "checkpoint_ref":  "models/prompt-to-task/prompt-to-task-v1/prompt-to-task-v1-checkpoint.json",
+                                                          "checkpoint_sha256":  "50bd20295e4729eab2366374890383a2959bf3fcb8b9114e46d74f8d6f85ad28"
+                                                      },
+                                   "orchestration_reasoning":  {
+                                                                   "loaded":  "true",
+                                                                   "manifest_ref":  "models/orchestration-reasoning/orchestration-reasoning-v1/manifest.json",
+                                                                   "checkpoint_ref":  "models/orchestration-reasoning/orchestration-reasoning-v1/checkpoint.json",
+                                                                   "checkpoint_sha256":  "f66f256156bbc4ba278851f75a2ecd644160adbf676db29118640519e3c9805b"
+                                                               },
+                                   "skill_selection":  {
+                                                           "loaded":  "true",
+                                                           "manifest_ref":  "models/skill-selection/skill-selection-v1/manifest.json",
+                                                           "checkpoint_ref":  "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json",
+                                                           "checkpoint_sha256":  "884cfd350fa582211d6939ac8e2252b7044524701117a458cc6473d5c8f7b228"
+                                                       }
+                               },
+    "deterministic_boundary":  {
+                                   "script_does_not_call_old_phase40_endpoint":  true,
+                                   "script_does_not_use_old_phase40_request_contract":  true,
+                                   "host_runtime_claimed":  false,
+                                   "training_started":  false,
+                                   "external_ai_used":  false,
+                                   "final_semantic_decision_source":  "XiigenExtensionApiService loaded machine outputs; endpoint script only transports JSON request/response",
+                                   "observed_skill_selection_second_pass":  "true",
+                                   "observed_semantic_quality_not_claimed_when_second_pass_or_no_matching_pattern":  true
+                               },
+    "verification":  {
+                         "focused_invocation_command":  "powershell -NoProfile -ExecutionPolicy Bypass -File tools/xiigen-extension-core-api.ps1 -RequestPath artifacts/api-boundary/CORE-API-INVOCATION-01-probe/request.json -ResponsePath artifacts/api-boundary/CORE-API-INVOCATION-01-probe/response.json -TracePath artifacts/api-boundary/CORE-API-INVOCATION-01-probe/trace.json",
+                         "focused_invocation_exit_code":  0,
+                         "focused_invocation_elapsed_seconds":  9.8,
+                         "json_parse":  "request/response/trace parsed OK before report write",
+                         "no_raw_prompt_sentinel_in_response_or_trace":  true
+                     },
+    "next_action_if_accepted":  "CL-02 rerun against tools/xiigen-extension-core-api.ps1; do not start from this work order"
+}

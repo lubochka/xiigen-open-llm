@@ -1,0 +1,84 @@
+{
+  "schema": "xiigen.cursor.runtime_proof.invocation_path_contract.v1",
+  "work_order_id": "DOCS-QA-CURSOR-RUNTIME-PROOF-REPAIR-DISCOVERY-NO-SCORING-NO-TRAINING-01",
+  "selected_host": "Cursor",
+  "retry_work_order_id": "DOCS-QA-CURSOR-RUNTIME-PROOF-RETRY-EXECUTION-NO-SCORING-NO-TRAINING-01",
+  "extension_id": "xiigen.cursor-xiigen-smart-skills",
+  "command_id": "xiigenSmartSkills.runtimeProof.invoke",
+  "cursor_executable": "C:\\Users\\lubao\\AppData\\Local\\Programs\\cursor\\Cursor.exe",
+  "cursor_cli_shim": "C:\\Users\\lubao\\AppData\\Local\\Programs\\cursor\\resources\\app\\bin\\cursor.cmd",
+  "extension_development_path": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills",
+  "workspace_path": "C:\\Projects\\llm_mvp_core",
+  "core_api_script": "C:\\Projects\\llm_mvp_core\\tools\\phase40-extension-core-api.ps1",
+  "environment": {
+    "PHASE40_CURSOR_RUNTIME_EVIDENCE_DIR": "<NEXT_RUN_ROOT>\\runtime-evidence"
+  },
+  "cursor_launch_command_template": "& 'C:\\Users\\lubao\\AppData\\Local\\Programs\\cursor\\Cursor.exe' --new-window --user-data-dir '<NEXT_RUN_ROOT>\\cursor-user-data' --extensions-dir '<NEXT_RUN_ROOT>\\cursor-extensions' --extensionDevelopmentPath 'C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills' --extensionTestsPath '<NEXT_RUN_ROOT>\\extension-host-tests' --disable-gpu --log trace 'C:\\Projects\\llm_mvp_core'",
+  "extension_host_test_steps": [
+    "Set PHASE40_CURSOR_RUNTIME_EVIDENCE_DIR to <NEXT_RUN_ROOT>\\runtime-evidence before launching Cursor.",
+    "In the extension-host test process, load vscode and activate vscode.extensions.getExtension('xiigen.cursor-xiigen-smart-skills').",
+    "Call vscode.commands.executeCommand('xiigenSmartSkills.runtimeProof.invoke', positive_request).",
+    "Call vscode.commands.executeCommand('xiigenSmartSkills.runtimeProof.invoke', negative_error_request).",
+    "Copy or summarize all generated request/core-response/core-trace/host-trace/entrypoint-response/redacted-trace refs into the retry artifact folder."
+  ],
+  "positive_scenario_input": {
+    "scenario": "positive_request",
+    "correlationId": "cursor-runtime-proof-retry-<TIMESTAMP>-positive",
+    "prompt": "Redacted Cursor smart-skills runtime proof request for bounded Phase40 work-order routing.",
+    "evidenceRoot": "<NEXT_RUN_ROOT>\\runtime-evidence",
+    "redactedInput": {
+      "scenario": "positive_request",
+      "prompt": "[REDACTED Cursor smart-skills routing request]",
+      "privateDataIncluded": false
+    }
+  },
+  "negative_scenario_input": {
+    "scenario": "negative_error_request",
+    "correlationId": "cursor-runtime-proof-retry-<TIMESTAMP>-negative",
+    "prompt": "",
+    "evidenceRoot": "<NEXT_RUN_ROOT>\\runtime-evidence",
+    "redactedInput": {
+      "scenario": "negative_error_request",
+      "prompt": "[REDACTED missing or invalid Cursor smart-skills request]",
+      "privateDataIncluded": false
+    }
+  },
+  "expected_artifacts": {
+    "positive": [
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-positive-positive_request-request-*.json",
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-positive-positive_request-core-response-*.json",
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-positive-positive_request-core-trace-*.json",
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-positive-positive_request-host-trace-*.json",
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-positive-positive_request-entrypoint-response-*.json",
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-positive-positive_request-redacted-trace-*.json"
+    ],
+    "negative": [
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-negative-negative_error_request-request-*.json",
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-negative-negative_error_request-core-response-*.json",
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-negative-negative_error_request-core-trace-*.json",
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-negative-negative_error_request-host-trace-*.json",
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-negative-negative_error_request-entrypoint-response-*.json",
+      "phase40-cursor-xiigenSmartSkills.runtimeProof.invoke-cursor-runtime-proof-retry-<TIMESTAMP>-negative-negative_error_request-redacted-trace-*.json"
+    ],
+    "latest": "phase40-cursor-host-runtime-latest.json"
+  },
+  "evidence_checks": {
+    "extension_host_registration": "Extension Host logs or vscode extension activation prove id xiigen.cursor-xiigen-smart-skills was loaded from extension_development_path.",
+    "positive_request": "entrypoint response has entrypointName=xiigenSmartSkills.runtimeProof.invoke, runtimeProofScenario=positive_request, correlationId matching input, runtimeEvidence=true, coreApiRuntimeEvidence=true, passed=true.",
+    "positive_core_boundary": "core response/trace refs exist and core trace traceKind is Phase40CoreApiCommandTrace.",
+    "negative_error_path": "negative entrypoint response has runtimeProofScenario=negative_error_request, correlationId matching input, runtimeEvidence=true, passed=false, redactedOutput.negativeErrorPathPresent=true or core response gaps count > 0.",
+    "redaction": "redacted traces contain inputRedacted/outputRedacted and do not include raw private corpus content or secrets.",
+    "same_handler_core_boundary": "host trace/redacted trace callsSameHandlerCoreBoundary=true and dashboardOnlyShortcut=false.",
+    "forbidden_claims": "token_savings_claimed=false, quality_improvement_claimed=false, semantic_quality_claimed=false, learnability_claimed=false."
+  },
+  "forbidden_in_retry": {
+    "scoring": true,
+    "training": true,
+    "model_mutation": true,
+    "checkpoint_promotion": true,
+    "claude_runtime_proof": true,
+    "codex_runtime_proof": true,
+    "external_ai_web_model_calls": true,
+    "broad_private_corpus_reads": true
+  }
+}

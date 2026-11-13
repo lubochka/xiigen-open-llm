@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "smart-skills-dpo-materialized-row-schema-v1",
+  "title": "Smart Skills DPO Materialized Row",
+  "type": "object",
+  "required": [
+    "row_id",
+    "work_order_id",
+    "source_binding_ref",
+    "source_binding_work_order_id",
+    "domain",
+    "candidate_domain",
+    "machine_target",
+    "prompt_input_task_context",
+    "chosen_ref",
+    "rejected_ref",
+    "error_code",
+    "near_miss_taxonomy",
+    "common_or_adaptive",
+    "universalized",
+    "technical_execution_refs_excluded",
+    "external_ai_used",
+    "raw_private_text_copied",
+    "training_row_created",
+    "materialized_data_row_only",
+    "path_or_filename_learning_excluded",
+    "deterministic_shortcut_hidden",
+    "near_miss_quality"
+  ],
+  "properties": {
+    "row_id": {
+      "type": "string",
+      "pattern": "^q2-02-dpo-[0-9]{3}$"
+    },
+    "work_order_id": {
+      "const": "Q2-02"
+    },
+    "source_binding_ref": {
+      "type": "string"
+    },
+    "source_binding_work_order_id": {
+      "const": "Q2-01"
+    },
+    "domain": {
+      "enum": [
+        "PromptToTask",
+        "OrchestrationReasoning",
+        "SkillSelection"
+      ]
+    },
+    "candidate_domain": {
+      "enum": [
+        "prompt-to-task",
+        "orchestration-reasoning",
+        "skill-selection"
+      ]
+    },
+    "machine_target": {
+      "type": "string"
+    },
+    "prompt_input_task_context": {
+      "type": "object",
+      "required": [
+        "context_type",
+        "universal_task_summary",
+        "input_ref",
+        "approved_behavior",
+        "rejected_near_miss_behavior",
+        "private_or_project_specific_text_copied"
+      ],
+      "properties": {
+        "context_type": {
+          "type": "string"
+        },
+        "universal_task_summary": {
+          "type": "string"
+        },
+        "input_ref": {
+          "type": "string"
+        },
+        "approved_behavior": {
+          "type": "string"
+        },
+        "rejected_near_miss_behavior": {
+          "type": "string"
+        },
+        "private_or_project_specific_text_copied": {
+          "const": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "chosen_ref": {
+      "type": "string"
+    },
+    "chosen_summary": {
+      "type": "string"
+    },
+    "rejected_ref": {
+      "type": "string"
+    },
+    "rejected_summary": {
+      "type": "string"
+    },
+    "error_code": {
+      "type": "string"
+    },
+    "near_miss_taxonomy": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "teaches_boundary": {
+      "type": "string"
+    },
+    "source_quality": {
+      "enum": [
+        "gold",
+        "silver"
+      ]
+    },
+    "common_or_adaptive": {
+      "const": "common"
+    },
+    "universalized": {
+      "const": true
+    },
+    "technical_execution_refs_excluded": {
+      "const": true
+    },
+    "external_ai_used": {
+      "const": false
+    },
+    "raw_private_text_copied": {
+      "const": false
+    },
+    "training_row_created": {
+      "const": true
+    },
+    "materialized_data_row_only": {
+      "const": true
+    },
+    "model_training_or_mutation_performed": {
+      "const": false
+    },
+    "path_or_filename_learning_excluded": {
+      "const": true
+    },
+    "deterministic_shortcut_hidden": {
+      "const": false
+    },
+    "near_miss_quality": {
+      "type": "object",
+      "required": [
+        "plausible",
+        "generic_refusal",
+        "absurd_bad_output",
+        "filename_or_path_route",
+        "single_reusable_boundary"
+      ],
+      "properties": {
+        "plausible": {
+          "const": true
+        },
+        "generic_refusal": {
+          "const": false
+        },
+        "absurd_bad_output": {
+          "const": false
+        },
+        "filename_or_path_route": {
+          "const": false
+        },
+        "single_reusable_boundary": {
+          "const": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,85 @@
+{
+  "artifact": "smart-skills-candidate-quality-review",
+  "work_order_id": "Q2-01",
+  "review_mode": "REVIEW_INTERNAL",
+  "status": "PASS",
+  "reviewed_at_utc": "2026-06-10T11:05:00.000Z",
+  "branch": "codex/chat-gpt-5.5",
+  "requested_artifact_type": "candidate quality review only",
+  "review_scope": [
+    "artifacts/dpo-material-quality/smart-skills-candidate-bindings.jsonl",
+    "artifacts/dpo-material-quality/smart-skills-candidate-binding-schema.json",
+    "artifacts/dpo-material-quality/smart-skills-candidate-quality-report.json",
+    "artifacts/dpo-material-quality/smart-skills-q1-source-boundary-proof.json",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-PLAN-v1.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-STATE.json",
+    "docs/plans/DPO-KNOWLEDGE-MAP-v1.md",
+    "docs/skills/skill-injection-SKILL.md",
+    "docs/skills/skill-graph-sync-SKILL.md",
+    "C:/Users/lubao/Documents/xiigen/extensions  - orchestration based on our data/PROMPT-TO-TASK-DPO-NEGATIVE-STRATEGY-v1.md",
+    "C:/Users/lubao/Documents/xiigen/extensions  - orchestration based on our data/ORCHESTRATION-REASONING-DPO-NEGATIVE-STRATEGY-v1.md"
+  ],
+  "findings": [],
+  "fixes_applied": [],
+  "candidate_quality_gate_review": {
+    "candidate_quality_gate_satisfied": true,
+    "training_allowed_now": false,
+    "dpo_generation_allowed_next": "bounded materialization from reviewed candidates only, still no training",
+    "good_common_candidate_counts": {
+      "prompt-to-task": 3,
+      "orchestration-reasoning": 3,
+      "skill-selection": 2
+    },
+    "excluded_candidate_counts": {
+      "prompt-to-task": 1,
+      "orchestration-reasoning": 2,
+      "skill-selection": 2
+    }
+  },
+  "review_tasks": {
+    "skill_selection_candidates": {
+      "status": "PASS",
+      "reviewed_bindings": [
+        "q2-01-skill-selection-skill-injection-minimal-blocks",
+        "q2-01-skill-selection-graph-sync-drift-boundary"
+      ],
+      "reason": "Both good SkillSelection candidates express reusable selection semantics and include chosen_reference_shape plus rejected_reference_shape. The first teaches minimal compatible skill-block selection with mandatory exceptions and rejects over-selection or execution-family drift. The second teaches skill-graph synchronization selection for governed seed links and drift, and rejects filename or candidate-position routing."
+    },
+    "prompt_to_task_and_orchestration_candidates": {
+      "status": "PASS",
+      "reason": "PromptToTask and OrchestrationReasoning good rows remain common candidates backed by accessible strategy-doc chosen/rejected examples and error taxonomies. Excluded rows have explicit exclusion reasons, rejected source quality, no chosen/rejected refs, and do not convert Q1 done metadata into learning content."
+    },
+    "q1_source_boundary_proof": {
+      "status": "PASS",
+      "reason": "The boundary proof records hashes, byte/char lengths, a redacted excerpt hash, and raw_excerpt_text_copied=false/raw_private_text_copied=false. It explicitly keeps common_training_source_approved=false, training_row_created=false, and dpo_row_created=false."
+    },
+    "invariants": {
+      "status": "PASS",
+      "training_row_created_false_for_all_rows": true,
+      "external_ai_used_false_for_all_rows": true,
+      "technical_execution_refs_excluded_true_for_all_good_common_rows": true,
+      "raw_private_text_copied_true_count": 0
+    }
+  },
+  "verification": {
+    "json_parse": "PASS",
+    "jsonl_parse": "PASS",
+    "jsonl_line_count": 13,
+    "jsonl_parse_failures": 0,
+    "invariant_failures": 0,
+    "targeted_rg_read": "PASS",
+    "git_diff_check": "PASS",
+    "forbidden_verification_not_run": [
+      "dotnet build",
+      "dotnet test",
+      "training",
+      "model mutation",
+      "production code edits",
+      "test code edits",
+      "dashboard code edits",
+      "commit",
+      "push"
+    ]
+  },
+  "exact_next_action": "Issue the next bounded DPO materialization work order for candidate-to-row conversion from the reviewed Q2-01 candidates only; still no training, no model mutation, no build/test, no commit/push unless separately authorized."
+}

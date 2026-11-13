@@ -1,0 +1,323 @@
+{
+  "work_order": "API-02",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "schema_version": 1,
+  "scope": "method-level XiigenExtension API contracts for thin host clients only",
+  "thin_client_boundary": true,
+  "host_runtime_claimed": false,
+  "training_run_started": false,
+  "external_ai_used": false,
+  "full_extension_completion_claimed": false,
+  "methods": [
+    {
+      "method": "prompt-to-task",
+      "allowed_request_fields": [
+        "HostName",
+        "HostType",
+        "Method",
+        "UserPromptOrTaskText",
+        "HostFacts",
+        "CheckSetInputs",
+        "Provenance",
+        "CorrelationId"
+      ],
+      "allowed_response_fields": [
+        "Success",
+        "Status",
+        "ChatDisplayText",
+        "StructuredTaskRefs",
+        "CheckSetResults",
+        "Warnings",
+        "Errors"
+      ],
+      "forbidden_payloads": [
+        "model_internals",
+        "raw_corpus_data",
+        "raw_private_prompt",
+        "host_side_training_logic",
+        "external_ai_call",
+        "host_runtime_claim"
+      ],
+      "boundary_rules": [
+        "thin_host_request_only",
+        "core_logic_stays_in_llm_mvp_core",
+        "no_model_internals_or_corpus_rows_in_response",
+        "semantic_quality_requires_trained_model_gate_refs",
+        "runtime_extension_claimed_false_until_host_runtime_phase"
+      ]
+    },
+    {
+      "method": "orchestration-plan",
+      "allowed_request_fields": [
+        "HostName",
+        "HostType",
+        "Method",
+        "HostFacts",
+        "CheckSetInputs",
+        "Provenance",
+        "CorrelationId",
+        "structured_task_ref"
+      ],
+      "allowed_response_fields": [
+        "Success",
+        "Status",
+        "ChatDisplayText",
+        "ScenarioRefs",
+        "CheckSetResults",
+        "Warnings",
+        "Errors"
+      ],
+      "forbidden_payloads": [
+        "model_internals",
+        "raw_corpus_data",
+        "raw_private_prompt",
+        "host_side_training_logic",
+        "external_ai_call",
+        "host_runtime_claim"
+      ],
+      "boundary_rules": [
+        "thin_host_request_only",
+        "core_logic_stays_in_llm_mvp_core",
+        "no_model_internals_or_corpus_rows_in_response",
+        "semantic_quality_requires_trained_model_gate_refs",
+        "runtime_extension_claimed_false_until_host_runtime_phase"
+      ]
+    },
+    {
+      "method": "skill-selection",
+      "allowed_request_fields": [
+        "HostName",
+        "HostType",
+        "Method",
+        "AvailableSkills",
+        "RequestedSkills",
+        "HostFacts",
+        "Provenance",
+        "CorrelationId",
+        "prompt_sha256"
+      ],
+      "allowed_response_fields": [
+        "Success",
+        "Status",
+        "ChatDisplayText",
+        "SelectedSkills",
+        "CheckSetResults",
+        "Warnings",
+        "Errors"
+      ],
+      "forbidden_payloads": [
+        "model_internals",
+        "raw_corpus_data",
+        "raw_private_prompt",
+        "host_side_training_logic",
+        "external_ai_call",
+        "host_runtime_claim"
+      ],
+      "boundary_rules": [
+        "thin_host_request_only",
+        "core_logic_stays_in_llm_mvp_core",
+        "no_model_internals_or_corpus_rows_in_response",
+        "semantic_quality_requires_trained_model_gate_refs",
+        "runtime_extension_claimed_false_until_host_runtime_phase"
+      ]
+    },
+    {
+      "method": "feedback",
+      "allowed_request_fields": [
+        "HostName",
+        "HostType",
+        "Method",
+        "Provenance",
+        "CorrelationId",
+        "feedback_class",
+        "chosen_ref",
+        "rejected_ref",
+        "prompt_sha256",
+        "response_ref",
+        "correction_ref"
+      ],
+      "allowed_response_fields": [
+        "Success",
+        "Status",
+        "ChatDisplayText",
+        "CheckSetResults",
+        "Warnings",
+        "Errors"
+      ],
+      "forbidden_payloads": [
+        "model_internals",
+        "raw_corpus_data",
+        "raw_private_prompt",
+        "host_side_training_logic",
+        "external_ai_call",
+        "host_runtime_claim",
+        "common_model_mutation",
+        "raw_private_correction_text"
+      ],
+      "boundary_rules": [
+        "thin_host_request_only",
+        "core_logic_stays_in_llm_mvp_core",
+        "no_model_internals_or_corpus_rows_in_response",
+        "semantic_quality_requires_trained_model_gate_refs",
+        "runtime_extension_claimed_false_until_host_runtime_phase",
+        "feedback_routes_refs_only_to_user_local_adaptive_dpo_signal_creation",
+        "feedback_must_not_mutate_common_models",
+        "feedback_must_not_include_raw_private_content"
+      ]
+    },
+    {
+      "method": "debug-trace",
+      "allowed_request_fields": [
+        "HostName",
+        "HostType",
+        "Method",
+        "DebugEnabled",
+        "CorrelationId",
+        "redacted_input_payload",
+        "redacted_output_payload"
+      ],
+      "allowed_response_fields": [
+        "Success",
+        "Status",
+        "ChatDisplayText",
+        "DebugTrace",
+        "Warnings",
+        "Errors"
+      ],
+      "forbidden_payloads": [
+        "model_internals",
+        "raw_corpus_data",
+        "raw_private_prompt",
+        "host_side_training_logic",
+        "external_ai_call",
+        "host_runtime_claim",
+        "debug_trace_when_raw_private_or_secret_flags_true"
+      ],
+      "boundary_rules": [
+        "thin_host_request_only",
+        "core_logic_stays_in_llm_mvp_core",
+        "no_model_internals_or_corpus_rows_in_response",
+        "semantic_quality_requires_trained_model_gate_refs",
+        "runtime_extension_claimed_false_until_host_runtime_phase",
+        "chat_format_exact:xiigen <method> :\\ninput: <redacted>\\noutput: <redacted>",
+        "debug_trace_suppressed_if_raw_private_content_or_secrets_true"
+      ]
+    }
+  ],
+  "verification": {
+    "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"XiigenExtensionApiContract\" --nologo",
+    "exit_code": 0,
+    "passed": 17,
+    "failed": 0,
+    "total": 17,
+    "elapsed_seconds": 29.6
+  },
+  "passed": true,
+  "parent_review_repair": {
+    "work_order": "API-02R",
+    "repair_scope": "report/state acceptance evidence only",
+    "parent_finding": "top-level passed was missing/null and active 16-goal review envelope was absent",
+    "code_runtime_gap": false,
+    "production_code_changed": false,
+    "tests_rerun": false,
+    "evidence_basis": "API-02 focused tests already passed 17/17 and schema covers exactly five method contracts with thin-client boundary rules"
+  },
+  "active_16_goal_review_envelope": [
+    {
+      "id": "G01",
+      "item": "Prompt-to-task method contract",
+      "status": "PASS_FOR_GATE",
+      "evidence": "prompt-to-task method contract exists with allowed request/response fields and forbidden internals/corpus/training/external AI/host-runtime payloads."
+    },
+    {
+      "id": "G02",
+      "item": "Orchestration plan method contract",
+      "status": "PASS_FOR_GATE",
+      "evidence": "orchestration-plan method contract exists with thin host request fields and no model internals or corpus data."
+    },
+    {
+      "id": "G03",
+      "item": "Skill-selection method contract",
+      "status": "PASS_FOR_GATE",
+      "evidence": "skill-selection method contract exists with skill refs/outputs only and boundary rules requiring trained-model gate refs."
+    },
+    {
+      "id": "G04",
+      "item": "No deterministic shortcut masquerade",
+      "status": "PASS",
+      "evidence": "API-02 adds contracts/schema only; contracts forbid model internals, corpus rows, host training, external AI, and no decision logic was added."
+    },
+    {
+      "id": "G05",
+      "item": "Common/adaptive split",
+      "status": "PASS_FOR_GATE",
+      "evidence": "Contracts preserve refs-only boundaries and do not mutate common or adaptive state; feedback is user-local DPO refs only."
+    },
+    {
+      "id": "G06",
+      "item": "Host runtime integration",
+      "status": "NOT_STARTED_IN_THIS_GATE",
+      "evidence": "API-02 defines core method contracts only; host runtime work remains later plan scope."
+    },
+    {
+      "id": "G07",
+      "item": "Core logic remains in llm_mvp_core",
+      "status": "PASS_FOR_GATE",
+      "evidence": "Schema is under artifacts/api-boundary and contracts are in 43.SmartSkillsDomain; no host repo touched."
+    },
+    {
+      "id": "G08",
+      "item": "External AI/tool ban",
+      "status": "PASS",
+      "evidence": "No external AI, browser, or image tools used; no external AI calls allowed by contracts."
+    },
+    {
+      "id": "G09",
+      "item": "Method-level thin client boundary",
+      "status": "PASS_FOR_GATE",
+      "evidence": "All five methods list allowed request/response fields for host thin requests without model internals or corpus data."
+    },
+    {
+      "id": "G10",
+      "item": "Training/model mutation boundary",
+      "status": "PASS_FOR_GATE",
+      "evidence": "Contracts forbid host-side training logic and common model mutation; no training runs started."
+    },
+    {
+      "id": "G11",
+      "item": "Debug trace privacy",
+      "status": "PASS_FOR_GATE",
+      "evidence": "debug-trace requires exact redacted chat format and suppression when raw/private/secrets flags are true."
+    },
+    {
+      "id": "G12",
+      "item": "Raw private/corpus leakage ban",
+      "status": "PASS_FOR_GATE",
+      "evidence": "All methods forbid raw corpus data and raw private prompt leakage; feedback forbids raw private correction text."
+    },
+    {
+      "id": "G13",
+      "item": "Client-side/user-side learning boundary",
+      "status": "PASS_FOR_GATE",
+      "evidence": "feedback contract routes refs/corrections only to user-local adaptive DPO signal creation and forbids common model mutation."
+    },
+    {
+      "id": "G14",
+      "item": "Full extension/host readiness claim",
+      "status": "NOT_STARTED_IN_THIS_GATE",
+      "evidence": "Artifact records host_runtime_claimed=false and full_extension_completion_claimed=false."
+    },
+    {
+      "id": "G15",
+      "item": "API-03 not started",
+      "status": "PASS",
+      "evidence": "This repair changes only API-02 report/state; no API-03 work started."
+    },
+    {
+      "id": "G16",
+      "item": "Architect critical review boundary",
+      "status": "PASS_PENDING_PARENT_REVIEW",
+      "evidence": "API-02R repair is ready for parent review; acceptance/state reconciliation to API-03 remains separate."
+    }
+  ]
+}

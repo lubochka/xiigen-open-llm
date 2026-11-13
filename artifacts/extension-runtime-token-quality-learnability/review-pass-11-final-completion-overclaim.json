@@ -1,0 +1,98 @@
+{
+  "schema": "xiigen.extension_runtime_token_quality_learnability.review_pass_11_final_completion_overclaim.v1",
+  "pass": 11,
+  "name": "Final completion matrix and overclaim audit",
+  "created_at_local": "2026-06-16T17:05:00.0000000+03:00",
+  "repo": "C:\\Projects\\llm_mvp_core",
+  "branch": "codex/chat-gpt-5.5",
+  "commit_reviewed": "9abb67d8",
+  "commit_push_performed_by_this_pass": false,
+  "code_or_test_changes_made": false,
+  "state_fix_applied": true,
+  "state_fix_summary": "Corrected stale LEARN-07 pending commit boundary to committed_and_pushed_by_parent=true at 9abb67d8; no readiness claim was added.",
+  "verdict": "PASS_WITH_STATE_FIX",
+  "evidence_coverage": {
+    "plan_completion_matrix_present": true,
+    "review_passes_01_to_10_present": true,
+    "learn_05_fresh_load_report_present": true,
+    "learn_06_held_out_ablation_report_present": true,
+    "learn_07_rollback_report_present": true,
+    "learn_05_06_07_tests_present": true,
+    "learn_07_commit_present_on_head_and_origin": true
+  },
+  "limitation_visibility": {
+    "prompt_to_task_partial_overlay_only_visible": true,
+    "skill_selection_partial_overlay_only_visible": true,
+    "orchestration_public_machine_fresh_load_visible": true,
+    "orchestration_public_machine_held_out_ablation_visible": true,
+    "orchestration_public_machine_rollback_visible": true,
+    "no_universal_semantic_quality_visible": true,
+    "no_full_learnability_visible": true,
+    "no_target_promotion_visible": true,
+    "no_common_model_readiness_visible": true,
+    "host_runtime_limits_visible": true
+  },
+  "reviewed_sources": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-01.md/json through review-pass-10.md/json",
+    "artifacts/extension-runtime-token-quality-learnability/fresh-load-report.md/json",
+    "artifacts/extension-runtime-token-quality-learnability/held-out-ablation-report.md/json",
+    "artifacts/extension-runtime-token-quality-learnability/rollback-report.md/json",
+    "artifacts/extension-runtime-token-quality-learnability/learn-05-validation.json",
+    "artifacts/extension-runtime-token-quality-learnability/learn-06-validation.json",
+    "artifacts/extension-runtime-token-quality-learnability/learn-07-validation.json",
+    "Tests/Learn05FreshLoadRunnerTests.cs",
+    "Tests/Learn06HeldOutAblationRunnerTests.cs",
+    "Tests/Learn07RollbackRunnerTests.cs",
+    "artifacts/extension-runtime-token-quality-learnability/claude-runtime-qa-report.md/json",
+    "artifacts/extension-runtime-token-quality-learnability/cursor-runtime-qa-report.md/json",
+    "artifacts/extension-runtime-token-quality-learnability/codex-runtime-qa-report.md/json"
+  ],
+  "findings": [
+    {
+      "severity": "P2",
+      "status": "FIXED_IN_STATE_DOC_ONLY",
+      "title": "Execution state still recorded LEARN-07 as pending phase commit after the phase commit was already pushed",
+      "evidence": "git log shows HEAD and origin/codex/chat-gpt-5.5 at 9abb67d8 phase LEARN-07: record rollback verifier artifacts, while state had phase_status ACCEPTED_FOR_PARENT_REVIEW_WITH_LIMITATIONS_PENDING_PHASE_COMMIT and pending_commit_boundary.pending=true.",
+      "impact": "The stale boundary could mislead final review into thinking execution was incomplete for commit bookkeeping reasons.",
+      "fix": "Updated only docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json to record LEARN-07 committed_and_pushed_by_parent=true at 9abb67d8."
+    }
+  ],
+  "overclaim_audit": {
+    "full_readiness_claim_found": false,
+    "full_extension_ready_claim_found": false,
+    "universal_semantic_quality_claim_found": false,
+    "full_learnability_claim_found": false,
+    "target_promotion_claim_found": false,
+    "common_model_readiness_claim_found": false,
+    "state_or_report_overclaim_after_fix": false
+  },
+  "completion_matrix_summary": [
+    {
+      "area": "PromptToTaskMachine",
+      "evidence": "LEARN-05 adaptive loader, LEARN-06 overlay metadata/source-disjoint controls, LEARN-07 overlay rollback",
+      "allowed_claim": "partial overlay evidence only",
+      "forbidden_claim_visible": "no full machine fresh-load, held-out/runtime, rollback, semantic quality, or learnability claim"
+    },
+    {
+      "area": "OrchestrationReasoningMachine",
+      "evidence": "LEARN-05 public LoadCheckpointAsync + Plan, LEARN-06 named held-out/ablation controls, LEARN-07 public rollback boundary",
+      "allowed_claim": "public machine boundary proof for named fresh-load, held-out/ablation, and rollback checks",
+      "forbidden_claim_visible": "no universal semantic quality, target promotion, common readiness, or full future correctness claim"
+    },
+    {
+      "area": "SkillSelectionMachine",
+      "evidence": "LEARN-05 correction-adaptive loader, LEARN-06 overlay metadata/source-disjoint controls, LEARN-07 overlay rollback",
+      "allowed_claim": "partial overlay evidence only",
+      "forbidden_claim_visible": "no full machine fresh-load, held-out/runtime, rollback, semantic quality, or learnability claim"
+    },
+    {
+      "area": "Host runtime",
+      "evidence": "Claude/Cursor/Codex runtime QA packets",
+      "allowed_claim": "named host runtime paths only, with Codex full plugin chat UI still not claimed",
+      "forbidden_claim_visible": "no token, quality, learning, checkpoint, or full plan completion claim from host runtime packets"
+    }
+  ],
+  "final_report_guardrail": "A final ready report must still avoid saying full learnability, universal semantic quality, target promotion, or common model readiness. It may claim only packet-backed scope and must preserve PromptToTask/SkillSelection partial-overlay wording."
+}

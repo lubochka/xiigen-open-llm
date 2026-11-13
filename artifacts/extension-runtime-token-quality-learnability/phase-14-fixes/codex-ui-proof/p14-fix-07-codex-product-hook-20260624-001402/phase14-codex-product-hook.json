@@ -1,0 +1,256 @@
+{
+  "schema": "phase14.codex_product_hook_packet.v1",
+  "packet_id": "p14-fix-07-codex-product-hook-20260624-001402",
+  "generated_at": "2026-06-24T00:16:00+03:00",
+  "verdict": "NEEDS_CODEX_APP_SUPPORT",
+  "final_readiness_claimed": false,
+  "active_task_sentence_source": "Design and, if safely possible within a bounded slice, implement the minimal product/API hook needed to resolve Phase 14.04 Codex UI proof without downscope.",
+  "code_changed": false,
+  "changed_files": [
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\phase14-codex-product-hook.md",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\phase14-codex-product-hook.json",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa-report.json",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\codex-cli-surface-probe.json",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa"
+  ],
+  "code_or_harness_changed_files": [],
+  "installed_cache_touched": false,
+  "source_repo_used": "C:/Projects/codex-xiigen-smart-skills",
+  "hook_contract": {
+    "status": "missing_from_available_codex_app_plugin_surface",
+    "proposed_product_api": [
+      {
+        "name": "create_isolated_codex_ui_session",
+        "purpose": "Create a disposable Codex chat/app session that is not Luba's live thread and can load the target plugin/app under test.",
+        "required_inputs": [
+          "plugin_id_or_path",
+          "workspace_root",
+          "session_label",
+          "redaction_policy"
+        ],
+        "required_outputs": [
+          "session_id",
+          "loaded_plugin_identity",
+          "session_artifact_root"
+        ]
+      },
+      {
+        "name": "submit_visible_ui_message",
+        "purpose": "Submit a redacted test prompt through the same visible UI/plugin route a user would use, not through src/codex-entrypoint.js directly.",
+        "required_inputs": [
+          "session_id",
+          "message_text",
+          "correlation_id"
+        ],
+        "required_outputs": [
+          "ui_message_id",
+          "submission_timestamp",
+          "accepted_by_visible_surface"
+        ]
+      },
+      {
+        "name": "export_rendered_response",
+        "purpose": "Export the rendered assistant/plugin response exactly as shown or renderable in Codex UI.",
+        "required_inputs": [
+          "session_id",
+          "ui_message_id"
+        ],
+        "required_outputs": [
+          "rendered_text_or_html_path",
+          "screenshot_or_render_artifact_path",
+          "render_timestamp"
+        ]
+      },
+      {
+        "name": "export_invocation_trace",
+        "purpose": "Export plugin invocation metadata and correlate the UI message with request/response/trace files written by llm_mvp_core.",
+        "required_inputs": [
+          "session_id",
+          "ui_message_id",
+          "correlation_id"
+        ],
+        "required_outputs": [
+          "plugin_invocation_id",
+          "request_path",
+          "response_path",
+          "trace_path",
+          "core_correlation_id"
+        ]
+      },
+      {
+        "name": "close_or_archive_test_session",
+        "purpose": "Close or archive the disposable test session so the proof does not pollute Luba's live Codex thread.",
+        "required_inputs": [
+          "session_id",
+          "archive_policy"
+        ],
+        "required_outputs": [
+          "closed_or_archived",
+          "archive_ref"
+        ]
+      }
+    ],
+    "required_pass_condition": "A future harness can claim 14.04 visible Codex UI proof only when submit_visible_ui_message and export_rendered_response succeed in the same isolated session and export_invocation_trace points to the same llm_mvp_core correlation id.",
+    "plugin_only_changes_cannot_satisfy": [
+      "The plugin source can call llm_mvp_core and format redacted text, but it cannot create an isolated Codex UI session.",
+      "The plugin source cannot submit a message through the actual Codex chat/app rendering path without a host API.",
+      "The plugin source cannot export the rendered Codex response or screenshot from the app surface.",
+      "Direct adapter/component invocation would repeat existing smoke evidence and would downscope 14.04."
+    ]
+  },
+  "verification": {
+    "targeted_commands": [
+      {
+        "name": "HOST-08F component QA into phase14 raw directory",
+        "command": "node.exe C:/Projects/codex-xiigen-smart-skills/test/host-qa/HOST-08F-codexComponentQA.js --output-root <run>/raw/component-qa --host-report <run>/raw/component-qa-report.json --core-root C:/Projects/llm_mvp_core",
+        "exit_code": 0,
+        "result": "PASS",
+        "evidence_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa-report.json",
+        "scope": "adapter/core component evidence only; not Codex UI proof"
+      },
+      {
+        "name": "Codex local product surface probe",
+        "command": "codex --help; codex debug --help; codex plugin --help",
+        "exit_code": null,
+        "result": "BLOCKED_ACCESS_DENIED",
+        "evidence_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\codex-cli-surface-probe.json",
+        "scope": "no synthetic prompt submitted; help probes only"
+      }
+    ],
+    "component_qa_passed": true,
+    "component_qa_claim_scope": "Codex active JS source-entrypoint component QA only; not full Codex plugin/app UI runtime evidence and not final completion.",
+    "component_qa_evidence_level": "handler_or_component_level_qa",
+    "component_qa_full_plugin_ui_evidence": false,
+    "component_qa_direct_local_plugin_app_invoke_path_found": false,
+    "codex_cli_found": true,
+    "codex_cli_path": "C:\\Program Files\\WindowsApps\\OpenAI.Codex_26.616.6631.0_x64__2p2nqsd0c76g0\\app\\resources\\codex.exe",
+    "codex_cli_help_available_in_this_run": false,
+    "codex_cli_probe_results": [
+      {
+        "name": "codex-help",
+        "command": "codex --help",
+        "exit_code": null,
+        "exception": "Program 'codex.exe' failed to run: Access is deniedAt line:22 char:17\r\n+     $combined = & codex @($probe.args) 2>&1\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~.",
+        "stdout_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\codex-help.stdout.txt",
+        "stderr_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\codex-help.stderr.txt"
+      },
+      {
+        "name": "codex-debug-help",
+        "command": "codex debug --help",
+        "exit_code": null,
+        "exception": "Program 'codex.exe' failed to run: Access is deniedAt line:22 char:17\r\n+     $combined = & codex @($probe.args) 2>&1\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~.",
+        "stdout_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\codex-debug-help.stdout.txt",
+        "stderr_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\codex-debug-help.stderr.txt"
+      },
+      {
+        "name": "codex-plugin-help",
+        "command": "codex plugin --help",
+        "exit_code": null,
+        "exception": "Program 'codex.exe' failed to run: Access is deniedAt line:22 char:17\r\n+     $combined = & codex @($probe.args) 2>&1\r\n+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~.",
+        "stdout_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\codex-plugin-help.stdout.txt",
+        "stderr_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\codex-plugin-help.stderr.txt"
+      }
+    ],
+    "json_parse_validation_pending_at_write_time": false,
+    "text_normalization_pending_at_write_time": false,
+    "post_write_validation": {
+      "validation_report": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\artifact-validation.json",
+      "all_json_files_parse": true,
+      "json_files_checked": 23,
+      "text_files_checked_for_normalization": 40,
+      "text_files_rewritten_by_normalizer": 12,
+      "utf8_bom_allowed": false,
+      "line_endings_required": "LF",
+      "trailing_whitespace_allowed": false
+    }
+  },
+  "ui_proof_supported_now": false,
+  "visible_codex_ui_submission_proven": false,
+  "rendered_response_capture_proven": false,
+  "same_run_core_correlation_proven": true,
+  "same_run_core_correlation_scope": "Proven only for local component QA through src/codex-entrypoint.js into llm_mvp_core, not for a visible Codex UI submission.",
+  "remaining_gap": "No sanctioned API was available in this bounded slice to create an isolated Codex UI session, submit a visible plugin/app message, export the rendered response, and correlate that rendered UI event with the same llm_mvp_core trace. Therefore 14.04 cannot be proven now without Codex app/product support.",
+  "no_overclaim_evidence": {
+    "adapter_smoke_is_not_ui_proof": true,
+    "component_report_claim_scope": "Codex active JS source-entrypoint component QA only; not full Codex plugin/app UI runtime evidence and not final completion.",
+    "component_report_full_plugin_ui_evidence": false,
+    "visible_answer_txt_not_counted_as_rendered_codex_ui": true,
+    "semantic_quality_claimed": false,
+    "token_savings_claimed": false,
+    "training_started": false,
+    "dpo_generation_started": false,
+    "checkpoint_mutation_started": false,
+    "final_readiness_claimed": false,
+    "live_codex_thread_prompt_submitted": false
+  },
+  "evidence": {
+    "component_report": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa-report.json",
+    "codex_cli_surface_probe": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\codex-cli-surface-probe.json",
+    "same_run_adapter_core_refs": [
+      {
+        "case_name": "prompt-to-task-debug-off",
+        "method": "prompt-to-task",
+        "request_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\prompt-to-task-debug-off\\xiigen-codex-core-request.json",
+        "response_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\prompt-to-task-debug-off\\xiigen-codex-core-response.json",
+        "trace_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\prompt-to-task-debug-off\\xiigen-codex-core-trace.json",
+        "visible_answer_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\prompt-to-task-debug-off\\visible-answer.txt",
+        "source_entrypoint_invoked": true,
+        "core_endpoint_invoked": "C:\\Projects\\llm_mvp_core\\tools\\xiigen-extension-core-api.ps1",
+        "response_success": true,
+        "semantic_quality_claimed": false,
+        "runtime_extension_claimed": false
+      },
+      {
+        "case_name": "prompt-to-task-debug-on",
+        "method": "prompt-to-task",
+        "request_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\prompt-to-task-debug-on\\xiigen-codex-core-request.json",
+        "response_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\prompt-to-task-debug-on\\xiigen-codex-core-response.json",
+        "trace_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\prompt-to-task-debug-on\\xiigen-codex-core-trace.json",
+        "visible_answer_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\prompt-to-task-debug-on\\visible-answer.txt",
+        "source_entrypoint_invoked": true,
+        "core_endpoint_invoked": "C:\\Projects\\llm_mvp_core\\tools\\xiigen-extension-core-api.ps1",
+        "response_success": true,
+        "semantic_quality_claimed": false,
+        "runtime_extension_claimed": false
+      },
+      {
+        "case_name": "orchestration-plan-debug-off",
+        "method": "orchestration-plan",
+        "request_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\orchestration-plan-debug-off\\xiigen-codex-core-request.json",
+        "response_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\orchestration-plan-debug-off\\xiigen-codex-core-response.json",
+        "trace_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\orchestration-plan-debug-off\\xiigen-codex-core-trace.json",
+        "visible_answer_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\orchestration-plan-debug-off\\visible-answer.txt",
+        "source_entrypoint_invoked": true,
+        "core_endpoint_invoked": "C:\\Projects\\llm_mvp_core\\tools\\xiigen-extension-core-api.ps1",
+        "response_success": true,
+        "semantic_quality_claimed": false,
+        "runtime_extension_claimed": false
+      },
+      {
+        "case_name": "skill-selection-debug-off",
+        "method": "skill-selection",
+        "request_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\skill-selection-debug-off\\xiigen-codex-core-request.json",
+        "response_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\skill-selection-debug-off\\xiigen-codex-core-response.json",
+        "trace_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\skill-selection-debug-off\\xiigen-codex-core-trace.json",
+        "visible_answer_ref": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\codex-ui-proof\\p14-fix-07-codex-product-hook-20260624-001402\\raw\\component-qa\\skill-selection-debug-off\\visible-answer.txt",
+        "source_entrypoint_invoked": true,
+        "core_endpoint_invoked": "C:\\Projects\\llm_mvp_core\\tools\\xiigen-extension-core-api.ps1",
+        "response_success": true,
+        "semantic_quality_claimed": false,
+        "runtime_extension_claimed": false
+      }
+    ]
+  },
+  "git": {
+    "git_authority": "forbidden",
+    "no_git_commands_were_run": true,
+    "commit_push_authorized": false,
+    "parent_will_perform_commit_push_after_review": true
+  },
+  "what_was_not_tested": [
+    "No live Codex chat/app UI submission was performed.",
+    "No rendered Codex UI response or screenshot was exported.",
+    "No Codex product session API was available to create or close an isolated UI test session.",
+    "No semantic quality, token savings, training, DPO, checkpoint mutation, or final readiness was tested or claimed."
+  ]
+}

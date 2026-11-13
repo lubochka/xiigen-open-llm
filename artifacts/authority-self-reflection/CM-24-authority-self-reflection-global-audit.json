@@ -1,0 +1,385 @@
+{
+  "schema_version": 1,
+  "work_order": "CM-24-AUTHORITY-SELF-REFLECTION-GLOBAL-AUDIT",
+  "artifact_kind": "authority_self_reflection_global_audit",
+  "verdict": "PASS_WITH_OPEN_COVERAGE_REPAIRS",
+  "passed": true,
+  "claim_scope": "Global authority/self-reflection audit artifact only. It proves current coverage status and remaining gaps; it does not repair governance, run code, edit host repos, start CM-25/CM-26/B21, or claim completion.",
+  "completion_claim_allowed": false,
+  "full_extension_completion_claimed": false,
+  "b21_started": false,
+  "review_sources": {
+    "agents": "AGENTS.md human override, GOLD GATE, OP-3/4/5/7/13/17/19/21/22/23/26/45/47/48/50/51/52/53/55/56/57",
+    "claude": "CLAUDE.md completion evidence, partial-progress firewall, test-only fallback, architect/sub-agent firewall, quality/protocol challenge settings-audit, Part A, plan testability, untrained honesty",
+    "plan": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md CM-24, B17, B19, B20, B21",
+    "state": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json",
+    "authority_problem_note": "C:/Users/lubao/Documents/xiigen/extensions  - orchestration based on our data/problem with authority.txt",
+    "b17": "artifacts/mental-experiment/B17-mental-experiment-matrix.json row B17-15",
+    "b19": "artifacts/anti-loophole/B19-anti-loophole-register-review.json row B19-19",
+    "b20": "artifacts/completion-matrix/B20-completion-matrix-review.json row CM-24",
+    "skills": [
+      "docs/skills/conversation-intent-and-self-reflection-SKILL.md",
+      "docs/skills/architect-behavior-classifier-SKILL.md",
+      "docs/skills/skill-injection-SKILL.md",
+      "docs/skills/plan-review-SKILL.md",
+      "docs/skills/implementation-integrity-SKILL.md",
+      "docs/skills/phase-completion-packager-SKILL.md",
+      "docs/skills/verification-before-completion-SKILL.md"
+    ]
+  },
+  "source_problem_summary": "Luba's repeated corrections show that plan work can fail from authority drift and behavioral drift even when technical artifacts exist. The covered failure classes are executor drift, action-as-relief, defensive freeze, defensive self-reflection, focus loss, entropy tolerance, shallow review, late answer to direct questions, protocol repair treated as stop, unreadable or non-testable plans, JSON/PS1/report/stub masquerading as code, and test-only evidence masquerading as implementation.",
+  "coverage_rows": [
+    {
+      "id": "CM24-01",
+      "behavior_or_failure_class": "Direct Luba question outranks ongoing work",
+      "user_problem_statement_or_source_ref": "AGENTS GOLD GATE and OP-50 R1; CLAUDE answer-first pattern; Luba interruption history in authority problem note.",
+      "governing_coverage_present": [
+        "AGENTS GOLD GATE requires answering Luba first before tool cleanup, sub-agent cleanup, state updates, or repair plans.",
+        "AGENTS OP-50 R1 and CLAUDE answer-first pattern repeat the rule.",
+        "conversation-intent-and-self-reflection hard ordering rule 1 says direct Luba question first."
+      ],
+      "evidence_refs": [
+        "AGENTS.md GOLD GATE",
+        "AGENTS.md OP-50 R1",
+        "CLAUDE.md answer-first/conversation intent sections",
+        "docs/skills/conversation-intent-and-self-reflection-SKILL.md"
+      ],
+      "status": "covered",
+      "what_would_fail_if_repeated": "A direct-question challenge answered after a tool call, cleanup, state write, commit, work-order continuation, or protocol repair would fail this row.",
+      "required_next_action_if_not_covered": null
+    },
+    {
+      "id": "CM24-02",
+      "behavior_or_failure_class": "Architect parent cannot become executor when architect/sub-agent-only",
+      "user_problem_statement_or_source_ref": "AGENTS OP-3/OP-48 and CLAUDE architect-owned session/firewall patterns.",
+      "governing_coverage_present": [
+        "AGENTS OP-3 says architect-owned sessions issue bounded sub-agent work orders and never become executor.",
+        "AGENTS OP-48 makes architect ownership sticky.",
+        "CLAUDE architect/sub-agent firewall pattern repeats that execution happens only through bounded sub-agents."
+      ],
+      "evidence_refs": [
+        "AGENTS.md OP-3",
+        "AGENTS.md OP-48",
+        "CLAUDE.md Architect-owned session pattern",
+        "CLAUDE.md Architect/sub-agent firewall pattern"
+      ],
+      "status": "covered",
+      "what_would_fail_if_repeated": "Parent architect direct code/runtime execution after a review or coverage challenge would fail this row.",
+      "required_next_action_if_not_covered": null
+    },
+    {
+      "id": "CM24-03",
+      "behavior_or_failure_class": "Protocol/governance repair commit/push is not a stop boundary",
+      "user_problem_statement_or_source_ref": "Luba correction before B18 and plan-repair/test-only-not-stop-gate context.",
+      "governing_coverage_present": [
+        "AGENTS OP-13 names protocol/governance/report commit as not a blocker when next action is derivable.",
+        "AGENTS OP-26 says report/commit/push are checkpoints only.",
+        "CLAUDE partial-progress stop firewall says commit/push is not a stop point."
+      ],
+      "evidence_refs": [
+        "AGENTS.md OP-13",
+        "AGENTS.md OP-26",
+        "CLAUDE.md Partial-progress stop firewall",
+        "B18/B19/B20 state next_action continuity"
+      ],
+      "status": "covered",
+      "what_would_fail_if_repeated": "Returning a final packet solely because a governance/report commit pushed while the state has a known next action would fail this row.",
+      "required_next_action_if_not_covered": null
+    },
+    {
+      "id": "CM24-04",
+      "behavior_or_failure_class": "Test-only/handler-level QA is fallback/intermediate, never implementation acceptance",
+      "user_problem_statement_or_source_ref": "Luba smoke-not-acceptance and test-only-not-stop-gate corrections.",
+      "governing_coverage_present": [
+        "AGENTS OP-13 test-only fallback rule labels intermediate artifacts with exact scope.",
+        "CLAUDE test-only fallback says handler-level/static/component evidence cannot cover full runtime/UI/plugin implementation.",
+        "B18/B19/B20 preserve completion_claim_allowed=false and host UI/runtime gaps."
+      ],
+      "evidence_refs": [
+        "AGENTS.md OP-13 test-only fallback",
+        "CLAUDE.md test-only fallback",
+        "B18 external tool audit",
+        "B19 anti-loophole rows B19-05/B19-06",
+        "B20 CM-18/CM-18A"
+      ],
+      "status": "covered",
+      "what_would_fail_if_repeated": "Using HOST-08D/HOST-08F handler/component evidence to claim full UI/runtime/plugin completion would fail this row.",
+      "required_next_action_if_not_covered": null
+    },
+    {
+      "id": "CM24-05",
+      "behavior_or_failure_class": "Plan must include readable Part A in Luba format before execution",
+      "user_problem_statement_or_source_ref": "Luba plan-readability corrections; AGENTS OP-52; CLAUDE Part A completeness.",
+      "governing_coverage_present": [
+        "AGENTS OP-52 defines the Part A completeness contract.",
+        "CLAUDE Part A completeness pattern lists required sections and branch parity.",
+        "plan-review FC-20 hard-fails missing/incomplete Part A."
+      ],
+      "evidence_refs": [
+        "AGENTS.md OP-52",
+        "CLAUDE.md Part A Completeness Contract pattern",
+        "docs/skills/plan-review-SKILL.md FC-20",
+        "B20 CM-01/CM-26"
+      ],
+      "status": "partially_covered",
+      "what_would_fail_if_repeated": "A future execution work order admitted from a plan without complete Part A/A5 parity would fail. B20 still marks CM-26 open, so global final coverage is not proven.",
+      "required_next_action_if_not_covered": "CM-26-A5-TRAINABLE-HIERARCHY-PARITY-AUDIT"
+    },
+    {
+      "id": "CM24-06",
+      "behavior_or_failure_class": "Sub-agent work orders must carry required skills/guides",
+      "user_problem_statement_or_source_ref": "Luba sub-agent quality and loaded-guides corrections; B19 row B19-25.",
+      "governing_coverage_present": [
+        "AGENTS OP-3 requires bounded work orders to name artifact, scope, time, implementation permission, approval quote, and interrupt rule.",
+        "skill-injection-SKILL requires work-order skill + guide binding and SK-VERIFY/SK-QA for trainable/host/code claims.",
+        "plan-review rejects work orders missing authority fields."
+      ],
+      "evidence_refs": [
+        "AGENTS.md OP-3 bounded sub-agent fields",
+        "docs/skills/skill-injection-SKILL.md work-order skill + guide binding",
+        "docs/skills/plan-review-SKILL.md role/firewall and authority fields",
+        "B19 row B19-25",
+        "B20 CM-30"
+      ],
+      "status": "partially_covered",
+      "what_would_fail_if_repeated": "A sub-agent packet without loaded skills/guides/injection blocks could still slip through unless CM-30 global packet quality is audited.",
+      "required_next_action_if_not_covered": "CM-30-SUBAGENT-PACKET-QUALITY-GLOBAL-AUDIT"
+    },
+    {
+      "id": "CM24-07",
+      "behavior_or_failure_class": "Review must catch JSON/PS1/report/stub masquerade before phase done",
+      "user_problem_statement_or_source_ref": "Luba smoke-not-acceptance and HOST-07A/B/C repair sequence.",
+      "governing_coverage_present": [
+        "AGENTS OP-53 forbids stub/JSON/scaffold as phase done.",
+        "implementation-integrity Check 5 requires real code/model asset path and anti-stub evidence.",
+        "phase-completion packager implementation reality gate rejects JSON/PowerShell/static evidence for code/runtime/plugin phases.",
+        "HOST-07B/HOST-07C repaired PS1-only gaps."
+      ],
+      "evidence_refs": [
+        "AGENTS.md OP-53",
+        "docs/skills/implementation-integrity-SKILL.md Check 5",
+        "docs/skills/phase-completion-packager-SKILL.md Implementation Reality Gate",
+        "HOST-07B",
+        "HOST-07C",
+        "B19 rows B19-04/B19-05"
+      ],
+      "status": "covered",
+      "what_would_fail_if_repeated": "Accepting a JSON/PowerShell/report/static bundle as completed code, host entrypoint, runtime, or trained semantic capability would fail this row.",
+      "required_next_action_if_not_covered": null
+    },
+    {
+      "id": "CM24-08",
+      "behavior_or_failure_class": "Executor drift",
+      "user_problem_statement_or_source_ref": "B17 row B17-15 and B19 row B19-19: architect/worker repairs or executes to relieve discomfort instead of answering/analyzing.",
+      "governing_coverage_present": [
+        "AGENTS OP-3/OP-48 and CLAUDE architect/sub-agent firewall prevent parent role bleed.",
+        "architect-behavior-classifier FAIL-22 names architect-to-executor role bleed."
+      ],
+      "evidence_refs": [
+        "B17 row B17-15 status policy_defined_not_globally_audited",
+        "B19 row B19-19 status open",
+        "docs/skills/architect-behavior-classifier-SKILL.md FAIL-22"
+      ],
+      "status": "partially_covered",
+      "what_would_fail_if_repeated": "Rules exist, but there is no global per-work-order authority/self-reflection artifact showing drift checks ran before every work order.",
+      "required_next_action_if_not_covered": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR"
+    },
+    {
+      "id": "CM24-09",
+      "behavior_or_failure_class": "Action-as-relief",
+      "user_problem_statement_or_source_ref": "Luba corrections about executor priority and artifact repair replacing analysis.",
+      "governing_coverage_present": [
+        "conversation-intent skill includes action_as_relief_risk and unresolved_thinking_check.",
+        "architect-behavior-classifier FAIL-39 names action-as-relief drift."
+      ],
+      "evidence_refs": [
+        "docs/skills/conversation-intent-and-self-reflection-SKILL.md unresolved_thinking_check",
+        "docs/skills/architect-behavior-classifier-SKILL.md FAIL-39",
+        "B17 row B17-15",
+        "B19 row B19-19"
+      ],
+      "status": "partially_covered",
+      "what_would_fail_if_repeated": "A future response that edits/commits/continues to escape unfinished analysis would fail; global evidence that this check ran everywhere is missing.",
+      "required_next_action_if_not_covered": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR"
+    },
+    {
+      "id": "CM24-10",
+      "behavior_or_failure_class": "Defensive freeze",
+      "user_problem_statement_or_source_ref": "Luba corrections that stop/answer-only must not become useless passivity when an architectural answer is safe.",
+      "governing_coverage_present": [
+        "conversation-intent skill records defensive_freeze_risk.",
+        "architect-behavior-classifier FAIL-37 names defensive-freeze answer-only."
+      ],
+      "evidence_refs": [
+        "docs/skills/conversation-intent-and-self-reflection-SKILL.md",
+        "docs/skills/architect-behavior-classifier-SKILL.md FAIL-37"
+      ],
+      "status": "partially_covered",
+      "what_would_fail_if_repeated": "A future answer-only or pause instruction could be misread as no useful answer; global evidence of per-turn freeze checks is not complete.",
+      "required_next_action_if_not_covered": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR"
+    },
+    {
+      "id": "CM24-11",
+      "behavior_or_failure_class": "Defensive self-reflection",
+      "user_problem_statement_or_source_ref": "Luba corrections requiring settings/root-cause before redo or repair.",
+      "governing_coverage_present": [
+        "CLAUDE quality/protocol challenge settings-audit pattern requires naming the setting/skill/guide gap first.",
+        "architect-behavior-classifier FAIL-38 names defensive self-reflection."
+      ],
+      "evidence_refs": [
+        "CLAUDE.md Quality/protocol challenge settings-audit pattern",
+        "AGENTS.md OP-51",
+        "docs/skills/architect-behavior-classifier-SKILL.md FAIL-38"
+      ],
+      "status": "partially_covered",
+      "what_would_fail_if_repeated": "A future quality challenge answered by immediate patching, defense, or options before a settings-gap hypothesis would fail; global audit evidence is not complete.",
+      "required_next_action_if_not_covered": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR"
+    },
+    {
+      "id": "CM24-12",
+      "behavior_or_failure_class": "Focus loss and attention-budget drift",
+      "user_problem_statement_or_source_ref": "Luba corrections about small action plus return to analysis; B17/B19 governance rows.",
+      "governing_coverage_present": [
+        "conversation-intent skill includes attention_budget_check.",
+        "architect-behavior-classifier FAIL-40 names attention-budget drift."
+      ],
+      "evidence_refs": [
+        "docs/skills/conversation-intent-and-self-reflection-SKILL.md Attention Budget Check",
+        "docs/skills/architect-behavior-classifier-SKILL.md FAIL-40"
+      ],
+      "status": "partially_covered",
+      "what_would_fail_if_repeated": "A future mixed-intent message could be consumed by the small action while dropping analysis; global per-turn attention-budget evidence is missing.",
+      "required_next_action_if_not_covered": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR"
+    },
+    {
+      "id": "CM24-13",
+      "behavior_or_failure_class": "Entropy tolerance and source-ordering failure",
+      "user_problem_statement_or_source_ref": "Authority problem note shows many files, prompts, old transcripts, and guides can produce drift without a source map.",
+      "governing_coverage_present": [
+        "conversation-intent skill includes order_making_review.",
+        "architect-behavior-classifier FAIL-41 names entropy tolerance."
+      ],
+      "evidence_refs": [
+        "docs/skills/conversation-intent-and-self-reflection-SKILL.md Order-Making Review",
+        "docs/skills/architect-behavior-classifier-SKILL.md FAIL-41",
+        "problem with authority.txt"
+      ],
+      "status": "partially_covered",
+      "what_would_fail_if_repeated": "A future large-source task without source grouping/index/rule synthesis could miss current authority or existing requirements; global evidence is incomplete.",
+      "required_next_action_if_not_covered": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR"
+    },
+    {
+      "id": "CM24-14",
+      "behavior_or_failure_class": "Shallow review",
+      "user_problem_statement_or_source_ref": "Luba quality/protocol challenges and architect-behavior-classifier failure catalog.",
+      "governing_coverage_present": [
+        "architect-behavior-classifier requires scan, docs-first dig, and classification.",
+        "CLAUDE quality/protocol challenge settings-audit pattern blocks immediate redo."
+      ],
+      "evidence_refs": [
+        "docs/skills/architect-behavior-classifier-SKILL.md Three-Step Doc-First Loop",
+        "docs/skills/architect-behavior-classifier-SKILL.md FAIL-5/FAIL-6/FAIL-12/FAIL-14",
+        "CLAUDE.md Quality/protocol challenge settings-audit pattern"
+      ],
+      "status": "partially_covered",
+      "what_would_fail_if_repeated": "A review that asserts without evidence, rolls up requested per-item detail, or performs governance theater would fail. Global per-review audit artifacts are not complete.",
+      "required_next_action_if_not_covered": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR"
+    },
+    {
+      "id": "CM24-15",
+      "behavior_or_failure_class": "Human authority boundary and historical transcript bleed",
+      "user_problem_statement_or_source_ref": "AGENTS human override/quarantine; authority problem note contains old transcript evidence that must not be current authorization.",
+      "governing_coverage_present": [
+        "AGENTS human override protocol and OP-3C quarantine quoted transcripts/state/old plans.",
+        "plan-review quoted transcript authority gate requires current authority source.",
+        "B20 CM-29 remains partial for global audit."
+      ],
+      "evidence_refs": [
+        "AGENTS.md human override protocol",
+        "AGENTS.md OP-3C",
+        "docs/skills/plan-review-SKILL.md Quoted transcript authority review gate",
+        "B20 CM-29"
+      ],
+      "status": "partially_covered",
+      "what_would_fail_if_repeated": "A future work order relying on quoted transcript/state as current permission would fail; global human-authority-boundary artifacts are not complete.",
+      "required_next_action_if_not_covered": "CM-29-AUTHORITY-BOUNDARY-GLOBAL-AUDIT"
+    },
+    {
+      "id": "CM24-16",
+      "behavior_or_failure_class": "CM-24 artifact presence for every work order",
+      "user_problem_statement_or_source_ref": "Plan CM-24 says every work order has artifacts/authority-self-reflection/<work_order>.json.",
+      "governing_coverage_present": [
+        "Plan names the required artifact path.",
+        "B20 marks CM-24 open.",
+        "This CM-24 artifact provides the first global audit but does not backfill or verify every historical work-order artifact."
+      ],
+      "evidence_refs": [
+        "Plan B20 CM-24",
+        "B17 row B17-15",
+        "B19 row B19-19",
+        "B20 row CM-24"
+      ],
+      "status": "open",
+      "what_would_fail_if_repeated": "Final acceptance would fail because not every work order has a per-work-order authority/self-reflection artifact proving required skills loaded and drift/defense/focus/entropy checks passed.",
+      "required_next_action_if_not_covered": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR"
+    }
+  ],
+  "counts": {
+    "total": 16,
+    "covered": 5,
+    "partially_covered": 10,
+    "open": 1
+  },
+  "first_open_or_partial_next_action": {
+    "id": "CM24-05",
+    "status": "partially_covered",
+    "next_bounded_action": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR",
+    "reason": "Although the first partial row points to CM-26 for Part A parity, the CM-24-specific blocker is broader: no per-work-order authority/self-reflection artifact coverage exists. CM-24A should audit/backfill or require these artifacts before CM-24 can be considered closed."
+  },
+  "cm24_specific_first_open": {
+    "id": "CM24-16",
+    "next_bounded_action": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR"
+  },
+  "remaining_gaps": [
+    "CM-24A_AUTHORITY_SELF_REFLECTION_ARTIFACT_COVERAGE_REPAIR",
+    "CM-26_A5_TRAINABLE_HIERARCHY_PARITY_AUDIT",
+    "CM-30_SUBAGENT_PACKET_QUALITY_GLOBAL_AUDIT",
+    "CM-29_AUTHORITY_BOUNDARY_GLOBAL_AUDIT",
+    "CM-20_TO_CM-31_OTHER_GLOBAL_AUDITS_FROM_B20"
+  ],
+  "result_summary": {
+    "audit_artifact_complete_and_honest": true,
+    "passed": true,
+    "completion_claim_allowed": false,
+    "covered": 5,
+    "partially_covered": 10,
+    "open": 1,
+    "first_open_or_partial_next_action": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR"
+  },
+  "next_bounded_action": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR",
+  "required_next_action": "CM-24A-AUTHORITY-SELF-REFLECTION-ARTIFACT-COVERAGE-REPAIR",
+  "forbidden_scope_confirmed": {
+    "production_code_edited": false,
+    "test_code_edited": false,
+    "host_repo_edited": false,
+    "runtime_run": false,
+    "build_test_run": false,
+    "training_model_corpus_dpo_started": false,
+    "external_ai_browser_image_web_used": false,
+    "cm25_cm26_b21_or_final_started": false
+  },
+  "verification": {
+    "commands_performed": [
+      "Read AGENTS relevant authority, role, completion, no-stop, anti-masquerade, and soft-skill rules",
+      "Read CLAUDE relevant completion, test-only, architect firewall, settings-audit, Part A, testability, and untrained honesty sections",
+      "Read plan CM-24/B20/B21 and related governance rows",
+      "Read state and B17/B19/B20 evidence rows",
+      "Read authority problem note and relevant local skill files"
+    ],
+    "runtime_or_external_commands_executed": false,
+    "json_parse_required_after_write": true,
+    "targeted_field_check_required_after_write": true,
+    "git_diff_check_required_after_write": true
+  },
+  "created_at": "2026-06-07T00:00:00+03:00"
+}

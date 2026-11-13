@@ -1,0 +1,89 @@
+{
+  "schema": "xiigen.learn_05_fresh_load_report.v1",
+  "phaseId": "LEARN-05",
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "generatedAtUtc": "2026-11-12T15:54:32.3801419+00:00",
+  "commands": [
+    "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter FullyQualifiedName~Learn05FreshLoadRunnerTests --no-restore --logger \"console;verbosity=normal\""
+  ],
+  "commandResults": [
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter FullyQualifiedName~Learn05FreshLoadRunnerTests --no-restore --logger \"console;verbosity=normal\"",
+      "exitCode": null,
+      "result": "IN_PROCESS_EVIDENCE_ONLY",
+      "summary": "This Learn05 artifact is written by the in-process fixture. The external dotnet test exit code and pass/fail status are recorded by the executor TRX/log, not self-authored here."
+    }
+  ],
+  "tracks": [
+    {
+      "machineId": "PromptToTaskMachine",
+      "verdict": "PARTIAL_ADAPTIVE_LOADER_ONLY",
+      "targetCheckpointPath": "<test-temp-root>/prompt-to-task/.xiigen/prompt-to-task/adaptive-checkpoint.json",
+      "manifestPath": null,
+      "targetCheckpointSha256": "4b3bf24bee5a371f9bfe7c80e0b906a2c32884ac9281dc33ebd8f96e62bfa722",
+      "boundaryUsed": "PromptToTaskAdaptiveTrainer.LoadCheckpoint",
+      "loadSucceeded": true,
+      "runtimeInvocationSucceeded": false,
+      "testOnlyInProcessProbeSucceeded": false,
+      "runtimeInvocationMethod": null,
+      "observedStatus": "adaptive_checkpoint_loaded",
+      "observedOutput": "taskProfiles=1; trainedSignalIds=1",
+      "semanticQualityClaimed": false,
+      "commonModelMutated": false,
+      "errorCode": null,
+      "limitation": "Narrow public adaptive loader only. The test-owned deterministic fixture is an adaptive overlay checkpoint without a PromptToTaskMachine manifest, so this does not prove PromptToTaskMachine.LoadCheckpointAsync or Translate."
+    },
+    {
+      "machineId": "OrchestrationReasoningMachine",
+      "verdict": "PASS_PUBLIC_MACHINE_BOUNDARY",
+      "targetCheckpointPath": "<test-temp-root>/orchestration-reasoning/checkpoint.json",
+      "manifestPath": "<test-temp-root>/orchestration-reasoning/manifest.json",
+      "targetCheckpointSha256": "910aac46987d2be5da0231466393005347f03ee947262a0fbb73223084b31d79",
+      "boundaryUsed": "OrchestrationReasoningMachine.LoadCheckpointAsync + OrchestrationReasoningMachine.Plan",
+      "loadSucceeded": true,
+      "runtimeInvocationSucceeded": false,
+      "testOnlyInProcessProbeSucceeded": true,
+      "runtimeInvocationMethod": "OrchestrationReasoningMachine.Plan",
+      "observedStatus": "loaded_guide_state_semantic_plan_produced",
+      "observedOutput": "or-learned-pattern:learn-04-local-runtime-token-quality-boundary",
+      "semanticQualityClaimed": false,
+      "commonModelMutated": false,
+      "errorCode": null,
+      "limitation": "Fresh-load proves loadability and public machine invocation for the test-owned deterministic fixture only. It does not prove semantic quality, held-out/source-disjoint behavior, ablation, rollback, or promotion readiness."
+    },
+    {
+      "machineId": "SkillSelectionMachine",
+      "verdict": "PARTIAL_ADAPTIVE_LOADER_ONLY",
+      "targetCheckpointPath": "<test-temp-root>/skill-selection/.xiigen/smart-skills/corrections/adaptive-checkpoint.json",
+      "manifestPath": null,
+      "targetCheckpointSha256": "c34067f430aa0a27d2f449bed48eaebdf7f3cf98a7758e4628e70b61a9cafbfe",
+      "boundaryUsed": "SkillSelectionCorrectionAdaptiveTrainer.LoadCheckpoint",
+      "loadSucceeded": true,
+      "runtimeInvocationSucceeded": false,
+      "testOnlyInProcessProbeSucceeded": false,
+      "runtimeInvocationMethod": null,
+      "observedStatus": "correction_adaptive_checkpoint_loaded",
+      "observedOutput": "correctionProfiles=1; trainedSignalIds=1",
+      "semanticQualityClaimed": false,
+      "commonModelMutated": false,
+      "errorCode": null,
+      "limitation": "Narrow public correction-adaptive loader only. The test-owned deterministic fixture is not a full SkillSelectionMachine checkpoint/manifest, so this does not prove SkillSelectionMachine.LoadCheckpointAsync or DecideFromTrainedState."
+    }
+  ],
+  "whatThisProves": [
+    "The OrchestrationReasoning test-owned deterministic fixture using the LEARN-04 pattern id/schema fresh-loads through OrchestrationReasoningMachine.LoadCheckpointAsync and produces a Plan response through OrchestrationReasoningMachine.Plan.",
+    "The PromptToTask test-owned deterministic adaptive fixture loads through the public PromptToTaskAdaptiveTrainer.LoadCheckpoint adaptive boundary only.",
+    "The SkillSelection test-owned deterministic correction fixture loads through the public SkillSelectionCorrectionAdaptiveTrainer.LoadCheckpoint adaptive boundary only.",
+    "The source checkpoint files are generated under a unique test temp root, reported only as <test-temp-root>/... paths, and removed before tracked Learn05 artifacts can record temp_fixture_removed=true."
+  ],
+  "whatThisDoesNotProve": [
+    "This does not prove semantic quality.",
+    "This does not prove held-out/source-disjoint quality.",
+    "This does not prove ablation/no-memorization controls.",
+    "This does not prove rollback safety.",
+    "This does not promote target checkpoints.",
+    "This does not exercise the real LEARN-04 target checkpoint files; it exercises test-owned deterministic fixtures matching the LEARN-04 pattern id/schema.",
+    "PromptToTask and SkillSelection are not full machine fresh-load proofs because these test-owned deterministic fixtures are adaptive overlay checkpoints without the full machine checkpoint/manifest shape."
+  ],
+  "nextIndependentTrack": "LEARN-06 held-out/ablation runner"
+}

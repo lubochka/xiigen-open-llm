@@ -1,0 +1,37 @@
+{
+  "reviewFixCycleCount": 4,
+  "cycles": [
+    {
+      "cycle": 1,
+      "finding": "Generic ILearningMachine train/eval path was scaffold-only.",
+      "fix": "TrainBatchAsync now builds SkillSelectionMachinePair rows and EvaluateAsync scores held-out requests.",
+      "result": "fixed"
+    },
+    {
+      "cycle": 2,
+      "finding": "GetOrchestratorAsync returned legacy contract-only orchestrator.",
+      "fix": "It now returns SkillSelectionLogicalOrchestrator over SkillSelectionLogicalFlow for the current machine.",
+      "result": "fixed"
+    },
+    {
+      "cycle": 3,
+      "finding": "Hidden deterministic shortcuts needed explicit ablation.",
+      "fix": "Evidence test records empty-machine ablation, candidate-order reversal, and source-id-only negative control.",
+      "result": "fixed"
+    },
+    {
+      "cycle": 4,
+      "finding": "Lifecycle evidence needed fresh load without retrain.",
+      "fix": "Evidence test saves checkpoint/manifest, imports into a fresh machine, loads checkpoint directly, and reruns held-out eval.",
+      "result": "fixed"
+    }
+  ],
+  "exactReviewScope": [
+    "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+    "Tests/SkillSelectionLogicalHierarchyTests.cs",
+    "Tests/SkillSelectionPhase06TrainedSelectorEvidenceTests.cs"
+  ],
+  "hiddenDeterministicShortcutSweep": "passed",
+  "deterministicHelpersLabelled": "baseline/internal/support evidence only",
+  "dashboardImpactChecked": "not applicable"
+}

@@ -1,0 +1,60 @@
+{
+  "schema": "completion-matrix-v1",
+  "work_order": "OR-04B-DPO-MATERIALIZE-01",
+  "status": "PASS_PENDING_PARENT_REVIEW",
+  "passed": true,
+  "passed_count": 7,
+  "failed_count": 0,
+  "rows": [
+    {
+      "requirement_id": "OR04B-MAT-01",
+      "literal_requirement": "Materialize approved ref-only DPO bindings into a pair contract bundle.",
+      "actual_artifact": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-pairs.jsonl",
+      "actual_value": "3 rows",
+      "passed": true
+    },
+    {
+      "requirement_id": "OR04B-MAT-02",
+      "literal_requirement": "Each pair derives from one binding/common corpus row.",
+      "actual_artifact": "training-data/orchestration-reasoning/orchestration-reasoning-dpo-pairs-manifest.json",
+      "actual_value": "source bindings, binding manifest, common corpus, and common manifest hashes recorded",
+      "passed": true
+    },
+    {
+      "requirement_id": "OR04B-MAT-03",
+      "literal_requirement": "Rows remain ref-only and do not copy raw private prompt or analysis text.",
+      "actual_artifact": "forbidden scan",
+      "actual_value": "forbidden_hits=0",
+      "passed": true
+    },
+    {
+      "requirement_id": "OR04B-MAT-04",
+      "literal_requirement": "Rows preserve common/adaptive split.",
+      "actual_artifact": "pair manifest",
+      "actual_value": "common_rows_materialized=3; adaptive_rows_deferred=1",
+      "passed": true
+    },
+    {
+      "requirement_id": "OR04B-MAT-05",
+      "literal_requirement": "Do not mark train-ready or start training.",
+      "actual_artifact": "pair rows and manifest",
+      "actual_value": "dpo_train_ready=false; training_started=false",
+      "passed": true
+    },
+    {
+      "requirement_id": "OR04B-MAT-06",
+      "literal_requirement": "Do not create model or checkpoint assets.",
+      "actual_artifact": "pair manifest",
+      "actual_value": "model_asset_created=false; checkpoint_created=false",
+      "passed": true
+    },
+    {
+      "requirement_id": "OR04B-MAT-07",
+      "literal_requirement": "Prepare output for next readiness validator without claiming readiness.",
+      "actual_artifact": "artifacts/orchestration-reasoning-lifecycle/OR-04B-dpo-materialize.json",
+      "actual_value": "next_feature_after_commit=OR-04B-DPO-READINESS-01",
+      "passed": true
+    }
+  ],
+  "next_bounded_action_after_parent_acceptance": "WO-COMMIT-OR-04B-DPO-MATERIALIZE-01"
+}

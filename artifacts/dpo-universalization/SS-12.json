@@ -1,0 +1,209 @@
+{
+    "work_order":  "SS-12",
+    "unit":  "intermediate_checks",
+    "plan_row":  "B9 SS-12",
+    "verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+    "claim_scope":  "one checkpoint-backed intermediate_checks semantic unit only; no SS-13 asset lifecycle, host, adaptive, export/import model asset lifecycle, or full SkillSelection quality claim",
+    "plain_russian_summary":  "Проверено родительским REVIEW_INTERNAL: SS-12 принят как узкий checkpoint-backed срез intermediate_checks; полное качество SkillSelection, SS-13 asset lifecycle, host, adaptive и export/import readiness не заявляются.",
+    "loaded_skills":  [
+                          "skill-injection",
+                          "implementation-integrity",
+                          "generated-code-review",
+                          "phase-completion-packager",
+                          "test-integrity",
+                          "conversation-intent-and-self-reflection",
+                          "DPO-KNOWLEDGE-MAP"
+                      ],
+    "changed_files":  [
+                          "43.SmartSkillsDomain/SkillSelectionContracts.cs",
+                          "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+                          "Tests/SkillSelectionMachineTests.cs",
+                          "43.SmartSkillsDomain/README.md",
+                          "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json",
+                          "artifacts/dpo-knowledge-map/SS-12.json",
+                          "artifacts/dpo-universalization/SS-12.json",
+                          "artifacts/test-strategy-admission/SS-12.json",
+                          "artifacts/authority-self-reflection/SS-12.json",
+                          "artifacts/implementation-integrity/SS-12.json",
+                          "artifacts/metric-honesty/SS-12.json",
+                          "artifacts/human-authority-boundary/SS-12.json",
+                          "artifacts/subagent-packet-quality/SS-12.json",
+                          "artifacts/test-execution-hygiene/SS-12.json",
+                          "artifacts/completion-matrix/SS-12.json",
+                          "artifacts/skill-selection-lifecycle/SS-12.json"
+                      ],
+    "checkpoint_evidence":  {
+                                "checkpoint_section":  "intermediateChecks",
+                                "unit_id":  "intermediate_checks",
+                                "training_adapter":  "IIntermediateCheckTraining",
+                                "evidence_feature":  "INTERMEDIATE_CHECKS_CHECKPOINT_SECTION",
+                                "learned_state_dictionary":  "_intermediateChecksSignals",
+                                "source_pairs_dictionary":  "_intermediateChecksSourcePairs",
+                                "route_source":  "TargetTrainingAdapter metadata only"
+                            },
+    "held_out_and_ablation":  {
+                                  "held_out_test":  "SkillSelectionMachine_IntermediateChecksUsesCheckpointSectionForHeldOutCheckPrompt",
+                                  "ablation_test":  "SkillSelectionMachine_IntermediateChecksAblationLowersDecisionWithoutUnitSection",
+                                  "held_out_result":  "selected intermediate-checks from fresh-loaded checkpoint section",
+                                  "ablation_result":  "empty/no-trained-state baseline selected no skills and lower confidence",
+                                  "metric_scope":  "diagnostic held-out exact test evidence for one semantic unit slice"
+                              },
+    "verification":  {
+                         "focused_test":  {
+                                              "command":  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+                                              "exit_code":  0,
+                                              "passed":  41,
+                                              "failed":  0,
+                                              "total":  41,
+                                              "elapsed_seconds":  187,
+                                              "test_assembly_duration_ms":  677,
+                                              "warnings_observed":  "existing unrelated project/analyzer warnings during build portion; no test failures"
+                                          },
+                         "static_scan":  {
+                                             "command":  "rg -n \u0027ExtractIntermediateChecks|hardcoded intermediate_checks|hardcoded intermediate checks|intermediate checks keyword whitelist|BM25|filename lookup|exact prompt memory|exact output memory|regex final authority|candidate-position scaffold|IntermediateCheck|IIntermediateCheckTraining|intermediate_checks\u0027 43.SmartSkillsDomain/SkillSelectionMachine.cs 43.SmartSkillsDomain/SkillSelectionContracts.cs Tests/SkillSelectionMachineTests.cs 43.SmartSkillsDomain/README.md",
+                                             "raw_exit_code":  0,
+                                             "classification":  "PASS_CLASSIFIED_HITS_ONLY_CONSTANTS_METHODS_TESTS_README_FORBIDDEN_PATTERN_LIST_AND_NEGATIVE_AUTHORITY_TEXT",
+                                             "production_final_authority_shortcut_found":  false,
+                                             "notes":  [
+                                                           "IntermediateCheck hits are the new unit constants/methods/tests/docs.",
+                                                           "BM25 appears only in the existing test forbidden-pattern list.",
+                                                           "candidate-position scaffold appears only as negative authority text."
+                                                       ]
+                                         }
+                     },
+    "no_hidden_determinism_review":  {
+                                         "runtime_decision_from_learned_profile":  true,
+                                         "training_route_by_target_adapter_only":  true,
+                                         "hardcoded_keyword_whitelist_used_as_final_authority":  false,
+                                         "regex_final_authority":  false,
+                                         "bm25_final_authority":  false,
+                                         "filename_lookup_final_authority":  false,
+                                         "exact_prompt_or_output_memory_final_authority":  false,
+                                         "candidate_position_final_authority":  false
+                                     },
+    "forbidden_claims":  {
+                             "full_skill_selection_quality_claimed":  false,
+                             "ss13_asset_lifecycle_claimed":  false,
+                             "host_readiness_claimed":  false,
+                             "adaptive_user_model_claimed":  false,
+                             "external_ai_used":  false,
+                             "export_import_model_asset_lifecycle_claimed":  false
+                         },
+    "user_16_check_review":  [
+                                 {
+                                     "id":  "scope_ss12_only",
+                                     "status":  "PASS",
+                                     "evidence":  "only intermediate_checks unit added"
+                                 },
+                                 {
+                                     "id":  "no_ss13",
+                                     "status":  "PASS",
+                                     "evidence":  "no asset lifecycle/export/import claim"
+                                 },
+                                 {
+                                     "id":  "explicit_adapter_route",
+                                     "status":  "PASS",
+                                     "evidence":  "IIntermediateCheckTraining"
+                                 },
+                                 {
+                                     "id":  "checkpoint_section",
+                                     "status":  "PASS",
+                                     "evidence":  "intermediateChecks section"
+                                 },
+                                 {
+                                     "id":  "held_out_report",
+                                     "status":  "PASS",
+                                     "evidence":  "held-out test passed"
+                                 },
+                                 {
+                                     "id":  "ablation",
+                                     "status":  "PASS",
+                                     "evidence":  "empty state selects no skills/lower confidence"
+                                 },
+                                 {
+                                     "id":  "no_hidden_determinism",
+                                     "status":  "PASS",
+                                     "evidence":  "static scan classified no production shortcut"
+                                 },
+                                 {
+                                     "id":  "focused_tests_only",
+                                     "status":  "PASS",
+                                     "evidence":  "SkillSelectionMachine filter only"
+                                 },
+                                 {
+                                     "id":  "docs_updated",
+                                     "status":  "PASS",
+                                     "evidence":  "README SS-02 through SS-12 scope"
+                                 },
+                                 {
+                                     "id":  "state_updated",
+                                     "status":  "PASS",
+                                     "evidence":  "compact state updated before and after work"
+                                 },
+                                 {
+                                     "id":  "artifacts_created",
+                                     "status":  "PASS",
+                                     "evidence":  "11 SS-12 JSON artifacts"
+                                 },
+                                 {
+                                     "id":  "no_host",
+                                     "status":  "PASS",
+                                     "evidence":  "host repos untouched"
+                                 },
+                                 {
+                                     "id":  "no_adaptive",
+                                     "status":  "PASS",
+                                     "evidence":  "no adaptive writes/training"
+                                 },
+                                 {
+                                     "id":  "no_external_ai",
+                                     "status":  "PASS",
+                                     "evidence":  "no external AI/browser/image tools"
+                                 },
+                                 {
+                                     "id":  "claim_scope_honest",
+                                     "status":  "PASS",
+                                     "evidence":  "one-unit narrow claim only"
+                                 },
+                                 {
+                                     "id":  "commit_boundary_not_taken",
+                                     "status":  "PASS",
+                                     "evidence":  "no commit/push in executor slice"
+                                 }
+                             ],
+    "next_parent_action":  "commit/push SS-12 accepted file set",
+    "artifact_category":  "dpo-universalization",
+    "parent_review_accepted":  true,
+    "parent_review_verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+    "pending_commit_boundary":  true,
+    "parent_review":  {
+                          "accepted":  true,
+                          "verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+                          "focused_test":  {
+                                               "command":  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+                                               "exit_code":  0,
+                                               "passed":  41,
+                                               "failed":  0,
+                                               "total":  41,
+                                               "elapsed_seconds":  60.4,
+                                               "started":  "2026-06-05T17:07:17.9898213Z",
+                                               "ended":  "2026-06-05T17:08:18.3807936Z"
+                                           },
+                          "json_parse":  "11 SS-12 artifacts + state parsed OK",
+                          "state_size_bytes":  63145,
+                          "git_diff_check_exit_code":  0,
+                          "static_scan":  {
+                                              "command":  "rg -n \u0027ExtractIntermediate|hardcoded intermediate_checks|hardcoded intermediate checks|intermediate checks keyword whitelist|BM25|filename lookup|exact prompt memory|exact output memory|regex final authority|candidate-position scaffold|IntermediateCheck|IntermediateChecks\u0027 43.SmartSkillsDomain/SkillSelectionMachine.cs 43.SmartSkillsDomain/SkillSelectionContracts.cs Tests/SkillSelectionMachineTests.cs 43.SmartSkillsDomain/README.md",
+                                              "classification":  "PASS_CLASSIFIED_HITS_ONLY_INTERMEDIATECHECKS_CONSTANTS_METHODS_TESTS_README_FORBIDDEN_PATTERN_LIST_AND_NEGATIVE_AUTHORITY_TEXT",
+                                              "no_production_final_authority_shortcut":  true
+                                          },
+                          "code_review_finding":  "Accepted narrow claim: TryDecideWithIntermediateChecks uses learned _intermediateChecksSignals populated only by TargetTrainingAdapter == IIntermediateCheckTraining; held-out and ablation tests cover checkpoint evidence and no-trained-state baseline.",
+                          "forbidden_claims":  {
+                                                   "ss13_asset_lifecycle":  false,
+                                                   "host_readiness":  false,
+                                                   "adaptive_user_model":  false,
+                                                   "export_import_model_asset_lifecycle":  false,
+                                                   "full_skill_selection_quality":  false
+                                               }
+                      }
+}

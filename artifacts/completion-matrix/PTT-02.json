@@ -1,0 +1,80 @@
+{
+  "artifact_schema": "completion-matrix-v1",
+  "work_order": "PTT-02",
+  "status": "PASS",
+  "claim_scope": "PTT-02 redacted PromptToTask seed corpus schema admission only",
+  "requirements": [
+    {
+      "requirement_id": "PTT02-01",
+      "literal_requirement": "prompt-to-task corpus schema artifact exists with source refs/hashes/redacted features only",
+      "source_file": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md",
+      "source_line_or_section": "B7 PTT-02",
+      "actual_artifact": "artifacts/prompt-to-task-corpus.jsonl",
+      "actual_value": "2 rows with source_root_id, source_path_hash_sha256, source_path_redacted_ref, file_sha256, content_hash, split_candidate",
+      "comparison_operator": "contains_required_fields",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT02-02",
+      "literal_requirement": "manifest exists with schema version, root refs, root hash/checksum summary, row count, split candidates, local source requirement",
+      "source_file": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md",
+      "source_line_or_section": "B7 PTT-02",
+      "actual_artifact": "artifacts/prompt-to-task-corpus-summary.json",
+      "actual_value": "schema xiigen-prompt-to-task-corpus-summary-v1, row_count 2, source root redacted ref/hash, audit ref, local_source_required true",
+      "comparison_operator": "contains_required_manifest_fields",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT02-03",
+      "literal_requirement": "raw private prompt text is not copied to committed artifacts",
+      "source_file": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md",
+      "source_line_or_section": "0.1 and B7 PTT-02",
+      "actual_artifact": "PowerShell parse plus rg forbidden raw field sweep",
+      "actual_value": "copied_raw_private_content false; forbidden raw payload field scan had no matches",
+      "comparison_operator": "equals_false_and_no_matches",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT02-04",
+      "literal_requirement": "no DPO finalization, no train-ready=true, no training",
+      "source_file": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md",
+      "source_line_or_section": "B7 PTT-02",
+      "actual_artifact": "artifacts/prompt-to-task-corpus.jsonl and artifacts/prompt-to-task-corpus-summary.json",
+      "actual_value": "dpo_finalized false, dpo_train_ready false, training_started false",
+      "comparison_operator": "equals_false",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT02-05",
+      "literal_requirement": "if existing artifacts already satisfy this, do not rewrite them except state/gate artifacts",
+      "source_file": "current Luba PTT-02 work order",
+      "source_line_or_section": "PTT-02 required evidence",
+      "actual_artifact": "git diff",
+      "actual_value": "existing corpus and manifest reused; only state and PTT-02 gate artifacts changed",
+      "comparison_operator": "equals",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT02-06",
+      "literal_requirement": "no deterministic classifier/inference is introduced",
+      "source_file": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md",
+      "source_line_or_section": "B16 and PTT-02 work order",
+      "actual_artifact": "artifacts/implementation-integrity/PTT-02.json",
+      "actual_value": "no production/test/tool code changed",
+      "comparison_operator": "equals_false",
+      "passed": true,
+      "gap": null
+    }
+  ],
+  "summary": {
+    "passed_count": 6,
+    "failed_count": 0,
+    "next_bounded_action": "WO-COMMIT-PTT-02-01"
+  },
+  "passed": true
+}

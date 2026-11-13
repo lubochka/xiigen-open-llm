@@ -1,0 +1,230 @@
+{
+  "work_order": "SS-05",
+  "unit": "routing",
+  "verdict": "ACCEPTED_PASS_PENDING_COMMIT",
+  "claim_scope": "One checkpoint-backed routing semantic unit slice only. No full SkillSelection semantic quality, no SS-06+ units, no host/adaptive/export/import lifecycle claim.",
+  "branch": "codex/chat-gpt-5.5",
+  "created_at_utc": "2026-06-05T12:20:14.051Z",
+  "changed_files": [
+    "43.SmartSkillsDomain/SkillSelectionContracts.cs",
+    "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+    "43.SmartSkillsDomain/README.md",
+    "Tests/SkillSelectionMachineTests.cs",
+    "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json",
+    "artifacts/dpo-knowledge-map/SS-05.json",
+    "artifacts/dpo-universalization/SS-05.json",
+    "artifacts/test-strategy-admission/SS-05.json",
+    "artifacts/authority-self-reflection/SS-05.json",
+    "artifacts/implementation-integrity/SS-05.json",
+    "artifacts/metric-honesty/SS-05.json",
+    "artifacts/human-authority-boundary/SS-05.json",
+    "artifacts/subagent-packet-quality/SS-05.json",
+    "artifacts/test-execution-hygiene/SS-05.json",
+    "artifacts/completion-matrix/SS-05.json",
+    "artifacts/skill-selection-lifecycle/SS-05.json"
+  ],
+  "skills_guides_loaded": [
+    "docs/skills/conversation-intent-and-self-reflection-SKILL.md",
+    "docs/skills/architect-behavior-classifier-SKILL.md",
+    "docs/skills/plan-review-SKILL.md",
+    "docs/skills/skill-injection-SKILL.md",
+    "docs/skills/implementation-integrity-SKILL.md",
+    "docs/skills/generated-code-review-SKILL.md",
+    "docs/skills/phase-completion-packager-SKILL.md",
+    "docs/plans/DPO-KNOWLEDGE-MAP-v1.md"
+  ],
+  "implementation": {
+    "checkpoint_section": "SkillSelectionCheckpoint.Routing",
+    "unit_state_type": "RoutingUnitState",
+    "training_adapter": "IRoutingTraining",
+    "checkpoint_evidence": "ROUTING_CHECKPOINT_SECTION",
+    "runtime_decision_source": "learned routing signal profiles loaded from checkpoint state",
+    "deterministic_helpers_scope": "tokenization, schema/load/save, and report serialization only; not routing final authority"
+  },
+  "evidence": {
+    "held_out": {
+      "test_name": "SkillSelectionMachine_RoutingUsesCheckpointSectionForHeldOutRoutePrompt",
+      "training_pair_id": "ss05-routing-pair-001",
+      "held_out_prompt": "Route this request to prompt-to-task first because structured task details are absent.",
+      "selected_skill_id": "prompt-to-task-route",
+      "evidence_feature": "ROUTING_CHECKPOINT_SECTION",
+      "candidate_position_scaffold_used_as_final_authority": false
+    },
+    "ablation": {
+      "test_name": "SkillSelectionMachine_RoutingAblationLowersDecisionWithoutUnitSection",
+      "trained_selected_skill_id": "prompt-to-task-route",
+      "empty_baseline_selected_count": 0,
+      "confidence_lower_without_unit_section": true
+    },
+    "focused_test_rerun": {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+      "exit_code": 0,
+      "passed": 27,
+      "failed": 0,
+      "total": 27,
+      "elapsed_seconds": 36.8,
+      "started_utc": "2026-06-05T12:23:30.9383386Z",
+      "ended_utc": "2026-06-05T12:24:07.7200052Z"
+    },
+    "initial_test_attempt": {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+      "exit_code": 124,
+      "result": "tool_timeout; remaining dotnet child processes were stopped before rerun"
+    }
+  },
+  "no_hidden_determinism_review": {
+    "hardcoded_routing_regex_dictionary_if_list_bm25_filename_lookup_as_authority": false,
+    "routing_training_rows_routed_by_target_training_adapter": true,
+    "runtime_prompt_sniffing_as_unit_gate": false,
+    "candidate_position_final_authority": false,
+    "static_scan_pending": false,
+    "parent_static_scan_result": {
+      "command": "rg -n 'ExtractRoutingSignals|hardcoded routing|routing keyword whitelist|route keyword whitelist|token is \"route\"|token is \"routing\"|token is \"flow\"|token is \"scenario\"|token is \"path\"' 43.SmartSkillsDomain/SkillSelectionMachine.cs",
+      "normalized_result": "PASS_ZERO_HITS"
+    }
+  },
+  "false_claims": {
+    "full_skill_selection_semantic_quality_claimed": false,
+    "host_runtime_claimed": false,
+    "adaptive_work_claimed": false,
+    "external_ai_used": false,
+    "model_export_import_lifecycle_claimed": false,
+    "ss_06_plus_claimed": false
+  },
+  "next_bounded_action": "WO-COMMIT-SS-05-01",
+  "row_count": 16,
+  "passed_count": 16,
+  "failed_count": 0,
+  "rows": [
+    {
+      "id": "SS05-01",
+      "requirement": "Only SS-05 routing unit implemented",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-02",
+      "requirement": "Mandatory reads and listed guides loaded",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-03",
+      "requirement": "State updated before implementation action",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-04",
+      "requirement": "Routing rows use TargetTrainingAdapter metadata",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-05",
+      "requirement": "Runtime routing decision uses learned checkpoint/profile state",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-06",
+      "requirement": "No hardcoded routing regex/dictionary/if-list/BM25/filename lookup final authority",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-07",
+      "requirement": "Held-out routing test uses non-identical prompt",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-08",
+      "requirement": "Ablation baseline proves no learned decision without unit state",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-09",
+      "requirement": "SS-02 through SS-04 behavior remains in focused test filter",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-10",
+      "requirement": "README scope updated without full quality claim",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-11",
+      "requirement": "Focused SkillSelectionMachine tests pass",
+      "passed": true,
+      "evidence": "parent focused rerun passed 27/27"
+    },
+    {
+      "id": "SS05-12",
+      "requirement": "Static scan required before parent review",
+      "passed": true,
+      "evidence": "parent production anti-hardcode scan PASS_ZERO_HITS"
+    },
+    {
+      "id": "SS05-13",
+      "requirement": "JSON artifacts/state parse required before parent review",
+      "passed": true,
+      "evidence": "parent JSON parse: 11 SS-05 artifacts + state parsed OK"
+    },
+    {
+      "id": "SS05-14",
+      "requirement": "No host/adaptive/export/import/external AI claim",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-15",
+      "requirement": "Metric honesty records timeout and successful rerun",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    },
+    {
+      "id": "SS05-16",
+      "requirement": "No commit/push performed in executor slice",
+      "passed": true,
+      "evidence": "recorded_in_SS_05_artifacts_or_tests"
+    }
+  ],
+  "status": "ACCEPTED_PASS_PENDING_COMMIT",
+  "parent_review_accepted": true,
+  "parent_review_verdict": "ACCEPTED_PASS_PENDING_COMMIT",
+  "pending_commit_boundary": true,
+  "next_action": "WO-COMMIT-SS-05-01",
+  "parent_review_evidence": {
+    "parent_review_accepted": true,
+    "parent_review_verdict": "ACCEPTED_PASS_PENDING_COMMIT",
+    "reviewed_at_utc": "2026-06-05T12:26:56.335Z",
+    "focused_test_rerun": {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+      "exit_code": 0,
+      "passed": 27,
+      "failed": 0,
+      "total": 27,
+      "elapsed_seconds": 36.8,
+      "started_utc": "2026-06-05T12:23:30.9383386Z",
+      "ended_utc": "2026-06-05T12:24:07.7200052Z"
+    },
+    "json_parse": {
+      "files": "11 SS-05 artifacts + state",
+      "parsed_ok": true
+    },
+    "anti_hardcode_scan": {
+      "command": "rg -n 'ExtractRoutingSignals|hardcoded routing|routing keyword whitelist|route keyword whitelist|token is \"route\"|token is \"routing\"|token is \"flow\"|token is \"scenario\"|token is \"path\"' 43.SmartSkillsDomain/SkillSelectionMachine.cs",
+      "normalized_result": "PASS_ZERO_HITS"
+    },
+    "diff_check": {
+      "scope": "SS-05 files/artifacts",
+      "exit_code": 0
+    },
+    "code_review_finding": "routing uses learned checkpoint/profile state populated only via TargetTrainingAdapter == IRoutingTraining; deterministic helper is neutral tokenization/load/save/reporting, not routing decision. Ablation test proves empty state returns no selected route.",
+    "model_asset_scope_note": "Existing committed models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json is old shape and is not part of SS-05 model asset lifecycle or export/import readiness claim."
+  }
+}

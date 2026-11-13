@@ -1,0 +1,606 @@
+{
+    "schema":  "xiigen.completion_matrix.v1",
+    "work_order":  "WO-COMPLETE-02",
+    "generated_at_utc":  "2026-06-03T22:40:08.8140541Z",
+    "plan":  "ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-PLAN-v2.md",
+    "row_count":  39,
+    "status_counts":  {
+                          "passed":  28,
+                          "planned_only":  3,
+                          "open_gaps":  8,
+                          "failed":  0
+                      },
+    "explicit_open_gap_ids":  [
+                                  "DPO-ORCH-OPERATOR-APPROVAL-REQUIRED",
+                                  "DPO-PTT-OPERATOR-APPROVAL-REQUIRED",
+                                  "HOST-INTERACTIVE-CLAUDE-NOT-READY",
+                                  "HOST-INTERACTIVE-CURSOR-NOT-READY",
+                                  "HOST-INTERACTIVE-CODEX-NOT-READY",
+                                  "GAP-TRAINABLE-MACHINES",
+                                  "GAP-ASSET-MATERIALIZATION",
+                                  "GAP-FULL-HOST-RUNTIME"
+                              ],
+    "nine_check_review":  {
+                              "total":  9,
+                              "passed":  8,
+                              "planned_only":  1,
+                              "open_gaps":  0,
+                              "failed":  0,
+                              "row_7_result":  [
+                                                   {
+                                                       "requirement_id":  "NC-07",
+                                                       "literal_requirement":  "Core logic stays in llm_mvp_core and extensions are thin API/check-set clients.",
+                                                       "category":  "nine_check",
+                                                       "status":  "passed",
+                                                       "evidence_kind":  "contract_and_boundary_reports",
+                                                       "artifacts":  [
+                                                                         "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs",
+                                                                         "artifacts/host-boundary-claude.json",
+                                                                         "artifacts/host-boundary-cursor.json",
+                                                                         "artifacts/host-boundary-codex.json"
+                                                                     ],
+                                                       "evidence_summary":  "API contracts and host boundary reports mark thin_client=true, core_logic_in_llm_mvp_core=true, and host_training_logic=false.",
+                                                       "scope_note":  "Full interactive host runtime is not claimed.",
+                                                       "next_action":  "parent REVIEW_INTERNAL reviews this completion matrix."
+                                                   }
+                                               ]
+                          },
+    "actual_vs_planned_policy":  "Rows distinguish passed actual evidence, planned_only evidence, open_gaps with next_action, and failed rows. Contracts, lifecycle reports, and local host traces are not promoted to trainable machine/runtime completion.",
+    "deterministic_shortcut_scope":  "Executor static sweep evidence is not enough by itself; parent REVIEW_INTERNAL sign-off is required and the visible state records WO-DET-01 parent sign-off. Runtime trained-state proof is pending until machine implementation exists.",
+    "dpo_readiness_scope":  "Both DPO domains remain blocked on operator-approved row-level chosen/rejected/error refs from binding-source templates; no false train-ready claim is made.",
+    "full_host_runtime_scope":  "Claude/Cursor/Codex host evidence includes static package boundary, debug trace, and local non-AI host integration. Full interactive runtime is not claimed because Claude/Cursor/Codex interactive reports remain NOT_READY.",
+    "rows":  [
+                 {
+                     "requirement_id":  "NC-01",
+                     "literal_requirement":  "Plan covers both ORCHESTRATION-REASONING-MACHINE-PLAN-v1 and PROMPT-TO-TASK-MACHINE-PLAN-v1.md.",
+                     "category":  "nine_check",
+                     "status":  "passed",
+                     "evidence_kind":  "actual_plan_and_contract_evidence",
+                     "artifacts":  [
+                                       "ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-PLAN-v2.md",
+                                       "Tests/PromptToTaskContractsTests.cs",
+                                       "Tests/OrchestrationReasoningContractsTests.cs"
+                                   ],
+                     "evidence_summary":  "Primary plans are named in plan section 1 and DTO contract slices have parent PASS reviews.",
+                     "scope_note":  "This proves coverage and contracts, not trained machine implementation.",
+                     "next_action":  "parent REVIEW_INTERNAL reviews this completion matrix."
+                 },
+                 {
+                     "requirement_id":  "NC-02",
+                     "literal_requirement":  "Current visible user requirements are ledgered; unavailable other-conversation source is noted.",
+                     "category":  "nine_check",
+                     "status":  "passed",
+                     "evidence_kind":  "actual_plan_evidence",
+                     "artifacts":  [
+                                       "ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-PLAN-v2.md#0A",
+                                       "ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-PLAN-v2.md#0B"
+                                   ],
+                     "evidence_summary":  "Conversation Requirements Ledger and UNAVAILABLE_SOURCE_NOTE are present.",
+                     "scope_note":  "Only current-visible requirements are claimed.",
+                     "next_action":  "Expand the ledger only if Luba provides the unavailable conversation source."
+                 },
+                 {
+                     "requirement_id":  "NC-03",
+                     "literal_requirement":  "Mental experiment coverage for first prompt, second pass, feedback, upgrade, host split, work-order size, debug, and corpus roots.",
+                     "category":  "nine_check",
+                     "status":  "passed",
+                     "evidence_kind":  "actual_plan_evidence",
+                     "artifacts":  [
+                                       "ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-PLAN-v2.md#12"
+                                   ],
+                     "evidence_summary":  "Mental Experiment Matrix rows cover the required scenarios.",
+                     "scope_note":  "This is plan-quality evidence, not runtime training evidence.",
+                     "next_action":  "parent REVIEW_INTERNAL reviews this completion matrix."
+                 },
+                 {
+                     "requirement_id":  "NC-04",
+                     "literal_requirement":  "No deterministic algorithm is hidden in place of a trainable unit.",
+                     "category":  "nine_check",
+                     "status":  "passed",
+                     "evidence_kind":  "static_executor_evidence_plus_parent_review",
+                     "artifacts":  [
+                                       "artifacts/deterministic-sweep-report.json",
+                                       "STATE.json parent_reviews WO-DET-01"
+                                   ],
+                     "evidence_summary":  "Static sweep has forbidden_hit_count=0 and parent REVIEW_INTERNAL sign-off is recorded where visible.",
+                     "scope_note":  "Runtime trained-state dependency proof remains pending until machine implementation exists and is not claimed here.",
+                     "next_action":  "parent REVIEW_INTERNAL reviews this completion matrix."
+                 },
+                 {
+                     "requirement_id":  "NC-05",
+                     "literal_requirement":  "Models and sets are saved in repo, split common/adaptive, import/export/upgrade capable.",
+                     "category":  "nine_check",
+                     "status":  "planned_only",
+                     "evidence_kind":  "asset_lifecycle_plan_reports",
+                     "artifacts":  [
+                                       "artifacts/prompt-to-task-asset-lifecycle-report.json",
+                                       "artifacts/orchestration-reasoning-asset-lifecycle-report.json"
+                                   ],
+                     "evidence_summary":  "Both asset lifecycle reports list required manifests, probes, common/adaptive paths, and explicitly set assets_created=false, checkpoint_created=false, training_started=false.",
+                     "scope_note":  "No model checkpoint, training data bundle, export/import, publish/load, or upgrade probe has been materialized in this plan execution.",
+                     "next_action":  "Concrete plan rows in section 16 cover DPO readiness, training mini-cycles, asset materialization, export/import/load, upgrade, rollback, and continue-training probes after operator-approved DPO bindings exist."
+                 },
+                 {
+                     "requirement_id":  "NC-06",
+                     "literal_requirement":  "Luba work style is added to agents and architect/planning/plan-review skills.",
+                     "category":  "nine_check",
+                     "status":  "passed",
+                     "evidence_kind":  "actual_governance_parent_reviews",
+                     "artifacts":  [
+                                       "AGENTS.md",
+                                       "docs/skills/*",
+                                       "STATE.json parent_reviews WO-GOV-*"
+                                   ],
+                     "evidence_summary":  "GovernanceCoverage Agents, ArchitectSkills, PlanningSkills, and PlanReviewSkills parent reviews are recorded as PASS.",
+                     "scope_note":  "Governance behavior is covered; this does not imply machine implementation.",
+                     "next_action":  "parent REVIEW_INTERNAL reviews this completion matrix."
+                 },
+                 {
+                     "requirement_id":  "NC-07",
+                     "literal_requirement":  "Core logic stays in llm_mvp_core and extensions are thin API/check-set clients.",
+                     "category":  "nine_check",
+                     "status":  "passed",
+                     "evidence_kind":  "contract_and_boundary_reports",
+                     "artifacts":  [
+                                       "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs",
+                                       "artifacts/host-boundary-claude.json",
+                                       "artifacts/host-boundary-cursor.json",
+                                       "artifacts/host-boundary-codex.json"
+                                   ],
+                     "evidence_summary":  "API contracts and host boundary reports mark thin_client=true, core_logic_in_llm_mvp_core=true, and host_training_logic=false.",
+                     "scope_note":  "Full interactive host runtime is not claimed.",
+                     "next_action":  "parent REVIEW_INTERNAL reviews this completion matrix."
+                 },
+                 {
+                     "requirement_id":  "NC-08",
+                     "literal_requirement":  "External AI and unrelated tools are banned unless explicitly approved.",
+                     "category":  "nine_check",
+                     "status":  "passed",
+                     "evidence_kind":  "actual_governance_report",
+                     "artifacts":  [
+                                       "artifacts/external-tool-approval-report.json"
+                                   ],
+                     "evidence_summary":  "ExternalToolApproval reports external_tool_use_requested=false, external_ai_used=false, unrelated_tools_used=false, and future approval required.",
+                     "scope_note":  "No external AI use is claimed or required.",
+                     "next_action":  "If future external tool use is needed, create Luba approval artifact first."
+                 },
+                 {
+                     "requirement_id":  "NC-09",
+                     "literal_requirement":  "Plan includes Claude/Cursor/Codex extension implementations and checks.",
+                     "category":  "nine_check",
+                     "status":  "passed",
+                     "evidence_kind":  "boundary_debug_and_local_non_ai_executor_evidence",
+                     "artifacts":  [
+                                       "artifacts/host-boundary-claude.json",
+                                       "artifacts/host-boundary-cursor.json",
+                                       "artifacts/host-boundary-codex.json",
+                                       "artifacts/debug-trace-claude.json",
+                                       "artifacts/debug-trace-cursor.json",
+                                       "artifacts/debug-trace-codex.json",
+                                       "artifacts/host-local-runtime-claude.json",
+                                       "artifacts/host-local-runtime-cursor.json",
+                                       "artifacts/host-local-runtime-codex.json"
+                                   ],
+                     "evidence_summary":  "All three host boundary reports, all three debug trace reports, and all three local non-AI host integration reports have passed their narrow gates.",
+                     "scope_note":  "This is thin-client boundary, debug, and local non-AI proof; full interactive Claude/Cursor/Codex runtime remains open NOT_READY in separate rows.",
+                     "next_action":  "parent REVIEW_INTERNAL reviews this completion matrix evidence."
+                 },
+                 {
+                     "requirement_id":  "SRC-ORCH-PLAN",
+                     "literal_requirement":  "ORCHESTRATION-REASONING-MACHINE-PLAN-v1 is a primary coverage source.",
+                     "category":  "primary_source_plan",
+                     "status":  "passed",
+                     "evidence_kind":  "actual_contract_and_plan_evidence",
+                     "artifacts":  [
+                                       "43.SmartSkillsDomain/OrchestrationReasoningContracts.cs",
+                                       "Tests/OrchestrationReasoningContractsTests.cs",
+                                       "artifacts/orchestration-reasoning-asset-lifecycle-report.json"
+                                   ],
+                     "evidence_summary":  "OrchestrationReasoning contract and lifecycle report exist; parent review for contract passed.",
+                     "scope_note":  "No OrchestrationReasoningMachine trainer/runtime implementation is claimed.",
+                     "next_action":  "Future machine implementation WOs create trained runtime evidence."
+                 },
+                 {
+                     "requirement_id":  "SRC-PTT-PLAN",
+                     "literal_requirement":  "PROMPT-TO-TASK-MACHINE-PLAN-v1.md is a primary coverage source.",
+                     "category":  "primary_source_plan",
+                     "status":  "passed",
+                     "evidence_kind":  "actual_contract_and_plan_evidence",
+                     "artifacts":  [
+                                       "43.SmartSkillsDomain/PromptToTaskContracts.cs",
+                                       "Tests/PromptToTaskContractsTests.cs",
+                                       "artifacts/prompt-to-task-asset-lifecycle-report.json"
+                                   ],
+                     "evidence_summary":  "PromptToTask contract and lifecycle report exist; parent review for contract passed.",
+                     "scope_note":  "No PromptToTaskMachine trainer/runtime implementation is claimed.",
+                     "next_action":  "Future machine implementation WOs create trained runtime evidence."
+                 },
+                 {
+                     "requirement_id":  "DPO-ORCH-STRATEGY",
+                     "literal_requirement":  "ORCHESTRATION-REASONING-DPO-NEGATIVE-STRATEGY-v1.md is integrated.",
+                     "category":  "dpo_strategy",
+                     "status":  "passed",
+                     "evidence_kind":  "schema_validator_report",
+                     "artifacts":  [
+                                       "artifacts/orchestration-reasoning-dpo-schema-report.json"
+                                   ],
+                     "evidence_summary":  "DPO schema report validates precursor rows and ORCH-01..ORCH-10 taxonomy, without finalizing DPO or training.",
+                     "scope_note":  "Schema pass does not mean train-ready.",
+                     "next_action":  "WO-DPO-ORCH-BINDING-SOURCE-01 produced an operator approval template; after Luba approves row-level refs, rerun WO-DPO-ORCH-PAIR-BINDING-01, WO-DPO-ORCH-PAIR-MATERIALIZE-01, and WO-DPO-READINESS-01."
+                 },
+                 {
+                     "requirement_id":  "DPO-PTT-STRATEGY",
+                     "literal_requirement":  "PROMPT-TO-TASK-DPO-NEGATIVE-STRATEGY-v1.md is integrated.",
+                     "category":  "dpo_strategy",
+                     "status":  "passed",
+                     "evidence_kind":  "schema_validator_report",
+                     "artifacts":  [
+                                       "artifacts/prompt-to-task-dpo-schema-report.json"
+                                   ],
+                     "evidence_summary":  "DPO schema report validates precursor rows and PromptError-01..12 taxonomy, without finalizing DPO or training.",
+                     "scope_note":  "Schema pass does not mean train-ready.",
+                     "next_action":  "WO-DPO-PTT-BINDING-SOURCE-01 produced an operator approval template; after Luba approves row-level refs, rerun WO-DPO-PTT-PAIR-MATERIALIZE-01 and WO-DPO-READINESS-01."
+                 },
+                 {
+                     "requirement_id":  "CORPUS-SONNET-ANALYZES",
+                     "literal_requirement":  "Corpus root sonnet local - analyzes is first-class and audited/built.",
+                     "category":  "corpus_root",
+                     "status":  "passed",
+                     "evidence_kind":  "audit_and_metadata_only_corpus_rows",
+                     "artifacts":  [
+                                       "artifacts/corpus-audit-sonnet-analyzes.json",
+                                       "artifacts/orchestration-reasoning-corpus.jsonl",
+                                       "artifacts/orchestration-reasoning-corpus-summary.json"
+                                   ],
+                     "evidence_summary":  "Orchestration corpus schema is self-contained with audit/build count and byte consistency.",
+                     "scope_note":  "No raw private content or training is claimed.",
+                     "next_action":  "Future private-source DPO/training WOs resolve local sources without copying raw text."
+                 },
+                 {
+                     "requirement_id":  "CORPUS-USER-PROMPTS",
+                     "literal_requirement":  "Corpus root claude-sessions\\\\user prompts is first-class and audited/built.",
+                     "category":  "corpus_root",
+                     "status":  "passed",
+                     "evidence_kind":  "audit_and_metadata_only_corpus_rows",
+                     "artifacts":  [
+                                       "artifacts/corpus-audit-user-prompts.json",
+                                       "artifacts/prompt-to-task-corpus.jsonl",
+                                       "artifacts/prompt-to-task-corpus-summary.json"
+                                   ],
+                     "evidence_summary":  "PromptToTask corpus draft rows are metadata/source references only and pass schema report checks.",
+                     "scope_note":  "No raw prompt text or training is claimed.",
+                     "next_action":  "Future private-source DPO/training WOs resolve local sources without copying raw text."
+                 },
+                 {
+                     "requirement_id":  "CORPUS-SONNET-USER-PROMPTS",
+                     "literal_requirement":  "Corpus root sonnet-user-prompts is first-class and audited/built.",
+                     "category":  "corpus_root",
+                     "status":  "passed",
+                     "evidence_kind":  "audit_and_metadata_only_paired_rows",
+                     "artifacts":  [
+                                       "artifacts/corpus-audit-sonnet-user-prompts.json",
+                                       "artifacts/prompt-plan-paired-corpus.jsonl",
+                                       "artifacts/prompt-plan-paired-corpus-summary.json"
+                                   ],
+                     "evidence_summary":  "Prompt-plan paired draft rows are metadata/source references only; dpo_finalized=false and training_started=false.",
+                     "scope_note":  "No chosen/rejected raw text or training is claimed.",
+                     "next_action":  "Future DPO finalization WOs create train-ready pairs with leakage gates."
+                 },
+                 {
+                     "requirement_id":  "ASSET-PTT",
+                     "literal_requirement":  "PromptToTask common/adaptive lifecycle is defined.",
+                     "category":  "asset_lifecycle",
+                     "status":  "planned_only",
+                     "evidence_kind":  "manifest_probe_plan_report",
+                     "artifacts":  [
+                                       "artifacts/prompt-to-task-asset-lifecycle-report.json"
+                                   ],
+                     "evidence_summary":  "Report lists required paths, fields, and probes while assets_created=false and training_started=false.",
+                     "scope_note":  "No PromptToTask checkpoint/export/import/load/upgrade execution is claimed.",
+                     "next_action":  "Future asset implementation WOs materialize assets and execute probes."
+                 },
+                 {
+                     "requirement_id":  "ASSET-ORCH",
+                     "literal_requirement":  "OrchestrationReasoning common/adaptive lifecycle is defined.",
+                     "category":  "asset_lifecycle",
+                     "status":  "planned_only",
+                     "evidence_kind":  "manifest_probe_plan_report",
+                     "artifacts":  [
+                                       "artifacts/orchestration-reasoning-asset-lifecycle-report.json"
+                                   ],
+                     "evidence_summary":  "Report lists required paths, fields, and probes while assets_created=false and training_started=false.",
+                     "scope_note":  "No OrchestrationReasoning checkpoint/export/import/load/upgrade execution is claimed.",
+                     "next_action":  "Future asset implementation WOs materialize assets and execute probes."
+                 },
+                 {
+                     "requirement_id":  "HOST-REPOS",
+                     "literal_requirement":  "Claude/Cursor/Codex private host repos exist with same owner.",
+                     "category":  "host_repo",
+                     "status":  "passed",
+                     "evidence_kind":  "repo_metadata_report",
+                     "artifacts":  [
+                                       "artifacts/host-repo-status.json"
+                                   ],
+                     "evidence_summary":  "HostRepoSet report records required repo rows and private-required result.",
+                     "scope_note":  "No repos are created by this matrix.",
+                     "next_action":  "If parent review finds stale metadata, rerun HostRepoSet as a bounded repair."
+                 },
+                 {
+                     "requirement_id":  "HOST-BOUNDARY-CLAUDE",
+                     "literal_requirement":  "claude extension is a thin host API/check-set client.",
+                     "category":  "host_boundary",
+                     "status":  "passed",
+                     "evidence_kind":  "host_boundary_report",
+                     "artifacts":  [
+                                       "artifacts/host-boundary-claude.json"
+                                   ],
+                     "evidence_summary":  "claude boundary report validates thin_client, uses_xiigen_exe_api, core_logic_in_llm_mvp_core, and no host training/deterministic shortcut.",
+                     "scope_note":  "Static/package boundary evidence only; no full interactive host runtime claimed.",
+                     "next_action":  "Future host runtime WOs must invoke real host UI/command paths if full runtime proof is required."
+                 },
+                 {
+                     "requirement_id":  "HOST-BOUNDARY-CURSOR",
+                     "literal_requirement":  "cursor extension is a thin host API/check-set client.",
+                     "category":  "host_boundary",
+                     "status":  "passed",
+                     "evidence_kind":  "host_boundary_report",
+                     "artifacts":  [
+                                       "artifacts/host-boundary-cursor.json"
+                                   ],
+                     "evidence_summary":  "cursor boundary report validates thin_client, uses_xiigen_exe_api, core_logic_in_llm_mvp_core, and no host training/deterministic shortcut.",
+                     "scope_note":  "Static/package boundary evidence only; no full interactive host runtime claimed.",
+                     "next_action":  "Future host runtime WOs must invoke real host UI/command paths if full runtime proof is required."
+                 },
+                 {
+                     "requirement_id":  "HOST-BOUNDARY-CODEX",
+                     "literal_requirement":  "codex extension is a thin host API/check-set client.",
+                     "category":  "host_boundary",
+                     "status":  "passed",
+                     "evidence_kind":  "host_boundary_report",
+                     "artifacts":  [
+                                       "artifacts/host-boundary-codex.json"
+                                   ],
+                     "evidence_summary":  "codex boundary report validates thin_client, uses_xiigen_exe_api, core_logic_in_llm_mvp_core, and no host training/deterministic shortcut.",
+                     "scope_note":  "Static/package boundary evidence only; no full interactive host runtime claimed.",
+                     "next_action":  "Future host runtime WOs must invoke real host UI/command paths if full runtime proof is required."
+                 },
+                 {
+                     "requirement_id":  "DEBUG-CLAUDE",
+                     "literal_requirement":  "claude extension debug trace uses exact xiigen method/input/output chat format.",
+                     "category":  "debug_trace",
+                     "status":  "passed",
+                     "evidence_kind":  "local_debug_trace_report",
+                     "artifacts":  [
+                                       "artifacts/debug-trace-claude.json"
+                                   ],
+                     "evidence_summary":  "claude debug report validates debug disabled omission, exact enabled format, redaction, and no external AI/training.",
+                     "scope_note":  "Local entrypoint/helper proof only; no paid/interactive host runtime claimed.",
+                     "next_action":  "Future host runtime WOs must prove full interactive runtime separately if required."
+                 },
+                 {
+                     "requirement_id":  "DEBUG-CURSOR",
+                     "literal_requirement":  "cursor extension debug trace uses exact xiigen method/input/output chat format.",
+                     "category":  "debug_trace",
+                     "status":  "passed",
+                     "evidence_kind":  "local_debug_trace_report",
+                     "artifacts":  [
+                                       "artifacts/debug-trace-cursor.json"
+                                   ],
+                     "evidence_summary":  "cursor debug report validates debug disabled omission, exact enabled format, redaction, and no external AI/training.",
+                     "scope_note":  "Local entrypoint/helper proof only; no paid/interactive host runtime claimed.",
+                     "next_action":  "Future host runtime WOs must prove full interactive runtime separately if required."
+                 },
+                 {
+                     "requirement_id":  "DEBUG-CODEX",
+                     "literal_requirement":  "codex extension debug trace uses exact xiigen method/input/output chat format.",
+                     "category":  "debug_trace",
+                     "status":  "passed",
+                     "evidence_kind":  "local_debug_trace_report",
+                     "artifacts":  [
+                                       "artifacts/debug-trace-codex.json"
+                                   ],
+                     "evidence_summary":  "codex debug report validates debug disabled omission, exact enabled format, redaction, and no external AI/training.",
+                     "scope_note":  "Local entrypoint/helper proof only; no paid/interactive host runtime claimed.",
+                     "next_action":  "Future host runtime WOs must prove full interactive runtime separately if required."
+                 },
+                 {
+                     "requirement_id":  "HOST-LOCAL-RUNTIME-CLAUDE",
+                     "literal_requirement":  "claude local non-AI host integration reaches xiigen boundary.",
+                     "category":  "host_local_runtime",
+                     "status":  "passed",
+                     "evidence_kind":  "local_non_ai_runtime_report",
+                     "artifacts":  [
+                                       "artifacts/host-local-runtime-claude.json"
+                                   ],
+                     "evidence_summary":  "claude local runtime report proves a controlled non-AI host wrapper/helper path reached the xiigen boundary and preserved redaction/debug behavior.",
+                     "scope_note":  "This is not full interactive paid/runtime host evidence and cannot close HOST-INTERACTIVE-CLAUDE-NOT-READY.",
+                     "next_action":  "Use only as narrow boundary evidence; full interactive runtime requires a separate authorized host proof."
+                 },
+                 {
+                     "requirement_id":  "HOST-LOCAL-RUNTIME-CURSOR",
+                     "literal_requirement":  "cursor local non-AI host integration reaches xiigen boundary.",
+                     "category":  "host_local_runtime",
+                     "status":  "passed",
+                     "evidence_kind":  "local_non_ai_runtime_report",
+                     "artifacts":  [
+                                       "artifacts/host-local-runtime-cursor.json"
+                                   ],
+                     "evidence_summary":  "cursor local runtime report proves a controlled non-AI host wrapper/helper path reached the xiigen boundary and preserved redaction/debug behavior.",
+                     "scope_note":  "This is not full interactive paid/runtime host evidence and cannot close HOST-INTERACTIVE-CURSOR-NOT-READY.",
+                     "next_action":  "Use only as narrow boundary evidence; full interactive runtime requires a separate authorized host proof."
+                 },
+                 {
+                     "requirement_id":  "HOST-LOCAL-RUNTIME-CODEX",
+                     "literal_requirement":  "codex local non-AI host integration reaches xiigen boundary.",
+                     "category":  "host_local_runtime",
+                     "status":  "passed",
+                     "evidence_kind":  "local_non_ai_runtime_report",
+                     "artifacts":  [
+                                       "artifacts/host-local-runtime-codex.json"
+                                   ],
+                     "evidence_summary":  "codex local runtime report proves a controlled non-AI host wrapper/helper path reached the xiigen boundary and preserved redaction/debug behavior.",
+                     "scope_note":  "This is not full interactive paid/runtime host evidence and cannot close HOST-INTERACTIVE-CODEX-NOT-READY.",
+                     "next_action":  "Use only as narrow boundary evidence; full interactive runtime requires a separate authorized host proof."
+                 },
+                 {
+                     "requirement_id":  "API-CONTRACT",
+                     "literal_requirement":  "xiigen exe API request/response/debug trace contract exists so hosts stay thin.",
+                     "category":  "api_contract",
+                     "status":  "passed",
+                     "evidence_kind":  "contract_tests_parent_review",
+                     "artifacts":  [
+                                       "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs",
+                                       "Tests/XiigenExtensionApiContractsTests.cs"
+                                   ],
+                     "evidence_summary":  "XiigenExtension API contract slice passed filtered tests in parent review; debug text helper is contract-only.",
+                     "scope_note":  "No production machine runtime is invoked by API contract tests.",
+                     "next_action":  "Future xiigen exe runtime implementation WOs connect the contract to trained machines."
+                 },
+                 {
+                     "requirement_id":  "XIIGEN-RUNTIME-SMOKE",
+                     "literal_requirement":  "xiigen exe API runtime smoke connects PromptToTask and OrchestrationReasoning skeletons without claiming inference.",
+                     "category":  "runtime_smoke",
+                     "status":  "passed",
+                     "evidence_kind":  "controlled_non_host_runtime_report",
+                     "artifacts":  [
+                                       "artifacts/xiigen-runtime-smoke-report.json"
+                                   ],
+                     "evidence_summary":  "Runtime smoke report invokes both skeletons through the core boundary and reports not-trained/no-inference rather than trained inference.",
+                     "scope_note":  "This is a controlled core smoke, not trained inference and not host runtime proof.",
+                     "next_action":  "After train-ready DPO and assets exist, future WOs add trained runtime probes."
+                 },
+                 {
+                     "requirement_id":  "MACHINE-SKELETONS-AND-LOADERS",
+                     "literal_requirement":  "PromptToTask and OrchestrationReasoning skeleton and learned-state loader slices preserve contracts without deterministic shortcuts.",
+                     "category":  "machine_skeleton",
+                     "status":  "passed",
+                     "evidence_kind":  "focused_filtered_tests_parent_review",
+                     "artifacts":  [
+                                       "Tests/PromptToTaskMachineSkeletonTests.cs",
+                                       "Tests/PromptToTaskMachineStateLoadingTests.cs",
+                                       "Tests/OrchestrationReasoningMachineSkeletonTests.cs",
+                                       "Tests/OrchestrationReasoningStateLoadingTests.cs"
+                                   ],
+                     "evidence_summary":  "Focused skeleton/loader WOs passed parent review: unloaded states return not-trained/no-inference, loaded descriptors preserve metadata, and no classifier/selector/trainer/checkpoint/asset is introduced.",
+                     "scope_note":  "Skeleton and loader boundaries are not trained machine implementation or semantic inference.",
+                     "next_action":  "DPO operator approvals are required before train-ready/training WOs can continue."
+                 },
+                 {
+                     "requirement_id":  "DPO-ORCH-OPERATOR-APPROVAL-REQUIRED",
+                     "literal_requirement":  "Orchestration DPO binding templates require operator-approved row-level error/chosen/rejected refs.",
+                     "category":  "open_capability_gap",
+                     "status":  "open_gap",
+                     "evidence_kind":  "binding_source_template_report",
+                     "artifacts":  [
+                                       "artifacts/orchestration-reasoning-dpo-binding-source-report.json",
+                                       "artifacts/orchestration-reasoning-dpo-binding-source-template.jsonl",
+                                       "artifacts/dpo-train-readiness-report.json"
+                                   ],
+                     "evidence_summary":  "Binding source report sets operator_approval_required=true because no safe automatic source_row_id to approved_pair_ref binding was provable.",
+                     "scope_note":  "No labels are invented and DPO readiness remains not_ready until Luba/operator approves row-level source_row_id, approved_pair_ref, error_code, chosen_ref, and rejected_ref.",
+                     "next_action":  "operator_input_required: approve/fill artifacts/orchestration-reasoning-dpo-binding-source-template.jsonl with source_row_id, approved_pair_ref, error_code, chosen_ref, and rejected_ref; then rerun WO-DPO-ORCH-PAIR-BINDING-01, WO-DPO-ORCH-PAIR-MATERIALIZE-01, and WO-DPO-READINESS-01."
+                 },
+                 {
+                     "requirement_id":  "DPO-PTT-OPERATOR-APPROVAL-REQUIRED",
+                     "literal_requirement":  "PromptToTask DPO binding templates require operator-approved row-level PromptError/chosen/rejected refs.",
+                     "category":  "open_capability_gap",
+                     "status":  "open_gap",
+                     "evidence_kind":  "binding_source_template_report",
+                     "artifacts":  [
+                                       "artifacts/prompt-to-task-dpo-binding-source-report.json",
+                                       "artifacts/prompt-to-task-dpo-binding-source-template.jsonl",
+                                       "artifacts/dpo-train-readiness-report.json"
+                                   ],
+                     "evidence_summary":  "Binding source report sets operator_approval_required=true because no safe automatic source_row_id to approved_pair_ref binding was provable.",
+                     "scope_note":  "No labels are invented and DPO readiness remains not_ready until Luba/operator approves row-level source_row_id, approved_pair_ref, PromptError error_code, chosen_ref, and rejected_ref.",
+                     "next_action":  "operator_input_required: approve/fill artifacts/prompt-to-task-dpo-binding-source-template.jsonl with source_row_id, approved_pair_ref, error_code, chosen_ref, and rejected_ref; then rerun WO-DPO-PTT-PAIR-MATERIALIZE-01 and WO-DPO-READINESS-01."
+                 },
+                 {
+                     "requirement_id":  "HOST-INTERACTIVE-CLAUDE-NOT-READY",
+                     "literal_requirement":  "Claude full interactive runtime proof must succeed through current repo plugin and fresh hook/core artifacts.",
+                     "category":  "open_capability_gap",
+                     "status":  "open_gap",
+                     "evidence_kind":  "interactive_host_not_ready_report",
+                     "artifacts":  [
+                                       "artifacts/host-interactive-runtime-claude.json"
+                                   ],
+                     "evidence_summary":  "Claude report is NOT_READY: command with current --plugin-dir timed out and did not produce fresh current-repo hook/core artifacts.",
+                     "scope_note":  "The Claude executable attempt and local non-AI proofs do not count as full interactive runtime completion.",
+                     "next_action":  "operator_input_required or parent repair decision: provide a safe noninteractive Claude plugin proof path that exits within the bounded gate and writes fresh current-repo hook/core artifacts, then rerun the Claude interactive host WO."
+                 },
+                 {
+                     "requirement_id":  "HOST-INTERACTIVE-CURSOR-NOT-READY",
+                     "literal_requirement":  "Cursor full Extension Host/UI/CLI proof must use a safe Cursor runtime path.",
+                     "category":  "open_capability_gap",
+                     "status":  "open_gap",
+                     "evidence_kind":  "interactive_host_not_ready_report",
+                     "artifacts":  [
+                                       "artifacts/host-interactive-runtime-cursor.json"
+                                   ],
+                     "evidence_summary":  "Cursor report is NOT_READY: no safe noninteractive Cursor Extension Host/UI/CLI path is exposed for full runtime proof.",
+                     "scope_note":  "Cursor local helper/boundary proof does not count as full interactive Cursor runtime completion.",
+                     "next_action":  "operator_input_required or parent repair decision: provide an approved safe Cursor Extension Host/UI/CLI invocation path for a redacted smoke request, then rerun the Cursor interactive host WO."
+                 },
+                 {
+                     "requirement_id":  "HOST-INTERACTIVE-CODEX-NOT-READY",
+                     "literal_requirement":  "Codex full plugin/app runtime proof must use a safe Codex runtime path.",
+                     "category":  "open_capability_gap",
+                     "status":  "open_gap",
+                     "evidence_kind":  "interactive_host_not_ready_report",
+                     "artifacts":  [
+                                       "artifacts/host-interactive-runtime-codex.json"
+                                   ],
+                     "evidence_summary":  "Codex report is NOT_READY: no safe noninteractive Codex plugin/app runtime path is exposed for full runtime proof.",
+                     "scope_note":  "Codex local helper/boundary proof does not count as full interactive Codex runtime completion.",
+                     "next_action":  "operator_input_required or parent repair decision: provide an approved safe Codex plugin/app runtime invocation path for a redacted smoke request, then rerun the Codex interactive host WO."
+                 },
+                 {
+                     "requirement_id":  "GAP-TRAINABLE-MACHINES",
+                     "literal_requirement":  "Trainable PromptToTaskMachine and OrchestrationReasoningMachine implementations/training.",
+                     "category":  "open_capability_gap",
+                     "status":  "open_gap",
+                     "evidence_kind":  "skeletons_only_no_training",
+                     "artifacts":  [
+                                       "43.SmartSkillsDomain/PromptToTaskMachine.cs",
+                                       "43.SmartSkillsDomain/OrchestrationReasoningMachine.cs",
+                                       "artifacts/dpo-train-readiness-report.json"
+                                   ],
+                     "evidence_summary":  "Current evidence includes DTO contracts, handoff tests, skeleton/loader tests, corpus/schema reports, and lifecycle plans; DPO readiness is not_ready pending operator-approved bindings.",
+                     "scope_note":  "No trained machine, trainer, checkpoint, or runtime inference proof is claimed.",
+                     "next_action":  "After DPO operator approvals and readiness pass, execute concrete section 16 training mini-cycle WOs."
+                 },
+                 {
+                     "requirement_id":  "GAP-ASSET-MATERIALIZATION",
+                     "literal_requirement":  "Actual model/checkpoint/training-data asset materialization and probes.",
+                     "category":  "open_capability_gap",
+                     "status":  "open_gap",
+                     "evidence_kind":  "asset_plan_only",
+                     "artifacts":  [
+                                       "artifacts/prompt-to-task-asset-lifecycle-report.json",
+                                       "artifacts/orchestration-reasoning-asset-lifecycle-report.json"
+                                   ],
+                     "evidence_summary":  "Lifecycle reports explicitly set assets_created=false, checkpoint_created=false, training_started=false, lifecycle_implementation_pending=true.",
+                     "scope_note":  "No export/import/publish/load/upgrade/continue-training probe has run.",
+                     "next_action":  "After trainable units exist, execute concrete section 16 asset materialization and lifecycle probe WOs."
+                 },
+                 {
+                     "requirement_id":  "GAP-FULL-HOST-RUNTIME",
+                     "literal_requirement":  "Full interactive Claude/Cursor/Codex host runtime proof.",
+                     "category":  "open_capability_gap",
+                     "status":  "open_gap",
+                     "evidence_kind":  "interactive_host_reports_not_ready",
+                     "artifacts":  [
+                                       "artifacts/host-interactive-runtime-claude.json",
+                                       "artifacts/host-interactive-runtime-cursor.json",
+                                       "artifacts/host-interactive-runtime-codex.json"
+                                   ],
+                     "evidence_summary":  "All three full interactive host reports remain NOT_READY; narrow local non-AI host proofs are preserved separately and not promoted.",
+                     "scope_note":  "No completed paid/full Claude, Cursor Extension Host/UI, or Codex plugin/app runtime proof is claimed.",
+                     "next_action":  "Resolve HOST-INTERACTIVE-CLAUDE/CURSOR/CODEX-NOT-READY rows only with explicit authorization and safe bounded host runtime paths."
+                 }
+             ],
+    "anti_loophole_report_path":  "artifacts/anti-loophole-report.json",
+    "passed":  true,
+    "status":  "pass_with_open_gaps",
+    "next_action":  "parent REVIEW_INTERNAL reviews WO-COMPLETE-02 evidence; if PASS_WITH_OPEN_GAPS is accepted, parent sets operator_input_required for DPO binding approvals plus safe Claude/Cursor/Codex full-host-runtime paths."
+}

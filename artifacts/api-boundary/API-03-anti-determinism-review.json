@@ -1,0 +1,312 @@
+{
+  "schema_version": 1,
+  "work_order": "API-03",
+  "generated_at_utc": "2026-06-06T02:05:23.450Z",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "passed": true,
+  "claim_scope": "Reports-only anti-determinism review for XiigenExtensionApiService and method contracts; no implementation, tests, builds, training, host repo work, external AI, browser/image tools, or CL-01/B12 started.",
+  "reviewed_files": [
+    "43.SmartSkillsDomain/XiigenExtensionApiService.cs",
+    "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs",
+    "artifacts/api-boundary/API-01-xiigen-extension-api-trained-assets.json",
+    "artifacts/api-boundary/API-02-method-contract-schema.json"
+  ],
+  "static_sweep": {
+    "command": "rg -n \"ValidateRequest|ComputeSha256|BuildDebugTrace|FormatDebugTraceForChat|JsonSerializer|Path\\.Combine|LoadCheckpoint|LoadCommonAssets|BuildCheckSetResults|BuildWarnings|ShouldClaimSemanticQuality|Translate\\(|Plan\\(|DecideFromTrainedState|BM25|regex|Regex|keyword|position|CandidatePosition|semantic_quality_claimed|runtime_extension_claimed\" 43.SmartSkillsDomain/XiigenExtensionApiService.cs 43.SmartSkillsDomain/XiigenExtensionApiContracts.cs",
+    "exit_code": 0,
+    "summary": "Hits classify as validation, hashing, redaction/debug formatting, JSON serialization, path resolution, manifest/checkpoint loading, response assembly, semantic-quality gate checks, and trained-state calls. No BM25, raw regex final selector, keyword whitelist final authority, filename lookup, position scaffold final authority, JSON/static contract semantic decision, or host runtime claim found in API boundary.",
+    "forbidden_final_authority_hits": []
+  },
+  "deterministic_components": [
+    {
+      "component": "XiigenExtensionApiContract.ValidateRequest",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs:85"
+      ],
+      "classification": "allowed_infrastructure",
+      "reason": "Validates required host request envelope fields only; does not choose task, plan, or skills."
+    },
+    {
+      "component": "ComputeSha256",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:72",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:509"
+      ],
+      "classification": "allowed_infrastructure",
+      "reason": "Hashes raw prompt for redacted refs and provenance; does not decide semantic output."
+    },
+    {
+      "component": "BuildDebugTrace / FormatDebugTraceForChat",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:463",
+        "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs:267"
+      ],
+      "classification": "allowed_infrastructure",
+      "reason": "Formats redacted programmer trace and suppresses private/secret traces; not semantic authority."
+    },
+    {
+      "component": "JsonSerializer serialization/deserialization",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:14",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:468",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:697"
+      ],
+      "classification": "allowed_infrastructure",
+      "reason": "Serializes redacted trace and loads checkpoint JSON; no semantic ranking is derived from JSON report presence."
+    },
+    {
+      "component": "Path resolution and manifest/checkpoint loading",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:553",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:567",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:586",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:605"
+      ],
+      "classification": "allowed_infrastructure",
+      "reason": "Locates and loads committed common assets; load status is gate evidence, not a semantic decision."
+    },
+    {
+      "component": "BuildCheckSetResults / BuildWarnings / response field assembly",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:111",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:302",
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:326"
+      ],
+      "classification": "allowed_infrastructure",
+      "reason": "Assembles status, warnings, refs, and checkset fields from machine outputs and asset load state."
+    },
+    {
+      "component": "ShouldClaimSemanticQuality",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:542"
+      ],
+      "classification": "allowed_gate_not_semantic_decision",
+      "reason": "Boolean claim gate requires all common assets loaded plus learned PromptToTask/OrchestrationReasoning statuses plus SkillSelection non-second-pass trained evidence; it does not synthesize task/plan/skill content."
+    }
+  ],
+  "trainable_decision_paths": [
+    {
+      "decision": "prompt-to-task",
+      "callsite": "PromptToTaskMachine.Translate",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:74"
+      ],
+      "authority": "loaded PromptToTask common asset state from models/prompt-to-task/prompt-to-task-v1",
+      "accepted": true
+    },
+    {
+      "decision": "orchestration-plan",
+      "callsite": "OrchestrationReasoningMachine.Plan",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:87"
+      ],
+      "authority": "loaded OrchestrationReasoning guide/checkpoint state from models/orchestration-reasoning/orchestration-reasoning-v1",
+      "accepted": true
+    },
+    {
+      "decision": "skill-selection",
+      "callsite": "SkillSelectionMachine.DecideFromTrainedState",
+      "evidence_refs": [
+        "43.SmartSkillsDomain/XiigenExtensionApiService.cs:257"
+      ],
+      "authority": "loaded SkillSelection checkpoint sections from models/skill-selection/skill-selection-v1",
+      "accepted": true
+    }
+  ],
+  "forbidden_as_final_authority": [
+    {
+      "mechanism": "raw keyword whitelist",
+      "found_as_final_authority": false
+    },
+    {
+      "mechanism": "regex final selector",
+      "found_as_final_authority": false
+    },
+    {
+      "mechanism": "BM25",
+      "found_as_final_authority": false
+    },
+    {
+      "mechanism": "candidate-position scaffold",
+      "found_as_final_authority": false,
+      "note": "Only appears in semantic-quality gate as evidence that prevents claiming semantic quality."
+    },
+    {
+      "mechanism": "filename/path lookup as semantic decision",
+      "found_as_final_authority": false
+    },
+    {
+      "mechanism": "JSON report/static contract as semantic decision",
+      "found_as_final_authority": false
+    },
+    {
+      "mechanism": "host runtime claim as semantic quality proof",
+      "found_as_final_authority": false
+    }
+  ],
+  "api_01_review": {
+    "artifact_ref": "artifacts/api-boundary/API-01-xiigen-extension-api-trained-assets.json",
+    "common_assets_loaded_by_default_constructor": true,
+    "semantic_quality_rule": "true only when all three common assets load and PromptToTask, OrchestrationReasoning, and SkillSelection all return learned-state/non-second-pass outputs",
+    "observed_focused_fixture_semantic_quality_claimed": false,
+    "observed_runtime_extension_claimed": false,
+    "host_runtime_claimed": false,
+    "training_run_started": false,
+    "external_ai_used": false,
+    "deterministic_shortcut_masquerade": false
+  },
+  "api_02_review": {
+    "artifact_ref": "artifacts/api-boundary/API-02-method-contract-schema.json",
+    "passed": true,
+    "methods": [
+      "prompt-to-task",
+      "orchestration-plan",
+      "skill-selection",
+      "feedback",
+      "debug-trace"
+    ],
+    "boundary_rules_forbid": [
+      "model_internals",
+      "raw_corpus_data",
+      "raw_private_prompt",
+      "host_side_training_logic",
+      "external_ai_call",
+      "host_runtime_claim"
+    ],
+    "feedback_boundary": "refs-only user-local adaptive DPO contract; no common model mutation and no raw private content",
+    "debug_boundary": "exact redacted chat format with suppression when raw/private/secrets flags are true",
+    "deterministic_shortcut_masquerade": false
+  },
+  "request_trace_evidence": {
+    "source": "existing API-01 focused test artifact; no API-03 tests rerun",
+    "focused_command_ref": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"XiigenExtensionApiService\" --nologo exit 0, 6/6, elapsed 30.8s",
+    "trace_checks": {
+      "semantic_quality_claimed_requires_all_trained_state_conditions": true,
+      "observed_semantic_quality_claimed": false,
+      "runtime_extension_claimed": false,
+      "missing_asset_fallback_safe": true,
+      "debug_trace_redacted": true
+    }
+  },
+  "active_16_goal_review_envelope": [
+    {
+      "id": "G01",
+      "item": "Prompt-to-task trainable decision path",
+      "status": "PASS_FOR_GATE",
+      "evidence": "API calls PromptToTaskMachine.Translate after common asset loading; deterministic helpers only hash/redact/shape request."
+    },
+    {
+      "id": "G02",
+      "item": "Orchestration reasoning trainable decision path",
+      "status": "PASS_FOR_GATE",
+      "evidence": "API calls OrchestrationReasoningMachine.Plan after common asset loading; no host-side planning logic added."
+    },
+    {
+      "id": "G03",
+      "item": "Skill selection trainable decision path",
+      "status": "PASS_FOR_GATE",
+      "evidence": "API calls SkillSelectionMachine.DecideFromTrainedState using loaded checkpoint sections; candidate-position scaffold only blocks semantic quality claim."
+    },
+    {
+      "id": "G04",
+      "item": "No deterministic shortcut masquerade",
+      "status": "PASS",
+      "evidence": "Static sweep names deterministic infrastructure and finds no keyword/regex/BM25/path/JSON/static final authority for semantic decisions."
+    },
+    {
+      "id": "G05",
+      "item": "Common/adaptive split",
+      "status": "PASS_FOR_GATE",
+      "evidence": "API boundary loads common assets only and feedback contracts remain refs-only/user-local; no adaptive/common mutation in this gate."
+    },
+    {
+      "id": "G06",
+      "item": "Host runtime integration",
+      "status": "NOT_STARTED_IN_THIS_GATE",
+      "evidence": "Host runtime remains B12/CL-01; API-03 is reports-only."
+    },
+    {
+      "id": "G07",
+      "item": "Core logic remains in llm_mvp_core",
+      "status": "PASS_FOR_GATE",
+      "evidence": "Reviewed files are under 43.SmartSkillsDomain and artifacts/api-boundary; no host repo touched."
+    },
+    {
+      "id": "G08",
+      "item": "External AI/tool ban",
+      "status": "PASS",
+      "evidence": "No external AI/browser/image tools used and contracts forbid external AI calls."
+    },
+    {
+      "id": "G09",
+      "item": "No JSON/report-only semantic substitute",
+      "status": "PASS",
+      "evidence": "JSON artifacts are evidence only; semantic calls route through machine APIs."
+    },
+    {
+      "id": "G10",
+      "item": "No training run in API boundary",
+      "status": "PASS",
+      "evidence": "No training command run; API-03 is review-only."
+    },
+    {
+      "id": "G11",
+      "item": "Request trace redaction",
+      "status": "PASS_FOR_GATE",
+      "evidence": "BuildDebugTrace redacts prompt text and reports hash/key refs; API-01 artifact records safe debug/request evidence."
+    },
+    {
+      "id": "G12",
+      "item": "No host runtime/full-extension claim",
+      "status": "PASS",
+      "evidence": "runtime_extension_claimed=false and full extension readiness not claimed."
+    },
+    {
+      "id": "G13",
+      "item": "Client-side/user-side learning boundary",
+      "status": "PASS_FOR_GATE",
+      "evidence": "Feedback API contract routes refs/corrections only to user-local adaptive DPO signal creation; no common mutation."
+    },
+    {
+      "id": "G14",
+      "item": "Model internals/corpus leakage ban",
+      "status": "PASS_FOR_GATE",
+      "evidence": "API-02 method contracts forbid model internals, raw corpus data, and raw private prompt leakage."
+    },
+    {
+      "id": "G15",
+      "item": "CL-01/B12 not started",
+      "status": "PASS",
+      "evidence": "Next row is named only; no host repo or CL-01 action started."
+    },
+    {
+      "id": "G16",
+      "item": "Architect critical review boundary",
+      "status": "PASS_PENDING_PARENT_REVIEW",
+      "evidence": "Executor review matrix complete; parent architect/reviewer signs off before state reconciliation to B12/CL-01."
+    }
+  ],
+  "summary": {
+    "deterministic_components_reviewed": 7,
+    "trainable_decision_paths_reviewed": 3,
+    "forbidden_final_authority_findings": 0,
+    "all_api_boundary_claims_scoped": true,
+    "no_host_runtime_claim": true,
+    "no_full_extension_claim": true,
+    "no_external_ai": true,
+    "pass_condition_met": true,
+    "first_missing_bounded_fix": null
+  },
+  "forbidden_actions": {
+    "production_code_edited": false,
+    "test_code_edited": false,
+    "tests_or_builds_run": false,
+    "training_run_started": false,
+    "host_repo_touched": false,
+    "external_ai_used": false,
+    "browser_or_image_tool_used": false,
+    "cl_01_started": false,
+    "b12_started": false
+  },
+  "next_subphase_if_parent_accepts": "CL-01/B12"
+}

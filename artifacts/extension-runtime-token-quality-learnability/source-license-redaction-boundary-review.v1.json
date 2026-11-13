@@ -1,0 +1,42 @@
+{
+  "schema": "xiigen.source_license_redaction_boundary_review.v1",
+  "phase_id": "LEARN-02",
+  "verdict": "PASS_BOUNDARY_REVIEW_COMMON_TRAINING_BLOCKED",
+  "source_file": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\local-dpo-candidates-v1.jsonl",
+  "row_count": 12,
+  "all_rows_classified": true,
+  "common_training_allowed": false,
+  "common_model_mutation_allowed": false,
+  "training_executed": false,
+  "checkpoint_mutation_executed": false,
+  "external_ai_used": false,
+  "common_source_rule": "Common training requires MIT/Apache-2.0 source verification or explicit Luba approval, plus redaction and source-disjoint split.",
+  "row_decisions": [
+    {"candidate_id":"LDPO-001-hidden-deterministic-shortcut","target_machine":"SkillSelectionMachine","decision":"USER_LOCAL_ONLY","reason":"conversation-derived shortcut boundary signal; redaction required before sharing"},
+    {"candidate_id":"LDPO-002-runtime-overclaim","target_machine":"OrchestrationReasoningMachine","decision":"USER_LOCAL_ONLY","reason":"conversation-derived runtime overclaim preference; common promotion not licensed"},
+    {"candidate_id":"LDPO-003-human-readable-plan-detail","target_machine":"PromptToTaskMachine","decision":"USER_LOCAL_ONLY","reason":"Luba-specific report format preference; redaction required"},
+    {"candidate_id":"LDPO-004-architect-executor-boundary","target_machine":"ArchitectBehavior","decision":"USER_LOCAL_ONLY_PRIVATE_BEHAVIOR","reason":"user behavior preference and authority boundary"},
+    {"candidate_id":"LDPO-005-token-only-success","target_machine":"OrchestrationReasoningMachine","decision":"USER_LOCAL_ONLY","reason":"quality-vs-token boundary from current project session"},
+    {"candidate_id":"LDPO-006-universal-vs-project-specific-leakage","target_machine":"OrchestrationReasoningMachine","decision":"QUARANTINE_FOR_COMMON","reason":"requires license review and universal/project-specific separation before any common use"},
+    {"candidate_id":"LDPO-007-available-skills-boundary","target_machine":"SkillSelectionMachine","decision":"USER_LOCAL_ONLY","reason":"runtime bug evidence from local adapter; common use requires sanitized reproduction"},
+    {"candidate_id":"LDPO-008-trainable-unit-pseudo-solution","target_machine":"ArchitectBehavior","decision":"USER_LOCAL_ONLY_PRIVATE_BEHAVIOR","reason":"user correction about solution detail; common use requires redacted corpus review"},
+    {"candidate_id":"LDPO-009-local-learnability-after-correction","target_machine":"SkillSelectionMachine","decision":"USER_LOCAL_ONLY_PRIVATE_CANDIDATE","reason":"local correction learning path; must not mutate common model"},
+    {"candidate_id":"LDPO-010-checkpoint-target-rollback","target_machine":"OrchestrationReasoningMachine","decision":"QUARANTINE_FOR_COMMON","reason":"source/license and target/rollback binding required before common training"},
+    {"candidate_id":"LDPO-011-debug-privacy-boundary","target_machine":"PromptToTaskMachine","decision":"USER_LOCAL_ONLY","reason":"debug visibility preference with privacy boundary"},
+    {"candidate_id":"LDPO-012-controlled-error-readability","target_machine":"PromptToTaskMachine","decision":"USER_LOCAL_ONLY","reason":"local runtime error wording requirement"}
+  ],
+  "summary": {
+    "USER_LOCAL_ONLY": 7,
+    "USER_LOCAL_ONLY_PRIVATE_BEHAVIOR": 2,
+    "USER_LOCAL_ONLY_PRIVATE_CANDIDATE": 1,
+    "QUARANTINE_FOR_COMMON": 2
+  },
+  "validation_requirements_for_future_common_use": [
+    "license file or source approval recorded",
+    "MIT or Apache-2.0 for external/common sources unless explicit approval exists",
+    "raw private user text removed or explicitly approved",
+    "universal rule extracted from project-specific implementation detail",
+    "source-disjoint held-out split created",
+    "common target and rollback checkpoint named before mutation"
+  ]
+}

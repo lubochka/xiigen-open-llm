@@ -1,0 +1,108 @@
+{
+  "work_order": "OR-AD-Z",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "passed": true,
+  "claim_scope": "OrchestrationReasoning two-leg portability evidence gate only; reports-only; no implementation, training, host work, external AI, PromptToTask/SkillSelection/ResultGap scope, API-01, AD-09Z, or full semantic quality claim.",
+  "matrix_ref": "artifacts/adaptive-learning/OR-AD-Z-orchestration-reasoning-two-leg-matrix.json",
+  "common_checkpoint_sha256": "f66f256156bbc4ba278851f75a2ecd644160adbf676db29118640519e3c9805b",
+  "adaptive_checkpoint_sha256": "b62aa7bfd644dc1e8137def1c5fde20ce58876ede1c1cea7faf64964df8d7650",
+  "required_evidence_passed": true,
+  "no_policy_only_pass": true,
+  "generated_at_utc": "2026-06-06T00:53:37.189Z",
+  "requirements": [
+    {
+      "requirement_id": "OR-TWO-LEG-01",
+      "requirement": "Common/global OrchestrationReasoning leg exists with committed manifest/checkpoint evidence",
+      "evidence_refs": [
+        "models/orchestration-reasoning/orchestration-reasoning-v1/manifest.json",
+        "models/orchestration-reasoning/orchestration-reasoning-v1/checkpoint.json"
+      ],
+      "actual": {
+        "manifest_checkpoint_hash": "f66f256156bbc4ba278851f75a2ecd644160adbf676db29118640519e3c9805b",
+        "computed_checkpoint_hash": "f66f256156bbc4ba278851f75a2ecd644160adbf676db29118640519e3c9805b",
+        "learned_pattern_count": 4
+      },
+      "passed": true,
+      "policy_only": false,
+      "next_action_if_failed": "repair common OrchestrationReasoning manifest/checkpoint evidence before final pair gate"
+    },
+    {
+      "requirement_id": "OR-TWO-LEG-02",
+      "requirement": "Personal/adaptive leg exists with user-local signal writer and adaptive checkpoint/load evidence",
+      "evidence_refs": [
+        "artifacts/adaptive-learning/OR-AD-01-orchestration-reasoning-adaptive-signal-writer.json",
+        "artifacts/adaptive-learning/OR-AD-02-orchestration-reasoning-adaptive-training.json"
+      ],
+      "actual": {
+        "writer_path": ".xiigen/orchestration-reasoning/adaptive-dpo-signals.jsonl",
+        "adaptive_checkpoint_hash": "b62aa7bfd644dc1e8137def1c5fde20ce58876ede1c1cea7faf64964df8d7650",
+        "metric": {
+          "before": 0,
+          "after": 1,
+          "improved": true
+        },
+        "load_probe_passed": true
+      },
+      "passed": true,
+      "policy_only": false,
+      "next_action_if_failed": "repair OR adaptive signal/training evidence before final pair gate"
+    },
+    {
+      "requirement_id": "OR-TWO-LEG-03",
+      "requirement": "Backup/export package exists with manifest, checkpoint hash, provenance refs, redaction report, and no raw private rows",
+      "evidence_refs": [
+        "artifacts/adaptive-learning/OR-AD-03-orchestration-reasoning-backup-package.json",
+        "artifacts/adaptive-learning/OR-AD-03-backup-package/manifest.json",
+        "artifacts/adaptive-learning/OR-AD-03-backup-package/redaction-report.json"
+      ],
+      "actual": {
+        "backup_package": "artifacts/adaptive-learning/OR-AD-03-backup-package",
+        "backup_hash": "b62aa7bfd644dc1e8137def1c5fde20ce58876ede1c1cea7faf64964df8d7650",
+        "redaction_passed": true,
+        "signal_rows_exported": false
+      },
+      "passed": true,
+      "policy_only": false,
+      "next_action_if_failed": "repair OR-AD-03 backup/export package evidence before final pair gate"
+    },
+    {
+      "requirement_id": "OR-TWO-LEG-04",
+      "requirement": "Restore/import cross-device fresh-profile probe loads adaptive checkpoint and continue probe proves no replay",
+      "evidence_refs": [
+        "artifacts/adaptive-learning/OR-AD-04-orchestration-reasoning-restore-share.json",
+        "artifacts/adaptive-learning/OR-AD-04-restore-import-report.json",
+        "artifacts/adaptive-learning/OR-AD-04-continue-probe.json"
+      ],
+      "actual": {
+        "fresh_profile_path": "artifacts/adaptive-learning/OR-AD-04-fresh-profile",
+        "restored_hash": "b62aa7bfd644dc1e8137def1c5fde20ce58876ede1c1cea7faf64964df8d7650",
+        "continue_no_op": true,
+        "no_replay_proven": true,
+        "trained_signal_ids_persisted": true
+      },
+      "passed": true,
+      "policy_only": false,
+      "next_action_if_failed": "repair OR-AD-04 restore/import and no-replay continue probe before final pair gate"
+    },
+    {
+      "requirement_id": "OR-TWO-LEG-05",
+      "requirement": "Approved share/anonymised policy has runtime/probe evidence with no raw private prompt/analysis/corpus rows, no silent sync, no external transfer",
+      "evidence_refs": [
+        "artifacts/adaptive-learning/OR-AD-04-anonymised-share-package/manifest.json",
+        "artifacts/adaptive-learning/OR-AD-04-anonymised-share-package/redaction-report.json"
+      ],
+      "actual": {
+        "share_mode": "anonymised_signal_package",
+        "approval": true,
+        "silent_sync": false,
+        "external_transfer": false,
+        "redaction_passed": true
+      },
+      "passed": true,
+      "policy_only": false,
+      "next_action_if_failed": "repair OR-AD-04 approved anonymised share/redaction evidence before final pair gate"
+    }
+  ],
+  "failed_requirements": [],
+  "next_bounded_work_order_after_parent_acceptance": "AD-09Z"
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "minimumCyclesRequired": 4,
+  "cycleCount": 5,
+  "allCyclesFixed": true,
+  "cycles": [
+    {
+      "cycle": 1,
+      "focus": "ILearningMachine contract path",
+      "finding": "Adapter scaffold returned not-implemented and did not import trained state.",
+      "fix": "TrainBatchAsync now accepts learned pattern/guide-state JSON and imports a checkpoint-shaped learned state into OrchestrationReasoningMachine.",
+      "status": "fixed"
+    },
+    {
+      "cycle": 2,
+      "focus": "checkpoint encoding and manifest",
+      "finding": "Checkpoint writes needed explicit BOM-free encoding for evidence hygiene.",
+      "fix": "OrchestrationReasoningMachine writes checkpoint/manifest JSON with UTF-8 without BOM.",
+      "status": "fixed"
+    },
+    {
+      "cycle": 3,
+      "focus": "fresh-load and continue-training lifecycle",
+      "finding": "Fresh-load and continue-training needed separate proof artifacts, not only in-memory planning.",
+      "fix": "Runner loads the saved checkpoint, plans without retrain, continues from that checkpoint, and writes a new continued checkpoint/manifest.",
+      "status": "fixed"
+    },
+    {
+      "cycle": 4,
+      "focus": "source-disjoint and hidden shortcut audit",
+      "finding": "Held-out eval needed positive/negative controls and proof that source ids are not authority.",
+      "fix": "Runner writes source-disjoint checks, source-only negative control, source-id-change ablation, and baseline/internal matcher labels.",
+      "status": "fixed"
+    },
+    {
+      "cycle": 5,
+      "focus": "claim boundary",
+      "finding": "Metrics could be mistaken for semantic quality or production promotion.",
+      "fix": "Evidence keeps semantic quality, token savings, host runtime, and production promotion claims closed.",
+      "status": "fixed"
+    }
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "work_order": "CM-25-RE-AUDIT-DPO-NEGATIVE-NEAR-MISS-QUALITY-AFTER-SKILL-SELECTION-ROWS",
+  "artifact_kind": "dpo_negative_near_miss_quality_reaudit_after_skill_selection_rows",
+  "branch": "codex/chat-gpt-5.5",
+  "verdict": "PASS_CM25_DPO_NEGATIVE_NEAR_MISS_QUALITY_CLOSED",
+  "passed": true,
+  "cm25_closed": true,
+  "claim_scope": "Static/local re-audit after CM-25C SkillSelection row materialization. No training, runtime, build, host execution, external AI, or final completion claim.",
+  "completion_claim_allowed": false,
+  "training_started": false,
+  "external_ai_used": false,
+  "runtime_or_host_invoked": false,
+  "counts": {
+    "total": 9,
+    "pass": 8,
+    "partial": 1,
+    "open": 0,
+    "fail": 0
+  },
+  "binding_validation": {
+    "prompt_to_task": {
+      "path": "artifacts/prompt-to-task-dpo-binding-source-template.jsonl",
+      "rows_total": 2,
+      "invalid_rows": 0,
+      "operator_placeholders": 0,
+      "local_source_required_provenance_markers": 0,
+      "raw_private_text_copied": false,
+      "distinct_error_code_values": 2,
+      "status": "pass"
+    },
+    "orchestration_reasoning": {
+      "path": "artifacts/orchestration-reasoning-dpo-binding-source-template.jsonl",
+      "rows_total": 408,
+      "invalid_rows": 0,
+      "operator_placeholders": 0,
+      "local_source_required_provenance_markers": 408,
+      "raw_private_text_copied": false,
+      "distinct_error_code_values": 2,
+      "status": "pass",
+      "local_source_required_note": "Rows retain local-source-required provenance markers while chosen_ref/rejected_ref/error_code/approved_pair_ref are concrete refs; this is not an operator approval placeholder."
+    },
+    "skill_selection": {
+      "path": "artifacts/skill-selection-dpo-binding-source-template.jsonl",
+      "rows_total": 4,
+      "invalid_rows": 0,
+      "operator_placeholders": 0,
+      "local_source_required_provenance_markers": 0,
+      "raw_private_text_copied": false,
+      "distinct_error_code_values": 4,
+      "status": "pass",
+      "strategy_path": "docs/plans/SKILL-SELECTION-DPO-NEGATIVE-STRATEGY-v1.md",
+      "strategy_required_sections_present": true,
+      "missing_strategy_sections": [],
+      "cm25c_materialization_report": "artifacts/dpo-quality/CM-25C-skill-selection-dpo-row-materialization-repair.json"
+    }
+  },
+  "evidence_sources": [
+    {
+      "id": "PLAN-CM25",
+      "path": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md",
+      "finding": "CM-25 requires DPO negatives to be plausible near-misses, labelled with explicit error taxonomy, universalized, and not generic refusal/static substitutes."
+    },
+    {
+      "id": "PTT-BINDINGS-CM25A6",
+      "path": "artifacts/prompt-to-task-dpo-binding-source-template.jsonl",
+      "finding": "PromptToTask has 2 approved redacted local-ref binding rows with source_row_id, approved_pair_ref, error_code, chosen_ref, and rejected_ref."
+    },
+    {
+      "id": "OR-BINDINGS-CM25A1",
+      "path": "artifacts/orchestration-reasoning-dpo-binding-source-template.jsonl",
+      "finding": "OrchestrationReasoning has 408 approved candidate-level rows with required binding fields and no operator approval placeholders."
+    },
+    {
+      "id": "SS-STRATEGY-CM25B",
+      "path": "docs/plans/SKILL-SELECTION-DPO-NEGATIVE-STRATEGY-v1.md",
+      "finding": "SkillSelection has a dedicated negative near-miss strategy with taxonomy, redacted examples, universalization rule, quality gates, and row-level binding guidance."
+    },
+    {
+      "id": "SS-BINDINGS-CM25C",
+      "path": "artifacts/skill-selection-dpo-binding-source-template.jsonl",
+      "finding": "SkillSelection now has 4 materialized DPO binding rows with required fields, explicit SS-DPO error codes, and no raw private text."
+    }
+  ],
+  "audit_rows": [
+    {
+      "id": "CM25-01",
+      "area": "PromptToTask negative strategy quality",
+      "status": "pass",
+      "evidence_refs": [
+        "PTT-BINDINGS-CM25A6",
+        "artifacts/dpo-quality/CM-25A6-prompt-to-task-local-dpo-pair-authoring-from-mapped-refs.json"
+      ],
+      "finding": "PromptToTask has strategy seed rows, explicit PromptError taxonomy, plausible near-miss rejected refs, and row-level approved redacted local binding refs.",
+      "not_claimed": "trained PromptToTask model quality",
+      "required_next_action": null
+    },
+    {
+      "id": "CM25-02",
+      "area": "OrchestrationReasoning negative strategy quality",
+      "status": "pass",
+      "evidence_refs": [
+        "OR-BINDINGS-CM25A1",
+        "artifacts/dpo-quality/CM-25A1-dpo-row-level-binding-approval-source-repair.json"
+      ],
+      "finding": "OrchestrationReasoning has concrete candidate-level strategy refs, ORCH taxonomy, chosen/rejected refs, and no operator approval placeholders.",
+      "not_claimed": "trained OrchestrationReasoning model quality",
+      "required_next_action": null
+    },
+    {
+      "id": "CM25-03",
+      "area": "SkillSelection universal skill semantics negative strategy quality",
+      "status": "pass",
+      "evidence_refs": [
+        "SS-STRATEGY-CM25B",
+        "SS-BINDINGS-CM25C"
+      ],
+      "finding": "SkillSelection now has both a dedicated near-miss strategy and materialized row-level DPO bindings.",
+      "not_claimed": "trained SkillSelection model quality",
+      "required_next_action": null
+    },
+    {
+      "id": "CM25-04",
+      "area": "Near-miss plausibility and taxonomy labels",
+      "status": "pass",
+      "evidence_refs": [
+        "PTT-BINDINGS-CM25A6",
+        "OR-BINDINGS-CM25A1",
+        "SS-BINDINGS-CM25C"
+      ],
+      "finding": "All three lanes have labelled near-miss/error-code evidence rather than generic refusal or empty bad-output negatives.",
+      "not_claimed": "corpus-wide trained model accuracy",
+      "required_next_action": null
+    },
+    {
+      "id": "CM25-05",
+      "area": "Universalization rule",
+      "status": "pass",
+      "evidence_refs": [
+        "artifacts/dpo-universalization/PTT-01.json",
+        "artifacts/dpo-universalization/OR-01.json",
+        "artifacts/dpo-universalization/SS-00U.json",
+        "SS-STRATEGY-CM25B"
+      ],
+      "finding": "DPO evidence separates universal reasoning/semantic payload from repo-specific technical execution and raw private content.",
+      "not_claimed": "technical execution DPO train-ready common model",
+      "required_next_action": null
+    },
+    {
+      "id": "CM25-06",
+      "area": "Per-model DPO distinctness",
+      "status": "pass",
+      "evidence_refs": [
+        "PTT-BINDINGS-CM25A6",
+        "OR-BINDINGS-CM25A1",
+        "SS-STRATEGY-CM25B",
+        "SS-BINDINGS-CM25C"
+      ],
+      "finding": "PromptToTask, OrchestrationReasoning, and SkillSelection now have distinct DPO evidence classes and error taxonomies.",
+      "not_claimed": "one shared trained model can satisfy all lanes",
+      "required_next_action": null
+    },
+    {
+      "id": "CM25-07",
+      "area": "Adaptive/user-side DPO generation from AI result/correction",
+      "status": "partial",
+      "evidence_refs": [
+        "artifacts/adaptive-learning/AD-01-result-gap-signal-writer.json",
+        "artifacts/adaptive-learning/AD-03-correction-dpo-signal-writer.json",
+        "SS-BINDINGS-CM25C"
+      ],
+      "finding": "Adaptive/user-side DPO signal evidence remains separate from common train-ready DPO rows and still needs its own quality gate before adaptive training claims.",
+      "not_claimed": "common model trained from adaptive user corrections",
+      "required_next_action": "future adaptive DPO quality gate before adaptive training claims; not the first B20 row after CM-25"
+    },
+    {
+      "id": "CM25-08",
+      "area": "Binding templates filled enough for execution",
+      "status": "pass",
+      "evidence_refs": [
+        "PTT-BINDINGS-CM25A6",
+        "OR-BINDINGS-CM25A1",
+        "SS-BINDINGS-CM25C"
+      ],
+      "finding": "All three DPO lanes have required source_row_id, approved_pair_ref, error_code, chosen_ref, and rejected_ref fields and no operator-approved placeholder refs.",
+      "not_claimed": "DPO training executed",
+      "required_next_action": null
+    },
+    {
+      "id": "CM25-09",
+      "area": "No generic refusal or absurd negative substitute",
+      "status": "pass",
+      "evidence_refs": [
+        "PTT-BINDINGS-CM25A6",
+        "OR-BINDINGS-CM25A1",
+        "SS-BINDINGS-CM25C",
+        "artifacts/anti-loophole/B19-anti-loophole-register-review.json"
+      ],
+      "finding": "Current evidence uses labelled near-miss refs/classes rather than generic refusal, empty output, absurd bad text, or deterministic shortcut substitute.",
+      "not_claimed": "full corpus-wide negative quality for every future row",
+      "required_next_action": null
+    }
+  ],
+  "cm25_closed_reason": "PromptToTask, OrchestrationReasoning, and SkillSelection now all have strategy/binding/materialization evidence with required DPO binding fields, explicit error codes, near-miss framing, universalization boundaries, and privacy-preserving refs.",
+  "first_actionable_gap": {
+    "id": "CM-26",
+    "gap_id": "CM-26_A5_TRAINABLE_HIERARCHY_PARITY_AUDIT",
+    "status": "open",
+    "description": "CM-25 DPO negative near-miss quality is closed by static re-audit; the next B20 row is CM-26 A5 trainable hierarchy parity audit.",
+    "next_bounded_action": "CM-26-A5-TRAINABLE-HIERARCHY-PARITY-AUDIT"
+  },
+  "remaining_gaps": [
+    "CM-26_A5_TRAINABLE_HIERARCHY_PARITY_AUDIT"
+  ],
+  "residual_non_cm25_distinctions": [
+    "Adaptive/user-side DPO quality gate remains separate and cannot support adaptive training claims without its own future review."
+  ],
+  "required_next_action": "CM-26-A5-TRAINABLE-HIERARCHY-PARITY-AUDIT",
+  "next_bounded_action": "CM-26-A5-TRAINABLE-HIERARCHY-PARITY-AUDIT",
+  "cm25_status": "closed_by_static_local_reaudit"
+}

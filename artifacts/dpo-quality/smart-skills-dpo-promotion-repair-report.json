@@ -1,0 +1,140 @@
+{
+  "artifact": "smart-skills-dpo-promotion-repair-report",
+  "work_order_id": "Q2-04",
+  "status": "PASS_SEED_ARTIFACT_PROMOTION_READY_ONLY",
+  "generated_at_utc": "2026-06-10T10:50:05.007Z",
+  "branch": "codex/chat-gpt-5.5",
+  "requested_artifact_type": "near-miss, split, and held-out promotion repair report",
+  "claim_scope": "Q2-04 repairs promotion readiness for seed artifact promotion only. It does not promote training data, train, mutate a model, build, test, commit, or push.",
+  "generated_artifacts": [
+    "artifacts/dpo-quality/smart-skills-dpo-near-miss-coverage.json",
+    "artifacts/dpo-quality/smart-skills-dpo-split-plan.json",
+    "artifacts/dpo-quality/smart-skills-dpo-promotion-repair-report.json"
+  ],
+  "source_artifacts": [
+    "artifacts/dpo-quality/smart-skills-dpo-materialized.jsonl",
+    "artifacts/dpo-quality/smart-skills-dpo-schema.json",
+    "artifacts/dpo-quality/smart-skills-dpo-materialization-report.json",
+    "artifacts/dpo-quality/smart-skills-dpo-materialization-review.json",
+    "artifacts/dpo-quality/smart-skills-dpo-dataset-card.json",
+    "artifacts/dpo-quality/smart-skills-dpo-promotion-report.json",
+    "artifacts/dpo-quality/smart-skills-dpo-promotion-manifest.json",
+    "artifacts/dpo-quality/smart-skills-dpo-promotion-review.json",
+    "artifacts/dpo-material-quality/smart-skills-candidate-bindings.jsonl",
+    "artifacts/dpo-material-quality/smart-skills-candidate-quality-report.json",
+    "artifacts/dpo-material-quality/smart-skills-candidate-quality-review.json",
+    "docs/plans/DPO-KNOWLEDGE-MAP-v1.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-PLAN-v1.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-STATE.json"
+  ],
+  "coverage_counts": {
+    "row_count": 8,
+    "by_domain": {
+      "PromptToTask": 3,
+      "OrchestrationReasoning": 3,
+      "SkillSelection": 2
+    },
+    "by_source_quality": {
+      "gold": 5,
+      "silver": 3
+    },
+    "global_error_code_counts": {
+      "PromptError-11+PromptError-01": 1,
+      "PromptError-01+PromptError-04": 1,
+      "PromptError-10+PromptError-03": 1,
+      "ORCH-02+ORCH-09": 2,
+      "ORCH-07": 1,
+      "SKILLSEL-OVERSELECT+SKILLSEL-WRONG_EXECUTION": 1,
+      "SKILLSEL-FILENAME_ROUTE+SKILLSEL-CANDIDATE_POSITION": 1
+    },
+    "global_taxonomy_counts": {
+      "vague_deliverables": 1,
+      "missing_structure": 2,
+      "missing_gates": 1,
+      "scope_creep": 1,
+      "weak_goal_decomposition": 2,
+      "missing_evidence": 2,
+      "insufficient_verification": 2,
+      "over_select_all_skills": 1,
+      "wrong_skill_family": 1,
+      "project_specific_technical_leakage": 1,
+      "deterministic_shortcut": 1,
+      "filename_route": 1,
+      "candidate_position_route": 1
+    }
+  },
+  "split_and_held_out_verdict": {
+    "split_plan_created": true,
+    "split_plan_ref": "artifacts/dpo-quality/smart-skills-dpo-split-plan.json",
+    "seed_smoke_train_candidate_rows": 5,
+    "seed_smoke_held_out_candidate_rows": 3,
+    "source_disjoint_model_quality_held_out_available": false,
+    "verdict": "PASS_FOR_SEED_SMOKE_ONLY_FAIL_FOR_MODEL_QUALITY",
+    "reason": "The eight rows can be split into seed train and seed smoke held-out roles for artifact wiring checks, but the set is too small for source-disjoint model-quality claims."
+  },
+  "promotion_readiness_verdict": {
+    "seed_artifact_promotion_readiness": "PASS",
+    "training_data_promotion_performed": false,
+    "training_allowed": false,
+    "model_quality_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "reason": "Near-miss coverage and split design are now explicit. Promotion may proceed only as a seed artifact staging row that preserves no-training and no-quality-claim labels."
+  },
+  "exact_next_action": {
+    "next_row": "Q2-05_SEED_TRAINING_DATA_PROMOTION_STAGING",
+    "action": "Copy the eight reviewed rows and Q2-04 split metadata into seed-only training-data artifact paths, without training or model mutation.",
+    "allowed_target_paths_for_next_row": [
+      "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed.jsonl",
+      "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed-manifest.json",
+      "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed-dataset-card.json",
+      "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed-split.json"
+    ],
+    "gate": [
+      "JSONL parse passes for seed copy.",
+      "Row count remains exactly 8.",
+      "Domain counts remain PromptToTask=3, OrchestrationReasoning=3, SkillSelection=2.",
+      "Split roles match artifacts/dpo-quality/smart-skills-dpo-split-plan.json.",
+      "training_allowed remains false.",
+      "semantic_quality_claimed remains false.",
+      "No trainer, model artifact, build, test, commit, or push runs inside the staging row unless separately authorized."
+    ]
+  },
+  "growth_queue_before_any_model_quality_or_training_claim": {
+    "status": "REQUIRED_BEFORE_MODEL_QUALITY_CLAIMS",
+    "minimum_additional_reviewed_near_miss_rows_per_domain": {
+      "PromptToTask": 9,
+      "OrchestrationReasoning": 9,
+      "SkillSelection": 10
+    },
+    "target_minimum_total_rows_per_domain": 12,
+    "reason": "The seed can be staged, but real training-quality gates need enough source-disjoint rows to reserve held-out examples and still train across multiple near-miss families."
+  },
+  "forbidden_scope_observed": {
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "dashboard_code_changed": false,
+    "training_data_asset_written": false,
+    "model_artifacts_changed": false,
+    "training_command_run": false,
+    "dotnet_build_run": false,
+    "dotnet_test_run": false,
+    "commit_or_push_done": false
+  },
+  "verification": {
+    "json_parse": "PASS",
+    "jsonl_parse": "PASS",
+    "targeted_scope_check": "PASS",
+    "git_diff_check": "PASS",
+    "forbidden_verification_not_run": [
+      "dotnet build",
+      "dotnet test",
+      "training",
+      "model mutation",
+      "production code edits",
+      "test code edits",
+      "dashboard code edits",
+      "commit",
+      "push"
+    ]
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "schema": "xiigen.cursor_safe_launch_network_process_isolation.contract.v1",
+  "work_order_id": "CURSOR-SAFE-LAUNCH-NETWORK-PROCESS-ISOLATION-REPAIR-03",
+  "run_id": "cursor-safe-launch-network-process-isolation-repair-20260619-042113",
+  "generated_at_local": "2026-06-19T04:21:13+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "cursor_was_launched": false,
+  "external_ai_or_model_calls": false,
+  "cursor_prompt_or_chat_sent": false,
+  "cursor_executable": {
+    "path": "C:\\Users\\lubao\\AppData\\Local\\Programs\\Cursor\\Cursor.exe",
+    "exists": true,
+    "product_version": "3.8.11",
+    "file_version": "3.8.11",
+    "verification_method": "Get-Item VersionInfo only; Cursor executable was not launched"
+  },
+  "extension_development_path": {
+    "path": "C:\\Projects\\cursor-xiigen-smart-skills",
+    "exists": true,
+    "package_json_exists": true,
+    "package_name": "cursor-xiigen-smart-skills",
+    "thin_client_only_from_package_json": true,
+    "external_ai_or_unrelated_tools_allowed_from_package_json": false
+  },
+  "isolated_paths": {
+    "run_root": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\cursor-safe-launch-network-process-isolation-repair\\cursor-safe-launch-network-process-isolation-repair-20260619-042113",
+    "user_data_dir": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\cursor-safe-launch-network-process-isolation-repair\\cursor-safe-launch-network-process-isolation-repair-20260619-042113\\isolated-user-data",
+    "extensions_dir": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\cursor-safe-launch-network-process-isolation-repair\\cursor-safe-launch-network-process-isolation-repair-20260619-042113\\isolated-extensions",
+    "cleanup_rule": "Only delete isolated user-data/extensions dirs inside this exact run_root after evidence is copied and checks pass; never touch the user's normal Cursor profile."
+  },
+  "candidate_command_line": "\"C:\\Users\\lubao\\AppData\\Local\\Programs\\Cursor\\Cursor.exe\" --extensionDevelopmentPath \"C:\\Projects\\cursor-xiigen-smart-skills\" --user-data-dir \"C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\cursor-safe-launch-network-process-isolation-repair\\cursor-safe-launch-network-process-isolation-repair-20260619-042113\\isolated-user-data\" --extensions-dir \"C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\cursor-safe-launch-network-process-isolation-repair\\cursor-safe-launch-network-process-isolation-repair-20260619-042113\\isolated-extensions\" --disable-workspace-trust --skip-welcome --skip-release-notes --skip-onboarding --disable-telemetry --disable-updates --log trace --new-window \"C:\\Projects\\cursor-xiigen-smart-skills\"",
+  "candidate_args": [
+    "--extensionDevelopmentPath",
+    "C:\\Projects\\cursor-xiigen-smart-skills",
+    "--user-data-dir",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\cursor-safe-launch-network-process-isolation-repair\\cursor-safe-launch-network-process-isolation-repair-20260619-042113\\isolated-user-data",
+    "--extensions-dir",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\cursor-safe-launch-network-process-isolation-repair\\cursor-safe-launch-network-process-isolation-repair-20260619-042113\\isolated-extensions",
+    "--disable-workspace-trust",
+    "--skip-welcome",
+    "--skip-release-notes",
+    "--skip-onboarding",
+    "--disable-telemetry",
+    "--disable-updates",
+    "--log",
+    "trace",
+    "--new-window",
+    "C:\\Projects\\cursor-xiigen-smart-skills"
+  ],
+  "network_deny_method": {
+    "method_id": "TEMP_WINDOWS_FIREWALL_OUTBOUND_BLOCK_CURSOR_EXE",
+    "rule_name_template": "XIIGen-Cursor-Isolation-${RunId}",
+    "program": "C:\\Users\\lubao\\AppData\\Local\\Programs\\Cursor\\Cursor.exe",
+    "create_command": "New-NetFirewallRule -DisplayName \"XIIGen-Cursor-Isolation-${RunId}\" -Direction Outbound -Action Block -Program \"C:\\Users\\lubao\\AppData\\Local\\Programs\\Cursor\\Cursor.exe\" -Profile Any -Enabled True",
+    "verify_present_command": "Get-NetFirewallRule -DisplayName \"XIIGen-Cursor-Isolation-${RunId}\" -ErrorAction Stop",
+    "remove_command": "Remove-NetFirewallRule -DisplayName \"XIIGen-Cursor-Isolation-${RunId}\" -ErrorAction Stop",
+    "verify_removed_command": "Get-NetFirewallRule -DisplayName \"XIIGen-Cursor-Isolation-${RunId}\" -ErrorAction SilentlyContinue",
+    "admin_required": true,
+    "permanent_change_allowed": false,
+    "cleanup_required_same_run": true,
+    "dry_run_status_this_phase": "NOT_CREATED_NOT_LEFT_ACTIVE",
+    "scope_warning": "Windows Firewall program rule blocks Cursor.exe processes. Any non-Cursor.exe child process with outbound connectivity must be detected by same-run monitor and treated as FAIL unless a future explicit sandbox method blocks that child before launch."
+  },
+  "process_tree_capture_method": {
+    "method_id": "CIM_PARENT_CHILD_TREE_FROM_CURSOR_ROOT_PID",
+    "start_before_network_verdict": true,
+    "exact_command_template": "$rootPid = <CURSOR_ROOT_PID>; $all = @(Get-CimInstance Win32_Process); $ids = @($rootPid); do { $before = $ids.Count; $children = @($all | Where-Object { $ids -contains [int]$_.ParentProcessId } | ForEach-Object { [int]$_.ProcessId }); $ids = @($ids + $children | Sort-Object -Unique) } while ($ids.Count -gt $before); $all | Where-Object { $ids -contains [int]$_.ProcessId } | Select-Object ProcessId,ParentProcessId,Name,ExecutablePath,CommandLine | ConvertTo-Json -Depth 5",
+    "required_artifact": "process-tree-snapshots.jsonl",
+    "dry_run_status_this_phase": "COMMAND_DEFINED_NOT_EXECUTED_WITH_CURSOR"
+  },
+  "network_monitor_method": {
+    "method_id": "GET_NET_TCP_CONNECTION_BY_PROCESS_TREE_PIDS",
+    "start_before_cursor_launch": true,
+    "sample_interval_ms": 500,
+    "minimum_samples": 10,
+    "exact_snapshot_command_template": "$processIds = @(<PROCESS_TREE_PIDS>); Get-NetTCPConnection -ErrorAction SilentlyContinue | Where-Object { $processIds -contains [int]$_.OwningProcess } | Select-Object CreationTime,State,LocalAddress,LocalPort,RemoteAddress,RemotePort,OwningProcess | ConvertTo-Json -Depth 5",
+    "pass_condition": "Zero successful outbound Established connections from the Cursor proof process tree for the whole run.",
+    "fail_conditions": [
+      "Any successful outbound connection from Cursor.exe process tree",
+      "Any non-Cursor.exe child process with outbound connectivity",
+      "Monitor started after Cursor launch",
+      "Process tree gaps or missing root pid",
+      "Monitor command unavailable"
+    ],
+    "required_artifact": "network-snapshots.jsonl",
+    "dry_run_status_this_phase": "COMMAND_DEFINED_NOT_EXECUTED_WITH_CURSOR"
+  },
+  "external_ai_risk_boundary": {
+    "no_prompt_to_cursor_copilot_ai_model_surface": true,
+    "no_external_ai_model_call_allowed": true,
+    "stdout_stderr_log_scan_terms": [
+      "availableModels",
+      "getDefaultModelNudgeData",
+      "pricing",
+      "availableDocs",
+      "user privacy mode",
+      "backendUrl",
+      "repoBackendUrl",
+      "telemBackendUrl",
+      "cmdkBackendUrl",
+      "geoCppBackendUrl",
+      "cppConfigBackendUrl",
+      "agentBackendUrlPrivacy",
+      "agentBackendUrlNonPrivacy"
+    ],
+    "successful_outbound_metadata_request_verdict": "FAIL",
+    "blocked_metadata_attempt_verdict": "QUARANTINE_AND_NO_READINESS_CLAIM_UNLESS_FUTURE_WORK_ORDER_EXPLICITLY_ACCEPTS_BLOCKED_ATTEMPT_SEMANTICS",
+    "no_overclaim_rule": "A network-isolated launch can at most support a bounded Cursor launch evidence packet. It cannot prove clean model/backend absence, token savings, quality, learnability, final readiness, or product readiness."
+  },
+  "helper_script": {
+    "path": "tools/cursor-safe-launch-isolation-preflight.ps1",
+    "dry_run_default": true,
+    "launch_cursor_default": false,
+    "firewall_probe_default": false,
+    "cleanup_default": false,
+    "dry_run_result_ref": "artifacts/extension-runtime-token-quality-learnability/cursor-safe-launch-network-process-isolation-repair/cursor-safe-launch-network-process-isolation-repair-20260619-042113/cursor-isolation-helper-result.json"
+  },
+  "contract_verdict": {
+    "safe_launch_contract_available_for_next_bounded_preflight": true,
+    "live_proof_in_this_phase": false,
+    "active_network_deny_rule_left_installed": false,
+    "same_run_process_network_monitor_executed": false,
+    "next_work_order": "CURSOR-LIVE-EVIDENCE-03"
+  }
+}

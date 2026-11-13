@@ -1,0 +1,400 @@
+{
+  "schema": "xiigen.phase14.final_review_report.v1",
+  "phase": "14/14",
+  "phase_name": "Ten final reviews and final done gate",
+  "overall_verdict": "NEEDS_FIX",
+  "final_readiness_claimed": false,
+  "human_readable_ru": {
+    "title_ru": "Фаза 14: финальный review-пакет",
+    "verdict_ru": "Итог остается NEEDS_FIX: финальная готовность продукта не заявлена.",
+    "status_meaning_ru": "NEEDS_FIX означает, что есть конкретные недостающие доказательства перед финальным закрытием, а не остановка проекта.",
+    "not_stop_gate_ru": "Это не стоп-гейт: следующий шаг - ограниченная fix-работа по найденным хвостам, затем повторный Phase 14 review.",
+    "what_remains_ru": [
+      "Claude Desktop/app UI proof.",
+      "Codex chat/plugin UI proof.",
+      "Full-machine PromptToTask + SkillSelection lifecycle proof: checkpoint+manifest load, backup/export/import/share, continue-training, fresh-load, held-out/ablation, rollback, no common mutation.",
+      "Re-run Phase 14 after fixes."
+    ]
+  },
+  "no_git_commands_used": true,
+  "external_ai_used": false,
+  "status_before": {
+    "phase_done": 13,
+    "phase_in_progress": 1,
+    "substeps_done": 102,
+    "substeps_remaining": 12,
+    "current_pointer": "14.01/14.12"
+  },
+  "status_after": {
+    "phase_done": 13,
+    "phase_needs_fix": 1,
+    "phase_in_progress": 0,
+    "substeps_done": 109,
+    "substeps_needs_fix": 4,
+    "substeps_remaining": 1,
+    "current_pointer": "14.02/14.12 NEEDS_FIX"
+  },
+  "review_passes": [
+    {
+      "review_id": "FR-01",
+      "reviewer_focus": "Claude full extension readiness evidence",
+      "evidence_files_commands_inspected": [
+        "phase-09-claude-proof.json",
+        "rg not-claimed/full UI scan"
+      ],
+      "verdict": "NEEDS_FIX",
+      "findings": [
+        "Claude package/plugin and real Node handler path are proven.",
+        "The evidence explicitly records actual_claude_app_ui_runtime_invoked=false and full_claude_app_ui_runtime_claimed=false.",
+        "A final full-extension readiness claim would overclaim beyond handler-level automation."
+      ],
+      "no_overclaim_check": "PASS: the packet refuses to claim full Claude app UI readiness.",
+      "verifies_luba_requirements": [
+        "R01"
+      ]
+    },
+    {
+      "review_id": "FR-02",
+      "reviewer_focus": "Cursor full extension readiness evidence",
+      "evidence_files_commands_inspected": [
+        "phase10-runner-summary.json",
+        "cursor/phase10-cursor-proof-report.json evidence paths"
+      ],
+      "verdict": "PASS",
+      "findings": [
+        "Cursor was attempted first and passed without fallback.",
+        "Evidence includes Cursor Extension Host command automation, panel evidence, runtimeProof.invoke evidence, core trace, host trace, and redacted trace files.",
+        "The packet does not claim manual screenshot or broad process network silence."
+      ],
+      "no_overclaim_check": "PASS: full_manual_cursor_ui_claimed=false is preserved.",
+      "verifies_luba_requirements": [
+        "R02"
+      ]
+    },
+    {
+      "review_id": "FR-03",
+      "reviewer_focus": "Codex full extension readiness evidence",
+      "evidence_files_commands_inspected": [
+        "phase11-codex-full-extension-live-proof-report.json",
+        "positive-debug-off/on request/response/trace packet references"
+      ],
+      "verdict": "NEEDS_FIX",
+      "findings": [
+        "Installed Codex plugin skill surface, node entrypoint, redaction, and adapter/core boundary are proven.",
+        "The report explicitly says this proves installed Codex skill surface plus adapter/core boundary only.",
+        "The report explicitly says it does not prove full Codex chat UI."
+      ],
+      "no_overclaim_check": "PASS: the packet refuses to claim full Codex chat UI.",
+      "verifies_luba_requirements": [
+        "R03"
+      ]
+    },
+    {
+      "review_id": "FR-04",
+      "reviewer_focus": "PromptToTask universal trainable quality, no project-stack leakage, no semantic overclaim",
+      "evidence_files_commands_inspected": [
+        "phase-04 completion-report.json",
+        "source-disjoint-eval-summary.json",
+        "leakage-ablation-report.json"
+      ],
+      "verdict": "PASS",
+      "findings": [
+        "10/10 source-disjoint rows passed with 5 positive and 5 negative rows.",
+        "Leakage ablation stayed stable under source/pair/prompt id changes.",
+        "semanticQualityClaimed=false and hiddenDeterministicShortcutFound=false are preserved."
+      ],
+      "no_overclaim_check": "PASS: trainable contract evidence is not upgraded into semantic-quality proof.",
+      "verifies_luba_requirements": [
+        "R04",
+        "R15"
+      ]
+    },
+    {
+      "review_id": "FR-05",
+      "reviewer_focus": "OrchestrationReasoning universal trainable quality, token/quality evidence, no deterministic hidden shortcut",
+      "evidence_files_commands_inspected": [
+        "phase-05 heldout-eval-summary.json",
+        "phase-05 leakage-ablation-report.json",
+        "phase12-cross-host-token-quality-report.json",
+        "heldout-ablation-no-leakage-report.json"
+      ],
+      "verdict": "PASS",
+      "findings": [
+        "Phase 05 held-out rows passed 4/4 with source overlap count 0.",
+        "Phase 12 records 9/9 token reduction accepted, 9/9 adaptive quality pass, and no quality regression.",
+        "Ablation/no-leakage checks preserve the limitation that semantic improvement is not proven."
+      ],
+      "no_overclaim_check": "PASS: deterministic matcher and token/quality harness limits remain labelled.",
+      "verifies_luba_requirements": [
+        "R05",
+        "R13",
+        "R14",
+        "R15"
+      ]
+    },
+    {
+      "review_id": "FR-06",
+      "reviewer_focus": "SkillSelection trainable selector quality, no candidate-position/count masquerade as semantic model",
+      "evidence_files_commands_inspected": [
+        "phase-06 completion-report.json",
+        "heldout-eval-summary.json",
+        "semantic-unit-coverage-matrix.json",
+        "leakage-ablation-report.json"
+      ],
+      "verdict": "PASS",
+      "findings": [
+        "Held-out gate passed with accuracy=1.0 and semantic_quality_claimed=false.",
+        "Known trainable semantic unit count is 11.",
+        "Candidate-order invariant rows=7, candidate-position evidence rows=0, and source-id-only control did not select a skill."
+      ],
+      "no_overclaim_check": "PASS: candidate position/count evidence is kept diagnostic/support-only.",
+      "verifies_luba_requirements": [
+        "R06",
+        "R15"
+      ]
+    },
+    {
+      "review_id": "FR-07",
+      "reviewer_focus": "Common/user two-leg model lifecycle: backup/export/import/share/continue-training/fresh-load/rollback boundaries",
+      "evidence_files_commands_inspected": [
+        "phase-08-lifecycle-evidence.json",
+        "backup-export-import-share-report.json",
+        "continue-training-report.json",
+        "fresh-load-report.json",
+        "held-out-ablation-report.json",
+        "rollback-report.json"
+      ],
+      "verdict": "NEEDS_FIX",
+      "findings": [
+        "Continue-training exists for PromptToTask, OrchestrationReasoning, and SkillSelection with common_model_mutated=false.",
+        "Backup/export/import/share exists, but the older report marks it as a limited pass, not final full-machine readiness.",
+        "PromptToTask and SkillSelection remain overlay-only or partial in portability, fresh-load, held-out/ablation, and rollback.",
+        "Phase 08 lifecycle matrix itself records passed=false and executable lifecycle proof only for SkillSelection inside that packet."
+      ],
+      "no_overclaim_check": "PASS: the review keeps overlay-only evidence out of full-machine lifecycle readiness.",
+      "verifies_luba_requirements": [
+        "R09",
+        "R10",
+        "R11",
+        "R12"
+      ]
+    },
+    {
+      "review_id": "FR-08",
+      "reviewer_focus": "Local learning/DPO construction quality: positive/negative examples, source/license, user-side model update boundaries",
+      "evidence_files_commands_inspected": [
+        "phase-07 completion-report.json",
+        "local-dpo-candidates-v1.validation.json",
+        "source-license-redaction-boundary-review.v1.json",
+        "training-approval-packet.v1.json",
+        "continue-training-report.json"
+      ],
+      "verdict": "PASS",
+      "findings": [
+        "DPO candidate validation passes with 12 rows, target machines, chosen/rejected pairs, privacy/source/license/redaction gates, and no training executed in the candidate pack.",
+        "Common training and common model mutation are blocked.",
+        "User-local continue-training ran with checkpoint mutation scope=user-local only and common_model_mutated=false."
+      ],
+      "no_overclaim_check": "PASS: construction/update boundaries are not called common model readiness or universal learnability.",
+      "verifies_luba_requirements": [
+        "R07",
+        "R08",
+        "R10",
+        "R15"
+      ]
+    },
+    {
+      "review_id": "FR-09",
+      "reviewer_focus": "QA automation coverage: dashboard/API, host packets, WPF/dashboard, token/quality scripts, no-overclaim automation",
+      "evidence_files_commands_inspected": [
+        "phase13-qa-docs-no-overclaim-report.json",
+        "api-dashboard-qa-output.json",
+        "phase12-cross-host-token-quality-report.json"
+      ],
+      "verdict": "PASS",
+      "findings": [
+        "Dashboard/API QA passed and is explicitly dashboard-to-core plus dashboard-scoped WPF automation only.",
+        "Host scenario packet checks for Claude, Cursor, and Codex passed in Phase 13.",
+        "No-overclaim self-check rejects positive forbidden readiness wording and allows negative wording."
+      ],
+      "no_overclaim_check": "PASS: dashboard evidence is not substituted for host/runtime/model readiness.",
+      "verifies_luba_requirements": [
+        "R13",
+        "R14",
+        "R15"
+      ]
+    },
+    {
+      "review_id": "FR-10",
+      "reviewer_focus": "Documentation/human readability: Russian-first, UML/no-code/code-reference requirements, clear counters",
+      "evidence_files_commands_inspected": [
+        "phase13-qa-docs-no-overclaim-report.json",
+        "api-dashboard-qa-output.json",
+        "XIIGEN-SEQUENTIAL-EXECUTION-CONTROL-PLAN-v1.md Phase 14 table"
+      ],
+      "verdict": "PASS",
+      "findings": [
+        "Dashboard docs checks report required user sections, UML/no-code/API/code-reference/QA mapping, and no mojibake in dashboard docs.",
+        "The sequential plan has explicit Phase 14 substep counters and status rows.",
+        "This Phase 14 packet updates the counters to reflect NEEDS_FIX rather than readiness."
+      ],
+      "no_overclaim_check": "PASS: docs readability is not used as product readiness.",
+      "verifies_luba_requirements": [
+        "R15",
+        "R16"
+      ]
+    },
+    {
+      "review_id": "FR-11",
+      "reviewer_focus": "Security/privacy/no external tools: redaction, no hidden external AI/tool use, API boundary thinness",
+      "evidence_files_commands_inspected": [
+        "phase09 Claude proof flags",
+        "phase10 Cursor proof flags",
+        "phase11 Codex redaction/forbidden_actions",
+        "phase12 external_ai/training/checkpoint flags",
+        "source-license-redaction-boundary-review.v1.json"
+      ],
+      "verdict": "PASS",
+      "findings": [
+        "Claude/Cursor/Codex packets preserve redaction and no external AI claims for the inspected proof runs.",
+        "Codex Phase 11 shows unredacted_prompt_persisted=false and external_ai_call_introduced=false.",
+        "Source/license/redaction review blocks common training and common mutation."
+      ],
+      "no_overclaim_check": "PASS: no hidden external AI/tool use is claimed for the Phase 14 review; this review used only local read-only shell inspection.",
+      "verifies_luba_requirements": [
+        "R01",
+        "R02",
+        "R03",
+        "R15"
+      ]
+    },
+    {
+      "review_id": "FR-12",
+      "reviewer_focus": "Final status integrity: no overclaim, exact counters, exact phase/step status",
+      "evidence_files_commands_inspected": [
+        "XIIGEN-SEQUENTIAL-EXECUTION-CONTROL-PLAN-v1.md",
+        "final-readiness-packet.json",
+        "phase14-final-review-report.json"
+      ],
+      "verdict": "PASS",
+      "findings": [
+        "Final readiness is not claimed because FR-01, FR-03, and FR-07 need fixes.",
+        "Phase 14 remains NEEDS_FIX with current pointer 14.02/14.12.",
+        "Whole-plan counters are updated to 109/114 done, 4 needs-fix, 1 remaining."
+      ],
+      "no_overclaim_check": "PASS: the report avoids project readiness and project completion claims.",
+      "verifies_luba_requirements": [
+        "R16"
+      ]
+    }
+  ],
+  "fix_list": [
+    {
+      "fix_id": "P14-FIX-01",
+      "finding_source": "FR-01",
+      "status": "NEEDS_BOUNDED_WORK_ORDER",
+      "summary_ru": "Нужен отдельный Claude Desktop/app UI или явно принятый downscope, потому что текущий пакет доказывает handler-level path, но не full Claude app UI.",
+      "proposed_next_bounded_subagent_work_order": {
+        "requested_artifact_type": "Claude full app/UI runtime proof or explicit downscope packet",
+        "allowed_write_scope": "new Claude runtime proof artifacts and any separately approved Claude plugin evidence files only",
+        "implementation_authorized_now": false,
+        "git_authority": "forbidden",
+        "must_not_claim": "full readiness unless an actual app/UI proof exists or Luba accepts downscope"
+      }
+    },
+    {
+      "fix_id": "P14-FIX-02",
+      "finding_source": "FR-03",
+      "status": "NEEDS_BOUNDED_WORK_ORDER",
+      "summary_ru": "Нужен Codex chat/plugin UI proof или явно принятый downscope, потому что текущий пакет доказывает installed skill plus adapter/core boundary only.",
+      "proposed_next_bounded_subagent_work_order": {
+        "requested_artifact_type": "Codex chat/plugin UI runtime proof or explicit downscope packet",
+        "allowed_write_scope": "new Codex runtime proof artifacts and any separately approved Codex plugin evidence files only",
+        "implementation_authorized_now": false,
+        "git_authority": "forbidden",
+        "must_not_claim": "full Codex chat UI until proven"
+      }
+    },
+    {
+      "fix_id": "P14-FIX-03",
+      "finding_source": "FR-07",
+      "status": "NEEDS_BOUNDED_WORK_ORDER",
+      "summary_ru": "Нужен full-machine lifecycle proof for PromptToTask and SkillSelection, потому что текущие portability/fresh-load/held-out/rollback отчеты оставляют их overlay-only.",
+      "proposed_next_bounded_subagent_work_order": {
+        "requested_artifact_type": "PromptToTask and SkillSelection full-machine lifecycle proof packet",
+        "allowed_write_scope": "new lifecycle proof artifacts and separately approved test/code changes only",
+        "implementation_authorized_now": false,
+        "git_authority": "forbidden",
+        "must_include": "checkpoint+manifest load, backup/export/import/share, continue-training, fresh-load, held-out/ablation, rollback, and no common mutation evidence"
+      }
+    },
+    {
+      "fix_id": "P14-FIX-04",
+      "finding_source": "Phase 14 gate",
+      "status": "WAIT_AFTER_FIXES",
+      "summary_ru": "После исправлений нужно повторить Phase 14 final review gate and update counters again."
+    }
+  ],
+  "phase14_step_status": [
+    {
+      "step": "14.01",
+      "status": "DONE",
+      "evidence": "final-readiness-packet.json and phase14-final-review-report.json"
+    },
+    {
+      "step": "14.02",
+      "status": "NEEDS_FIX",
+      "evidence": "FR-01"
+    },
+    {
+      "step": "14.03",
+      "status": "DONE",
+      "evidence": "FR-02"
+    },
+    {
+      "step": "14.04",
+      "status": "NEEDS_FIX",
+      "evidence": "FR-03"
+    },
+    {
+      "step": "14.05",
+      "status": "DONE",
+      "evidence": "FR-04, FR-05, FR-06"
+    },
+    {
+      "step": "14.06",
+      "status": "DONE",
+      "evidence": "FR-05"
+    },
+    {
+      "step": "14.07",
+      "status": "DONE",
+      "evidence": "FR-05"
+    },
+    {
+      "step": "14.08",
+      "status": "NEEDS_FIX",
+      "evidence": "FR-07, FR-08"
+    },
+    {
+      "step": "14.09",
+      "status": "NEEDS_FIX",
+      "evidence": "FR-07"
+    },
+    {
+      "step": "14.10",
+      "status": "DONE",
+      "evidence": "FR-04, FR-05, FR-06, FR-11"
+    },
+    {
+      "step": "14.11",
+      "status": "DONE",
+      "evidence": "FR-09, FR-10, FR-12"
+    },
+    {
+      "step": "14.12",
+      "status": "REMAINING",
+      "evidence": "Final DONE boundary is blocked until all NEEDS_FIX rows pass"
+    }
+  ]
+}

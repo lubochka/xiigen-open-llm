@@ -1,0 +1,89 @@
+{
+  "schema": "xiigen.token_quality.scenario_pack.v1",
+  "pack_id": "scenario-pack-token-quality-v1",
+  "phase_id": "TOKEN-01",
+  "artifact_family": [
+    "scenario-pack-token-quality-v1.md",
+    "scenario-pack-token-quality-v1.json",
+    "scenario-pack-token-quality-v1.jsonl",
+    "scenario-pack-token-quality-v1.validation.json"
+  ],
+  "scenario_count": 12,
+  "scenario_groups": {
+    "prompt-to-task": 3,
+    "orchestration": 3,
+    "skill-selection": 3,
+    "mixed": 3
+  },
+  "hosts": [
+    "Claude",
+    "Cursor",
+    "Codex"
+  ],
+  "modes": [
+    "baseline_common_model_only",
+    "adaptive_common_plus_user_model"
+  ],
+  "methods": [
+    "prompt-to-task",
+    "orchestration-plan",
+    "skill-selection"
+  ],
+  "required_scoring_dimensions": [
+    "task_quality",
+    "plan_universality",
+    "skill_selection",
+    "no_deterministic_shortcut",
+    "debug_trace_availability",
+    "token_measurement_fields"
+  ],
+  "minimum_pass_score_per_dimension": 4,
+  "baseline_adaptive_measurement_design": {
+    "baseline": "common model only; local/adaptive model disabled; no user-local checkpoint loaded",
+    "adaptive": "common model plus user-local adaptive model or overlay enabled; exact overlay/checkpoint id recorded",
+    "same_prompt_required": true,
+    "same_hosts_required": [
+      "Claude",
+      "Cursor",
+      "Codex"
+    ],
+    "same_method_required": true,
+    "same_debug_setting_required": true,
+    "same_tokenizer_accounting_required": true,
+    "same_expected_answer_contract_required": true,
+    "token_success_requires_quality_non_regression": true,
+    "single_run_evidence_forbids_strong_token_improvement_claim": true
+  },
+  "privacy_redaction_policy": {
+    "shared_artifacts_allowed": [
+      "redacted prompt/output text",
+      "hashes",
+      "token counts",
+      "quality scores",
+      "failure codes",
+      "evidence refs"
+    ],
+    "raw_private_content_policy": "Raw private prompt/output content must stay in approved private artifacts referenced by hash or private path fields.",
+    "common_training_boundary": "Scenario rows do not authorize copying private/user-local content into common training assets."
+  },
+  "external_ai_tool_policy": "No scenario authorizes external AI or tool use beyond later approved host/runtime probes.",
+  "dashboard_api_qa_hooks": [
+    "parse scenario JSONL",
+    "validate required runner fields",
+    "render human labels and coverage",
+    "mark dashboard/API evidence as supporting only",
+    "lint no-overclaim status and missing next bounded work order"
+  ],
+  "no_overclaim": {
+    "token_savings_proven": false,
+    "quality_improvement_proven": false,
+    "learnability_proven": false,
+    "semantic_quality_claimed": false,
+    "training_started": false,
+    "eval_started": false,
+    "checkpoint_mutation_started": false,
+    "host_runtime_newly_proven_by_token_01": false,
+    "full_product_readiness_claimed": false
+  },
+  "next_bounded_work_order": "TOKEN-02-RUNNER-HARNESS-IMPLEMENTATION"
+}

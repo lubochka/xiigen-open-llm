@@ -1,0 +1,52 @@
+{
+  "schema": "xiigen.extension_quality_gap_repair_01_report.v1",
+  "phase_id": "QUALITY-GAP-REPAIR-01",
+  "status": "BOUNDED_REPAIR_APPLIED_TARGETED_TESTS_PASS_NEXT_RERUN_TOKEN_04",
+  "changed_behavior": [
+    {
+      "blocker": "PromptToTask no-matching-pattern coverage",
+      "was": "XiigenExtensionApiService preserved only the prompt hash for PromptToTask, and PromptToTaskTaskPatternUnit matched only explicit constraints/context fields.",
+      "changed": "XiigenExtensionApiService now passes UserPromptOrTaskText into PromptToTaskRequest.RawPrompt; PromptToTaskTaskPatternUnit now derives normalized prompt-token signals for baseline nearest-pattern matching.",
+      "claim": "baseline/KNN-style overlap only; semantic_quality_claimed remains false"
+    },
+    {
+      "blocker": "OrchestrationReasoning manifest/checkpoint mismatch",
+      "was": "XiigenExtensionApiService.LoadCommonAssets used a hardcoded orchestration checkpoint path that could disagree with manifest.checkpointRef.",
+      "changed": "LoadCommonAssets resolves the manifest-owned checkpointRef before falling back to legacy checkpoint.json.",
+      "claim": "asset path repair only; no common model readiness claim"
+    },
+    {
+      "blocker": "SkillSelection empty or second-pass-only output",
+      "was": "XiigenExtensionApiService sent only sha256:<hash> as SkillSelectionRequest.Prompt, hiding prompt tokens from trained prompt_context units.",
+      "changed": "XiigenExtensionApiService now passes UserPromptOrTaskText into SkillSelectionRequest.Prompt. A test-local PromptContext baseline trained with SkillSelectionMachine.TrainMachineBatchAsync returns non-empty final skills without candidate-position authority.",
+      "claim": "test-local baseline evidence only; full semantic SkillSelection remains unclaimed"
+    },
+    {
+      "blocker": "missing real user-local adaptive model effect",
+      "was": "TOKEN-04 found adaptive-effect pairs=0.",
+      "changed": "Not repaired in this bounded slice; no user-local adaptive checkpoint was mutated or promoted.",
+      "claim": "learnability_claimed remains false"
+    }
+  ],
+  "test_local_assets": {
+    "prompt_to_task": "in-memory PromptToTaskCheckpoint imported through PromptToTaskMachine.ImportLearnedState",
+    "orchestration_reasoning": "in-memory OrchestrationReasoningCheckpoint imported through OrchestrationReasoningMachine.ImportLearnedState",
+    "skill_selection": "in-memory PromptContext training pairs applied through SkillSelectionMachine.TrainMachineBatchAsync",
+    "promoted_common_checkpoint_mutated": false,
+    "locator_or_target_promoted": false
+  },
+  "claims": {
+    "token_savings_claim_allowed": false,
+    "quality_improvement_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "learnability_claimed": false,
+    "common_model_readiness_claimed": false,
+    "target_promotion_done": false,
+    "locator_update_done": false
+  },
+  "verification": {
+    "targeted_tests": "PASS: dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ExtensionQualityGapRepairTests|FullyQualifiedName~ExtensionToken04QualityScoringArtifactsTests\" --no-restore --nologo",
+    "test_count": "5 passed, 0 failed"
+  },
+  "next_action": "Rerun TOKEN-04 scoring after QUALITY-GAP-REPAIR-01 output changes; keep all token, quality, semantic, learnability, common-readiness, target-promotion, and locator claims false unless the rerun proves them."
+}

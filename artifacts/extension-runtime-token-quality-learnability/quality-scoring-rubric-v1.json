@@ -1,0 +1,131 @@
+{
+  "schema": "xiigen.extension_runtime_token_quality_learnability.quality_scoring_rubric.v1",
+  "phase_id": "QUALITY-01",
+  "verdict": "RUBRIC_READY_FOR_SCORER_IMPLEMENTATION",
+  "scope": {
+    "artifact_authoring_only": true,
+    "production_code_changed": false,
+    "runtime_started": false,
+    "scoring_implementation_started": false,
+    "model_mutation_started": false,
+    "checkpoint_mutation_started": false,
+    "semantic_quality_result_claimed": false,
+    "learnability_claimed": false
+  },
+  "score_scale": {
+    "min": 0,
+    "max": 5,
+    "passing_layer_score_min": 4,
+    "needs_repair_layer_score_min": 3,
+    "fail_layer_score_max": 2,
+    "anchors": [
+      { "score": 5, "meaning_ru": "Полностью выполняет ожидаемое поведение сценария, без overclaim и forbidden failures." },
+      { "score": 4, "meaning_ru": "Основная цель выполнена, есть только мелкая неполнота." },
+      { "score": 3, "meaning_ru": "Частично полезно, но нужен repair перед pass." },
+      { "score": 2, "meaning_ru": "Слишком общий или prompt-like ответ без проверяемой полноты." },
+      { "score": 1, "meaning_ru": "Почти не выполнил задачу или ушёл в неправильное направление." },
+      { "score": 0, "meaning_ru": "Нарушил запрет: неразрешённая реализация, hidden shortcut, overclaim, leakage или fake success." }
+    ]
+  },
+  "layers": [
+    {
+      "layer_id": "prompt_to_task",
+      "human_name_ru": "PromptToTask: запрос пользователя -> задача",
+      "checks": [
+        "user goal preserved",
+        "deliverables extracted",
+        "constraints extracted",
+        "forbidden actions preserved",
+        "universal-only boundary preserved when scenario requires it"
+      ],
+      "positive_examples": [
+        { "scenario_id": "TQ-001-prompt-to-task-docs", "example_ru": "Документационный запрос становится bounded documentation task с UML, no-code algorithms и short code quotations." },
+        { "scenario_id": "TQ-007-universal-vs-project-specific", "example_ru": "Mixed project document делится на universal orchestration rules и project-specific quarantine." }
+      ],
+      "negative_examples": [
+        { "scenario_id": "TQ-001-prompt-to-task-docs", "example_ru": "Ответ начинает implementation или пропускает UML/no-code/code-quote requirements." },
+        { "scenario_id": "TQ-007-universal-vs-project-specific", "example_ru": "Stack-specific repo procedure копируется как universal common-training row." }
+      ]
+    },
+    {
+      "layer_id": "orchestration_reasoning",
+      "human_name_ru": "OrchestrationReasoning: задача -> универсальный план",
+      "checks": [
+        "phases and gates are concrete",
+        "review/fix loop exists when required",
+        "exact artifact target is named",
+        "authority and runtime/training boundaries are preserved",
+        "implementation does not start from plan-only task"
+      ],
+      "positive_examples": [
+        { "scenario_id": "TQ-002-orchestration-plan-review", "example_ru": "Один bounded sub-agent drafts/fixes, parent reviews, fixes repeat until execution-ready." },
+        { "scenario_id": "TQ-005-no-overclaim-runtime", "example_ru": "Dashboard/API proof separated from real host runtime proof with named missing evidence." }
+      ],
+      "negative_examples": [
+        { "scenario_id": "TQ-002-orchestration-plan-review", "example_ru": "Single-pass generic plan marked ready without fixes or requirement mapping." },
+        { "scenario_id": "TQ-005-no-overclaim-runtime", "example_ru": "Handler smoke test claimed as full Claude/Cursor/Codex runtime." }
+      ]
+    },
+    {
+      "layer_id": "skill_selection",
+      "human_name_ru": "SkillSelection: задача/план -> нужные скилы",
+      "checks": [
+        "skills selected by task semantics",
+        "candidate order does not decide",
+        "review/code/DPO/runtime/privacy skills included only when task requires them",
+        "evidence explains why selected",
+        "no semantic quality claim without later eval gates"
+      ],
+      "positive_examples": [
+        { "scenario_id": "TQ-003-skill-selection-universal", "example_ru": "Выбраны architecture-audit, plan-review, code-review, trainable-unit-design, documentation-readability." },
+        { "scenario_id": "TQ-011-trainable-unit-boundary", "example_ru": "Learned scorer classified with allowed contract level and concrete fix path." }
+      ],
+      "negative_examples": [
+        { "scenario_id": "TQ-003-skill-selection-universal", "example_ru": "Выбраны первые доступные skills или evidence говорит только о score без смысла задачи." },
+        { "scenario_id": "TQ-011-trainable-unit-boundary", "example_ru": "Ответ говорит only 'make it a unit' without typed state, lifecycle, datasets, K-NN role and tests." }
+      ]
+    },
+    {
+      "layer_id": "final_output_usefulness",
+      "human_name_ru": "Final output usefulness: полезность и честность ответа",
+      "checks": [
+        "answer is human-readable",
+        "proven and not-proven scope is explicit",
+        "next bounded action or exact limitation is named",
+        "errors are controlled and not fake success",
+        "private content is not leaked into shared artifacts"
+      ],
+      "positive_examples": [
+        { "scenario_id": "TQ-010-error-readability", "example_ru": "Missing core dependency is shown as controlled human-readable error with recovery hint." },
+        { "scenario_id": "TQ-012-full-extension-readiness", "example_ru": "Per-host gap matrix separates API, handler, runtime, training/eval and documentation evidence." }
+      ],
+      "negative_examples": [
+        { "scenario_id": "TQ-010-error-readability", "example_ru": "Blank output, stack trace only, or success flag when core is missing." },
+        { "scenario_id": "TQ-012-full-extension-readiness", "example_ru": "Full extension learnability claimed after smoke tests without training/eval lifecycle." }
+      ]
+    }
+  ],
+  "scenario_mapping": [
+    { "scenario_id": "TQ-001-prompt-to-task-docs", "primary_layer": "prompt_to_task", "secondary_layers": ["orchestration_reasoning", "final_output_usefulness"] },
+    { "scenario_id": "TQ-002-orchestration-plan-review", "primary_layer": "orchestration_reasoning", "secondary_layers": ["prompt_to_task", "skill_selection"] },
+    { "scenario_id": "TQ-003-skill-selection-universal", "primary_layer": "skill_selection", "secondary_layers": ["final_output_usefulness"] },
+    { "scenario_id": "TQ-004-debug-visibility", "primary_layer": "final_output_usefulness", "secondary_layers": ["orchestration_reasoning", "skill_selection"] },
+    { "scenario_id": "TQ-005-no-overclaim-runtime", "primary_layer": "orchestration_reasoning", "secondary_layers": ["final_output_usefulness"] },
+    { "scenario_id": "TQ-006-approval-target-rollback", "primary_layer": "orchestration_reasoning", "secondary_layers": ["prompt_to_task", "final_output_usefulness"] },
+    { "scenario_id": "TQ-007-universal-vs-project-specific", "primary_layer": "prompt_to_task", "secondary_layers": ["orchestration_reasoning", "skill_selection"] },
+    { "scenario_id": "TQ-008-local-learnability-dpo", "primary_layer": "orchestration_reasoning", "secondary_layers": ["prompt_to_task", "skill_selection"] },
+    { "scenario_id": "TQ-009-token-before-after", "primary_layer": "final_output_usefulness", "secondary_layers": ["orchestration_reasoning"] },
+    { "scenario_id": "TQ-010-error-readability", "primary_layer": "final_output_usefulness", "secondary_layers": ["prompt_to_task"] },
+    { "scenario_id": "TQ-011-trainable-unit-boundary", "primary_layer": "skill_selection", "secondary_layers": ["orchestration_reasoning", "final_output_usefulness"] },
+    { "scenario_id": "TQ-012-full-extension-readiness", "primary_layer": "orchestration_reasoning", "secondary_layers": ["final_output_usefulness", "skill_selection"] }
+  ],
+  "hard_rules": {
+    "token_reduction_cannot_pass_if_quality_regresses": true,
+    "quality_scoring_cannot_prove_learnability_or_training": true,
+    "quality_scoring_cannot_claim_semantic_quality": true,
+    "runtime_proof_must_name_host_and_layer": true,
+    "api_or_dashboard_evidence_is_not_full_host_runtime": true,
+    "common_training_must_keep_universal_semantics_only": true,
+    "deterministic_counter_must_be_labelled_baseline_or_internal_detail": true
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "work_order": "PTT-AD-Z",
+  "generated_at_utc": "2026-06-05T23:45:27.897Z",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "scope": "PromptToTask two-leg portability evidence gate only; reports-only; no implementation, training, host work, external AI, other sphere scope, API-01, or AD-09C.",
+  "gate_rule": "Fail unless every PromptToTask required two-leg portability item maps to actual artifact/probe evidence; policy-only evidence is not accepted.",
+  "prompt_to_task": {
+    "common_checkpoint_sha256": "50bd20295e4729eab2366374890383a2959bf3fcb8b9114e46d74f8d6f85ad28",
+    "adaptive_checkpoint_sha256": "a4f787dc0ce24750bddef5a843fecfb4937215c242ffd762d44071faa82ff0e9",
+    "common_checkpoint_unchanged_across_adaptive_rows": true,
+    "evidence_rows": [
+      {
+        "id": "prompt_to_task_common_global_leg",
+        "requirement": "PromptToTask has a repo-owned common/global model leg with manifest and checkpoint refs.",
+        "evidence_paths": [
+          "models/prompt-to-task/prompt-to-task-v1/manifest.json",
+          "models/prompt-to-task/prompt-to-task-v1/prompt-to-task-v1-checkpoint.json"
+        ],
+        "evidence_type": "common_model_asset",
+        "policy_only": false,
+        "actual": {
+          "manifest_checkpoint_sha256": "50bd20295e4729eab2366374890383a2959bf3fcb8b9114e46d74f8d6f85ad28",
+          "actual_checkpoint_sha256": "50bd20295e4729eab2366374890383a2959bf3fcb8b9114e46d74f8d6f85ad28",
+          "learned_pattern_count": 2,
+          "semantic_quality_claimed": false
+        },
+        "passed": true
+      },
+      {
+        "id": "prompt_to_task_personal_adaptive_leg_signal_and_checkpoint",
+        "requirement": "PromptToTask has a user-local personal/adaptive DPO signal writer plus adaptive checkpoint/report evidence.",
+        "evidence_paths": [
+          "artifacts/adaptive-learning/PTT-AD-01-prompt-to-task-adaptive-signal-writer.json",
+          "artifacts/adaptive-learning/PTT-AD-02-prompt-to-task-adaptive-training.json",
+          "artifacts/adaptive-learning/PTT-AD-02-probe/.xiigen/prompt-to-task/adaptive-training-report.json",
+          "artifacts/adaptive-learning/PTT-AD-02-probe/.xiigen/prompt-to-task/adaptive-checkpoint.json"
+        ],
+        "evidence_type": "writer_training_load_probe_artifacts",
+        "policy_only": false,
+        "actual": {
+          "writer_path": ".xiigen/prompt-to-task/adaptive-dpo-signals.jsonl",
+          "checkpoint_sha256_reported": "a4f787dc0ce24750bddef5a843fecfb4937215c242ffd762d44071faa82ff0e9",
+          "checkpoint_sha256_actual": "a4f787dc0ce24750bddef5a843fecfb4937215c242ffd762d44071faa82ff0e9",
+          "metric_improved": true,
+          "load_probe_passed": true,
+          "common_checkpoint_unchanged": true
+        },
+        "passed": true
+      },
+      {
+        "id": "prompt_to_task_backup_export",
+        "requirement": "PromptToTask personal/adaptive leg has backup/export package with manifest, checkpoint hash, schema, provenance refs, and redaction report.",
+        "evidence_paths": [
+          "artifacts/adaptive-learning/PTT-AD-03-prompt-to-task-backup-package.json",
+          "artifacts/adaptive-learning/PTT-AD-03-backup-package/manifest.json",
+          "artifacts/adaptive-learning/PTT-AD-03-backup-package/redaction-report.json"
+        ],
+        "evidence_type": "backup_export_package_artifacts",
+        "policy_only": false,
+        "actual": {
+          "package_path": "artifacts/adaptive-learning/PTT-AD-03-backup-package",
+          "schema_version": 1,
+          "checkpoint_sha256": "a4f787dc0ce24750bddef5a843fecfb4937215c242ffd762d44071faa82ff0e9",
+          "provenance_refs": "artifacts/adaptive-learning/PTT-AD-03-backup-package/provenance-refs.json",
+          "redaction_passed": true,
+          "common_checkpoint_unchanged": true
+        },
+        "passed": true
+      },
+      {
+        "id": "prompt_to_task_restore_import_cross_device",
+        "requirement": "PromptToTask backup package restores/imports into fresh profile, verifies checkpoint hash, and can continue or no-op without replay.",
+        "evidence_paths": [
+          "artifacts/adaptive-learning/PTT-AD-04-restore-share-report.json",
+          "artifacts/adaptive-learning/PTT-AD-04-restore-import-report.json",
+          "artifacts/adaptive-learning/PTT-AD-04-continue-probe.json"
+        ],
+        "evidence_type": "fresh_profile_restore_continue_probe",
+        "policy_only": false,
+        "actual": {
+          "fresh_profile_path": "artifacts/adaptive-learning/PTT-AD-04-fresh-profile",
+          "restored_checkpoint_sha256": "a4f787dc0ce24750bddef5a843fecfb4937215c242ffd762d44071faa82ff0e9",
+          "hash_verified": true,
+          "trained_state_loaded": true,
+          "continue_passed": true,
+          "no_replay_proven": true,
+          "replay_silent": false
+        },
+        "passed": true
+      },
+      {
+        "id": "prompt_to_task_approved_share_anonymised_policy_with_probe",
+        "requirement": "PromptToTask share/copy path is user-approved anonymised package with no silent sync and redaction evidence.",
+        "evidence_paths": [
+          "artifacts/adaptive-learning/PTT-AD-04-anonymised-share-package/manifest.json",
+          "artifacts/adaptive-learning/PTT-AD-04-anonymised-share-package/redaction-report.json",
+          "artifacts/adaptive-learning/PTT-AD-04-anonymised-share-package/approval-record.json"
+        ],
+        "evidence_type": "approved_anonymised_share_artifacts",
+        "policy_only": false,
+        "actual": {
+          "share_mode": "anonymised_signal_package",
+          "user_approval_present": true,
+          "silent_sync": false,
+          "external_transfer_performed": false,
+          "redaction_passed": true,
+          "raw_private_text_included": false
+        },
+        "passed": true
+      }
+    ]
+  },
+  "failed_requirements": [],
+  "next_action": "parent REVIEW_INTERNAL then commit boundary already handled by this executor if verification passes; after parent acceptance proceed to AD-09C only by separate work order"
+}

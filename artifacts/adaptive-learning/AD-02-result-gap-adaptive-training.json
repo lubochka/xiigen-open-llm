@@ -1,0 +1,61 @@
+{
+  "work_order": "AD-02",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "claim_scope": "User-local ResultGap adaptive training from missing-pattern DPO only; no common checkpoint overwrite, no host work, no external AI, no full adaptive runtime quality claim.",
+  "plan_row": "B10 AD-02 Train user adaptive model from missing-pattern DPO",
+  "adapter": {
+    "class": "SmartSkillsDomain.ResultGapAdaptiveTrainer",
+    "method": "TrainUserLocalAsync",
+    "input_signal_schema": "ResultGapAdaptiveDpoSignal",
+    "input_signal_storage_scope": "project-local:.xiigen/smart-skills/result-gap/adaptive-dpo-signals.jsonl",
+    "output_checkpoint_scope": "project-local:.xiigen/smart-skills/result-gap/adaptive-checkpoint.json",
+    "output_report_scope": "project-local:.xiigen/smart-skills/result-gap/adaptive-training-report.json"
+  },
+  "persistent_probe_paths": {
+    "adaptive_checkpoint": "artifacts/adaptive-learning/AD-02-probe/.xiigen/smart-skills/result-gap/adaptive-checkpoint.json",
+    "adaptive_training_report": "artifacts/adaptive-learning/AD-02-probe/.xiigen/smart-skills/result-gap/adaptive-training-report.json"
+  },
+  "adaptive_checkpoint": {
+    "sha256": "8ddadb7560fd33117ca4f1d1a96b1e4fde6cad58d42c7a557527d25c77ee6fd4",
+    "trained_signal_ids": [
+      "result-gap-adaptive-UPS-AD02-001-plan-review"
+    ],
+    "semantic_quality_claimed": false,
+    "common_checkpoint_mutation_claimed": false
+  },
+  "common_checkpoint_evidence": {
+    "path": "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json",
+    "sha256_before": "884cfd350fa582211d6939ac8e2252b7044524701117a458cc6473d5c8f7b228",
+    "sha256_after": "884cfd350fa582211d6939ac8e2252b7044524701117a458cc6473d5c8f7b228",
+    "unchanged": true
+  },
+  "metric_evidence": {
+    "eligible_signal_count": 1,
+    "trained_signal_count": 1,
+    "metric_before": 0,
+    "metric_after": 1,
+    "metric_improved": true,
+    "no_op_reason": ""
+  },
+  "fresh_load": {
+    "feasible_in_ad_02_scope": true,
+    "passed": true,
+    "evidence": "Focused test calls ResultGapAdaptiveTrainer.LoadCheckpoint on the generated user-local adaptive checkpoint."
+  },
+  "verification": {
+    "focused_test_command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ResultGapAdaptiveTrainer\" --nologo",
+    "focused_test_exit_code": 0,
+    "focused_test_passed": 1,
+    "focused_test_failed": 0,
+    "focused_test_elapsed_seconds": 94.5,
+    "previous_timeout_recorded": true
+  },
+  "forbidden_claims": {
+    "common_checkpoint_overwritten": false,
+    "host_runtime_claimed": false,
+    "external_ai_used": false,
+    "full_adaptive_model_quality_claimed": false,
+    "common_skill_selection_quality_claimed": false
+  },
+  "next_action": "PARENT_REVIEW_AD-02_THEN_COMMIT_PUSH_IF_ACCEPTED"
+}

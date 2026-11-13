@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "work_order": "CM-25A-DPO-ROW-LEVEL-APPROVED-PAIR-BINDING-REPAIR",
+  "artifact_kind": "dpo_row_level_approved_pair_binding_repair",
+  "generated_at_utc": "2026-06-07T00:00:00Z",
+  "branch": "codex/chat-gpt-5.5",
+  "verdict": "PASS_WITH_PENDING_BINDINGS_NO_SAFE_AUTOMATIC_APPROVAL",
+  "passed": true,
+  "claim_scope": "Static/local DPO binding repair attempt only. Existing template rows were audited for grounded row-level approvals. No training, runtime, build, test, host execution, external AI, web, browser, or final completion claim.",
+  "completion_claim_allowed": false,
+  "training_started": false,
+  "runtime_or_host_invoked": false,
+  "external_ai_used": false,
+  "safe_automatic_binding_exists": false,
+  "templates_modified": false,
+  "approval_invented": false,
+  "automatic_binding_performed": false,
+  "rows_total": 138,
+  "approved_bindings_written": 0,
+  "pending_bindings": 138,
+  "invalid_rows": 0,
+  "why_no_template_rows_were_changed": "The existing binding-source reports mark both domains operator_approval_required and safe_automatic_binding_exists=false. OrchestrationReasoning rows contain candidate chosen/rejected refs, but every row still has multiple candidates and binding_status=operator_approval_required. PromptToTask candidates contain operator-approved chosen/rejected placeholders. Converting any candidate into a top-level approved binding would invent approval.",
+  "counts": {
+    "rows_total": 138,
+    "approved_bindings_written": 0,
+    "pending_bindings": 138,
+    "invalid_rows": 0
+  },
+  "by_machine": {
+    "OrchestrationReasoning": {
+      "template_path": "artifacts/orchestration-reasoning-dpo-binding-source-template.jsonl",
+      "rows_total": 136,
+      "approved_bindings_written": 0,
+      "pending_bindings": 136,
+      "invalid_rows": 0,
+      "rows_with_candidates": 136,
+      "candidate_objects_with_chosen_rejected_refs": 408,
+      "rows_with_placeholder_candidates": 0,
+      "safe_automatic_binding_exists": false,
+      "automatic_binding_performed": false,
+      "pending_reason": "operator_approval_required; each source row has multiple approved_pair_ref_candidates, so selecting one candidate per source row would be an arbitrary binding without a local approval source."
+    },
+    "PromptToTask": {
+      "template_path": "artifacts/prompt-to-task-dpo-binding-source-template.jsonl",
+      "rows_total": 2,
+      "approved_bindings_written": 0,
+      "pending_bindings": 2,
+      "invalid_rows": 0,
+      "rows_with_candidates": 2,
+      "candidate_objects_with_chosen_rejected_refs": 0,
+      "rows_with_placeholder_candidates": 2,
+      "safe_automatic_binding_exists": false,
+      "automatic_binding_performed": false,
+      "pending_reason": "operator_approval_required; candidates expose taxonomy refs but chosen_ref and rejected_ref remain operator-approved placeholders."
+    }
+  },
+  "required_fields_validation": {
+    "required_fields": [
+      "source_row_id",
+      "approved_pair_ref",
+      "error_code",
+      "chosen_ref",
+      "rejected_ref"
+    ],
+    "approved_rows_validated": 0,
+    "approved_rows_missing_required_fields": 0,
+    "pending_template_rows_missing_top_level_approved_fields": 138,
+    "validation_note": "No approved binding rows were written. Pending template rows are intentionally not treated as approved rows."
+  },
+  "evidence_refs": [
+    {
+      "path": "artifacts/orchestration-reasoning-dpo-binding-source-template.jsonl",
+      "finding": "136 valid JSONL rows, all binding_status=operator_approval_required; no top-level approved_pair_ref/error_code/chosen_ref/rejected_ref binding exists."
+    },
+    {
+      "path": "artifacts/prompt-to-task-dpo-binding-source-template.jsonl",
+      "finding": "2 valid JSONL rows, all binding_status=operator_approval_required; candidates contain operator-approved chosen_ref/rejected_ref placeholders."
+    },
+    {
+      "path": "artifacts/orchestration-reasoning-dpo-binding-source-report.json",
+      "finding": "status=operator_approval_required_template_created, safe_automatic_binding_exists=false, automatic_binding_performed=false."
+    },
+    {
+      "path": "artifacts/prompt-to-task-dpo-binding-source-report.json",
+      "finding": "status=operator_approval_required_template_created, safe_automatic_binding_exists=false, automatic_binding_performed=false."
+    },
+    {
+      "path": "artifacts/dpo-train-readiness-report.json",
+      "finding": "train_ready=false; not_ready_domains include orchestration-reasoning and prompt-to-task."
+    },
+    {
+      "path": "C:/Users/lubao/Documents/xiigen/extensions  - orchestration based on our data/ORCHESTRATION-REASONING-DPO-NEGATIVE-STRATEGY-v1.md",
+      "sha256": "A02E6C4FCD8950E428D96B1B7470847578D47D579995D575FD258B9BE8514A5C",
+      "finding": "Strategy document contains plausible near-miss ORCH taxonomy and example chosen/rejected refs, but does not approve a one-to-one candidate binding for each local source_row_id."
+    },
+    {
+      "path": "C:/Users/lubao/Documents/xiigen/extensions  - orchestration based on our data/PROMPT-TO-TASK-DPO-NEGATIVE-STRATEGY-v1.md",
+      "sha256": "F90505D71200FF10AB74ECBEA6ED00DF7B1F905770E8ED7626F1383107E098B7",
+      "finding": "Strategy document contains plausible near-miss PromptError taxonomy and example chosen/rejected refs, but the current PromptToTask binding template still requires operator-approved chosen/rejected refs."
+    }
+  ],
+  "pending_unresolved": [
+    {
+      "id": "ORCH_ROW_LEVEL_BINDINGS_PENDING",
+      "machine": "OrchestrationReasoning",
+      "pending_bindings": 136,
+      "reason": "Multiple candidate approved_pair_refs are available per source row, and no local approval artifact selects one candidate per source_row_id.",
+      "next_action": "CM-25A1-DPO-ROW-LEVEL-BINDING-APPROVAL-SOURCE-REPAIR"
+    },
+    {
+      "id": "PTT_ROW_LEVEL_BINDINGS_PENDING",
+      "machine": "PromptToTask",
+      "pending_bindings": 2,
+      "reason": "Candidate rows still contain operator-approved chosen_ref/rejected_ref placeholders.",
+      "next_action": "CM-25A1-DPO-ROW-LEVEL-BINDING-APPROVAL-SOURCE-REPAIR"
+    }
+  ],
+  "first_actionable_gap": {
+    "id": "CM25A-01",
+    "gap_id": "DPO_ROW_LEVEL_BINDING_APPROVAL_SOURCE_MISSING",
+    "status": "open",
+    "description": "A source-row-level approval artifact is required before any template row can be promoted into an approved binding with source_row_id, approved_pair_ref, error_code, chosen_ref, and rejected_ref.",
+    "next_bounded_action": "CM-25A1-DPO-ROW-LEVEL-BINDING-APPROVAL-SOURCE-REPAIR"
+  },
+  "next_bounded_action": "CM-25A1-DPO-ROW-LEVEL-BINDING-APPROVAL-SOURCE-REPAIR",
+  "required_next_action": "CM-25A1-DPO-ROW-LEVEL-BINDING-APPROVAL-SOURCE-REPAIR"
+}

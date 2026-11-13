@@ -1,0 +1,134 @@
+{
+  "artifact": "smart-skills-dpo-split-plan",
+  "work_order_id": "Q2-04",
+  "status": "PASS_SEED_SPLIT_PLAN_ONLY",
+  "generated_at_utc": "2026-06-10T10:50:05.007Z",
+  "branch": "codex/chat-gpt-5.5",
+  "claim_scope": "Split and held-out design for a tiny eight-row seed artifact. This plan supports seed smoke evaluation only and explicitly forbids model-quality claims.",
+  "source_dataset": {
+    "path": "artifacts/dpo-quality/smart-skills-dpo-materialized.jsonl",
+    "row_count": 8,
+    "domains": {
+      "PromptToTask": 3,
+      "OrchestrationReasoning": 3,
+      "SkillSelection": 2
+    }
+  },
+  "split_policy": {
+    "split_plan_id": "q2-04-smart-skills-dpo-seed-split-v1",
+    "seed_train_role": "seed_smoke_train_candidate",
+    "seed_held_out_role": "seed_smoke_held_out_candidate",
+    "held_out_set_id": "q2-04-smart-skills-dpo-seed-smoke-heldout-v1",
+    "source_disjointness_scope": "Only source_ref/source_binding family separation inside the tiny seed; not enough for true source-disjoint model-quality held-out evidence.",
+    "model_quality_held_out_scope": "INSUFFICIENT",
+    "training_allowed": false,
+    "training_data_write_performed": false
+  },
+  "row_split_assignments": [
+    {
+      "row_id": "q2-02-dpo-001",
+      "domain": "PromptToTask",
+      "split_id": "q2-04-ptt-seed-train",
+      "split_role": "seed_smoke_train_candidate",
+      "held_out_set_id": null,
+      "reason": "Keep one PromptToTask structure row available for seed smoke data movement."
+    },
+    {
+      "row_id": "q2-02-dpo-002",
+      "domain": "PromptToTask",
+      "split_id": "q2-04-ptt-seed-train",
+      "split_role": "seed_smoke_train_candidate",
+      "held_out_set_id": null,
+      "reason": "Keep one PromptToTask gate-structure row available for seed smoke data movement."
+    },
+    {
+      "row_id": "q2-02-dpo-003",
+      "domain": "PromptToTask",
+      "split_id": "q2-04-ptt-seed-heldout",
+      "split_role": "seed_smoke_held_out_candidate",
+      "held_out_set_id": "q2-04-smart-skills-dpo-seed-smoke-heldout-v1",
+      "reason": "Reserve the PromptToTask scope-creep row as seed smoke held-out only; not a quality held-out claim."
+    },
+    {
+      "row_id": "q2-02-dpo-004",
+      "domain": "OrchestrationReasoning",
+      "split_id": "q2-04-orch-seed-train",
+      "split_role": "seed_smoke_train_candidate",
+      "held_out_set_id": null,
+      "reason": "Keep one orchestration evidence row available for seed smoke data movement."
+    },
+    {
+      "row_id": "q2-02-dpo-005",
+      "domain": "OrchestrationReasoning",
+      "split_id": "q2-04-orch-seed-heldout",
+      "split_role": "seed_smoke_held_out_candidate",
+      "held_out_set_id": "q2-04-smart-skills-dpo-seed-smoke-heldout-v1",
+      "reason": "Reserve the orchestration decomposition row as seed smoke held-out only; not a quality held-out claim."
+    },
+    {
+      "row_id": "q2-02-dpo-006",
+      "domain": "OrchestrationReasoning",
+      "split_id": "q2-04-orch-seed-train",
+      "split_role": "seed_smoke_train_candidate",
+      "held_out_set_id": null,
+      "reason": "Keep one repository-safety evidence row available for seed smoke data movement."
+    },
+    {
+      "row_id": "q2-02-dpo-007",
+      "domain": "SkillSelection",
+      "split_id": "q2-04-skill-selection-seed-train",
+      "split_role": "seed_smoke_train_candidate",
+      "held_out_set_id": null,
+      "reason": "Keep the over-selection row available for seed smoke data movement."
+    },
+    {
+      "row_id": "q2-02-dpo-008",
+      "domain": "SkillSelection",
+      "split_id": "q2-04-skill-selection-seed-heldout",
+      "split_role": "seed_smoke_held_out_candidate",
+      "held_out_set_id": "q2-04-smart-skills-dpo-seed-smoke-heldout-v1",
+      "reason": "Reserve the filename/candidate-position row as seed smoke held-out only; not a quality held-out claim."
+    }
+  ],
+  "split_counts": {
+    "seed_smoke_train_candidate": {
+      "total": 5,
+      "by_domain": {
+        "PromptToTask": 2,
+        "OrchestrationReasoning": 2,
+        "SkillSelection": 1
+      }
+    },
+    "seed_smoke_held_out_candidate": {
+      "total": 3,
+      "by_domain": {
+        "PromptToTask": 1,
+        "OrchestrationReasoning": 1,
+        "SkillSelection": 1
+      }
+    }
+  },
+  "what_can_be_used_now": [
+    "Smoke-test JSONL parsing, schema loading, row routing by domain, seed manifest wiring, redaction flags, and no-overclaim checks.",
+    "Smoke-test that a later trainer can see separate seed train and seed held-out roles without using them for a model-quality metric.",
+    "Smoke-test deterministic-shortcut firewall labels for filename, candidate-position, evidence, verification, and structure near misses."
+  ],
+  "what_is_insufficient_now": [
+    "No semantic model-quality claim.",
+    "No training readiness claim.",
+    "No source-disjoint held-out quality metric.",
+    "No runner-emitted accuracy, loss, reward margin, ablation, fresh-load, or continue-training evidence.",
+    "No production or dashboard runtime claim."
+  ],
+  "next_training_data_promotion_candidate": {
+    "promotion_ready_for_seed_artifact_only": true,
+    "promotion_not_performed_here": true,
+    "exact_seed_artifact_paths_for_next_row": [
+      "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed.jsonl",
+      "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed-manifest.json",
+      "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed-dataset-card.json",
+      "training-data/smart-skills/semantic-quality/seed-v1/smart-skills-dpo-seed-split.json"
+    ],
+    "next_row_gate": "A later bounded promotion row may copy only the eight reviewed rows plus this split plan into the seed-only training-data paths, must keep training_allowed=false, must label the held-out rows as seed_smoke_held_out_candidate only, must preserve checksums/source refs, and must not run training or claim model quality."
+  }
+}

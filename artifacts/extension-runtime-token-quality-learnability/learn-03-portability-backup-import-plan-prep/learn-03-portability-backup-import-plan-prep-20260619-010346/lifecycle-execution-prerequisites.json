@@ -1,0 +1,236 @@
+{
+  "schema": "xiigen.learn_03_lifecycle_execution_prerequisites.v1",
+  "work_order_id": "LEARN-03-PORTABILITY-BACKUP-IMPORT-PLAN-PREP-01",
+  "run_id": "learn-03-portability-backup-import-plan-prep-20260619-010346",
+  "generated_at_local": "2026-06-19T01:03:46+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "artifact_type": "missing_prerequisites_before_actual_lifecycle_execution",
+  "actual_lifecycle_execution_authorized_now": false,
+  "missing_prerequisites": [
+    {
+      "id": "operation_specific_execution_authority",
+      "status": "MISSING",
+      "required_before": [
+        "actual backup/export/import/share/restore/load-without-retrain",
+        "continue-training",
+        "checkpoint mutation"
+      ],
+      "needed_artifact": "bounded work order with exact operation, allowed roots, target/rollback/source packet, and verification contract"
+    },
+    {
+      "id": "approved_user_local_root",
+      "status": "MISSING",
+      "required_before": [
+        "backup",
+        "export",
+        "same-machine restore"
+      ],
+      "needed_fields": [
+        "user_local_root_id",
+        "absolute_path_or_approved_locator",
+        "privacy_class",
+        "owner_scope",
+        "access_control_or_encryption_policy"
+      ]
+    },
+    {
+      "id": "distinct_import_restore_root",
+      "status": "MISSING",
+      "required_before": [
+        "another-root import",
+        "another-root restore",
+        "portability claim"
+      ],
+      "needed_fields": [
+        "target_device_or_root_id",
+        "target_root_is_distinct_from_source=true",
+        "approved_restore_policy",
+        "restore_cleanup_policy"
+      ]
+    },
+    {
+      "id": "row_specific_host_machine_selection",
+      "status": "MISSING",
+      "required_before": [
+        "host/machine lifecycle PASS"
+      ],
+      "needed_fields": [
+        "host",
+        "machine",
+        "scenario_id",
+        "user_root_id",
+        "target_checkpoint_id",
+        "row_scope"
+      ],
+      "full_scope_requires_rows": 9
+    },
+    {
+      "id": "trainable_dpo_refs",
+      "status": "MISSING",
+      "required_before": [
+        "training",
+        "continue-training",
+        "learnability claim"
+      ],
+      "needed_fields": [
+        "dpo_row_id",
+        "chosen_ref",
+        "rejected_ref",
+        "machine_target",
+        "host_path",
+        "source_ref",
+        "source_license_ref",
+        "privacy_class",
+        "redaction_ref",
+        "provenance_ref",
+        "approval_ref"
+      ]
+    },
+    {
+      "id": "source_license_redaction_review",
+      "status": "MISSING",
+      "required_before": [
+        "redacted share packet",
+        "common route",
+        "training material acceptance"
+      ],
+      "needed_fields": [
+        "source_license_material_review_ref",
+        "review_sha256",
+        "route_decision",
+        "raw_private_material_excluded_or_quarantined",
+        "external_ai_output_role"
+      ]
+    },
+    {
+      "id": "manifest_and_checksum_binding",
+      "status": "MISSING",
+      "required_before": [
+        "backup",
+        "export",
+        "import",
+        "restore"
+      ],
+      "needed_fields": [
+        "store_manifest_ref",
+        "store_manifest_sha256",
+        "coverage_matrix_ref",
+        "coverage_matrix_sha256",
+        "backup_bundle_sha256",
+        "export_bundle_sha256",
+        "import_manifest_sha256",
+        "restored_store_manifest_sha256"
+      ]
+    },
+    {
+      "id": "base_imported_target_rollback_checkpoint_binding",
+      "status": "MISSING",
+      "required_before": [
+        "load-without-retrain",
+        "continue-training",
+        "fresh-load",
+        "rollback",
+        "promotion"
+      ],
+      "needed_fields": [
+        "base_checkpoint_ref",
+        "base_checkpoint_sha256",
+        "imported_checkpoint_ref",
+        "imported_checkpoint_sha256",
+        "target_checkpoint_ref",
+        "target_checkpoint_sha256",
+        "rollback_checkpoint_ref",
+        "rollback_checkpoint_sha256"
+      ]
+    },
+    {
+      "id": "load_order_and_no_retrain_probe_contract",
+      "status": "MISSING",
+      "required_before": [
+        "load-without-retrain PASS"
+      ],
+      "needed_fields": [
+        "checkpoint_load_order",
+        "load_source=imported_user_local",
+        "loaded_existing_checkpoint=true",
+        "retrained_from_zero=false",
+        "behavior_probe_before_any_training=true",
+        "user_local_disabled_baseline_ref"
+      ]
+    },
+    {
+      "id": "training_and_heldout_dataset_hashes",
+      "status": "MISSING",
+      "required_before": [
+        "continue-training",
+        "held-out/source-disjoint eval",
+        "ablation/no-memorization"
+      ],
+      "needed_fields": [
+        "training_dataset_sha256",
+        "held_out_dataset_sha256",
+        "source_disjoint_split_ref",
+        "near_duplicate_exclusion_ref",
+        "no_memorization_controls_ref"
+      ]
+    },
+    {
+      "id": "rollback_probe_contract",
+      "status": "MISSING",
+      "required_before": [
+        "target promotion",
+        "locator update",
+        "rollback closure"
+      ],
+      "needed_fields": [
+        "rollback_to_imported_overlay=true",
+        "rollback_after_continue_training=true",
+        "store_pointer_before_ref",
+        "store_pointer_after_ref",
+        "locator_candidate_ref",
+        "common_assets_unchanged=true"
+      ]
+    }
+  ],
+  "safe_independent_tracks_that_remain_allowed_without_mutation": [
+    "root and target/rollback binding prep",
+    "source/license/redaction packet prep",
+    "operation-specific approval packet prep",
+    "deferred decision queue prep",
+    "documentation of lifecycle evidence scope"
+  ],
+  "blocked_actual_actions": [
+    "backup/export/import/share/restore/load-without-retrain execution",
+    "DPO row creation as trainable data",
+    "training",
+    "continue-training",
+    "fresh-load",
+    "held-out/source-disjoint evaluation",
+    "ablation/no-memorization execution",
+    "rollback probe",
+    "checkpoint or locator mutation",
+    "target promotion"
+  ],
+  "claim_locks": {
+    "dpo_rows_created_as_training_data": false,
+    "actual_training_performed": false,
+    "continue_training_performed": false,
+    "checkpoint_mutation_performed": false,
+    "backup_export_import_share_restore_execution_performed": false,
+    "load_without_retrain_performed": false,
+    "fresh_load_performed": false,
+    "held_out_eval_performed": false,
+    "ablation_performed": false,
+    "rollback_performed": false,
+    "runtime_host_execution_performed": false,
+    "external_ai_model_calls_performed": false,
+    "actual_eval_or_scoring_performed": false,
+    "learnability_claimed": false,
+    "training_ready_claimed": false,
+    "common_readiness_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  }
+}

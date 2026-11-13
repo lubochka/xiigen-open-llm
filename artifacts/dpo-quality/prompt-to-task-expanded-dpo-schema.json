@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PromptToTask expanded DPO row schema v1",
+  "type": "object",
+  "required": [
+    "row_id",
+    "domain",
+    "common_or_adaptive",
+    "universalized",
+    "technical_execution_refs_excluded",
+    "external_ai_used",
+    "raw_private_text_copied",
+    "source_quality",
+    "source_refs",
+    "source_checksums",
+    "chosen_summary",
+    "rejected_summary",
+    "error_code",
+    "split_role",
+    "training_allowed",
+    "semantic_quality_claimed"
+  ],
+  "properties": {
+    "row_id": {
+      "type": "string"
+    },
+    "domain": {
+      "const": "PromptToTask"
+    },
+    "common_or_adaptive": {
+      "const": "common"
+    },
+    "universalized": {
+      "const": true
+    },
+    "universal_prompt_to_task_behavior": {
+      "const": true
+    },
+    "technical_execution_refs_excluded": {
+      "const": true
+    },
+    "external_ai_used": {
+      "const": false
+    },
+    "raw_private_text_copied": {
+      "const": false
+    },
+    "source_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "ref",
+          "path",
+          "sha256",
+          "role"
+        ],
+        "properties": {
+          "ref": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "source_checksums": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "chosen_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rejected_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "error_code": {
+      "type": "string",
+      "minLength": 1
+    },
+    "split_role": {
+      "enum": [
+        "train",
+        "held-out"
+      ]
+    },
+    "training_allowed": {
+      "const": false
+    },
+    "semantic_quality_claimed": {
+      "const": false
+    },
+    "source_quality": {
+      "enum": [
+        "gold",
+        "silver",
+        "rejected"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

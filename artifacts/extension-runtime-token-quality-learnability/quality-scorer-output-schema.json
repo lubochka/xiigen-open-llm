@@ -1,0 +1,65 @@
+{
+  "schema": "xiigen.extension_runtime_token_quality_learnability.quality_scorer_output_schema.v1",
+  "phase_id": "QUALITY-02",
+  "output_schema_version": "xiigen.extension_quality_score.v1",
+  "required_layers": [
+    "prompt_to_task",
+    "orchestration_reasoning",
+    "skill_selection",
+    "final_output_usefulness"
+  ],
+  "verdicts": [
+    "Pass",
+    "NeedsRepair",
+    "Fail"
+  ],
+  "score_scale": {
+    "min": 0,
+    "max": 5,
+    "passing_layer_score_min": 4,
+    "needs_repair_layer_score_min": 3
+  },
+  "required_result_fields": [
+    "schemaVersion",
+    "scenarioId",
+    "pairId",
+    "verdict",
+    "layerScores",
+    "averageScore",
+    "reasons",
+    "forbiddenFailures",
+    "humanReviewerNote",
+    "qualityResultClaimed",
+    "semanticQualityClaimed",
+    "learnabilityClaimed",
+    "tokenSavingsClaimed"
+  ],
+  "no_overclaim_defaults": {
+    "quality_result_claimed": false,
+    "semantic_quality_claimed": false,
+    "learnability_claimed": false,
+    "token_savings_claimed": false
+  },
+  "failure_categories_supported": [
+    "approval_boundary",
+    "runtime_substitution",
+    "leakage_signal",
+    "missing_skill",
+    "human_unreadable",
+    "overclaim",
+    "quality_regression",
+    "inconclusive_review",
+    "hidden_deterministic_shortcut",
+    "privacy_or_redaction_failed"
+  ],
+  "hard_rules": [
+    "all four layers are required",
+    "any forbidden failure forces Fail",
+    "any layer score 0..2 forces Fail",
+    "all four layers must be 4+ for Pass",
+    "token reduction alone cannot pass quality",
+    "token reduction cannot pass if quality regresses",
+    "every layer requires a human reviewer note",
+    "scorer output is evaluation infrastructure and does not prove semantic quality or learnability"
+  ]
+}

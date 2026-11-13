@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "smart-skills-candidate-binding-schema-v1",
+  "title": "Smart Skills Candidate Binding",
+  "type": "object",
+  "required": [
+    "binding_id",
+    "work_order_id",
+    "candidate_domain",
+    "candidate_quality",
+    "universalization_status",
+    "training_row_created",
+    "external_ai_used",
+    "redaction_required",
+    "technical_execution_refs_excluded"
+  ],
+  "oneOf": [
+    {
+      "required": [
+        "source_row_id",
+        "source_version_id"
+      ]
+    },
+    {
+      "required": [
+        "external_strategy_ref"
+      ]
+    }
+  ],
+  "properties": {
+    "binding_id": {
+      "type": "string"
+    },
+    "work_order_id": {
+      "const": "Q2-01"
+    },
+    "source_row_id": {
+      "type": "string"
+    },
+    "source_version_id": {
+      "type": "string"
+    },
+    "external_strategy_ref": {
+      "type": "string"
+    },
+    "candidate_domain": {
+      "enum": [
+        "prompt-to-task",
+        "orchestration-reasoning",
+        "skill-selection"
+      ]
+    },
+    "candidate_quality": {
+      "enum": [
+        "gold",
+        "silver",
+        "excluded"
+      ]
+    },
+    "universalization_status": {
+      "enum": [
+        "passed_common_candidate",
+        "candidate_needs_pair_materialization",
+        "excluded_no_content_quality_proof",
+        "excluded_missing_strategy_doc",
+        "excluded_redaction_or_adaptive_only"
+      ]
+    },
+    "exclusion_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "teaches_boundary": {
+      "type": "string"
+    },
+    "chosen_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rejected_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "error_code": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "training_row_created": {
+      "const": false
+    },
+    "external_ai_used": {
+      "const": false
+    },
+    "redaction_required": {
+      "type": "boolean"
+    },
+    "technical_execution_refs_excluded": {
+      "const": true
+    },
+    "approved_source_boundary_proof": {
+      "type": "boolean"
+    },
+    "source_content_boundary_proof_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_content_hash_copied": {
+      "type": "boolean"
+    },
+    "raw_private_text_copied": {
+      "const": false
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,168 @@
+{
+  "schema": "xiigen.learn_04c_quarantine_and_route_ledger.v1",
+  "work_order_id": "LEARN-04C-SOURCE-LICENSE-DPO-CANDIDATE-PREP-01",
+  "sub_agent_id": "current-codex-bounded-subagent",
+  "run_id": "learn-04c-source-license-dpo-candidate-prep-20260619-020115",
+  "generated_at_local": "2026-06-19T02:01:15+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "artifact_type": "route_and_quarantine_ledger_no_training_rows",
+  "route_rules": [
+    {
+      "route_id": "USER_LOCAL_PRIVATE_ROUTE",
+      "allowed_when": [
+        "material is a Luba/user-approved correction or local/project-owned evidence",
+        "material is private/user/project/host-specific and must not enter common training",
+        "future transformed row has source/license/privacy/redaction/provenance fields and DPO authoring approval"
+      ],
+      "required_storage_boundary": ".xiigen or another approved user root",
+      "common_training_allowed": false,
+      "training_allowed_now": false
+    },
+    {
+      "route_id": "COMMON_PERMISSIVE_ROUTE",
+      "allowed_when": [
+        "material teaches universal orchestration or skill semantics",
+        "license is MIT, Apache-2.0, or approved equivalent permissive/open source",
+        "source hash, license ref/hash, provenance, redaction and material-quality PASS are recorded",
+        "no vendor/model-specific, host-specific, stack-specific, path/title/branch/locator/private prompt/raw external output text is included"
+      ],
+      "required_review": "execution-level source/license/redaction/material-quality review",
+      "common_training_allowed_now": false,
+      "reason_closed_now": "No concrete reviewed common DPO candidate exists in this LEARN-04C prep packet."
+    },
+    {
+      "route_id": "RAW_EXTERNAL_OUTPUT_EVIDENCE_ONLY",
+      "allowed_when": [
+        "Claude/Cursor/Codex or other external/vendor output is observed",
+        "raw output is stored only as private diagnostic/evaluation evidence ref",
+        "external_ai_output_used_as_training_target=false and external_ai_output_used_verbatim=false"
+      ],
+      "required_ref_field": "external_ai_output_ref_private",
+      "common_training_allowed": false,
+      "training_allowed_now": false
+    },
+    {
+      "route_id": "QUARANTINE_ROUTE",
+      "allowed_when": [
+        "source/license/provenance/privacy/redaction is missing",
+        "raw external output is placed into trainable target fields",
+        "reviewer/evaluator prose is used as chosen/rejected text before DPO authoring",
+        "private/user/project/stack-specific material is proposed as common universal material",
+        "held-out/source-disjoint material overlaps training source"
+      ],
+      "repair_required_before_reconsideration": [
+        "remove raw external output from trainable fields",
+        "restore source/license refs and hashes",
+        "redact private material",
+        "classify universal vs stack-specific",
+        "re-author chosen/rejected pair from human/XIIGen or licensed source-grounded material",
+        "run a separate DPO candidate dry-run validation work order"
+      ]
+    }
+  ],
+  "route_ledger_entries": [
+    {
+      "entry_id": "ROUTE-CLAUDE-RAW-OUTPUT",
+      "material": "Claude raw output or vendor trace",
+      "default_route": "RAW_EXTERNAL_OUTPUT_EVIDENCE_ONLY",
+      "common_route_status": "FORBIDDEN_BY_DEFAULT",
+      "user_local_status": "PRIVATE_DIAGNOSTIC_REF_ONLY_UNTIL_TRANSFORMED_DPO_APPROVAL",
+      "quarantine_if": "raw output appears in chosen/rejected/source/synthetic/promotion/common material"
+    },
+    {
+      "entry_id": "ROUTE-CURSOR-RAW-OUTPUT",
+      "material": "Cursor raw output or extension host/project mechanics",
+      "default_route": "RAW_EXTERNAL_OUTPUT_EVIDENCE_ONLY_OR_STACK_SPECIFIC_EVIDENCE_ONLY",
+      "common_route_status": "FORBIDDEN_BY_DEFAULT",
+      "user_local_status": "ADAPTIVE_ONLY_AFTER_APPROVAL_IF_LOCAL_USE_IS_APPROVED",
+      "quarantine_if": "host mechanics, exact path, command, local workflow, or raw output is proposed as common"
+    },
+    {
+      "entry_id": "ROUTE-CODEX-RAW-OUTPUT",
+      "material": "Codex raw output, plugin cache path, package/app mechanics or local skill surface observation",
+      "default_route": "RAW_EXTERNAL_OUTPUT_EVIDENCE_ONLY_OR_STACK_SPECIFIC_EVIDENCE_ONLY",
+      "common_route_status": "FORBIDDEN_BY_DEFAULT",
+      "user_local_status": "ADAPTIVE_ONLY_AFTER_DPO_AUTHORING_APPROVAL",
+      "quarantine_if": "plugin/cache/path/candidate-order/private preference is proposed as common"
+    },
+    {
+      "entry_id": "ROUTE-UNIVERSAL-PERMISSIVE",
+      "material": "universal orchestration/skill semantic rule from MIT, Apache-2.0 or approved equivalent permissive/open source",
+      "default_route": "COMMON_PERMISSIVE_ROUTE_AFTER_REVIEW",
+      "common_route_status": "CONDITIONAL_NOT_READY_IN_THIS_PACKET",
+      "user_local_status": "not required unless tied to private correction",
+      "quarantine_if": "license/hash/provenance/redaction/material-quality PASS is missing"
+    },
+    {
+      "entry_id": "ROUTE-PRIVATE-USER-CORRECTION",
+      "material": "Luba/user correction, local preference, private prompt or project-owned failure evidence",
+      "default_route": "USER_LOCAL_PRIVATE_ROUTE",
+      "common_route_status": "FORBIDDEN_UNLESS_SEPARATE_REDACTED_UNIVERSAL_ROW_PASSES_REVIEW",
+      "user_local_status": "POSSIBLE_AFTER_DPO_AUTHORING_APPROVAL",
+      "quarantine_if": "raw private text is copied into common rows or share packets without redaction/review"
+    },
+    {
+      "entry_id": "ROUTE-REVIEWER-ADJUDICATION",
+      "material": "reviewer/evaluator/adjudicator output",
+      "default_route": "EVAL_OR_ADJUDICATION_EVIDENCE_ONLY",
+      "common_route_status": "NOT_TRAINABLE_BY_ITSELF",
+      "user_local_status": "may create labels and refs only",
+      "quarantine_if": "reviewer prose becomes chosen/rejected target before DPO authoring"
+    },
+    {
+      "entry_id": "ROUTE-UNKNOWN-LICENSE",
+      "material": "unknown source or missing license material",
+      "default_route": "COMMON_REJECTED_LICENSE_UNKNOWN",
+      "common_route_status": "FORBIDDEN",
+      "user_local_status": "EVIDENCE_ONLY_UNTIL_SOURCE_LICENSE_DECISION",
+      "quarantine_if": "any trainable row is proposed before source/license repair"
+    }
+  ],
+  "next_safe_work_order": {
+    "id": "LEARN-05-DPO-CANDIDATE-DRY-RUN-VALIDATION-01",
+    "requested_artifact_type": "dry-run validation of LEARN-04C candidate schema and route matrix only",
+    "allowed_write_scope_recommendation": "new timestamped folder under artifacts/extension-runtime-token-quality-learnability/learn-05-dpo-candidate-dry-run-validation/ plus execution state only",
+    "allowed_execution": [
+      "parse LEARN-04C JSON artifacts and state",
+      "check 9/9 host-machine rows",
+      "check required candidate field names exist in schema",
+      "check raw external output evidence-only defaults",
+      "check common route remains conditional and not approved",
+      "check user-local route remains candidate-only and not training",
+      "check quarantine route covers missing source/license/private/stack/raw-output cases",
+      "emit validation report and state update"
+    ],
+    "forbidden": [
+      "no actual DPO row creation as training data",
+      "no training or continue-training",
+      "no checkpoint/export/import/restore/fresh-load",
+      "no runtime/eval/external AI/model calls",
+      "no user/model root probe or mutation",
+      "no learnability/readiness claim",
+      "no git add/commit/push by sub-agent"
+    ],
+    "parent_will_perform_commit_push_after_review": true
+  },
+  "claim_locks": {
+    "dpo_rows_created_as_training_data": false,
+    "actual_training_performed": false,
+    "continue_training_performed": false,
+    "checkpoint_mutation_performed": false,
+    "backup_export_import_share_restore_execution_performed": false,
+    "load_without_retrain_performed": false,
+    "fresh_load_performed": false,
+    "held_out_eval_performed": false,
+    "ablation_performed": false,
+    "rollback_performed": false,
+    "runtime_host_execution_performed": false,
+    "external_ai_model_calls_performed": false,
+    "actual_eval_or_scoring_performed": false,
+    "learnability_claimed": false,
+    "training_ready_claimed": false,
+    "common_readiness_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  }
+}

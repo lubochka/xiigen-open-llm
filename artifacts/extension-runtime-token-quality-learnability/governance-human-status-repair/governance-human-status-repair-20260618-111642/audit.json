@@ -1,0 +1,88 @@
+{
+  "schema": "xiigen.extension_runtime_token_quality_learnability.governance_human_status_repair.audit.v1",
+  "run_id": "governance-human-status-repair-20260618-111642",
+  "generated_at_local": "2026-06-18T11:16:42+03:00",
+  "subagent_id": "bounded GOVERNANCE_REPAIR_INTERNAL sub-agent",
+  "result_type": "policy/governance artifact; product evidence remains closed",
+  "changed_files": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/HOW-TO-USE-SKILLS.md",
+    "docs/skills/agent-output-format-SKILL.md",
+    "docs/skills/code-examination-SKILL.md",
+    "docs/skills/generated-code-review-SKILL.md",
+    "docs/skills/implementation-integrity-SKILL.md",
+    "docs/skills/output-readability-gate-SKILL.md",
+    "docs/skills/phase-completion-packager-SKILL.md",
+    "docs/skills/plan-review-SKILL.md",
+    "docs/skills/session-execution-log-SKILL.md",
+    "docs/skills/skill-injection-SKILL.md",
+    "docs/skills/test-integrity-SKILL.md",
+    "docs/skills/trainable-architecture-decision-SKILL.md",
+    "docs/skills/verification-before-completion-SKILL.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "artifacts/extension-runtime-token-quality-learnability/governance-human-status-repair/governance-human-status-repair-20260618-111642/audit.json",
+    "artifacts/extension-runtime-token-quality-learnability/governance-human-status-repair/governance-human-status-repair-20260618-111642/audit.md"
+  ],
+  "rule_summary_ru": [
+    "Каждый статус, review packet, execution packet и near-final/final report для многофазного выполнения теперь обязан показывать человеческие счетчики: всего задач, сделано с именами, текущая задача и владелец, осталось с именами, тип результата, закрытые claims с причинами и следующее bounded действие.",
+    "Chat log/status теперь считается проваленным, если Luba не может понять из видимого сообщения, что сделано, что выполняется, что осталось, является ли текущий результат кодом, артефактом, review, policy или evidence-only, и какие claims остаются закрытыми.",
+    "Code slice review теперь обязан явно проверять стандарты проекта, допустимые тесты, границу `llm_mvp_core`, тонкость host adapters, скрытые deterministic shortcuts, корректную маркировку deterministic helper как eval-only/helper/internal baseline и влияние на docs/QA/dashboard.",
+    "Final/full-readiness completion требует минимум 10 PASS execution reviews по полному исходному target: три Claude/Cursor/Codex extensions, orchestration/skills, local model export/import/backup/continue-training, DPO/source quality, runtime/e2e/QA docs и отсутствие hidden deterministic mechanisms.",
+    "Sub-agent work orders теперь должны требовать human-readable status и exact review scope; machine-only QSG/STATE/JSON labels могут быть только вторичным evidence."
+  ],
+  "before_after_loopholes_closed": [
+    {
+      "before": "Статус мог состоять из QSG/STATE/JSON labels и быть понятным только машине.",
+      "after": "Primary status должен быть human-readable board с counts, names, result type, closed claims и next bounded action."
+    },
+    {
+      "before": "Лог мог быть parseable, но Luba не могла понять stage/done/current/remaining/result kind.",
+      "after": "Human gate fails such logs and forces governance/skill repair before product continuation."
+    },
+    {
+      "before": "Code review мог принять tests/QSG без проверки core boundary, thin adapters, deterministic labels и docs/QA/dashboard impact.",
+      "after": "Execution/code review completeness gate blocks acceptance until all rows are explicitly checked."
+    },
+    {
+      "before": "Final readiness could be blurred by summary reviews, non-PASS rows, or narrower helper/static evidence.",
+      "after": "10 PASS independent execution reviews must cover the full target, and findings repair governance before the review can count."
+    },
+    {
+      "before": "Sub-agent work orders could omit human-readable status fields and exact review scope.",
+      "after": "Skill injection and index rules require progress board fields and exact files/sections/hosts/claims scope."
+    }
+  ],
+  "checks_run": [
+    "Markdown/readability sanity with targeted rg for new gate phrases.",
+    "git diff --check.",
+    "JSON parse for docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json.",
+    "JSON parse for this audit artifact.",
+    "No source-code changes check.",
+    "Forbidden truthy product claims check."
+  ],
+  "checks_result": {
+    "targeted_readability_rg": "PASS",
+    "git_diff_check": "PASS",
+    "state_json_parse": "PASS",
+    "audit_json_parse": "PASS",
+    "no_source_code_changes": "PASS",
+    "forbidden_truthy_product_claims": "PASS"
+  },
+  "product_claims": {
+    "source_code_edited": false,
+    "eval_runner_executed": false,
+    "host_runtime_started": false,
+    "model_eval_executed": false,
+    "training_started": false,
+    "model_or_checkpoint_or_locator_mutated": false,
+    "token_savings_claimed": false,
+    "quality_improvement_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "final_readiness_claimed": false
+  },
+  "next_action": "Parent loads changed AGENTS/CLAUDE/skills/guides/state/audit into active session, reviews this packet, commits/pushes if accepted, then continues through bounded sub-agents at QUALITY-02-EVAL-ONLY-RUNNER-IMPLEMENTATION-PACKET-NO-EVAL-EXECUTION.",
+  "checks_status": "PASS"
+}

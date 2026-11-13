@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "work_order": "CM-25A1-DPO-ROW-LEVEL-BINDING-APPROVAL-SOURCE-REPAIR",
+  "artifact_kind": "dpo_row_level_binding_approval_source_repair",
+  "generated_at_utc": "2026-06-07T00:00:00Z",
+  "branch": "codex/chat-gpt-5.5",
+  "verdict": "PASS_WITH_PROMPT_TO_TASK_PLACEHOLDERS_PENDING",
+  "passed": true,
+  "claim_scope": "Static/local binding model repair only. OrchestrationReasoning candidate-level rows were expanded only where each candidate already had concrete approved_pair_ref, error_code, chosen_ref, and rejected_ref from local artifacts. PromptToTask placeholders were not promoted.",
+  "completion_claim_allowed": false,
+  "training_started": false,
+  "runtime_or_host_invoked": false,
+  "external_ai_used": false,
+  "binding_model_changed": true,
+  "binding_model": "candidate_level_all_concrete_candidates",
+  "safe_automatic_binding_exists": false,
+  "safe_automatic_binding_exists_reason": "Safe candidate-level expansion exists for OrchestrationReasoning only. PromptToTask still has placeholder chosen_ref/rejected_ref candidates, so the whole CM-25A1 scope is not fully automatic-binding complete.",
+  "automatic_binding_performed": true,
+  "approval_invented": false,
+  "templates_modified": true,
+  "rows_total": 410,
+  "approved_bindings_written": 408,
+  "pending_bindings": 2,
+  "placeholder_pending": 2,
+  "invalid_rows": 0,
+  "counts": {
+    "rows_total": 410,
+    "approved_bindings_written": 408,
+    "pending_bindings": 2,
+    "placeholder_pending": 2,
+    "invalid_rows": 0
+  },
+  "by_machine": {
+    "OrchestrationReasoning": {
+      "template_path": "artifacts/orchestration-reasoning-dpo-binding-source-template.jsonl",
+      "original_source_rows": 136,
+      "approved_bindings_written": 408,
+      "pending_bindings": 0,
+      "placeholder_pending": 0,
+      "invalid_rows": 0,
+      "candidate_level_rows_per_source_row": 3,
+      "safe_candidate_level_binding_exists": true,
+      "automatic_binding_performed": true,
+      "binding_basis": "Every approved_pair_ref_candidate in the original template already had concrete approved_pair_ref, error_codes, chosen_ref, and rejected_ref from the local OrchestrationReasoning strategy artifact.",
+      "no_arbitrary_selection": true,
+      "stable_candidate_ref_field": "binding_candidate_ref"
+    },
+    "PromptToTask": {
+      "template_path": "artifacts/prompt-to-task-dpo-binding-source-template.jsonl",
+      "rows_total": 2,
+      "approved_bindings_written": 0,
+      "pending_bindings": 2,
+      "placeholder_pending": 2,
+      "invalid_rows": 0,
+      "safe_candidate_level_binding_exists": false,
+      "automatic_binding_performed": false,
+      "pending_reason": "Candidate rows still contain <operator-approved-chosen-ref-required> and <operator-approved-rejected-ref-required> placeholders, so promotion would invent approval."
+    }
+  },
+  "required_field_validation": {
+    "required_fields": [
+      "source_row_id",
+      "approved_pair_ref",
+      "error_code",
+      "chosen_ref",
+      "rejected_ref"
+    ],
+    "approved_rows_validated": 408,
+    "approved_rows_missing_required_fields": 0,
+    "approved_rows_with_placeholder_refs": 0,
+    "pending_rows_not_treated_as_approved": 2,
+    "invalid_jsonl_rows": 0
+  },
+  "universalization_preserved": {
+    "technical_execution_dpo_claimed": false,
+    "universal_semantic_binding_only": true,
+    "project_specific_code_execution_bound": false,
+    "evidence_refs": [
+      "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md DPO-UNIVERSALIZATION-GATE",
+      "artifacts/dpo-universalization/OR-01.json",
+      "artifacts/dpo-universalization/PTT-01.json"
+    ]
+  },
+  "files_changed": [
+    "artifacts/orchestration-reasoning-dpo-binding-source-template.jsonl",
+    "artifacts/dpo-quality/CM-25A1-dpo-row-level-binding-approval-source-repair.json",
+    "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json"
+  ],
+  "pending_unresolved": [
+    {
+      "id": "PTT_PLACEHOLDER_CHOSEN_REJECTED_REFS_PENDING",
+      "machine": "PromptToTask",
+      "pending_bindings": 2,
+      "reason": "PromptToTask binding candidates expose taxonomy refs but chosen_ref and rejected_ref remain operator-approved placeholders.",
+      "next_action": "CM-25A2-PROMPT-TO-TASK-DPO-PLACEHOLDER-SOURCE-REPAIR"
+    }
+  ],
+  "first_actionable_gap": {
+    "id": "CM25A1-01",
+    "gap_id": "PROMPT_TO_TASK_DPO_PLACEHOLDER_REFS_PENDING",
+    "status": "open",
+    "description": "PromptToTask has 2 pending source rows whose candidates still need concrete chosen_ref and rejected_ref local source references.",
+    "next_bounded_action": "CM-25A2-PROMPT-TO-TASK-DPO-PLACEHOLDER-SOURCE-REPAIR"
+  },
+  "next_bounded_action": "CM-25A2-PROMPT-TO-TASK-DPO-PLACEHOLDER-SOURCE-REPAIR",
+  "required_next_action": "CM-25A2-PROMPT-TO-TASK-DPO-PLACEHOLDER-SOURCE-REPAIR"
+}

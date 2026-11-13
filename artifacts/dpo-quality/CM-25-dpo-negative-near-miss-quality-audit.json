@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "work_order": "CM-25-DPO-NEGATIVE-NEAR-MISS-QUALITY-AUDIT",
+  "artifact_kind": "dpo_negative_near_miss_quality_audit",
+  "generated_at_utc": "2026-06-07T00:00:00Z",
+  "branch": "codex/chat-gpt-5.5",
+  "verdict": "PASS_WITH_OPEN_DPO_QUALITY_GAPS",
+  "passed": true,
+  "claim_scope": "Static/local audit of DPO negative near-miss quality evidence only. No training, runtime, build, host execution, external AI, or final completion claim.",
+  "completion_claim_allowed": false,
+  "training_started": false,
+  "external_ai_used": false,
+  "runtime_or_host_invoked": false,
+  "counts": {
+    "total": 9,
+    "pass": 2,
+    "partial": 5,
+    "open": 2,
+    "fail": 0
+  },
+  "evidence_sources": [
+    {
+      "id": "PLAN-CM25",
+      "path": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md",
+      "finding": "CM-25 requires DPO negatives to be real near-misses: plausible, taxonomy-labelled, close enough to chosen outputs, and not generic refusal or absurd bad output."
+    },
+    {
+      "id": "DPO-KNOWLEDGE-MAP",
+      "path": "docs/plans/DPO-KNOWLEDGE-MAP-v1.md",
+      "finding": "PromptToTask and OrchestrationReasoning are mapped to their respective negative-strategy docs and DPO authoring skills."
+    },
+    {
+      "id": "PTT-STRATEGY",
+      "path": "C:/Users/lubao/Documents/xiigen/extensions  - orchestration based on our data/PROMPT-TO-TASK-DPO-NEGATIVE-STRATEGY-v1.md",
+      "sha256": "F90505D71200FF10AB74ECBEA6ED00DF7B1F905770E8ED7626F1383107E098B7",
+      "finding": "PromptToTask strategy seed rows include PromptError codes, chosen/rejected refs, and plausible wrong-output descriptions."
+    },
+    {
+      "id": "OR-STRATEGY",
+      "path": "C:/Users/lubao/Documents/xiigen/extensions  - orchestration based on our data/ORCHESTRATION-REASONING-DPO-NEGATIVE-STRATEGY-v1.md",
+      "sha256": "A02E6C4FCD8950E428D96B1B7470847578D47D579995D575FD258B9BE8514A5C",
+      "finding": "OrchestrationReasoning strategy seed rows include ORCH error codes, chosen/rejected refs, and plausible wrong-output descriptions."
+    },
+    {
+      "id": "TRAIN-READINESS",
+      "path": "artifacts/dpo-train-readiness-report.json",
+      "finding": "Overall DPO train readiness is false: both PromptToTask and OrchestrationReasoning still miss approved row-level error_code, chosen_ref, and rejected_ref values."
+    },
+    {
+      "id": "PTT-BINDING",
+      "path": "artifacts/prompt-to-task-dpo-pair-materialization-report.json",
+      "finding": "PromptToTask materialization is not ready because approved_prompt_pair_binding_ref, approved_error_code, approved_chosen_ref, and approved_rejected_ref are missing for metadata rows."
+    },
+    {
+      "id": "OR-BINDING",
+      "path": "artifacts/orchestration-reasoning-dpo-pair-materialization-report.json",
+      "finding": "OrchestrationReasoning materialization is not ready because approved_pair_binding_ref, approved_error_code, approved_chosen_ref, and approved_rejected_ref are missing for 136 rows."
+    },
+    {
+      "id": "SS-UNIVERSALIZATION",
+      "path": "artifacts/dpo-universalization/SS-00U.json",
+      "finding": "SkillSelection has universalization and trainable-unit evidence, but this audit did not find a dedicated SkillSelection negative near-miss strategy equivalent to the PromptToTask and OrchestrationReasoning strategy docs."
+    },
+    {
+      "id": "ADAPTIVE-DPO",
+      "path": "artifacts/adaptive-learning/AD-03-correction-dpo-signal-writer.json",
+      "finding": "Adaptive SkillSelection correction DPO signals record chosen_ref and rejected_ref shapes for user-local learning, but this remains user/adaptive signal evidence rather than common train-ready DPO quality for all domains."
+    }
+  ],
+  "audit_rows": [
+    {
+      "id": "CM25-01",
+      "area": "PromptToTask negative strategy quality",
+      "status": "partial",
+      "evidence_refs": [
+        "PTT-STRATEGY",
+        "artifacts/prompt-to-task-dpo-strategy-seed.jsonl",
+        "artifacts/prompt-to-task-dpo-finalization-report.json"
+      ],
+      "finding": "PromptToTask has real strategy seed rows with PromptError taxonomy and plausible rejected outputs, but finalized metadata is train_ready=false because approved row-level bindings are missing.",
+      "not_claimed": "train-ready PromptToTask DPO",
+      "required_next_action": "CM-25A-DPO-ROW-LEVEL-APPROVED-PAIR-BINDING-REPAIR"
+    },
+    {
+      "id": "CM25-02",
+      "area": "OrchestrationReasoning negative strategy quality",
+      "status": "partial",
+      "evidence_refs": [
+        "OR-STRATEGY",
+        "artifacts/orchestration-reasoning-dpo-strategy-seed.jsonl",
+        "artifacts/orchestration-reasoning-dpo-finalization-report.json"
+      ],
+      "finding": "OrchestrationReasoning has real strategy seed rows with ORCH taxonomy and plausible rejected outputs, but finalized metadata is train_ready=false because approved row-level bindings are missing.",
+      "not_claimed": "train-ready OrchestrationReasoning DPO",
+      "required_next_action": "CM-25A-DPO-ROW-LEVEL-APPROVED-PAIR-BINDING-REPAIR"
+    },
+    {
+      "id": "CM25-03",
+      "area": "SkillSelection universal skill semantics negative strategy quality",
+      "status": "open",
+      "evidence_refs": [
+        "artifacts/dpo-knowledge-map/SS-00U.json",
+        "artifacts/dpo-universalization/SS-00U.json",
+        "artifacts/skill-selection-lifecycle/SS-13.json"
+      ],
+      "finding": "SkillSelection has checkpoint-backed semantic-unit and universalization evidence, but no dedicated SkillSelection negative near-miss DPO strategy/template equivalent to PromptToTask and OrchestrationReasoning was found in this audit.",
+      "not_claimed": "complete SkillSelection negative near-miss DPO quality",
+      "required_next_action": "CM-25B-SKILL-SELECTION-DPO-NEGATIVE-NEAR-MISS-STRATEGY-REPAIR"
+    },
+    {
+      "id": "CM25-04",
+      "area": "Near-miss plausibility and taxonomy labels",
+      "status": "partial",
+      "evidence_refs": [
+        "artifacts/prompt-to-task-dpo-strategy-seed.jsonl",
+        "artifacts/orchestration-reasoning-dpo-strategy-seed.jsonl",
+        "artifacts/dpo-train-readiness-report.json"
+      ],
+      "finding": "Seed rows show plausible near-miss wrong outputs and taxonomy codes, but the train-ready gate still rejects them until approved row-level source bindings exist.",
+      "not_claimed": "fully approved near-miss corpus",
+      "required_next_action": "CM-25A-DPO-ROW-LEVEL-APPROVED-PAIR-BINDING-REPAIR"
+    },
+    {
+      "id": "CM25-05",
+      "area": "Universalization rule",
+      "status": "pass",
+      "evidence_refs": [
+        "artifacts/dpo-universalization/PTT-01.json",
+        "artifacts/dpo-universalization/OR-01.json",
+        "artifacts/dpo-universalization/SS-00U.json"
+      ],
+      "finding": "Available universalization artifacts separate universal reasoning/semantic payload from technical execution and preserve narrow claim scope.",
+      "not_claimed": "technical execution DPO train-ready common model",
+      "required_next_action": null
+    },
+    {
+      "id": "CM25-06",
+      "area": "Per-model DPO distinctness",
+      "status": "partial",
+      "evidence_refs": [
+        "PTT-STRATEGY",
+        "OR-STRATEGY",
+        "artifacts/dpo-knowledge-map/SS-00U.json"
+      ],
+      "finding": "PromptToTask and OrchestrationReasoning use distinct strategy documents and error taxonomies. SkillSelection has distinct trainable semantic units, but lacks a dedicated negative near-miss strategy artifact in the current audit evidence.",
+      "not_claimed": "three-domain complete DPO distinctness",
+      "required_next_action": "CM-25B-SKILL-SELECTION-DPO-NEGATIVE-NEAR-MISS-STRATEGY-REPAIR"
+    },
+    {
+      "id": "CM25-07",
+      "area": "Adaptive/user-side DPO generation from AI result/correction",
+      "status": "partial",
+      "evidence_refs": [
+        "artifacts/adaptive-learning/AD-01-result-gap-signal-writer.json",
+        "artifacts/adaptive-learning/AD-03-correction-dpo-signal-writer.json",
+        "artifacts/adaptive-learning/PTT-AD-01-prompt-to-task-adaptive-signal-writer.json",
+        "artifacts/adaptive-learning/OR-AD-01-orchestration-reasoning-adaptive-signal-writer.json"
+      ],
+      "finding": "Adaptive signal writers and chosen/rejected refs exist, but the evidence remains user-local/adaptive and does not close common train-ready DPO quality for all three semantic domains.",
+      "not_claimed": "common model trained from adaptive user corrections",
+      "required_next_action": "CM-25C-ADAPTIVE-DPO-QUALITY-GATE-REVIEW"
+    },
+    {
+      "id": "CM25-08",
+      "area": "Binding templates filled enough for execution",
+      "status": "open",
+      "evidence_refs": [
+        "artifacts/prompt-to-task-dpo-binding-source-report.json",
+        "artifacts/orchestration-reasoning-dpo-binding-source-report.json",
+        "artifacts/orchestration-reasoning-dpo-pair-binding-report.json"
+      ],
+      "finding": "Binding templates exist and explicitly avoid invented labels, but they are operator_approval_required and not filled enough for train-ready execution.",
+      "not_claimed": "DPO training-ready binding set",
+      "required_next_action": "CM-25A-DPO-ROW-LEVEL-APPROVED-PAIR-BINDING-REPAIR"
+    },
+    {
+      "id": "CM25-09",
+      "area": "No generic refusal or absurd negative substitute",
+      "status": "pass",
+      "evidence_refs": [
+        "B19 anti-loophole finding",
+        "artifacts/prompt-to-task-dpo-strategy-seed.jsonl",
+        "artifacts/orchestration-reasoning-dpo-strategy-seed.jsonl"
+      ],
+      "finding": "Current seed evidence uses labelled near-miss error classes rather than generic refusal/empty/absurd negatives. The remaining issue is approval/binding completeness, not generic refusal substitution in the sampled seed rows.",
+      "not_claimed": "full corpus-wide negative quality for every future row",
+      "required_next_action": null
+    }
+  ],
+  "first_actionable_gap": {
+    "id": "CM25-08",
+    "gap_id": "DPO_ROW_LEVEL_APPROVED_PAIR_BINDINGS_MISSING",
+    "status": "open",
+    "description": "PromptToTask and OrchestrationReasoning DPO templates/finalized metadata are not train-ready because approved row-level error_code, chosen_ref, and rejected_ref bindings are missing.",
+    "evidence_refs": [
+      "artifacts/dpo-train-readiness-report.json",
+      "artifacts/prompt-to-task-dpo-pair-materialization-report.json",
+      "artifacts/orchestration-reasoning-dpo-pair-materialization-report.json"
+    ],
+    "next_bounded_action": "CM-25A-DPO-ROW-LEVEL-APPROVED-PAIR-BINDING-REPAIR"
+  },
+  "remaining_gaps": [
+    "DPO_ROW_LEVEL_APPROVED_PAIR_BINDINGS_MISSING",
+    "SKILL_SELECTION_DPO_NEGATIVE_NEAR_MISS_STRATEGY_MISSING",
+    "ADAPTIVE_DPO_QUALITY_GATE_NOT_REVIEWED_FOR_COMMON_TRAIN_READY_CLAIMS"
+  ],
+  "required_next_action": "CM-25A-DPO-ROW-LEVEL-APPROVED-PAIR-BINDING-REPAIR",
+  "next_bounded_action": "CM-25A-DPO-ROW-LEVEL-APPROVED-PAIR-BINDING-REPAIR"
+}

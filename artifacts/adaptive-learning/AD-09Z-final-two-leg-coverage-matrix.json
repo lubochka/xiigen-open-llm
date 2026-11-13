@@ -1,0 +1,591 @@
+{
+  "schema_version": 1,
+  "work_order": "AD-09Z",
+  "generated_at_utc": "2026-06-06T01:07:58.923Z",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "passed": true,
+  "claim_scope": "Reports-only final two-leg coverage gate for PromptToTask, OrchestrationReasoning, SkillSelection, and ResultGap; no implementation, training, host repo, external AI, API-01/B11, or full extension completion claim.",
+  "historical_failed_evidence_ref": {
+    "path": "artifacts/adaptive-learning/AD-09-two-leg-coverage-matrix.json",
+    "verdict": "FAIL",
+    "used_as_completion": false,
+    "role": "historical failed matrix that triggered AD-09A/PTT-AD/OR-AD repair rows"
+  },
+  "source_contract_ref": "artifacts/adaptive-learning/AD-00-pair-coverage-matrix.json",
+  "required_current_spheres": [
+    "PromptToTask",
+    "OrchestrationReasoning",
+    "SkillSelection",
+    "ResultGap"
+  ],
+  "future_sphere_rule": {
+    "id": "AD-09Z-FUTURE-SPHERE-RULE",
+    "passed": true,
+    "rule": "Every future trainable ILearningMachine sphere fails this gate unless it has common/global leg evidence, personal/adaptive leg evidence, backup/export, restore/import/cross-device probe, approved share/anonymised policy, no common overwrite evidence, no raw private text export evidence, no silent sync/external transfer evidence, no deterministic shortcut masquerade, and non-policy runtime/probe evidence.",
+    "policy_only_pass_allowed": false,
+    "enforcement": "Any missing, planned-only, or policy-only row makes the final pair coverage matrix FAIL until a bounded repair row produces real artifact/probe evidence."
+  },
+  "required_checks_per_sphere": [
+    "common/core leg",
+    "user/adaptive leg",
+    "backup/export",
+    "restore/import/cross-device probe",
+    "approved share/anonymised policy",
+    "no common overwrite",
+    "no raw private text export",
+    "no silent sync",
+    "no external transfer",
+    "no deterministic shortcut masquerade",
+    "no policy-only pass"
+  ],
+  "spheres": [
+    {
+      "sphere": "PromptToTask",
+      "verdict": "PASS",
+      "source_matrix": "artifacts/adaptive-learning/PTT-AD-Z-prompt-to-task-two-leg-matrix.json",
+      "common_checkpoint_sha256": "50bd20295e4729eab2366374890383a2959bf3fcb8b9114e46d74f8d6f85ad28",
+      "adaptive_checkpoint_sha256": "a4f787dc0ce24750bddef5a843fecfb4937215c242ffd762d44071faa82ff0e9",
+      "requirements": [
+        {
+          "requirement_id": "prompt_to_task_common_global_leg",
+          "requirement": "PromptToTask has a repo-owned common/global model leg with manifest and checkpoint refs.",
+          "evidence_refs": [
+            "models/prompt-to-task/prompt-to-task-v1/manifest.json",
+            "models/prompt-to-task/prompt-to-task-v1/prompt-to-task-v1-checkpoint.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "manifest_checkpoint_sha256": "50bd20295e4729eab2366374890383a2959bf3fcb8b9114e46d74f8d6f85ad28",
+            "actual_checkpoint_sha256": "50bd20295e4729eab2366374890383a2959bf3fcb8b9114e46d74f8d6f85ad28",
+            "learned_pattern_count": 2,
+            "semantic_quality_claimed": false
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "prompt_to_task_personal_adaptive_leg_signal_and_checkpoint",
+          "requirement": "PromptToTask has a user-local personal/adaptive DPO signal writer plus adaptive checkpoint/report evidence.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/PTT-AD-01-prompt-to-task-adaptive-signal-writer.json",
+            "artifacts/adaptive-learning/PTT-AD-02-prompt-to-task-adaptive-training.json",
+            "artifacts/adaptive-learning/PTT-AD-02-probe/.xiigen/prompt-to-task/adaptive-training-report.json",
+            "artifacts/adaptive-learning/PTT-AD-02-probe/.xiigen/prompt-to-task/adaptive-checkpoint.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "writer_path": ".xiigen/prompt-to-task/adaptive-dpo-signals.jsonl",
+            "checkpoint_sha256_reported": "a4f787dc0ce24750bddef5a843fecfb4937215c242ffd762d44071faa82ff0e9",
+            "checkpoint_sha256_actual": "a4f787dc0ce24750bddef5a843fecfb4937215c242ffd762d44071faa82ff0e9",
+            "metric_improved": true,
+            "load_probe_passed": true,
+            "common_checkpoint_unchanged": true
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "prompt_to_task_backup_export",
+          "requirement": "PromptToTask personal/adaptive leg has backup/export package with manifest, checkpoint hash, schema, provenance refs, and redaction report.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/PTT-AD-03-prompt-to-task-backup-package.json",
+            "artifacts/adaptive-learning/PTT-AD-03-backup-package/manifest.json",
+            "artifacts/adaptive-learning/PTT-AD-03-backup-package/redaction-report.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "package_path": "artifacts/adaptive-learning/PTT-AD-03-backup-package",
+            "schema_version": 1,
+            "checkpoint_sha256": "a4f787dc0ce24750bddef5a843fecfb4937215c242ffd762d44071faa82ff0e9",
+            "provenance_refs": "artifacts/adaptive-learning/PTT-AD-03-backup-package/provenance-refs.json",
+            "redaction_passed": true,
+            "common_checkpoint_unchanged": true
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "prompt_to_task_restore_import_cross_device",
+          "requirement": "PromptToTask backup package restores/imports into fresh profile, verifies checkpoint hash, and can continue or no-op without replay.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/PTT-AD-04-restore-share-report.json",
+            "artifacts/adaptive-learning/PTT-AD-04-restore-import-report.json",
+            "artifacts/adaptive-learning/PTT-AD-04-continue-probe.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "fresh_profile_path": "artifacts/adaptive-learning/PTT-AD-04-fresh-profile",
+            "restored_checkpoint_sha256": "a4f787dc0ce24750bddef5a843fecfb4937215c242ffd762d44071faa82ff0e9",
+            "hash_verified": true,
+            "trained_state_loaded": true,
+            "continue_passed": true,
+            "no_replay_proven": true,
+            "replay_silent": false
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "prompt_to_task_approved_share_anonymised_policy_with_probe",
+          "requirement": "PromptToTask share/copy path is user-approved anonymised package with no silent sync and redaction evidence.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/PTT-AD-04-anonymised-share-package/manifest.json",
+            "artifacts/adaptive-learning/PTT-AD-04-anonymised-share-package/redaction-report.json",
+            "artifacts/adaptive-learning/PTT-AD-04-anonymised-share-package/approval-record.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "share_mode": "anonymised_signal_package",
+            "user_approval_present": true,
+            "silent_sync": false,
+            "external_transfer_performed": false,
+            "redaction_passed": true,
+            "raw_private_text_included": false
+          },
+          "passed": true,
+          "policy_only": false
+        }
+      ],
+      "requirement_count": 5,
+      "passed_requirement_count": 5,
+      "failed_requirements": []
+    },
+    {
+      "sphere": "OrchestrationReasoning",
+      "verdict": "PASS",
+      "source_matrix": "artifacts/adaptive-learning/OR-AD-Z-orchestration-reasoning-two-leg-matrix.json",
+      "common_checkpoint_sha256": "f66f256156bbc4ba278851f75a2ecd644160adbf676db29118640519e3c9805b",
+      "adaptive_checkpoint_sha256": "b62aa7bfd644dc1e8137def1c5fde20ce58876ede1c1cea7faf64964df8d7650",
+      "requirements": [
+        {
+          "requirement_id": "OR-TWO-LEG-01",
+          "requirement": "Common/global OrchestrationReasoning leg exists with committed manifest/checkpoint evidence",
+          "evidence_refs": [
+            "models/orchestration-reasoning/orchestration-reasoning-v1/manifest.json",
+            "models/orchestration-reasoning/orchestration-reasoning-v1/checkpoint.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "manifest_checkpoint_hash": "f66f256156bbc4ba278851f75a2ecd644160adbf676db29118640519e3c9805b",
+            "computed_checkpoint_hash": "f66f256156bbc4ba278851f75a2ecd644160adbf676db29118640519e3c9805b",
+            "learned_pattern_count": 4
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "OR-TWO-LEG-02",
+          "requirement": "Personal/adaptive leg exists with user-local signal writer and adaptive checkpoint/load evidence",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/OR-AD-01-orchestration-reasoning-adaptive-signal-writer.json",
+            "artifacts/adaptive-learning/OR-AD-02-orchestration-reasoning-adaptive-training.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "writer_path": ".xiigen/orchestration-reasoning/adaptive-dpo-signals.jsonl",
+            "adaptive_checkpoint_hash": "b62aa7bfd644dc1e8137def1c5fde20ce58876ede1c1cea7faf64964df8d7650",
+            "metric": {
+              "before": 0,
+              "after": 1,
+              "improved": true
+            },
+            "load_probe_passed": true
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "OR-TWO-LEG-03",
+          "requirement": "Backup/export package exists with manifest, checkpoint hash, provenance refs, redaction report, and no raw private rows",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/OR-AD-03-orchestration-reasoning-backup-package.json",
+            "artifacts/adaptive-learning/OR-AD-03-backup-package/manifest.json",
+            "artifacts/adaptive-learning/OR-AD-03-backup-package/redaction-report.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "backup_package": "artifacts/adaptive-learning/OR-AD-03-backup-package",
+            "backup_hash": "b62aa7bfd644dc1e8137def1c5fde20ce58876ede1c1cea7faf64964df8d7650",
+            "redaction_passed": true,
+            "signal_rows_exported": false
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "OR-TWO-LEG-04",
+          "requirement": "Restore/import cross-device fresh-profile probe loads adaptive checkpoint and continue probe proves no replay",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/OR-AD-04-orchestration-reasoning-restore-share.json",
+            "artifacts/adaptive-learning/OR-AD-04-restore-import-report.json",
+            "artifacts/adaptive-learning/OR-AD-04-continue-probe.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "fresh_profile_path": "artifacts/adaptive-learning/OR-AD-04-fresh-profile",
+            "restored_hash": "b62aa7bfd644dc1e8137def1c5fde20ce58876ede1c1cea7faf64964df8d7650",
+            "continue_no_op": true,
+            "no_replay_proven": true,
+            "trained_signal_ids_persisted": true
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "OR-TWO-LEG-05",
+          "requirement": "Approved share/anonymised policy has runtime/probe evidence with no raw private prompt/analysis/corpus rows, no silent sync, no external transfer",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/OR-AD-04-anonymised-share-package/manifest.json",
+            "artifacts/adaptive-learning/OR-AD-04-anonymised-share-package/redaction-report.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "share_mode": "anonymised_signal_package",
+            "approval": true,
+            "silent_sync": false,
+            "external_transfer": false,
+            "redaction_passed": true
+          },
+          "passed": true,
+          "policy_only": false
+        }
+      ],
+      "requirement_count": 5,
+      "passed_requirement_count": 5,
+      "failed_requirements": []
+    },
+    {
+      "sphere": "SkillSelection",
+      "verdict": "PASS",
+      "source_matrix": "SS-13 + AD-03/AD-04 + AD-06/AD-07/AD-08 evidence",
+      "common_checkpoint_sha256": "884cfd350fa582211d6939ac8e2252b7044524701117a458cc6473d5c8f7b228",
+      "adaptive_checkpoint_sha256": "ee791d97bd70487981348cd0b14550e0fd862ab79b926bdc281ec06e28e8b76f",
+      "requirements": [
+        {
+          "requirement_id": "SS-TWO-LEG-01",
+          "requirement": "Common/core SkillSelection leg has model manifest/checkpoint/import/fresh-load/continue evidence with all 11 semantic unit ids.",
+          "evidence_refs": [
+            "artifacts/skill-selection-lifecycle/SS-13.json",
+            "models/skill-selection/skill-selection-v1/manifest.json",
+            "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json",
+            "artifacts/skill-selection-lifecycle/SS-13-load-probe.json",
+            "artifacts/skill-selection-lifecycle/SS-13-continue-probe.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "checkpoint_sha256": "884cfd350fa582211d6939ac8e2252b7044524701117a458cc6473d5c8f7b228",
+            "all_11_unit_ids_listed": true,
+            "fresh_load_passed": true,
+            "continue_passed": true
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "SS-TWO-LEG-02",
+          "requirement": "User/adaptive SkillSelection correction leg has user-local signal writer and adaptive checkpoint continuation evidence.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/AD-03-correction-dpo-signal-writer.json",
+            "artifacts/adaptive-learning/AD-04-correction-adaptive-continuation.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "writer_target": "project-local:.xiigen/smart-skills/corrections/adaptive-dpo-signals.jsonl",
+            "adaptive_checkpoint_hash": "ee791d97bd70487981348cd0b14550e0fd862ab79b926bdc281ec06e28e8b76f",
+            "metric_improved": true,
+            "common_checkpoint_unchanged": true
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "SS-TWO-LEG-03",
+          "requirement": "Backup/export package exists with manifest, checkpoint hash, schema, provenance refs, redaction report, and no raw private rows.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/AD-06-user-adaptive-backup-package.json",
+            "artifacts/adaptive-learning/AD-06-backup-package/manifest.json",
+            "artifacts/adaptive-learning/AD-06-backup-package/redaction-report.json",
+            "artifacts/adaptive-learning/AD-06-backup-package/provenance-refs.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "package_path": "artifacts/adaptive-learning/AD-06-backup-package",
+            "checkpoint_sha256": "ee791d97bd70487981348cd0b14550e0fd862ab79b926bdc281ec06e28e8b76f",
+            "schema_version": 1,
+            "redaction_report_present": true,
+            "raw_private_rows_exported": false
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "SS-TWO-LEG-04",
+          "requirement": "Restore/import cross-device probe loads backup into fresh profile, verifies hash, and continues with no replay.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/AD-07-restore-import-report.json",
+            "artifacts/adaptive-learning/AD-07-fresh-profile/.xiigen/smart-skills/corrections/continue-probe-report.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "fresh_profile_path": "artifacts/adaptive-learning/AD-07-fresh-profile",
+            "restored_hash_matches_package": true,
+            "continue_probe_passed": true,
+            "common_checkpoint_unchanged": true
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "SS-TWO-LEG-05",
+          "requirement": "Approved share/anonymised policy has evidence for user approval, no silent sync, no external transfer, redaction, and no raw private text.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/AD-08-share-anonymised-sync-report.json",
+            "artifacts/adaptive-learning/AD-08-anonymised-share-package/manifest.json",
+            "artifacts/adaptive-learning/AD-08-anonymised-share-package/approval-record.json",
+            "artifacts/adaptive-learning/AD-08-anonymised-share-package/redaction-report.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "share_mode": "anonymised_signal_package",
+            "user_approval_present": true,
+            "silent_sync": false,
+            "external_transfer_performed": false,
+            "redaction_passed": true
+          },
+          "passed": true,
+          "policy_only": false
+        }
+      ],
+      "requirement_count": 5,
+      "passed_requirement_count": 5,
+      "failed_requirements": []
+    },
+    {
+      "sphere": "ResultGap",
+      "verdict": "PASS",
+      "source_matrix": "artifacts/adaptive-learning/AD-09A-result-gap-portability-report.json",
+      "common_checkpoint_sha256": "884cfd350fa582211d6939ac8e2252b7044524701117a458cc6473d5c8f7b228",
+      "adaptive_checkpoint_sha256": "8ddadb7560fd33117ca4f1d1a96b1e4fde6cad58d42c7a557527d25c77ee6fd4",
+      "requirements": [
+        {
+          "requirement_id": "RG-TWO-LEG-01",
+          "requirement": "Common/core ResultGap leg exists through SS-09 result_gap semantic unit in SkillSelection common checkpoint and common checkpoint remains unchanged.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/AD-09A-result-gap-portability-report.json",
+            "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "common_checkpoint_sha256": "884cfd350fa582211d6939ac8e2252b7044524701117a458cc6473d5c8f7b228",
+            "unchanged": true
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "RG-TWO-LEG-02",
+          "requirement": "User/adaptive ResultGap missing-pattern leg has user-local signal writer and adaptive checkpoint/report evidence.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/AD-01-result-gap-signal-writer.json",
+            "artifacts/adaptive-learning/AD-02-result-gap-adaptive-training.json",
+            "artifacts/adaptive-learning/AD-02-probe/.xiigen/smart-skills/result-gap/adaptive-checkpoint.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "writer_target": "project-local:.xiigen/smart-skills/result-gap/adaptive-dpo-signals.jsonl",
+            "adaptive_checkpoint_sha256": "8ddadb7560fd33117ca4f1d1a96b1e4fde6cad58d42c7a557527d25c77ee6fd4"
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "RG-TWO-LEG-03",
+          "requirement": "Backup/export package exists for ResultGap missing-pattern adaptive checkpoint with manifest/provenance/redaction.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/AD-09A-result-gap-backup-package/manifest.json",
+            "artifacts/adaptive-learning/AD-09A-result-gap-backup-package/checkpoint/adaptive-checkpoint.json",
+            "artifacts/adaptive-learning/AD-09A-result-gap-backup-package/provenance-refs.json",
+            "artifacts/adaptive-learning/AD-09A-result-gap-backup-package/redaction-report.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "package_path": "artifacts/adaptive-learning/AD-09A-result-gap-backup-package",
+            "checkpoint_sha256": "8ddadb7560fd33117ca4f1d1a96b1e4fde6cad58d42c7a557527d25c77ee6fd4",
+            "schema_version": 1,
+            "redaction_passed": true
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "RG-TWO-LEG-04",
+          "requirement": "Restore/import fresh-profile probe loads ResultGap package, verifies hash, and no-op continue proves no replay with trained signal ids persisted.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/AD-09A-result-gap-restore-import-report.json",
+            "artifacts/adaptive-learning/AD-09A-result-gap-fresh-profile/.xiigen/smart-skills/result-gap/continue-probe-report.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "fresh_profile_path": "artifacts/adaptive-learning/AD-09A-result-gap-fresh-profile",
+            "restored_hash": "8ddadb7560fd33117ca4f1d1a96b1e4fde6cad58d42c7a557527d25c77ee6fd4",
+            "hash_verified": true,
+            "no_replay_proven": true,
+            "trained_signal_ids_persisted": [
+              "result-gap-adaptive-UPS-AD02-001-plan-review"
+            ]
+          },
+          "passed": true,
+          "policy_only": false
+        },
+        {
+          "requirement_id": "RG-TWO-LEG-05",
+          "requirement": "Approved anonymised share evidence exists with redaction, no silent sync, and no external transfer.",
+          "evidence_refs": [
+            "artifacts/adaptive-learning/AD-09A-result-gap-anonymised-share-package/manifest.json",
+            "artifacts/adaptive-learning/AD-09A-result-gap-anonymised-share-package/approval-record.json",
+            "artifacts/adaptive-learning/AD-09A-result-gap-anonymised-share-package/redaction-report.json"
+          ],
+          "evidence_present": true,
+          "actual": {
+            "share_mode": "anonymised_signal_package",
+            "user_approval_present": true,
+            "silent_sync": false,
+            "external_transfer_performed": false,
+            "redaction_passed": true
+          },
+          "passed": true,
+          "policy_only": false
+        }
+      ],
+      "requirement_count": 5,
+      "passed_requirement_count": 5,
+      "failed_requirements": []
+    }
+  ],
+  "active_16_goal_review_envelope": [
+    {
+      "id": "G01",
+      "item": "Prompt-to-task coverage",
+      "status": "PASS_FOR_GATE",
+      "evidence": "PromptToTask two-leg portability evidence maps to PTT-AD-Z artifacts; no new prompt-to-task implementation started."
+    },
+    {
+      "id": "G02",
+      "item": "Orchestration reasoning coverage",
+      "status": "PASS_FOR_GATE",
+      "evidence": "OrchestrationReasoning two-leg portability evidence maps to OR-AD-Z artifacts; no new reasoning implementation started."
+    },
+    {
+      "id": "G03",
+      "item": "Skill selection coverage",
+      "status": "PASS_FOR_GATE",
+      "evidence": "SkillSelection common SS-13 and adaptive AD-03..AD-08 evidence verified."
+    },
+    {
+      "id": "G04",
+      "item": "No deterministic shortcut masquerade",
+      "status": "PASS",
+      "evidence": "Reports-only gate does not claim learned decision quality; matrices require artifact/probe evidence, not keyword/dictionary/BM25/regex proof."
+    },
+    {
+      "id": "G05",
+      "item": "Common/adaptive split",
+      "status": "PASS",
+      "evidence": "All four spheres list common/core and user/adaptive legs with common checkpoint unchanged evidence."
+    },
+    {
+      "id": "G06",
+      "item": "Host boundary",
+      "status": "NOT_STARTED_IN_THIS_GATE",
+      "evidence": "Host repos and extension runtime are later rows; no host work touched."
+    },
+    {
+      "id": "G07",
+      "item": "Model/training assets remain scoped",
+      "status": "PASS",
+      "evidence": "Common assets remain in llm_mvp_core; user adaptive assets are .xiigen/probe/package artifacts."
+    },
+    {
+      "id": "G08",
+      "item": "External tools/AI ban",
+      "status": "PASS",
+      "evidence": "No external AI/browser/image tools used; only local reads, JSON/static checks, git."
+    },
+    {
+      "id": "G09",
+      "item": "Backup/export portability",
+      "status": "PASS",
+      "evidence": "Each current sphere has backup/export artifact evidence or matrix-backed package evidence."
+    },
+    {
+      "id": "G10",
+      "item": "Restore/import/cross-device",
+      "status": "PASS",
+      "evidence": "Each current sphere maps to fresh-profile restore/import and continue/no-replay evidence."
+    },
+    {
+      "id": "G11",
+      "item": "Approved share/anonymised policy",
+      "status": "PASS",
+      "evidence": "Each current sphere maps to user-approved anonymised package/redaction evidence."
+    },
+    {
+      "id": "G12",
+      "item": "No common checkpoint overwrite",
+      "status": "PASS",
+      "evidence": "Sphere evidence records common checkpoint unchanged for adaptive/package operations."
+    },
+    {
+      "id": "G13",
+      "item": "Client-side/user-side learning boundary",
+      "status": "PASS",
+      "evidence": "Adaptive signals/checkpoints/packages are user-local .xiigen style/probe artifacts; no common checkpoint mutation."
+    },
+    {
+      "id": "G14",
+      "item": "Privacy/redaction",
+      "status": "PASS",
+      "evidence": "No raw private prompt/output/AI-response/analysis/corpus rows, secrets, private paths in share/export evidence."
+    },
+    {
+      "id": "G15",
+      "item": "No API-01/B11 start",
+      "status": "PASS",
+      "evidence": "API-01 next action only if this gate passes; not started in this gate."
+    },
+    {
+      "id": "G16",
+      "item": "Architect critical review boundary",
+      "status": "PASS_PENDING_PARENT_REVIEW",
+      "evidence": "Executor matrix self-check complete; parent architect/reviewer must accept before state-only reconciliation to API-01."
+    }
+  ],
+  "summary": {
+    "current_spheres_total": 4,
+    "passed_spheres": [
+      "PromptToTask",
+      "OrchestrationReasoning",
+      "SkillSelection",
+      "ResultGap"
+    ],
+    "failed_spheres": [],
+    "all_current_spheres_passed": true,
+    "future_rule_exists": true,
+    "future_rule_passed": true,
+    "policy_only_rows": [],
+    "first_missing_bounded_repair": null
+  },
+  "forbidden_actions": {
+    "implementation_changed": false,
+    "training_run": false,
+    "production_code_edited": false,
+    "host_repo_touched": false,
+    "external_ai_used": false,
+    "browser_or_image_tool_used": false,
+    "api_01_started": false,
+    "b11_started": false
+  },
+  "next_bounded_work_order": "API-01",
+  "next_plan_row_if_pass": "API-01/B11 Core API boundary",
+  "commit_message_if_pass": "phase 0: final adaptive pair coverage gate ? reports state"
+}

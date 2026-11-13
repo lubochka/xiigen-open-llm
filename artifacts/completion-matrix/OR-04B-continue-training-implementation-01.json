@@ -1,0 +1,122 @@
+{
+  "work_order": "OR-04B-CONTINUE-TRAINING-IMPLEMENTATION-01",
+  "status": "PASS_WITH_HARD_CAP_BREACH_PENDING_PARENT_REVIEW",
+  "passed": true,
+  "row_count": 16,
+  "passed_count": 16,
+  "failed_count": 0,
+  "hard_cap_exceeded": true,
+  "rows": [
+    {
+      "requirement_id": "OR04B-CTI-01",
+      "literal_requirement": "Implement only in-memory continue-training merge primitive",
+      "passed": true,
+      "evidence": "ContinueTrainingFromLearnedState added; no CLI/checkpoint rewrite."
+    },
+    {
+      "requirement_id": "OR04B-CTI-02",
+      "literal_requirement": "Require imported checkpoint learned state with preserved accepted refs",
+      "passed": true,
+      "evidence": "No-state and loader-only tests reject with ORCHESTRATION_REASONING_CONTINUE_IMPORTED_CHECKPOINT_STATE_REQUIRED; imported checkpoint path preserves existing accepted refs."
+    },
+    {
+      "requirement_id": "OR04B-CTI-03",
+      "literal_requirement": "Require delta learned patterns",
+      "passed": true,
+      "evidence": "Method rejects null/empty delta patterns."
+    },
+    {
+      "requirement_id": "OR04B-CTI-04",
+      "literal_requirement": "Preserve existing patterns",
+      "passed": true,
+      "evidence": "Focused test verifies existing pattern remains."
+    },
+    {
+      "requirement_id": "OR04B-CTI-05",
+      "literal_requirement": "Append only new pattern ids",
+      "passed": true,
+      "evidence": "Focused test verifies delta pattern appended."
+    },
+    {
+      "requirement_id": "OR04B-CTI-06",
+      "literal_requirement": "Reject duplicate PatternId collisions",
+      "passed": true,
+      "evidence": "Focused test verifies duplicate error code."
+    },
+    {
+      "requirement_id": "OR04B-CTI-07",
+      "literal_requirement": "Recompute StateSha256 from merged patterns",
+      "passed": true,
+      "evidence": "Focused test verifies merged state hash changes after merge."
+    },
+    {
+      "requirement_id": "OR04B-CTI-08",
+      "literal_requirement": "Merge accepted ref ids for later export",
+      "passed": true,
+      "evidence": "Focused test verifies old and delta accepted refs."
+    },
+    {
+      "requirement_id": "OR04B-CTI-09",
+      "literal_requirement": "Resulting machine plans for old and new patterns",
+      "passed": true,
+      "evidence": "Focused test verifies both learned scenarios."
+    },
+    {
+      "requirement_id": "OR04B-CTI-10",
+      "literal_requirement": "No raw prompt memory as decision authority",
+      "passed": true,
+      "evidence": "Old/new planning test uses different raw prompt hashes and structured signals."
+    },
+    {
+      "requirement_id": "OR04B-CTI-11",
+      "literal_requirement": "No BM25/route/exact prompt/filename fallback",
+      "passed": true,
+      "evidence": "No such implementation added; existing learned-state path remains signal based."
+    },
+    {
+      "requirement_id": "OR04B-CTI-12",
+      "literal_requirement": "No CLI command added",
+      "passed": true,
+      "evidence": "Program.cs untouched in this slice."
+    },
+    {
+      "requirement_id": "OR04B-CTI-13",
+      "literal_requirement": "No checkpoint/model rewrite or fresh-load-after-continue",
+      "passed": true,
+      "evidence": "Only in-memory state merge result; no asset files touched."
+    },
+    {
+      "requirement_id": "OR04B-CTI-14",
+      "literal_requirement": "No semantic quality/host/adaptive/external AI claim",
+      "passed": true,
+      "evidence": "Result false flags and artifacts record non-claims."
+    },
+    {
+      "requirement_id": "OR04B-CTI-15",
+      "literal_requirement": "Focused OrchestrationReasoning verification passes",
+      "passed": true,
+      "evidence": "Broad filter passed 49/49 after repair."
+    },
+    {
+      "requirement_id": "OR04B-CTI-16",
+      "literal_requirement": "Process breach recorded",
+      "passed": true,
+      "evidence": "Hard cap exceeded is recorded; parent must decide acceptance before commit."
+    }
+  ],
+  "next_bounded_action_if_parent_accepts": "WO-COMMIT-OR-04B-CONTINUE-TRAINING-IMPLEMENTATION-01",
+  "parent_review_repair": {
+    "loader_only_accepted_ref_preservation_covered": true,
+    "row_count_preserved": 16,
+    "verification": {
+      "parent_repair_test": {
+        "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~OrchestrationReasoningContinueTraining\" --nologo",
+        "exit_code": 0,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "summary": "Includes loader-only learned descriptor rejection to preserve imported checkpoint accepted refs."
+      }
+    }
+  }
+}

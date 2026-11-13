@@ -1,0 +1,115 @@
+{
+  "schema": "xiigen.learn_03_rollback_target_binding_needed.v1",
+  "work_order_id": "LEARN-03-PORTABILITY-BACKUP-IMPORT-PLAN-PREP-01",
+  "run_id": "learn-03-portability-backup-import-plan-prep-20260619-010346",
+  "generated_at_local": "2026-06-19T01:03:46+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "artifact_type": "next_safe_work_order_definition_no_mutation",
+  "why_binding_is_required_before_execution": [
+    "continue-training cannot prove continuation unless it first loads an existing/imported checkpoint and records the base checkpoint sha",
+    "rollback cannot prove recovery unless target, rollback checkpoint, store pointer and locator candidate are bound before mutation",
+    "backup/export/import/share cannot claim portability if same-machine restore and another-root restore target ids are not separated",
+    "saved checkpoint, file-open, hash-only, static manifest or repo/common fallback cannot prove user-local adaptive lifecycle"
+  ],
+  "binding_packet_required_fields": {
+    "root_binding": [
+      "source_user_local_root_id",
+      "source_user_local_root_ref",
+      "source_privacy_class",
+      "target_import_restore_root_id",
+      "target_import_restore_root_ref",
+      "target_root_is_distinct_from_source",
+      "backup_root_ref",
+      "export_root_ref",
+      "share_packet_root_ref",
+      "restore_root_ref"
+    ],
+    "checkpoint_binding": [
+      "base_checkpoint_ref",
+      "base_checkpoint_sha256",
+      "imported_checkpoint_ref",
+      "imported_checkpoint_sha256",
+      "target_checkpoint_candidate_ref",
+      "target_checkpoint_candidate_sha256",
+      "rollback_checkpoint_ref",
+      "rollback_checkpoint_sha256"
+    ],
+    "store_and_locator_binding": [
+      "store_manifest_ref",
+      "store_manifest_sha256",
+      "store_pointer_before_ref",
+      "store_pointer_after_ref",
+      "locator_candidate_ref",
+      "locator_candidate_sha256",
+      "common_assets_mutated=false"
+    ],
+    "dataset_and_review_binding": [
+      "dpo_acceptance_matrix_ref",
+      "training_dataset_manifest_ref",
+      "training_dataset_sha256",
+      "held_out_source_disjoint_manifest_ref",
+      "held_out_dataset_sha256",
+      "source_license_redaction_review_ref",
+      "redacted_share_packet_ref"
+    ],
+    "deferred_decision_queue": [
+      "missing_common_training_approval",
+      "missing_dpo_row_refs",
+      "missing_root_approval",
+      "missing_checkpoint_sha",
+      "missing_redaction_review",
+      "missing_external_ai_or_paid_host_runtime_authority"
+    ]
+  },
+  "next_safe_work_order": {
+    "id": "LEARN-04-USER-LOCAL-ROOT-AND-TARGET-ROLLBACK-BINDING-PREP-01",
+    "requested_artifact_type": "root binding, checkpoint target binding, rollback binding, locator/store pointer binding and deferred decision queue prep only",
+    "allowed_write_scope_recommendation": "new timestamped folder under artifacts/extension-runtime-token-quality-learnability/learn-04-user-local-root-and-target-rollback-binding-prep/ plus execution state only",
+    "must_read": [
+      "LEARN-01 artifacts",
+      "LEARN-02 artifacts",
+      "LEARN-03 artifacts",
+      "plan sections 4.4.2, 4.4.3, 9, 9.1, 10, 11",
+      "state"
+    ],
+    "forbidden": [
+      "source/code/test/plan/governance/skill edits",
+      "git add/commit/push",
+      "actual backup/export/import/share/restore/load-without-retrain",
+      "checkpoint mutation",
+      "DPO row creation as training data",
+      "training or continue-training",
+      "runtime/eval/external AI/model calls",
+      "learnability/readiness claim"
+    ],
+    "verification": [
+      "JSON parse new JSON plus state",
+      "git diff --check scoped to new folder plus state",
+      "scope guard only new folder plus state",
+      "claim locks false"
+    ],
+    "parent_will_perform_commit_push_after_review": true
+  },
+  "claim_locks": {
+    "dpo_rows_created_as_training_data": false,
+    "actual_training_performed": false,
+    "continue_training_performed": false,
+    "checkpoint_mutation_performed": false,
+    "backup_export_import_share_restore_execution_performed": false,
+    "load_without_retrain_performed": false,
+    "fresh_load_performed": false,
+    "held_out_eval_performed": false,
+    "ablation_performed": false,
+    "rollback_performed": false,
+    "runtime_host_execution_performed": false,
+    "external_ai_model_calls_performed": false,
+    "actual_eval_or_scoring_performed": false,
+    "learnability_claimed": false,
+    "training_ready_claimed": false,
+    "common_readiness_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  }
+}

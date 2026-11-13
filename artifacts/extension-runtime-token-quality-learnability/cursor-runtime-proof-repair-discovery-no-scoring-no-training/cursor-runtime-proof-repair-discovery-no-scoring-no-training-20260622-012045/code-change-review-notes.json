@@ -1,0 +1,104 @@
+{
+  "schema": "xiigen.cursor.runtime_proof.code_change_review_notes.v1",
+  "work_order_id": "DOCS-QA-CURSOR-RUNTIME-PROOF-REPAIR-DISCOVERY-NO-SCORING-NO-TRAINING-01",
+  "code_changed": true,
+  "final_pushed_cursor_extension_commit": {
+    "repo_path": "C:/Users/lubao/Documents/xiigen/extensions reasearch/cursor-xiigen-smart-skills",
+    "commit": "73769ae8f251e573f1d0236a546abf04e28c3384",
+    "branch": "main",
+    "remote": "origin/main",
+    "rebase_conflict_resolved_files": [
+      "src/extension.ts",
+      "dist/extension.js"
+    ],
+    "package_json_auto_merged_staged_in_final_commit": true,
+    "parent_push_succeeded": true
+  },
+  "changed_files": [
+    {
+      "path": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\package.json",
+      "functions_or_sections_changed": [
+        "activationEvents",
+        "contributes.commands",
+        "xiigenPhase40.futureUserFacingEntrypoints"
+      ],
+      "why_changed": "Expose a deterministic test-only command id that Cursor Extension Host tests can execute without interactive input.",
+      "bounded_reason": "Only command metadata was added; no scoring, training, model, checkpoint, locator or target config was changed."
+    },
+    {
+      "path": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\src\\extension.ts",
+      "functions_or_sections_changed": [
+        "activate",
+        "runCursorSmartSkillsRequest",
+        "ensureEvidenceDirectory",
+        "buildTraceReferences",
+        "buildCoreRequest",
+        "normalizeRuntimeProofCommandInput",
+        "sanitizeFilePart",
+        "normalizeResponse",
+        "buildHostTrace",
+        "writeRedactedTrace"
+      ],
+      "why_changed": "Move the test-only command contract into the declared source implementation file so future source/dist sync cannot erase the runtime proof command.",
+      "bounded_reason": "The source command calls the same runCursorSmartSkillsRequest handler and invokeCoreApi core boundary as dist; it does not add host-side semantic selection, dashboard shortcuts or standalone core invocation."
+    },
+    {
+      "path": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist\\extension.js",
+      "functions_or_sections_changed": [
+        "activate",
+        "runCursorSmartSkillsRequest",
+        "ensureEvidenceDirectory",
+        "buildTraceReferences",
+        "buildCoreRequest",
+        "normalizeRuntimeProofCommandInput",
+        "sanitizeFilePart",
+        "normalizeResponse",
+        "buildHostTrace",
+        "writeRedactedTrace"
+      ],
+      "why_changed": "Add command-level runtime proof harness with positive/negative scenarios, correlation-aware trace names, evidenceRoot override and redacted trace output.",
+      "bounded_reason": "The new command calls the existing runCursorSmartSkillsRequest handler and existing invokeCoreApi core boundary; it does not add host-side semantic selection, dashboard shortcuts or standalone core invocation."
+    }
+  ],
+  "source_dist_aligned": true,
+  "source_dist_alignment_note": "source/dist aligned: src/extension.ts and dist/extension.js both contain the same test-only runtime proof command id, input contract, evidenceRoot override, correlation-aware trace naming and redacted trace path.",
+  "same_handler_core_boundary": {
+    "calls_existing_handler": "runCursorSmartSkillsRequest",
+    "calls_existing_core_invoker": "invokeCoreApi",
+    "core_api_script": "C:\\Projects\\llm_mvp_core\\tools\\phase40-extension-core-api.ps1",
+    "calls_same_handler_core_boundary": true
+  },
+  "dashboard_only_shortcut": false,
+  "supports_positive_and_negative_redacted_request_invocation": true,
+  "produces_trace_artifacts_with_correlation_id_and_redacted_input_output": true,
+  "does_not_claim_full_chat_ui_evidence": true,
+  "verification": [
+    {
+      "command": "Get-Command tsc -ErrorAction SilentlyContinue",
+      "result": "TSC_NOT_FOUND",
+      "note": "TypeScript compile/check was not run because no local tsc executable was available in PATH."
+    },
+    {
+      "command": "node --check 'C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist\\extension.js'",
+      "result": "PASS"
+    },
+    {
+      "command": "Get-Content -Raw -LiteralPath 'C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\package.json' | ConvertFrom-Json | Out-Null",
+      "result": "PASS"
+    },
+    {
+      "command": "Targeted source-boundary check for xiigenSmartSkills.runtimeProof.invoke, normalizeRuntimeProofCommandInput, writeRedactedTrace, ensureEvidenceDirectory, buildTraceReferences, correlationId, evidenceRoot, and negative_error_request in src/extension.ts",
+      "result": "PASS"
+    }
+  ],
+  "forbidden_actions_performed": {
+    "git_commands": false,
+    "scoring": false,
+    "training": false,
+    "model_mutation": false,
+    "checkpoint_promotion": false,
+    "claude_runtime_proof": false,
+    "codex_runtime_proof": false,
+    "external_ai_web_model_calls": false
+  }
+}

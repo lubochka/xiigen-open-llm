@@ -1,0 +1,285 @@
+{
+  "schema": "xiigen.learn_01_dpo_source_route_matrix.v1",
+  "work_order_id": "LEARN-01-DPO-SOURCE-LIFECYCLE-PREP-01",
+  "run_id": "learn-01-dpo-source-lifecycle-prep-20260619-003953",
+  "generated_at_local": "2026-06-19T00:39:53+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "artifact_type": "prep_schema_source_route_matrix_no_training_rows",
+  "source_refs_read": {
+    "plan": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "plan_sections": [
+      "0.0.1 distillation/source/provenance/privacy boundary",
+      "4.4 Correction -> DPO -> local learning algorithm",
+      "4.4.1 Local learnability hard gate",
+      "4.4.2 Cycle 4 two-leg local learnable model matrix",
+      "4.4.3 User-side adaptive portability lifecycle acceptance gate",
+      "4.4.4 Common-training material-quality, license and DPO triple gate",
+      "6 Execution phases LEARN-01..LEARN-07",
+      "9 Final acceptance matrix",
+      "11 No-overclaim firewall"
+    ],
+    "state": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "quality_03_gap_repair": "artifacts/extension-runtime-token-quality-learnability/quality-03-adjudication-input-gap-repair/quality-03-adjudication-input-gap-repair-20260619-003038/adjudication-input-gap-repair.json",
+    "quality_03_remaining_gaps": "artifacts/extension-runtime-token-quality-learnability/quality-03-adjudication-input-gap-repair/quality-03-adjudication-input-gap-repair-20260619-003038/remaining-quality-gaps.json"
+  },
+  "quality_input_state": {
+    "quality03_rows_total": 9,
+    "quality03_complete_pairs": 0,
+    "quality03_actual_eval_or_scoring_ready_rows": 0,
+    "quality03_actual_eval_can_be_next": false,
+    "impact_on_learn01": "LEARN-01 may prepare source/lifecycle metadata only. It must not create DPO training rows, run scoring, train, mutate checkpoints, or claim learnability."
+  },
+  "dpo_row_schema_template": {
+    "created_as_training_data_now": false,
+    "row_creation_allowed_in_this_packet": false,
+    "required_fields_for_future_dpo_authoring": [
+      "dpo_row_id",
+      "scenario_id",
+      "host_path",
+      "method",
+      "machine_target",
+      "source_material_class",
+      "source_ref",
+      "doc_id",
+      "source_sha256",
+      "source_license_ref",
+      "source_license_hash",
+      "license_class",
+      "privacy_class",
+      "external_ai_output_observed",
+      "external_ai_output_ref_private",
+      "external_ai_output_used_as_training_target",
+      "external_ai_output_used_verbatim",
+      "external_ai_role",
+      "provider_terms_training_use_reviewed",
+      "chosen_authority",
+      "rejected_authority",
+      "positive_example_ref",
+      "negative_example_ref",
+      "chosen_ref",
+      "rejected_ref",
+      "chosen_correct_behavior",
+      "rejected_failure_pattern",
+      "why_chosen_is_correct",
+      "why_rejected_is_wrong",
+      "correction_reason_code",
+      "universal_candidate_text",
+      "stack_specific_text",
+      "stack_specific_quarantine_route",
+      "redaction_ref",
+      "redaction_status",
+      "provenance_ref",
+      "consent_or_authority_ref",
+      "common_training_allowed",
+      "approved_for_common_training",
+      "quarantine_status",
+      "created_utc",
+      "reviewer_id"
+    ],
+    "field_defaults": {
+      "external_ai_output_used_as_training_target": false,
+      "external_ai_output_used_verbatim": false,
+      "external_ai_role": "diagnostic_evidence_only",
+      "provider_terms_training_use_reviewed": false,
+      "common_training_allowed": false,
+      "approved_for_common_training": false,
+      "quarantine_status": "QUARANTINE_INCOMPLETE_DPO_UNTIL_AUTHORED_AND_REVIEWED"
+    },
+    "valid_machine_targets": [
+      "PromptToTaskMachine",
+      "OrchestrationReasoningMachine",
+      "SkillSelectionMachine"
+    ],
+    "valid_hosts": [
+      "Claude",
+      "Cursor",
+      "Codex"
+    ]
+  },
+  "allowed_source_class_routes": [
+    {
+      "source_material_class": "COMMON_UNIVERSAL_PERMISSIVE",
+      "common_training_route": "COMMON_ACCEPTED only after reviewer verifies MIT, Apache-2.0, or equivalent permissive license, source hash, redaction, provenance, and universal semantics",
+      "user_local_route": "may be referenced as common baseline material",
+      "required_decision": "COMMON_ACCEPTED",
+      "training_allowed_now": false
+    },
+    {
+      "source_material_class": "COMMON_OPEN_SOURCE_REVIEW_REQUIRED",
+      "common_training_route": "blocked until exact compatible license is identified and recorded",
+      "user_local_route": "evidence-only while review is pending",
+      "required_decision": "COMMON_PENDING_LICENSE_REVIEW or EVIDENCE_ONLY",
+      "training_allowed_now": false
+    },
+    {
+      "source_material_class": "PRIVATE_USER_CORRECTION",
+      "common_training_route": "forbidden for common training; a redacted universal lesson must be authored as a separate reviewed row",
+      "user_local_route": "user-local .xiigen adaptive store only after DPO authoring approval",
+      "required_decision": "USER_LOCAL_ONLY or ADAPTIVE_ONLY",
+      "training_allowed_now": false
+    },
+    {
+      "source_material_class": "LOCAL_PROJECT_OWNED_EVIDENCE",
+      "common_training_route": "common route only if rewritten as universal, redacted, source/license reviewed material",
+      "user_local_route": "project/user-local adaptive route if private, path-specific, host-specific, or workflow-specific",
+      "required_decision": "ADAPTIVE_ONLY, EVIDENCE_ONLY, or reviewed COMMON_ACCEPTED",
+      "training_allowed_now": false
+    },
+    {
+      "source_material_class": "XIIGEN_HUMAN_AUTHORED_RULE",
+      "common_training_route": "eligible for common review only when universal, source/provenance recorded, and not copied from external model output",
+      "user_local_route": "eligible for user-local adaptive review when tied to Luba-approved correction or local failure pattern",
+      "required_decision": "COMMON_ACCEPTED, USER_LOCAL_ONLY, or ADAPTIVE_ONLY after review",
+      "training_allowed_now": false
+    },
+    {
+      "source_material_class": "EXTERNAL_AI_OUTPUT_OR_VENDOR_TRACE",
+      "common_training_route": "forbidden by default; raw output cannot be chosen/rejected text, source material, synthetic corpus, promotion material, or common training data without explicit provider/license/source approval",
+      "user_local_route": "private diagnostic/evaluation evidence ref only by default; transformed user-local row requires DPO authoring approval",
+      "required_decision": "EXTERNAL_OUTPUT_EVIDENCE_ONLY or QUARANTINE_EXTERNAL_OUTPUT_TRAINING_TARGET",
+      "training_allowed_now": false
+    },
+    {
+      "source_material_class": "EVALUATOR_REVIEWER_ADJUDICATION_OUTPUT",
+      "common_training_route": "not trainable text by itself",
+      "user_local_route": "may create labels and refs for DPO authoring, not chosen/rejected targets directly",
+      "required_decision": "EVAL_OR_ADJUDICATION_EVIDENCE_ONLY",
+      "training_allowed_now": false
+    },
+    {
+      "source_material_class": "PROJECT_SPECIFIC_RUNTIME_OR_PATH",
+      "common_training_route": "forbidden because it teaches this repo, host stack, path, command, branch, locator, or private workflow",
+      "user_local_route": "adaptive-only if Luba approves local use; otherwise evidence-only",
+      "required_decision": "ADAPTIVE_ONLY, EVIDENCE_ONLY, or QUARANTINE_STACK_SPECIFIC",
+      "training_allowed_now": false
+    },
+    {
+      "source_material_class": "UNKNOWN_OR_LICENSE_MISSING",
+      "common_training_route": "forbidden until source and license are restored",
+      "user_local_route": "evidence-only until source/license decision",
+      "required_decision": "COMMON_REJECTED_LICENSE_UNKNOWN",
+      "training_allowed_now": false
+    },
+    {
+      "source_material_class": "HELDOUT_OR_ABLATION_SOURCE",
+      "common_training_route": "never reused as training material for the same target",
+      "user_local_route": "eval/control only",
+      "required_decision": "EVAL_ONLY_SOURCE_DISJOINT",
+      "training_allowed_now": false
+    }
+  ],
+  "route_boundaries": {
+    "raw_external_ai_output_boundary": {
+      "default_role": "diagnostic_or_evaluation_evidence_only",
+      "private_ref_field": "external_ai_output_ref_private",
+      "must_not_fill_fields_without_explicit_current_provider_license_source_approval": [
+        "chosen_correct_behavior",
+        "rejected_failure_pattern",
+        "positive_example_ref",
+        "negative_example_ref",
+        "source_ref",
+        "universal_candidate_text",
+        "common training rows",
+        "synthetic corpus",
+        "promotion material"
+      ],
+      "future_approved_transform_required": "human/XIIGen-authored or licensed source-grounded chosen/rejected pair with provenance/license/privacy fields"
+    },
+    "luba_or_user_correction_route": {
+      "raw_private_data_location": "user-owned .xiigen or approved user root",
+      "common_training_default": "forbidden",
+      "user_local_default": "USER_LOCAL_ONLY or ADAPTIVE_ONLY after DPO authoring approval",
+      "redacted_share_packet": "separate future artifact requiring source/license/material review before any common route"
+    },
+    "universal_vs_stack_specific_route": {
+      "universal_common_candidate": "only reusable orchestration/skill semantics with permissive source/license and redaction",
+      "stack_specific_or_project_private": "ADAPTIVE_ONLY, EVIDENCE_ONLY, or QUARANTINE_STACK_SPECIFIC",
+      "examples_blocked_from_common": [
+        "exact repo path",
+        "branch name",
+        "host package command",
+        "local skill inventory",
+        "private workflow preference",
+        "vendor/model trace",
+        "raw Luba correction"
+      ]
+    },
+    "common_vs_user_local_leg": {
+      "common_repo_leg": "contracts, schemas, common manifests, common checkpoints, common source/license policy and universal examples in llm_mvp_core",
+      "user_local_leg": "private corrections, preferences, adaptive overlays, DPO candidates, backups, exported bundles and checkpoints under .xiigen or approved user root",
+      "connection_rule": "stable ids, manifests and hashes connect the legs; private material is not copied into repo/common assets"
+    }
+  },
+  "quarantine_rules": [
+    {
+      "label": "DPO_SCHEMA_INVALID",
+      "route": "QUARANTINE_INCOMPLETE_DPO",
+      "trigger": "any required machine/source/license/provenance/redaction/chosen/rejected field is missing"
+    },
+    {
+      "label": "FAIL_MISSING_POSITIVE_NEGATIVE_REFS",
+      "route": "QUARANTINE_INCOMPLETE_DPO",
+      "trigger": "positive/chosen and rejected/near-miss refs are absent or not tied to the same machine"
+    },
+    {
+      "label": "FAIL_RAW_EXTERNAL_OUTPUT_AS_TRAINING_TARGET",
+      "route": "EXTERNAL_OUTPUT_EVIDENCE_ONLY or QUARANTINE_EXTERNAL_OUTPUT_TRAINING_TARGET",
+      "trigger": "raw external model output is copied into training target fields without explicit provider/license/source approval"
+    },
+    {
+      "label": "FAIL_REVIEWER_OUTPUT_AS_TRAINING_TARGET",
+      "route": "EVAL_OR_ADJUDICATION_EVIDENCE_ONLY",
+      "trigger": "reviewer/evaluator/adjudicator prose is used as training text before DPO authoring"
+    },
+    {
+      "label": "FAIL_COMMON_LICENSE_NOT_PERMISSIVE",
+      "route": "COMMON_REJECTED_LICENSE_UNKNOWN or EVIDENCE_ONLY",
+      "trigger": "common route requested with unknown, private, GPL/copyleft/share-alike, commercial, or unverified license"
+    },
+    {
+      "label": "FAIL_STACK_SPECIFIC_AS_COMMON",
+      "route": "QUARANTINE_STACK_SPECIFIC, ADAPTIVE_ONLY, or EVIDENCE_ONLY",
+      "trigger": "host package path, command, file, branch, locator recipe, UI workaround, or project workflow is proposed as universal"
+    },
+    {
+      "label": "FAIL_PRIVATE_OR_USER_PREF_AS_COMMON",
+      "route": "USER_LOCAL_ONLY, ADAPTIVE_ONLY, or QUARANTINE_PRIVATE_LEAKAGE",
+      "trigger": "private/user/project-specific preference or raw correction is proposed for common training"
+    },
+    {
+      "label": "FAIL_SOURCE_DISJOINT_DOC_OVERLAP",
+      "route": "EVAL_ONLY_SOURCE_DISJOINT invalid; create a new split",
+      "trigger": "held-out/eval row overlaps source_ref, doc_id, source root, path/title, correction text, near-duplicate text, or nearest-neighbour source"
+    }
+  ],
+  "next_without_training": [
+    "author user-local adaptive store manifest schema",
+    "prepare source-license-redaction review packet",
+    "prepare common-training source classification packet",
+    "prepare redacted share packet schema",
+    "prepare operation-specific approval packet template for future LEARN-03"
+  ],
+  "requires_operation_specific_target_rollback_source_packet": [
+    "DPO row creation as trainable data",
+    "training or continue-training",
+    "fresh-load probe",
+    "held-out/source-disjoint eval",
+    "ablation/no-memorization eval",
+    "checkpoint mutation",
+    "target promotion or locator update",
+    "rollback probe"
+  ],
+  "claim_locks": {
+    "dpo_rows_created_as_training_data": false,
+    "actual_training_performed": false,
+    "checkpoint_mutation_performed": false,
+    "external_ai_model_calls_performed": false,
+    "actual_eval_or_scoring_performed": false,
+    "learnability_claimed": false,
+    "training_ready_claimed": false,
+    "common_readiness_claimed": false,
+    "target_promotion_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  }
+}

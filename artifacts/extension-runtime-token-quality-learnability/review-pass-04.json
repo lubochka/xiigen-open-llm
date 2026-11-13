@@ -1,0 +1,58 @@
+{
+  "pass": 4,
+  "requested_review_fix_floor": 10,
+  "work_order_scope": "Pass 4 only",
+  "reviewer": "Codex review_fix_pass_04",
+  "verdict": "PASS_WITH_FIX",
+  "ledger_rows_are_evidence": false,
+  "loaded_rules_and_gates": [
+    "AGENTS.md OP-62",
+    "docs/skills/plan-review-SKILL.md Review depth floor",
+    "docs/skills/claim-verification-SKILL.md"
+  ],
+  "reviewed_files": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1-REVIEW.jsonl"
+  ],
+  "reviewed_sections": [
+    "3 token notes",
+    "4.2 token before/after algorithm",
+    "4.3 quality scoring algorithm",
+    "6 TOKEN/QUALITY phases",
+    "7 required artifacts",
+    "8 ten-pass ledger",
+    "9 final acceptance matrix",
+    "11 no-overclaim firewall"
+  ],
+  "artifact_before_ref": "Plan before pass 4 had a token algorithm requiring same scenario pack, host, method, debug setting and tokenizer, but did not require prompt hash/text as a hard pair key, same host runtime/build, same invocation settings, tokenizer version/accounting spans, baseline/adaptive isolation, repeated-run variance handling, complete trace schema, privacy/redaction handling, and explicit invalid-pair/quality-regression failure outcomes. REVIEW.jsonl row 4 was ledger-only.",
+  "findings": [
+    {
+      "severity": "HIGH",
+      "status_before_fix": "FAIL",
+      "summary": "Token before/after methodology was not rigorous enough to prevent invalid paired comparisons or token-only overclaims.",
+      "required_fix": "Add a hard paired-run methodology gate covering identity, host/runtime sameness, method/settings, tokenizer/accounting, isolation, variance, trace schema, privacy/redaction, and failure handling."
+    },
+    {
+      "severity": "HIGH",
+      "status_before_fix": "FAIL",
+      "summary": "REVIEW.jsonl row 4 was ledger-only and did not point to an inspectable evidence packet.",
+      "required_fix": "Create review-pass-04.md/json and update only row 4 with evidence packet refs and ledger_rows_are_evidence=false."
+    }
+  ],
+  "fix_refs": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 4.2.1",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 9 token before/after row",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 11 no-overclaim firewall",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1-REVIEW.jsonl row 4",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-04.md",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-04.json"
+  ],
+  "recheck_evidence": [
+    "Plan requires same scenario_id, canonical prompt_text, prompt_text_sha256, method, host/runtime/build, debug setting, tokenizer name/version/accounting scope, baseline/adaptive isolation, repeated-run variance handling, full trace schema, privacy/redaction status, and failure classifications.",
+    "Plan states tokens cannot prove quality and token savings count only after quality non-regression or improvement for the same scenario pair.",
+    "Plan states token delta alone cannot close runtime readiness, semantic quality, model readiness, target promotion, rollback, or learnability.",
+    "REVIEW.jsonl row 4 points to review-pass-04.md/json and sets ledger_rows_are_evidence=false."
+  ],
+  "parent_review_disposition": "parent_review_required_after_return=true",
+  "overall_complete_claimed": false
+}

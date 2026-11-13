@@ -1,0 +1,62 @@
+{
+    "schemaVersion":  1,
+    "contract":  "Phase40ExtensionApiRequest",
+    "hostKind":  "Claude",
+    "evidenceScope":  "user_facing_claude_hook",
+    "entrypoint":  {
+                       "type":  "hook",
+                       "name":  "xiigen.smartSkills.select",
+                       "file":  "src\\claude-entrypoint.ps1"
+                   },
+    "core":  {
+                 "root":  "C:\\Projects\\llm_mvp_core",
+                 "contractFile":  "43.SmartSkillsDomain\\Phase40ExtensionContracts.cs",
+                 "apiScript":  "C:\\Projects\\llm_mvp_core\\tools\\phase40-extension-core-api.ps1",
+                 "clientMode":  "thin_api_check_set_client",
+                 "coreOwnsSkillSelection":  true,
+                 "hostDecisionAuthority":  false
+             },
+    "skillSelectionRequest":  {
+                                  "requestType":  "SkillSelectionRequest",
+                                  "hostKind":  "Claude",
+                                  "concreteTask":  "REDACTED_POSITIVE_PROMPT run_id=claude-runtime-proof-20260621-235951 correlation=positive: route Claude plugin hook to llm_mvp_core with check-set binding.",
+                                  "prompt":  "REDACTED: small Claude-side XIIGen smart-skills runtime proof prompt; no private data; run_id=claude-runtime-proof-20260621-235951; scenario=positive.",
+                                  "checkSetItems":  [
+                                                        {
+                                                            "id":  "positive-core-boundary",
+                                                            "kind":  "core_contract_boundary",
+                                                            "assertion":  "Claude plugin hook request reaches llm_mvp_core Phase40 core API."
+                                                        },
+                                                        {
+                                                            "id":  "positive-trace-refs",
+                                                            "kind":  "trace_refs",
+                                                            "assertion":  "Core request, response, and trace references are written for the same run."
+                                                        }
+                                                    ]
+                              },
+    "traceLogReference":  {
+                              "tracePath":  "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\claude-runtime-proof-execution-no-scoring-no-training\\claude-runtime-proof-execution-no-scoring-no-training-20260621-235951\\positive-entrypoint-trace.json",
+                              "coreRequestRef":  "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\claude-runtime-proof-execution-no-scoring-no-training\\claude-runtime-proof-execution-no-scoring-no-training-20260621-235951\\phase40-claude-core-request.json",
+                              "coreResponseRef":  "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\claude-runtime-proof-execution-no-scoring-no-training\\claude-runtime-proof-execution-no-scoring-no-training-20260621-235951\\phase40-claude-core-response.json",
+                              "outputPath":  "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\claude-runtime-proof-execution-no-scoring-no-training\\claude-runtime-proof-execution-no-scoring-no-training-20260621-235951\\positive-entrypoint-response.json"
+                          },
+    "assetReferences":  {
+                            "commonAssetRef":  "llm_mvp_core:phase40-common-skill-selection-set",
+                            "adaptiveAssetRef":  "claude-host:runtime-adaptive-ref-not-owned-by-extension",
+                            "commonOwnedByCore":  true,
+                            "adaptiveOwnedByHostOrProject":  true,
+                            "separationRequired":  true
+                        },
+    "decisionEvidence":  {
+                             "requiredDecisionSource":  "llm_mvp_core_trainable_or_core_api",
+                             "hostSemanticRankingAllowed":  false,
+                             "deterministicStaticDecisionAuthorityAllowed":  false,
+                             "deterministicMasqueradeProhibited":  true
+                         },
+    "externalToolEvidence":  {
+                                 "externalAiUsed":  false,
+                                 "imageGenerationUsed":  false,
+                                 "unrelatedToolUsed":  false,
+                                 "approvalRef":  null
+                             }
+}

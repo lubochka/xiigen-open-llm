@@ -1,0 +1,140 @@
+{
+    "kind":  "completion_matrix",
+    "work_order":  "SS-06",
+    "verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+    "row_count":  16,
+    "passed_count":  16,
+    "failed_count":  0,
+    "rows":  [
+                 {
+                     "id":  "B9-SS06-01",
+                     "check":  "Only skill_candidates unit implemented",
+                     "passed":  true,
+                     "evidence":  "Code changes add SkillCandidates checkpoint section only; SS-07+ untouched."
+                 },
+                 {
+                     "id":  "B9-SS06-02",
+                     "check":  "Checkpoint-backed decision",
+                     "passed":  true,
+                     "evidence":  "Decision evidence includes SKILL_CANDIDATES_CHECKPOINT_SECTION."
+                 },
+                 {
+                     "id":  "B9-SS06-03",
+                     "check":  "Held-out probe",
+                     "passed":  true,
+                     "evidence":  "SkillSelectionMachine_SkillCandidatesUsesCheckpointSectionForHeldOutCandidatePrompt"
+                 },
+                 {
+                     "id":  "B9-SS06-04",
+                     "check":  "Ablation",
+                     "passed":  true,
+                     "evidence":  "SkillSelectionMachine_SkillCandidatesAblationLowersDecisionWithoutUnitSection"
+                 },
+                 {
+                     "id":  "B9-SS06-05",
+                     "check":  "Adapter-routed training rows",
+                     "passed":  true,
+                     "evidence":  "TargetTrainingAdapter == ISkillCandidateTraining routes training."
+                 },
+                 {
+                     "id":  "B9-SS06-06",
+                     "check":  "No prompt keyword unit gate",
+                     "passed":  true,
+                     "evidence":  "No skill-candidate whitelist or ExtractSkillCandidate gate."
+                 },
+                 {
+                     "id":  "B9-SS06-07",
+                     "check":  "No BM25/filename lookup authority",
+                     "passed":  true,
+                     "evidence":  "Static scan PASS_ZERO_HITS."
+                 },
+                 {
+                     "id":  "B9-SS06-08",
+                     "check":  "Candidate-position not final authority",
+                     "passed":  true,
+                     "evidence":  "Tests reject CandidatePositionScaffoldEvidence in learned decision."
+                 },
+                 {
+                     "id":  "B9-SS06-09",
+                     "check":  "Documentation updated",
+                     "passed":  true,
+                     "evidence":  "README SS-02 through SS-06 scope updated."
+                 },
+                 {
+                     "id":  "B9-SS06-10",
+                     "check":  "Focused tests",
+                     "passed":  true,
+                     "evidence":  "SkillSelectionMachine filter passed 29/29."
+                 },
+                 {
+                     "id":  "B9-SS06-11",
+                     "check":  "No full semantic quality claim",
+                     "passed":  true,
+                     "evidence":  "Artifact and state scope one unit only."
+                 },
+                 {
+                     "id":  "B9-SS06-12",
+                     "check":  "No host/adaptive/export/import lifecycle claim",
+                     "passed":  true,
+                     "evidence":  "Metric honesty false flags."
+                 },
+                 {
+                     "id":  "B9-SS06-13",
+                     "check":  "No model/checkpoint asset mutation",
+                     "passed":  true,
+                     "evidence":  "No model files in changed file set."
+                 },
+                 {
+                     "id":  "B9-SS06-14",
+                     "check":  "External AI/browser/image not used",
+                     "passed":  true,
+                     "evidence":  "No external tools used."
+                 },
+                 {
+                     "id":  "B9-SS06-15",
+                     "check":  "State compactness maintained",
+                     "passed":  true,
+                     "evidence":  "State uses refs/summaries, no giant inline history."
+                 },
+                 {
+                     "id":  "B9-SS06-16",
+                     "check":  "SS-07..SS-12 remain future",
+                     "passed":  true,
+                     "evidence":  "README/artifacts keep future scope explicit."
+                 }
+             ],
+    "next_action_if_parent_accepts":  "WO-COMMIT-SS-06-01",
+    "parent_review_accepted":  true,
+    "parent_review_verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+    "pending_commit_boundary":  true,
+    "parent_review_evidence":  {
+                                   "parent_review_accepted":  true,
+                                   "parent_review_verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+                                   "reviewed_at_utc":  "2026-06-05T12:55:10.2693819Z",
+                                   "focused_test_rerun":  {
+                                                              "command":  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+                                                              "exit_code":  0,
+                                                              "passed":  29,
+                                                              "failed":  0,
+                                                              "total":  29,
+                                                              "elapsed_seconds":  49.1,
+                                                              "started_utc":  "2026-06-05T12:54:21.2015270Z",
+                                                              "ended_utc":  "2026-06-05T12:55:10.2693819Z"
+                                                          },
+                                   "json_parse":  {
+                                                      "files":  "11 SS-06 artifacts + state",
+                                                      "parsed_ok":  true
+                                                  },
+                                   "anti_hardcode_scan":  {
+                                                              "command":  "rg -n \u0027ExtractSkillCandidate|hardcoded skill_candidates|hardcoded skill candidates|skill candidate keyword whitelist|candidate keyword whitelist|token is \"skill\"|token is \"candidate\"|token is \"coverage\"|token is \"review\"|BM25|filename lookup\u0027 43.SmartSkillsDomain/SkillSelectionMachine.cs",
+                                                              "normalized_result":  "PASS_ZERO_HITS"
+                                                          },
+                                   "diff_check":  {
+                                                      "scope":  "SS-06 files/artifacts",
+                                                      "exit_code":  0
+                                                  },
+                                   "code_review_finding":  "skill_candidates uses learned checkpoint/profile state populated only via TargetTrainingAdapter == ISkillCandidateTraining; deterministic helper is neutral tokenization/load/save/reporting, not skill candidate decision. Ablation test proves empty state returns no selected candidate.",
+                                   "model_asset_scope_note":  "Existing committed model asset compatibility is outside SS-06 narrow claim; no export/import readiness claimed."
+                               },
+    "next_bounded_action":  "WO-COMMIT-SS-06-01"
+}

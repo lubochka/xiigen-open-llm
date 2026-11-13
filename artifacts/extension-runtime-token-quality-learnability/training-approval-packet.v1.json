@@ -1,0 +1,153 @@
+{
+  "schema": "xiigen.training_approval_packet.v1",
+  "phase_id": "LEARN-03",
+  "verdict": "PACKET_READY_FOR_LOCAL_TRACK_REVIEW_NO_TRAINING",
+  "created_for_plan": "C:\\Projects\\llm_mvp_core\\docs\\plans\\EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+  "approval_quote_seen": "Для выполнения есть все необходимые разрешения",
+  "scope": {
+    "operation": "prepare_local_continue_training_contract",
+    "training_started": false,
+    "checkpoint_mutation_started": false,
+    "common_model_mutation_started": false,
+    "external_ai_used": false,
+    "common_training_allowed": false,
+    "local_training_next_phase_requires_parent_review": true
+  },
+  "shared_inputs": {
+    "candidate_dataset_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\local-dpo-candidates-v1.jsonl",
+    "candidate_dataset_sha256": "704EDF7A718B60C80585D73ED9E291991736BD53615F17D10EB78FD3129974B1",
+    "scenario_pack_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\scenario-pack-token-quality-v1.jsonl",
+    "scenario_pack_sha256": "5BECBBE93D4B32C4CB30A598D35E0A348BDDB86EE91C9ADEDA84C51CEEC3C1A6",
+    "user_local_store_manifest_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\user-local-adaptive-store-manifest.v1.json",
+    "user_local_store_manifest_sha256": "D2F75B89BFF89B6734892E4961E62213A98B7BC566FB67E900FE6D7756188A42",
+    "source_license_review_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\source-license-redaction-boundary-review.v1.json",
+    "source_license_review_sha256": "BAC9CE1C31449BDE360C2E027AE1E17E9C00214B01F359E2AAB41DA581DBCC03"
+  },
+  "tracks": [
+    {
+      "track_id": "learn03-prompt-to-task-local",
+      "machine_id": "PromptToTaskMachine",
+      "operation_requested_for_next_phase": "local_continue_training_from_existing_checkpoint",
+      "candidate_ids": [
+        "LDPO-003-human-readable-plan-detail",
+        "LDPO-011-debug-privacy-boundary",
+        "LDPO-012-controlled-error-readability"
+      ],
+      "source_scope": "user_local_redacted_candidates_only",
+      "common_training_allowed": false,
+      "user_local_slot": "%USERPROFILE%\\.xiigen\\adaptive-models\\prompt-to-task",
+      "load_order": [
+        "%USERPROFILE%\\.xiigen\\adaptive-models\\prompt-to-task\\checkpoints\\current",
+        "%USERPROFILE%\\.xiigen\\adaptive-models\\prompt-to-task\\backups\\latest-valid",
+        "C:\\Projects\\llm_mvp_core\\artifacts\\prompt-to-task\\checkpoints\\current"
+      ],
+      "backup_before_mutation": "%USERPROFILE%\\.xiigen\\adaptive-models\\prompt-to-task\\backups\\pre-learn-04",
+      "target_checkpoint_path": "%USERPROFILE%\\.xiigen\\adaptive-models\\prompt-to-task\\checkpoints\\targets\\learn-04-prompt-to-task-local-v1",
+      "rollback_checkpoint_path": "%USERPROFILE%\\.xiigen\\adaptive-models\\prompt-to-task\\backups\\pre-learn-04",
+      "held_out_eval_source": "scenario-pack-token-quality-v1 rows for PromptToTask plus source-disjoint synthetic controls created in LEARN-06",
+      "ablation_controls_required": [
+        "no-trained-state",
+        "shuffled chosen/rejected",
+        "exact prompt removed",
+        "source id/path/title removed"
+      ],
+      "promotion_blocked_until": [
+        "LEARN-04 continue-training report proves loaded_existing_checkpoint=true",
+        "LEARN-05 fresh-load report passes through public PromptToTask boundary",
+        "LEARN-06 held-out/source-disjoint ablation passes",
+        "LEARN-07 rollback proof passes"
+      ]
+    },
+    {
+      "track_id": "learn03-orchestration-reasoning-local",
+      "machine_id": "OrchestrationReasoningMachine",
+      "operation_requested_for_next_phase": "local_continue_training_from_existing_checkpoint",
+      "candidate_ids": [
+        "LDPO-002-runtime-overclaim",
+        "LDPO-005-token-only-success",
+        "LDPO-006-universal-vs-project-specific-leakage",
+        "LDPO-010-checkpoint-target-rollback"
+      ],
+      "source_scope": "user_local_redacted_candidates_only_common_blocked",
+      "common_training_allowed": false,
+      "user_local_slot": "%USERPROFILE%\\.xiigen\\adaptive-models\\orchestration-reasoning",
+      "load_order": [
+        "%USERPROFILE%\\.xiigen\\adaptive-models\\orchestration-reasoning\\checkpoints\\current",
+        "%USERPROFILE%\\.xiigen\\adaptive-models\\orchestration-reasoning\\backups\\latest-valid",
+        "C:\\Projects\\llm_mvp_core\\artifacts\\orchestration-reasoning\\checkpoints\\current"
+      ],
+      "backup_before_mutation": "%USERPROFILE%\\.xiigen\\adaptive-models\\orchestration-reasoning\\backups\\pre-learn-04",
+      "target_checkpoint_path": "%USERPROFILE%\\.xiigen\\adaptive-models\\orchestration-reasoning\\checkpoints\\targets\\learn-04-orchestration-reasoning-local-v1",
+      "rollback_checkpoint_path": "%USERPROFILE%\\.xiigen\\adaptive-models\\orchestration-reasoning\\backups\\pre-learn-04",
+      "held_out_eval_source": "scenario-pack-token-quality-v1 rows for OrchestrationReasoning plus universal-only source-disjoint controls created in LEARN-06",
+      "ablation_controls_required": [
+        "no-trained-state",
+        "shuffled chosen/rejected",
+        "project-stack-specific terms removed",
+        "source id/path/title removed"
+      ],
+      "promotion_blocked_until": [
+        "LEARN-04 continue-training report proves loaded_existing_checkpoint=true",
+        "LEARN-05 fresh-load report passes through public OrchestrationReasoning boundary",
+        "LEARN-06 held-out/source-disjoint ablation passes",
+        "LEARN-07 rollback proof passes"
+      ]
+    },
+    {
+      "track_id": "learn03-skill-selection-local",
+      "machine_id": "SkillSelectionMachine",
+      "operation_requested_for_next_phase": "local_continue_training_from_existing_checkpoint",
+      "candidate_ids": [
+        "LDPO-001-hidden-deterministic-shortcut",
+        "LDPO-007-available-skills-boundary",
+        "LDPO-009-local-learnability-after-correction"
+      ],
+      "source_scope": "user_local_redacted_candidates_only",
+      "common_training_allowed": false,
+      "user_local_slot": "%USERPROFILE%\\.xiigen\\adaptive-models\\skill-selection",
+      "load_order": [
+        "%USERPROFILE%\\.xiigen\\adaptive-models\\skill-selection\\checkpoints\\current",
+        "%USERPROFILE%\\.xiigen\\adaptive-models\\skill-selection\\backups\\latest-valid",
+        "C:\\Projects\\llm_mvp_core\\artifacts\\skill-selection\\checkpoints\\current"
+      ],
+      "backup_before_mutation": "%USERPROFILE%\\.xiigen\\adaptive-models\\skill-selection\\backups\\pre-learn-04",
+      "target_checkpoint_path": "%USERPROFILE%\\.xiigen\\adaptive-models\\skill-selection\\checkpoints\\targets\\learn-04-skill-selection-local-v1",
+      "rollback_checkpoint_path": "%USERPROFILE%\\.xiigen\\adaptive-models\\skill-selection\\backups\\pre-learn-04",
+      "held_out_eval_source": "scenario-pack-token-quality-v1 rows for SkillSelection plus candidate-order/source-id leakage controls created in LEARN-06",
+      "ablation_controls_required": [
+        "no-trained-state",
+        "shuffled chosen/rejected",
+        "candidate order permutation",
+        "available-skills empty/partial controls",
+        "source id/path/title removed"
+      ],
+      "promotion_blocked_until": [
+        "LEARN-04 continue-training report proves loaded_existing_checkpoint=true",
+        "LEARN-05 fresh-load report passes through public SkillSelection boundary",
+        "LEARN-06 held-out/source-disjoint ablation passes",
+        "LEARN-07 rollback proof passes"
+      ]
+    }
+  ],
+  "deferred_tracks": [
+    {
+      "machine_id": "ArchitectBehavior",
+      "reason": "ArchitectBehavior rows are useful local behavior signals, but the active extension-readiness plan requires PromptToTaskMachine, OrchestrationReasoningMachine, and SkillSelectionMachine separately. ArchitectBehavior training remains user-local/deferred until a separate behavior-model approval packet."
+    }
+  ],
+  "next_phase_guard": {
+    "learn04_may_start_local_continue_training_only_for_tracks": [
+      "PromptToTaskMachine",
+      "OrchestrationReasoningMachine",
+      "SkillSelectionMachine"
+    ],
+    "learn04_must_not": [
+      "update common checkpoints",
+      "use external AI",
+      "claim semantic quality",
+      "promote target checkpoint",
+      "skip backup",
+      "retrain from zero unless explicitly labelled cold-start and separately approved"
+    ]
+  }
+}

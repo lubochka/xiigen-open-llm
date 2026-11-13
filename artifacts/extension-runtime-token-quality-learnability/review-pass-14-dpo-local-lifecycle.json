@@ -1,0 +1,169 @@
+{
+  "schema": "xiigen.extension_runtime_token_quality_learnability.review_pass_14_dpo_local_lifecycle.v1",
+  "pass": 14,
+  "name": "DPO and local model lifecycle audit",
+  "created_at_local": "2026-06-16T17:45:00.0000000+03:00",
+  "repo": "C:\\Projects\\llm_mvp_core",
+  "branch": "codex/chat-gpt-5.5",
+  "commit_push_performed_by_this_pass": false,
+  "code_or_test_changes_made": false,
+  "runtime_probes_run_by_this_pass": false,
+  "training_run_by_this_pass": false,
+  "checkpoint_mutation_by_this_pass": false,
+  "external_ai_used_by_this_pass": false,
+  "state_or_report_fix_applied": false,
+  "verdict": "PASS_WITH_BLOCKING_GAP",
+  "reviewed_sources": [
+    "artifacts/extension-runtime-token-quality-learnability/local-dpo-candidates-v1.jsonl",
+    "artifacts/extension-runtime-token-quality-learnability/local-dpo-candidates-v1.md",
+    "artifacts/extension-runtime-token-quality-learnability/local-dpo-candidates-v1.validation.json",
+    "artifacts/extension-runtime-token-quality-learnability/user-local-adaptive-store-manifest.v1.json",
+    "artifacts/extension-runtime-token-quality-learnability/user-local-adaptive-store-plan.v1.md",
+    "artifacts/extension-runtime-token-quality-learnability/source-license-redaction-boundary-review.v1.json",
+    "artifacts/extension-runtime-token-quality-learnability/source-license-redaction-boundary-review.v1.md",
+    "artifacts/extension-runtime-token-quality-learnability/training-approval-packet.v1.json",
+    "artifacts/extension-runtime-token-quality-learnability/training-approval-packet.v1.md",
+    "artifacts/extension-runtime-token-quality-learnability/continue-training-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/continue-training-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/fresh-load-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/fresh-load-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/held-out-ablation-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/held-out-ablation-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/rollback-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/rollback-report.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-11-final-completion-overclaim.json",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-11-final-completion-overclaim.md",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-12-token-quality-truthfulness.json",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-12-token-quality-truthfulness.md",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-13-host-runtime-boundary.json",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-13-host-runtime-boundary.md"
+  ],
+  "dpo_boundary_audit": {
+    "candidate_count": 12,
+    "machine_targeted_rows": true,
+    "target_machines_seen": [
+      "PromptToTaskMachine",
+      "OrchestrationReasoningMachine",
+      "SkillSelectionMachine",
+      "ArchitectBehavior"
+    ],
+    "common_training_allowed_all_false": true,
+    "user_local_store_required_all_true": true,
+    "no_training_executed_in_candidate_pack": true,
+    "privacy_classification_present_all_rows": true,
+    "source_license_gate_present_all_rows": true,
+    "redaction_gate_present_all_rows": true,
+    "local_common_separation_represented": true,
+    "private_data_sneak_into_common_assets_found": false,
+    "evidence": [
+      "local-dpo-candidates-v1.jsonl sets target_machine on every row.",
+      "local-dpo-candidates-v1.jsonl sets common_training_allowed=false and user_local_store_required=true on every row.",
+      "source-license-redaction-boundary-review.v1.json classifies every row as USER_LOCAL_ONLY, USER_LOCAL_ONLY_PRIVATE_BEHAVIOR, USER_LOCAL_ONLY_PRIVATE_CANDIDATE, or QUARANTINE_FOR_COMMON.",
+      "source-license-redaction-boundary-review.v1.md blocks common training until source/license, redaction, universal-rule extraction, source-disjoint split, target checkpoint, rollback checkpoint, and fresh approval packet exist."
+    ]
+  },
+  "local_model_lifecycle_audit": {
+    "user_local_storage_covered": true,
+    "backup_before_training_covered": true,
+    "export_import_share_portability_contract_covered": true,
+    "export_import_share_executed_probe_found": false,
+    "backup_export_import_share_report_present": false,
+    "backup_export_import_share_path_proven": false,
+    "continue_training_from_existing_checkpoint_covered": true,
+    "staged_targets_covered": true,
+    "fresh_load_evidence_covered": true,
+    "held_out_ablation_evidence_covered": true,
+    "rollback_evidence_covered": true,
+    "local_checkpoint_mutation_scope_only": true,
+    "common_checkpoint_mutated": false,
+    "tracks": [
+      {
+        "machine_id": "PromptToTaskMachine",
+        "continue_training": "PASS_LOCAL_CONTINUE_TRAINING",
+        "fresh_load": "PARTIAL_ADAPTIVE_LOADER_ONLY",
+        "held_out_ablation": "PARTIAL_NOT_FULL_MACHINE_EVAL",
+        "rollback": "PARTIAL_OVERLAY_ROLLBACK_ONLY",
+        "limitation": "Lifecycle evidence is overlay/adaptive-loader scoped, not full PromptToTaskMachine checkpoint plus manifest readiness."
+      },
+      {
+        "machine_id": "OrchestrationReasoningMachine",
+        "continue_training": "PASS_LOCAL_CONTINUE_TRAINING",
+        "fresh_load": "PASS_PUBLIC_MACHINE_BOUNDARY",
+        "held_out_ablation": "PASS_NAMED_CONTROLS_NOT_LEAKAGE",
+        "rollback": "PASS_PUBLIC_MACHINE_BOUNDARY_ROLLBACK",
+        "limitation": "Evidence proves named local target lifecycle checks only; it does not prove universal semantic quality, promotion readiness, host runtime readiness, or common readiness."
+      },
+      {
+        "machine_id": "SkillSelectionMachine",
+        "continue_training": "PASS_LOCAL_CONTINUE_TRAINING_CORRECTION_ADAPTIVE_LEG",
+        "fresh_load": "PARTIAL_ADAPTIVE_LOADER_ONLY",
+        "held_out_ablation": "PARTIAL_NOT_FULL_MACHINE_EVAL",
+        "rollback": "PARTIAL_OVERLAY_ROLLBACK_ONLY",
+        "limitation": "Lifecycle evidence is correction-adaptive overlay scoped, not full SkillSelectionMachine checkpoint plus manifest readiness."
+      },
+      {
+        "machine_id": "ArchitectBehavior",
+        "continue_training": "DEFERRED",
+        "fresh_load": "NOT_IN_LEARN_04_TO_07_TRACK",
+        "held_out_ablation": "NOT_IN_LEARN_04_TO_07_TRACK",
+        "rollback": "NOT_IN_LEARN_04_TO_07_TRACK",
+        "limitation": "Rows remain user-local/deferred until a separate behavior-model approval packet exists."
+      }
+    ]
+  },
+  "common_model_readiness_audit": {
+    "common_model_readiness_claim_found": false,
+    "common_training_claim_found": false,
+    "common_checkpoint_mutation_claim_found": false,
+    "target_promotion_claim_found": false,
+    "semantic_quality_claim_found": false,
+    "learnability_claim_found": false,
+    "truthful_representation": true,
+    "evidence": [
+      "Review pass 11 explicitly says no common model readiness is claimed.",
+      "Review pass 12 keeps semantic_quality_claimed=false and learnability_claimed=false.",
+      "Execution state evidence_limitations has common_model_readiness_claimed=false and promotion_readiness_claimed=false.",
+      "LEARN-04/05/06/07 reports preserve commonModelMutated=false/common_checkpoint_mutated=false and no promotion claim."
+    ]
+  },
+  "findings": [
+    {
+      "severity": "INFO",
+      "status": "NO_FIX_NEEDED",
+      "title": "DPO rows are machine-targeted and blocked from common training",
+      "evidence": "All 12 local DPO rows include target_machine, privacy classification, source/license and redaction gates, common_training_allowed=false, user_local_store_required=true, and no_training_executed=true."
+    },
+    {
+      "severity": "INFO",
+      "status": "NO_FIX_NEEDED",
+      "title": "Local/common separation is represented and common promotion is quarantined",
+      "evidence": "The source/license/redaction review keeps all rows user-local or quarantined for common use and requires license/redaction/universalization/source-disjoint/target/rollback approval before any common use."
+    },
+    {
+      "severity": "BLOCKING",
+      "status": "BLOCKS_FINAL_REVIEW_CONTINUATION",
+      "title": "Backup/export/import/share portability probe is missing",
+      "evidence": "The active plan expects backup-export-import-share-report.md/json and requires the backup/export/import/share path to be proven. The user-local store manifest and plan define export packets, import requirements, share redaction, load order, and backup rules, but no executed backup/export/import/share portability probe or backup-export-import-share-report.md/json was found in the reviewed lifecycle reports."
+    },
+    {
+      "severity": "INFO",
+      "status": "LIMITATION_PRESERVED",
+      "title": "PromptToTask and SkillSelection lifecycle evidence remains overlay-scoped",
+      "evidence": "Fresh-load, held-out/ablation, and rollback reports all preserve PARTIAL_ADAPTIVE_LOADER_ONLY or PARTIAL_OVERLAY wording for PromptToTask and SkillSelection."
+    },
+    {
+      "severity": "INFO",
+      "status": "NO_FIX_NEEDED",
+      "title": "Common model readiness is not claimed",
+      "evidence": "State and review passes 11-13 preserve no common readiness, no promotion readiness, no semantic quality, and no learnability claims."
+    }
+  ],
+  "patch_decision": {
+    "existing_state_patch_needed": false,
+    "existing_report_patch_needed": false,
+    "reason": "No existing state or lifecycle/DPO wording was patched in this repair, but the review verdict was downgraded because the active plan requires executed backup/export/import/share proof and the expected report artifacts are missing."
+  },
+  "required_next_action": "Run a bounded backup/export/import/share portability probe and produce backup-export-import-share-report.md/json before final review can continue.",
+  "final_verdict_rationale": "PASS_WITH_BLOCKING_GAP: DPO rows are machine-targeted and gated for user-local storage; local/common separation and source/license/redaction review block common use; local lifecycle evidence covers storage, backup-before-mutation, staged targets, continue-training, fresh-load, held-out/ablation, and rollback. However, the active plan expects backup-export-import-share-report.md/json and requires the backup/export/import/share path to be proven. Only the portability contract is documented; no executed portability probe was found, so final review cannot continue until that bounded probe is run. Common model readiness is not claimed."
+}

@@ -1,0 +1,72 @@
+{
+  "artifact": "smart-skills-source-material-quality-review",
+  "work_order_id": "Q2_MATERIAL_QUALITY_REVIEW",
+  "status": "PASS_WITH_REPAIR_ACCEPTED",
+  "generated_at_utc": "2026-06-10T09:46:00.000Z",
+  "branch": "codex/chat-gpt-5.5",
+  "requested_artifact_type": "material-quality review only",
+  "allowed_write_scope_observed": [
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-STATE.json",
+    "artifacts/dpo-material-quality/smart-skills-source-material-quality-review.json",
+    "artifacts/dpo-material-quality/smart-skills-source-material-quality-audit.json"
+  ],
+  "forbidden_scope_observed": {
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "dashboard_code_changed": false,
+    "training_data_dpo_rows_created": false,
+    "model_artifacts_changed": false,
+    "external_ai_or_tool_use_implied": false,
+    "commit_or_push_done": false
+  },
+  "review_path": [
+    "Read AGENTS.md and CLAUDE.md governance.",
+    "Read active Q2 plan/state and DPO-KNOWLEDGE-MAP-v1.md.",
+    "Read Q2 audit/schema/sample JSONL.",
+    "Read Q1 source-ledger reports, manifests, and review reports.",
+    "Read accessible PromptToTask and OrchestrationReasoning DPO strategy docs and local strategy seed JSONL evidence.",
+    "Parsed audit/state and inspected candidate gate fields, seed labels, sample classifications, and forbidden-scope flags."
+  ],
+  "findings": [
+    {
+      "id": "Q2-MQ-01",
+      "severity": "P1",
+      "status": "FIXED",
+      "finding": "Audit JSON did not contain top-level training_block even though schema requires it, weakening machine-checkable training block evidence.",
+      "fix": "Added audit.training_block with training_allowed=false and an explicit block until Q2-01 candidate binding and candidate quality gates pass."
+    },
+    {
+      "id": "Q2-MQ-02",
+      "severity": "P1",
+      "status": "FIXED",
+      "finding": "First 512 ledger rows had 0 good common candidates; the audit did not make locate-good-candidates a prerequisite strongly enough for a PASS review.",
+      "fix": "Added good_candidate_location_prerequisite to the audit and updated state/review_gate exact next action to Q2-01 locate/materialize candidate bindings before DPO generation."
+    }
+  ],
+  "task_results": {
+    "bad_material_block": "PASS_AFTER_REPAIR: backlog/todo rows, raw/private material, technical/code-bound material, prior training sets, checkpoints, and generated train-ready packages are rejected or evidence-only; training_block now makes the block machine-checkable.",
+    "first_512_zero_good_strategy": "PASS_AFTER_REPAIR: Q2-01 locate/materialize candidate bindings is now prerequisite before any DPO generation.",
+    "reference_seed_rows": "PASS: reference_seed_examples are sourced from PromptToTask/OrchestrationReasoning strategy docs or plan boundary refs, labeled as examples/candidates, and training_row_created=false; they are not approved training rows.",
+    "external_ai_or_tool_use": "PASS: reviewed Q2 audit/sample does not imply external AI/tool use; existing strategy docs mention future assisted generation, but Q2-00/Q2 review produced audit-only artifacts and did not create DPO rows.",
+    "exact_next_action": "Q2-01 locate/materialize candidate bindings beyond the first-512 ledger sample and run the candidate quality gate; DPO generation remains forbidden until candidate_quality_gate_satisfied=true."
+  },
+  "verification_allowed": [
+    "JSON parse",
+    "targeted rg/read",
+    "git diff --check"
+  ],
+  "verification_results": {
+    "json_parse_after_write": "PASS",
+    "schema_required_keys_present": "PASS",
+    "missing_schema_required_keys": [],
+    "sample_jsonl_parse_after_write": "PASS",
+    "sample_jsonl_line_count": 18,
+    "sample_training_row_created_not_false": 0,
+    "sample_external_ai_used_true": 0,
+    "targeted_rg_read": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "training_allowed_now": false,
+  "candidate_quality_gate_satisfied": false,
+  "commit_push_allowed": false
+}

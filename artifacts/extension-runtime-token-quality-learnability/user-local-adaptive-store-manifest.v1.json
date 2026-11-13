@@ -1,0 +1,197 @@
+{
+  "schema": "xiigen.user_local_adaptive_store_manifest.v1",
+  "phase_id": "LEARN-02",
+  "verdict": "BOUNDARY_MANIFEST_READY_NO_TRAINING",
+  "created_for_plan": "C:\\Projects\\llm_mvp_core\\docs\\plans\\EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+  "scope": {
+    "common_repo_logic": "C:\\Projects\\llm_mvp_core",
+    "user_local_root": "%USERPROFILE%\\.xiigen\\adaptive-models",
+    "training_executed": false,
+    "checkpoint_mutation_executed": false,
+    "common_model_mutation_executed": false,
+    "external_ai_used": false
+  },
+  "machines": [
+    {
+      "machine_id": "PromptToTaskMachine",
+      "common_assets_root": "C:\\Projects\\llm_mvp_core\\artifacts\\prompt-to-task",
+      "user_local_slot": "%USERPROFILE%\\.xiigen\\adaptive-models\\prompt-to-task",
+      "store_files": {
+        "manifest": "manifest.json",
+        "candidate_rows": "dpo-candidates.jsonl",
+        "accepted_rows": "dpo-accepted.jsonl",
+        "quarantine_rows": "dpo-quarantine.jsonl",
+        "checkpoint_current": "checkpoints\\current",
+        "checkpoint_backups": "backups",
+        "export_packets": "exports"
+      },
+      "source_candidate_ids": [
+        "LDPO-003-human-readable-plan-detail",
+        "LDPO-011-debug-privacy-boundary",
+        "LDPO-012-controlled-error-readability"
+      ],
+      "load_order": [
+        "user_local_slot/checkpoints/current",
+        "user_local_slot/backups/latest-valid",
+        "common_assets_root/checkpoints/current"
+      ],
+      "continue_training_rule": "Load an existing user-local checkpoint first. If absent, copy common checkpoint into a new user-local base and record cold-start=false only after the copy is verified. Never retrain from zero unless explicitly approved and labelled cold-start.",
+      "backup_export_import_share": {
+        "backup_before_training_required": true,
+        "export_packet_contains": [
+          "manifest.json",
+          "checkpoint hash",
+          "redacted DPO row refs",
+          "source/license decision",
+          "held-out split hash",
+          "rollback ref"
+        ],
+        "import_requires": [
+          "manifest schema match",
+          "machine_id match",
+          "checkpoint hash verification",
+          "redaction review pass"
+        ],
+        "share_requires_redaction": true
+      }
+    },
+    {
+      "machine_id": "OrchestrationReasoningMachine",
+      "common_assets_root": "C:\\Projects\\llm_mvp_core\\artifacts\\orchestration-reasoning",
+      "user_local_slot": "%USERPROFILE%\\.xiigen\\adaptive-models\\orchestration-reasoning",
+      "store_files": {
+        "manifest": "manifest.json",
+        "candidate_rows": "dpo-candidates.jsonl",
+        "accepted_rows": "dpo-accepted.jsonl",
+        "quarantine_rows": "dpo-quarantine.jsonl",
+        "checkpoint_current": "checkpoints\\current",
+        "checkpoint_backups": "backups",
+        "export_packets": "exports"
+      },
+      "source_candidate_ids": [
+        "LDPO-002-runtime-overclaim",
+        "LDPO-005-token-only-success",
+        "LDPO-006-universal-vs-project-specific-leakage",
+        "LDPO-010-checkpoint-target-rollback"
+      ],
+      "load_order": [
+        "user_local_slot/checkpoints/current",
+        "user_local_slot/backups/latest-valid",
+        "common_assets_root/checkpoints/current"
+      ],
+      "continue_training_rule": "Continue only from the existing user-local checkpoint or verified copied common base; target and rollback must be named before mutation.",
+      "backup_export_import_share": {
+        "backup_before_training_required": true,
+        "export_packet_contains": [
+          "manifest.json",
+          "checkpoint hash",
+          "universal-rule-only row refs",
+          "source/license decision",
+          "held-out split hash",
+          "rollback ref"
+        ],
+        "import_requires": [
+          "manifest schema match",
+          "machine_id match",
+          "universal-vs-project-specific review pass",
+          "checkpoint hash verification"
+        ],
+        "share_requires_redaction": true
+      }
+    },
+    {
+      "machine_id": "SkillSelectionMachine",
+      "common_assets_root": "C:\\Projects\\llm_mvp_core\\artifacts\\skill-selection",
+      "user_local_slot": "%USERPROFILE%\\.xiigen\\adaptive-models\\skill-selection",
+      "store_files": {
+        "manifest": "manifest.json",
+        "candidate_rows": "dpo-candidates.jsonl",
+        "accepted_rows": "dpo-accepted.jsonl",
+        "quarantine_rows": "dpo-quarantine.jsonl",
+        "checkpoint_current": "checkpoints\\current",
+        "checkpoint_backups": "backups",
+        "export_packets": "exports"
+      },
+      "source_candidate_ids": [
+        "LDPO-001-hidden-deterministic-shortcut",
+        "LDPO-007-available-skills-boundary",
+        "LDPO-009-local-learnability-after-correction"
+      ],
+      "load_order": [
+        "user_local_slot/checkpoints/current",
+        "user_local_slot/backups/latest-valid",
+        "common_assets_root/checkpoints/current"
+      ],
+      "continue_training_rule": "Continue from existing user-local SkillSelection checkpoint only after candidate rows pass no-candidate-position, no-source-id, available-skills-boundary, and source-disjoint gates.",
+      "backup_export_import_share": {
+        "backup_before_training_required": true,
+        "export_packet_contains": [
+          "manifest.json",
+          "checkpoint hash",
+          "skill candidate row refs",
+          "no-leakage validation",
+          "held-out split hash",
+          "rollback ref"
+        ],
+        "import_requires": [
+          "manifest schema match",
+          "machine_id match",
+          "no deterministic shortcut review pass",
+          "checkpoint hash verification"
+        ],
+        "share_requires_redaction": true
+      }
+    },
+    {
+      "machine_id": "ArchitectBehavior",
+      "common_assets_root": "C:\\Projects\\llm_mvp_core\\artifacts\\architect-behavior",
+      "user_local_slot": "%USERPROFILE%\\.xiigen\\adaptive-models\\architect-behavior",
+      "store_files": {
+        "manifest": "manifest.json",
+        "candidate_rows": "dpo-candidates.jsonl",
+        "accepted_rows": "dpo-accepted.jsonl",
+        "quarantine_rows": "dpo-quarantine.jsonl",
+        "checkpoint_current": "checkpoints\\current",
+        "checkpoint_backups": "backups",
+        "export_packets": "exports"
+      },
+      "source_candidate_ids": [
+        "LDPO-004-architect-executor-boundary",
+        "LDPO-008-trainable-unit-pseudo-solution"
+      ],
+      "load_order": [
+        "user_local_slot/checkpoints/current",
+        "user_local_slot/backups/latest-valid",
+        "common_assets_root/checkpoints/current"
+      ],
+      "continue_training_rule": "Behavior rows are user-local by default; common promotion requires separate redacted corpus review and explicit approval.",
+      "backup_export_import_share": {
+        "backup_before_training_required": true,
+        "export_packet_contains": [
+          "manifest.json",
+          "checkpoint hash",
+          "redacted behavior-row refs",
+          "authority/privacy decision",
+          "held-out split hash",
+          "rollback ref"
+        ],
+        "import_requires": [
+          "manifest schema match",
+          "machine_id match",
+          "redaction review pass",
+          "checkpoint hash verification"
+        ],
+        "share_requires_redaction": true
+      }
+    }
+  ],
+  "global_rules": {
+    "load_user_or_cache_first": true,
+    "repo_common_fallback_second": true,
+    "backup_before_continue_training": true,
+    "export_import_share_supported_by_plan": true,
+    "common_training_allowed_now": false,
+    "semantic_quality_claimed": false,
+    "learnability_claimed": false
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "pass": 5,
+  "requested_review_fix_floor": 10,
+  "work_order_scope": "Pass 5 only",
+  "reviewer": "Codex review_fix_pass_05",
+  "verdict": "PASS_WITH_FIX",
+  "ledger_rows_are_evidence": false,
+  "loaded_rules_and_gates": [
+    "AGENTS.md OP-62",
+    "docs/skills/plan-review-SKILL.md Review depth floor",
+    "docs/skills/claim-verification-SKILL.md"
+  ],
+  "reviewed_files": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1-REVIEW.jsonl"
+  ],
+  "reviewed_sections": [
+    "4.2 token methodology handoff",
+    "4.3 quality scoring algorithm",
+    "4.6 examples",
+    "6 QUALITY phases",
+    "7 quality artifacts",
+    "8 ten-pass ledger",
+    "9 final acceptance matrix",
+    "11 no-overclaim firewall"
+  ],
+  "artifact_before_ref": "Plan before pass 5 had a shallow Section 4.3 with four quality layers and brief good/bad examples, but lacked score anchors, pass thresholds, failure taxonomy, reviewer notes, inter-rater handling, and an exact anti-token-overclaim comparison rule. Section 8 rows 4-5 were plain PASS rows without packet refs for completed passes. REVIEW.jsonl row 5 was ledger-only.",
+  "findings": [
+    {
+      "severity": "HIGH",
+      "status_before_fix": "FAIL",
+      "summary": "Quality scoring was not detailed enough to compare baseline/adaptive and prove improvement or non-regression for PromptToTask, OrchestrationReasoning, SkillSelection, and final usefulness.",
+      "required_fix": "Add per-layer score anchors, thresholds, pass/fail examples, failure taxonomy, reviewer notes, inter-rater handling, and comparison rules."
+    },
+    {
+      "severity": "HIGH",
+      "status_before_fix": "FAIL",
+      "summary": "Token savings could still be overclaimed because the plan did not explicitly say that savings cannot compensate for quality regression in any layer.",
+      "required_fix": "Add an explicit rule that any adaptive quality drop, new failure code, failed layer, or inconclusive review blocks token-success claims."
+    },
+    {
+      "severity": "HIGH",
+      "status_before_fix": "FAIL",
+      "summary": "Pass 5 was ledger-only; Section 8 row 5 and REVIEW.jsonl row 5 did not point to an inspectable evidence packet.",
+      "required_fix": "Create review-pass-05.md/json and update row 5 with evidence packet refs and ledger_rows_are_evidence=false."
+    }
+  ],
+  "fix_refs": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 4.3",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 8 rows 4-5",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1-REVIEW.jsonl row 5",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-05.md",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-05.json"
+  ],
+  "recheck_evidence": [
+    "Section 4.3 now requires separate PromptToTask, OrchestrationReasoning, SkillSelection, and Final output usefulness scores with score anchors 0..5 and PASS threshold >=4.",
+    "Section 4.3 now requires failure_codes, human_reviewer_note, quality_regression, reviewer_id, review_timestamp_utc, and inter_rater_status.",
+    "Section 4.3 now requires adaptive >= baseline in every layer and forbids averaging from hiding a failed layer.",
+    "Section 4.3 now says token savings cannot compensate for any quality regression, new failure code, failed layer, or inconclusive review.",
+    "Section 8 rows 1-5 now use packet refs for completed passes.",
+    "REVIEW.jsonl row 5 points to review-pass-05.md/json and sets ledger_rows_are_evidence=false."
+  ],
+  "consistency_check": {
+    "section_8_completed_rows_1_to_5_use_packet_refs": true,
+    "review_jsonl_row_5_updated_only": true,
+    "ledger_rows_are_evidence_for_completed_pass_5": false
+  },
+  "parent_review_disposition": "parent_review_required_after_return=true",
+  "overall_complete_claimed": false
+}

@@ -1,0 +1,66 @@
+{
+  "schema": "xiigen.parent_review.token_03_full_hosts.v1",
+  "review_role": "bounded parent-review subagent",
+  "review_target": "TOKEN-03-LIVE-TRACE-CAPTURE-FULL-HOSTS",
+  "verdict": "PASS_WITH_REPAIR_ACCEPTED_REVIEW_ONLY",
+  "implementation_performed": false,
+  "commit_push_performed": false,
+  "accepted_evidence": {
+    "codex": {
+      "traces": 36,
+      "pairs": 18,
+      "scope": "adapter/core surface only"
+    },
+    "cursor": {
+      "traces": 22,
+      "pairs": 11,
+      "scope": "partial Extension Host capture after timeout"
+    },
+    "claude": {
+      "traces": 0,
+      "pairs": 0
+    }
+  },
+  "rejected_or_corrected_evidence": [
+    "Corrected pairing_fields_preserved from false to true because all 29 pair-result rows preserve pairing fields and pairing_failures is empty.",
+    "Rejected partial-scoring-first next action because full capture repair remains actionable and the user goal wants full host traces and quality.",
+    "Repaired Claude gap wording to name CommonJS require under type=module and .cjs/ESM-safe runner fix."
+  ],
+  "no_overclaim": {
+    "full_host_completion_claimed": false,
+    "token_savings_claimed": false,
+    "quality_improvement_claimed": false,
+    "semantic_quality_claimed": false,
+    "learnability_claimed": false,
+    "training_started": false,
+    "checkpoint_mutation_started": false,
+    "full_readiness_claimed": false
+  },
+  "exact_gaps": {
+    "Cursor": "Extension Host run timed out at 240 seconds after 22 physical rows / 11 complete pairs; runner summary JSON is missing. Repair needs resumable capture and summary writing.",
+    "Claude": "SessionStart hook launched, but the generated .js runner used CommonJS require under package type=module, causing ReferenceError: require is not defined in ES module scope. Repair needs .cjs runner or ESM-safe imports.",
+    "Codex": "Full scenario pack captured through adapter/core only; real Codex chat UI and real adaptive model effect remain unproven."
+  },
+  "next_work_orders": [
+    "TOKEN-03-CURSOR-CLAUDE-GAP-REPAIR: rerun remaining Cursor rows with resumable summary writer; rerun Claude hook runner as .cjs or ESM-safe. Preserve no-overclaim flags and do not score token savings.",
+    "TOKEN-04-QUALITY-SCORING-CODEX-CURSOR-PARTIAL: only after the repair attempt, score captured real outputs with token_savings_claim_allowed=false unless full quality and adaptive-effect gates are met."
+  ],
+  "verification": {
+    "json_jsonl_parse": "PASS: traces=58, pairs=29, quality_inputs=58.",
+    "counts": "PASS: Codex 36/18, Cursor 22/11, Claude 0/0.",
+    "pairing_fields": "PASS after correction: pair rows with pairing_fields_preserved=false = 0.",
+    "no_overclaim_search": "PASS.",
+    "host_evidence_paths": "PASS for report roots and sampled Cursor response/trace refs.",
+    "cursor_gap_marker": "PASS: token03-cursor-full-pack-summary.json missing and report records timeout.",
+    "claude_gap_marker": "PASS: stdout records ReferenceError require is not defined in ES module scope and .cjs guidance.",
+    "git_diff_check": "PASS in core, Codex host repo, Cursor host repo, and TOKEN-03 path-scoped Claude host repo. Full Claude repo diff-check reports pre-existing RUNTIME-02 whitespace findings outside this TOKEN-03 review scope.",
+    "authorship_gate": "PASS: review only authored parent-review artifacts plus allowed report/state wording corrections."
+  },
+  "changed_files": [
+    "artifacts/extension-runtime-token-quality-learnability/token-03-full-hosts-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/token-03-full-hosts-report.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "artifacts/extension-runtime-token-quality-learnability/parent-review-TOKEN-03-FULL-HOSTS.md",
+    "artifacts/extension-runtime-token-quality-learnability/parent-review-TOKEN-03-FULL-HOSTS.json"
+  ]
+}

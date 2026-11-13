@@ -1,0 +1,48 @@
+{
+  "schema": "xiigen.quality_semantic_gates_22.validation.v1",
+  "phase_id": "QUALITY-SEMANTIC-GATES-22",
+  "generated_at_utc": "2026-06-17T11:52:37.473Z",
+  "dry_run_command": "node tools/qsg22-staged-promotion.js --dry-run",
+  "dry_run_mode": true,
+  "production_locator_or_checkpoint_mutated": false,
+  "source_files_checked": 24,
+  "required_source_files_exist": true,
+  "required_source_json_parses": true,
+  "qsg21_promotion_basis_accepted_for_staging": true,
+  "dry_run_exact_files_count": 7,
+  "rollback_load_probe_passed_for_staged_packet": true,
+  "local_adaptive_full_readiness_claimed": false,
+  "no_overclaim_verified": true,
+  "post_generation_checks_run": [
+    {
+      "command": "node -e QSG22 JSON/refs/hash sanity",
+      "result": "PASS_PARSED_10_JSON_OUTPUT_MISSING_0_SOURCE_MISSING_0_EXACT_CHANGE_MISSING_0_PRODUCTION_HASH_MISMATCHES_0"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff -U0 -- docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json | rg deterministic-boundary terms",
+      "result": "PASS_NO_NEW_STATE_DIFF_MATCHES"
+    },
+    {
+      "command": "rg deterministic-boundary terms in QSG22 tool/artifacts",
+      "result": "PASS_NO_MATCHES"
+    }
+  ],
+  "output_files": [
+    "artifacts/extension-runtime-token-quality-learnability/qsg22-staged-promotion/current-locator-checkpoint-snapshot.json",
+    "artifacts/extension-runtime-token-quality-learnability/qsg22-staged-promotion/dry-run-promotion-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/qsg22-staged-promotion/rollback-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/qsg22-staged-promotion/rollback-load-probe.json",
+    "artifacts/extension-runtime-token-quality-learnability/qsg22-staged-promotion/local-adaptive-readiness-check.json",
+    "artifacts/extension-runtime-token-quality-learnability/qsg22-staged-promotion/qsg21-promotion-basis.json",
+    "artifacts/extension-runtime-token-quality-learnability/qsg22-staged-promotion/claim-ledger.json",
+    "artifacts/extension-runtime-token-quality-learnability/qsg22-staged-promotion/summary-ru.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-22-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-22-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-22.validation.json"
+  ],
+  "verdict": "PASS_STAGED_PROMOTION_ROLLBACK_BACKUP_PACKET_CREATED_NO_PRODUCTION_MUTATION"
+}

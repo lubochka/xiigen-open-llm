@@ -1,0 +1,117 @@
+{
+  "schema": "xiigen.codex_available_skills_parser_repair.v1",
+  "phase_id": "HOST-REPAIR-CODEX-AVAILABLE-SKILLS-PARSER",
+  "verdict": "PASS",
+  "claim_scope": "Codex adapter CLI parser regression and core-boundary request evidence only.",
+  "true_root_cause": "RUNTIME-04 did pass --available-skills-json, but Windows PowerShell/native Node invocation stripped JSON double quotes before Node received the value. Node saw [architect,planning,plan-review], JSON.parse failed, and the existing parseJsonOrDefault fallback produced AvailableSkills=[]. The mapping line already existed.",
+  "what_this_proves": [
+    "--available-skills-json is parsed by src/codex-entrypoint.js when it arrives as valid JSON.",
+    "--available-skills-json is also parsed when PowerShell/native invocation strips JSON string quotes into a bracket-list form.",
+    "AvailableSkills reaches the XiigenExtensionRequest JSON sent to llm_mvp_core.",
+    "RequestedSkills still reaches the same request.",
+    "The Codex host remains a thin adapter: no semantic ranking, training, DPO, or checkpoint mutation happens in the host."
+  ],
+  "what_this_does_not_prove": [
+    "Semantic SkillSelection quality.",
+    "Token savings or quality improvement.",
+    "Trained-model readiness, DPO generation, checkpoint mutation, fresh-load, or continue-training.",
+    "Full Codex plugin chat UI runtime invocation."
+  ],
+  "exact_code_change_human_language": "src/codex-entrypoint.js already mapped available-skills-json and requested-skills-json. The repair changes those fields to use parseJsonArrayOrDefault, which first accepts real JSON arrays and then safely accepts the PowerShell-stripped bracket-list form such as [architect,planning,plan-review]. The host still does not rank or train skills; it only forwards explicit arrays to llm_mvp_core.",
+  "tests_and_probes": [
+    {
+      "name": "HOST-REPAIR-CODEX-AVAILABLE-SKILLS-PARSER.js",
+      "command": "node.exe test/host-qa/HOST-REPAIR-CODEX-AVAILABLE-SKILLS-PARSER.js --repo-root C:\\Projects\\codex-xiigen-smart-skills --core-root C:\\Projects\\llm_mvp_core --output-root C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser",
+      "result": "PASS",
+      "assertions": [
+        "valid JSON array case maps request.AvailableSkills to [\"architect\",\"planning\",\"plan-review\"]",
+        "PowerShell-stripped bracket-list case maps request.AvailableSkills to [\"architect\",\"planning\",\"plan-review\"]",
+        "PowerShell-stripped bracket-list case maps request.RequestedSkills to [\"planning\"]",
+        "request.Provenance.runner proves this focused probe path",
+        "response does not claim semantic quality"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_name": "valid-json-array",
+      "passed": true,
+      "available_skills_arg": "[\"architect\",\"planning\",\"plan-review\"]",
+      "requested_skills_arg": "[\"planning\"]",
+      "request_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\valid-json-array\\xiigen-codex-core-request.json",
+      "response_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\valid-json-array\\xiigen-codex-core-response.json",
+      "trace_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\valid-json-array\\xiigen-codex-core-trace.json",
+      "stdout_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\valid-json-array\\entrypoint.stdout.log",
+      "stderr_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\valid-json-array\\entrypoint.stderr.log",
+      "observed_available_skills": [
+        "architect",
+        "planning",
+        "plan-review"
+      ],
+      "observed_requested_skills": [
+        "planning"
+      ],
+      "exit_code": 0,
+      "available_skills_mapped": true,
+      "requested_skills_mapped": true,
+      "host_remained_thin": true,
+      "semantic_quality_claimed": false
+    },
+    {
+      "case_name": "powershell-stripped-bracket-list",
+      "passed": true,
+      "available_skills_arg": "[architect,planning,plan-review]",
+      "requested_skills_arg": "[planning]",
+      "request_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\powershell-stripped-bracket-list\\xiigen-codex-core-request.json",
+      "response_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\powershell-stripped-bracket-list\\xiigen-codex-core-response.json",
+      "trace_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\powershell-stripped-bracket-list\\xiigen-codex-core-trace.json",
+      "stdout_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\powershell-stripped-bracket-list\\entrypoint.stdout.log",
+      "stderr_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\powershell-stripped-bracket-list\\entrypoint.stderr.log",
+      "observed_available_skills": [
+        "architect",
+        "planning",
+        "plan-review"
+      ],
+      "observed_requested_skills": [
+        "planning"
+      ],
+      "exit_code": 0,
+      "available_skills_mapped": true,
+      "requested_skills_mapped": true,
+      "host_remained_thin": true,
+      "semantic_quality_claimed": false
+    }
+  ],
+  "request_artifact_showing_available_skills": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\powershell-stripped-bracket-list\\xiigen-codex-core-request.json",
+  "response_artifact": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\powershell-stripped-bracket-list\\xiigen-codex-core-response.json",
+  "trace_artifact": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\powershell-stripped-bracket-list\\xiigen-codex-core-trace.json",
+  "stdout_artifact": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\powershell-stripped-bracket-list\\entrypoint.stdout.log",
+  "stderr_artifact": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser\\powershell-stripped-bracket-list\\entrypoint.stderr.log",
+  "observed_request_available_skills": [
+    "architect",
+    "planning",
+    "plan-review"
+  ],
+  "observed_request_requested_skills": [
+    "planning"
+  ],
+  "no_overclaim_booleans": {
+    "codex_adapter_parser_boundary_proven": true,
+    "host_semantic_ranking": false,
+    "model_training_in_host": false,
+    "dpo_generation_in_host": false,
+    "learned_model_mutation_in_host": false,
+    "semantic_quality_claimed": false,
+    "token_savings_claimed": false,
+    "full_plan_completion_claimed": false,
+    "external_ai_used": false
+  },
+  "changed_files": [
+    "C:\\Projects\\codex-xiigen-smart-skills\\test\\host-qa\\HOST-REPAIR-CODEX-AVAILABLE-SKILLS-PARSER.js",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-ext-readiness-01\\available-skills-parser",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-available-skills-parser-repair-report.md",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\codex-available-skills-parser-repair-report.json",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+  ],
+  "next_independent_track": "Parent review can accept this parser repair, then Codex SkillSelection/token/quality runtime rows may use non-empty AvailableSkills evidence without relying on the stale RUNTIME-04 bug finding."
+}

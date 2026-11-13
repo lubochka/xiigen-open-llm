@@ -1,0 +1,76 @@
+{
+  "work_order": "PTT-01",
+  "status": "PASS_WITH_REPAIR_ACCEPTED",
+  "claim_scope": "PromptToTask contract-only training pair and checkpoint state shape",
+  "full_extension_completion_claimed": false,
+  "rows": [
+    {
+      "requirement_id": "PTT01-01",
+      "literal_requirement": "A trainable PromptToTask pair/DTO shape exists for prompt-to-task DPO/training without raw private prompt text.",
+      "actual_artifact": "PromptToTaskTrainingPairContract",
+      "actual_value": "ref/hash based pair; no RawPrompt/PromptText property",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT01-02",
+      "literal_requirement": "Required source/provenance refs exist: source_row_id or equivalent, chosen_ref/approved_pair_ref, rejected_ref, error_code/taxonomy, source hash/ref, split/heldout support.",
+      "actual_artifact": "PromptToTaskTrainingPairContract",
+      "actual_value": "SourceRowId, ApprovedPairRef, ChosenRef, RejectedRef, ErrorCode, ErrorTaxonomyRef, SourcePromptSha256, SourceManifestRef, SplitId, SplitRole, HeldOutSetId",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT01-03",
+      "literal_requirement": "Checkpoint state fields exist: checkpoint id/hash or learned-state id, schema version, row count/pair count, source manifest ref, model/training-state refs needed by future export/import/fresh-load/continue.",
+      "actual_artifact": "PromptToTaskCheckpointStateContract",
+      "actual_value": "LearnedStateId, CheckpointId, CheckpointSha256, SchemaVersion, SourceRowCount, DpoPairCount, SourceManifestRef, ModelStateRef, TrainingStateRef, ExportManifestRef, FreshLoadProbeRef, ContinueTrainingStateRef",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT01-04",
+      "literal_requirement": "Public surfaces follow OperationResult discipline where applicable; no null/bool-only contract surface newly added.",
+      "actual_artifact": "PromptToTaskContracts.cs",
+      "actual_value": "DTO records only added; no public method added; existing OperationResult builder preserved",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT01-05",
+      "literal_requirement": "No deterministic classifier/inference implementation is added in PTT-01. Skeleton may remain honest not-ready.",
+      "actual_artifact": "rg deterministic shortcut sweep and PromptToTaskContracts tests",
+      "actual_value": "No classifier/trainer/lookup/BM25/regex added; machine remains not-ready/no-inference",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT01-06",
+      "literal_requirement": "Raw prompt text/private source text is not persisted in committed contract artifacts.",
+      "actual_artifact": "PromptToTaskTrainingPairContract test",
+      "actual_value": "Training pair uses refs and hashes; artifacts contain no private corpus rows",
+      "passed": true,
+      "gap": null
+    },
+    {
+      "requirement_id": "PTT01-07",
+      "literal_requirement": "Positive/negative DPO shape is plausible near-miss capable and compatible with strategy docs.",
+      "actual_artifact": "PromptToTaskTrainingPairContract",
+      "actual_value": "ChosenRef, RejectedRef, ErrorCode, ErrorTaxonomyRef, NearMissStrategyRef",
+      "passed": true,
+      "gap": null
+    }
+  ],
+  "verification": {
+    "focused_test": {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~PromptToTaskContracts\" --nologo",
+      "exit_code": 0,
+      "summary": "Failed: 0, Passed: 9, Skipped: 0, Total: 9"
+    },
+    "deterministic_sweep": {
+      "exit_code": 0,
+      "forbidden_hits": 0
+    }
+  },
+  "next_bounded_action": "WO-COMMIT-PTT-01-01"
+}

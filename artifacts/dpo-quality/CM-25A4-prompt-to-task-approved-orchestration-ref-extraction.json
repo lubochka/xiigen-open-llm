@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "work_order": "CM-25A4-PROMPT-TO-TASK-APPROVED-ORCHESTRATION-REF-EXTRACTION",
+  "artifact_kind": "prompt_to_task_approved_orchestration_ref_extraction",
+  "verdict": "PASS_WITH_PAIR_REFS_STILL_PENDING_NO_ROW_LEVEL_ANCHOR",
+  "passed": true,
+  "claim_scope": "Static local PromptToTask approved/ref extraction attempt only; no DPO training, no runtime, no external AI, and no completion claim.",
+  "completion_claim_allowed": false,
+  "training_started": false,
+  "runtime_or_host_invoked": false,
+  "external_ai_used": false,
+  "template_modified": false,
+  "approval_invented": false,
+  "raw_private_text_copied": false,
+  "counts": {
+    "rows_total": 2,
+    "approved_bindings_written": 0,
+    "pending_bindings": 2,
+    "placeholder_rows_remaining": 2,
+    "invalid_rows": 0,
+    "row_level_pair_anchor_found": 0,
+    "candidate_level_concrete_pairs_written": 0
+  },
+  "extraction_result": {
+    "source_files_found_from_cm25a3": 2,
+    "approved_orchestration_material_found": true,
+    "strategy_positive_negative_examples_found": true,
+    "strategy_candidate_refs_found": 23,
+    "row_bound_chosen_ref_found": false,
+    "row_bound_rejected_ref_found": false,
+    "safe_template_update_possible": false,
+    "reason_template_not_updated": "Local approved/reference docs contain usable strategy and approved-orchestration references, but no local artifact proves which concrete chosen_ref/rejected_ref pair belongs to each PromptToTask source_row_id. Candidate-level expansion would still attach the same unbound strategy examples to both source rows and would invent row-level approval."
+  },
+  "rows": [
+    {
+      "source_row_id": "ptt-ref-943c5d0117a30def",
+      "source_file_ref": "<local-source:claude-user-prompts/accepted-orchestration-patterns.md#sha256:7F8936DA88485E17E2CC1FC11B836600C10664A35B51A3547E873BB2B2A04285>",
+      "candidate_strategy_ref_family": "<strategy-doc:f90505d71200ff10#line-38..49,line-86,line-94,line-97,line-110,line-146,line-156,line-194,line-206,line-219..221>",
+      "approved_orchestration_ref_family": "<local-ref:sonnet-user-prompts/sonnet-approved-orchestration.md#sha256:4E1E1643DE9A5F79C44665EB02E955B36361A7F6109B399676CA020B544FCD1E>",
+      "chosen_ref": null,
+      "rejected_ref": null,
+      "approved_pair_ref": null,
+      "error_code": null,
+      "binding_status": "pending_row_level_pair_anchor",
+      "pending_reason": "No redacted row-level anchor maps this source_row_id to one approved chosen/rejected pair."
+    },
+    {
+      "source_row_id": "ptt-ref-d2b9682eee5dceff",
+      "source_file_ref": "<local-source:claude-user-prompts/user-prompts.md#sha256:6AC7F7C32EDB36FF4CD1027D9639815046CF7A0E4934A69275DFBCC61E31CE1F>",
+      "candidate_strategy_ref_family": "<strategy-doc:f90505d71200ff10#line-38..49,line-86,line-94,line-97,line-110,line-146,line-156,line-194,line-206,line-219..221>",
+      "approved_orchestration_ref_family": "<local-ref:sonnet-user-prompts/sonnet-approved-orchestration.md#sha256:4E1E1643DE9A5F79C44665EB02E955B36361A7F6109B399676CA020B544FCD1E>",
+      "chosen_ref": null,
+      "rejected_ref": null,
+      "approved_pair_ref": null,
+      "error_code": null,
+      "binding_status": "pending_row_level_pair_anchor",
+      "pending_reason": "No redacted row-level anchor maps this source_row_id to one approved chosen/rejected pair."
+    }
+  ],
+  "candidate_refs_reviewed": {
+    "prompt_to_task_strategy_doc": "<strategy-doc:f90505d71200ff10:PROMPT-TO-TASK-DPO-NEGATIVE-STRATEGY-v1.md>",
+    "taxonomy_lines": "<strategy-doc:f90505d71200ff10#line-38..49>",
+    "example_pair_line_families": [
+      "<strategy-doc:f90505d71200ff10#line-57,line-86,line-94,line-97,line-110>",
+      "<strategy-doc:f90505d71200ff10#line-117,line-146,line-156>",
+      "<strategy-doc:f90505d71200ff10#line-163,line-194,line-206>",
+      "<strategy-doc:f90505d71200ff10#line-219..221>"
+    ],
+    "why_candidate_level_rows_not_written": "The strategy examples are concrete example refs, but they are not proven to be the approved chosen/rejected pair for either hashed PromptToTask source row. Writing them into both rows would satisfy shape while losing source authority."
+  },
+  "pending_unresolved": [
+    {
+      "id": "PTT_ROW_LEVEL_PAIR_ANCHOR_MISSING",
+      "pending_rows": 2,
+      "reason": "Need a redacted local artifact that maps each source_row_id to approved_pair_ref, error_code, chosen_ref, and rejected_ref using line/hash refs from the mapped prompt source and approved orchestration/reference material.",
+      "next_action": "CM-25A5-PROMPT-TO-TASK-ROW-LEVEL-PAIR-ANCHOR-REPAIR"
+    }
+  ],
+  "first_actionable_gap": {
+    "id": "CM25A4-01",
+    "gap_id": "PROMPT_TO_TASK_ROW_LEVEL_PAIR_ANCHOR_MISSING",
+    "status": "open",
+    "description": "Create a redacted row-level pair anchor artifact for the two PromptToTask source rows, then rerun binding materialization without copying raw private prompt text or inventing approval.",
+    "next_bounded_action": "CM-25A5-PROMPT-TO-TASK-ROW-LEVEL-PAIR-ANCHOR-REPAIR"
+  },
+  "next_bounded_action": "CM-25A5-PROMPT-TO-TASK-ROW-LEVEL-PAIR-ANCHOR-REPAIR",
+  "required_next_action": "CM-25A5-PROMPT-TO-TASK-ROW-LEVEL-PAIR-ANCHOR-REPAIR"
+}

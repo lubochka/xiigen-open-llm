@@ -1,0 +1,56 @@
+{
+  "schema": "xiigen.extension_runtime_token_quality_learnability.plan_review_packet.v1",
+  "subagent_id": "PLAN-REVIEW-01",
+  "subagent_name": "bounded sub-agent PLAN-REVIEW-01",
+  "pass_number": 1,
+  "pass_count_required": 10,
+  "product_implementation_authorized": false,
+  "product_implementation_executed": false,
+  "commit_push_authorized": false,
+  "commit_push_executed": false,
+  "target_outcome_row": "At least 10 final readiness checks after execution; no Target Outcome Matrix row may be treated as done or ready without fresh packet-backed proof.",
+  "focus": "Target outcome completion loophole",
+  "findings": [
+    {
+      "severity": "high",
+      "finding": "The plan did not explicitly forbid READY everywhere final report/state completion labels were forbidden.",
+      "status": "fixed"
+    },
+    {
+      "severity": "high",
+      "finding": "Execution state contained historical status fields with PASS_WITH_LIMITATIONS and READY wording that could be mistaken for active completion while target rows remain unproven.",
+      "status": "fixed"
+    }
+  ],
+  "fix_refs": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 0",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 8",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 9",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 9.2",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json active_completion_gate",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json final_review_10"
+  ],
+  "recheck_evidence": {
+    "rg_patterns": [
+      "DONE",
+      "READY",
+      "COMPLETE_WITH_LIMITATIONS",
+      "PASS_WITH_LIMITATIONS",
+      "Target Outcome Matrix",
+      "IN_PROGRESS_NEXT_STEP_KNOWN",
+      "old_state_completion_claims_are_evidence_only",
+      "active_completion_status",
+      "ledger_rows_are_evidence"
+    ],
+    "rg_result_summary": "The remaining forbidden labels in active plan/state text are now inside explicit forbidden-label lists, revoked historical wording, or historical_status under old_state_completion_claims_are_evidence_only=true. Active completion status is IN_PROGRESS_NEXT_STEP_KNOWN.",
+    "state_json_valid": true
+  },
+  "ledger_rows_are_evidence": false,
+  "old_state_completion_claims_are_evidence_only": true,
+  "parent_self_review_counts": false,
+  "old_review_pass_01_to_10_count_for_current_gate": false,
+  "active_completion_status": "IN_PROGRESS_NEXT_STEP_KNOWN",
+  "final_report_may_say_done_or_ready": false,
+  "execution_state_may_say_done_or_ready": false,
+  "verdict": "PASS_AFTER_FIXES"
+}

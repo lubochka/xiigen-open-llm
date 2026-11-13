@@ -1,0 +1,68 @@
+{
+  "schema": "completion-matrix-v1",
+  "schema_version": "1.0",
+  "work_order": "OR-02V",
+  "status": "PASS_PENDING_PARENT_REVIEW",
+  "claim_scope": "OR-02V validator-only gate",
+  "requirements": [
+    {"id":"OR02V-01","requirement":"Create real OrchestrationReasoning corpus validator before later validator use.","actual_artifact":"tools/validate-orchestration-reasoning-corpus.ps1","passed":true},
+    {"id":"OR02V-02","requirement":"Validator accepts explicit corpus, manifest, and report paths.","actual_artifact":"tools/validate-orchestration-reasoning-corpus.ps1","passed":true},
+    {"id":"OR02V-03","requirement":"Corpus JSONL parses row-by-row.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-validator-report.json","passed":true},
+    {"id":"OR02V-04","requirement":"Manifest JSON parses and hash checks pass.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-validator-report.json","passed":true},
+    {"id":"OR02V-05","requirement":"Manifest row_count equals corpus row count.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-validator-report.json","passed":true},
+    {"id":"OR02V-06","requirement":"Corpus has only common OrchestrationReasoning rows with trainable-target fields.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-validator-report.json","passed":true},
+    {"id":"OR02V-07","requirement":"DPO error codes and taxonomy refs are checked.","actual_artifact":"tools/validate-orchestration-reasoning-corpus.ps1","passed":true},
+    {"id":"OR02V-08","requirement":"Source refs and 64-hex sha256 fields are checked.","actual_artifact":"tools/validate-orchestration-reasoning-corpus.ps1","passed":true},
+    {"id":"OR02V-09","requirement":"Raw/private/leakage/finalized/train-ready/training flags remain false.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-validator-report.json","passed":true},
+    {"id":"OR02V-10","requirement":"No private absolute paths in corpus or manifest.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-validator-report.json","passed":true},
+    {"id":"OR02V-11","requirement":"Excluded adaptive row count is present and adaptive rows are not in common corpus.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-validator-report.json","passed":true},
+    {"id":"OR02V-12","requirement":"Report does not claim training/model/host/runtime success.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-validator-report.json","passed":true},
+    {"id":"OR02V-13","requirement":"No external AI, host repo, training, OR-03, commit, or push performed.","actual_artifact":"artifacts/authority-self-reflection/OR-02V.json","passed":true},
+    {"id":"OR02V-14","requirement":"State was updated before first OR-02V implementation write.","actual_artifact":"docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json","passed":true},
+    {"id":"OR02V-15","requirement":"Completion evidence is validation-only and does not claim full extension completion.","actual_artifact":"artifacts/completion-matrix/OR-02V.json","passed":true},
+    {"id":"OR02V-16","requirement":"Next bounded action is commit-only if parent accepts; OR-03 is not started.","actual_artifact":"docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json","passed":true},
+    {"id":"OR02V-R1","requirement":"Validator emits a JSON failure report instead of throwing silently when input files are missing.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-negative-missing-corpus-report.json","passed":true},
+    {"id":"OR02V-R2","requirement":"Validator report exposes failures and failed_checks lists.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-validator-report.json","passed":true},
+    {"id":"OR02V-R3","requirement":"Rows must include non-empty project_adapter_refs arrays.","actual_artifact":"tools/validate-orchestration-reasoning-corpus.ps1","passed":true},
+    {"id":"OR02V-R4","requirement":"Rows must include non-empty excluded_technical_execution_refs arrays.","actual_artifact":"tools/validate-orchestration-reasoning-corpus.ps1","passed":true},
+    {"id":"OR02V-R5","requirement":"Parent positive rerun report is accounted as active OR-02V evidence.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-parent-rerun-validator-report.json","passed":true},
+    {"id":"OR02V-R6","requirement":"Parent negative missing-corpus report is accounted as active OR-02V evidence.","actual_artifact":"artifacts/orchestration-reasoning-corpus/OR-02V-parent-negative-missing-corpus-report.json","passed":true}
+  ],
+  "validator_summary": {
+    "passed": true,
+    "row_count": 3,
+    "failed_check_count": 0,
+    "check_count": 13,
+    "failures_list_present": true,
+    "failed_checks_list_present": true,
+    "negative_missing_corpus_probe": {
+      "passed": false,
+      "expected_failure": true,
+      "failed_check_count": 1,
+      "report_ref": "artifacts/orchestration-reasoning-corpus/OR-02V-negative-missing-corpus-report.json"
+    },
+    "parent_review_evidence": {
+      "positive_rerun": {
+        "exit_code": 0,
+        "passed": true,
+        "failed_check_count": 0,
+        "required_fields_include_adapter_refs": true,
+        "report_ref": "artifacts/orchestration-reasoning-corpus/OR-02V-parent-rerun-validator-report.json"
+      },
+      "negative_missing_corpus": {
+        "exit_code": 1,
+        "expected_failure": true,
+        "passed": false,
+        "failed_check_count": 1,
+        "failed_check": "corpus_file_exists",
+        "report_ref": "artifacts/orchestration-reasoning-corpus/OR-02V-parent-negative-missing-corpus-report.json"
+      }
+    }
+  },
+  "passed_count": 22,
+  "failed_count": 0,
+  "content_passed": true,
+  "process_passed": true,
+  "overall_passed": true,
+  "passed": true
+}

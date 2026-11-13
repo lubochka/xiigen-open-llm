@@ -1,0 +1,129 @@
+{
+  "schema": "xiigen.extension_runtime_token_quality_learnability.review_pass_13_host_runtime_boundary.v1",
+  "pass": 13,
+  "name": "Host runtime boundary audit",
+  "created_at_local": "2026-06-16T17:30:00.0000000+03:00",
+  "repo": "C:\\Projects\\llm_mvp_core",
+  "branch": "codex/chat-gpt-5.5",
+  "commit_push_performed_by_this_pass": false,
+  "code_or_test_changes_made": false,
+  "runtime_probes_run_by_this_pass": false,
+  "external_ai_used_by_this_pass": false,
+  "state_or_report_fix_applied": false,
+  "verdict": "PASS_NO_FIX_NEEDED",
+  "reviewed_sources": [
+    "artifacts/extension-runtime-token-quality-learnability/runtime-map.json",
+    "artifacts/extension-runtime-token-quality-learnability/runtime-map.md",
+    "artifacts/extension-runtime-token-quality-learnability/claude-runtime-qa-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/claude-runtime-qa-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/cursor-runtime-qa-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/cursor-runtime-qa-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/codex-runtime-qa-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/codex-runtime-qa-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/claude-adapter-functionality-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/claude-adapter-functionality-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/cursor-adapter-functionality-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/cursor-adapter-functionality-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/codex-adapter-functionality-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/codex-adapter-functionality-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/codex-available-skills-parser-repair-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/codex-available-skills-parser-repair-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-11-final-completion-overclaim.json",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-11-final-completion-overclaim.md",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-12-token-quality-truthfulness.json",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-12-token-quality-truthfulness.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+  ],
+  "host_boundary_matrix": [
+    {
+      "host": "Claude",
+      "adapter_report_scope": "source adapter functionality only; no interactive Claude runtime proof",
+      "runtime_report_scope": "Claude Code 2.1.170 session-only --plugin-dir SessionStart hook path",
+      "actual_runtime_path_proven": true,
+      "full_ui_or_marketplace_installation_proven": false,
+      "debug_trace_requirement_status": "REPRESENTED",
+      "debug_trace_evidence": [
+        "claude-adapter-functionality-report records debug-on/debug-off source entrypoint evidence and exact redacted shape",
+        "claude-runtime-qa-report records debugTraceObserved=true and fresh hook/core artifacts",
+        "runtime report limitation says persistent marketplace/global installation is not proven"
+      ],
+      "overclaim_found": false
+    },
+    {
+      "host": "Cursor",
+      "adapter_report_scope": "thin adapter functionality/repair only; no full Cursor Extension Host/UI runtime proof",
+      "runtime_report_scope": "Cursor Extension Host CLI/headless command path through xiigen.smartSkills.select",
+      "actual_runtime_path_proven": true,
+      "chat_participant_ui_proven": false,
+      "screenshot_or_human_ui_capture_proven": false,
+      "debug_trace_requirement_status": "REPRESENTED_WITH_LIMITATION",
+      "debug_trace_evidence": [
+        "cursor-adapter-functionality-report records debug-on/debug-off local adapter evidence and exact redacted shape",
+        "cursor-runtime-qa-report records debugTraceObserved=true and command return display text",
+        "runtime report explicitly says no Cursor chat participant UI send/invoke and no screenshot/human UI capture"
+      ],
+      "overclaim_found": false
+    },
+    {
+      "host": "Codex",
+      "adapter_report_scope": "thin adapter functionality/repair only; no full Codex plugin/app runtime proof",
+      "runtime_report_scope": "Codex exec model-backed runtime session invoked test-only evidence scripts, which invoked the Codex JS source entrypoint CLI and llm_mvp_core API",
+      "actual_runtime_path_proven": true,
+      "full_plugin_chat_ui_proven": false,
+      "external_ai_or_model_backed_runtime_used": true,
+      "debug_trace_requirement_status": "REPRESENTED_WITH_LIMITATION",
+      "debug_trace_evidence": [
+        "codex-adapter-functionality-report records component/source-entrypoint debug-on evidence and exact redacted shape",
+        "codex-runtime-qa-report records visible_debug_ref, debug_trace_observed=true, debug_redaction_observed=true, and visible_debug_shape",
+        "codex-runtime-qa-report explicitly says this is not full Codex plugin chat UI evidence",
+        "codex-available-skills parser repair report explicitly does not prove full Codex plugin chat UI runtime invocation"
+      ],
+      "overclaim_found": false
+    }
+  ],
+  "findings": [
+    {
+      "severity": "INFO",
+      "status": "NO_FIX_NEEDED",
+      "title": "Host runtime evidence is scoped to named paths and does not overclaim full product readiness",
+      "evidence": "Runtime-map rejects old artifacts as final proof; runtime QA reports name the exact Claude, Cursor, and Codex paths; review pass 11 says host runtime packets allow named runtime paths only and no full plan completion."
+    },
+    {
+      "severity": "INFO",
+      "status": "NO_FIX_NEEDED",
+      "title": "Codex full plugin chat UI remains explicitly unproven",
+      "evidence": "codex-runtime-qa-report claim_scope says Codex exec plus test-only evidence script and not full Codex plugin chat UI evidence; no_overclaim_booleans.codex_full_plugin_chat_ui=false; what_this_does_not_prove includes full Codex plugin chat UI invocation."
+    },
+    {
+      "severity": "INFO",
+      "status": "NO_FIX_NEEDED",
+      "title": "Debug input/output trace requirement is represented with host-specific limitations",
+      "evidence": "Claude, Cursor, and Codex adapter/runtime reports include the redacted debug shape 'xiigen <method> : input: <redacted> output: <redacted>' or host-specific evidence refs. Cursor limits this to command return display text, and Codex limits it to codex exec/scripted CLI evidence rather than full plugin chat UI."
+    },
+    {
+      "severity": "INFO",
+      "status": "NO_FIX_NEEDED",
+      "title": "Parser repair report does not expand Codex runtime claims",
+      "evidence": "codex-available-skills-parser-repair-report proves only CLI parser/request-boundary repair and explicitly does not prove semantic SkillSelection quality, token savings, trained-model readiness, or full Codex plugin chat UI runtime invocation."
+    }
+  ],
+  "overclaim_audit": {
+    "direct_overclaim_found": false,
+    "missing_limitation_found": false,
+    "existing_state_or_report_patch_required": false,
+    "full_codex_plugin_chat_ui_claim_found": false,
+    "cursor_chat_participant_ui_claim_found": false,
+    "claude_persistent_install_claim_found": false,
+    "host_runtime_used_for_token_quality_learning_claim": false,
+    "debug_trace_requirement_missing": false
+  },
+  "limitations_to_preserve_in_final_reporting": [
+    "Claude runtime proof is session-only --plugin-dir hook evidence, not persistent marketplace/global installation proof.",
+    "Cursor runtime proof is Extension Host command-path evidence; Cursor chat participant UI and screenshot/human UI capture are not proven.",
+    "Codex runtime proof is codex exec model-backed scripted evidence invoking the JS CLI adapter; full Codex plugin chat UI is not proven.",
+    "Adapter functionality reports are source/component evidence and must not be substituted for full host runtime proof.",
+    "Host runtime evidence does not prove token savings, semantic quality, learnability, training, checkpoint readiness, target promotion, rollback safety, or full extension completion.",
+    "Debug input/output trace evidence is redacted and host-path-scoped; it must not be described as raw prompt/response display."
+  ],
+  "final_verdict_rationale": "PASS_NO_FIX_NEEDED: reviewed host runtime and adapter reports state what was actually run, preserve Codex full plugin chat UI limitations, and represent the debug input/output trace requirement with host-specific evidence or limitations. No direct overclaim or missing limitation requiring a state/report patch was found."
+}

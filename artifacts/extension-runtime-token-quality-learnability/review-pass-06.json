@@ -1,0 +1,80 @@
+{
+  "pass": 6,
+  "requested_review_fix_floor": 10,
+  "reviewer_id": "Codex review_fix_pass_06",
+  "artifact_type": "review_fix_pass",
+  "work_order_scope": "Pass 6 only",
+  "verdict_before_fix": "FAIL",
+  "verdict_after_fix": "PASS_WITH_FIX",
+  "ledger_rows_are_evidence": false,
+  "loaded_rules_and_gates": [
+    "AGENTS.md OP-62",
+    "docs/skills/plan-review-SKILL.md Review depth floor",
+    "docs/skills/claim-verification-SKILL.md"
+  ],
+  "reviewed_files": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1-REVIEW.jsonl"
+  ],
+  "reviewed_sections": [
+    "Section 4.4",
+    "Section 4.5",
+    "Section 6 LEARN phases",
+    "Section 7 Required artifacts",
+    "Section 8 row 6",
+    "Section 9 final acceptance matrix",
+    "Section 11 no-overclaim firewall"
+  ],
+  "findings": [
+    {
+      "id": "P6-F1",
+      "severity": "HIGH",
+      "status_before_fix": "OPEN",
+      "summary": "Learnability proof was too generic and did not force the full correction-to-rollback lifecycle.",
+      "required_fix": "Add AI output/correction -> DPO -> privacy/source/license -> user-local store -> approval packet -> continue-training from existing checkpoint -> fresh-load -> source-disjoint held-out/ablation -> no memorization -> rollback gates."
+    },
+    {
+      "id": "P6-F2",
+      "severity": "HIGH",
+      "status_before_fix": "OPEN",
+      "summary": "Plan did not require separate learnability evidence for PromptToTask, OrchestrationReasoning, and SkillSelection.",
+      "required_fix": "Add per-machine evidence rows with DPO target, local/common separation, continue-training proof, fresh-load/held-out proof, and ablation/no-memorization proof."
+    },
+    {
+      "id": "P6-F3",
+      "severity": "MEDIUM",
+      "status_before_fix": "OPEN",
+      "summary": "Review ledger row 6 was ledger-only PASS without an evidence packet.",
+      "required_fix": "Create review-pass-06.md/json and update REVIEW.jsonl row 6 with ledger_rows_are_evidence=false."
+    }
+  ],
+  "fix_refs": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 4.4.1",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 6",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 7",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 8",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 9",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 11",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1-REVIEW.jsonl row 6",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-06.md",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-06.json"
+  ],
+  "recheck_evidence": [
+    "Plan now states the full local learnability chain from host AI output/correction through rollback.",
+    "Plan now separates private/user-local adaptive store from common repo training and requires source/license/redaction review before common use.",
+    "Plan now requires backup/export/import/share evidence for user-local adaptive store.",
+    "Plan now requires continue-training to load existing checkpoints for PromptToTaskMachine, OrchestrationReasoningMachine, and SkillSelectionMachine.",
+    "Plan now forbids retrain-from-zero unless explicitly approved and labelled cold-start.",
+    "Plan now requires fresh-load through the public machine boundary and source-disjoint held-out/ablation controls.",
+    "Plan now requires per-machine learnability evidence instead of a generic local-model row.",
+    "Review row 6 now points to review-pass-06.md/json and marks ledger_rows_are_evidence=false."
+  ],
+  "forbidden_actions_observed": {
+    "git": false,
+    "product_code": false,
+    "runtime": false,
+    "training": false,
+    "tests": false
+  },
+  "overall_complete_claimed": false
+}

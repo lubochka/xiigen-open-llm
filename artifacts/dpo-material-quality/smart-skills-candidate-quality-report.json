@@ -1,0 +1,114 @@
+{
+  "artifact": "smart-skills-candidate-quality-report",
+  "work_order_id": "Q2-01",
+  "status": "PASS_CANDIDATE_BINDINGS_GATE_ONLY",
+  "generated_at_utc": "2026-06-10T10:55:00.000Z",
+  "branch": "codex/chat-gpt-5.5",
+  "requested_artifact_type": "candidate bindings and candidate quality gate only",
+  "source_basis": [
+    "AGENTS.md and CLAUDE.md governance",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-PLAN-v1.md",
+    "docs/plans/SMART-SKILLS-SEMANTIC-QUALITY-UPLIFT-STATE.json",
+    "docs/plans/DPO-KNOWLEDGE-MAP-v1.md",
+    "docs/HOW-TO-USE-SKILLS.md",
+    "docs/skills/skill-injection-SKILL.md",
+    "docs/skills/skill-graph-sync-SKILL.md",
+    "docs/skills/plan-review-SKILL.md",
+    "docs/skills/planning-dpo-authoring-SKILL.md",
+    "artifacts/dpo-material-quality/smart-skills-source-material-quality-audit.json",
+    "artifacts/dpo-material-quality/smart-skills-source-material-quality-review.json",
+    "artifacts/dpo-material-quality/smart-skills-source-material-quality-schema.json",
+    "artifacts/dpo-material-quality/smart-skills-source-material-quality-sample.jsonl",
+    "artifacts/smart-skills-quality-uplift/intake/source-ledger-review-report.json",
+    "artifacts/dpo-material-quality/smart-skills-q1-source-boundary-proof.json",
+    "C:/Users/lubao/Documents/xiigen/extensions  - orchestration based on our data/PROMPT-TO-TASK-DPO-NEGATIVE-STRATEGY-v1.md",
+    "C:/Users/lubao/Documents/xiigen/extensions  - orchestration based on our data/ORCHESTRATION-REASONING-DPO-NEGATIVE-STRATEGY-v1.md"
+  ],
+  "bounded_scan": {
+    "source_ledger_path": "artifacts/smart-skills-quality-uplift/intake/source-ledger.jsonl",
+    "scanned_lines_until_stop": 3910,
+    "done_rows_seen_until_stop": 12,
+    "done_rows_materialized_as_bindings": 4,
+    "done_rows_good_common_candidates": 0,
+    "path_and_file_names_used_as_learning_content": false,
+    "content_boundary_proof": "PASS_BOUNDARY_PROOF_ONLY",
+    "content_boundary_proof_ref": "artifacts/dpo-material-quality/smart-skills-q1-source-boundary-proof.json",
+    "reason_done_rows_not_approved_as_training": "The proof validates that at least one Q1 done-row source can be checked by content hash and redacted excerpt hash, but it does not establish chosen/rejected refs, taxonomy, or common-training approval."
+  },
+  "counts": {
+    "total_bindings": 13,
+    "training_rows_created": 0,
+    "external_ai_used": 0,
+    "redaction_required": 4,
+    "technical_execution_refs_excluded_false": 0,
+    "raw_private_text_copied_true": 0,
+    "by_domain": {
+      "prompt-to-task": {
+        "total": 4,
+        "good_common_candidates": 3,
+        "excluded": 1
+      },
+      "orchestration-reasoning": {
+        "total": 5,
+        "good_common_candidates": 3,
+        "excluded": 2
+      },
+      "skill-selection": {
+        "total": 4,
+        "good_common_candidates": 2,
+        "excluded": 2
+      }
+    },
+    "by_quality": {
+      "gold": 5,
+      "silver": 3,
+      "excluded": 5
+    },
+    "by_universalization_status": {
+      "passed_common_candidate": 8,
+      "excluded_no_content_quality_proof": 4,
+      "excluded_missing_strategy_doc": 1
+    }
+  },
+  "skill_selection_repairs": [
+    {
+      "binding_id": "q2-01-skill-selection-skill-injection-minimal-blocks",
+      "source_ref": "docs/skills/skill-injection-SKILL.md#When-to-Inject-Per-Task-Type",
+      "quality": "gold",
+      "teaches_boundary": "Select the smallest task-appropriate skill block set while preserving mandatory blocks."
+    },
+    {
+      "binding_id": "q2-01-skill-selection-graph-sync-drift-boundary",
+      "source_ref": "docs/skills/skill-graph-sync-SKILL.md#Drift-Detection-Protocol",
+      "quality": "silver",
+      "teaches_boundary": "Select skill-graph synchronization for skill-to-graph drift and governed seed links, not by filename or candidate position."
+    }
+  ],
+  "candidate_quality_gate": {
+    "candidate_quality_gate_satisfied": true,
+    "minimum_gate": {
+      "at_least_two_prompt_to_task_good_common_candidates": true,
+      "at_least_two_orchestration_reasoning_good_common_candidates": true,
+      "at_least_two_skill_selection_good_common_candidates": true,
+      "at_least_one_q1_done_row_source_boundary_proof": true,
+      "all_good_candidates_have_chosen_and_rejected_refs": true,
+      "all_rows_training_row_created_false": true,
+      "all_rows_external_ai_used_false": true,
+      "all_rows_exclude_technical_execution_refs": true,
+      "all_rows_raw_private_text_copied_false_or_absent": true
+    },
+    "verdict_reason": "PromptToTask, OrchestrationReasoning, and SkillSelection now each have at least two good common candidate bindings. The Q1 done-row proof validates a content-backed source boundary without copying raw private text or approving that source for training.",
+    "dpo_generation_allowed_next": "PENDING_PARENT_REVIEW_AND_BOUNDED_ROW_MATERIALIZATION",
+    "training_allowed_next": false
+  },
+  "forbidden_scope_observed": {
+    "production_code_changed": false,
+    "test_code_changed": false,
+    "dashboard_code_changed": false,
+    "training_data_dpo_rows_created": false,
+    "model_artifacts_changed": false,
+    "external_ai_used": false,
+    "commit_or_push_done": false
+  },
+  "exact_next_action": "REVIEW_INTERNAL should review the Q2-01 repair artifacts; if accepted, issue the next bounded DPO materialization work order for candidate-to-row conversion without training."
+}

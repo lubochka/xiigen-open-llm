@@ -1,0 +1,332 @@
+{
+    "work_order":  "SS-03",
+    "created_at_utc":  "2026-06-05T10:53:25.6872332Z",
+    "branch":  "codex/chat-gpt-5.5",
+    "verdict":  "PASS_ACCEPTED_PENDING_COMMIT",
+    "claim_scope":  "one checkpoint-backed trainable task_understanding semantic unit slice only; no full skill-selection semantic quality claim; no SS-04..SS-12 claim; no host/adaptive/model export claim",
+    "semantic_unit":  "task_understanding",
+    "trained_unit_section_name":  "TaskUnderstandingUnitState",
+    "checkpoint_evidence_constant":  "TASK_UNDERSTANDING_CHECKPOINT_SECTION",
+    "implementation_summary":  {
+                                   "checkpoint_section":  "SkillSelectionCheckpoint.TaskUnderstanding",
+                                   "learned_state":  "per-skill learned task token-signal profiles and source pair ids, populated only from rows routed to ITaskUnderstandingTraining",
+                                   "decision_path":  "DecideFromTrainedState checks task_understanding learned checkpoint profiles before prompt_understanding and candidate-position scaffold fallback; no runtime task keyword applicability gate is used.",
+                                   "ablation_path":  "fresh empty machine has no task_understanding profiles and returns no selected skills",
+                                   "training_routing":  "TargetTrainingAdapter == ITaskUnderstandingTraining populates task_understanding; prompt rows use IPromptUnderstandingTraining/default prompt routing."
+                               },
+    "train_rows_used":  [
+                            "ss03-task-understanding-pair-001",
+                            "ss03-task-understanding-pair-002"
+                        ],
+    "held_out_prompts":  [
+                             "Check completion constraints and review deliverables before saying the task is done."
+                         ],
+    "held_out_result":  {
+                            "selected_skill":  "task-completion",
+                            "evidence":  "TASK_UNDERSTANDING_CHECKPOINT_SECTION",
+                            "candidate_position_scaffold_used":  false
+                        },
+    "ablation_result":  {
+                            "trained_selected_skill":  "task-completion",
+                            "empty_selected_skill_count":  0,
+                            "empty_confidence":  0,
+                            "trained_confidence_greater_than_empty":  true
+                        },
+    "no_deterministic_shortcut_review":  {
+                                             "candidate_position_final_authority":  false,
+                                             "regex_if_table_lookup_final_authority":  false,
+                                             "exact_prompt_memory_final_authority":  false,
+                                             "claim":  "minimal learned task-signal profile, routed by training metadata and bounded to diagnostic held-out evidence",
+                                             "scan_interpretation":  "Negative labels and boolean false fields are guard evidence, not forbidden final-authority claims.",
+                                             "real_forbidden_final_authority_claims":  0,
+                                             "hardcoded_task_anchor_whitelist_removed":  true,
+                                             "runtime_task_keyword_gate":  false,
+                                             "adapter_routing_uses_target_training_adapter_metadata":  true
+                                         },
+    "verification":  [
+                         {
+                             "command":  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+                             "exit_code":  0,
+                             "passed":  23,
+                             "failed":  0,
+                             "total":  23,
+                             "note":  "Focused SkillSelectionMachine filter passed after removing hardcoded task anchor whitelist and routing task_understanding training through ITaskUnderstandingTraining metadata."
+                         }
+                     ],
+    "changed_files":  [
+                          "43.SmartSkillsDomain/SkillSelectionContracts.cs",
+                          "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+                          "43.SmartSkillsDomain/README.md",
+                          "Tests/SkillSelectionMachineTests.cs",
+                          "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json",
+                          "artifacts/skill-selection-lifecycle/SS-03.json",
+                          "artifacts/completion-matrix/SS-03.json",
+                          "artifacts/dpo-knowledge-map/SS-03.json",
+                          "artifacts/dpo-universalization/SS-03.json",
+                          "artifacts/test-strategy-admission/SS-03.json",
+                          "artifacts/authority-self-reflection/SS-03.json",
+                          "artifacts/human-authority-boundary/SS-03.json",
+                          "artifacts/subagent-packet-quality/SS-03.json",
+                          "artifacts/test-execution-hygiene/SS-03.json",
+                          "artifacts/implementation-integrity/SS-03.json",
+                          "artifacts/metric-honesty/SS-03.json"
+                      ],
+    "sixteen_check_review":  [
+                                 {
+                                     "id":  "SS03-01",
+                                     "check":  "Current human instruction: SS-03 only",
+                                     "result":  "PASS",
+                                     "note":  "Only task_understanding was added; no SS-04+ unit work."
+                                 },
+                                 {
+                                     "id":  "SS03-02",
+                                     "check":  "Checkpoint-backed unit section exists",
+                                     "result":  "PASS",
+                                     "note":  "SkillSelectionCheckpoint includes TaskUnderstandingUnitState."
+                                 },
+                                 {
+                                     "id":  "SS03-03",
+                                     "check":  "Fresh load can use learned section",
+                                     "result":  "PASS",
+                                     "note":  "Export/import test round-trips checkpoint JSON containing taskUnderstanding while preserving promptUnderstanding; unit population comes from training adapter metadata."
+                                 },
+                                 {
+                                     "id":  "SS03-04",
+                                     "check":  "Held-out prompt is not exact training row",
+                                     "result":  "PASS",
+                                     "note":  "Held-out task prompt differs from training prompt and selects task-completion through task_understanding evidence."
+                                 },
+                                 {
+                                     "id":  "SS03-05",
+                                     "check":  "Ablation lowers decision",
+                                     "result":  "PASS",
+                                     "note":  "Empty machine returns no selected skills and 0 confidence while trained machine selects task-completion."
+                                 },
+                                 {
+                                     "id":  "SS03-06",
+                                     "check":  "Candidate-position not final authority",
+                                     "result":  "PASS",
+                                     "note":  "Task-understanding decision omits candidate-position scaffold evidence."
+                                 },
+                                 {
+                                     "id":  "SS03-07",
+                                     "check":  "No hardcoded task-anchor keyword gate",
+                                     "result":  "PASS",
+                                     "note":  "Prior hardcoded task-anchor helper was removed; runtime scoring uses learned checkpoint profiles with neutral tokenization."
+                                 },
+                                 {
+                                     "id":  "SS03-08",
+                                     "check":  "No full semantic quality claim",
+                                     "result":  "PASS",
+                                     "note":  "TaskUnderstandingUnitState.SemanticQualityClaimed=false and artifact scope is one-unit only."
+                                 },
+                                 {
+                                     "id":  "SS03-09",
+                                     "check":  "SS-00U and SS-02 boundaries preserved",
+                                     "result":  "PASS",
+                                     "note":  "Prompt rows route to IPromptUnderstandingTraining and task rows route to ITaskUnderstandingTraining; prompt_understanding tests still pass alongside task_understanding."
+                                 },
+                                 {
+                                     "id":  "SS03-10",
+                                     "check":  "No model/checkpoint asset export/import SS-13 scope",
+                                     "result":  "PASS",
+                                     "note":  "Machine checkpoint contract section updated only; no model asset files changed."
+                                 },
+                                 {
+                                     "id":  "SS03-11",
+                                     "check":  "Focused tests passed",
+                                     "result":  "PASS",
+                                     "note":  "SkillSelectionMachine filter passed 23/23 after repair-02."
+                                 },
+                                 {
+                                     "id":  "SS03-12",
+                                     "check":  "No host/adaptive/external AI",
+                                     "result":  "PASS",
+                                     "note":  "No host/adaptive/external AI work performed."
+                                 },
+                                 {
+                                     "id":  "SS03-13",
+                                     "check":  "Documentation updated",
+                                     "result":  "PASS",
+                                     "note":  "SmartSkillsDomain README records SS-03 scope and no full quality claim."
+                                 },
+                                 {
+                                     "id":  "SS03-14",
+                                     "check":  "Artifact evidence present",
+                                     "result":  "PASS",
+                                     "note":  "SS-03 lifecycle and cross-cutting artifacts produced."
+                                 },
+                                 {
+                                     "id":  "SS03-15",
+                                     "check":  "State updated",
+                                     "result":  "PASS",
+                                     "note":  "State records SS-03 PASS_PENDING_PARENT_REVIEW and commit boundary next action."
+                                 },
+                                 {
+                                     "id":  "SS03-16",
+                                     "check":  "Commit boundary not executed",
+                                     "result":  "PASS",
+                                     "note":  "No commit/push in executor slice."
+                                 }
+                             ],
+    "next_bounded_action":  "WO-COMMIT-SS-03-01",
+    "commit_push_performed":  false,
+    "artifact_path":  "artifacts/completion-matrix/SS-03.json",
+    "row_count":  16,
+    "passed_count":  16,
+    "failed_count":  0,
+    "rows":  [
+                 {
+                     "id":  "SS03-01",
+                     "check":  "Current human instruction: SS-03 only",
+                     "result":  "PASS",
+                     "note":  "Only task_understanding was added; no SS-04+ unit work."
+                 },
+                 {
+                     "id":  "SS03-02",
+                     "check":  "Checkpoint-backed unit section exists",
+                     "result":  "PASS",
+                     "note":  "SkillSelectionCheckpoint includes TaskUnderstandingUnitState."
+                 },
+                 {
+                     "id":  "SS03-03",
+                     "check":  "Fresh load can use learned section",
+                     "result":  "PASS",
+                     "note":  "Export/import test round-trips checkpoint JSON containing taskUnderstanding while preserving promptUnderstanding; unit population comes from training adapter metadata."
+                 },
+                 {
+                     "id":  "SS03-04",
+                     "check":  "Held-out prompt is not exact training row",
+                     "result":  "PASS",
+                     "note":  "Held-out task prompt differs from training prompt and selects task-completion through task_understanding evidence."
+                 },
+                 {
+                     "id":  "SS03-05",
+                     "check":  "Ablation lowers decision",
+                     "result":  "PASS",
+                     "note":  "Empty machine returns no selected skills and 0 confidence while trained machine selects task-completion."
+                 },
+                 {
+                     "id":  "SS03-06",
+                     "check":  "Candidate-position not final authority",
+                     "result":  "PASS",
+                     "note":  "Task-understanding decision omits candidate-position scaffold evidence."
+                 },
+                 {
+                     "id":  "SS03-07",
+                     "check":  "No hardcoded task-anchor keyword gate",
+                     "result":  "PASS",
+                     "note":  "Prior hardcoded task-anchor helper was removed; runtime scoring uses learned checkpoint profiles with neutral tokenization."
+                 },
+                 {
+                     "id":  "SS03-08",
+                     "check":  "No full semantic quality claim",
+                     "result":  "PASS",
+                     "note":  "TaskUnderstandingUnitState.SemanticQualityClaimed=false and artifact scope is one-unit only."
+                 },
+                 {
+                     "id":  "SS03-09",
+                     "check":  "SS-00U and SS-02 boundaries preserved",
+                     "result":  "PASS",
+                     "note":  "Prompt rows route to IPromptUnderstandingTraining and task rows route to ITaskUnderstandingTraining; prompt_understanding tests still pass alongside task_understanding."
+                 },
+                 {
+                     "id":  "SS03-10",
+                     "check":  "No model/checkpoint asset export/import SS-13 scope",
+                     "result":  "PASS",
+                     "note":  "Machine checkpoint contract section updated only; no model asset files changed."
+                 },
+                 {
+                     "id":  "SS03-11",
+                     "check":  "Focused tests passed",
+                     "result":  "PASS",
+                     "note":  "SkillSelectionMachine filter passed 23/23 after repair-02."
+                 },
+                 {
+                     "id":  "SS03-12",
+                     "check":  "No host/adaptive/external AI",
+                     "result":  "PASS",
+                     "note":  "No host/adaptive/external AI work performed."
+                 },
+                 {
+                     "id":  "SS03-13",
+                     "check":  "Documentation updated",
+                     "result":  "PASS",
+                     "note":  "SmartSkillsDomain README records SS-03 scope and no full quality claim."
+                 },
+                 {
+                     "id":  "SS03-14",
+                     "check":  "Artifact evidence present",
+                     "result":  "PASS",
+                     "note":  "SS-03 lifecycle and cross-cutting artifacts produced."
+                 },
+                 {
+                     "id":  "SS03-15",
+                     "check":  "State updated",
+                     "result":  "PASS",
+                     "note":  "State records SS-03 PASS_PENDING_PARENT_REVIEW and commit boundary next action."
+                 },
+                 {
+                     "id":  "SS03-16",
+                     "check":  "Commit boundary not executed",
+                     "result":  "PASS",
+                     "note":  "No commit/push in executor slice."
+                 }
+             ],
+    "repair_02":  {
+                      "repair_work_order":  "SS-03-REPAIR-02-REMOVE-HARDCODED-TASK-ANCHORS",
+                      "repaired_at_utc":  "2026-06-05T11:03:35.6981484Z",
+                      "parent_review_gap":  "Hardcoded task-anchor whitelist violated trainable-unit boundary.",
+                      "code_repair":  "Removed the hardcoded task-anchor whitelist; task_understanding training now uses TargetTrainingAdapter metadata and runtime scoring uses learned checkpoint profiles via neutral tokenization.",
+                      "focused_tests":  [
+                                            {
+                                                "command":  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+                                                "exit_code":  0,
+                                                "passed":  23,
+                                                "failed":  0,
+                                                "total":  23,
+                                                "note":  "Focused SkillSelectionMachine filter passed after removing hardcoded task anchor whitelist and routing task_understanding training through ITaskUnderstandingTraining metadata."
+                                            }
+                                        ],
+                      "claim_scope":  "one trainable task_understanding semantic unit slice only; task unit training is routed by TargetTrainingAdapter metadata and runtime scoring uses learned checkpoint profiles; no full skill-selection semantic quality, no SS-04..SS-12, no host/adaptive/model asset export claim"
+                  },
+    "parent_review":  {
+                          "parent_review_accepted":  true,
+                          "parent_review_verdict":  "ACCEPTED_PASS_PENDING_COMMIT",
+                          "accepted_at_utc":  "2026-06-05T11:13:21.7249669Z",
+                          "claim_scope":  "one checkpoint-backed trainable task_understanding semantic unit slice only; no full skill-selection semantic quality claim; no SS-04..SS-12 claim; no host/adaptive/model export claim",
+                          "focused_test_rerun":  {
+                                                     "command":  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionMachine\" --nologo",
+                                                     "exit_code":  0,
+                                                     "passed":  23,
+                                                     "failed":  0,
+                                                     "total":  23,
+                                                     "elapsed_seconds":  19.2,
+                                                     "started_at_utc":  "2026-06-05T11:10:15.9530877Z",
+                                                     "ended_at_utc":  "2026-06-05T11:10:35.1153858Z"
+                                                 },
+                          "hardcoded_anchor_scan":  {
+                                                        "command":  "rg -n \u0027ExtractTaskUnderstandingSignals|token is \"deliverable\"|token is \"constraints\"|token is \"task\"|hardcoded task keyword whitelist\u0027 43.SmartSkillsDomain/SkillSelectionMachine.cs",
+                                                        "normalized_exit_code":  0,
+                                                        "no_hits":  true,
+                                                        "note":  "Parent normalized no-hit rg result as pass for absence of production hardcoded-anchor whitelist."
+                                                    },
+                          "json_parse":  {
+                                             "scope":  "11 SS-03 artifacts plus state",
+                                             "parsed_ok":  true
+                                         },
+                          "git_diff_check":  {
+                                                 "scope":  "scoped SS-03 files/artifacts",
+                                                 "exit_code":  0
+                                             },
+                          "no_hidden_determinism_review":  {
+                                                               "task_understanding_runtime_learned_checkpoint_profile_backed":  true,
+                                                               "hardcoded_task_keyword_whitelist":  false,
+                                                               "adapter_routing_uses_target_training_adapter_metadata":  true,
+                                                               "candidate_position_final_authority":  false,
+                                                               "regex_if_table_final_authority":  false
+                                                           },
+                          "next_bounded_action":  "WO-COMMIT-SS-03-01"
+                      },
+    "accepted_for_commit_boundary":  true
+}

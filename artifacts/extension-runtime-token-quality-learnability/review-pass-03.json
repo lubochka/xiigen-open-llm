@@ -1,0 +1,66 @@
+{
+  "pass": 3,
+  "requested_pass_floor": 10,
+  "reviewer_id": "codex-review-fix-pass-03",
+  "requested_artifact_type": "review_fix_pass",
+  "work_order_scope": "Pass 3 only",
+  "implementation_authorized_now": "plan/review artifact edits only",
+  "product_code_or_runtime_execution_performed": false,
+  "allowed_write_scope": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1-REVIEW.jsonl",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-03.md",
+    "artifacts/extension-runtime-token-quality-learnability/review-pass-03.json"
+  ],
+  "loaded_skills_and_gates": [
+    "AGENTS.md OP-62",
+    "docs/skills/plan-review-SKILL.md Review depth floor",
+    "docs/skills/claim-verification-SKILL.md"
+  ],
+  "review_question": "Are runtime proof requirements deep enough to prevent fake host evidence and distinct enough for Claude/Cursor/Codex?",
+  "artifact_before_refs": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md before pass 3: Section 4.1 required fresh artifacts/debug/correlation but did not force raw/redacted input/output, host-visible answer capture, same-run freshness details, or negative/error path.",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md before pass 3: Sections 6 and 9 had per-host runtime rows but not distinct enough proof criteria for Claude hook/plugin, Cursor Extension Host/UI, and Codex plugin/app.",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1-REVIEW.jsonl before pass 3: row 3 was ledger-only PASS without evidence packet refs."
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "finding": "Runtime proof depth could still admit helper/API/test-only/dashboard substitution because raw host-visible input/output, freshness details, and negative/error path were not mandatory."
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "finding": "Claude, Cursor, and Codex criteria were not distinct enough to prevent cross-host proof substitution."
+    },
+    {
+      "id": "F3",
+      "severity": "medium",
+      "finding": "REVIEW.jsonl row 3 claimed PASS without an inspectable pass packet, which violates OP-62 and the review-depth floor."
+    }
+  ],
+  "fix_applied": true,
+  "fix_refs": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 4.1",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 6",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 8",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 9",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 11",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1-REVIEW.jsonl row 3"
+  ],
+  "recheck_evidence": [
+    "Section 4.1 now requires fresh proof packets with run timestamp, scenario id, correlation id, host runtime version/build, entrypoint identity, same-run artifact creation times, raw/redacted input, raw/redacted output, debug input/output trace, freshness check, and screenshot/chat transcript or limitation-backed transcript.",
+    "Section 4.1 now includes distinct proof criteria and explicit FAIL examples for Claude hook/plugin, Cursor Extension Host/UI, and Codex plugin/app.",
+    "Section 4.1 now makes negative/error path mandatory for all hosts.",
+    "Sections 6, 9, and 11 now reject old artifact reuse, local helper masquerade, package smoke, test-only adapter, dashboard/API substitution, direct handler substitution, and positive-only traces.",
+    "REVIEW.jsonl row 3 now references review-pass-03.md/json with ledger_rows_are_evidence=false."
+  ],
+  "verdict": "PASS_WITH_FIX",
+  "ledger_rows_are_evidence": false,
+  "real_pass_count_claimed": 3,
+  "overall_task_complete_claimed": false,
+  "may_derive_next_phase": false,
+  "must_stop_after_report": true,
+  "overall_complete_claimed": false
+}

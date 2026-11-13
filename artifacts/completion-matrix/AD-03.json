@@ -1,0 +1,37 @@
+{
+  "work_order": "AD-03",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "scope": "Correction/change DPO signal writer only.",
+  "requirements": [
+    {
+      "id": "AD03-01",
+      "requirement": "Writer targets user-local .xiigen path.",
+      "evidence": "SkillSelectionCorrectionDpoSignalWriter writes project-local:.xiigen/smart-skills/corrections/adaptive-dpo-signals.jsonl.",
+      "passed": true
+    },
+    {
+      "id": "AD03-02",
+      "requirement": "Chosen/rejected refs are present.",
+      "evidence": "Focused test asserts skill-correction:chosen and skill-correction:rejected refs.",
+      "passed": true
+    },
+    {
+      "id": "AD03-03",
+      "requirement": "Private raw prompt/output/AI response text is redacted.",
+      "evidence": "Focused test asserts raw prompt, raw output, and raw AI response text are absent from JSONL.",
+      "passed": true
+    },
+    {
+      "id": "AD03-04",
+      "requirement": "Common checkpoint is not mutated.",
+      "evidence": "Focused test hashes models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json before and after writer execution.",
+      "passed": true
+    },
+    {
+      "id": "AD03-05",
+      "requirement": "No adaptive training or semantic quality claim.",
+      "evidence": "Signal flags SemanticQualityClaimed=false and CommonCheckpointMutationClaimed=false; artifact scope excludes training.",
+      "passed": true
+    }
+  ]
+}

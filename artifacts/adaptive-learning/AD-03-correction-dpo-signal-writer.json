@@ -1,0 +1,38 @@
+{
+  "work_order": "AD-03",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "claim_scope": "User-local correction/change adaptive DPO signal writer only; no adaptive training, common checkpoint mutation, host work, external AI, or semantic quality claim.",
+  "writer": {
+    "class": "SkillSelectionCorrectionDpoSignalWriter",
+    "method": "WriteUserLocalSignal",
+    "target": "project-local:.xiigen/smart-skills/corrections/adaptive-dpo-signals.jsonl",
+    "records_chosen_rejected_refs": true,
+    "stores_raw_private_text": false,
+    "writes_common_checkpoint": false
+  },
+  "signal_schema": {
+    "chosen_ref": "skill-correction:chosen:<source_prompt_ledger_id>:<correction_id>",
+    "rejected_ref": "skill-correction:rejected:<source_prompt_ledger_id>:<correction_id>",
+    "correction_class": "user correction or change class",
+    "redacted_refs": [
+      "prompt_ref",
+      "output_ref",
+      "ai_response_ref"
+    ],
+    "target_training_adapter": "IProjectLocalSkillSelectionFeedbackTraining"
+  },
+  "test_evidence": {
+    "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~SkillSelectionCorrectionDpoSignalWriter\" --nologo",
+    "exit_code": 0,
+    "passed": 1,
+    "failed": 0,
+    "elapsed_seconds": 159.5
+  },
+  "forbidden_claims": {
+    "adaptive_training_claimed": false,
+    "common_checkpoint_mutation_claimed": false,
+    "host_work_claimed": false,
+    "external_ai_used": false,
+    "semantic_quality_claimed": false
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "schema": "xiigen.learn_05_blocked_dpo_candidate_items.v1",
+  "work_order_id": "LEARN-05-DPO-CANDIDATE-DRY-RUN-VALIDATION-01",
+  "run_id": "learn-05-dpo-candidate-dry-run-validation-20260619-021307",
+  "generated_at_local": "2026-06-19T02:13:51+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "blocking_summary": {
+    "schema_dry_run_passed": true,
+    "actual_dpo_rows_missing": true,
+    "blocked_rows": 9,
+    "global_stop_required": false,
+    "next_safe_work_order": "docs/QA prep or operation-specific DPO candidate authoring packet prep, no training"
+  },
+  "common_missing_before_any_actual_dpo_row": [
+    "concrete dpo_candidate_id",
+    "chosen_ref and rejected_ref",
+    "positive_example_ref and negative_example_ref",
+    "source_ref, doc_id, source_sha256, source_license_ref and source_license_hash",
+    "license_review_ref, privacy_class, redaction_ref and provenance_ref",
+    "DPO authoring approval",
+    "DPO acceptance matrix ref",
+    "training dataset manifest ref and sha256",
+    "execution-level source/license/redaction review ref for share/common route",
+    "approved user-local root and distinct import/restore root",
+    "target and rollback checkpoint shas",
+    "held-out source-disjoint manifest and ablation/no-memorization plan",
+    "operation-specific mutation/training/eval authority"
+  ],
+  "blocked_rows": [
+    {
+      "row_id": "Claude-PromptToTaskMachine",
+      "host": "Claude",
+      "machine": "PromptToTaskMachine",
+      "blocked_reason": "actual DPO chosen/rejected refs and source/license/privacy/provenance approvals missing",
+      "safe_route_now": "USER_LOCAL_CANDIDATE_SCHEMA_ONLY_OR_COMMON_SCHEMA_ONLY_CONDITIONAL",
+      "quarantine_if_proposed_now": "EXTERNAL_OUTPUT_EVIDENCE_ONLY_OR_QUARANTINE_EXTERNAL_OUTPUT_TRAINING_TARGET"
+    },
+    {
+      "row_id": "Claude-OrchestrationReasoningMachine",
+      "host": "Claude",
+      "machine": "OrchestrationReasoningMachine",
+      "blocked_reason": "universal source-grounded orchestration lesson or user-local correction refs missing",
+      "safe_route_now": "USER_LOCAL_CANDIDATE_SCHEMA_ONLY_OR_COMMON_SCHEMA_ONLY_CONDITIONAL",
+      "quarantine_if_proposed_now": "EVIDENCE_ONLY_OR_QUARANTINE_STACK_SPECIFIC"
+    },
+    {
+      "row_id": "Claude-SkillSelectionMachine",
+      "host": "Claude",
+      "machine": "SkillSelectionMachine",
+      "blocked_reason": "semantic skill-selection chosen/rejected refs and material-quality review missing",
+      "safe_route_now": "USER_LOCAL_CANDIDATE_SCHEMA_ONLY_OR_COMMON_SCHEMA_ONLY_CONDITIONAL",
+      "quarantine_if_proposed_now": "QUARANTINE_STACK_SPECIFIC_OR_PRIVATE_LEAKAGE"
+    },
+    {
+      "row_id": "Cursor-PromptToTaskMachine",
+      "host": "Cursor",
+      "machine": "PromptToTaskMachine",
+      "blocked_reason": "transformed DPO candidate refs and permissive source/license refs missing",
+      "safe_route_now": "USER_LOCAL_CANDIDATE_SCHEMA_ONLY_OR_COMMON_SCHEMA_ONLY_CONDITIONAL",
+      "quarantine_if_proposed_now": "EXTERNAL_OUTPUT_EVIDENCE_ONLY_OR_QUARANTINE_STACK_SPECIFIC"
+    },
+    {
+      "row_id": "Cursor-OrchestrationReasoningMachine",
+      "host": "Cursor",
+      "machine": "OrchestrationReasoningMachine",
+      "blocked_reason": "source-grounded chosen/rejected refs, license/privacy/redaction review and operation authority missing",
+      "safe_route_now": "USER_LOCAL_CANDIDATE_SCHEMA_ONLY_OR_COMMON_SCHEMA_ONLY_CONDITIONAL",
+      "quarantine_if_proposed_now": "QUARANTINE_STACK_SPECIFIC"
+    },
+    {
+      "row_id": "Cursor-SkillSelectionMachine",
+      "host": "Cursor",
+      "machine": "SkillSelectionMachine",
+      "blocked_reason": "semantic skill-selection refs, reviewed source/license refs and redacted provenance missing",
+      "safe_route_now": "USER_LOCAL_CANDIDATE_SCHEMA_ONLY_OR_COMMON_SCHEMA_ONLY_CONDITIONAL",
+      "quarantine_if_proposed_now": "QUARANTINE_STACK_SPECIFIC_OR_PRIVATE_LEAKAGE"
+    },
+    {
+      "row_id": "Codex-PromptToTaskMachine",
+      "host": "Codex",
+      "machine": "PromptToTaskMachine",
+      "blocked_reason": "transformed prompt-to-task chosen/rejected refs and DPO acceptance matrix ref missing",
+      "safe_route_now": "USER_LOCAL_CANDIDATE_SCHEMA_ONLY_OR_COMMON_SCHEMA_ONLY_CONDITIONAL",
+      "quarantine_if_proposed_now": "EXTERNAL_OUTPUT_EVIDENCE_ONLY_OR_QUARANTINE_STACK_SPECIFIC"
+    },
+    {
+      "row_id": "Codex-OrchestrationReasoningMachine",
+      "host": "Codex",
+      "machine": "OrchestrationReasoningMachine",
+      "blocked_reason": "universal orchestration lesson refs or user-local correction refs plus license/source refs missing",
+      "safe_route_now": "USER_LOCAL_CANDIDATE_SCHEMA_ONLY_OR_COMMON_SCHEMA_ONLY_CONDITIONAL",
+      "quarantine_if_proposed_now": "QUARANTINE_STACK_SPECIFIC"
+    },
+    {
+      "row_id": "Codex-SkillSelectionMachine",
+      "host": "Codex",
+      "machine": "SkillSelectionMachine",
+      "blocked_reason": "semantic skill-selection chosen/rejected refs, license/source/provenance refs and privacy/redaction review missing",
+      "safe_route_now": "USER_LOCAL_CANDIDATE_SCHEMA_ONLY_OR_COMMON_SCHEMA_ONLY_CONDITIONAL",
+      "quarantine_if_proposed_now": "QUARANTINE_STACK_SPECIFIC_OR_PRIVATE_LEAKAGE"
+    }
+  ],
+  "forbidden_promotions": [
+    "Do not treat schema readiness as trainable DPO row readiness.",
+    "Do not use raw Claude/Cursor/Codex output as chosen/rejected/source/synthetic/common training material.",
+    "Do not approve common route without MIT, Apache-2.0, or approved equivalent permissive source/license review.",
+    "Do not move private/user/project/host-specific material into common training.",
+    "Do not train, continue-train, mutate checkpoints, export/import/restore/fresh-load, run eval/runtime/model calls, or claim learnability."
+  ],
+  "claim_locks": {
+    "dpo_rows_created_as_training_data": false,
+    "actual_training_performed": false,
+    "continue_training_performed": false,
+    "checkpoint_mutation_performed": false,
+    "runtime_host_execution_performed": false,
+    "external_ai_model_calls_performed": false,
+    "actual_eval_or_scoring_performed": false,
+    "learnability_claimed": false,
+    "training_ready_claimed": false,
+    "common_readiness_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  }
+}

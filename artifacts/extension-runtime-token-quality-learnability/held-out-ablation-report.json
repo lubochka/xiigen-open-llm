@@ -1,0 +1,246 @@
+{
+  "schema": "xiigen.learn_06_held_out_ablation_report.v1",
+  "phaseId": "LEARN-06",
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "generatedAtUtc": "2026-11-12T15:51:37.3927177+00:00",
+  "commands": [
+    "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter FullyQualifiedName~Learn06HeldOutAblationRunnerTests --no-restore --logger \u0022console;verbosity=normal\u0022",
+    "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter FullyQualifiedName~Learn06HeldOutAblationRunnerTests --no-restore --logger \u0022console;verbosity=normal\u0022",
+    "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter FullyQualifiedName~Learn06HeldOutAblationRunnerTests --no-restore --logger \u0022console;verbosity=normal\u0022"
+  ],
+  "commandResults": [
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter FullyQualifiedName~Learn06HeldOutAblationRunnerTests --no-restore --logger \u0022console;verbosity=normal\u0022",
+      "exitCode": 1,
+      "result": "FAIL_COMPILE",
+      "summary": "Initial LEARN-06 test compile failed because OperationResult\u003C\u003E needed the AgentInfrastructure namespace."
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter FullyQualifiedName~Learn06HeldOutAblationRunnerTests --no-restore --logger \u0022console;verbosity=normal\u0022",
+      "exitCode": 1,
+      "result": "FAIL_COMPILE",
+      "summary": "Second LEARN-06 test compile failed because IReadOnlyDictionary\u003Cstring,string\u003E constructor arguments used collection expressions; patched to explicit dictionaries."
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter FullyQualifiedName~Learn06HeldOutAblationRunnerTests --no-restore --logger \u0022console;verbosity=normal\u0022",
+      "exitCode": 0,
+      "result": "PASS",
+      "summary": "Test Run Successful. Total tests: 1. Passed: 1. Failed: 0."
+    }
+  ],
+  "tracks": [
+    {
+      "machineId": "PromptToTaskMachine",
+      "verdict": "PARTIAL_NOT_FULL_MACHINE_EVAL",
+      "targetCheckpointPath": "\u003Ctest-temp-root\u003E/source-assets/prompt-to-task/.xiigen/prompt-to-task/adaptive-checkpoint.json",
+      "manifestPath": null,
+      "targetCheckpointSha256": "9f0d0dce647d7e584f7bcc0cadd54512506b655d126f9cbc75dc6a7fd2d5768c",
+      "boundaryUsed": "PromptToTaskAdaptiveTrainer.LoadCheckpoint \u002B overlay metadata/source-disjoint controls",
+      "heldOutDatasetId": "learn-06-prompt-to-task-overlay-held-out-source-disjoint-v1",
+      "heldOutDatasetSha256": "c34a6d8d2743329e8e73daf0db87e7c16d34edbb810cd5953c4eed05a56750b2",
+      "sourceDisjoint": true,
+      "heldOutPassed": true,
+      "runtimeInvocationSucceeded": false,
+      "testOnlyInProcessProbeSucceeded": false,
+      "notFullMachineEval": true,
+      "controls": [
+        {
+          "controlName": "exact_prompt_replay",
+          "status": "PARTIAL_STATIC_REF_ONLY",
+          "boundaryUsed": "adaptive overlay loader",
+          "expected": "Exact prompt replay cannot PASS full machine eval for overlay-only target.",
+          "observed": "safeRefs=True; refCount=2",
+          "leakageExplainsHeldOut": false,
+          "notes": "PromptToTask adaptive overlay has refs only and no full PromptToTaskMachine manifest."
+        },
+        {
+          "controlName": "path_title_source_id_leakage",
+          "status": "PARTIAL_STATIC_REF_ONLY",
+          "boundaryUsed": "adaptive overlay loader",
+          "expected": "Overlay refs must not contain private absolute paths or raw source titles.",
+          "observed": "safeRefs=True",
+          "leakageExplainsHeldOut": false,
+          "notes": "PromptToTask adaptive overlay has refs only and no full PromptToTaskMachine manifest."
+        },
+        {
+          "controlName": "nearest_neighbor_memorization",
+          "status": "PARTIAL_NOT_APPLICABLE_NO_RUNTIME_NEAREST",
+          "boundaryUsed": "adaptive overlay loader",
+          "expected": "Nearest-neighbour runtime proof is unavailable without a full machine boundary.",
+          "observed": "not run; overlay checkpoint has no public semantic runtime",
+          "leakageExplainsHeldOut": false,
+          "notes": "PromptToTask adaptive overlay has refs only and no full PromptToTaskMachine manifest."
+        },
+        {
+          "controlName": "no_trained_state_baseline",
+          "status": "PARTIAL_NOT_APPLICABLE_NO_FULL_MACHINE",
+          "boundaryUsed": "adaptive overlay loader",
+          "expected": "No-trained-state baseline is not a full machine comparison for overlay-only target.",
+          "observed": "not run; marked limitation",
+          "leakageExplainsHeldOut": false,
+          "notes": "PromptToTask adaptive overlay has refs only and no full PromptToTaskMachine manifest."
+        },
+        {
+          "controlName": "shuffled_chosen_rejected",
+          "status": "PARTIAL_STATIC_REF_ONLY",
+          "boundaryUsed": "adaptive overlay loader",
+          "expected": "Chosen/rejected sanity is limited to distinct refs in overlay metadata.",
+          "observed": "distinctRefs=2",
+          "leakageExplainsHeldOut": false,
+          "notes": "PromptToTask adaptive overlay has refs only and no full PromptToTaskMachine manifest."
+        }
+      ],
+      "semanticQualityClaimed": false,
+      "commonModelMutated": false,
+      "validationHonest": true,
+      "limitation": "PARTIAL/NOT_FULL_MACHINE_EVAL: staged target is an adaptive overlay checkpoint without a PromptToTaskMachine checkpoint plus manifest. Checks are overlay-level source-disjoint metadata and loader checks only."
+    },
+    {
+      "machineId": "OrchestrationReasoningMachine",
+      "verdict": "PASS_NAMED_CONTROLS_NOT_LEAKAGE",
+      "targetCheckpointPath": "\u003Ctest-temp-root\u003E/source-assets/orchestration-reasoning/checkpoint.json",
+      "manifestPath": "\u003Ctest-temp-root\u003E/source-assets/orchestration-reasoning/manifest.json",
+      "targetCheckpointSha256": "1d1b3a4e9ffad0939071788d378aecf0bcaab10a691a4e4c33432bfe74a02f35",
+      "boundaryUsed": "OrchestrationReasoningMachine.LoadCheckpointAsync \u002B OrchestrationReasoningMachine.Plan",
+      "heldOutDatasetId": "learn-06-orchestration-held-out-source-disjoint-v1",
+      "heldOutDatasetSha256": "780ab93961b0e05c98f467261b6dfca17e568593010103bd965ed8eeb88eef0b",
+      "sourceDisjoint": true,
+      "heldOutPassed": true,
+      "runtimeInvocationSucceeded": false,
+      "testOnlyInProcessProbeSucceeded": true,
+      "notFullMachineEval": false,
+      "controls": [
+        {
+          "controlName": "exact_prompt_replay",
+          "status": "OBSERVED_MATCH_REFERENCE_ONLY",
+          "boundaryUsed": "OrchestrationReasoningMachine.Plan",
+          "expected": "Exact prompt replay may match but cannot be the only positive evidence.",
+          "observed": "loaded_guide_state_semantic_plan_produced; selected=or-learned-pattern:learn-04-local-runtime-token-quality-boundary",
+          "leakageExplainsHeldOut": false,
+          "notes": "Held-out source-disjoint row also matched, so exact prompt replay is not used as sole proof."
+        },
+        {
+          "controlName": "path_title_source_id_leakage",
+          "status": "PASS_BLOCKED",
+          "boundaryUsed": "OrchestrationReasoningMachine.Plan",
+          "expected": "Path/title/source-id metadata alone must not select the learned pattern.",
+          "observed": "loaded_guide_state_no_matching_learned_pattern; selected=",
+          "leakageExplainsHeldOut": false,
+          "notes": "The request omitted required task/constraint/requirement/deliverable/evidence signals."
+        },
+        {
+          "controlName": "nearest_neighbor_memorization",
+          "status": "PASS_BLOCKED",
+          "boundaryUsed": "OrchestrationReasoningMachine.Plan",
+          "expected": "A near row missing one required signal must not pass as held-out success.",
+          "observed": "loaded_guide_state_no_matching_learned_pattern; selected=",
+          "leakageExplainsHeldOut": false,
+          "notes": "Nearest overlap remains baseline evidence only and does not claim semantic quality."
+        },
+        {
+          "controlName": "no_trained_state_baseline",
+          "status": "PASS_BLOCKED",
+          "boundaryUsed": "new OrchestrationReasoningMachine().Plan",
+          "expected": "Without loaded target state, the same held-out request must not produce the learned pattern.",
+          "observed": "not_trained_no_learned_guide_state; selected=",
+          "leakageExplainsHeldOut": false,
+          "notes": "This separates loaded target behavior from default no-trained-state behavior."
+        },
+        {
+          "controlName": "shuffled_chosen_rejected",
+          "status": "PASS_BLOCKED",
+          "boundaryUsed": "OrchestrationReasoningMachine.Plan",
+          "expected": "A shuffled/rejected-signals request must not select the learned pattern.",
+          "observed": "loaded_guide_state_no_matching_learned_pattern; selected=",
+          "leakageExplainsHeldOut": false,
+          "notes": "Represents chosen/rejected sanity control at the orchestration signal boundary."
+        }
+      ],
+      "semanticQualityClaimed": false,
+      "commonModelMutated": false,
+      "validationHonest": true,
+      "limitation": "Scope: test-owned deterministic fixture using LEARN-04 pattern id/schema; real LEARN-04 target not exercised. The public loader plus in-process Machine.Plan prove only the named held-out/ablation checks; no external/host runtime was launched and no runtime success is claimed."
+    },
+    {
+      "machineId": "SkillSelectionMachine",
+      "verdict": "PARTIAL_NOT_FULL_MACHINE_EVAL",
+      "targetCheckpointPath": "\u003Ctest-temp-root\u003E/source-assets/skill-selection/.xiigen/smart-skills/corrections/adaptive-checkpoint.json",
+      "manifestPath": null,
+      "targetCheckpointSha256": "62c43406470b73554699d57ed23702cfdc5f0c9b94cce91cc40e7805fd3e0b49",
+      "boundaryUsed": "SkillSelectionCorrectionAdaptiveTrainer.LoadCheckpoint \u002B overlay metadata/source-disjoint controls",
+      "heldOutDatasetId": "learn-06-skill-selection-overlay-held-out-source-disjoint-v1",
+      "heldOutDatasetSha256": "392dc0a719ad0e5a794a5ec46a61272e8d3921d5c7d217ff7c24788ad03be1fb",
+      "sourceDisjoint": true,
+      "heldOutPassed": true,
+      "runtimeInvocationSucceeded": false,
+      "testOnlyInProcessProbeSucceeded": false,
+      "notFullMachineEval": true,
+      "controls": [
+        {
+          "controlName": "exact_prompt_replay",
+          "status": "PARTIAL_STATIC_REF_ONLY",
+          "boundaryUsed": "adaptive overlay loader",
+          "expected": "Exact prompt replay cannot PASS full machine eval for overlay-only target.",
+          "observed": "safeRefs=True; refCount=2",
+          "leakageExplainsHeldOut": false,
+          "notes": "SkillSelection correction adaptive overlay has refs only and no full SkillSelectionMachine checkpoint plus manifest."
+        },
+        {
+          "controlName": "path_title_source_id_leakage",
+          "status": "PARTIAL_STATIC_REF_ONLY",
+          "boundaryUsed": "adaptive overlay loader",
+          "expected": "Overlay refs must not contain private absolute paths or raw source titles.",
+          "observed": "safeRefs=True",
+          "leakageExplainsHeldOut": false,
+          "notes": "SkillSelection correction adaptive overlay has refs only and no full SkillSelectionMachine checkpoint plus manifest."
+        },
+        {
+          "controlName": "nearest_neighbor_memorization",
+          "status": "PARTIAL_NOT_APPLICABLE_NO_RUNTIME_NEAREST",
+          "boundaryUsed": "adaptive overlay loader",
+          "expected": "Nearest-neighbour runtime proof is unavailable without a full machine boundary.",
+          "observed": "not run; overlay checkpoint has no public semantic runtime",
+          "leakageExplainsHeldOut": false,
+          "notes": "SkillSelection correction adaptive overlay has refs only and no full SkillSelectionMachine checkpoint plus manifest."
+        },
+        {
+          "controlName": "no_trained_state_baseline",
+          "status": "PARTIAL_NOT_APPLICABLE_NO_FULL_MACHINE",
+          "boundaryUsed": "adaptive overlay loader",
+          "expected": "No-trained-state baseline is not a full machine comparison for overlay-only target.",
+          "observed": "not run; marked limitation",
+          "leakageExplainsHeldOut": false,
+          "notes": "SkillSelection correction adaptive overlay has refs only and no full SkillSelectionMachine checkpoint plus manifest."
+        },
+        {
+          "controlName": "shuffled_chosen_rejected",
+          "status": "PARTIAL_STATIC_REF_ONLY",
+          "boundaryUsed": "adaptive overlay loader",
+          "expected": "Chosen/rejected sanity is limited to distinct refs in overlay metadata.",
+          "observed": "distinctRefs=2",
+          "leakageExplainsHeldOut": false,
+          "notes": "SkillSelection correction adaptive overlay has refs only and no full SkillSelectionMachine checkpoint plus manifest."
+        }
+      ],
+      "semanticQualityClaimed": false,
+      "commonModelMutated": false,
+      "validationHonest": true,
+      "limitation": "PARTIAL/NOT_FULL_MACHINE_EVAL: staged target is a correction adaptive overlay checkpoint without a SkillSelectionMachine checkpoint plus manifest. Checks are overlay-level source-disjoint metadata and loader checks only."
+    }
+  ],
+  "whatThisProves": [
+    "This proves the named held-out/source-disjoint and ablation controls for a test-owned deterministic fixture using LEARN-04 pattern id/schema; real LEARN-04 target not exercised, through OrchestrationReasoningMachine.LoadCheckpointAsync plus in-process Machine.Plan.",
+    "This proves only overlay-level checkpoint loading and source-disjoint metadata checks for PromptToTask and SkillSelection, because their staged targets are adaptive overlay checkpoints.",
+    "This proves common model assets were not mutated and no external AI, promotion, rollback, runtime host probe, or semantic-quality claim was used."
+  ],
+  "whatThisDoesNotProve": [
+    "This does not exercise the real LEARN-04 target: the orchestration evidence is a test-owned deterministic fixture using LEARN-04 pattern id/schema; real LEARN-04 target not exercised.",
+    "This does not prove universal semantic quality or future unseen correctness.",
+    "This does not prove full PromptToTaskMachine or SkillSelectionMachine held-out/runtime readiness.",
+    "This does not prove host runtime readiness, token savings, common training license safety, target promotion, or rollback safety.",
+    "This does not activate or promote any checkpoint."
+  ],
+  "runtimeAllowed": false,
+  "runtimeLaunched": false,
+  "nextIndependentTrack": "LEARN-07 rollback verifier"
+}

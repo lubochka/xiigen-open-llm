@@ -1,0 +1,84 @@
+{
+  "packet_schema": "phase14.fr01.claude_ui_proof_gap_packet.v1",
+  "task_id": "P14-FIX-01",
+  "fr_id": "FR-01",
+  "run_id": "p14-fix-01-claude-ui-proof-20260623-224057",
+  "timestamp_utc": "2026-06-23T19:40:57Z",
+  "verdict": "NEEDS_FIX",
+  "pass_claim": false,
+  "final_readiness_claim": false,
+  "changed_files": [
+    "C:\\Projects\\llm_mvp_core\\tools\\phase14-claude-ui-proof-diagnostic.ps1",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\claude-ui-proof\\p14-fix-01-claude-ui-proof-20260623-224057\\claude-ui-proof-gap-diagnostic.json",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\claude-ui-proof\\p14-fix-01-claude-ui-proof-20260623-224057\\claude-ui-proof-gap-packet.json",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\claude-ui-proof\\p14-fix-01-claude-ui-proof-20260623-224057\\claude-ui-proof-gap-report-ru.md"
+  ],
+  "commands_and_checks_run": [
+    {
+      "command": "Get-Command claude -ErrorAction SilentlyContinue",
+      "result": "NOT_FOUND",
+      "meaning": "No shell-resolvable Claude CLI command was available for a safe non-AI command check."
+    },
+    {
+      "command": "Get-CimInstance Win32_Process | Where-Object { Name/ExecutablePath match Claude Desktop or Claude Code }",
+      "result": "FOUND",
+      "meaning": "Claude Desktop/app and Claude Code-related processes were present; command lines were redacted and classified by flags only."
+    },
+    {
+      "command": "Get-StartApps | Where-Object { Name/AppID match Claude|Anthropic }",
+      "result": "FOUND",
+      "meaning": "Windows Start app entries for Claude were present."
+    },
+    {
+      "command": "Test-Path for common Claude app/config locations",
+      "result": "FOUND",
+      "meaning": "Local Claude config/app directories were present."
+    },
+    {
+      "command": "Get-Process -Name claude | inspect MainWindowHandle/MainWindowTitle with title redaction",
+      "result": "WINDOW_FOUND",
+      "meaning": "A Claude window handle was present; the title was redacted and this is not prompt-acceptance proof."
+    },
+    {
+      "command": "Inspect redacted Claude process command lines for --remote-debugging",
+      "result": "NOT_FOUND",
+      "meaning": "No Chrome/Electron remote-debugging flag was found for a controllable browser-style UI proof path."
+    },
+    {
+      "command": "Test-Path HKCU/HKCR claude protocol keys",
+      "result": "FOUND",
+      "meaning": "A Claude URI protocol key was present, but this does not prove prompt submission, visible answer, or llm_mvp_core invocation."
+    },
+    {
+      "command": "Select-String prior Claude runtime proof/review/preflight reports for explicit UI non-claims",
+      "result": "FOUND_UI_NON_CLAIMS",
+      "meaning": "Existing handler/package proof remains evidence-only and does not satisfy FR-01 UI proof."
+    },
+    {
+      "command": "Run C:\\Projects\\llm_mvp_core\\tools\\phase14-claude-ui-proof-diagnostic.ps1",
+      "result": "NEEDS_FIX",
+      "meaning": "Generated the diagnostic JSON under the allowed Phase 14 claude-ui-proof artifact path."
+    }
+  ],
+  "evidence_artifact_paths": [
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\claude-ui-proof\\p14-fix-01-claude-ui-proof-20260623-224057\\claude-ui-proof-gap-diagnostic.json",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\claude-ui-proof\\p14-fix-01-claude-ui-proof-20260623-224057\\claude-ui-proof-gap-packet.json",
+    "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\claude-ui-proof\\p14-fix-01-claude-ui-proof-20260623-224057\\claude-ui-proof-gap-report-ru.md"
+  ],
+  "evidence_boundary": {
+    "handler_or_package_proof": "evidence_only",
+    "claude_desktop_app_availability": "proven",
+    "visible_claude_window_handle": "proven",
+    "prompt_accepted_by_claude_ui": "not_verified",
+    "same_run_llm_mvp_core_adapter_call": "not_verified",
+    "visible_answer_error_debug_with_correlation_id": "not_verified",
+    "redacted_input_output_freshness": "not_verified",
+    "controlled_negative_path_in_claude_ui": "not_verified"
+  },
+  "blocker": "Claude Desktop/app availability was found, including a redacted visible window handle, but this Codex environment did not expose a safe controllable Claude UI/app surface to submit a test prompt, capture a visible answer/error/debug, and bind that same run to an llm_mvp_core adapter/core correlation id. No prompt was sent.",
+  "exact_next_action": "Issue a bounded, operator-approved Claude Desktop/app UI capture work order in the active Claude app session: send one test-only XIIGen positive prompt and one controlled negative prompt through the visible Claude UI, capture redacted prompt/answer/error/debug with timestamp and correlation id, collect same-run llm_mvp_core adapter/core trace refs, save artifacts under the Phase 14 claude-ui-proof path, forbid product edits, forbid git, and do not claim PASS unless all FR-01 evidence fields are present.",
+  "no_git_commands_were_run": true,
+  "no_external_ai_calls_were_run": true,
+  "no_web_browsing_was_run": true,
+  "product_files_edited": false
+}

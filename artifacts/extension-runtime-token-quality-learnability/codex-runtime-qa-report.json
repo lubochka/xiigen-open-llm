@@ -1,0 +1,131 @@
+{
+  "schema": "xiigen.extension_runtime_token_quality_learnability.codex_runtime_qa_report.v1",
+  "phase_id": "RUNTIME-04",
+  "created_at_local": "2026-06-16T09:53:24.151Z",
+  "verdict": "PASS_RUNTIME_PROOF_CANDIDATE_WITH_LIMITATIONS",
+  "claim_scope": "Codex exec model-backed runtime session invoked a test-only evidence script, which invoked the Codex JS source entrypoint CLI and llm_mvp_core API. This is not full Codex plugin chat UI evidence.",
+  "what_this_proves": [
+    "Codex CLI runtime can run Codex exec sessions.",
+    "Codex exec executed evidence scripts in the Codex extension repo.",
+    "Evidence scripts invoked src/codex-entrypoint.js as CLI thin adapter.",
+    "The adapter called llm_mvp_core/tools/xiigen-extension-core-api.ps1 and received XiigenExtensionResponse.",
+    "Visible answer/debug and controlled error artifacts were produced."
+  ],
+  "what_this_does_not_prove": [
+    "Full Codex plugin chat UI invocation.",
+    "Token savings, quality improvement, semantic quality, DPO, training, checkpoint mutation, fresh-load, continue-training, rollback.",
+    "SkillSelection end-to-end through Codex until AvailableSkills parser bug is fixed."
+  ],
+  "runtime": {
+    "codex_executable": "C:/Users/lubao/AppData/Local/OpenAI/Codex/bin/f1c7ee7a13db5fed/codex.exe",
+    "codex_version": "codex-cli 0.140.0-alpha.2",
+    "run_root": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342",
+    "runtime_path": "codex exec --json --dangerously-bypass-approvals-and-sandbox -C C:/Projects/codex-xiigen-smart-skills --add-dir C:/Projects/llm_mvp_core -o <last-message> -",
+    "positive_command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File <run>/runtime04-positive-probe.ps1",
+    "error_command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File <run>/runtime04-error-probe.ps1"
+  },
+  "scenarios": [
+    {
+      "scenario_id": "codex-runtime04-positive-scripted",
+      "correlation_id": "codex-runtime04-positive-scripted-20260616-123342",
+      "method": "prompt-to-task",
+      "success": true,
+      "status": "core_boundary_partial_no_semantic_quality_claim",
+      "user_prompt_sha256": "f9dd3f83c2e4a9f18ba6c397f78de987bb63556cde87e38adb598ee920514bc7",
+      "request_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\xiigen-codex-core-request.json",
+      "response_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\xiigen-codex-core-response.json",
+      "trace_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\xiigen-codex-core-trace.json",
+      "visible_answer_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\visible-answer.txt",
+      "visible_debug_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\visible-debug.txt",
+      "codex_stream_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\codex-runtime04-positive-scripted-rerun.stdout.jsonl",
+      "codex_last_message_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\codex-runtime04-positive-scripted-rerun.last-message.txt",
+      "debug_trace_observed": true,
+      "redacted_input_output_observed": true,
+      "command_execution_observed": false,
+      "external_ai_used": true
+    },
+    {
+      "scenario_id": "codex-runtime04-error-scripted",
+      "correlation_id": "codex-runtime04-error-scripted-20260616-123342",
+      "method": "prompt-to-task",
+      "controlled_error_state": true,
+      "request_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\error-scripted\\xiigen-codex-core-request.json",
+      "response_created": false,
+      "trace_created": false,
+      "visible_error_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\error-scripted\\visible-error.txt",
+      "codex_stream_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\codex-runtime04-error-scripted-rerun.stdout.jsonl",
+      "codex_last_message_ref": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\codex-runtime04-error-scripted-rerun.last-message.txt",
+      "debug_redaction_observed": true,
+      "command_execution_observed": false,
+      "external_ai_used": true
+    }
+  ],
+  "no_overclaim_booleans": {
+    "package_smoke_only": false,
+    "direct_handler_only": false,
+    "dashboard_api_only": false,
+    "direct_core_handler_call": false,
+    "codex_exec_model_backed_runtime": true,
+    "codex_full_plugin_chat_ui": false,
+    "semantic_quality_claimed": false,
+    "training_or_checkpoint_mutation": false,
+    "dpo_generation": false,
+    "token_savings_claimed": false,
+    "quality_improvement_claimed": false,
+    "full_plan_completion_claimed": false,
+    "external_ai_used": true
+  },
+  "boundary_review": {
+    "logic_stays_inside_llm_mvp_core": "PASS_FOR_RUNTIME_04_SCOPE",
+    "codex_host_role": "thin adapter CLI plus evidence script; no semantic ranking/training in host",
+    "deterministic_solution_hidden_in_adapter": "NOT_OBSERVED_IN_RUNTIME_PROBE",
+    "production_code_changed": false,
+    "model_checkpoint_mutated": false,
+    "dpo_or_training_mutated": false,
+    "raw_private_prompt_in_visible_output": false,
+    "visible_debug_shape": "xiigen prompt-to-task :\\ninput: <redacted>\\noutput: <redacted>"
+  },
+  "findings": [
+    {
+      "severity": "HIGH",
+      "title": "Codex CLI entrypoint omits available-skills-json mapping",
+      "evidence": "Probe script passed available-skills-json, but XiigenExtensionRequest still had AvailableSkills=[]; optionsFromCliArgs maps requested-skills-json but not available-skills-json.",
+      "impact": "SkillSelection cannot be fairly runtime-tested through the Codex CLI path until the parser maps AvailableSkills.",
+      "required_fix": "Add availableSkills: parseJsonOrDefault(parsed['available-skills-json'], []) to optionsFromCliArgs, rerun adapter tests, then rerun RUNTIME-04.",
+      "fixed_in_this_phase": false,
+      "reason_not_fixed": "RUNTIME-04 scope forbids production code changes."
+    }
+  ],
+  "freshness": {
+    "run_folder": "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342",
+    "generated_files": [
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\codex-runtime04-error-scripted-rerun.last-message.txt",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\codex-runtime04-error-scripted-rerun.stderr.log",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\codex-runtime04-error-scripted-rerun.stdout.jsonl",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\codex-runtime04-positive-scripted-rerun.last-message.txt",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\codex-runtime04-positive-scripted-rerun.stderr.log",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\codex-runtime04-positive-scripted-rerun.stdout.jsonl",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\error-scripted\\case-result.json",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\error-scripted\\entrypoint.stderr.log",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\error-scripted\\entrypoint.stdout.log",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\error-scripted\\visible-error.txt",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\error-scripted\\xiigen-codex-core-request.json",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\case-result.json",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\entrypoint.stderr.log",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\entrypoint.stdout.log",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\visible-answer.txt",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\visible-debug.txt",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\xiigen-codex-core-request.json",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\xiigen-codex-core-response.json",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\positive-scripted\\xiigen-codex-core-trace.json",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\runtime04-error-probe.ps1",
+      "C:\\Projects\\codex-xiigen-smart-skills\\reports\\RUNTIME-04-codex\\20260616-123342\\runtime04-positive-probe.ps1"
+    ],
+    "current_report_created_utc": "2026-06-16T09:53:24.175Z"
+  },
+  "next_independent_track": {
+    "recommended_phase": "HOST-REPAIR-CODEX-AVAILABLE-SKILLS-PARSER before TOKEN-01",
+    "reason": "Codex runtime exposed a request-shape bug that blocks honest SkillSelection runtime evidence.",
+    "fallback_if_not_repaired": "TOKEN-01 can draft scenarios, but Codex SkillSelection runtime rows must be invalid until parser repair passes."
+  }
+}
