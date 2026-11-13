@@ -1,0 +1,93 @@
+{
+  "phase": 93,
+  "date": "2026-05-05",
+  "name": "CB4 Stage 5I node-01 splitter replacement",
+  "flow": {
+    "flow_id": "security-verification-3.4",
+    "scenario_id": "cb4-security-verification",
+    "replaced_station": "node-01 domain splitter",
+    "unit": "ExperimentsV2.LogicalFlow.SecuritySplitterUnit",
+    "unit_id": "unit-cb4-security-splitter-v1",
+    "unit_role": "node-01-domain-splitter",
+    "domain_tag": "security-verification-3.4",
+    "confidence": 0.87
+  },
+  "station_chain": [
+    "SecuritySplitterUnit",
+    "SecurityArbiterSelectorUnit",
+    "SecurityTranslatorUnit",
+    "SecurityPlannerUnit",
+    "SecurityProcessorUnit",
+    "SecurityArbiterUnit",
+    "SecurityApplierUnit",
+    "SecurityResultTranslatorUnit",
+    "SecurityFormatterUnit"
+  ],
+  "scenario_results": [
+    {
+      "scenario_id": "S1",
+      "verdict": "PASS",
+      "node_01_source_pair_id": "CB4-3.4-001",
+      "domain_label": "security_and_authorization_model",
+      "coverage_status": "covered"
+    },
+    {
+      "scenario_id": "S2",
+      "verdict": "REPROCESS",
+      "node_01_source_pair_id": "CB4-3.4-005",
+      "domain_label": "security_and_authorization_model",
+      "coverage_status": "covered_reprocess_risk",
+      "forbidden_result_signals_absent": [
+        "compliant",
+        "satisfies"
+      ]
+    },
+    {
+      "scenario_id": "S3",
+      "verdict": "CONCERN",
+      "node_01_source_pair_id": "CB4-3.4-009",
+      "domain_label": "security_and_authorization_model",
+      "coverage_status": "covered_boundary"
+    }
+  ],
+  "acceptance_gates": {
+    "only_one_station_replaced": true,
+    "node_01_executed_as_ilogicalunit": true,
+    "nodes_02_through_09_remain_units": true,
+    "s1_pass_stable": true,
+    "s2_reprocess_stable": true,
+    "s3_concern_stable": true,
+    "external_ai_calls": 0,
+    "wda_tests": "7/7 passing",
+    "full_suite": "1172/1172 passing",
+    "solution_build": "passing"
+  },
+  "verification": [
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"LogicalOrchestratorAssistant_RunSecurityVerification34\"",
+      "result": "1/1 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"LogicalOrchestratorAssistant\" --no-build",
+      "result": "15/15 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"WDA\" --no-build",
+      "result": "7/7 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --no-build",
+      "result": "1172/1172 passing"
+    },
+    {
+      "command": "dotnet build LlmFromScratch.sln",
+      "result": "Build succeeded, 0 warnings, 0 errors"
+    }
+  ],
+  "closed_slice": "CB4 security-verification Stage 5 replacement from node-01 through node-09 is complete for the S1/S2/S3 oracle scenarios.",
+  "open_work": [
+    "Broaden CB4 scenario coverage beyond the three oracle probes.",
+    "Start the next sub-phase corpus batch or register the next available external-source flow.",
+    "The full v4 corpus remains open."
+  ]
+}

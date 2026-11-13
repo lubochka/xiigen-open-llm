@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orchestrator Experiment Report — T34 and P3 — 2026-05-04</title>
+<style>
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 12pt;
+    line-height: 1.6;
+    color: #1a1a1a;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 50px;
+    background: #fff;
+}
+h1 {
+    font-size: 20pt;
+    font-weight: 700;
+    color: #0d1117;
+    margin-top: 0;
+    margin-bottom: 6px;
+    border-bottom: 3px solid #0366d6;
+    padding-bottom: 8px;
+}
+h2 {
+    font-size: 15pt;
+    font-weight: 700;
+    color: #0366d6;
+    margin-top: 32px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e1e4e8;
+    padding-bottom: 6px;
+}
+h3 {
+    font-size: 12.5pt;
+    font-weight: 700;
+    color: #24292e;
+    margin-top: 22px;
+    margin-bottom: 8px;
+}
+h4 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #444d56;
+    margin-top: 16px;
+    margin-bottom: 6px;
+}
+p {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+ul, ol {
+    margin: 0 0 12px 24px;
+}
+li { margin-bottom: 4px; }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0 18px 0;
+    font-size: 10.5pt;
+}
+th {
+    background: #0366d6;
+    color: #fff;
+    font-weight: 700;
+    padding: 7px 10px;
+    text-align: left;
+}
+td {
+    padding: 6px 10px;
+    border: 1px solid #d1d5da;
+}
+tr:nth-child(even) td { background: #f6f8fa; }
+code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 10pt;
+    background: #f6f8fa;
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid #e1e4e8;
+}
+pre {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 14px 18px;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 12px 0 16px 0;
+    font-size: 9.5pt;
+    line-height: 1.5;
+}
+pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #d4d4d4;
+    font-size: inherit;
+}
+hr {
+    border: none;
+    border-top: 2px solid #e1e4e8;
+    margin: 28px 0;
+}
+strong { color: #24292e; }
+blockquote {
+    border-left: 4px solid #0366d6;
+    padding: 8px 16px;
+    margin: 12px 0;
+    color: #444;
+    background: #f6f8fa;
+}
+@media print {
+    body { padding: 20px 30px; }
+    h2 { page-break-before: auto; }
+    pre { white-space: pre-wrap; }
+    table { page-break-inside: avoid; }
+}
+
+</style>
+</head>
+<body>
+<h1 id="orchestrator-experiment-report">Orchestrator Experiment Report</h1>
+<h1 id="runs-t34-phase-transition-and-p3-learning-from-failure">Runs: T34 Phase Transition and P3 Learning From Failure</h1>
+<h1 id="date-2026-05-04">Date: 2026-05-04</h1>
+<h1 id="project-llmfromscratch-dynamic-flow-orchestration-experiments">Project: LlmFromScratch — dynamic-flow orchestration experiments</h1>
+<hr />
+<h2 id="document-purpose">Document Purpose</h2>
+<p>This report describes in plain language what happened across two experiment
+runs completed on 2026-05-04: the T34 Phase 3 to Phase 4 Transition Gate
+(code phase 24) and the P3 Learning From Transition Failure (code phase 25).</p>
+<p>For each run it explains:</p>
+<ul>
+<li>what problem the run was trying to solve,</li>
+<li>what oracle documents were produced before the code was written,</li>
+<li>what code and diagrams were produced or changed,</li>
+<li>what the test results showed,</li>
+<li>and what the results mean for the broader architecture.</li>
+</ul>
+<p>The architecture change section describes the four UML diagrams before and
+after the corrections made in T34 Round B, with specific reference to every
+entity, interface, and parameter that was added or changed.</p>
+<hr />
+<h2 id="1-background-what-the-orchestrator-is-and-why-phase-transitions-matter">1. Background: What the Orchestrator Is and Why Phase Transitions Matter</h2>
+<h3 id="11-the-nine-node-pipeline">1.1 The Nine-Node Pipeline</h3>
+<p>The LlmFromScratch project implements a dynamic-flow orchestration pipeline
+in pure C# without any external ML frameworks. The pipeline is a nine-node
+sequence that processes one source packet — a structured problem description —
+into a human-readable result.</p>
+<p>The nine nodes are:</p>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Node 1</td>
+<td>Domain Splitter: breaks the source packet into domain-tagged fragments</td>
+</tr>
+<tr>
+<td>Node 2</td>
+<td>Domain Translator: converts each fragment into a formal domain statement</td>
+</tr>
+<tr>
+<td>Node 3</td>
+<td>Scheme Planner: produces a step-by-step plan for the domain statement</td>
+</tr>
+<tr>
+<td>Node 4</td>
+<td>Domain Processor: executes each plan step</td>
+</tr>
+<tr>
+<td>Node 5</td>
+<td>Applier: applies the processed plan to produce concrete results</td>
+</tr>
+<tr>
+<td>Node 6</td>
+<td>Result Translator: converts formal results into natural language</td>
+</tr>
+<tr>
+<td>Node 7</td>
+<td>Arbiter Selector: chooses which review units should fire</td>
+</tr>
+<tr>
+<td>Node 8</td>
+<td>Arbiter Units: review results and produce accept/concern/reject verdicts</td>
+</tr>
+<tr>
+<td>Node 9</td>
+<td>Formatter: assembles the final human-readable output</td>
+</tr>
+</tbody>
+</table>
+<p>The critical technical foundation is that the system does not process words
+directly. Every input passes through a semantic compiler that maps text to
+a 22-slot predicate vector. The 22 predicates are a fixed vocabulary:</p>
+<pre class="codehilite"><code>NULL_GUARD   FAIL        ITERATE     HANDLE_ERROR  AWAIT
+THROW        DECLARE     ASSIGN      CREATE        CALL
+BRANCH       RETURN      GET_OP      VALIDATE_OP   CREATE_OP
+UPDATE_OP    DELETE_OP   PROCESS_OP  CONVERT_OP    SEND_OP
+LOG_OP       AUTH_OP
+</code></pre>
+
+<p>These predicates are the fixed contract between all units in the system.
+Domain labels (such as database-query-efficiency or api-contract) are attached
+to predicate vectors as metadata. Phase signatures (such as Phase 3 —
+Technical Design) are learned statistical patterns over predicate vectors,
+not fixed code structures.</p>
+<h3 id="12-why-phase-transitions-are-needed">1.2 Why Phase Transitions Are Needed</h3>
+<p>As of the start of the T34 experiment, the nine-node pipeline could process
+one source packet in isolation. It did not know that its output would become
+the input for a downstream phase of development work. It did not carry
+decisions, constraints, or knowledge gaps forward from one phase to the next.</p>
+<p>A real development lifecycle has seven phases: UI/UX Definition, Functional
+Specification, Technical Design, Implementation, Testing, QA, and QA
+Automation. Each phase produces decisions that the next phase must respect.
+If the Technical Design phase decides that all services must inherit from
+BaseService, the Implementation phase must know about that decision and either
+enforce it or explicitly name it as an uncovered gap.</p>
+<p>The experiments described in this report build and prove the mechanisms that
+allow the system to carry phase context forward and verify that downstream
+phases are consistent with what upstream phases decided.</p>
+<p>Three structures need to be added to the architecture for this to work. They
+sit above and beside the nine-node pipeline:</p>
+<ol>
+<li>
+<p>The <strong>Phase Context Packet</strong> — a structured artifact that every completed
+   phase produces, capturing its decisions, inherited constraints, knowledge
+   edges (named gaps), boundary markers, and rejected items.</p>
+</li>
+<li>
+<p>The <strong>Transition Gate</strong> — a verification unit that runs between two phases
+   and checks whether the downstream phase's source packet is consistent with
+   the upstream phase's context packet.</p>
+</li>
+<li>
+<p>The <strong>Phase Registry</strong> — a versioned topology that maps phase nodes,
+   transition edges, continuity thresholds, and conformance tests. This is
+   stored as data, not code, so that methodology changes do not require
+   rebuilding the system.</p>
+</li>
+</ol>
+<hr />
+<h2 id="2-t34-experiment-phase-3-to-phase-4-transition-gate">2. T34 Experiment — Phase 3 to Phase 4 Transition Gate</h2>
+<h3 id="21-what-t34-was-trying-to-prove">2.1 What T34 Was Trying to Prove</h3>
+<p>T34 (code phase 24, experiment identifier T34-PHASE-3-TO-4-TRANSITION-GATE)
+was the first concrete test of the transition gate concept. It asked one
+specific question: given a real Phase 3 Technical Design context packet and
+a real Phase 4 Implementation source packet, does the transition gate
+correctly identify what was preserved, what was left as a named gap, and
+what was safe to pass despite appearing superficially problematic?</p>
+<p>The Phase 3 source was the existing XIIGEN dynamic-flow architecture
+documents:
+- <code>DYNAMIC-FLOW-ARCHITECTURE-PLAN-v1_0-DRAFT.md</code>
+- <code>DYNAMIC-FLOW-HIGH-LEVEL-DESIGN-AMENDMENT-v1.md</code>
+- <code>DECISIONS-LOCKED.md</code></p>
+<p>The Phase 4 source was an existing implementation plan:
+- <code>AUTONOMOUS-LEARNING-SESSION-PLAN-v1.0.md</code></p>
+<p>The implementation plan described an eight-step autonomous learning cycle
+for the <code>16.AutonomousLearning</code> project component.</p>
+<p>Three specific scenarios were designed to test the gate's judgment:</p>
+<p><strong>Scenario T34-1: Stated-but-unenforced constraint.</strong> The Phase 3 design
+requires that all production services inherit from <code>BaseService</code>. The Phase 4
+plan mentions BaseService in its dependency map but does not include a Gate B
+check or test assertion that would catch a service that omits the inheritance.
+Expected verdict: CONCERN (not BLOCK — the phase can proceed with this named
+gap, but the gap must be resolved before the phase output is accepted).</p>
+<p><strong>Scenario T34-2: Absent knowledge-edge acknowledgment.</strong> The Phase 3 design
+introduces a cross-phase context packet mechanism for carrying decisions
+between phases. This mechanism is not yet implemented. The Phase 4 plan does
+not mention this gap explicitly — it neither implements it nor marks it as
+out of scope. Expected verdict: CONCERN (the local component can proceed, but
+the plan must explicitly mark the gap as out of scope so it does not silently
+disappear).</p>
+<p><strong>Scenario T34-3: Superficial resemblance to a rejected item.</strong> The Phase 4
+plan lists a fixed five-step implementation sequence (Phase 1 through Phase 5
+build steps). The Phase 3 design explicitly rejected a static runtime pipeline
+as an architectural shape. A naive checker would flag the fixed sequence as
+reinstating the rejected item. Expected verdict: PASS — the fixed sequence is
+build-time implementation order, not runtime execution topology. Artifact
+types are different.</p>
+<h3 id="22-t34-round-a-oracle-documents">2.2 T34 Round A — Oracle Documents</h3>
+<p>Round A produced five oracle documents that defined the experiment before any
+code was written. These documents are the authority; the code must match them,
+not the other way around.</p>
+<p><strong>T34-SOURCE-BINDING-v1.md</strong> defined the upstream and downstream source
+documents and produced a complete upstream context packet. The context packet
+contained:</p>
+<ul>
+<li>6 decisions made (DCTX-01 through DCTX-06), including the locked decisions
+  that the pipeline graph is data not code, that internal LLMs run before any
+  external AI, and that arbiters are the hard acceptance boundary.</li>
+<li>7 constraints inherited (CSTR-01 through CSTR-07), including no external
+  ML frameworks, StackDetector before normalization, StratifiedSplit for splits,
+  the D-09 weight formula, and BaseService-style service inheritance.</li>
+<li>3 knowledge edges (KEDGE-01 through KEDGE-03), including the cross-phase
+  context packet mechanism not yet implemented and the swappability judge not
+  yet trained.</li>
+<li>2 boundary markers (BND-01, BND-02).</li>
+<li>4 rejected items (REJ-01 through REJ-04), including the static runtime
+  pipeline as an architecture shape and external AI as ordinary control-path
+  authority.</li>
+</ul>
+<p><strong>T34-TRANSITION-DOMAIN-MAP-v1.md</strong> defined the formal vocabulary for the
+four transition domains: constraint preservation, decision acknowledgment,
+knowledge edge continuity, and rejection preservation. For each domain it
+specified the formal statement shape, the key vocabulary, and the required
+phrasing for each of the three T34 scenarios.</p>
+<p><strong>T34-TRANSITION-FAILURE-TAXONOMY-v1.md</strong> defined six failure types (F1
+through F6) with their observable signals and correct verdicts. The taxonomy
+established the critical distinction: F2 (stated but unenforced) produces
+CONCERN, not BLOCK. F3 (absent knowledge edge acknowledgment) produces
+CONCERN. F6 (superficial reinstatement with different artifact type) produces
+PASS.</p>
+<p><strong>T34-TRANSITION-HUMAN-RESULT-STANDARDS-v1.md</strong> defined what a technical
+lead must be able to read in the final human result: the transition verdict
+must be PASS WITH GAPS, five preserved constraints must be named, each concern
+must have a concrete remediation, and the build-time sequence must be
+explicitly distinguished from the rejected static runtime pipeline.</p>
+<p><strong>T34-TRANSITION-EXECUTOR-CONTRACT-v1.md</strong> specified the seven pass gates,
+the required metrics table, the required test names, and the required evidence
+output (JSON, Markdown, and Mermaid files).</p>
+<h3 id="23-t34-round-b-code-changes">2.3 T34 Round B — Code Changes</h3>
+<p>Round B implemented the deterministic transition proof as a C# class in the
+<code>35.ExperimentsV2</code> project.</p>
+<p><strong>New file:</strong> <code>35.ExperimentsV2/Experiments/T34PhaseTransitionProof.cs</code></p>
+<p>The class <code>T34PhaseTransitionProof</code> is in namespace <code>ExperimentsV2</code>. It
+contains twelve record types and fourteen methods. The key structures are:</p>
+<p><strong>Record: PhaseContextPacket</strong>
+Parameters: <code>PacketId</code>, <code>UpstreamPhase</code>, <code>DownstreamPhase</code>,
+<code>DecisionsMade[]</code>, <code>ConstraintsInherited[]</code>, <code>KnowledgeEdges[]</code>,
+<code>BoundaryMarkers[]</code>, <code>RejectedItems[]</code>.
+Purpose: carries the complete upstream phase authority that the transition
+gate checks against the downstream packet set.</p>
+<p><strong>Record: DomainPacket</strong>
+Parameters: <code>PacketId</code>, <code>DomainLabel</code>, <code>CoverageStatus</code>, <code>PromptFragment</code>,
+<code>ReasonForInclusion</code>, <code>SourceIds[]</code>.
+CoverageStatus values: <code>covered</code>, <code>concern</code>, <code>boundary</code>.
+Purpose: one fragment produced by the transition domain splitter (node-01
+equivalent), carrying one upstream item into the translation layer.</p>
+<p><strong>Record: FormalTranslation</strong>
+Parameters: <code>StatementId</code>, <code>SourcePacketId</code>, <code>CoverageStatus</code>,
+<code>HandoffMarker</code>, <code>FormalStatement</code>.
+HandoffMarker values: <code>ready_for_transition_planner</code>,
+<code>send_to_transition_gate_with_concern_flag</code>,
+<code>send_to_transition_gate_with_scope_boundary</code>.
+Purpose: the output of node-02 translation for one domain packet.</p>
+<p><strong>Record: TransitionScenario</strong>
+Parameters: <code>ScenarioId</code>, <code>Title</code>, <code>Verdict</code>, <code>VerdictType</code>, <code>Reason</code>,
+<code>EvidenceIds[]</code>, <code>RequiredPreservations[]</code>, <code>Blocks[]</code>.
+VerdictType values: <code>pass</code>, <code>concern</code>, <code>block</code>.
+Purpose: one planned or applied transition check from node-03 through node-05.</p>
+<p><strong>Record: ArbiterVerdict</strong>
+Parameters: <code>Arbiter</code>, <code>TargetScenarioId</code>, <code>Verdict</code>, <code>VerdictType</code>,
+<code>BlocksTransition</code>, <code>Reason</code>.
+Purpose: the node-08 arbiter classification for one scenario.</p>
+<p><strong>Record: Metrics</strong>
+Parameters: <code>LostConstraintCount</code>, <code>DecisionAcknowledgmentMissingCount</code>,
+<code>KnowledgeEdgeDroppedCount</code>, <code>RejectionLostCount</code>, <code>ConcernCount</code>,
+<code>BlockCount</code>, <code>PassCount</code>, <code>DomainPacketCount</code>, <code>FormalTranslationCount</code>,
+<code>ScenarioCount</code>, <code>ForbiddenRuntimeTopologyReinstatementCount</code>,
+<code>HumanResultSectionsPresent</code>, <code>TransitionSuccess</code> (JSON key:
+<code>transition_success</code>).
+Purpose: the machine-readable gate collection that determines whether all
+pass gates pass.</p>
+<p><strong>Record: Evidence</strong>
+This is the root record that <code>WriteEvidence()</code> serializes to JSON. It contains:
+<code>ExperimentId</code>, <code>ScenarioId</code>, <code>RunId</code>, <code>RunTimestampUtc</code>,
+<code>SourceBindingPath</code>, <code>ExpectedTracePath</code>, <code>SourceBinding</code>,
+<code>Node00CompiledPhaseContext</code>, <code>Node01DomainPackets[]</code>,
+<code>Node02FormalTranslations[]</code>, <code>Node03ScenarioPlan[]</code>,
+<code>Node04ScenarioProcessing[]</code>, <code>Node05AppliedTransitionResults[]</code>,
+<code>NodeTrace[]</code>, <code>EdgeTrace[]</code>, <code>Node08ArbiterVerdicts[]</code>,
+<code>Node09HumanSections[]</code>, <code>FinalHumanResult</code>, <code>Metrics</code>, <code>PassGates[]</code>,
+<code>OverallVerdict</code>, <code>Summary</code>.</p>
+<p><strong>The build pipeline inside BuildEvidence():</strong></p>
+<pre class="codehilite"><code>BuildSourceBinding()
+  → BuildPhaseContextPacket()
+    → BuildDomainPackets(phaseContext)          [10 packets]
+      → BuildFormalTranslations(packets)         [10 translations]
+        → BuildScenarioPlan(translations)        [3 scenarios]
+          → BuildScenarioProcessing(plan)
+            → BuildAppliedTransitionResults()
+              → BuildArbiterVerdicts(applied)
+                → BuildHumanSections(verdicts)
+                  → BuildFinalHumanResult(sections)
+  → BuildNodeTrace(...)
+  → BuildEdgeTrace(...)
+  → BuildMetrics(...)
+  → BuildPassGates(...)
+</code></pre>
+
+<p>The <code>Mentions()</code> method is the core predicate-matching function. It maps each
+upstream constraint or decision to the domain packet that carries it, using
+keyword matching against the 22-predicate vocabulary labels. For example,
+<code>sourceItem.Contains("BaseService")</code> returns <code>true</code> only for
+<code>td06_base_service_constraint</code>.</p>
+<p><strong>Ten domain packets produced by BuildDomainPackets():</strong></p>
+<table>
+<thead>
+<tr>
+<th>Packet ID</th>
+<th>Domain label</th>
+<th>Coverage status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>td01_runtime_orchestration_decision</td>
+<td>runtime_orchestration_decision</td>
+<td>covered</td>
+</tr>
+<tr>
+<td>td02_internal_first_authority</td>
+<td>internal_first_authority</td>
+<td>covered</td>
+</tr>
+<tr>
+<td>td03_arbiter_authority</td>
+<td>arbiter_authority</td>
+<td>covered</td>
+</tr>
+<tr>
+<td>td04_idle_learning_promotion</td>
+<td>idle_learning_promotion</td>
+<td>covered</td>
+</tr>
+<tr>
+<td>td05_downstream_phase_sequence</td>
+<td>implementation_sequence_artifact</td>
+<td>covered</td>
+</tr>
+<tr>
+<td>td06_base_service_constraint</td>
+<td>implementation_constraint_preservation</td>
+<td>concern</td>
+</tr>
+<tr>
+<td>td07_cross_phase_context_packet</td>
+<td>cross_phase_context_handoff</td>
+<td>concern</td>
+</tr>
+<tr>
+<td>td08_static_runtime_rejection</td>
+<td>rejected_runtime_shape</td>
+<td>covered</td>
+</tr>
+<tr>
+<td>td09_downstream_scope_boundary</td>
+<td>downstream_scope_boundary</td>
+<td>boundary</td>
+</tr>
+<tr>
+<td>td10_transition_verdict_assembly</td>
+<td>transition_verdict_assembly</td>
+<td>covered</td>
+</tr>
+</tbody>
+</table>
+<p><strong>New file:</strong> <code>Tests/DynamicFlowT34Tests.cs</code></p>
+<p>Eight tests in class <code>DynamicFlowT34Tests</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Test name</th>
+<th>What it verifies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T34_Run_WritesJsonMarkdownAndMermaidEvidence</td>
+<td>JSON, MD, MMD files are created with matching run IDs</td>
+</tr>
+<tr>
+<td>T34_EvidenceJson_UsesRequiredMetricKeys</td>
+<td><code>transition_success</code> key exists in JSON; no misspelling (<code>transition_sucess</code> must not appear)</td>
+</tr>
+<tr>
+<td>T34_Run_PassesPhase3ToPhase4TransitionGates</td>
+<td>OverallVerdict = PASS_WITH_GAPS, all 10 pass gates pass</td>
+</tr>
+<tr>
+<td>T34_Node01_EmitsExpectedTenDomainPackets</td>
+<td>All 10 packet IDs present; td06 and td07 have status concern</td>
+</tr>
+<tr>
+<td>T34_BaseServiceConstraint_IsConcernNotBlock</td>
+<td>T34-1 verdict = concern, blocks = false, human result names enforcement gap</td>
+</tr>
+<tr>
+<td>T34_CrossPhaseContextEdge_IsConcernNotDropped</td>
+<td>T34-2 verdict = concern, blocks = false, no dropped items in EdgeTrace</td>
+</tr>
+<tr>
+<td>T34_BuildTimeSequence_DoesNotReinstateStaticRuntimePipeline</td>
+<td>T34-3 verdict = pass; forbidden phrase not in human result</td>
+</tr>
+<tr>
+<td>T34_HumanResult_IsPassWithGapsAndActionable</td>
+<td>5/5 sections present; all required phrases present</td>
+</tr>
+</tbody>
+</table>
+<h3 id="24-t34-round-b-uml-diagram-changes">2.4 T34 Round B — UML Diagram Changes</h3>
+<p>The T34 Round B manifest recorded that all four SVG diagrams were redrawn
+before the code was written, because the existing diagrams showed the wrong
+mental model. The corrections are explained below.</p>
+<hr />
+<h4 id="diagram-1-dynamic_flow_runtime_umlsvg">Diagram 1: <code>dynamic_flow_runtime_uml.svg</code></h4>
+<p><strong>What the diagram showed before correction:</strong></p>
+<p>The diagram represented the nine nodes as processing text or tokens directly.
+There was no semantic compiler at the front. There was no predicate packet as
+the fixed inter-unit contract. The diagram did not show a phase context
+compiler, a transition gate, a context packet store, or the continuous
+learning feedback path.</p>
+<p><strong>What the diagram shows after correction:</strong></p>
+<p>The diagram is organized into three horizontal lanes.</p>
+<p><strong>Lane 1 — Intake and Predicate Contract:</strong>
+- <code>User / Document Input</code> → <code>Semantic Compiler</code> → <code>Predicate Packet</code></p>
+<p>The Semantic Compiler maps all incoming text to the 22-slot predicate vector.
+The Predicate Packet is the fixed contract that every downstream node receives.
+No node sees raw words; every node sees predicate counts, domain tags,
+confidence scores, and dependency edges.</p>
+<p><strong>Lane 2 — Dynamic Flow Pipeline:</strong>
+The nine nodes appear in sequence: <code>Topology Router</code> → <code>Sub-Phase Router</code> →
+<code>Domain Splitter</code> → <code>Domain Translator</code> → <code>Scheme Planner</code> →
+<code>Processor and Applier Arrays</code> → <code>Convergence Gate</code> →
+<code>Result Translator + Formatter</code>.</p>
+<p>Two new components appear after the pipeline: <code>Phase Context Compiler</code> and
+<code>Transition Gate Unit</code>. The Phase Context Compiler takes the complete
+predicate output of a phase run and produces a ranked set of predicate
+fragments (decisions, constraints, knowledge edges, boundaries, rejected items)
+for the next phase. The Transition Gate Unit receives the upstream carry-forward
+summary and the downstream source packet and produces PASS, PASS WITH GAPS,
+or BLOCK.</p>
+<p><code>Arbiter Selector + Units</code> and <code>Knowledge Edge Path</code> appear as the review
+layer that feeds the learning cycle.</p>
+<p><strong>Lane 3 — Registries and Learning:</strong>
+<code>Flow Registry</code>, <code>Unit Registry</code>, <code>Dataset Registry</code>, <code>Decision Graph</code>,
+<code>Context Packet Store</code>, <code>Event Log</code>, and <code>Continuous Learning</code>.</p>
+<p>The Context Packet Store is a new registry that holds versioned phase
+predicate summaries. The dashed lines from the pipeline to the registries
+represent runtime lookups, not control flow.</p>
+<hr />
+<h4 id="diagram-2-dynamic_flow_data_layer_umlsvg">Diagram 2: <code>dynamic_flow_data_layer_uml.svg</code></h4>
+<p><strong>What the diagram showed before correction:</strong></p>
+<p>The data layer diagram showed simpler structures that did not include phase
+topology, context packets, transition evidence, or learning gaps. The predicate
+vector was not represented as a concrete entity with named fields.</p>
+<p><strong>What the diagram shows after correction:</strong></p>
+<p>The diagram is an entity-relationship layout with eight top-row entities and
+four bottom-row entities.</p>
+<p><strong>Top-row entities:</strong></p>
+<p><code>FlowRegistry.TopologyContract</code> — fields: <code>flowId</code>, <code>topologyKind</code> (request or
+phase), <code>nodes[]</code>, <code>edges[]</code>, <code>versionPointer</code>. This is how the nine-node
+pipeline topology is stored as data, not code.</p>
+<p><code>PhaseTopology</code> — fields: <code>methodologyId</code>, <code>phaseNodes[]</code>,
+<code>transitionEdges[]</code>, <code>semanticThresholds[]</code>, <code>companyVersion</code>. This entity
+is new. It stores the phase lifecycle as a versioned topology in the same
+registry family as flow topologies. A methodology change is a version pointer
+move, not a code deployment.</p>
+<p><code>UnitRegistry.Cell</code> — fields: <code>cellId</code>, <code>role</code>, <code>domainTagSet</code>,
+<code>predicateContract</code>, <code>trustScore</code>, <code>version</code>.</p>
+<p><code>RoleDomainSlot</code> — fields: <code>role</code>, <code>domainTagSet</code>, <code>activeCellId</code>,
+<code>fallbackCellIds[]</code>, <code>conformanceSuiteId</code>. This is the slot that a cell fills
+in the unit registry; a role-domain pair can have multiple fallback cells.</p>
+<p><code>PredicateVector</code> — fields: <code>predicateCounts[22]</code>, <code>domainTags[]</code>,
+<code>confidence</code>, <code>dependencyEdges[]</code>, <code>sourceEvidenceIds[]</code>. The array size 22
+corresponds to the 22-predicate vocabulary. This entity is the fixed contract.</p>
+<p><code>DatasetRegistry.CorpusSlice</code> — fields: <code>sliceId</code>, <code>role</code>, <code>domainTagSet</code>,
+<code>learningPairs[]</code>, <code>sourceTrust</code>, <code>trainedCells[]</code>.</p>
+<p><code>DecisionGraph.RoutingEdge</code> — fields: <code>edgeId</code>, <code>fromSignature</code>,
+<code>toRoleDomainSlot</code>, <code>confidence</code>, <code>observations</code>. This entity encodes learned
+routing confidence as data.</p>
+<p><code>KnnMemoryEntry</code> — fields: <code>predicateVectorId</code>, <code>neighborId</code>, <code>arbiterStatus</code>
+(positive, warning, or rejected), <code>failureReason</code>.</p>
+<p><strong>Bottom-row entities (all new):</strong></p>
+<p><code>ContextPacketStore</code> — fields: <code>contextPacketId</code>, <code>phaseRunId</code>,
+<code>predicateSummaryIds[]</code>, <code>transitionRole</code>, <code>version</code>, <code>sourceRun</code>. This
+entity stores the carry-forward predicate summaries between phases.</p>
+<p><code>TransitionEvidence</code> — fields: <code>transitionId</code>, <code>upstreamContextId</code>,
+<code>downstreamVectorId</code>, <code>similarityScores[]</code>, <code>verdict</code> (PASS, GAPS, or BLOCK).
+This entity stores the evidence that the transition gate produced for each
+phase-to-phase boundary.</p>
+<p><code>PhaseLearningGap</code> — fields: <code>gapId</code>, <code>phaseId</code>, <code>subPhaseId</code>,
+<code>missingPredicateVectorId</code>, <code>targetCellRole</code>, <code>feedbackSignal</code>. This entity
+tracks what a specific phase or sub-phase could not cover, so the learning
+cycle knows which cell to train.</p>
+<p><code>EventLog.EventRecord</code> — fields: <code>eventId</code>, <code>timestamp</code>, <code>sourceEntity</code>,
+<code>parentState</code>, <code>childState</code>, <code>trustScoreAtTime</code>. This entity is the append-only
+audit trail for all mutations.</p>
+<hr />
+<h4 id="diagram-3-continuous_learning_integrationsvg">Diagram 3: <code>continuous_learning_integration.svg</code></h4>
+<p><strong>What the diagram showed before correction:</strong></p>
+<p>The continuous learning diagram showed a general feedback loop without
+predicate-level specificity. It did not distinguish between real-time request
+feedback, idle scheduled learning, gap-driven cell creation, and phase-level
+learning.</p>
+<p><strong>What the diagram shows after correction:</strong></p>
+<p>The diagram shows four separate horizontal paths, each representing a distinct
+learning trigger:</p>
+<p><strong>Path 1 — Real-Time Request Feedback:</strong>
+<code>Pipeline Run</code> → <code>Arbiter Verdicts</code> (labeled: accept, concern, reprocess)
+→ <code>Event Log</code>.
+Every pipeline run produces verdicts that are immediately appended to the
+event log. This path requires no idle window.</p>
+<p><strong>Path 2 — Idle Scheduled Learning:</strong>
+<code>Idle Detector</code> → <code>Feedback Router</code> (labeled: accepted, edited, rejected)
+→ <code>Dataset Curator</code> → <code>LoRA Trainer</code> (labeled: incremental update)
+→ <code>Promotion Gate</code> (labeled: after accuracy greater) → <code>Unit Registry</code>.
+The Idle Detector gates whether training is safe to run. The Feedback Router
+classifies stored event records. The Promotion Gate blocks adapter registration
+unless after-accuracy exceeds before-accuracy — this is D-14.</p>
+<p><strong>Path 3 — Gap-Driven Cell Creation:</strong>
+<code>Gap Detector</code> (labeled: sustained low confidence) → <code>Learning Gap Packet</code>
+(labeled: missing predicate evidence) → <code>Create or Fetch Cell</code> (labeled:
+trust-tier search) → <code>Unit Registry</code> (probationary cell) and
+<code>Decision Graph</code> (confidence updated).
+This path responds to sustained low confidence in a role-domain slot by
+creating a new probationary cell.</p>
+<p><strong>Path 4 — Phase-Level Learning:</strong>
+<code>Transition Evidence</code> → <code>Phase Learning Gap</code> → feedback into
+<code>Learning Gap Packet</code> (Path 3) and <code>Dataset Curator</code> (Path 2).
+This is the new path added by the T34 experiment design. Phase transitions
+produce transition evidence and phase learning gaps that feed into both the
+idle scheduled learning path and the gap-driven cell creation path.</p>
+<hr />
+<h4 id="diagram-4-missing_tools_for_context_completionsvg">Diagram 4: <code>missing_tools_for_context_completion.svg</code></h4>
+<p><strong>What the diagram showed before correction:</strong></p>
+<p>The diagram classified missing pieces as general methodology tooling — fixed
+schemas for phases, document templates, and checklist automation. This
+reflected a deterministic methodology mindset rather than a predicate-level
+adaptive design.</p>
+<p><strong>What the diagram shows after correction:</strong></p>
+<p>The diagram is reorganized into three sections based on implementation
+readiness, and all items are described as dynamic-flow cells over predicate
+vectors.</p>
+<p><strong>Section 1 — Exists and proven (4 items):</strong>
+Nine-node orchestration pipeline (proven by E53 deterministic proof);
+Semantic compiler contract (22 logical predicates + vectors); Arbiter
+authority (hard gate over KNN and external AI); Initial learning loop pieces
+(feedback, DPO, LoRA, idle gate).</p>
+<p><strong>Section 2 — Designed but not fully built (8 items):</strong>
+Flow and phase registry; Unit registry; Dataset registry; Decision graph;
+Intake and topology routers; Evidence pack selector; Budget and confidence
+gate; Context packet store.</p>
+<p><strong>Section 3 — Missing and now required (8 items):</strong>
+Phase context compiler cell; Transition gate cell; Phase learning gap
+tracker; Predicate-to-text translator; Swappability judge; Conformance
+runner; Marketplace trust tooling; Exam affordance UI.</p>
+<p>The last section is the direct output of the T34 experiment design work.
+It names what must be built next, expressed as dynamic-flow cells rather
+than as fixed methodology features.</p>
+<h3 id="25-t34-results">2.5 T34 Results</h3>
+<p><strong>Overall verdict:</strong> PASS_WITH_GAPS
+<strong>Transition success:</strong> true
+<strong>Domain packets:</strong> 10/10
+<strong>Formal translations:</strong> 10/10
+<strong>Transition scenarios:</strong> 3/3
+<strong>Concerns:</strong> 2 (T34-1 BaseService enforcement, T34-2 cross-phase context)
+<strong>Blocks:</strong> 0
+<strong>Passes:</strong> 1 (T34-3 build-time sequence)
+<strong>Human result sections:</strong> 5/5
+<strong>Test baseline:</strong> 997/997 → 1005/1005 (+8 tests)
+<strong>Commit:</strong> <code>e6622a8</code> pushed to main</p>
+<p>The result confirmed three behaviors simultaneously:</p>
+<ol>
+<li>The gate correctly identifies a named gap (BaseService unenforced)
+   without blocking the phase.</li>
+<li>The gate correctly identifies a knowledge edge that disappeared without
+   acknowledgment, without blocking the phase.</li>
+<li>The gate correctly distinguishes a build-time sequence from the rejected
+   runtime topology, producing a clean PASS rather than a false BLOCK.</li>
+</ol>
+<hr />
+<h2 id="3-p3-experiment-learning-from-transition-failure">3. P3 Experiment — Learning From Transition Failure</h2>
+<h3 id="31-what-p3-was-trying-to-prove">3.1 What P3 Was Trying to Prove</h3>
+<p>P3 (code phase 25, experiment identifier P3-LEARNING-FROM-TRANSITION-FAILURE)
+extended T34 by asking: what happens when the transition gate does block, and
+does the system learn the right lesson?</p>
+<p>P3 ran three sub-experiments in sequence:</p>
+<p><strong>P3-C — Corrupted run.</strong> The Phase 3 upstream context packet is unchanged.
+The downstream domain packet set is corrupted by removing the BaseService
+packet (<code>td06_base_service_constraint</code>) entirely. No packet in the set carries
+or acknowledges BaseService. Expected verdict: BLOCK.</p>
+<p>This simulates a downstream implementation plan that is completely silent
+about BaseService — not mentioning it even as a named gap.</p>
+<p><strong>P3-L — Learning cycle.</strong> The BLOCK finding feeds into the idle learning
+cycle. The cycle produces one <code>FeedbackRecord</code> naming BaseService as the
+dropped predicate, then derives one <code>LearnedDiscriminator</code> that encodes the
+specific boundary: entirely absent → BLOCK; present as concern → PASS_WITH_GAPS.</p>
+<p><strong>P3-V — Verification run.</strong> The original T34 domain packet set (all 10
+packets including td06 with status concern) is run through the transition
+gate. The gate consults the discriminator registry, finds the discriminator
+inactive because td06 is present, and produces PASS_WITH_GAPS — the same
+result as T34. The discriminator did not over-generalize.</p>
+<p>The key question that P3 answered was: does the learned discriminator
+correctly distinguish between "entirely absent" and "present but unenforced"?
+These two states look superficially similar (both indicate the constraint is
+not fully enforced) but have very different meanings. An entirely absent
+predicate means the downstream plan has no awareness of the constraint at
+all — it cannot possibly enforce what it does not know about. A present-but-
+concern predicate means the plan knows about the constraint and has explicitly
+flagged the gap.</p>
+<h3 id="32-p3-round-a-oracle-documents">3.2 P3 Round A — Oracle Documents</h3>
+<p>Seven oracle documents were produced before the code was written.</p>
+<p><strong>P3-SOURCE-BINDING-v1.md</strong> defined the three sub-experiments, the shared
+upstream source (identical to T34), and the specific corruption applied in
+P3-C (removing td06 from the domain packet set). It also specified the six
+binding rules, including: the corruption is in the downstream domain packet
+set, not in the upstream authority; the P3-C BLOCK must name BaseService
+specifically; and the P3-V verification must produce PASS_WITH_GAPS or the
+learning cycle has over-generalized.</p>
+<p><strong>P3-FAILURE-DISCRIMINATOR-v1.md</strong> defined the core distinction at the
+predicate level. It provided the exact evidence tables:</p>
+<p>For T34 (PASS_WITH_GAPS case):</p>
+<pre class="codehilite"><code>ConstraintsInherited: [&quot;BaseService inheritance is a production service pattern...&quot;]
+DomainPackets: [{PacketId: &quot;td06_base_service_constraint&quot;, CoverageStatus: &quot;concern&quot;, ...}]
+Mentions(packet, &quot;BaseService&quot;) = true for td06
+LostConstraintCount = 0
+Verdict = PASS_WITH_GAPS
+</code></pre>
+
+<p>For P3-C (BLOCK case):</p>
+<pre class="codehilite"><code>ConstraintsInherited: [&quot;BaseService inheritance is a production service pattern...&quot;]
+DomainPackets: [9 packets, none referencing BaseService]
+Mentions(packet, &quot;BaseService&quot;) = false for all 9 packets
+LostConstraintCount = 1
+Verdict = BLOCK
+</code></pre>
+
+<p><strong>P3-LEARNING-CYCLE-TAXONOMY-v1.md</strong> defined the FeedbackRecord shape,
+the LearnedDiscriminator shape, and the LearningCycleVerdict shape. It
+specified what the learning cycle must NOT produce: it must not create a
+general rule that blocks any constraint lacking downstream enforcement.
+The discriminator is BaseService-specific by design.</p>
+<p><strong>P3-EXPECTED-TRACE-v1.md</strong> provided the oracle for all three sub-experiments
+with the exact expected values for packet counts, verdict strings, metric
+names, and discriminator states.</p>
+<p><strong>P3-HUMAN-RESULT-STANDARDS-v1.md</strong> defined what human text must appear in
+each sub-experiment's result, including required sections and forbidden
+statements for each of P3-C, P3-L, and P3-V.</p>
+<p><strong>P3-EXECUTOR-CONTRACT-v1.md</strong> specified eight pass gates, the required
+metrics table (17 metrics), eight required test names, and the required
+evidence output structure.</p>
+<h3 id="33-p3-round-b-code-changes">3.3 P3 Round B — Code Changes</h3>
+<p><strong>New file:</strong> <code>35.ExperimentsV2/Experiments/P3LearningFromFailureProof.cs</code></p>
+<p>The class <code>P3LearningFromFailureProof</code> is in namespace <code>ExperimentsV2</code>.
+It shares the upstream <code>PhaseContextPacket</code> and <code>DomainPacket</code> record shapes
+with T34, and adds five new record types:</p>
+<p><strong>Record: FeedbackRecord</strong>
+Parameters: <code>FeedbackId</code>, <code>SourceExperimentId</code>, <code>SubExperimentId</code>,
+<code>BlockedScenarioId</code>, <code>DroppedConstraint</code>, <code>UpstreamAuthority</code>, <code>BlockVerdict</code>,
+<code>LostConstraintCount</code>, <code>RejectedPattern</code>, <code>LearningNote</code>.
+Purpose: captures one BLOCK finding for the learning cycle. Each feedback
+record is keyed by the specific predicate that was dropped, not by a general
+failure category.</p>
+<p><strong>Record: LearnedDiscriminator</strong>
+Parameters: <code>DiscriminatorId</code>, <code>SourceFeedbackId</code>, <code>PredicateName</code>,
+<code>AbsentPattern</code>, <code>PresentButUnenforcedPattern</code>, <code>AbsentVerdict</code>,
+<code>PresentButUnenforcedVerdict</code>, <code>Specificity</code>, <code>Generalization</code>.
+Purpose: encodes the predicate-level boundary learned from a BLOCK finding.
+The <code>Generalization</code> field is always "none" for a correctly specific
+discriminator.</p>
+<p><strong>Record: LearningCycleResult</strong>
+Parameters: <code>CycleId</code>, <code>FeedbackRecordsAdded</code>, <code>DiscriminatorsAdded</code>,
+<code>DiscriminatorSummary</code>, <code>OverGeneralizationRisk</code>, <code>FeedbackRecords[]</code>,
+<code>LearnedDiscriminators[]</code>.
+The <code>OverGeneralizationRisk</code> field is the machine gate for specificity —
+it must equal "none" for the P3-L pass gates to pass.</p>
+<p><strong>Record: CorruptedRunResult</strong>
+Parameters: <code>SubExperimentId</code>, <code>CorruptedPacketCount</code>, <code>LostConstraintCount</code>,
+<code>DroppedConstraint</code>, <code>OverallVerdict</code>, <code>BlockCount</code>, <code>ConcernCount</code>,
+<code>PassCount</code>, <code>TransitionSuccess</code>, <code>Scenarios[]</code>, <code>HumanResult</code>.
+Purpose: carries the P3-C corrupted sub-experiment outcome.</p>
+<p><strong>Record: VerificationRunResult</strong>
+Parameters: <code>SubExperimentId</code>, <code>PacketCount</code>, <code>LostConstraintCount</code>,
+<code>OverallVerdict</code>, <code>BlockCount</code>, <code>ConcernCount</code>, <code>PassCount</code>,
+<code>TransitionSuccess</code>, <code>DiscriminatorConsulted</code>, <code>DiscriminatorActivated</code>,
+<code>DiscriminatorActivationReason</code>, <code>Scenarios[]</code>, <code>HumanResult</code>.
+The <code>DiscriminatorConsulted</code> and <code>DiscriminatorActivated</code> fields are the
+machine gates for the non-generalization proof.</p>
+<p><strong>Record: Metrics</strong>
+17 fields with JSON snake_case names:
+<code>p3c_corrupted_packet_count</code>, <code>p3c_lost_constraint_count</code>,
+<code>p3c_overall_verdict</code>, <code>p3c_block_count</code>, <code>p3c_concern_count</code>,
+<code>p3c_pass_count</code>, <code>p3l_feedback_records_added</code>,
+<code>p3l_discriminators_added</code>, <code>p3l_over_generalization_risk</code>,
+<code>p3v_packet_count</code>, <code>p3v_lost_constraint_count</code>, <code>p3v_overall_verdict</code>,
+<code>p3v_block_count</code>, <code>p3v_concern_count</code>, <code>p3v_pass_count</code>,
+<code>p3v_discriminator_activated</code> (explicit JsonPropertyName),
+<code>experiment_success</code> (explicit JsonPropertyName).</p>
+<p><strong>The build pipeline inside BuildEvidence():</strong></p>
+<pre class="codehilite"><code>BuildPhaseContextPacket()           [shared with T34]
+  → BuildCorruptedRun(context)
+      → BuildCorruptedDomainPackets()   [9 packets, td06 absent]
+      → BuildCorruptedScenarios()       [P3-C-1 BLOCK, P3-C-2 concern, P3-C-3 pass]
+      → BuildCorruptedHumanResult()
+  → BuildLearningCycle(corruptedRun)
+      → FeedbackRecord P3-L-FB-001
+      → LearnedDiscriminator P3-L-DISC-001
+  → BuildVerificationRun(context, learningCycle)
+      → BuildOriginalDomainPackets()    [10 packets, td06 present as concern]
+      → BuildVerificationScenarios()    [P3-V-1 concern, P3-V-2 concern, P3-V-3 pass]
+      → BuildVerificationHumanResult()
+  → BuildMetrics(...)
+  → BuildPassGates(...)
+</code></pre>
+
+<p>The key logic in <code>BuildVerificationRun()</code> is the discriminator activation
+check:</p>
+<pre class="codehilite"><code>bool discriminatorActivated = lostConstraints &gt; 0
+    &amp;&amp; learningCycle.LearnedDiscriminators
+       .Any(d =&gt; d.PredicateName == &quot;BaseService&quot;);
+</code></pre>
+
+<p>Because <code>lostConstraints = 0</code> in the verification run (td06 is present),
+<code>discriminatorActivated = false</code>. This is the machine proof that the
+discriminator was consulted but did not fire.</p>
+<p><strong>New file:</strong> <code>Tests/DynamicFlowP3Tests.cs</code></p>
+<p>Nine tests in class <code>DynamicFlowP3Tests</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Test name</th>
+<th>What it verifies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P3_Run_WritesJsonMarkdownAndMermaidEvidence</td>
+<td>JSON, MD, MMD files created with matching run IDs</td>
+</tr>
+<tr>
+<td>P3_CorruptedRun_ProducesBlockVerdict</td>
+<td>OverallVerdict = BLOCK, 9 packets, TransitionSuccess = false, BlockCount = 1</td>
+</tr>
+<tr>
+<td>P3_CorruptedRun_BlockAttributedToBaseServicePredicate</td>
+<td>DroppedConstraint = BaseService, LostConstraintCount = 1, P3-C-1 scenario blocks</td>
+</tr>
+<tr>
+<td>P3_CorruptedRun_CrossPhaseContextRemainsConcem</td>
+<td>P3-C-2 verdict = concern, not block; P3-C-3 verdict = pass</td>
+</tr>
+<tr>
+<td>P3_LearningCycle_StoresFeedbackRecord</td>
+<td>FeedbackRecordsAdded = 1; SubExperimentId = P3-C; DroppedConstraint = BaseService</td>
+</tr>
+<tr>
+<td>P3_LearningCycle_DerivesSpecificDiscriminator</td>
+<td>DiscriminatorsAdded = 1; PredicateName = BaseService; Generalization = none</td>
+</tr>
+<tr>
+<td>P3_VerificationRun_ProducesPassWithGaps</td>
+<td>OverallVerdict = PASS_WITH_GAPS, 10 packets, BlockCount = 0, ConcernCount = 2</td>
+</tr>
+<tr>
+<td>P3_VerificationRun_DiscriminatorConsultedButNotActivated</td>
+<td>DiscriminatorConsulted = true, DiscriminatorActivated = false; human result confirms specificity</td>
+</tr>
+<tr>
+<td>P3_PassGates_AllPass</td>
+<td>All 8 gates pass; <code>experiment_success</code> = true in JSON; <code>p3v_discriminator_activated</code> = false in JSON</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-p3-results">3.4 P3 Results</h3>
+<p><strong>P3-C (corrupted run):</strong>
+Verdict: BLOCK, LostConstraintCount = 1, DroppedConstraint = BaseService,
+CorruptedPacketCount = 9, BlockCount = 1, ConcernCount = 1, PassCount = 1.</p>
+<p><strong>P3-L (learning cycle):</strong>
+FeedbackRecordsAdded = 1, DiscriminatorsAdded = 1,
+OverGeneralizationRisk = none.
+Discriminator P3-L-DISC-001: BaseService absent → BLOCK;
+BaseService as concern → PASS_WITH_GAPS. Specificity: BaseService only.</p>
+<p><strong>P3-V (verification run):</strong>
+Verdict: PASS_WITH_GAPS, PacketCount = 10, LostConstraintCount = 0,
+DiscriminatorConsulted = true, DiscriminatorActivated = false,
+ConcernCount = 2, BlockCount = 0, PassCount = 1.</p>
+<p><strong>All 8 pass gates passed.</strong>
+<strong>Test baseline:</strong> 1005/1005 → 1014/1014 (+9 tests)
+<strong>Commit:</strong> <code>8e4134b</code> pushed to main</p>
+<p>The result confirmed three behaviors:</p>
+<ol>
+<li>The transition gate correctly produces BLOCK when a high-confidence
+   upstream constraint has no semantic neighbor in the downstream packet set.</li>
+<li>The learning cycle produces a specific discriminator, not a general rule.</li>
+<li>The discriminator is correctly inactive when the predicate is present as
+   a concern, confirming no over-generalization.</li>
+</ol>
+<hr />
+<h2 id="4-architecture-before-and-after-summary">4. Architecture: Before and After Summary</h2>
+<h3 id="41-what-existed-before-t34-round-b">4.1 What Existed Before T34 Round B</h3>
+<p>Before the T34 Round B corrections, the architecture was documented and
+implemented as follows:</p>
+<ul>
+<li>The nine-node pipeline was proven by the E53 experiment.</li>
+<li>The semantic compiler produced predicate vectors, but the diagrams did not
+  clearly show it as the first step before the pipeline.</li>
+<li>The learning loop existed in pieces (feedback, DPO, LoRA, idle gate) but
+  was not connected to phase transitions.</li>
+<li>There was no Phase Context Packet, no Transition Gate, no Context Packet
+  Store, and no Phase Learning Gap tracker.</li>
+<li>The development phases were described as deterministic methodology schemas
+  with fixed sub-phase lists, rather than as adaptive learned topologies over
+  predicate vectors.</li>
+<li>The four SVG diagrams reflected a mixed mental model that sometimes treated
+  nodes as processing words and did not clearly separate predicates, domain
+  tags, and learned signatures.</li>
+</ul>
+<h3 id="42-what-changed-after-t34-round-b">4.2 What Changed After T34 Round B</h3>
+<p>The four SVG diagrams were redrawn to reflect the correct predicate-first model.</p>
+<p>The <code>DEVELOPMENT-PHASES-GUIDE-EXTENSION-v1.md</code> was corrected and extended
+with three new parts:</p>
+<ul>
+<li>Part 3 defines the three representation layers that must never be mixed:
+  the 22 logical predicates (fixed), domain tags (metadata), and learned
+  phase signatures (statistical).</li>
+<li>Part 4 defines the phase registry as a learned topology with phase IDs,
+  human labels, predicate signatures, sub-phase routers, transition edges,
+  minimum continuity thresholds, and conformance tests.</li>
+<li>Part 5 defines four experiment requirements (P1 through P4) for proving
+  the design.</li>
+</ul>
+<p>The data layer diagram acquired three new entity types with concrete fields:
+<code>PhaseTopology</code> (methodology as versioned data), <code>ContextPacketStore</code>
+(versioned phase predicate summaries), and <code>TransitionEvidence</code> (gate verdict
+records). The <code>PhaseLearningGap</code> entity was added to connect phase-level
+failures to the learning cycle.</p>
+<p>The continuous learning diagram acquired a fourth path — Phase-Level Learning
+— that feeds transition evidence and phase learning gaps into both the
+idle scheduled learning path and the gap-driven cell creation path.</p>
+<h3 id="43-code-structure-before-and-after">4.3 Code Structure Before and After</h3>
+<p><strong>Before T34:</strong>
+No C# code for phase transitions, context packets, or transition gates.
+The <code>35.ExperimentsV2</code> project contained experiments E01 through E50 and
+the infrastructure for experiment registration and evidence writing.</p>
+<p><strong>After T34 (phase 24):</strong>
+<code>T34PhaseTransitionProof.cs</code> added 12 record types and 14 methods.
+<code>DynamicFlowT34Tests.cs</code> added 8 tests.
+Test count: 997 → 1005.</p>
+<p><strong>After P3 (phase 25):</strong>
+<code>P3LearningFromFailureProof.cs</code> added 5 new record types (FeedbackRecord,
+LearnedDiscriminator, LearningCycleResult, CorruptedRunResult,
+VerificationRunResult) and 12 methods. It reuses the upstream
+PhaseContextPacket and DomainPacket shapes from T34.
+<code>DynamicFlowP3Tests.cs</code> added 9 tests.
+Test count: 1005 → 1014.</p>
+<h3 id="44-the-predicate-boundary-that-both-experiments-hinge-on">4.4 The Predicate Boundary That Both Experiments Hinge On</h3>
+<p>The central technical insight proven by T34 and P3 together is that the
+same constraint ("BaseService must be inherited") can be in three distinct
+predicate states, and each state produces a different verdict:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Evidence</th>
+<th>LostConstraintCount</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fully covered</td>
+<td>td06 in packet set, CoverageStatus = covered, Gate B present</td>
+<td>0</td>
+<td>PASS</td>
+</tr>
+<tr>
+<td>Present as concern</td>
+<td>td06 in packet set, CoverageStatus = concern</td>
+<td>0</td>
+<td>PASS_WITH_GAPS</td>
+</tr>
+<tr>
+<td>Entirely absent</td>
+<td>No packet mentions BaseService</td>
+<td>1</td>
+<td>BLOCK</td>
+</tr>
+</tbody>
+</table>
+<p>T34 proved the second state (present as concern → PASS_WITH_GAPS).
+P3-C proved the third state (entirely absent → BLOCK).
+P3-V proved that the discriminator learned from state three does not
+misclassify state two. The first state (fully covered → PASS) is the
+natural target for follow-up: adding a Gate B assertion for BaseService
+is the concrete next action named in the T34 human result.</p>
+<hr />
+<h2 id="5-what-comes-next">5. What Comes Next</h2>
+<h3 id="p4-full-lifecycle-phase-topology">P4 — Full Lifecycle Phase Topology</h3>
+<p>P4 will prove that a topology of phases can orchestrate a lifecycle across
+multiple phase runs. The first target topology is Phase 1 (UI/UX Definition)
+→ Phase 3 (Technical Design) → Phase 4 (Implementation).</p>
+<p>Pass conditions for P4:
+- Phase 1 produces a carry-forward predicate summary.
+- Phase 3 consumes the Phase 1 summary and preserves design constraints.
+- Phase 3 produces a carry-forward predicate summary.
+- Phase 4 consumes the Phase 3 summary and preserves technical constraints.
+- Both transition verdicts are correct.
+- Gap packets are attributed to the phase that produced the gap.</p>
+<h3 id="gate-b-closure-for-baseservice">Gate B Closure for BaseService</h3>
+<p>The T34 human result named one concrete next action: add a Phase 4 Gate B
+assertion for inherited service constraints. This is the first specific
+remediation for a concern that the transition gate flagged but did not block.</p>
+<h3 id="training-pairs-for-the-block-path">Training Pairs for the BLOCK Path</h3>
+<p>Once the P3 evidence is validated, gap-closure training pairs can be written
+for node-07 (arbiter selector) and node-08 (arbiter units) to teach the BLOCK
+verdict path. The <code>examination-domain-pairs/</code> folder already has 60 pairs
+for the concern and pass paths; the BLOCK path requires separate pairs.</p>
+<hr />
+<h2 id="appendix-experiment-identifiers-and-file-locations">Appendix — Experiment Identifiers and File Locations</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T34 Round A oracle documents</td>
+<td><code>orchestrator experiment/T34-PHASE-TRANSITION-ROUND-A-2026-05-04/</code></td>
+</tr>
+<tr>
+<td>T34 Round B manifest</td>
+<td><code>orchestrator experiment/ROUND-MANIFEST-2026-05-04-T34-PHASE-TRANSITION-ROUND-B.md</code></td>
+</tr>
+<tr>
+<td>T34 C# experiment</td>
+<td><code>35.ExperimentsV2/Experiments/T34PhaseTransitionProof.cs</code></td>
+</tr>
+<tr>
+<td>T34 tests</td>
+<td><code>Tests/DynamicFlowT34Tests.cs</code></td>
+</tr>
+<tr>
+<td>T34 JSON evidence</td>
+<td><code>experiments-v2/T34-PHASE-3-TO-4-TRANSITION-GATE/results/run-2026-05-04-*.json</code></td>
+</tr>
+<tr>
+<td>P3 Round A oracle documents</td>
+<td><code>orchestrator experiment/P3-LEARNING-FROM-FAILURE-ROUND-A-2026-05-04/</code></td>
+</tr>
+<tr>
+<td>P3 Round B manifest</td>
+<td><code>orchestrator experiment/P3-LEARNING-FROM-FAILURE-ROUND-A-2026-05-04/ROUND-MANIFEST-*</code></td>
+</tr>
+<tr>
+<td>P3 C# experiment</td>
+<td><code>35.ExperimentsV2/Experiments/P3LearningFromFailureProof.cs</code></td>
+</tr>
+<tr>
+<td>P3 tests</td>
+<td><code>Tests/DynamicFlowP3Tests.cs</code></td>
+</tr>
+<tr>
+<td>P3 JSON evidence</td>
+<td><code>experiments-v2/P3-LEARNING-FROM-TRANSITION-FAILURE/results/run-2026-05-04-*.json</code></td>
+</tr>
+<tr>
+<td>Architecture SVGs</td>
+<td><code>orchestrator experiment/dynamic_flow_runtime_uml.svg</code>, <code>dynamic_flow_data_layer_uml.svg</code>, <code>continuous_learning_integration.svg</code>, <code>missing_tools_for_context_completion.svg</code></td>
+</tr>
+<tr>
+<td>Phases guide extension</td>
+<td><code>orchestrator experiment/DEVELOPMENT-PHASES-GUIDE-EXTENSION-v1.md</code></td>
+</tr>
+<tr>
+<td>Git commits</td>
+<td>T34: <code>e6622a8</code> / P3: <code>8e4134b</code> — both on branch <code>main</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>End of report. Produced: 2026-05-04.</em></p>
+</body>
+</html>

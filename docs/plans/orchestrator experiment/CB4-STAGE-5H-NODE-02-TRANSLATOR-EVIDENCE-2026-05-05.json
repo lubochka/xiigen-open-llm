@@ -1,0 +1,93 @@
+{
+  "phase": 92,
+  "date": "2026-05-05",
+  "name": "CB4 Stage 5H node-02 translator replacement",
+  "flow": {
+    "flow_id": "security-verification-3.4",
+    "scenario_id": "cb4-security-verification",
+    "replaced_station": "node-02 domain translator",
+    "unit": "ExperimentsV2.LogicalFlow.SecurityTranslatorUnit",
+    "unit_id": "unit-cb4-security-translator-v1",
+    "unit_role": "node-02-domain-translator",
+    "domain_tag": "security-verification-3.4",
+    "confidence": 0.88
+  },
+  "station_chain": [
+    "SecurityArbiterSelectorUnit",
+    "SecurityTranslatorUnit",
+    "SecurityPlannerUnit",
+    "SecurityProcessorUnit",
+    "SecurityArbiterUnit",
+    "SecurityApplierUnit",
+    "SecurityResultTranslatorUnit",
+    "SecurityFormatterUnit"
+  ],
+  "scenario_results": [
+    {
+      "scenario_id": "S1",
+      "verdict": "PASS",
+      "node_02_source_pair_id": "CB4-3.4-001",
+      "node_03_source_pair_id": "CB4-3.4-001"
+    },
+    {
+      "scenario_id": "S2",
+      "verdict": "REPROCESS",
+      "node_02_source_pair_id": "CB4-3.4-005",
+      "node_03_source_pair_id": "CB4-3.4-005",
+      "forbidden_result_signals_absent": [
+        "compliant",
+        "satisfies"
+      ]
+    },
+    {
+      "scenario_id": "S3",
+      "verdict": "CONCERN",
+      "node_02_source_pair_id": "CB4-3.4-009",
+      "node_03_source_pair_id": "CB4-3.4-009"
+    }
+  ],
+  "acceptance_gates": {
+    "only_one_station_replaced": true,
+    "node_02_executed_as_ilogicalunit": true,
+    "node_03_remains_unit": true,
+    "node_04_remains_unit": true,
+    "node_05_remains_unit": true,
+    "node_06_remains_unit": true,
+    "node_07_remains_unit": true,
+    "node_08_remains_unit": true,
+    "node_09_remains_unit": true,
+    "s1_pass_stable": true,
+    "s2_reprocess_stable": true,
+    "s3_concern_stable": true,
+    "external_ai_calls": 0,
+    "wda_tests": "7/7 passing",
+    "full_suite": "1172/1172 passing",
+    "solution_build": "passing"
+  },
+  "verification": [
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"LogicalOrchestratorAssistant_RunSecurityVerification34\"",
+      "result": "1/1 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"LogicalOrchestratorAssistant\" --no-build",
+      "result": "15/15 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"WDA\" --no-build",
+      "result": "7/7 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --no-build",
+      "result": "1172/1172 passing"
+    },
+    {
+      "command": "dotnet build LlmFromScratch.sln",
+      "result": "Build succeeded, 0 warnings, 0 errors"
+    }
+  ],
+  "open_work": [
+    "Replace node-01 splitter next.",
+    "The full v4 corpus remains open."
+  ]
+}

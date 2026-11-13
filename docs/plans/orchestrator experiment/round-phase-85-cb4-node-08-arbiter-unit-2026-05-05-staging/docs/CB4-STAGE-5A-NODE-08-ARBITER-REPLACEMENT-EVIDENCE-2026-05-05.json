@@ -1,0 +1,103 @@
+{
+  "phase": 85,
+  "date": "2026-05-05",
+  "name": "CB4 Stage 5A node-08 arbiter replacement",
+  "flow": {
+    "flow_id": "security-verification-3.4",
+    "scenario_id": "cb4-security-verification",
+    "adapter": "ExperimentsV2.LogicalFlow.SecurityVerification34FlowAdapter",
+    "replaced_station": "node-08 arbiter",
+    "unit": "ExperimentsV2.LogicalFlow.SecurityArbiterUnit",
+    "unit_id": "unit-cb4-security-arbiter-v1",
+    "unit_role": "node-08-arbiter",
+    "domain_tag": "security-verification-3.4",
+    "confidence": 0.94
+  },
+  "pair_anchors": [
+    {
+      "scenario_id": "S1",
+      "source_pair_id": "CB4-3.4-001",
+      "meaning": "complete ASVS V6/V7/V8/V9 evidence produces PASS"
+    },
+    {
+      "scenario_id": "S2",
+      "source_pair_id": "CB4-3.4-005",
+      "meaning": "PKCE plain method when S256 is supported produces REPROCESS"
+    },
+    {
+      "scenario_id": "S3",
+      "source_pair_id": "CB4-3.4-009",
+      "meaning": "ASVS 7.3.1 satisfied but internal standard differs produces CONCERN"
+    }
+  ],
+  "scenario_results": [
+    {
+      "scenario_id": "S1",
+      "verdict": "PASS",
+      "node_08_unit_id": "unit-cb4-security-arbiter-v1",
+      "node_08_source_pair_id": "CB4-3.4-001",
+      "node_08_unit_confidence": 0.94,
+      "external_ai_call_count": 0
+    },
+    {
+      "scenario_id": "S2",
+      "verdict": "REPROCESS",
+      "node_08_unit_id": "unit-cb4-security-arbiter-v1",
+      "node_08_source_pair_id": "CB4-3.4-005",
+      "node_08_unit_confidence": 0.94,
+      "external_ai_call_count": 0,
+      "forbidden_result_signals_absent": [
+        "compliant",
+        "satisfies"
+      ]
+    },
+    {
+      "scenario_id": "S3",
+      "verdict": "CONCERN",
+      "node_08_unit_id": "unit-cb4-security-arbiter-v1",
+      "node_08_source_pair_id": "CB4-3.4-009",
+      "node_08_unit_confidence": 0.94,
+      "external_ai_call_count": 0
+    }
+  ],
+  "acceptance_gates": {
+    "only_one_station_replaced": true,
+    "node_08_executed_as_ilogicalunit": true,
+    "s1_pass_stable": true,
+    "s2_reprocess_stable": true,
+    "s3_concern_stable": true,
+    "pair_anchors_visible": true,
+    "unit_confidence_floor_0_70_met": true,
+    "external_ai_calls": 0,
+    "wda_tests": "7/7 passing",
+    "full_suite": "1172/1172 passing",
+    "solution_build": "passing"
+  },
+  "verification": [
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"LogicalOrchestratorAssistant_RunSecurityVerification34\"",
+      "result": "1/1 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"LogicalOrchestratorAssistant\" --no-build",
+      "result": "15/15 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"WDA\" --no-build",
+      "result": "7/7 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --no-build",
+      "result": "1172/1172 passing"
+    },
+    {
+      "command": "dotnet build LlmFromScratch.sln",
+      "result": "Build succeeded, 0 warnings, 0 errors"
+    }
+  ],
+  "open_work": [
+    "Replace another security-verification station while preserving the same S1/S2/S3 oracle.",
+    "Recommended next station is node-07 arbiter selector because it supplies the candidate arbiter list to node-08.",
+    "The full v4 corpus remains open."
+  ]
+}

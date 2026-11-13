@@ -1,0 +1,17 @@
+﻿# Wave 2 Batch 008 - Transitions Source Ledger v1
+# Date: 2026-05-05
+
+---
+
+## Purpose
+
+Build-ready transition held-out coverage for the six adjacent lifecycle transitions.
+
+| document_id | source_path_or_url | source_state | upstream_phase_id | downstream_phase_id | category | transition_name | three_verifiable_claims | known_failure_mode | expected_top_predicates | expected_knowledge_edges | expected_conflicts | train_or_held_out | promotion_status |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| W2B008-T01 | $source | source_backed | phase-1-ui-ux-definition | phase-2-functional-specification | transition-held-out | UI/UX to functional spec | upstream output must carry design constraints, accessibility markers, interaction decisions; downstream packet must acknowledge carry-forward; rejected or missing items remain visible | downstream phase forgets design constraints, accessibility markers, interaction decisions | DECLARE, VALIDATE_OP, RETURN | none | dropped carry-forward | held_out | build-ready transition seed |
+| W2B008-T02 | $source | source_backed | phase-2-functional-specification | phase-3-technical-design | transition-held-out | functional spec to technical design | upstream output must carry business rules, integration boundaries, data boundaries; downstream packet must acknowledge carry-forward; rejected or missing items remain visible | downstream phase forgets business rules, integration boundaries, data boundaries | DECLARE, VALIDATE_OP, RETURN | none | dropped carry-forward | held_out | build-ready transition seed |
+| W2B008-T03 | $source | source_backed | phase-3-technical-design | phase-4-implementation | transition-held-out | technical design to implementation | upstream output must carry architecture decisions, API contracts, security constraints; downstream packet must acknowledge carry-forward; rejected or missing items remain visible | downstream phase forgets architecture decisions, API contracts, security constraints | DECLARE, VALIDATE_OP, RETURN | none | dropped carry-forward | held_out | build-ready transition seed |
+| W2B008-T04 | $source | source_backed | phase-4-implementation | phase-5-testing | transition-held-out | implementation to testing | upstream output must carry implemented behaviors, rejected branches, source anchors; downstream packet must acknowledge carry-forward; rejected or missing items remain visible | downstream phase forgets implemented behaviors, rejected branches, source anchors | DECLARE, VALIDATE_OP, RETURN | none | dropped carry-forward | held_out | build-ready transition seed |
+| W2B008-T05 | $source | source_backed | phase-5-testing | phase-6-qa | transition-held-out | testing to QA | upstream output must carry test results, coverage gaps, performance findings; downstream packet must acknowledge carry-forward; rejected or missing items remain visible | downstream phase forgets test results, coverage gaps, performance findings | DECLARE, VALIDATE_OP, RETURN | none | dropped carry-forward | held_out | build-ready transition seed |
+| W2B008-T06 | $source | source_backed | phase-6-qa | phase-7-qa-automation | transition-held-out | QA to QA automation | upstream output must carry regression risks, compliance gaps, automation candidates; downstream packet must acknowledge carry-forward; rejected or missing items remain visible | downstream phase forgets regression risks, compliance gaps, automation candidates | DECLARE, VALIDATE_OP, RETURN | none | dropped carry-forward | held_out | build-ready transition seed |

@@ -1,0 +1,119 @@
+{
+  "phase": 84,
+  "date": "2026-05-05",
+  "name": "CB4 Stage 5 security-verification flow registration",
+  "flow": {
+    "flow_id": "security-verification-3.4",
+    "scenario_id": "cb4-security-verification",
+    "adapter": "ExperimentsV2.LogicalFlow.SecurityVerification34FlowAdapter",
+    "assistant": "OrchestratorModel.Logical.LogicalOrchestratorAssistant",
+    "registration_surface": "LogicalOrchestratorAssistant.CreateDefault",
+    "status": "registered"
+  },
+  "source_corpus": {
+    "wave": "wave-1",
+    "batch": "CB4",
+    "sub_phase": "3.4 Security and authorization model",
+    "sources": [
+      "OWASP ASVS 5.0.0",
+      "NIST SSDF",
+      "CWE Top 25",
+      "IETF RFCs"
+    ],
+    "pair_instances_available": 892,
+    "base_pairs_available": 446,
+    "stage_5_mode": "deterministic flow adapter first; learned station replacement later"
+  },
+  "scenario_results": [
+    {
+      "scenario_id": "S1",
+      "input_shape": "verified authentication, token, session, and authorization controls",
+      "selected_flow_id": "security-verification-3.4",
+      "verdict": "PASS",
+      "external_ai_call_count": 0,
+      "attribution_visible": true,
+      "required_result_signals": [
+        "PASS",
+        "OWASP ASVS 5.0.0",
+        "password length",
+        "RS256",
+        "RBAC",
+        "per-resource ownership"
+      ]
+    },
+    {
+      "scenario_id": "S2",
+      "input_shape": "PKCE code_challenge_method=plain while S256 is supported",
+      "selected_flow_id": "security-verification-3.4",
+      "verdict": "REPROCESS",
+      "external_ai_call_count": 0,
+      "attribution_visible": true,
+      "required_result_signals": [
+        "REPROCESS",
+        "ASVS 10.4.6",
+        "S256",
+        "ASVS-V10-OAuth-Arbiter",
+        "plain-method assessment rejected"
+      ],
+      "forbidden_result_signals": [
+        "compliant",
+        "satisfies"
+      ]
+    },
+    {
+      "scenario_id": "S3",
+      "input_shape": "20-minute ASVS risk-analysis evidence conflicts with 30-minute enterprise standard",
+      "selected_flow_id": "security-verification-3.4",
+      "verdict": "CONCERN",
+      "external_ai_call_count": 0,
+      "attribution_visible": true,
+      "required_result_signals": [
+        "CONCERN",
+        "ASVS 7.3.1",
+        "RA-AUTH-003",
+        "Internal standard ESS-SESSION-001",
+        "not an OWASP ASVS failure by itself"
+      ]
+    }
+  ],
+  "acceptance_gates": {
+    "flow_registered": true,
+    "selected_flow_id": "security-verification-3.4",
+    "scenario_count": 3,
+    "pass_scenario_accepted": true,
+    "reprocess_scenario_preserved": true,
+    "concern_scenario_preserved": true,
+    "attribution_visible_for_owasp_asvs": true,
+    "external_ai_calls": 0,
+    "wda_tests": "7/7 passing",
+    "full_suite": "1172/1172 passing",
+    "solution_build": "passing"
+  },
+  "verification": [
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"LogicalOrchestratorAssistant_RunSecurityVerification34\"",
+      "result": "1/1 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"LogicalOrchestratorAssistant\" --no-build",
+      "result": "15/15 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"WDA\" --no-build",
+      "result": "7/7 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --no-build",
+      "result": "1172/1172 passing"
+    },
+    {
+      "command": "dotnet build LlmFromScratch.sln",
+      "result": "Build succeeded, 4 existing xUnit analyzer warnings, 0 errors"
+    }
+  ],
+  "open_work": [
+    "Replace the deterministic security-verification flow adapter one station at a time with pair-backed units.",
+    "Incorporate CB4 Action 3 extension instances into the active training split before learned replacement.",
+    "Continue v4 source-document quota work; CB4 pair corpus does not complete the full development-area corpus."
+  ]
+}

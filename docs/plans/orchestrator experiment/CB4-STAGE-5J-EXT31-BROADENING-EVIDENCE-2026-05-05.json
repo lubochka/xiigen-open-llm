@@ -1,0 +1,114 @@
+{
+  "phase": 94,
+  "date": "2026-05-05",
+  "name": "CB4 Stage 5J ext31 coverage broadening",
+  "flow": {
+    "flow_id": "security-verification-3.4",
+    "scenario_id": "cb4-security-verification",
+    "change_type": "broaden existing node-01-through-node-09 unit chain",
+    "new_scenarios": [
+      "S4",
+      "S5",
+      "S6"
+    ]
+  },
+  "source_pairs": [
+    {
+      "scenario_id": "S4",
+      "source_pair_id": "CB4-3.4-803",
+      "full_trace_pair_id": "CB4-3.4-811",
+      "source_file": "node-08-arbiter-set-ext31.md / node-pipeline-chain-set-ext25.md",
+      "expected_verdict": "REPROCESS",
+      "coverage": "RFC 9700 2.1.1 public-client PKCE enforcement"
+    },
+    {
+      "scenario_id": "S5",
+      "source_pair_id": "CB4-3.4-807",
+      "full_trace_pair_id": "CB4-3.4-815",
+      "source_file": "node-08-arbiter-set-ext31.md / node-pipeline-chain-set-ext25.md",
+      "expected_verdict": "CONCERN",
+      "coverage": "IP-only token endpoint rate limiting without per-client-id throttling"
+    },
+    {
+      "scenario_id": "S6",
+      "source_pair_id": "CB4-3.4-808",
+      "full_trace_pair_id": "CB4-3.4-816",
+      "source_file": "node-08-arbiter-set-ext31.md / node-pipeline-chain-set-ext25.md",
+      "expected_verdict": "PASS",
+      "coverage": "per-client-id token endpoint rate limiting with graduated response"
+    }
+  ],
+  "station_chain": [
+    "SecuritySplitterUnit",
+    "SecurityArbiterSelectorUnit",
+    "SecurityTranslatorUnit",
+    "SecurityPlannerUnit",
+    "SecurityProcessorUnit",
+    "SecurityArbiterUnit",
+    "SecurityApplierUnit",
+    "SecurityResultTranslatorUnit",
+    "SecurityFormatterUnit"
+  ],
+  "scenario_results": [
+    {
+      "scenario_id": "S4",
+      "verdict": "REPROCESS",
+      "node_01_source_pair_id": "CB4-3.4-803",
+      "node_08_source_pair_id": "CB4-3.4-803",
+      "human_result_required_signal": "RFC 9700 2.1.1"
+    },
+    {
+      "scenario_id": "S5",
+      "verdict": "CONCERN",
+      "node_01_source_pair_id": "CB4-3.4-807",
+      "node_08_source_pair_id": "CB4-3.4-807",
+      "human_result_required_signal": "per-client-id throttling"
+    },
+    {
+      "scenario_id": "S6",
+      "verdict": "PASS",
+      "node_01_source_pair_id": "CB4-3.4-808",
+      "node_08_source_pair_id": "CB4-3.4-808",
+      "human_result_required_signal": "Retry-After"
+    }
+  ],
+  "acceptance_gates": {
+    "existing_s1_s2_s3_stable": true,
+    "s4_reprocess_added": true,
+    "s5_concern_added": true,
+    "s6_pass_added": true,
+    "nodes_01_through_09_remain_units": true,
+    "external_ai_calls": 0,
+    "wda_tests": "7/7 passing",
+    "assistant_tests": "16/16 passing",
+    "full_suite": "1173/1173 passing",
+    "solution_build": "passing"
+  },
+  "verification": [
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"LogicalOrchestratorAssistant_RunSecurityVerification34\"",
+      "result": "2/2 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"LogicalOrchestratorAssistant\" --no-build",
+      "result": "16/16 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --filter \"WDA\" --no-build",
+      "result": "7/7 passing"
+    },
+    {
+      "command": "dotnet test Tests\\LlmFromScratch.Tests.csproj --no-build",
+      "result": "1173/1173 passing"
+    },
+    {
+      "command": "dotnet build LlmFromScratch.sln",
+      "result": "Build succeeded, 0 warnings, 0 errors"
+    }
+  ],
+  "open_work": [
+    "Continue broadening CB4 from Action 3 ext files.",
+    "Register the next sub-phase flow when a reviewed source batch is ready.",
+    "The full v4 corpus remains open."
+  ]
+}

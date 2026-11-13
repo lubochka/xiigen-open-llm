@@ -1,0 +1,66 @@
+{
+  "round": "phase-95",
+  "date": "2026-05-05",
+  "purpose": "Broaden the registered security-verification-3.4 flow from single-rule Action 3 probes into cross-source rule combinations.",
+  "source_files": [
+    "C:\\Users\\lubao\\Documents\\xiigen\\llm mvp\\external-sources-training-sets\\wave-1\\CB4-stage-3-pairs\\node-cross-source-set-ext24.md"
+  ],
+  "source_pairs": [
+    {
+      "scenario": "S7",
+      "pair_id": "CB4-3.4-819",
+      "expected_verdict": "REPROCESS",
+      "tested_combination": "AS no PKCE enforcement for public clients plus HS256 multi-party signing",
+      "required_preservation": [
+        "RFC 9700 2.1.1",
+        "RFC 8725 3.6",
+        "two independent MUST-level violations",
+        "gradual adoption is not a normative exception",
+        "operational simplicity is not a normative exception"
+      ]
+    },
+    {
+      "scenario": "S8",
+      "pair_id": "CB4-3.4-820",
+      "expected_verdict": "PASS",
+      "tested_combination": "AS-enforced PKCE S256 plus RS256 asymmetric signing",
+      "required_preservation": [
+        "RFC 9700 2.1.1",
+        "RFC 8725 3.6",
+        "PKCE S256 enforced",
+        "RS256 asymmetric signing",
+        "HTTPS JWKS verification"
+      ]
+    },
+    {
+      "scenario": "S9",
+      "pair_id": "CB4-3.4-821",
+      "expected_verdict": "CONCERN",
+      "tested_combination": "IP-only token endpoint throttling plus OIDC End Session without id_token_hint",
+      "required_preservation": [
+        "ASVS V6.2",
+        "OIDC RP-Initiated Logout",
+        "N CONCERNs do not escalate to REPROCESS",
+        "per-client-id throttling absent",
+        "id_token_hint absent"
+      ]
+    }
+  ],
+  "acceptance_gates": {
+    "s7_cross_source_not_reduced_to_s4": true,
+    "s9_cross_source_not_reduced_to_s5": true,
+    "combined_rule_pair_ids_preserved_at_node_01": true,
+    "combined_rule_pair_ids_preserved_at_node_08": true,
+    "two_concerns_do_not_escalate": true,
+    "external_ai_call_count": 0
+  },
+  "verification": {
+    "focused_security_flow": "3/3 passing",
+    "logical_orchestrator_assistant": "17/17 passing",
+    "wda_lifecycle": "7/7 passing",
+    "full_suite": "1174/1174 passing",
+    "solution_build": "succeeded with 0 warnings and 0 errors",
+    "compliance_scan": "no Console.WriteLine, throw, .Result, .Wait, or GetAwaiter hits in touched files"
+  },
+  "finding": "The flow now preserves combined-rule judgments instead of collapsing them into whichever single-rule detector matches first."
+}
