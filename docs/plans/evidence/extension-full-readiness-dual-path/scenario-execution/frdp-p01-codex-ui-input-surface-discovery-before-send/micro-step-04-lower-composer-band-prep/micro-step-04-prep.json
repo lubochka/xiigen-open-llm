@@ -1,0 +1,161 @@
+{
+  "artifact_type": "micro_step_04_lower_composer_band_prep",
+  "language": "ru",
+  "micro_step": "Микро-шаг 04",
+  "scenario": "frdp-p01-codex-ui-input-surface-discovery-before-send",
+  "prep_only": true,
+  "implementation_authorized_now": false,
+  "product_runtime_ui_tests_executed": false,
+  "commit_push_authorized": false,
+  "purpose_ru": "Подготовить следующий read-only микро-сценарий: сузить поиск input/composer до нижней полосы окна Codex после того, как широкий accessibility query micro-step 03 достиг max_nodes=500 без подтвержденного locator.",
+  "accepted_context": {
+    "target_window": {
+      "process": "Codex",
+      "pid": 13508,
+      "hwnd_hex": "0x1038E",
+      "bounds": {
+        "left": -2071,
+        "top": 204,
+        "width": 1283,
+        "height": 733,
+        "right": -788,
+        "bottom": 937
+      }
+    },
+    "micro_step_02_result": "shallow UIA ControlView found no composer/input",
+    "micro_step_03_result": "read-only accessibility query hit max_nodes=500 without confirmed input/composer",
+    "review_recommendation": "run lower composer band bounded query before webview metadata feasibility"
+  },
+  "derived_lower_band_region": {
+    "name_ru": "нижняя полоса",
+    "basis": "lower_35_percent_of_target_window",
+    "calculation": "ceil(733 * 0.35) = 257; 204 + 733 - 257 = 680",
+    "left": -2071,
+    "top": 680,
+    "right": -788,
+    "bottom": 937,
+    "width": 1283,
+    "height": 257,
+    "not_a_click_target": true,
+    "must_not_rely_on_blind_clicking": true
+  },
+  "read_only_method": {
+    "summary_ru": "Root the query at AutomationElement.FromHandle(0x1038E), filter elements by bounds intersecting the lower-band region, then inspect read-only UIA properties and pattern availability only.",
+    "allowed_inspection": [
+      "Win32 target window recheck",
+      "UIAutomation root lookup from HWND",
+      "bounds intersection filtering against lower band",
+      "read-only process/control/class/automation-id-hash/name-length/name-hash/bounds/enabled/offscreen/focusable properties",
+      "pattern availability only for ValuePattern, TextPattern, LegacyIAccessiblePattern, InvokePattern"
+    ],
+    "forbidden_actions_ru": [
+      "не использовать слепой ввод",
+      "не отправлять",
+      "не печатать",
+      "не кликать",
+      "не выполнять paste",
+      "не нажимать Send",
+      "не нажимать Enter",
+      "не использовать clipboard",
+      "не выполнять hotkeys",
+      "не менять focus через SetFocus",
+      "не читать приватный текст сообщений или ValuePattern.Value",
+      "не запускать product/runtime/UI/tests",
+      "не делать commit/push"
+    ]
+  },
+  "runtime_limits": {
+    "stop_before_minutes": 8,
+    "per_operation_timeout_required": true,
+    "required_literal_timeout": "timeout",
+    "partial_evidence_after_each_substep": true,
+    "required_literal_partial_evidence": "partial evidence"
+  },
+  "future_executor_steps": [
+    {
+      "id": "04.0",
+      "title_ru": "создать start marker",
+      "timeout": "shell timeout 10 seconds",
+      "partial_evidence": "micro-step-04-start-marker.json"
+    },
+    {
+      "id": "04.1",
+      "title_ru": "read-only recheck target window",
+      "timeout": "shell timeout 15 seconds; Win32 read-only budget 5 seconds",
+      "partial_evidence": "micro-step-04-window-recheck.json",
+      "blocker_if_failed": "TARGET_WINDOW_RECHECK_FAILED"
+    },
+    {
+      "id": "04.2",
+      "title_ru": "record lower-band geometry",
+      "timeout": "shell timeout 15 seconds; UIA root lookup timeout 750 ms",
+      "partial_evidence": "micro-step-04-lower-band-region.json",
+      "blocker_if_failed": "LOWER_BAND_ROOT_LOOKUP_FAILED"
+    },
+    {
+      "id": "04.3",
+      "title_ru": "bounded lower-band accessibility candidate query",
+      "timeout": "shell timeout 60 seconds; property timeout 350 ms; navigation timeout 750 ms; traversal budget 35 seconds; suggested max_nodes 250 after bounds filtering",
+      "partial_evidence": "micro-step-04-lower-band-candidates.json",
+      "blocker_if_failed": "LOWER_BAND_QUERY_TIMEOUT"
+    },
+    {
+      "id": "04.4",
+      "title_ru": "classify locator without interaction",
+      "timeout": "shell timeout 15 seconds",
+      "partial_evidence": "micro-step-04-locator-classification.json",
+      "success_if": "INPUT_COMPOSER_CONFIRMED_IN_LOWER_BAND_PRE_SEND",
+      "blocker_if_failed": "LOWER_BAND_LOCATOR_NOT_CONFIRMED"
+    },
+    {
+      "id": "04.5",
+      "title_ru": "write status and report",
+      "timeout": "shell timeout 10 seconds",
+      "partial_evidence": "micro-step-04-status.json and micro-step-04-report.md"
+    }
+  ],
+  "success_criteria": {
+    "status": "INPUT_COMPOSER_CONFIRMED_IN_LOWER_BAND_PRE_SEND",
+    "requires_confirmed_locator": true,
+    "requires_bounds_in_or_intersecting_lower_band": true,
+    "requires_editable_value_text_or_invoke_evidence": true,
+    "requires_no_send": true,
+    "requires_no_typing_clicking_paste_clipboard_hotkeys_or_ui_mutation": true
+  },
+  "blocker_criteria": [
+    "TARGET_WINDOW_RECHECK_FAILED",
+    "LOWER_BAND_ROOT_LOOKUP_FAILED",
+    "LOWER_BAND_QUERY_TIMEOUT",
+    "LOWER_BAND_LOCATOR_NOT_CONFIRMED",
+    "ONLY_BROAD_CONTAINERS_FOUND",
+    "RUNTIME_APPROACHING_8_MINUTES_WITH_PARTIAL_EVIDENCE"
+  ],
+  "exact_evidence_filenames": [
+    "micro-step-04-start-marker.json",
+    "micro-step-04-window-recheck.json",
+    "micro-step-04-lower-band-region.json",
+    "micro-step-04-lower-band-candidates.json",
+    "micro-step-04-locator-classification.json",
+    "micro-step-04-blocker.json",
+    "micro-step-04-status.json",
+    "micro-step-04-report.md"
+  ],
+  "required_validation_phrases": [
+    "Микро-шаг 04",
+    "нижняя полоса",
+    "timeout",
+    "partial evidence",
+    "не использовать слепой ввод",
+    "не отправлять",
+    "не доказывает готовность продукта"
+  ],
+  "non_claims_ru": [
+    "Этот prep не выполняет микро-сценарий.",
+    "Этот prep не подтверждает input/composer locator.",
+    "Этот prep не отправляет сообщение.",
+    "Этот prep не запускает product/runtime/UI/tests.",
+    "Этот prep не доказывает готовность продукта."
+  ],
+  "independent_prep_review_required": true,
+  "next_work_order_text_ru": "Ты bounded Row21.1 micro-step 04 executor. Выполни только read-only discovery нижней полосы для Codex target window PID 13508 HWND 0x1038E bounds left=-2071 top=204 width=1283 height=733. Цель: после timeout/max_nodes=500 в micro-step 03 сузить поиск input/composer до lower-band region left=-2071 top=680 width=1283 height=257, то есть нижняя полоса окна. Не запускай product/runtime/UI/tests, не делай commit/push. Не использовать слепой ввод, не отправлять, не печатать, не кликать, не paste, не Send, не Enter, не clipboard, не hotkeys, не SetFocus, не Invoke, не читать приватный текст сообщений или ValuePattern.Value. Метод: AutomationElement.FromHandle(0x1038E), фильтр элементов по bounds intersecting lower band, затем read-only properties/pattern availability only: bounds, enabled, offscreen, focusable, ValuePattern/TextPattern/LegacyIAccessiblePattern/InvokePattern evidence. На каждом sub-step используй timeout и сразу записывай partial evidence. Stop before 8 minutes. Evidence files: micro-step-04-start-marker.json, micro-step-04-window-recheck.json, micro-step-04-lower-band-region.json, micro-step-04-lower-band-candidates.json, micro-step-04-locator-classification.json, micro-step-04-status.json, micro-step-04-report.md, and micro-step-04-blocker.json if blocked. Success: confirmed input/composer locator with editable/value/text/invoke evidence and bounds in or intersecting the lower band; no send. Blocker: no confirmed lower-band locator, only broad containers, target recheck failure, timeout, or runtime approaching 8 minutes with partial evidence. Final report must explicitly say: не доказывает готовность продукта."
+}

@@ -1,0 +1,69 @@
+﻿1012:     panelTitle: "XIIGen Smart Skills",
+1013:     visiblePromptInputPresent: true,
+1014:     visiblePromptInputElement: "textarea#xiigen-smart-skills-prompt",
+1015:     visiblePromptInputAccessibleLabel: "XIIGen task prompt",
+1016:     visibleSubmitButtonPresent: true,
+1017:     visibleSubmitButtonElement: "button#xiigen-smart-skills-submit",
+1018:     visibleSubmitButtonLabel: "Submit to llm_mvp_core",
+1019:     webviewScriptsEnabledForPanelFormOnly: true,
+1020:     webviewUsesNonceCsp: true,
+1021:     noExternalScripts: true,
+1022:     hostMessageType: "xiigenSmartSkills.submitPrompt",
+1023:     panelSubmitRoutesToCoreVia: "runCursorSmartSkillsRequest",
+1024:     sameSharedRequestPathAsRuntimeProofInvoke: true,
+1025:     responseRef: response.coreResponseRef,
+1026:     traceRef: response.hostTraceRef,
+1027:     correlationId,
+1028:     runtimeProofScenario: panelInput.scenario || null,
+1029:     marker,
+1030:     sameMarkerInPrompt: marker ? panelInput.prompt.includes(marker) : false,
+1031:     semanticQualityClaimed: false,
+1032:     externalAiOrUnrelatedToolUsed: false,
+1033:     readinessClaimed: false,
+1034:     tokenSavingsClaimed: false,
+1035:     ...details
+1036:   });
+1037: }
+1038:
+1039: function buildPanelHtml(response, prompt, panelInput, nonce) {
+1040:   const displayText = escapeHtml(getDisplayText(response));
+1041:   const responsePath = escapeHtml(String(response.coreResponseRef || ""));
+1042:   const tracePath = escapeHtml(String(response.hostTraceRef || ""));
+1043:   const status = response.adapterFunctionalityPassed ? "Core API response recorded for adapter functionality" : "Core API response missing or failed";
+1044:   const initialState = serializeForHtmlScript({
+1045:     scenario: panelInput.scenario || "",
+1046:     correlationId: panelInput.correlationId || "",
+1047:     method: panelInput.method || "prompt-to-task",
+1048:     requestedSkills: panelInput.requestedSkills || [],
+1049:     availableSkills: panelInput.availableSkills || [],
+1050:     redactedInput: panelInput.redactedInput || null
+1051:   });
+1052:   return `<!doctype html>
+1053: <html lang="en">
+1054: <head>
+1055: <meta charset="UTF-8">
+1056: <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'nonce-${nonce}'; script-src 'nonce-${nonce}';">
+1057: <meta name="viewport" content="width=device-width, initial-scale=1.0">
+1058: <title>XIIGen Smart Skills</title>
+1059: <style nonce="${nonce}">
+1060: body { box-sizing: border-box; margin: 0; padding: 20px; font-family: var(--vscode-font-family); color: var(--vscode-foreground); background: var(--vscode-editor-background); }
+1061: main { display: flex; flex-direction: column; gap: 14px; max-width: 980px; }
+1062: label { font-weight: 600; }
+1063: .hint, .boundary, .refs { color: var(--vscode-descriptionForeground); }
+1064: textarea { box-sizing: border-box; width: 100%; min-height: 132px; resize: vertical; padding: 10px; color: var(--vscode-input-foreground); background: var(--vscode-input-background); border: 1px solid var(--vscode-input-border); font-family: var(--vscode-editor-font-family); }
+1065: button { width: fit-content; padding: 7px 12px; color: var(--vscode-button-foreground); background: var(--vscode-button-background); border: 0; cursor: pointer; }
+1066: button:disabled { opacity: 0.7; cursor: wait; }
+1067: pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 12px; background: var(--vscode-textBlockQuote-background); border: 1px solid var(--vscode-textBlockQuote-border); }
+1068: .error { color: var(--vscode-errorForeground); }
+1069: </style>
+1070: </head>
+1071: <body>
+1072: <main>
+1073: <h1>XIIGen Smart Skills</h1>
+1074: <p id="xiigen-smart-skills-status">${escapeHtml(status)}</p>
+1075: <label for="xiigen-smart-skills-prompt">XIIGen task prompt</label>
+1076: <p id="xiigen-smart-skills-prompt-hint" class="hint">Enter the task to route through llm_mvp_core. Cursor stays a thin client and does not call external AI.</p>
+1077: <textarea id="xiigen-smart-skills-prompt" aria-describedby="xiigen-smart-skills-prompt-hint" autocomplete="off" spellcheck="true">${escapeHtml(prompt)}</textarea>
+1078: <button id="xiigen-smart-skills-submit" type="button">Submit to llm_mvp_core</button>
+1079: <p class="boundary">No product readiness, token savings, semantic quality, or training claim is made by this panel.</p>
+1080: <pre id="xiigen-smart-skills-result" aria-live="polite">${displayText}</pre>

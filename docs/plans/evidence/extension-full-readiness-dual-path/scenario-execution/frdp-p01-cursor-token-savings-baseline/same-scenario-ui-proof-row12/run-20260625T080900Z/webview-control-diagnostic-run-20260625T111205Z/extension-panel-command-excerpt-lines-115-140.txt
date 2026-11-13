@@ -1,0 +1,26 @@
+﻿115:     vscode.commands.registerCommand("xiigenSmartSkills.panel", async (input) => {
+116:       const providedInput = input && typeof input === "object" ? input : undefined;
+117:       const panelInput = providedInput
+118:         ? normalizeRuntimeProofCommandInput(providedInput)
+119:         : normalizeRuntimeProofCommandInput({
+120:           prompt: "A Cursor user opens the XIIGen Smart Skills panel and asks for thin-client host-runtime evidence."
+121:         });
+122:       const result = await runCursorSmartSkillsRequest(context, panelInput.prompt || "", "xiigenSmartSkills.panel", "panel", panelInput);
+123:       const marker = getRedactedInputString(panelInput.redactedInput, "marker");
+124:       const correlationId = typeof result.correlationId === "string" ? result.correlationId : panelInput.correlationId || null;
+125:
+126:       try {
+127:         const panel = vscode.window.createWebviewPanel(
+128:           "xiigenSmartSkills.panel",
+129:           "XIIGen Smart Skills",
+130:           vscode.ViewColumn.Active,
+131:           {
+132:             enableScripts: true,
+133:             enableCommandUris: false,
+134:             localResourceRoots: []
+135:           }
+136:         );
+137:         const nonce = createNonce();
+138:         panel.webview.html = buildPanelHtml(result, panelInput.prompt || "", panelInput, nonce);
+139:         const panelMessageSubscription = panel.webview.onDidReceiveMessage(async (message) => {
+140:           await handleTrustedPanelSubmitMessage(context, panelInput, message, (payload) => panel.webview.postMessage(payload));

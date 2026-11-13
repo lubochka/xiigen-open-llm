@@ -1,0 +1,117 @@
+{
+  "schema": "xiigen.row21_1.blocker_cluster_packaging_status.v1",
+  "created_at_local": "2026-06-26",
+  "created_by": "Row21.1 blocker-cluster packaging sub-agent",
+  "scenario_id": "frdp-p01-codex-ui-input-surface-discovery-before-send",
+  "parent_scenario": {
+    "row": 21,
+    "scenario_id": "frdp-p01-codex-codex-chat-ui-marker",
+    "relationship": "sub-scenario/blocker-cluster under Row21"
+  },
+  "status": "ROW21_1_SCOPED_ACCEPTED_BLOCKER_CLUSTER_ONLY",
+  "human_status_ru": "Row21.1 принят только как scoped accepted blocker cluster under Row21; это не UI route pass и не product readiness.",
+  "literal_readback": [
+    "Row21.1 blocker cluster",
+    "product readiness false/not proven",
+    "Codex UI route not proven",
+    "No product readiness claim"
+  ],
+  "accepted_evidence_source": "current Luba work order plus existing Row21.1 artifact readback; product/runtime/UI/tests were not run by this packaging sub-agent",
+  "micro_steps": [
+    {
+      "micro_step": "01",
+      "accepted_status": "PASS",
+      "summary": "Codex window/process candidates found; primary window PID 13508, HWND 0x1038E.",
+      "evidence_refs": [
+        "micro-step-01-window-enumeration/micro-step-01-window-enumeration.json",
+        "micro-step-01-window-enumeration/micro-step-01-window-enumeration.md"
+      ]
+    },
+    {
+      "micro_step": "02",
+      "accepted_status": "PASS",
+      "summary": "Target window rechecked; shallow UIA ControlView bounded search found no confirmed input/composer; no input/click/clipboard.",
+      "evidence_refs": [
+        "micro-step-02-target-window-light-discovery/micro_step_02_validation.json",
+        "micro-step-02-target-window-light-discovery/micro_step_02_window_recheck.json",
+        "micro-step-02-target-window-light-discovery/micro_step_02_uia_light_inspection.json"
+      ]
+    },
+    {
+      "micro_step": "03",
+      "accepted_status": "PASS_SCOPED_BLOCKER",
+      "summary": "Accessibility focus/query reached max_nodes=500 without locator; no product readiness.",
+      "blocker": "ACCESSIBILITY_BOUNDED_QUERY_TIMEOUT",
+      "evidence_refs": [
+        "micro-step-03-accessibility-focus-query/micro-step-03-status.json",
+        "micro-step-03-accessibility-focus-query/micro-step-03-blocker.json",
+        "micro-step-03-accessibility-focus-query/micro-step-03-report.md"
+      ]
+    },
+    {
+      "micro_step": "04",
+      "accepted_status": "BLOCKER_EVIDENCE",
+      "summary": "Execution timed out and was shut down; lower-band UIA query as written is unsafe/unreliable.",
+      "important_boundary": "Do not treat any lower-band UIA candidate preview as a safe route pass under this package.",
+      "evidence_refs": [
+        "micro-step-04-lower-composer-band-prep/micro-step-04-prep.json",
+        "micro-step-04-lower-composer-band-query/micro-step-04-lower-band-candidates.json",
+        "micro-step-04-lower-composer-band-query/micro-step-04-targeted-pattern-query.json"
+      ]
+    },
+    {
+      "micro_step": "05",
+      "accepted_status": "PASS_SCOPED_BLOCKER",
+      "summary": "No safe attributed webview metadata endpoint found; no HTTP GET performed.",
+      "evidence_refs": [
+        "micro-step-05-webview-metadata-feasibility/micro-step-05-status.json",
+        "micro-step-05-webview-metadata-feasibility/micro-step-05-blocker.json",
+        "micro-step-05-webview-metadata-feasibility/micro-step-05-report.md"
+      ]
+    }
+  ],
+  "claim_boundary": {
+    "scoped_blocker_cluster_only": true,
+    "ui_route_pass": false,
+    "product_readiness_claim": false,
+    "product_readiness_status": "false/not_proven",
+    "codex_ui_route_status": "not_proven",
+    "main_28_scenario_count_inflated": false,
+    "subscenario_counting_used": false
+  },
+  "non_claims": [
+    "product readiness false/not proven",
+    "Codex UI route not proven",
+    "No Codex UI route pass",
+    "No visible marker in Codex UI",
+    "No confirmed prompt typed, pasted, sent, clicked, or clipboard route",
+    "No token savings claim",
+    "No semantic quality claim",
+    "No learnability/training claim",
+    "No checkpoint promotion claim",
+    "No locator update claim",
+    "No full extension readiness claim"
+  ],
+  "board_count_handling": {
+    "board_files_touched": false,
+    "state_file_touched": false,
+    "main_counts_changed": false,
+    "main_counts_readback_required": false,
+    "reason": "Row21.1 is packaged as a sub-scenario/blocker-cluster under Row21; the board already has later Row22/Row23 main counts, so this package does not recalculate or inflate main scenario counts."
+  },
+  "next_action": {
+    "status": "OPEN",
+    "recommendation": "Architecture/product route needed for Codex UI automation boundary: provide a controlled test-only input surface/adapter or a safe host automation hook before further probing.",
+    "forbidden_without_new_explicit_scenario": "No more blind UIA/CDP probing."
+  },
+  "validation_expectations": [
+    "JSON parse this status file",
+    "Select-String touched files for Row21.1",
+    "Select-String touched files for blocker cluster",
+    "Select-String touched files for product readiness false/not proven",
+    "Select-String touched files for Codex UI route not proven",
+    "git diff --check"
+  ],
+  "independent_packaging_review_required_next": true,
+  "product_readiness_claim": false
+}

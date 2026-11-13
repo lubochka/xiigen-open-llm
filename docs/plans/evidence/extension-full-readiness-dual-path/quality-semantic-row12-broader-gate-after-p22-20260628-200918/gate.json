@@ -1,0 +1,102 @@
+{
+    "task":  "QUALITY-SEMANTIC-ROW12-BROADER-GATE-AFTER-P22-01",
+    "generated_at":  "2026-06-28T20:13:52.0213038+03:00",
+    "verdict":  "PARTIAL_NEEDS_WORK",
+    "pass_full_semantic_preconditions":  false,
+    "tests":  {
+                  "command":  "dotnet test Tests\\LlmFromScratch.Tests.csproj -p:IsTestProject=true --filter \"FullyQualifiedName~PromptToTaskPhase04UniversalContractTests|FullyQualifiedName~ApiDashboardSourceDisjointGuardTests|FullyQualifiedName~SmartSkillsSemanticQualityP11FreshLoadTests|FullyQualifiedName~SmartSkillsSemanticQualityP12ContinueTrainingTests|FullyQualifiedName~OrchestrationReasoningP9EvalAblationTests|FullyQualifiedName~OrchestrationReasoningP9BEvalAblationRerunTests|FullyQualifiedName~SmartSkillsSemanticQualityP22SourceDisjointRuntimeEvalTests\" --no-restore --logger \"console;verbosity=normal\"",
+                  "exit_code":  0,
+                  "total":  15,
+                  "passed":  15,
+                  "failed":  0,
+                  "log":  "dotnet-test.log"
+              },
+    "p22_metrics":  {
+                        "parsed_at":  "2026-06-28T20:13:51.9889431+03:00",
+                        "latest_p22_dir":  "C:\\Projects\\llm_mvp_core_codex_sync_20260628\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\skillselection-source-disjoint-runtime-eval-20260628T170959Z",
+                        "eval_json":  "C:\\Projects\\llm_mvp_core_codex_sync_20260628\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\skillselection-source-disjoint-runtime-eval-20260628T170959Z\\eval.json",
+                        "accepted_rows":  2,
+                        "accepted_rows_jsonl_count":  2,
+                        "rejected_or_quarantined_rows":  2,
+                        "rejected_or_quarantined_rows_jsonl_count":  2,
+                        "candidate_rows_reviewed":  2,
+                        "runtime_rows_run":  2,
+                        "runtime_results_jsonl_count":  2,
+                        "common_expected_match_count":  0,
+                        "candidate_expected_match_count":  0,
+                        "common_pass_rate":  0,
+                        "candidate_pass_rate":  0,
+                        "controls":  {
+                                         "sourcePairIdDisjointnessPassed":  true,
+                                         "promptReplayControlsPassed":  true,
+                                         "candidateOrderPermutationControlsPassed":  true,
+                                         "filenamePathTitleControlsPassed":  true,
+                                         "sourceIdPairIdControlsPassed":  true,
+                                         "noCandidatePositionFinalAuthorityPassed":  true,
+                                         "noTrainingUsePassed":  true
+                                     },
+                        "all_no_leakage_control_booleans_true":  true,
+                        "false_controls":  [
+
+                                           ],
+                        "models_unchanged":  true,
+                        "runtime_comparison_ran":  true,
+                        "training_run":  false,
+                        "checkpoint_mutated":  false,
+                        "runtime_promotion_performed":  false,
+                        "external_ai_or_network_used":  false,
+                        "semantic_quality_claimed":  false,
+                        "skill_selection_readiness_claimed":  false,
+                        "full_api_readiness_claimed":  false
+                    },
+    "required_verdict_rule":  {
+                                  "tests_pass_required":  true,
+                                  "accepted_rows_expected_matches_positive_required":  true,
+                                  "all_no_leakage_gates_true_required":  true
+                              },
+    "blockers":  [
+                     "P22 common_expected_match_count remains 0.",
+                     "P22 candidate_expected_match_count remains 0."
+                 ],
+    "next_bounded_work_orders":  [
+                                     {
+                                         "id":  "QUALITY-SEMANTIC-ROW12-P22-EXPECTED-MATCH-REPAIR-01",
+                                         "type":  "bounded_diagnosis_then_product_fix_candidate",
+                                         "scope":  "Diagnose why the two accepted P22 source-disjoint SkillSelection runtime rows produce zero expected matches for both common and candidate checkpoints; propose or implement a minimal authorized repair only after a separate product-edit work order.",
+                                         "entry_evidence":  [
+                                                                "accepted-rows.jsonl",
+                                                                "runtime-results.jsonl",
+                                                                "eval.json"
+                                                            ],
+                                         "acceptance":  "At least one accepted P22 row has common_expected_match_count \u003e 0 and candidate_expected_match_count \u003e 0 under the same no-leakage controls, or the worker returns a narrower blocker with exact failing row/runtime reason."
+                                     },
+                                     {
+                                         "id":  "QUALITY-SEMANTIC-ROW12-BROADER-GATE-RERUN-AFTER-P22-REPAIR-01",
+                                         "type":  "bounded_eval_rerun",
+                                         "scope":  "Rerun the same focused broader semantic gate after the P22 expected-match repair and parse the current P22 report/eval values.",
+                                         "entry_evidence":  [
+                                                                "this gate packet",
+                                                                "repaired P22 packet"
+                                                            ],
+                                         "acceptance":  "PASS_FULL_SEMANTIC_PRECONDITIONS only if focused tests pass, accepted P22 expected matches are \u003e 0 for common and candidate, and all no-leakage gates remain true."
+                                     }
+                                 ],
+    "claim_boundaries":  {
+                             "product_readiness_claimed":  false,
+                             "token_savings_claimed":  false,
+                             "training_claimed":  false,
+                             "checkpoint_promotion_claimed":  false,
+                             "locator_update_claimed":  false,
+                             "host_ui_readiness_claimed":  false,
+                             "semantic_quality_claimed":  false,
+                             "evidence_supports_only":  "Focused broader gate tests passed, and current P22 accepted/quarantine/control counts were parsed. Full semantic preconditions remain blocked by zero expected matches."
+                         },
+    "honesty_block":  {
+                          "claim_scope":  "Focused broader semantic-quality precondition gate after P22, plus current P22 eval metric parse.",
+                          "evidence_scope":  "One focused dotnet test run; parsed newest P22 eval.json and JSONL line counts; no product/test/governance edits.",
+                          "count_claimed":  "15 tests total, 15 passed, 0 failed; P22 accepted_rows=2, rejected_or_quarantined_rows=2, common_expected_match_count=0, candidate_expected_match_count=0.",
+                          "independent_evidence_count":  2,
+                          "subagent_id_or_NONE":  "NONE",
+                          "downgrade_needed":  "yes: expected-match counts are zero, so verdict is PARTIAL_NEEDS_WORK."
+                      }
+}

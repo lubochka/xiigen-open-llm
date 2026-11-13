@@ -1,0 +1,161 @@
+{
+  "schema_version": "row27-scenario-prep/v1",
+  "artifact_type": "scenario_prep_only",
+  "subagent_id": "row27-prep-subagent-codex",
+  "created_at_local": "2026-06-27T00:09:13+03:00",
+  "scenario": {
+    "row": 27,
+    "scenario_id": "frdp-p01-codex-checkpoint-promotion-reload",
+    "host": "Codex",
+    "purpose_ru": "Доказать только безопасный staged/temp checkpoint reload detection и rollback path без настоящего promotion и без production locator/checkpoint mutation.",
+    "board_status_before_prep": {
+      "automated_core_api_status": "Accepted guard-only; checkpoint/locator readback and direct-promotion rejection tests passed.",
+      "local_real_program_status": "Blocked with reason; Codex reload from candidate checkpoint is not proven.",
+      "joined_status": "Blocked with next action; no joined pass.",
+      "board_category": "blocked_with_next_action",
+      "next_concrete_action": "Run non-mutating checkpoint candidate load/rollback proof first; promotion requires a separate explicit work order."
+    }
+  },
+  "human_status_line_ru": "Готово: 12 сценариев приняты только как узкое evidence/status, 0 сценариев доказали product readiness. Сейчас: Row27 prep-only для безопасной проверки checkpoint promotion/reload. Осталось: 16 сценариев открыты; Row27 execution еще не запускался.",
+  "forbidden": {
+    "real_checkpoint_promotion": true,
+    "production_locator_update": true,
+    "production_checkpoint_mutation": true,
+    "product_ready_claim": true,
+    "product_readiness_claim": true,
+    "semantic_quality_claim": true,
+    "training_claim": true,
+    "token_savings_claim": true,
+    "heldout_or_eval_run": true,
+    "stage_commit_push": true
+  },
+  "claim_locks": {
+    "product_readiness_claim": false,
+    "host_ui_readiness_claim": false,
+    "formal_joined_pass": false,
+    "semantic_quality_claimed": false,
+    "training_claimed": false,
+    "token_savings_claimed": false,
+    "checkpoint_promotion_claimed": false,
+    "production_locator_update_claimed": false,
+    "production_checkpoint_mutated": false,
+    "runtime_or_product_execution_ran": false,
+    "ui_execution_ran": false,
+    "tests_eval_or_heldout_ran": false
+  },
+  "safe_two_path_strategy": {
+    "path_a_automatic": {
+      "status": "prep_defined",
+      "allowed": "staging/temp locator and temp checkpoint only inside Row27 execution folder",
+      "must_prove": [
+        "intended staged checkpoint artifact exists",
+        "hash/readback recorded",
+        "reload/load check uses only temp locator/temp checkpoint",
+        "reload detects intended staged artifact",
+        "rollback path exists",
+        "final verification says production locator/checkpoint were not touched"
+      ],
+      "must_block_if": [
+        "only available route mutates production",
+        "temp locator/checkpoint cannot be isolated",
+        "reload/load command is absent or unsafe"
+      ]
+    },
+    "path_b_local_ui_host": {
+      "status": "conditional_only",
+      "allowed": "only if exact Codex host UI route exists before input",
+      "required_route_details": [
+        "app/window target",
+        "session/auth preflight",
+        "exact clicks/typing/expected visible state",
+        "screenshots or video moments",
+        "same staged/temp checkpoint scenario as Path A",
+        "no secrets captured"
+      ],
+      "if_route_missing": "record UI blocker, not fake pass"
+    }
+  },
+  "criteria": {
+    "prep_pass": [
+      "row27-scenario-prep.md exists",
+      "row27-scenario-prep.json parses",
+      "forbidden actions and claim locks are explicit",
+      "Path A staging/temp-only strategy is explicit",
+      "Path B exact-route-or-blocker strategy is explicit",
+      "next execution work order is present and <=10 minutes"
+    ],
+    "future_execution_pass": [
+      "Path A uses only staging/temp locator and temp checkpoint inside Row27 execution folder",
+      "reload/load check records matching hash/readback for intended staged artifact",
+      "rollback path exists and final verification proves production locator/checkpoint were not touched",
+      "claim locks remain false",
+      "Path B either uses exact same staged/temp scenario with exact host UI route or records explicit UI blocker"
+    ],
+    "future_execution_needs_fix": [
+      "missing evidence files or invalid JSON",
+      "ambiguous temp/staging paths",
+      "missing hash/readback correlation",
+      "missing rollback or final no-production-mutation verification",
+      "UI pass claimed without exact route and visible/readback evidence",
+      "overclaim wording"
+    ],
+    "future_execution_blocked": [
+      "no safe non-mutating temp checkpoint reload/load command or callable route exists",
+      "available command requires production mutation",
+      "exact Codex host/UI route is not found",
+      "session/auth/preflight cannot be verified without secrets exposure",
+      "temp rollback path cannot be created safely"
+    ]
+  },
+  "next_execution_work_order": {
+    "role": "bounded Row27 execution sub-agent",
+    "max_minutes": 10,
+    "implementation_authorized_now": false,
+    "allowed_write_scope": [
+      "docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-codex-checkpoint-promotion-reload/row27-execution-<timestamp>/"
+    ],
+    "allowed_reads": [
+      "docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-codex-checkpoint-promotion-reload/row27-scenario-prep-20260627-000913/",
+      "docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-scenario-board.md",
+      "docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-scenario-board.json",
+      "docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-codex-checkpoint-promotion-reload/"
+    ],
+    "required_steps": [
+      "Create execution run folder and write preflight.json with temp paths and claim locks.",
+      "Find or create only a temp/staged checkpoint artifact inside execution folder; block if no safe staged artifact path exists within 10 minutes.",
+      "Find or create only a temp locator inside execution folder; block if this touches production locator.",
+      "Run only non-mutating reload/load check against temp locator/temp checkpoint; block if only available route mutates production.",
+      "Write checkpoint-readback.json, temp-locator-readback.json, reload-result.json, rollback-proof.json, and row27-execution-report.md.",
+      "Run UI only if exact Codex host route exists before input; otherwise write UI blocker files.",
+      "Validate JSON files parse and run git diff --check -- <execution folder>.",
+      "Return PASS/NEEDS_FIX/BLOCKED with commands run, files changed, and explicit non-claims."
+    ],
+    "forbidden": [
+      "real checkpoint promotion",
+      "production locator update",
+      "production checkpoint mutation",
+      "training",
+      "eval",
+      "heldout",
+      "product workflow run",
+      "broad code edits",
+      "board/action-plan edits",
+      "AGENTS/CLAUDE/skills edits",
+      "stage",
+      "commit",
+      "push"
+    ],
+    "expected_report_line": "Row27 execution status: done=<temp evidence files created>, current=<PASS|NEEDS_FIX|BLOCKED reason>, remaining=<host/UI route or reviewer acceptance still needed>; product_readiness_claim=false; checkpoint_promotion_claimed=false."
+  },
+  "validation_requested_for_this_prep": [
+    "JSON parses",
+    "git diff --check -- <new folder> passes"
+  ],
+  "non_claims_for_this_prep": [
+    "product/runtime/UI/tests/eval/heldout/training did not run",
+    "checkpoint reload was not verified",
+    "checkpoint promotion did not run",
+    "locator update did not run",
+    "this is scenario prep only"
+  ]
+}

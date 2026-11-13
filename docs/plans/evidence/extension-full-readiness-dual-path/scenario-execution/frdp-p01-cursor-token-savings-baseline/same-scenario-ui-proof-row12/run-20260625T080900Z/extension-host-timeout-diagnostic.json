@@ -1,0 +1,96 @@
+{
+  "packet_type": "CURSOR_EXTHOST_TIMEOUT_DIAGNOSTIC_PACKET",
+  "status": "HOST_STARTS_LATE_LAUNCHER_WAIT_FIX",
+  "created_at_utc": "2026-06-25T08:50:00.8979725Z",
+  "active_task_sentence_source": "CURRENT TASK: Diagnose the Cursor extension-host startup timeout under the repaired short-temp launch. Determine exact cause and repair if narrow/safe. Do not run row12 UI proof.",
+  "git_authority": "forbidden",
+  "git_actions_run": [],
+  "row12_ui_proof_run": false,
+  "login_or_browser_recovery_run": false,
+  "external_ai_used": false,
+  "readiness_claimed": false,
+  "changed_files": [
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\launch-visible-cursor-row12-corrected.ps1",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\extension-host-timeout-diagnostic.json",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\extension-host-timeout-diagnostic.md"
+  ],
+  "diagnostic_answers": {
+    "fresh_log_files": {
+      "timeout": "C:\\Users\\lubao\\AppData\\Local\\Temp\\xiigen-row12-cursor-devhost-20260625114202\\user-data\\logs\\20260625T114206\\window1\\renderer.log:119",
+      "extension_host_start": "C:\\Users\\lubao\\AppData\\Local\\Temp\\xiigen-row12-cursor-devhost-20260625114202\\user-data\\logs\\20260625T114206\\window1\\exthost\\exthost.log:1",
+      "extension_host_unresponsive": "C:\\Users\\lubao\\AppData\\Local\\Temp\\xiigen-row12-cursor-devhost-20260625114202\\user-data\\logs\\20260625T114206\\window1\\renderer.log:125",
+      "extension_host_responsive": "C:\\Users\\lubao\\AppData\\Local\\Temp\\xiigen-row12-cursor-devhost-20260625114202\\user-data\\logs\\20260625T114206\\window1\\renderer.log:129",
+      "main_error": "C:\\Users\\lubao\\AppData\\Local\\Temp\\xiigen-row12-cursor-devhost-20260625114202\\user-data\\logs\\20260625T114206\\main.log:1",
+      "extension_host_stderr_or_runtime_errors": [
+        "C:\\Users\\lubao\\AppData\\Local\\Temp\\xiigen-row12-cursor-devhost-20260625114202\\user-data\\logs\\20260625T114206\\window1\\renderer.log:127",
+        "C:\\Users\\lubao\\AppData\\Local\\Temp\\xiigen-row12-cursor-devhost-20260625114202\\user-data\\logs\\20260625T114206\\window1\\renderer.log:131"
+      ]
+    },
+    "did_extension_host_eventually_start": true,
+    "host_start_timing": {
+      "launch_record_utc": "2026-06-25T08:42:11.4226937Z",
+      "renderer_timeout_local": "2026-06-25 11:42:25.195",
+      "exthost_started_local": "2026-06-25 11:42:30.554",
+      "renderer_unresponsive_local": "2026-06-25 11:42:37.648",
+      "renderer_responsive_local": "2026-06-25 11:42:39.990",
+      "supported_conclusion": "The extension host started about 5.4 seconds after Cursor's built-in 10-second timeout line and became responsive later. The fixed 8-second launcher wait was too short for this observed startup."
+    },
+    "log_path_still_bad": false,
+    "log_path_evidence": "Fresh short-temp logs were created under C:\\Users\\lubao\\AppData\\Local\\Temp\\xiigen-row12-cursor-devhost-20260625114202\\user-data\\logs\\20260625T114206, including renderer.log and window1\\exthost\\exthost.log. No fresh SQLITE_CANTOPEN evidence was found in the inspected short-temp log set.",
+    "launch_flag_shape": {
+      "extension_development_path_loaded": true,
+      "evidence": "renderer.log:104 says Loading development extension at c:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills; command line contained --extensionDevelopmentPath=<full path>; workspace folder argument was present.",
+      "disable_extensions_change_applied": false,
+      "reason": "No exact evidence showed --disable-extensions was required, and adding it could disable or alter extension discovery."
+    },
+    "dist_loadability": {
+      "node_check": "PASS",
+      "package_main_resolvable": true,
+      "main": "./dist/extension.js",
+      "main_path": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist\\extension.js",
+      "top_level_requires": [
+        "vscode",
+        "fs",
+        "path",
+        "crypto",
+        "child_process"
+      ],
+      "runtime_import_error_found_in_fresh_logs": false
+    },
+    "cursor_specific_devhost_flags_needed": "Not proven by this diagnostic. The existing devhost flag was recognized by Cursor because the renderer logged Loading development extension at the intended path."
+  },
+  "diagnosis": "The reported startup timeout is a late-start condition, not proof that the extension host never started. Cursor emitted its built-in 10-second timeout at renderer.log:119, but exthost.log:1 shows the host started at 11:42:30.554 and renderer.log:129 says it became responsive at 11:42:39.990. The narrow repair is to replace the launcher's fixed 8-second sleep with a bounded wait for concrete exthost/responsive log signals.",
+  "fix_summary": "Updated launch-visible-cursor-row12-corrected.ps1 to wait up to 45 seconds for extension-host responsiveness in fresh short-temp logs and to include those signals in corrected-launch-record.json.",
+  "verification_results": [
+    "PowerShell AST parse OK for launch-visible-cursor-row12-corrected.ps1 after the launcher edit.",
+    "node --check passed for C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist\\extension.js.",
+    "package.json main resolved to an existing dist\\extension.js path; top-level requires inspected.",
+    "Existing command-availability-after-short-temp-launch.json parsed successfully.",
+    "This packet JSON parsed successfully after creation."
+  ],
+  "commands_run": [
+    "Get-ChildItem row12 run folder",
+    "rg timeout/error/devhost patterns in row12 run folder",
+    "Get-Content package.json",
+    "Get-ChildItem fresh short-temp log files",
+    "Get-Content launch-visible-cursor-row12-corrected.ps1",
+    "node --check dist/extension.js",
+    "Resolve-Path dist/extension.js",
+    "rg timeout/error/devhost patterns in fresh short-temp logs",
+    "Get-Content exthost.log first 220 lines",
+    "Get-Content renderer.log lines 105-150",
+    "rg xiigen/extensionDevelopmentPath in short-temp user-data",
+    "PowerShell AST parse for launch-visible-cursor-row12-corrected.ps1",
+    "Node package main resolvability/top-level require inspection",
+    "ConvertFrom-Json command-availability-after-short-temp-launch.json",
+    "Get-Date UTC"
+  ],
+  "evidence_files": [
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\extension-host-timeout-diagnostic.json",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\extension-host-timeout-diagnostic.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\launch-visible-cursor-row12-corrected.ps1",
+    "C:\\Users\\lubao\\AppData\\Local\\Temp\\xiigen-row12-cursor-devhost-20260625114202\\user-data\\logs\\20260625T114206\\window1\\renderer.log",
+    "C:\\Users\\lubao\\AppData\\Local\\Temp\\xiigen-row12-cursor-devhost-20260625114202\\user-data\\logs\\20260625T114206\\window1\\exthost\\exthost.log"
+  ],
+  "next_smallest_action": "Rerun the corrected launcher only when authorized for the narrow command-palette availability check; do not treat this timeout repair as row12 readiness. If the XIIGen command remains absent after the host-responsive wait, split to extension-discovery/manifest validation because the timeout itself is no longer the blocker."
+}

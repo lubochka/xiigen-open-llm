@@ -1,0 +1,97 @@
+{
+  "schema": "xiigen.host_ui_scenario_prep.v1",
+  "host": "Claude",
+  "working_metric": "scenario coverage",
+  "slice_status": {
+    "total_actions": 4,
+    "done_actions": 4,
+    "in_progress_actions": 0,
+    "remaining_actions": 0
+  },
+  "scenario_coverage": {
+    "scenario_total": 1,
+    "accepted": 0,
+    "api_only": 0,
+    "ui_only": 0,
+    "blocked": 0,
+    "not_started": 1
+  },
+  "exact_prompt": "Проверь универсальную оркестрацию для запроса пользователя: нужно принять просьбу, перевести ее в универсальную задачу, построить универсальный план действий и выбрать нужные навыки. Не привязывай ответ к конкретному языку программирования, IDE, стеку или внутренним файлам проекта. Верни коротко: 1) какая задача получилась, 2) какой универсальный план нужен, 3) какие навыки выбраны и почему, 4) какого обучающего сигнала не хватает, если система не уверена.",
+  "prompt_intent": [
+    "prompt_to_task",
+    "task_to_orchestration_plan",
+    "task_plan_to_skills",
+    "universal_non_stack_specific_behavior"
+  ],
+  "preconditions": [
+    "Claude app visible/unlocked",
+    "No password/PIN captured",
+    "Correct Claude thread/project/extension route identified",
+    "If login/session prompt appears, agent stops before credentials and user completes locally",
+    "If model/reasoning tier visible and wrong, record warning and do not fake"
+  ],
+  "dual_path_same_scenario_proof": {
+    "title": "Dual-path same-scenario proof",
+    "path_a": {
+      "name": "Path A",
+      "type": "non-UI Claude adapter/API boundary path",
+      "expected_evidence": [
+        "XiigenExtensionRequest",
+        "RequestedSkills",
+        "AvailableSkills",
+        "core response",
+        "no host selector/scorer"
+      ],
+      "meaning": "Proves adapter/API/core boundary only for the same prompt."
+    },
+    "path_b": {
+      "name": "Path B",
+      "type": "real Claude UI path",
+      "exact_steps": [
+        "Open or focus Claude app/window",
+        "Choose correct thread/project/extension route",
+        "Type exact prompt",
+        "Screenshot before submit",
+        "Submit prompt",
+        "Screenshot after response",
+        "Collect trace/correlation if available without secrets"
+      ],
+      "meaning": "Proves local-agent UI path in real Claude app/window for the same prompt."
+    }
+  },
+  "anti_substitution_rules": [
+    "JSON/log/core trace alone is not Claude UI proof",
+    "marker-only screenshot is not full UI proof",
+    "Claude adapter proof is not Claude chat UI readiness"
+  ],
+  "acceptance_criteria": [
+    "PASS",
+    "PARTIAL",
+    "BLOCKED_LOGIN_REQUIRED",
+    "TARGET_WINDOW_NOT_FOUND",
+    "RESPONSE_NOT_VISIBLE",
+    "CORE_TRACE_MISSING",
+    "WRONG_THREAD_OR_SURFACE",
+    "MODEL_TIER_WARNING"
+  ],
+  "evidence_required_after_execution": [
+    "window inventory",
+    "screenshots",
+    "core request/response/trace",
+    "adapter/plugin trace",
+    "redaction log",
+    "human summary"
+  ],
+  "will_not_prove": [
+    "token savings",
+    "semantic quality",
+    "learnability/training",
+    "DPO",
+    "promotion/locator",
+    "Cursor/Codex scenario acceptance"
+  ],
+  "runtime_executed": false,
+  "prompt_submitted": false,
+  "external_ai_tools_used": false,
+  "model_or_checkpoint_mutated": false
+}

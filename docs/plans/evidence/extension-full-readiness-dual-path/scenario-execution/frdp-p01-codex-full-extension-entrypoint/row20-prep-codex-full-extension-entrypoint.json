@@ -1,0 +1,214 @@
+{
+  "schema": "xiigen.extension_readiness.row20_prep.v2",
+  "status": "ROW20_PREP_REPAIRED_REVIEW_REQUIRED",
+  "prepared_on_session_date": "2026-06-26",
+  "subagent_id": "bounded-row20-scenario-prep-repair",
+  "row20_accepted_by_this_packet": false,
+  "scenario": {
+    "scenario_number": 20,
+    "scenario_label_ru": "Сценарий 20",
+    "scenario_id": "frdp-p01-codex-full-extension-entrypoint",
+    "meaning_ru": "Сценарий 20 проверяет узкую готовность входной точки Codex extension: установленный Codex plugin codex-xiigen-smart-skills должен показать, что текущий src/codex-entrypoint.js может провести один безопасный non-mutating smoke request до llm_mvp_core через adapter/core boundary.",
+    "narrow_claim_if_later_passes_ru": "Только installed plugin entrypoint / Codex host-visible entrypoint proof для одного Row20 сценария.",
+    "does_not_prove_ru": "Row20 не доказывает готовность продукта и не является full Codex chat UI readiness."
+  },
+  "actions_performed_by_this_packet": {
+    "prepared_only": true,
+    "scenario_execution_started": false,
+    "adapter_entrypoint_run": false,
+    "codex_ui_actions_run": false,
+    "product_or_runtime_run": false,
+    "training_started": false,
+    "eval_started": false,
+    "checkpoint_mutation_started": false,
+    "checkpoint_promotion_started": false,
+    "locator_update_started": false,
+    "external_ai_called": false,
+    "code_edits": false,
+    "git_actions": false,
+    "board_or_state_updated": false
+  },
+  "same_scenario_input": {
+    "prompt": "Row20 non-mutating Codex installed-plugin entrypoint smoke: route this harmless planning request through XIIGen Smart Skills using prompt-to-task, request only xiigen-smart-skills, keep debug output redacted, do not train, do not evaluate, do not mutate checkpoint or locator, do not call external AI, and return the selected skill/plan boundary result.",
+    "correlation_id": "ROW20-CODEX-FULL-EXTENSION-ENTRYPOINT-NONMUTATING-SMOKE",
+    "method": "prompt-to-task",
+    "requested_skills": [
+      "xiigen-smart-skills"
+    ],
+    "available_skills": [
+      "xiigen-smart-skills"
+    ],
+    "host_facts": {
+      "surface": "installed-codex-skill",
+      "scenario_id": "frdp-p01-codex-full-extension-entrypoint"
+    },
+    "check_set_inputs": {
+      "row20": "codex-full-extension-entrypoint",
+      "mutation": "forbidden",
+      "external_ai": "forbidden"
+    },
+    "provenance": {
+      "source": "row20-prep",
+      "plugin": "codex-xiigen-smart-skills"
+    }
+  },
+  "path_a": {
+    "label_ru": "Путь A",
+    "purpose_ru": "Automated/before-host boundary proof: проверить, что текущая установленная JS entrypoint из Codex plugin создает request и вызывает llm_mvp_core для того же Row20 prompt/correlation.",
+    "does_not_prove_ru": "Путь A не является UI proof и не доказывает готовность продукта.",
+    "exact_commands_ru": [
+      "$scenarioRoot = \"C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-codex-full-extension-entrypoint\"",
+      "$runStamp = Get-Date -Format \"yyyyMMdd-HHmmss\"",
+      "$runRoot = Join-Path $scenarioRoot \"run-$runStamp\"",
+      "New-Item -ItemType Directory -Force -Path $runRoot | Out-Null",
+      "$pluginRoot = \"C:/Users/lubao/.codex/plugins/cache/xiigen-local/codex-xiigen-smart-skills/0.1.0+codex.runtime04e-20260616-231500\"",
+      "if (-not (Test-Path -LiteralPath (Join-Path $pluginRoot \"src/codex-entrypoint.js\"))) { $pluginRoot = Get-ChildItem -LiteralPath \"$env:USERPROFILE/.codex/plugins/cache/xiigen-local/codex-xiigen-smart-skills\" -Directory | Where-Object { (Test-Path -LiteralPath (Join-Path $_.FullName \".codex-plugin/plugin.json\")) -and (Test-Path -LiteralPath (Join-Path $_.FullName \"skills/xiigen-smart-skills/SKILL.md\")) -and (Test-Path -LiteralPath (Join-Path $_.FullName \"src/codex-entrypoint.js\")) } | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName }",
+      "Expected selector: package.name=codex-xiigen-smart-skills; package.main=src/codex-entrypoint.js; skill file exists; src/codex-entrypoint.js exists.",
+      "$package = Get-Content -LiteralPath (Join-Path $pluginRoot \"package.json\") -Raw | ConvertFrom-Json",
+      "$manifest = Get-Content -LiteralPath (Join-Path $pluginRoot \".codex-plugin/plugin.json\") -Raw | ConvertFrom-Json",
+      "$contract = [pscustomobject]@{ scenario = \"Сценарий 20\"; path = \"Путь A\"; pluginRoot = $pluginRoot; packageName = $package.name; packageMain = $package.main; manifestName = $manifest.name; skillPathExists = Test-Path -LiteralPath (Join-Path $pluginRoot \"skills/xiigen-smart-skills/SKILL.md\"); jsEntrypointExists = Test-Path -LiteralPath (Join-Path $pluginRoot \"src/codex-entrypoint.js\"); powershellEntrypointRole = \"legacy_launcher_only\" }",
+      "$contract | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $runRoot \"path-a-entrypoint-contract-review.json\") -Encoding UTF8",
+      "$prompt = \"Row20 non-mutating Codex installed-plugin entrypoint smoke: route this harmless planning request through XIIGen Smart Skills using prompt-to-task, request only xiigen-smart-skills, keep debug output redacted, do not train, do not evaluate, do not mutate checkpoint or locator, do not call external AI, and return the selected skill/plan boundary result.\"",
+      "$correlation = \"ROW20-CODEX-FULL-EXTENSION-ENTRYPOINT-NONMUTATING-SMOKE\"",
+      "$hostFactsJson = '{\"surface\":\"installed-codex-skill\",\"scenario_id\":\"frdp-p01-codex-full-extension-entrypoint\"}'",
+      "$requestedSkillsJson = '[\"xiigen-smart-skills\"]'",
+      "$availableSkillsJson = '[\"xiigen-smart-skills\"]'",
+      "$checkSetInputsJson = '{\"row20\":\"codex-full-extension-entrypoint\",\"mutation\":\"forbidden\",\"external_ai\":\"forbidden\"}'",
+      "$provenanceJson = '{\"source\":\"row20-prep\",\"plugin\":\"codex-xiigen-smart-skills\"}'",
+      "$stdoutPath = Join-Path $runRoot \"path-a-stdout.txt\"; $stderrPath = Join-Path $runRoot \"path-a-stderr.txt\"; $requestPath = Join-Path $runRoot \"path-a-request.json\"; $responsePath = Join-Path $runRoot \"path-a-response.json\"; $tracePath = Join-Path $runRoot \"path-a-trace.json\"",
+      "$nodeArgs = @((Join-Path $pluginRoot \"src/codex-entrypoint.js\"), \"--method\", \"prompt-to-task\", \"--user-prompt-or-task-text\", $prompt, \"--host-facts-json\", $hostFactsJson, \"--requested-skills-json\", $requestedSkillsJson, \"--available-skills-json\", $availableSkillsJson, \"--check-set-inputs-json\", $checkSetInputsJson, \"--provenance-json\", $provenanceJson, \"--correlation-id\", $correlation, \"--core-root\", \"C:/Projects/llm_mvp_core\", \"--extension-root\", $pluginRoot, \"--request-path\", $requestPath, \"--response-path\", $responsePath, \"--trace-path\", $tracePath)",
+      "Push-Location $pluginRoot; try { & node.exe @nodeArgs 1> $stdoutPath 2> $stderrPath; $exitCode = $LASTEXITCODE } finally { Pop-Location }",
+      "[pscustomobject]@{ scenario = \"Сценарий 20\"; path = \"Путь A\"; command = \"node.exe src/codex-entrypoint.js --method prompt-to-task --user-prompt-or-task-text <Row20 prompt> --correlation-id ROW20-CODEX-FULL-EXTENSION-ENTRYPOINT-NONMUTATING-SMOKE\"; pluginRoot = $pluginRoot; exitCode = $exitCode; stdoutPath = $stdoutPath; stderrPath = $stderrPath; requestPath = $requestPath; responsePath = $responsePath; tracePath = $tracePath; noProductReadinessClaim = $true } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $runRoot \"path-a-command-result.json\") -Encoding UTF8"
+    ],
+    "expected_evidence_files": [
+      "path-a-entrypoint-contract-review.json",
+      "path-a-request.json",
+      "path-a-response.json",
+      "path-a-trace.json",
+      "path-a-command-result.json",
+      "path-a-stdout.txt",
+      "path-a-stderr.txt"
+    ],
+    "success_criteria_ru": [
+      "exitCode=0",
+      "request содержит Row20 prompt и correlation id",
+      "response и trace существуют и являются JSON",
+      "evidence показывает no external AI",
+      "evidence показывает no training/eval/checkpoint/locator mutation"
+    ],
+    "rejection_criteria_ru": [
+      "старый JSON или phase report вместо запуска",
+      "ps1 wrapper без доказательства JS entrypoint",
+      "package metadata без invocation",
+      "missing response/trace",
+      "любое readiness claim шире adapter/core или installed plugin entrypoint proof"
+    ]
+  },
+  "path_b": {
+    "label_ru": "Путь B",
+    "purpose_ru": "Local Codex desktop/UI proof: показать локальную видимую поверхность Codex для того же Row20 prompt/correlation либо записать честный blocker.",
+    "does_not_prove_ru": "Путь B сам по себе не доказывает готовность продукта и не заменяет Путь A.",
+    "preflight_ru": [
+      "Перед UI/runtime execution scenario prep must PASS by independent prep review.",
+      "Открыть реальное приложение Codex Desktop.",
+      "Проверить рабочую область C:/Projects/llm_mvp_core.",
+      "Проверить, что сессия не anonymous; если нужен login, Luba вводит секреты вручную, evidence capture до секретов не ведется.",
+      "Закрыть или скрыть окна с секретами. no secrets captured."
+    ],
+    "exact_clicks_ru": [
+      "точные клики: нажать кнопку создания нового thread/chat в Codex Desktop.",
+      "Если Codex просит workspace, выбрать C:/Projects/llm_mvp_core.",
+      "В поле сообщения вставить точный Row20 prompt с фразой Use the installed Codex plugin skill codex-xiigen-smart-skills:xiigen-smart-skills for Сценарий 20 и correlation id ROW20-CODEX-FULL-EXTENSION-ENTRYPOINT-NONMUTATING-SMOKE.",
+      "Нажать Send/Enter один раз.",
+      "Дождаться видимого ответа Codex.",
+      "Не отправлять исправляющие prompts внутри того же evidence packet."
+    ],
+    "expected_visible_states_ru": [
+      "виден clean thread для проверки",
+      "виден Row20 correlation id",
+      "ответ содержит redacted result или blocker",
+      "raw private trace не показан",
+      "ответ не утверждает product readiness",
+      "если route plugin/skill не доказан, записан CODEX_ROUTE_BLOCKED_CLEAN_SURFACE_NOT_PROVEN"
+    ],
+    "capture_commands_ru": [
+      "$scenarioRoot = \"C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-codex-full-extension-entrypoint\"",
+      "$runRoot = Get-ChildItem -LiteralPath $scenarioRoot -Directory -Filter \"run-*\" | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
+      "if (-not $runRoot) { throw \"Run root not found; run Path A setup first\" }",
+      "$codexWindows = Get-Process | Where-Object { $_.MainWindowTitle -match \"Codex\" } | Select-Object ProcessName, Id, MainWindowTitle, MainWindowHandle",
+      "$codexWindows | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $runRoot \"path-b-codex-window-process.json\") -Encoding UTF8",
+      "Add-Type -AssemblyName System.Windows.Forms; Add-Type -AssemblyName System.Drawing; $bounds = [System.Windows.Forms.SystemInformation]::VirtualScreen; $bitmap = New-Object System.Drawing.Bitmap $bounds.Width, $bounds.Height; $graphics = [System.Drawing.Graphics]::FromImage($bitmap); $graphics.CopyFromScreen($bounds.Left, $bounds.Top, 0, 0, $bounds.Size); $screenshotPath = Join-Path $runRoot \"path-b-codex-ui-capture.png\"; $bitmap.Save($screenshotPath, [System.Drawing.Imaging.ImageFormat]::Png); $graphics.Dispose(); $bitmap.Dispose()",
+      "UIA dump command: Add-Type -AssemblyName UIAutomationClient; read the Codex MainWindowHandle; write visible control names/automation ids/control types to path-b-codex-ui-readback.json. If UIAutomation is unavailable, create path-b-uia-unavailable.md with the exact error and no PASS claim."
+    ],
+    "two_monitor_fallback_ru": [
+      "Если screenshot нечитаемый или окна перекрывают Codex, переместить Codex Desktop на основной монитор.",
+      "Закрыть или свернуть перекрывающие окна.",
+      "Повторить screenshot command.",
+      "Записать fallback в path-b-local-ui-notes.md с фразой no secrets captured."
+    ],
+    "expected_evidence_files": [
+      "path-b-codex-window-process.json",
+      "path-b-codex-ui-capture.png",
+      "path-b-codex-ui-readback.json",
+      "path-b-uia-unavailable.md",
+      "path-b-local-ui-notes.md",
+      "path-b-codex-installed-plugin-visibility.md"
+    ],
+    "blocker_if_not_controllable": "CODEX_ROUTE_BLOCKED_CLEAN_SURFACE_NOT_PROVEN"
+  },
+  "joined_comparison": {
+    "expected_evidence_files": [
+      "joined-row20-path-comparison.json",
+      "row20-execution-report.md",
+      "row20-status.json"
+    ],
+    "must_compare_ru": [
+      "same Row20 prompt",
+      "same correlation id",
+      "Path A exit code/status",
+      "Path A request/response/trace",
+      "Path B screenshot/readback",
+      "installed Codex plugin route visibility or blocker",
+      "all non-claims",
+      "row20_accepted=false until independent review"
+    ]
+  },
+  "non_claims_locked_for_executor": {
+    "product_readiness_claimed": false,
+    "full_joined_pass": false,
+    "token_savings_claimed": false,
+    "semantic_quality_claimed": false,
+    "learnability_claimed": false,
+    "training_started": false,
+    "eval_started": false,
+    "checkpoint_mutation_started": false,
+    "checkpoint_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "external_ai_used": false,
+    "code_mutation_claimed": false,
+    "git_action_claimed": false
+  },
+  "success_criteria_ru": [
+    "Human-first Russian scenario prep.",
+    "Сценарий 20 has clear phase/step meaning.",
+    "Путь A and Путь B use the same scenario prompt and correlation.",
+    "точные команды exist for automated path.",
+    "точные клики, visible states, session/login preflight, screenshot/UIA capture, overlap/two-monitor fallback, and no secrets captured exist for local UI path.",
+    "Exact evidence files are listed for Path A, Path B, and joined comparison.",
+    "Text explicitly says Row20 не доказывает готовность продукта.",
+    "Row20 is not marked accepted."
+  ],
+  "rejection_criteria_ru": [
+    "machine/status language comes before human meaning",
+    "Path A or Path B lacks exact commands/actions",
+    "Codex Desktop session/login preflight is missing",
+    "two-monitor/overlap fallback is missing",
+    "secret capture is allowed",
+    "evidence files are not exact",
+    "product readiness or other forbidden claims appear",
+    "Row20 is marked accepted by prep"
+  ],
+  "next_work_order_text_ru": "Выполни только Сценарий 20 `frdp-p01-codex-full-extension-entrypoint` в директории `C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-codex-full-extension-entrypoint`. Сначала прочитай этот prep packet и skill `codex-xiigen-smart-skills:xiigen-smart-skills`. Не редактируй code. Не используй git. Не запускай training, eval, checkpoint mutation/promotion, locator update, external AI или product readiness checks. Путь A: выполни точные команды из prep: создай `run-<timestamp>`, выбери installed plugin root командой discovery/selector `package.name=codex-xiigen-smart-skills` и `package.main=src/codex-entrypoint.js`, запусти `node.exe src/codex-entrypoint.js` с Row20 prompt/correlation `ROW20-CODEX-FULL-EXTENSION-ENTRYPOINT-NONMUTATING-SMOKE`, сохрани `path-a-entrypoint-contract-review.json`, `path-a-request.json`, `path-a-response.json`, `path-a-trace.json`, `path-a-command-result.json`, `path-a-stdout.txt`, `path-a-stderr.txt`. Путь B: только после PASS independent prep review открой локальный Codex Desktop, проверь login/session без capture секретов, создай clean thread, выполни точные клики: new thread/chat, workspace `C:/Projects/llm_mvp_core` если запрошен, вставь exact Row20 prompt с skill `codex-xiigen-smart-skills:xiigen-smart-skills`, нажми Send/Enter один раз, дождись visible response; сохрани `path-b-codex-window-process.json`, `path-b-codex-ui-capture.png`, `path-b-codex-ui-readback.json` или `path-b-uia-unavailable.md`, `path-b-local-ui-notes.md`, `path-b-codex-installed-plugin-visibility.md`. Если Codex UI route нельзя чисто доказать, запиши `CODEX_ROUTE_BLOCKED_CLEAN_SURFACE_NOT_PROVEN` и не называй это PASS. Затем создай `joined-row20-path-comparison.json`, `row20-execution-report.md`, `row20-status.json` с `row20_accepted=false` до независимого review. В отчете явно напиши: Row20 не доказывает готовность продукта, full Codex chat UI readiness, token savings, semantic quality, learnability/training, checkpoint mutation/promotion или locator update.",
+  "narrow_claim_ru": "Этот prep repair определяет русский человекочитаемый Row20 scenario prep, точные команды, точные клики, evidence files, success/rejection criteria и non-claims. Он не выполняет Row20, не принимает Row20 и не заявляет readiness.",
+  "parent_will_perform_commit_push_after_review": true
+}

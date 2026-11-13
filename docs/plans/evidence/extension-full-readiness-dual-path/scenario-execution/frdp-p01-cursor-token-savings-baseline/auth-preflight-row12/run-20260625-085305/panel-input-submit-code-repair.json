@@ -1,0 +1,81 @@
+{
+  "schema": "xiigen.cursor.panel_input_submit_code_repair.v2",
+  "status": "FIX_ACCEPT_CANDIDATE",
+  "scope": {
+    "findings_fixed": [
+      "P1 webview metadata trust boundary",
+      "P2 cryptographic CSP nonce"
+    ],
+    "row12_ui_proof_run": false,
+    "browser_or_login_run": false,
+    "external_ai_used": false,
+    "git_authority": "forbidden",
+    "commit_push_authorized": false,
+    "parent_will_perform_commit_push_after_review": true
+  },
+  "changed_files": [
+    "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\src\\extension.ts",
+    "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist\\extension.js",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\auth-preflight-row12\\run-20260625-085305\\panel-input-submit-code-repair.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\auth-preflight-row12\\run-20260625-085305\\panel-input-submit-code-repair.json"
+  ],
+  "commands_run": [
+    {
+      "command": "node --check \"C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist\\extension.js\"",
+      "exit_code": 0,
+      "result": "passed"
+    },
+    {
+      "command": "rg -n \"Math\\.random|createNonce|crypto\\.randomBytes|message\\.metadata|evidenceRoot|buildTrustedPanelSubmitInput|\\.\\.\\.\\(message\\.metadata\" \"C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\src\\extension.ts\" \"C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist\\extension.js\"",
+      "exit_code": 0,
+      "result": "found trusted submit helper and crypto nonce context"
+    },
+    {
+      "command": "$files = @('C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\src\\extension.ts','C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist\\extension.js'); $matches = rg -n 'message\\.metadata|Math\\.random|\\.\\.\\.\\s*\\(?message\\.metadata' @files; if ($LASTEXITCODE -eq 0) { $matches; exit 1 } elseif ($LASTEXITCODE -eq 1) { 'no message.metadata spread/trust or Math.random matches' } else { exit $LASTEXITCODE }",
+      "exit_code": 0,
+      "result": "no message.metadata spread/trust or Math.random matches"
+    },
+    {
+      "command": "Select-String -Path 'C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\src\\extension.ts','C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist\\extension.js' -Pattern 'function buildTrustedPanelSubmitInput|scenario: panelInput\\.scenario|correlationId: panelInput\\.correlationId|prompt: submittedPrompt|crypto\\.randomBytes' -Context 0,3",
+      "exit_code": 0,
+      "result": "trusted helper whitelists scenario/correlationId/prompt and nonce uses crypto.randomBytes in source and dist"
+    },
+    {
+      "command": "npm run install-smoke",
+      "working_directory": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills",
+      "exit_code": 0,
+      "result": "passed"
+    },
+    {
+      "command": "node -e \"JSON.parse(require('fs').readFileSync('C:\\\\Projects\\\\llm_mvp_core\\\\docs\\\\plans\\\\evidence\\\\extension-full-readiness-dual-path\\\\scenario-execution\\\\frdp-p01-cursor-token-savings-baseline\\\\auth-preflight-row12\\\\run-20260625-085305\\\\panel-input-submit-code-repair.json','utf8')); console.log('json parse ok')\"",
+      "exit_code": 0,
+      "result": "passed after packet write"
+    }
+  ],
+  "verification_results": {
+    "dist_javascript_syntax": "passed",
+    "package_install_smoke": "passed",
+    "webview_metadata_trust_boundary": "passed",
+    "cryptographic_nonce": "passed",
+    "evidence_json_parse": "passed",
+    "dist_updated_consistently": true,
+    "ui_proof_not_run_by_instruction": true
+  },
+  "fix_summary": [
+    "Panel submit no longer spreads message.metadata into normalizeRuntimeProofCommandInput.",
+    "Panel submit now calls buildTrustedPanelSubmitInput(panelInput, submittedPrompt).",
+    "The trusted submit helper whitelists only trusted extension-side scenario, trusted extension-side correlationId, and the submitted prompt.",
+    "Webview-supplied evidenceRoot and other path-like metadata are ignored on panel submit.",
+    "createNonce now uses Node crypto.randomBytes(24) with base64url-compatible output.",
+    "dist/extension.js mirrors src/extension.ts."
+  ],
+  "remaining_risks": [
+    "Trusted command/runtime input still supports evidenceRoot outside the webview panel submit path.",
+    "This packet is not interactive Cursor UI proof."
+  ],
+  "evidence_files": [
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\auth-preflight-row12\\run-20260625-085305\\panel-input-submit-code-repair.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\auth-preflight-row12\\run-20260625-085305\\panel-input-submit-code-repair.json"
+  ],
+  "next_smallest_action": "Parent review should inspect this bounded two-finding repair and evidence packet; row12 UI proof remains a separate explicitly authorized slice."
+}

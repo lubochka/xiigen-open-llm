@@ -1,0 +1,116 @@
+{
+  "packet_type": "ROW12_PANEL_INPUT_SUBMIT_DISCOVERY_PACKET",
+  "status": "PANEL_NO_INPUT_SUBMIT_PATH_IN_SOURCE",
+  "generated_at_local": "2026-06-25T10:37:05.8222331+03:00",
+  "run_folder": "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\auth-preflight-row12\\run-20260625-085305",
+  "files_created": [
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\auth-preflight-row12\\run-20260625-085305\\panel-input-submit-discovery.json",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\auth-preflight-row12\\run-20260625-085305\\panel-input-submit-discovery.md"
+  ],
+  "source_files_read": [
+    {
+      "path": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\package.json",
+      "evidence": [
+        "lines 17-21 activate on xiigenSmartSkills.panel and main ./dist/extension.js",
+        "lines 29-32 contribute command xiigenSmartSkills.panel with title XIIGen: Open Smart Skills Panel"
+      ]
+    },
+    {
+      "path": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\src\\extension.ts",
+      "evidence": [
+        "lines 117-128 show xiigen.smartSkills.select has a VS Code showInputBox with prompt and placeholder",
+        "lines 199-206 show xiigenSmartSkills.panel normalizes optional command input or default prompt, then immediately calls runCursorSmartSkillsRequest",
+        "lines 211-217 create webview panel XIIGen Smart Skills with enableScripts false and assign buildPanelHtml(result)",
+        "lines 231-232 record panelCommandAcceptedRuntimeProofInput and sameSharedRequestPathAsRuntimeProofInvoke as artifact fields, not visible panel controls",
+        "lines 1022-1027 buildPanelHtml returns only h1, p, pre, p, p HTML elements"
+      ]
+    },
+    {
+      "path": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist\\extension.js",
+      "evidence": [
+        "lines 89-107 compiled panel command matches src behavior",
+        "lines 874-879 compiled buildPanelHtml returns output-only h1/p/pre/p/p HTML"
+      ]
+    },
+    {
+      "path": "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-instructions\\row12-cursor-auth-preflight-same-scenario-ui-script.md",
+      "evidence": [
+        "lines 563-608 define Step 7 source-inspection-first row12 input/submit discovery gate",
+        "lines 596-601 include source-candidate/source-not-found statuses for input and submit discovery",
+        "lines 607-608 forbid typing row12 prompt when input or submit path remains unknown"
+      ]
+    }
+  ],
+  "source_searches_run": [
+    {
+      "roots": [
+        "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\src",
+        "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist"
+      ],
+      "terms": "createWebviewPanel|buildPanelHtml|enableScripts|<input|<textarea|<button|form|submit|acquireVsCodeApi|postMessage|onDidReceiveMessage|addEventListener|showInputBox|xiigenSmartSkills.panel|xiigen.smartSkills.select|registerCommand",
+      "result_summary": "No panel-side input, textarea, button, form, submit handler, acquireVsCodeApi, postMessage, onDidReceiveMessage, or addEventListener was found. Matches show only output-only panel creation and the separate xiigen.smartSkills.select showInputBox command."
+    },
+    {
+      "roots": [
+        "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\src",
+        "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\dist"
+      ],
+      "terms": "rg --files",
+      "result_summary": "Only src\\extension.ts and dist\\extension.js exist under inspected src/dist roots; no separate webview/html/js assets were present."
+    }
+  ],
+  "input_path": {
+    "status": "not_found_in_panel_source",
+    "panel_visible_input_control": null,
+    "panel_textarea": null,
+    "panel_contenteditable": null,
+    "panel_placeholder": null,
+    "panel_aria_label": null,
+    "panel_data_testid": null,
+    "panel_message_command": null,
+    "non_panel_input_found": {
+      "command": "xiigen.smartSkills.select",
+      "control_kind": "vscode.window.showInputBox",
+      "prompt": "Task for XIIGen smart-skill selection",
+      "placeholder": "Describe the concrete task to send to llm_mvp_core",
+      "source": "src\\extension.ts lines 117-128",
+      "why_not_row12_panel_input_path": "This belongs to the separate XIIGen: Select Smart Skill command, not the xiigenSmartSkills.panel webview."
+    },
+    "panel_command_argument_path": {
+      "exists": true,
+      "source": "src\\extension.ts lines 199-206 and 231-232",
+      "description": "The panel command accepts optional RuntimeProofCommandInput when invoked programmatically, but Command Palette UI opening uses the default prompt and does not expose a visible row12 input field."
+    }
+  },
+  "submit_path": {
+    "status": "not_found_in_panel_source",
+    "panel_visible_submit_control": null,
+    "panel_button": null,
+    "panel_form": null,
+    "keyboard_shortcut": null,
+    "panel_message_command": null,
+    "submit_handler": null,
+    "reason": "The webview has scripts disabled and buildPanelHtml emits static output-only HTML, so there is no panel-side handler that can submit row12 text."
+  },
+  "exact_ui_action_sequence_if_known": {
+    "row12_prompt_entry_and_submit": null,
+    "reason": "No exact click/type/submit sequence exists for row12 prompt entry through the XIIGen Smart Skills panel in inspected source. Do not invent a click.",
+    "safe_panel_open_only_sequence": [
+      "Open Cursor Command Palette with Ctrl+Shift+P.",
+      "Type exactly: XIIGen: Open Smart Skills Panel.",
+      "Select/confirm the command titled exactly: XIIGen: Open Smart Skills Panel.",
+      "Press Enter.",
+      "Expected opened panel title/header: XIIGen Smart Skills.",
+      "Expected panel body is output-only status/text/Response/Trace; no row12 input control is expected from source."
+    ]
+  },
+  "what_is_not_proven": [
+    "No browser, Cursor UI, login, or full row12 prompt scenario was run.",
+    "This does not prove visible Cursor panel availability on the host session.",
+    "This does not prove token savings, semantic quality, product readiness, training, checkpoint promotion, or locator update.",
+    "This does not prove a Path B row12 UI result.",
+    "This does not prove that a programmatic command argument path is acceptable as visible UI proof."
+  ],
+  "human_explanation": "Source inspection found the XIIGen Smart Skills panel is output-only. The panel command can be opened from the Command Palette, and the command can receive a RuntimeProofCommandInput only when invoked programmatically, but the webview itself has no visible input field and no visible submit control. The only user-facing prompt input found is the separate XIIGen: Select Smart Skill command, not the panel.",
+  "next_smallest_action": "Plan/code repair, not UI run: either change the scenario to use a different approved visible UI path with exact controls, or implement/review a real panel input and submit control before any row12 prompt execution."
+}

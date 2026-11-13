@@ -1,0 +1,1183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xiigen.local/schemas/phase-02-dual-path-evidence-schema.json",
+  "title": "Phase 02 Dual-Path Evidence Contract",
+  "description": "Schema-style contract for Automated boundary packet, Local desktop packet, and joined evidence packet. Defaults are intentionally forbidden by the local validator.",
+  "type": "object",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/automated_boundary_packet"
+    },
+    {
+      "$ref": "#/$defs/local_desktop_packet"
+    },
+    {
+      "$ref": "#/$defs/joined_evidence_packet"
+    }
+  ],
+  "$defs": {
+    "schema_version": {
+      "type": "string",
+      "const": "phase-02-dual-path-evidence-contract/v1"
+    },
+    "phase": {
+      "type": "string",
+      "const": "Phase 02"
+    },
+    "host": {
+      "type": "string",
+      "enum": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ]
+    },
+    "claim_id": {
+      "type": "string",
+      "enum": [
+        "product-readiness",
+        "full-extension",
+        "codex-chat-ui",
+        "token-savings",
+        "semantic-quality",
+        "learnability-training",
+        "dpo-quality",
+        "asset-lifecycle",
+        "checkpoint-promotion",
+        "locator-update"
+      ]
+    },
+    "redaction_status": {
+      "type": "string",
+      "enum": [
+        "NOT_APPLICABLE",
+        "PENDING_REDACTION",
+        "REDACTED",
+        "REDACTION_NOT_REQUIRED"
+      ]
+    },
+    "string_list": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "collected_by",
+        "collected_at_utc_or_NONE",
+        "source",
+        "command_or_NONE",
+        "input_refs",
+        "notes"
+      ],
+      "properties": {
+        "collected_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "collected_at_utc_or_NONE": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command_or_NONE": {
+          "type": "string",
+          "minLength": 1
+        },
+        "input_refs": {
+          "$ref": "#/$defs/string_list"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence_item": {
+      "type": "object",
+      "required": [
+        "evidence_type",
+        "status",
+        "artifact_ref_or_NONE",
+        "summary",
+        "redaction_status",
+        "provenance"
+      ],
+      "properties": {
+        "evidence_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "description": "For any path PASS, PASS_JOINED, or joined_claim_proven=true, evidence status must be COLLECTED or ACCEPTED. Placeholder statuses such as NOT_RUN, NOT_CAPTURED, NEEDS_VERIFICATION, and NOT_DISCOVERED_YET are shape-only non-claims and cannot support PASS.",
+          "type": "string",
+          "enum": [
+            "NOT_RUN",
+            "NEEDS_VERIFICATION",
+            "NOT_CAPTURED",
+            "COLLECTED",
+            "ACCEPTED",
+            "REJECTED"
+          ]
+        },
+        "artifact_ref_or_NONE": {
+          "description": "For PASS evidence this must reference a real collected artifact. NONE, NONE_COLLECTED_IN_PHASE_01_01, NONE_COLLECTED_IN_PHASE_02_SAMPLE, and other placeholder refs are allowed only for non-PASS shape samples.",
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "redaction_status": {
+          "$ref": "#/$defs/redaction_status"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        },
+        "claims_substitute_for_path": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence_list": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/evidence_item"
+      }
+    },
+    "automated_boundary": {
+      "type": "object",
+      "required": [
+        "status",
+        "evidence",
+        "remaining",
+        "blocker_or_NONE",
+        "downgraded_claim",
+        "provenance"
+      ],
+      "properties": {
+        "status": {
+          "description": "PASS_AUTOMATED_BOUNDARY requires real COLLECTED or ACCEPTED Automated boundary evidence, a non-placeholder artifact ref, no blocker, and no downgrade text contradicting PASS.",
+          "type": "string",
+          "enum": [
+            "NOT_RUN",
+            "NEEDS_VERIFICATION",
+            "PASS_AUTOMATED_BOUNDARY",
+            "BLOCKED_AUTOMATED_BOUNDARY",
+            "FAIL"
+          ]
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence_list"
+        },
+        "remaining": {
+          "$ref": "#/$defs/string_list"
+        },
+        "blocker_or_NONE": {
+          "type": "string",
+          "minLength": 1
+        },
+        "downgraded_claim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      },
+      "additionalProperties": false
+    },
+    "local_desktop": {
+      "type": "object",
+      "required": [
+        "status",
+        "activation",
+        "evidence",
+        "remaining",
+        "blocker_or_NONE",
+        "downgraded_claim",
+        "provenance"
+      ],
+      "properties": {
+        "status": {
+          "description": "PASS_LOCAL_DESKTOP requires real COLLECTED or ACCEPTED Local desktop evidence, real activation evidence, a non-placeholder artifact ref, no blocker, and no downgrade text contradicting PASS.",
+          "type": "string",
+          "enum": [
+            "NOT_RUN",
+            "NEEDS_VERIFICATION",
+            "PASS_LOCAL_DESKTOP",
+            "BLOCKED_LOCAL_UI_CONTROL",
+            "BLOCKED_HOST_NOT_INSTALLED",
+            "BLOCKED_LOCAL_DESKTOP",
+            "FAIL"
+          ]
+        },
+        "activation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence_list"
+        },
+        "remaining": {
+          "$ref": "#/$defs/string_list"
+        },
+        "blocker_or_NONE": {
+          "type": "string",
+          "minLength": 1
+        },
+        "downgraded_claim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      },
+      "additionalProperties": false
+    },
+    "result_fields": {
+      "type": "object",
+      "required": [
+        "evidence",
+        "remaining",
+        "downgraded_claim",
+        "non_claims",
+        "blocker_or_NONE",
+        "redaction_status",
+        "provenance"
+      ],
+      "properties": {
+        "evidence": {
+          "$ref": "#/$defs/evidence_list"
+        },
+        "remaining": {
+          "$ref": "#/$defs/string_list"
+        },
+        "downgraded_claim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "non_claims": {
+          "$ref": "#/$defs/string_list"
+        },
+        "blocker_or_NONE": {
+          "type": "string",
+          "minLength": 1
+        },
+        "redaction_status": {
+          "$ref": "#/$defs/redaction_status"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "token_payload": {
+      "type": "object",
+      "required": [
+        "workload_id",
+        "tokenizer",
+        "tokenizer_version",
+        "baseline_tokens",
+        "candidate_tokens",
+        "repeat_count",
+        "savings_calculation",
+        "quality_guard",
+        "evidence",
+        "remaining",
+        "downgraded_claim"
+      ],
+      "properties": {
+        "workload_id": {
+          "type": "string"
+        },
+        "tokenizer": {
+          "type": "string"
+        },
+        "tokenizer_version": {
+          "type": "string"
+        },
+        "baseline_tokens": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "candidate_tokens": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "repeat_count": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "savings_calculation": {
+          "type": "string"
+        },
+        "quality_guard": {
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/string_list"
+        },
+        "remaining": {
+          "$ref": "#/$defs/string_list"
+        },
+        "downgraded_claim": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "semantic_quality_payload": {
+      "type": "object",
+      "required": [
+        "held_out_case_id",
+        "rubric",
+        "baseline_score",
+        "candidate_score",
+        "leakage_checks",
+        "answer_evidence",
+        "remaining",
+        "downgraded_claim"
+      ],
+      "properties": {
+        "held_out_case_id": {
+          "type": "string"
+        },
+        "rubric": {
+          "type": "string"
+        },
+        "baseline_score": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "candidate_score": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "leakage_checks": {
+          "type": "string"
+        },
+        "answer_evidence": {
+          "type": "string"
+        },
+        "remaining": {
+          "$ref": "#/$defs/string_list"
+        },
+        "downgraded_claim": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "learnability_dpo_payload": {
+      "type": "object",
+      "required": [
+        "dataset_provenance",
+        "allowed_use_status",
+        "train_eval_split",
+        "leakage_gates",
+        "before_after_behavior",
+        "checkpoint_diff",
+        "rollback_evidence",
+        "dpo_pair_evidence",
+        "remaining",
+        "downgraded_claim"
+      ],
+      "properties": {
+        "dataset_provenance": {
+          "type": "string"
+        },
+        "allowed_use_status": {
+          "type": "string"
+        },
+        "train_eval_split": {
+          "type": "string"
+        },
+        "leakage_gates": {
+          "type": "string"
+        },
+        "before_after_behavior": {
+          "type": "string"
+        },
+        "checkpoint_diff": {
+          "type": "string"
+        },
+        "rollback_evidence": {
+          "type": "string"
+        },
+        "dpo_pair_evidence": {
+          "type": "string"
+        },
+        "remaining": {
+          "$ref": "#/$defs/string_list"
+        },
+        "downgraded_claim": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "asset_lifecycle_payload": {
+      "type": "object",
+      "required": [
+        "backup_export_import",
+        "share",
+        "continue_training",
+        "rollback",
+        "package_manifest",
+        "readback_evidence",
+        "remaining",
+        "downgraded_claim"
+      ],
+      "properties": {
+        "backup_export_import": {
+          "type": "string"
+        },
+        "share": {
+          "type": "string"
+        },
+        "continue_training": {
+          "type": "string"
+        },
+        "rollback": {
+          "type": "string"
+        },
+        "package_manifest": {
+          "type": "string"
+        },
+        "readback_evidence": {
+          "type": "string"
+        },
+        "remaining": {
+          "$ref": "#/$defs/string_list"
+        },
+        "downgraded_claim": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "checkpoint_payload": {
+      "type": "object",
+      "required": [
+        "candidate_hash",
+        "compatibility_load_result",
+        "quality_gate",
+        "promotion_owner",
+        "rollback_evidence",
+        "host_reload_evidence",
+        "remaining",
+        "downgraded_claim"
+      ],
+      "properties": {
+        "candidate_hash": {
+          "type": "string"
+        },
+        "compatibility_load_result": {
+          "type": "string"
+        },
+        "quality_gate": {
+          "type": "string"
+        },
+        "promotion_owner": {
+          "type": "string"
+        },
+        "rollback_evidence": {
+          "type": "string"
+        },
+        "host_reload_evidence": {
+          "type": "string"
+        },
+        "remaining": {
+          "$ref": "#/$defs/string_list"
+        },
+        "downgraded_claim": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "locator_payload": {
+      "type": "object",
+      "required": [
+        "locator_source_of_truth",
+        "locator_diff",
+        "fresh_load_result",
+        "rollback_locator",
+        "per_host_reload_evidence",
+        "remaining",
+        "downgraded_claim"
+      ],
+      "properties": {
+        "locator_source_of_truth": {
+          "type": "string"
+        },
+        "locator_diff": {
+          "type": "string"
+        },
+        "fresh_load_result": {
+          "type": "string"
+        },
+        "rollback_locator": {
+          "type": "string"
+        },
+        "per_host_reload_evidence": {
+          "type": "string"
+        },
+        "remaining": {
+          "$ref": "#/$defs/string_list"
+        },
+        "downgraded_claim": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "codex_chat_ui_payload": {
+      "type": "object",
+      "required": [
+        "activation",
+        "visible_marker",
+        "screenshot_video_log_evidence",
+        "helper_vs_real_ui_separation",
+        "exact_blocker_if_unavailable",
+        "remaining",
+        "downgraded_claim"
+      ],
+      "properties": {
+        "activation": {
+          "type": "string"
+        },
+        "visible_marker": {
+          "type": "string"
+        },
+        "screenshot_video_log_evidence": {
+          "type": "string"
+        },
+        "helper_vs_real_ui_separation": {
+          "type": "string"
+        },
+        "exact_blocker_if_unavailable": {
+          "type": "string"
+        },
+        "remaining": {
+          "$ref": "#/$defs/string_list"
+        },
+        "downgraded_claim": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "typed_payloads": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "$ref": "#/$defs/token_payload"
+        },
+        "semantic_quality": {
+          "$ref": "#/$defs/semantic_quality_payload"
+        },
+        "learnability_dpo": {
+          "$ref": "#/$defs/learnability_dpo_payload"
+        },
+        "asset_lifecycle": {
+          "$ref": "#/$defs/asset_lifecycle_payload"
+        },
+        "checkpoint": {
+          "$ref": "#/$defs/checkpoint_payload"
+        },
+        "locator": {
+          "$ref": "#/$defs/locator_payload"
+        },
+        "codex_chat_ui": {
+          "$ref": "#/$defs/codex_chat_ui_payload"
+        }
+      },
+      "additionalProperties": false
+    },
+    "typed_payload_conditionals": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "claim_id": {
+                "const": "token-savings"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "typed_payloads": {
+                "required": [
+                  "token"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "claim_id": {
+                "const": "semantic-quality"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "typed_payloads": {
+                "required": [
+                  "semantic_quality"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "claim_id": {
+                "enum": [
+                  "learnability-training",
+                  "dpo-quality"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "typed_payloads": {
+                "required": [
+                  "learnability_dpo"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "claim_id": {
+                "const": "asset-lifecycle"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "typed_payloads": {
+                "required": [
+                  "asset_lifecycle"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "claim_id": {
+                "const": "checkpoint-promotion"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "typed_payloads": {
+                "required": [
+                  "checkpoint"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "claim_id": {
+                "const": "locator-update"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "typed_payloads": {
+                "required": [
+                  "locator"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "claim_id": {
+                "const": "codex-chat-ui"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "typed_payloads": {
+                "required": [
+                  "codex_chat_ui"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "base_properties": {
+      "schema_version": {
+        "$ref": "#/$defs/schema_version"
+      },
+      "phase": {
+        "$ref": "#/$defs/phase"
+      },
+      "scenario_id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "host": {
+        "$ref": "#/$defs/host"
+      },
+      "claim_id": {
+        "$ref": "#/$defs/claim_id"
+      },
+      "marker": {
+        "type": "string",
+        "minLength": 1
+      },
+      "evidence": {
+        "$ref": "#/$defs/evidence_list"
+      },
+      "remaining": {
+        "$ref": "#/$defs/string_list"
+      },
+      "downgraded_claim": {
+        "type": "string",
+        "minLength": 1
+      },
+      "non_claims": {
+        "$ref": "#/$defs/string_list"
+      },
+      "blocker_or_NONE": {
+        "type": "string",
+        "minLength": 1
+      },
+      "redaction_status": {
+        "$ref": "#/$defs/redaction_status"
+      },
+      "provenance": {
+        "$ref": "#/$defs/provenance"
+      },
+      "typed_payloads": {
+        "$ref": "#/$defs/typed_payloads"
+      }
+    },
+    "base_required": [
+      "schema_version",
+      "phase",
+      "scenario_id",
+      "host",
+      "claim_id",
+      "marker",
+      "evidence",
+      "remaining",
+      "downgraded_claim",
+      "non_claims",
+      "blocker_or_NONE",
+      "redaction_status",
+      "provenance",
+      "typed_payloads"
+    ],
+    "automated_boundary_packet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/typed_payload_conditionals"
+        },
+        {
+          "type": "object",
+          "required": [
+            "packet_kind",
+            "automated_boundary",
+            "schema_version",
+            "phase",
+            "scenario_id",
+            "host",
+            "claim_id",
+            "marker",
+            "evidence",
+            "remaining",
+            "downgraded_claim",
+            "non_claims",
+            "blocker_or_NONE",
+            "redaction_status",
+            "provenance",
+            "typed_payloads"
+          ],
+          "properties": {
+            "packet_kind": {
+              "type": "string",
+              "const": "automated_boundary_packet"
+            },
+            "schema_version": {
+              "$ref": "#/$defs/schema_version"
+            },
+            "phase": {
+              "$ref": "#/$defs/phase"
+            },
+            "scenario_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "host": {
+              "$ref": "#/$defs/host"
+            },
+            "claim_id": {
+              "$ref": "#/$defs/claim_id"
+            },
+            "marker": {
+              "type": "string",
+              "minLength": 1
+            },
+            "automated_boundary": {
+              "$ref": "#/$defs/automated_boundary"
+            },
+            "evidence": {
+              "$ref": "#/$defs/evidence_list"
+            },
+            "remaining": {
+              "$ref": "#/$defs/string_list"
+            },
+            "downgraded_claim": {
+              "type": "string",
+              "minLength": 1
+            },
+            "non_claims": {
+              "$ref": "#/$defs/string_list"
+            },
+            "blocker_or_NONE": {
+              "type": "string",
+              "minLength": 1
+            },
+            "redaction_status": {
+              "$ref": "#/$defs/redaction_status"
+            },
+            "provenance": {
+              "$ref": "#/$defs/provenance"
+            },
+            "typed_payloads": {
+              "$ref": "#/$defs/typed_payloads"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "local_desktop_packet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/typed_payload_conditionals"
+        },
+        {
+          "type": "object",
+          "required": [
+            "packet_kind",
+            "local_desktop",
+            "schema_version",
+            "phase",
+            "scenario_id",
+            "host",
+            "claim_id",
+            "marker",
+            "evidence",
+            "remaining",
+            "downgraded_claim",
+            "non_claims",
+            "blocker_or_NONE",
+            "redaction_status",
+            "provenance",
+            "typed_payloads"
+          ],
+          "properties": {
+            "packet_kind": {
+              "type": "string",
+              "const": "local_desktop_packet"
+            },
+            "schema_version": {
+              "$ref": "#/$defs/schema_version"
+            },
+            "phase": {
+              "$ref": "#/$defs/phase"
+            },
+            "scenario_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "host": {
+              "$ref": "#/$defs/host"
+            },
+            "claim_id": {
+              "$ref": "#/$defs/claim_id"
+            },
+            "marker": {
+              "type": "string",
+              "minLength": 1
+            },
+            "local_desktop": {
+              "$ref": "#/$defs/local_desktop"
+            },
+            "evidence": {
+              "$ref": "#/$defs/evidence_list"
+            },
+            "remaining": {
+              "$ref": "#/$defs/string_list"
+            },
+            "downgraded_claim": {
+              "type": "string",
+              "minLength": 1
+            },
+            "non_claims": {
+              "$ref": "#/$defs/string_list"
+            },
+            "blocker_or_NONE": {
+              "type": "string",
+              "minLength": 1
+            },
+            "redaction_status": {
+              "$ref": "#/$defs/redaction_status"
+            },
+            "provenance": {
+              "$ref": "#/$defs/provenance"
+            },
+            "typed_payloads": {
+              "$ref": "#/$defs/typed_payloads"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "joined_evidence_packet": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/typed_payload_conditionals"
+        },
+        {
+          "type": "object",
+          "required": [
+            "packet_kind",
+            "schema_version",
+            "phase",
+            "scenario_id",
+            "host",
+            "claim_id",
+            "marker",
+            "join_keys",
+            "automated_boundary_packet_ref",
+            "local_desktop_packet_ref",
+            "automated_boundary",
+            "local_desktop",
+            "join_status",
+            "joined_claim_proven",
+            "downgrade_record",
+            "evidence",
+            "remaining",
+            "downgraded_claim",
+            "non_claims",
+            "blocker_or_NONE",
+            "redaction_status",
+            "provenance",
+            "typed_payloads"
+          ],
+          "properties": {
+            "packet_kind": {
+              "type": "string",
+              "const": "joined_evidence_packet"
+            },
+            "schema_version": {
+              "$ref": "#/$defs/schema_version"
+            },
+            "phase": {
+              "$ref": "#/$defs/phase"
+            },
+            "scenario_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "host": {
+              "$ref": "#/$defs/host"
+            },
+            "claim_id": {
+              "$ref": "#/$defs/claim_id"
+            },
+            "marker": {
+              "type": "string",
+              "minLength": 1
+            },
+            "join_keys": {
+              "type": "object",
+              "required": [
+                "scenario_id",
+                "host",
+                "claim_id",
+                "marker"
+              ],
+              "properties": {
+                "scenario_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "host": {
+                  "$ref": "#/$defs/host"
+                },
+                "claim_id": {
+                  "$ref": "#/$defs/claim_id"
+                },
+                "marker": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            },
+            "automated_boundary_packet_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "local_desktop_packet_ref": {
+              "type": "string",
+              "minLength": 1
+            },
+            "automated_boundary": {
+              "$ref": "#/$defs/automated_boundary"
+            },
+            "local_desktop": {
+              "$ref": "#/$defs/local_desktop"
+            },
+            "join_status": {
+              "description": "PASS_JOINED requires both path statuses to be PASS and all path plus joined evidence to be real COLLECTED or ACCEPTED evidence. A joined PASS built from NOT_RUN, NOT_CAPTURED, NONE, NONE_COLLECTED_IN_PHASE_01_01, or other placeholder values is an overclaim and must be rejected by the validator.",
+              "type": "string",
+              "enum": [
+                "NOT_RUN",
+                "NEEDS_VERIFICATION",
+                "PASS_JOINED",
+                "PASS_WITH_DOWNGRADE",
+                "FAIL_MISSING_AUTOMATED",
+                "FAIL_MISSING_LOCAL",
+                "FAIL_MISMATCH",
+                "FAIL_ONE_PATH_ONLY",
+                "FAIL_DOCUMENTATION_SUBSTITUTE"
+              ]
+            },
+            "joined_claim_proven": {
+              "description": "true is allowed only with PASS_JOINED and with real accepted/collected Automated boundary, Local desktop, and joined evidence. Shape-only NOT_RUN samples must keep this false.",
+              "type": "boolean"
+            },
+            "downgrade_record": {
+              "type": "object",
+              "required": [
+                "applies_to_host",
+                "scenario_id",
+                "claim_id",
+                "marker",
+                "reason",
+                "downgraded_claim",
+                "remaining",
+                "one_path_cannot_prove_joined_claim",
+                "documentation_dashboard_ledger_substitute_allowed"
+              ],
+              "properties": {
+                "applies_to_host": {
+                  "$ref": "#/$defs/host"
+                },
+                "scenario_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "claim_id": {
+                  "$ref": "#/$defs/claim_id"
+                },
+                "marker": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "downgraded_claim": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "remaining": {
+                  "$ref": "#/$defs/string_list"
+                },
+                "one_path_cannot_prove_joined_claim": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "documentation_dashboard_ledger_substitute_allowed": {
+                  "type": "boolean",
+                  "const": false
+                }
+              },
+              "additionalProperties": false
+            },
+            "evidence": {
+              "$ref": "#/$defs/evidence_list"
+            },
+            "remaining": {
+              "$ref": "#/$defs/string_list"
+            },
+            "downgraded_claim": {
+              "type": "string",
+              "minLength": 1
+            },
+            "non_claims": {
+              "$ref": "#/$defs/string_list"
+            },
+            "blocker_or_NONE": {
+              "type": "string",
+              "minLength": 1
+            },
+            "redaction_status": {
+              "$ref": "#/$defs/redaction_status"
+            },
+            "provenance": {
+              "$ref": "#/$defs/provenance"
+            },
+            "typed_payloads": {
+              "$ref": "#/$defs/typed_payloads"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

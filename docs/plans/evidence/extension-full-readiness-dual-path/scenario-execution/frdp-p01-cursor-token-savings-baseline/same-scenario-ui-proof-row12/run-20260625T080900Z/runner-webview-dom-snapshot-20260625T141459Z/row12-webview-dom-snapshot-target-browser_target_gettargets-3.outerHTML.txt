@@ -1,0 +1,358 @@
+﻿<html lang="en" style="width: 100%; height: 100%;"><head>
+	<meta charset="UTF-8">
+
+	<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-JKDqZ0lI90LgNlOPtaPQBEf9KXp4cbhU7xtLwo4WRpY=' 'self'; frame-src 'self'; style-src 'unsafe-inline';">
+
+
+	<!-- Disable pinch zooming -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+</head>
+
+<body style="margin: 0; overflow: hidden; width: 100%; height: 100%; overscroll-behavior-x: none;" role="document">
+	<script async="" type="module">
+		// @ts-check
+		/// <reference lib="dom" />
+
+		const isSafari = (
+			navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
+			navigator.userAgent &&
+			navigator.userAgent.indexOf('CriOS') === -1 &&
+			navigator.userAgent.indexOf('FxiOS') === -1
+		);
+
+		const isFirefox = (
+			navigator.userAgent &&
+			navigator.userAgent.indexOf('Firefox') >= 0
+		);
+
+		const searchParams = new URL(location.toString()).searchParams;
+		const ID = searchParams.get('id');
+		const webviewOrigin = searchParams.get('origin');
+		const onElectron = searchParams.get('platform') === 'electron';
+		const disableServiceWorker = searchParams.has('disableServiceWorker');
+		const expectedWorkerVersion = parseInt(searchParams.get('swVersion'));
+
+		/**
+		 * Use polling to track focus of main webview and iframes within the webview
+		 *
+		 * @param {Object} handlers
+		 * @param {() => void} handlers.onFocus
+		 * @param {() => void} handlers.onBlur
+		 */
+		const trackFocus = ({ onFocus, onBlur }) => {
+			const interval = 250;
+			let isFocused = document.hasFocus();
+			setInterval(() => {
+				const target = getActiveFrame();
+				const isCurrentlyFocused = document.hasFocus() || !!(target && target.contentDocument && target.contentDocument.body.classList.contains('vscode-context-menu-visible'));
+				if (isCurrentlyFocused === isFocused) {
+					return;
+				}
+				isFocused = isCurrentlyFocused;
+				if (isCurrentlyFocused) {
+					onFocus();
+				} else {
+					onBlur();
+				}
+			}, interval);
+		};
+
+		const getActiveFrame = () => {
+			return /** @type {HTMLIFrameElement | undefined} */ (document.getElementById('active-frame'));
+		};
+
+		const getPendingFrame = () => {
+			return /** @type {HTMLIFrameElement | undefined} */ (document.getElementById('pending-frame'));
+		};
+
+		/**
+		 * @template T
+		 * @param {T | undefined | null} obj
+		 * @return {T}
+		 */
+		function assertIsDefined(obj) {
+			if (typeof obj === 'undefined' || obj === null) {
+				throw new Error('Found unexpected null');
+			}
+			return obj;
+		}
+
+		const vscodePostMessageFuncName = '__vscode_post_message__';
+
+		const defaultStyles = document.createElement('style');
+		defaultStyles.id = '_defaultStyles';
+		defaultStyles.textContent = `
+			html {
+				scrollbar-color: var(--vscode-scrollbarSlider-background) var(--vscode-editor-background);
+			}
+
+			body {
+				overscroll-behavior-x: none;
+				background-color: transparent;
+				color: var(--vscode-editor-foreground);
+				font-family: var(--vscode-font-family);
+				font-weight: var(--vscode-font-weight);
+				font-size: var(--vscode-font-size);
+				margin: 0;
+				padding: 0 20px;
+			}
+
+			img, video {
+				max-width: 100%;
+				max-height: 100%;
+			}
+
+			a, a code {
+				color: var(--vscode-textLink-foreground);
+			}
+
+			p > a {
+				text-decoration: var(--text-link-decoration);
+			}
+
+			a:hover {
+				color: var(--vscode-textLink-activeForeground);
+			}
+
+			a:focus,
+			input:focus,
+			select:focus,
+			textarea:focus {
+				outline: 1px solid -webkit-focus-ring-color;
+				outline-offset: -1px;
+			}
+
+			code {
+				font-family: var(--monaco-monospace-font);
+				color: var(--vscode-textPreformat-foreground);
+				background-color: var(--vscode-textPreformat-background);
+				padding: 1px 3px;
+				border-radius: 4px;
+			}
+
+			pre code {
+				padding: 0;
+			}
+
+			blockquote {
+				background: var(--vscode-textBlockQuote-background);
+				border-color: var(--vscode-textBlockQuote-border);
+			}
+
+			kbd {
+				background-color: var(--vscode-keybindingLabel-background);
+				color: var(--vscode-keybindingLabel-foreground);
+				border-style: solid;
+				border-width: 1px;
+				border-radius: 3px;
+				border-color: var(--vscode-keybindingLabel-border);
+				border-bottom-color: var(--vscode-keybindingLabel-bottomBorder);
+				box-shadow: inset 0 -1px 0 var(--vscode-widget-shadow);
+				vertical-align: middle;
+				padding: 1px 3px;
+			}
+
+			::-webkit-scrollbar {
+				width: 10px;
+				height: 10px;
+			}
+
+			::-webkit-scrollbar-corner {
+				background-color: var(--vscode-editor-background);
+			}
+
+			::-webkit-scrollbar-thumb {
+				background-color: var(--vscode-scrollbarSlider-background);
+			}
+			::-webkit-scrollbar-thumb:hover {
+				background-color: var(--vscode-scrollbarSlider-hoverBackground);
+			}
+			::-webkit-scrollbar-thumb:active {
+				background-color: var(--vscode-scrollbarSlider-activeBackground);
+			}
+			::highlight(find-highlight) {
+				background-color: var(--vscode-editor-findMatchHighlightBackground);
+			}
+			::highlight(current-find-highlight) {
+				background-color: var(--vscode-editor-findMatchBackground);
+			}`;
+
+		/**
+		 * @param {boolean} allowMultipleAPIAcquire
+		 * @param {*} [state]
+		 * @return {string}
+		 */
+		function getVsCodeApiScript(allowMultipleAPIAcquire, state) {
+			const encodedState = state ? encodeURIComponent(state) : undefined;
+			return /* js */`
+					globalThis.acquireVsCodeApi = (function() {
+						const originalPostMessage = window.parent['${vscodePostMessageFuncName}'].bind(window.parent);
+						const doPostMessage = (channel, data, transfer) => {
+							originalPostMessage(channel, data, transfer);
+						};
+
+						let acquired = false;
+
+						let state = ${state ? `JSON.parse(decodeURIComponent("${encodedState}"))` : undefined};
+
+						return () => {
+							if (acquired && !${allowMultipleAPIAcquire}) {
+								throw new Error('An instance of the VS Code API has already been acquired');
+							}
+							acquired = true;
+							return Object.freeze({
+								postMessage: function(message, transfer) {
+									doPostMessage('onmessage', { message, transfer }, transfer);
+								},
+								setState: function(newState) {
+									state = newState;
+									doPostMessage('do-update-state', JSON.stringify(newState));
+									return newState;
+								},
+								getState: function() {
+									return state;
+								}
+							});
+						};
+					})();
+					delete window.parent;
+					delete window.top;
+					delete window.frameElement;
+				`;
+		}
+
+		/**
+		 * Attempts to register a service worker with retry logic.
+		 * On some platforms (particularly Linux), service worker registration can fail
+		 * with "InvalidStateError: The document is in an invalid state" due to timing issues.
+		 * @param {string} swPath
+		 * @param {number} maxRetries
+		 * @param {number} baseDelay
+		 * @returns {Promise<ServiceWorkerRegistration>}
+		 */
+		const registerServiceWorkerWithRetry = async (swPath, maxRetries = 3, baseDelay = 100) => {
+			let lastError;
+			for (let attempt = 0; attempt <= maxRetries; attempt++) {
+				try {
+					return await navigator.serviceWorker.register(swPath);
+				} catch (error) {
+					lastError = error;
+					// Check if this is a retryable error (InvalidStateError on Linux)
+					const isInvalidStateError = error instanceof Error &&
+						(error.name === 'InvalidStateError' || error.message.includes('InvalidStateError') || error.message.includes('invalid state'));
+
+					if (isInvalidStateError && attempt < maxRetries) {
+						const delay = baseDelay * Math.pow(2, attempt);
+						console.log(`Service worker registration failed with InvalidStateError, retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+						await new Promise(r => setTimeout(r, delay));
+						continue;
+					}
+					throw error;
+				}
+			}
+			throw lastError;
+		};
+
+		/** @type {Promise<void>} */
+		const workerReady = new Promise((resolve, reject) => {
+			if (disableServiceWorker) {
+				return resolve();
+			}
+
+			if (!areServiceWorkersEnabled()) {
+				return reject(new Error('Service Workers are not enabled. Webviews will not work. Try disabling private/incognito mode.'));
+			}
+
+			const swPath = encodeURI(`service-worker.js?v=${expectedWorkerVersion}&vscode-resource-base-authority=${searchParams.get('vscode-resource-base-authority')}&id=${ID}&remoteAuthority=${searchParams.get('remoteAuthority') ?? ''}`);
+			registerServiceWorkerWithRetry(swPath)
+				.then(async registration => {
+					/**
+					 * @param {MessageEvent} event
+					 */
+					const versionHandler = async (event) => {
+						if (event.data.channel !== 'version') {
+							return;
+						}
+
+						navigator.serviceWorker.removeEventListener('message', versionHandler);
+						if (event.data.version === expectedWorkerVersion) {
+							return resolve();
+						} else {
+							console.log(`Found unexpected service worker version. Found: ${event.data.version}. Expected: ${expectedWorkerVersion}`);
+							console.log(`Attempting to reload service worker`);
+
+							// If we have the wrong version, try once (and only once) to unregister and re-register
+							// Note that `.update` doesn't seem to work desktop electron at the moment so we use
+							// `unregister` and `register` here.
+							return registration.unregister()
+								.then(() => navigator.serviceWorker.register(swPath))
+								.finally(() => { resolve(); });
+						}
+					};
+					navigator.serviceWorker.addEventListener('message', versionHandler);
+
+					const postVersionMessage = (/** @type {ServiceWorker} */ controller) => {
+						controller.postMessage({ channel: 'version' });
+					};
+
+					// At this point, either the service worker is ready and
+					// became our controller, or we need to wait for it.
+					// Note that navigator.serviceWorker.controller could be a
+					// controller from a previously loaded service worker.
+					const currentController = navigator.serviceWorker.controller;
+					if (currentController?.scriptURL.endsWith(swPath)) {
+						// service worker already loaded & ready to receive messages
+						postVersionMessage(currentController);
+					} else {
+						if (currentController) {
+							console.log(`Found unexpected service worker controller. Found: ${currentController.scriptURL}. Expected: ${swPath}. Waiting for controllerchange.`);
+						} else {
+							console.log(`No service worker controller found. Waiting for controllerchange.`);
+						}
+
+						// Either there's no controlling service worker, or it's an old one.
+						// Wait for it to change before posting the message
+						const onControllerChange = () => {
+							navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange);
+							if (navigator.serviceWorker.controller) {
+								postVersionMessage(navigator.serviceWorker.controller);
+							} else {
+								return reject(new Error('No controller found.'));
+							}
+						};
+						navigator.serviceWorker.addEventListener('controllerchange', onControllerChange);
+					}
+				}).catch(error => {
+					if (!onElectron && error instanceof Error && error.message.includes('user denied permission')) {
+						return reject(new Error(`Could not register service worker. Please make sure third party cookies are enabled: ${error}`));
+					}
+					return reject(new Error(`Could not register service worker: ${error}.`));
+				});
+		});
+
+		/**
+		 *  @type {import('../webviewMessages').WebviewHostMessaging}
+		 */
+		const hostMessaging = new class HostMessaging {
+
+			constructor() {
+				this.channel = new MessageChannel();
+
+				/** @type {Map<string, Array<(event: MessageEvent, data: any) => void>>} */
+				this.handlers = new Map();
+
+				this.channel.port1.onmessage = (e) => {
+					const channel = e.data.channel;
+					const handlers = this.handlers.get(channel);
+					if (handlers) {
+						for (const handler of handlers) {
+							handler(e, e.data.args);
+						}
+					} else {
+						console.log('no handler for ', e);
+					}
+				};
+			}
+
+			postMessage(channel, data, transfer) {
+				this.channel

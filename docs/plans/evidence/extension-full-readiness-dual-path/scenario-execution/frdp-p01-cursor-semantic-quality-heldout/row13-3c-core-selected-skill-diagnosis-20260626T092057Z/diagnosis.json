@@ -1,0 +1,120 @@
+{
+  "schema": "xiigen.row13_3c.core_selected_skill_diagnosis.v1",
+  "generated_utc": "2026-06-26T09:20:57Z",
+  "subagent_id_or_NONE": "Row13.3c-bounded-sub-agent",
+  "verdict": "NEEDS_STAGED_CANDIDATE_INJECTION",
+  "claim_scope": "Row13.3c core selected-skill diagnosis only",
+  "evidence_scope": [
+    "runtime request JSON",
+    "runtime core response JSON",
+    "runtime core trace JSON",
+    "runtime host trace JSON",
+    "XiigenExtensionApiService code",
+    "SkillSelectionMachine code",
+    "SkillSelectionContracts code",
+    "selected tests",
+    "common checkpoint manifest",
+    "nearby staged-candidate evidence"
+  ],
+  "actions_not_performed": [
+    "code edit",
+    "test run",
+    "build run",
+    "UI rerun",
+    "training",
+    "checkpoint mutation",
+    "locator mutation",
+    "promotion",
+    "git stage",
+    "git commit",
+    "git push"
+  ],
+  "runtime_request": {
+    "method": "prompt-to-task",
+    "requestedSkills": [
+      "output-skepticism"
+    ],
+    "availableSkills": [
+      "output-skepticism",
+      "phase-completion-packager",
+      "verification-before-completion",
+      "plan-review"
+    ],
+    "userPromptOrTaskText": "The user challenges whether a reported pass is real when the evidence only proves a boundary marker and does not prove the broader readiness claim.",
+    "redactedInputReachedCoreAsTopLevelField": false,
+    "targetLocator": null
+  },
+  "runtime_response": {
+    "success": true,
+    "status": "core_boundary_partial_no_semantic_quality_claim",
+    "selectedSkills": [
+      "verification-before-completion"
+    ],
+    "skill_selection_confidence": "0.85",
+    "skill_selection_evidence": "SEMANTIC_SKILL_SELECTION_PIPELINE_BOUNDARY,SKILL_SELECTION_SKILL_UNIT_EXECUTED,SKILL_SELECTION_CHECKPOINT_SECTION,skill_selection:semantic_quality_claimed=false,api_evidence_compacted=true",
+    "skill_selection_method_rationale": "method=prompt-to-task;selected=verification-before-completion;reason=semantic_task_and_host_skill_surface;evidence=SEMANTIC_SKILL_SELECTION_PIPELINE_BOUNDARY,SKILL_SELECTION_SKILL_UNIT_EXECUTED,SKILL_SELECTION_CHECKPOINT_SECTION,skill_selection:semantic_quality_claimed=false,api_evidence_compacted=true",
+    "commonSkillSelectionCheckpointRef": "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json",
+    "commonSkillSelectionCheckpointSha256": "737a5fad7c82851728a529dfc5890c22b4154cede7e639403a9e135d821e56ef"
+  },
+  "service_behavior": {
+    "requestedSkillsPassedToSkillSelectionMachine": false,
+    "requestedSkillsTreatment": "fallback/hint surface only",
+    "hardConstraint": false,
+    "code_refs": [
+      "43.SmartSkillsDomain/XiigenExtensionApiService.cs:378-394 constructs SkillSelectionRequest without RequestedSkills",
+      "43.SmartSkillsDomain/XiigenExtensionApiService.cs:396-402 returns active trained decision when SelectedSkillIds.Count > 0",
+      "43.SmartSkillsDomain/XiigenExtensionApiService.cs:456-506 builds requested-skill fallback only after no selected trained decision path"
+    ]
+  },
+  "machine_behavior": {
+    "skillSelectionRequestHasRequestedSkillsField": false,
+    "semanticUnitPriority": [
+      "TryDecideWithSkillSelection",
+      "PromptContext",
+      "ResultGap",
+      "OutputValidation",
+      "TaskCompletion",
+      "IntermediateChecks",
+      "SkillCandidates",
+      "Routing",
+      "TaskType",
+      "TaskUnderstanding",
+      "PromptUnderstanding"
+    ],
+    "code_refs": [
+      "43.SmartSkillsDomain/SkillSelectionContracts.cs:9-14",
+      "43.SmartSkillsDomain/SkillSelectionMachine.cs:107-111",
+      "43.SmartSkillsDomain/SkillSelectionMachine.cs:173-177",
+      "43.SmartSkillsDomain/SkillSelectionMachine.cs:954-978"
+    ]
+  },
+  "staged_candidate_participation": {
+    "participated_in_runtime_request": false,
+    "why": "TargetLocator was null, so ResolveRequestLoadState returned common/default asset state.",
+    "code_ref": "43.SmartSkillsDomain/XiigenExtensionApiService.cs:283-287",
+    "candidate_evidence": [
+      "row13-1b-candidate-training-export-20260626T072146Z/staged-candidate/skill-selection-checkpoint.json contains output-skepticism",
+      "row13-1b-candidate-training-export-20260626T072146Z/row13-1b-scenario-results.jsonl reports candidate selected output-skepticism while common selected verification-before-completion, plan-review"
+    ]
+  },
+  "classification_notes": {
+    "core_bug": "Not as current code contract: current core priority rule intentionally returns trained semantic decision before requested-skill fallback. A code fix is only needed if product requirement changes RequestedSkills into hard constraint.",
+    "model_training_issue": "Common checkpoint is stale/wrong for this held-out row, but nearby staged-candidate evidence indicates a trained candidate already fixes it; no new DPO/model retraining is the next necessary work from this evidence.",
+    "request_surface_issue": "RequestedSkills and AvailableSkills pass-through worked. Missing TargetLocator/user-adaptive asset binding is the request/config gap if Row13.3c must use the staged candidate.",
+    "expected_priority_rule": "Yes for the current common-state core path: semantic unit decision outranks requested-skill fallback when it selects a skill."
+  },
+  "next_bounded_work_order": {
+    "type": "staged_candidate_injection_config",
+    "summary": "Pass an approved TargetLocator/user-adaptive asset root into the Cursor UI/core request path, rerun only bounded Row13.3c scenario, and verify core loads the staged candidate and selects output-skepticism.",
+    "forbidden": [
+      "training",
+      "checkpoint mutation",
+      "locator mutation unless explicitly scoped as config binding artifact",
+      "promotion",
+      "readiness claim",
+      "semantic quality claim",
+      "git actions"
+    ],
+    "secondary_optional_work": "Add/adjust core contract tests only if Luba decides RequestedSkills must be hard constraints rather than fallback/no-semantic-authority hints."
+  }
+}

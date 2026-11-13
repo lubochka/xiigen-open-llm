@@ -1,0 +1,98 @@
+{
+    "slice":  "Cursor UI/session preflight recovery",
+    "createdAt":  "2026-06-27T08:38:43.6550159+03:00",
+    "verdict":  "BLOCKED_WINDOWS_LOCK_OR_PIN",
+    "productReadinessCountRemains":  0,
+    "promptSubmitted":  false,
+    "secretsTyped":  false,
+    "trainingPerformed":  false,
+    "loginAttempted":  false,
+    "target":  {
+                   "found":  true,
+                   "title":  "[Extension Development Host] cursor-xiigen-smart-skills - Cursor",
+                   "processName":  "Cursor",
+                   "pid":  11344,
+                   "handle":  "0x2205FE",
+                   "bounds":  {
+                                  "left":  460,
+                                  "top":  140,
+                                  "right":  1460,
+                                  "bottom":  940,
+                                  "width":  1000,
+                                  "height":  800
+                              },
+                   "reason":  "title contains Extension Development Host and is a relevant Cursor/Code-family visible window"
+               },
+    "evidence":  {
+                     "windowInventory":  "window-inventory.json and window-inventory.txt",
+                     "selectedTarget":  "selected-target.json",
+                     "screenshots":  [
+                                         {
+                                             "Name":  "screenshot-01-before-target-printwindow.png",
+                                             "Length":  10327
+                                         },
+                                         {
+                                             "Name":  "screenshot-02-before-target-screenregion.png",
+                                             "Length":  875982
+                                         },
+                                         {
+                                             "Name":  "screenshot-03-before-storage-error-printwindow.png",
+                                             "Length":  12264
+                                         },
+                                         {
+                                             "Name":  "screenshot-04-before-storage-error-screenregion.png",
+                                             "Length":  103682
+                                         }
+                                     ],
+                     "redaction":  "redaction-log.json"
+                 },
+    "observations":  [
+                         "Relevant Cursor Extension Development Host window exists in Win32 inventory.",
+                         "Screen-region screenshot shows Windows lock/PIN prompt; account display name redacted.",
+                         "Cursor target PrintWindow screenshot shows Cursor login screen with Log In / Sign Up; no email visible or recorded.",
+                         "Cursor Storage Error modal exists and was captured before action; modal says Cursor was unable to open local storage and offers Restart/Quit.",
+                         "No prompt was submitted and no credentials/PIN/secrets were typed."
+                     ],
+    "actionsTaken":  [
+                         "Created allowed evidence folder only.",
+                         "Enumerated relevant windows with title, process id, handle, and bounds.",
+                         "Captured before-action target and modal screenshots.",
+                         "Redacted Windows account display name from screen-region screenshots.",
+                         "Stopped before any UI interaction because Windows lock/PIN blocks safe Cursor UI preflight."
+                     ],
+    "actionsNotTaken":  [
+                            "Did not focus Cursor target because the desktop is blocked by Windows lock/PIN.",
+                            "Did not dismiss Storage Error because the session is locked and the safe next action is human unlock first.",
+                            "Did not open browser login or enter credentials.",
+                            "Did not submit any prompt."
+                        ],
+    "blockers":  [
+                     {
+                         "kind":  "Windows lock/PIN",
+                         "evidence":  "screenshot-02-before-target-screenregion.png",
+                         "effect":  "Real UI is blocked before Cursor interaction."
+                     },
+                     {
+                         "kind":  "Cursor login required visible",
+                         "evidence":  "screenshot-01-before-target-printwindow.png",
+                         "effect":  "After unlock, Cursor account/session likely still needs login before prompt scenario."
+                     },
+                     {
+                         "kind":  "Cursor Storage Error modal",
+                         "evidence":  "screenshot-03-before-storage-error-printwindow.png",
+                         "effect":  "After unlock, safe dismissal or restart decision is needed before scenario."
+                     }
+                 ],
+    "proven":  [
+                   "Target Cursor Extension Development Host window is present in the window inventory.",
+                   "Windows lock/PIN is currently blocking real desktop UI access.",
+                   "Cursor is not ready for prompt submission in this preflight slice."
+               ],
+    "notProven":  [
+                      "Target was not proven focused or interactable.",
+                      "Signed-in Cursor account/session was not proven.",
+                      "Extension product readiness was not proven.",
+                      "Token savings, quality, learnability, training, and runtime prompt flow were not proven."
+                  ],
+    "nextBoundedAction":  "Human unlocks Windows session without sharing PIN/password; then rerun the same Cursor UI/session preflight and decide safe handling of Storage Error and Cursor login before any prompt submission."
+}

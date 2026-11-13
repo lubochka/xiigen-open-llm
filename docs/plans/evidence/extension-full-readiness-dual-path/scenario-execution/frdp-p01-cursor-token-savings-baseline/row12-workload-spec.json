@@ -1,0 +1,219 @@
+{
+  "schema_version": "row12-workload-spec/v1",
+  "status": "SPEC_READY",
+  "artifact_type": "planning_spec_only",
+  "scenario": {
+    "row": 12,
+    "scenario_id": "frdp-p01-cursor-token-savings-baseline",
+    "host": "Cursor",
+    "purpose_ru": "Зафиксировать точный no-send workload, hash, tokenizer/accounting source, baseline/adaptive pairing fields и quality guard до любого token measurement.",
+    "active_task_sentence_source": "Текущий bounded work order от Luba: Create the row 12 workload spec packet for `frdp-p01-cursor-token-savings-baseline`."
+  },
+  "not_the_task": [
+    "run token tests",
+    "run builds",
+    "measure token savings",
+    "claim token savings",
+    "claim readiness",
+    "edit scenario board",
+    "stage",
+    "commit",
+    "push"
+  ],
+  "evidence_read": [
+    "docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-scenario-board.md",
+    "docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-scenario-board.json",
+    "docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-action-plan.md",
+    "docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-action-plan.json",
+    "docs/plans/evidence/extension-full-readiness-dual-path/phase-03-command-output/03-dotnet-token-trace.txt",
+    "Tests/ExtensionTokenTraceAccountingTests.cs",
+    "43.SmartSkillsDomain/TokenTraceAccounting.cs"
+  ],
+  "found_in_existing_tests_and_evidence": {
+    "board_row_12_status": "automated/core/API guard-only evidence exists; local Cursor token scenario not run; no joined pass; token savings not claimed",
+    "phase_03_token_trace_log": "Read-only evidence log reports ExtensionTokenTraceAccountingTests total=5 passed=5 exit_code=0. This work order did not rerun tests.",
+    "test_contract": [
+      "trace requires stable schema, scenario_id, pair_id, host_name, method, debug_enabled, prompt_hash, visible_answer_hash, tokenizer fields, token counts, redaction flags and artifact refs",
+      "baseline/adaptive validation requires same scenario_id, pair_id, host_name, method, debug_enabled, prompt_hash, tokenizer_name, tokenizer_version and tokenizer_accounting_type",
+      "baseline mode must be baseline and adaptive mode must be adaptive",
+      "token_savings_claimed, semantic_quality_claimed and learnability_claimed are forbidden in trace schema phase",
+      "token delta alone cannot pass quality"
+    ],
+    "token_trace_accounting_source": {
+      "schema_version": "xiigen.extension_token_trace.v1",
+      "tokenizer_name": "xiigen-heuristic-word-punctuation",
+      "tokenizer_version": "v1",
+      "tokenizer_accounting_type": "heuristic",
+      "baseline_mode": "baseline",
+      "adaptive_mode": "adaptive"
+    }
+  },
+  "workload": {
+    "exact_prompt_exists_in_prior_evidence": false,
+    "why_new_prompt_is_allowed_ru": "Prior evidence had only unit-test accounting fixture text, not a Cursor row 12 workload. This prompt is synthetic, no-send, contains no private data, requires no external AI, performs no mutation, and forces prompt_to_task/task_to_plan/task_to_skills structure for quality guarding.",
+    "canonical_line_endings": "LF",
+    "marker": "FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1",
+    "pair_id": "frdp-p01-row12-cursor-token-baseline-v1",
+    "method": "prompt-to-task",
+    "host_path_label": "Cursor no-send local extension runtime",
+    "external_ai_send": false,
+    "prompt_lines": [
+      "[FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1]",
+      "Host: Cursor no-send local extension runtime.",
+      "Scenario: frdp-p01-cursor-token-savings-baseline.",
+      "User request: Convert this synthetic request into a bounded Smart Skills execution plan without calling external AI.",
+      "Requirements:",
+      "1. Preserve the marker and scenario id in references.",
+      "2. Produce a prompt_to_task result with task_id, task_title, constraints, and acceptance_gates.",
+      "3. Produce a task_to_plan result with three ordered steps and one verification gate per step.",
+      "4. Produce a task_to_skills result selecting skills from this allowed set only: prompt-to-task, task-to-plan, task-to-skills, evidence-ledger.",
+      "5. State non_claims: no token savings claim, no semantic quality claim, no readiness claim, no training, no checkpoint promotion, no locator update.",
+      "6. Return deterministic structured text with sections: task, plan, skills, references, non_claims."
+    ],
+    "prompt_hash_rule": "UTF-8 bytes of exact prompt_lines joined by LF, no Markdown fences, SHA-256 lowercase hex with sha256: prefix; must match TokenTraceAccounting.HashText semantics.",
+    "prompt_hash": "sha256:7140fd94d9e6df18b4abef4f13317146ef41a5db7ba1953e8579ffcb783cb374"
+  },
+  "tokenizer_accounting": {
+    "schema_version": "xiigen.extension_token_trace.v1",
+    "tokenizer_name": "xiigen-heuristic-word-punctuation",
+    "tokenizer_version": "v1",
+    "tokenizer_accounting_type": "heuristic",
+    "source_file": "43.SmartSkillsDomain/TokenTraceAccounting.cs",
+    "source_file_sha256": "d012a59912c60de27fabf822ea032937f1a03407cede1d856bda6d554f78168f",
+    "test_source_file": "Tests/ExtensionTokenTraceAccountingTests.cs",
+    "test_source_file_sha256": "95b3ea183e641a639021bb0ff659ff158e6e7e6292c187e09cfe4d2aacfdebdc",
+    "unknowns_to_record_before_any_future_claim": [
+      "repo commit or explicit dirty-worktree status",
+      "compiled SmartSkillsDomain assembly path and SHA-256 if used",
+      "Cursor extension build/version/hash or exact blocker if unavailable",
+      "TokenTraceAccounting.cs source hash read back at run time",
+      "schema/tokenizer constants read back from produced traces"
+    ]
+  },
+  "before_after_pairing": {
+    "same_fields_required": [
+      "scenario_id",
+      "pair_id",
+      "host_name",
+      "host_path_label",
+      "method",
+      "core_api_path",
+      "debug_enabled",
+      "prompt_hash",
+      "tokenizer_name",
+      "tokenizer_version",
+      "tokenizer_accounting_type",
+      "isolation_mode",
+      "external_ai_send",
+      "contains_raw_private_content",
+      "prompt_redacted",
+      "answer_redacted"
+    ],
+    "fixed_values": {
+      "scenario_id": "frdp-p01-cursor-token-savings-baseline",
+      "pair_id": "frdp-p01-row12-cursor-token-baseline-v1",
+      "host_name": "Cursor",
+      "host_path_label": "Cursor no-send local extension runtime",
+      "method": "prompt-to-task",
+      "core_api_path": "prompt-to-task",
+      "debug_enabled_recommended": true,
+      "prompt_hash": "sha256:7140fd94d9e6df18b4abef4f13317146ef41a5db7ba1953e8579ffcb783cb374",
+      "tokenizer_name": "xiigen-heuristic-word-punctuation",
+      "tokenizer_version": "v1",
+      "tokenizer_accounting_type": "heuristic",
+      "external_ai_send": false,
+      "contains_raw_private_content": false,
+      "token_savings_claimed": false,
+      "semantic_quality_claimed": false,
+      "learnability_claimed": false
+    },
+    "baseline_mode": "baseline",
+    "candidate_mode": "adaptive",
+    "mismatch_result": "measurement_not_comparable"
+  },
+  "quality_guard": {
+    "rubric_type": "structured_assertions",
+    "numeric_semantic_score_available": false,
+    "critical_failure_if_answer_loses": [
+      "prompt_to_task",
+      "task_to_plan",
+      "task_to_skills",
+      "marker reference",
+      "scenario reference",
+      "non_claims",
+      "deterministic shortcut disclosure"
+    ],
+    "allowed_skill_set": [
+      "prompt-to-task",
+      "task-to-plan",
+      "task-to-skills",
+      "evidence-ledger"
+    ],
+    "assertions": [
+      "pair_validation_errors_count == 0",
+      "both traces keep token_savings_claimed=false, semantic_quality_claimed=false and learnability_claimed=false",
+      "baseline and adaptive responses preserve marker FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1",
+      "baseline and adaptive responses preserve scenario id frdp-p01-cursor-token-savings-baseline",
+      "prompt_to_task output contains task_id, task_title, constraints and acceptance_gates",
+      "task_to_plan output contains exactly three ordered steps",
+      "each plan step has one verification gate",
+      "task_to_skills output exists",
+      "skill selection includes prompt-to-task, task-to-plan and task-to-skills",
+      "every selected skill is from the allowed set",
+      "references include marker and scenario id",
+      "non_claims include no token savings claim, no semantic quality claim, no readiness claim, no training, no checkpoint promotion and no locator update",
+      "response is not generic: exact marker, exact scenario id, required sections and row-specific non-claims are present",
+      "deterministic shortcuts are disclosed: synthetic no-send workload, heuristic tokenizer/accounting, no external AI send and token delta alone not quality proof"
+    ],
+    "pass_threshold": {
+      "quality_assertions_total": 14,
+      "quality_assertions_passed_required": 14,
+      "critical_failures_count_required": 0,
+      "external_ai_send_required": false,
+      "token_savings_claimed_required": false,
+      "semantic_quality_claimed_required": false,
+      "readiness_claimed_required": false
+    },
+    "token_delta_observation_threshold": {
+      "eligible_observation_rule": "adaptive.token_count_total < baseline.token_count_total",
+      "claim_allowed_by_this_spec": false,
+      "if_not_less_than_baseline": "fails token-reduction observation but may remain useful evidence"
+    }
+  },
+  "required_later_measurement_artifacts": [
+    "baseline-request.json",
+    "baseline-response.json",
+    "baseline-core-trace.json",
+    "baseline-command-result.json",
+    "baseline-command-output.txt",
+    "baseline-command-error.txt",
+    "adaptive-request.json",
+    "adaptive-response.json",
+    "adaptive-core-trace.json",
+    "adaptive-command-result.json",
+    "adaptive-command-output.txt",
+    "adaptive-command-error.txt",
+    "token-traces.json",
+    "token-traces.jsonl",
+    "pair-validation.json",
+    "quality-guard.json",
+    "execution-report.md",
+    "execution-report.json",
+    "Cursor host-visible candidate evidence or exact blocker for the same marker"
+  ],
+  "explicit_non_claims": [
+    "this spec does not prove token savings",
+    "this spec does not prove product readiness",
+    "this spec does not prove full Cursor readiness",
+    "this spec does not prove semantic quality improvement",
+    "this spec does not prove learnability",
+    "this spec does not prove training",
+    "this spec does not prove checkpoint promotion",
+    "this spec does not prove locator update"
+  ],
+  "changed_files": [
+    "docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-token-savings-baseline/row12-workload-spec.md",
+    "docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-token-savings-baseline/row12-workload-spec.json"
+  ],
+  "next_worker_task_after_review_ru": "После review принять этот spec и запустить отдельного bounded measurement worker: выполнить fixed no-send Cursor baseline/adaptive workload по точному prompt hash, same host/debug/tokenizer/core API path, no external AI send; создать baseline/adaptive traces, pair-validation.json, quality-guard.json, token delta observation, host-visible candidate evidence или exact blocker; не claim token savings/readiness."
+}

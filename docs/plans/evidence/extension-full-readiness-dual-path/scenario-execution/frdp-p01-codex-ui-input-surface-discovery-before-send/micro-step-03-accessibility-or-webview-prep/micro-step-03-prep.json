@@ -1,0 +1,171 @@
+{
+  "artifact_type": "micro_step_03_accessibility_or_webview_prep",
+  "language": "ru",
+  "micro_step": "Микро-шаг 03",
+  "scenario": "frdp-p01-codex-ui-input-surface-discovery-before-send",
+  "purpose_ru": "Найти composer/input другим безопасным методом после того, как shallow UIA ControlView не подтвердил input/composer, и подготовить следующий микро-сценарий без выполнения.",
+  "prep_only": true,
+  "product_runtime_ui_tests_executed": false,
+  "target_window": {
+    "process": "Codex",
+    "pid": 13508,
+    "handle_hex": "0x1038E",
+    "title": "Codex",
+    "foreground": true,
+    "visible": true,
+    "bounds": {
+      "left": -2071,
+      "top": 204,
+      "width": 1283,
+      "height": 733
+    }
+  },
+  "previous_micro_steps_context": {
+    "micro_step_01": "Target Codex window PID 13508, handle 0x1038E, foreground/visible, bounds left=-2071 top=204 width=1283 height=733.",
+    "micro_step_02": "Shallow bounded UIA ControlView found no confirmed input/composer; 8 candidates rejected; no typing/clicking/clipboard/screenshot."
+  },
+  "selected_primary_method": {
+    "name": "accessibility_focus_query_without_sending",
+    "why_ru": "Это более безопасный локальный read-only метод: он не повторяет тот же shallow UIA ControlView вслепую, не требует Electron DevTools attach, не выполняет ввод и не отправляет сообщения.",
+    "must_not_repeat_blindly": "same shallow UIA ControlView"
+  },
+  "selected_fallback_method": {
+    "name": "bounded_electron_webview_inspection_without_typing_or_sending",
+    "why_ru": "Использовать только если уже существует безопасный локальный read-only DevTools endpoint у PID 13508; не включать endpoint, не перезапускать Codex, не выполнять Runtime.evaluate/Input.*.",
+    "feasibility_required": true
+  },
+  "global_limits": {
+    "total_runtime_stop_before_minutes": 8,
+    "per_operation_timeout_required": true,
+    "required_literal_timeout": "timeout",
+    "partial_evidence_after_every_substep": true,
+    "required_literal_partial_evidence": "partial evidence"
+  },
+  "forbidden_actions_ru": [
+    "не использовать слепой ввод",
+    "не отправлять",
+    "не печатать",
+    "не кликать",
+    "не вставлять paste",
+    "не нажимать Send",
+    "не нажимать Enter",
+    "не использовать clipboard",
+    "не выполнять hotkeys",
+    "не запускать product/runtime/UI/tests",
+    "не делать commit/push"
+  ],
+  "primary_steps": [
+    {
+      "id": "03.0",
+      "title_ru": "Создать start marker",
+      "timeout": "shell timeout 10 seconds",
+      "command_or_step_ru": "Записать micro-step-03-start-marker.json с target window, выбранным методом, запретами и product_readiness_claim=false.",
+      "partial_evidence": "micro-step-03-start-marker.json",
+      "stop_on_failure": true
+    },
+    {
+      "id": "03.1",
+      "title_ru": "Повторно проверить target window без UI interaction",
+      "timeout": "shell timeout 15 seconds; Win32 read-only budget 5 seconds",
+      "command_or_step_ru": "Read-only Win32 recheck: hwnd 0x1038E exists, PID 13508 matches, title Codex, visible=true, foreground=true, bounds match left=-2071 top=204 width=1283 height=733.",
+      "partial_evidence": "micro-step-03-window-recheck.json",
+      "blocker_if_failed": "TARGET_WINDOW_RECHECK_FAILED"
+    },
+    {
+      "id": "03.2",
+      "title_ru": "Запросить текущий accessibility focus без отправки",
+      "timeout": "shell timeout 20 seconds; FocusedElement timeout 750 ms; property timeout 350 ms",
+      "command_or_step_ru": "Query AutomationElement.FocusedElement; record process id, control type, class, automation id hash, name length/hash only, bounds, focusable/enabled/offscreen, patterns, within target bounds. Do not SetFocus, click, read Value/Text content, type, paste, or send.",
+      "partial_evidence": "micro-step-03-accessibility-focus-baseline.json",
+      "blocker_if_failed": "ACCESSIBILITY_FOCUS_QUERY_TIMEOUT"
+    },
+    {
+      "id": "03.3",
+      "title_ru": "Выполнить bounded accessibility query по input-like predicate",
+      "timeout": "shell timeout 60 seconds; root-from-hwnd timeout 750 ms; property timeout 350 ms; navigation timeout 750 ms; traversal budget 35 seconds",
+      "command_or_step_ru": "From AutomationElement.FromHandle(0x1038E), use bounded RawView or ContentView predicate query for Edit/Document/Custom/Pane only when focusable or text/value/legacy pattern exists; capture pattern metadata only, no message text and no ValuePattern.Value.",
+      "partial_evidence": "micro-step-03-accessibility-candidates.json",
+      "blocker_if_failed": "ACCESSIBILITY_BOUNDED_QUERY_TIMEOUT"
+    },
+    {
+      "id": "03.4",
+      "title_ru": "Классифицировать locator без interaction",
+      "timeout": "shell timeout 15 seconds",
+      "command_or_step_ru": "Accept exactly one locator only if enabled/focusable or editable pattern evidence exists, bounds are non-empty and inside target window, not whole-window/root/title/sidebar/history, and geometry is composer-sized near expected input area.",
+      "partial_evidence": "micro-step-03-locator-classification.json",
+      "success_if": "INPUT_SURFACE_CONFIRMED_PRE_SEND_ACCESSIBILITY_OR_WEBVIEW",
+      "blocker_if_failed": "INPUT_COMPOSER_NOT_CONFIRMED_AFTER_ACCESSIBILITY_QUERY"
+    }
+  ],
+  "fallback_steps": [
+    {
+      "id": "03.F1",
+      "title_ru": "Проверить наличие уже существующего safe local DevTools endpoint",
+      "timeout": "shell timeout 20 seconds",
+      "command_or_step_ru": "Read Win32_Process.CommandLine for PID 13508 and local listening TCP ports; continue only if an existing endpoint is bound to 127.0.0.1 or ::1. Do not add flags or restart Codex.",
+      "partial_evidence": "micro-step-03-webview-feasibility.json",
+      "blocker_if_failed": "WEBVIEW_READONLY_ENDPOINT_NOT_AVAILABLE"
+    },
+    {
+      "id": "03.F2",
+      "title_ru": "Прочитать только redacted target metadata",
+      "timeout": "shell timeout 20 seconds; HTTP request timeout 2 seconds each",
+      "command_or_step_ru": "GET /json/version and /json/list only; redact/hash target titles/types/urls where private; do not call Runtime.evaluate, Input.*, Page.*, DOM mutation, or JavaScript.",
+      "partial_evidence": "micro-step-03-webview-targets-redacted.json",
+      "blocker_if_failed": "WEBVIEW_READONLY_METADATA_UNSAFE"
+    },
+    {
+      "id": "03.F3",
+      "title_ru": "Если безопасно, снять read-only accessibility snapshot",
+      "timeout": "shell timeout 45 seconds; CDP call timeout 5 seconds",
+      "command_or_step_ru": "Call only read-only accessibility metadata such as Accessibility.getFullAXTree; record role/name length/hash, editable/focusable states and bounds if available; no Runtime.evaluate, no Input.*, no DOM mutation.",
+      "partial_evidence": "micro-step-03-webview-ax-snapshot-redacted.json",
+      "classification_evidence": "micro-step-03-webview-locator-classification.json",
+      "blocker_if_failed": "INPUT_COMPOSER_NOT_CONFIRMED_AFTER_WEBVIEW_QUERY"
+    }
+  ],
+  "success_criteria": {
+    "status": "INPUT_SURFACE_CONFIRMED_PRE_SEND_ACCESSIBILITY_OR_WEBVIEW",
+    "requires_confirmed_locator": true,
+    "requires_no_sending": true,
+    "requires_no_typing_clicking_paste_enter_clipboard_blind_input": true,
+    "requires_target_window_rechecked": true,
+    "requires_report_literal": "не доказывает готовность продукта"
+  },
+  "blocker_criteria": [
+    "TARGET_WINDOW_RECHECK_FAILED",
+    "ACCESSIBILITY_FOCUS_QUERY_TIMEOUT",
+    "ACCESSIBILITY_BOUNDED_QUERY_TIMEOUT",
+    "INPUT_COMPOSER_NOT_CONFIRMED_AFTER_ACCESSIBILITY_QUERY",
+    "WEBVIEW_READONLY_ENDPOINT_NOT_AVAILABLE",
+    "WEBVIEW_READONLY_METADATA_UNSAFE",
+    "INPUT_COMPOSER_NOT_CONFIRMED_AFTER_WEBVIEW_QUERY",
+    "RUNTIME_APPROACHING_8_MINUTES_WITH_PARTIAL_EVIDENCE"
+  ],
+  "exact_evidence_filenames": [
+    "micro-step-03-start-marker.json",
+    "micro-step-03-window-recheck.json",
+    "micro-step-03-accessibility-focus-baseline.json",
+    "micro-step-03-accessibility-candidates.json",
+    "micro-step-03-locator-classification.json",
+    "micro-step-03-webview-feasibility.json",
+    "micro-step-03-webview-targets-redacted.json",
+    "micro-step-03-webview-ax-snapshot-redacted.json",
+    "micro-step-03-webview-locator-classification.json",
+    "micro-step-03-blocker.json",
+    "micro-step-03-status.json",
+    "micro-step-03-report.md"
+  ],
+  "non_claims_ru": [
+    "Нет Codex UI route pass.",
+    "Нет product readiness claim.",
+    "Нет token savings claim.",
+    "Нет semantic quality claim.",
+    "Нет training/learnability claim.",
+    "Нет checkpoint promotion claim.",
+    "Нет locator update claim.",
+    "Нет full extension readiness claim.",
+    "Этот prep не доказывает готовность продукта."
+  ],
+  "next_work_order_text_ru": "Ты bounded Row21.1 micro-step 03 executor. Выполни только safe input/composer discovery до отправки, не запускай product/runtime/UI/tests и не делай commit/push. Цель: найти подтвержденный input/composer locator для Codex window PID 13508 handle 0x1038E bounds left=-2071 top=204 width=1283 height=733 другим методом после failed shallow UIA. Primary: accessibility focus/query without sending. Fallback: bounded Electron/webview inspection only if already feasible via existing local read-only endpoint. На каждом sub-step используй timeout, сразу пиши partial evidence, остановись до 8 минут. Запрещено: не использовать слепой ввод, не отправлять, не печатать, не кликать, не paste, не Enter, не clipboard, не hotkeys, не Runtime.evaluate/Input.*, не blind input. Создай exact evidence filenames из prep. Успех: confirmed input/composer locator with evidence and no sending. Blocker: no confirmed locator after safe methods with exact evidence. Отчет обязан сказать: не доказывает готовность продукта."
+}

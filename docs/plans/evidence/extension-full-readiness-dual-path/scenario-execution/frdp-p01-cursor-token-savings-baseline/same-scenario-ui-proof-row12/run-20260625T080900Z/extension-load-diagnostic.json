@@ -1,0 +1,119 @@
+{
+  "packet_type": "CURSOR_EXTENSION_LOAD_DIAGNOSTIC_PACKET",
+  "status": "LOAD_FIX_ACCEPT_CANDIDATE",
+  "changed_files": [
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\launch-visible-cursor-row12-corrected.ps1",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\extension-load-diagnostic.json",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\extension-load-diagnostic.md"
+  ],
+  "commands_run": [
+    {
+      "command": "Get-Content package.json",
+      "result": "PASS"
+    },
+    {
+      "command": "Get-Content src/extension.ts",
+      "result": "PASS"
+    },
+    {
+      "command": "Get-Content dist/extension.js",
+      "result": "PASS"
+    },
+    {
+      "command": "Get-ChildItem row12 run folder",
+      "result": "PASS"
+    },
+    {
+      "command": "Get-Content extension-load-diagnostic.md/json",
+      "result": "MISSING_EXPECTED_FILES"
+    },
+    {
+      "command": "Get-Content command-availability-after-corrected-launch.md/json",
+      "result": "PASS"
+    },
+    {
+      "command": "Select-String Cursor logs for extension/load/error signals",
+      "result": "PASS_WITH_DIAGNOSTIC_FINDINGS"
+    },
+    {
+      "command": "Get-Content exthost.log, renderer.log, main.log",
+      "result": "PASS"
+    },
+    {
+      "command": "Get-Content launch-visible-cursor-row12-corrected.ps1",
+      "result": "PASS"
+    },
+    {
+      "command": "PowerShell AST parse launch-visible-cursor-row12-corrected.ps1",
+      "result": "PASS"
+    },
+    {
+      "command": "ConvertFrom-Json package.json and targeted command/activation check",
+      "result": "PASS"
+    },
+    {
+      "command": "Select-String -SimpleMatch for xiigenSmartSkills.panel registration in src/dist",
+      "result": "PASS"
+    },
+    {
+      "command": "Path length comparison for old deep user-data path vs new short temp path",
+      "result": "PASS"
+    }
+  ],
+  "diagnosis": {
+    "package_json_main_points_to_dist_extension_js": true,
+    "engines_vscode": "^1.90.0",
+    "engine_rejection_log_found": false,
+    "activation_event_for_panel_command_present": true,
+    "panel_command_contribution_present": true,
+    "panel_command_id": "xiigenSmartSkills.panel",
+    "panel_command_title": "XIIGen: Open Smart Skills Panel",
+    "source_registers_panel_command": true,
+    "dist_registers_panel_command": true,
+    "command_id_title_mismatch_found": false,
+    "manifest_or_main_fix_needed": false,
+    "cursor_log_loaded_development_extension_path": "c:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills",
+    "corrected_launch_path_intact": true,
+    "extension_host_log_xiigen_activation_seen": false,
+    "expected_reason_for_no_xiigen_activation": "The command was not available/invoked, so onCommand activation did not fire.",
+    "host_storage_errors": [
+      "[storage state.vscdb] open(): Unable to open DB due to Error: SQLITE_CANTOPEN: unable to open database file",
+      "[uncaught exception in main]: Error: SQLITE_CANTOPEN: unable to open database file",
+      "[LocalProcessExtensionHost]: Extension host did not start in 10 seconds",
+      "Extension host (LocalProcess [role: user] pid: 16232) is unresponsive",
+      "Extension Host:user failed opening multiple exthost output log files for writing: no such file or directory"
+    ],
+    "old_deep_user_data_path_length": 197,
+    "old_workspace_state_db_path_length": 264,
+    "example_short_user_data_path_length": 86,
+    "example_short_workspace_state_db_path_length": 153,
+    "root_cause": "The corrected launcher fixed extensionDevelopmentPath quoting but still put Cursor user-data and extensions-dir under the very deep row12 evidence path. Cursor then failed to open its state.vscdb path and extension-host output log paths, leaving the Extension Development Host in an unhealthy state where the XIIGen command contribution did not surface.",
+    "fix_applied": "Launcher now uses a fresh short temp root for Cursor user-data/extensions-dir and passes --extensionDevelopmentPath as one equals-form argument."
+  },
+  "fix_summary": [
+    "Changed launch-visible-cursor-row12-corrected.ps1 to create $shortHostRoot under the system temp path.",
+    "Changed --user-data-dir and --extensions-dir to use that short fresh root instead of the deep row12 evidence folder.",
+    "Changed extensionDevelopmentPath to equals-form: --extensionDevelopmentPath=<full path>.",
+    "Kept launch evidence output corrected-launch-record.json under the row12 run folder."
+  ],
+  "verification_results": {
+    "launcher_ast_parse": "PASS",
+    "package_json_parse": "PASS",
+    "package_main": "./dist/extension.js",
+    "panel_command_title_match_count": 1,
+    "panel_activation_event_match_count": 1,
+    "source_dist_registration_check": "PASS",
+    "node_check_dist_extension_js": "NOT_RUN_NOT_TOUCHED",
+    "npm_run_install_smoke": "NOT_RUN_PACKAGE_SOURCE_DIST_NOT_TOUCHED",
+    "ui_command_availability_after_fix": "NOT_RUN"
+  },
+  "evidence_files": [
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\extension-load-diagnostic.json",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\extension-load-diagnostic.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\command-availability-after-corrected-launch.json",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\user-data\\logs\\20260625T112610\\main.log",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\user-data\\logs\\20260625T112610\\window1\\renderer.log",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\same-scenario-ui-proof-row12\\run-20260625T080900Z\\user-data\\logs\\20260625T112610\\window1\\exthost\\exthost.log"
+  ],
+  "next_smallest_action": "Run the repaired launcher once, then perform only the narrow command-palette availability check for XIIGen: Open Smart Skills Panel without row12 submit."
+}

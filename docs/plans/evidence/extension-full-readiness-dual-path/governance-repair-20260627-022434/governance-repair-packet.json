@@ -1,0 +1,73 @@
+{
+  "verdict": "PASS",
+  "claim_scope": "только governance/skill/guide repair; product readiness не заявляется",
+  "evidence_scope": "Изменены AGENTS.md, CLAUDE.md, пять docs/skills файлов и два evidence packet файла; выполнены targeted textual checks, git diff --check, packet whitespace check и JSON parse check.",
+  "count_claimed": {
+    "governance_skill_files_changed": 7,
+    "evidence_packet_files_created": 2
+  },
+  "independent_evidence_count": 4,
+  "subagent_id_or_NONE": "bounded-governance-repair-subagent",
+  "downgrade_needed": "Downgrade не нужен для governance repair; product readiness, host readiness, tests, runtime execution, commit и push не заявлялись.",
+  "changed_files": [
+    "C:\\Projects\\llm_mvp_core\\AGENTS.md",
+    "C:\\Projects\\llm_mvp_core\\CLAUDE.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\skills\\planning-session-startup-SKILL.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\skills\\plan-review-SKILL.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\skills\\output-readability-gate-SKILL.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\skills\\verification-before-completion-SKILL.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\skills\\session-output-contract-SKILL.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\governance-repair-20260627-022434\\governance-repair-packet.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\governance-repair-20260627-022434\\governance-repair-packet.json"
+  ],
+  "diagnosis": "Существующие правила говорили, что plan-not-ready возвращает в repair, но не блокировали явно старое do-not-stop/continue pressure как executor authorization до plan readiness и product-readiness plan gate pass.",
+  "rule_snippets_added": [
+    "do not stop is not executor authorization",
+    "plan-not-ready returns to planning repair, not execution",
+    "premature executor must be stopped and replaced by bounded governance repair",
+    "human-readable phase counts before execution continuation"
+  ],
+  "why_this_closes_the_loophole": [
+    "Continuation pressure больше не является executor authorization.",
+    "Unready plan ведет в bounded planning/governance/clarity repair, не в execution и не в final pause.",
+    "Premature executor должен быть stopped, output считается quarantine evidence only, затем идет bounded governance repair и возврат в plan-readiness workflow.",
+    "Перед execution continuation требуется visible human-readable phase counts: total phases/steps, done, in-progress, remaining и meaning текущей фазы/шага."
+  ],
+  "verification_performed": [
+    {
+      "command": "rg --fixed-strings for the four required phrases on changed governance/skill files",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --check on changed governance/skill files",
+      "result": "PASS; no output"
+    },
+    {
+      "command": "git diff --stat on changed governance/skill files",
+      "result": "PASS; 7 files changed, 90 insertions before packet creation"
+    },
+    {
+      "command": "rg --fixed-strings for the four required phrases on all 9 changed files after packet creation",
+      "result": "PASS"
+    },
+    {
+      "command": "rg trailing-whitespace check on evidence packet .md and .json",
+      "result": "PASS; no matches"
+    },
+    {
+      "command": "PowerShell ConvertFrom-Json on governance-repair-packet.json",
+      "result": "PASS; parsed verdict PASS"
+    }
+  ],
+  "forbidden_actions_not_performed": [
+    "product code edits",
+    "plan execution",
+    "host UI execution",
+    "product tests",
+    "commit",
+    "push",
+    "external AI/web",
+    "nested codex/subagents"
+  ],
+  "remaining_next_action": "Parent/current session reviews this packet, accepts or rejects the repair, then resumes plan-readiness workflow. This packet does not authorize product execution."
+}

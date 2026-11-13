@@ -1,0 +1,119 @@
+{
+  "schema_version": "frdp.row12.cursor.reference_preservation_diagnosis.v1",
+  "created_at_utc": "2026-06-28T15:27:38Z",
+  "worker_id": "REFERENCE-PRESERVATION-ROW12-CURSOR-DIAGNOSE-AND-FIX-01",
+  "worktree": "C:/Projects/llm_mvp_core_codex_sync_20260628",
+  "task": "REFERENCE-PRESERVATION-ROW12-CURSOR-DIAGNOSE-AND-FIX-01",
+  "verdict": "NEEDS_PRODUCT_CODE_WORK_ORDER",
+  "fixed": false,
+  "fix_layer": "none",
+  "product_readiness_claimed": false,
+  "semantic_quality_claimed": false,
+  "token_savings_claimed": false,
+  "training_started": false,
+  "checkpoint_mutation": false,
+  "external_ai_used": false,
+  "claim_scope": "Diagnosis of why Row12 Cursor Path A CheckSetResults.references has marker/scenario_id/pair_id as not-provided.",
+  "evidence_scope": "Existing Row12 Path A request/core-response/runner evidence, existing semantic eval packet, read-only Cursor host QA runner and extension source snippets, and read-only core service/test snippets.",
+  "summary_ru": "Row12 marker/scenario/pair не теряются в старой eval-сводке: они уже отсутствуют как структурные поля в Path A core request CheckSetInputs, а core response поэтому честно пишет not-provided в CheckSetResults.references. Значения есть в prompt text, CorrelationId, runner validation/request_status и redactedInput runner-команды, но не попадают в XiigenExtensionRequest.CheckSetInputs.",
+  "missing_exactly": {
+    "core_response_field": "CheckSetResults.references",
+    "missing_values": {
+      "marker": "FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1",
+      "scenario_id": "frdp-p01-cursor-token-savings-baseline",
+      "pair_id": "frdp-p01-row12-cursor-token-baseline-v1"
+    },
+    "observed_values": {
+      "marker": "not-provided",
+      "scenario_id": "not-provided",
+      "pair_id": "not-provided"
+    }
+  },
+  "where_it_comes_from": [
+    {
+      "layer": "row12_path_a_request_artifact",
+      "finding": "The generated core request CheckSetInputs does not contain marker, scenario_id, or pair_id.",
+      "evidence": "Direct ConvertFrom-Json parse: request_checkset_has_marker=false, request_checkset_has_scenario_id=false, request_checkset_has_pair_id=false.",
+      "path": "docs/plans/evidence/extension-full-readiness-dual-path/row12-cursor-timeout-fix-final-20260628T134935Z/xiigen-cursor-xiigenSmartSkills.runtimeProof.invoke-frdp-p01-row12-cursor-token-baseline-v1_FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1_frdp-p01-cursor-token-savings-baseline-positive_request-request-2026-06-28T13-50-15-212Z.json"
+    },
+    {
+      "layer": "row12_path_a_core_response_artifact",
+      "finding": "The raw core response already contains not-provided in CheckSetResults.references, so the later semantic eval did not invent the symptom.",
+      "evidence": "Direct ConvertFrom-Json parse of CheckSetResults.references showed marker/scenario_id/pair_id all equal not-provided.",
+      "path": "docs/plans/evidence/extension-full-readiness-dual-path/row12-cursor-timeout-fix-final-20260628T134935Z/xiigen-cursor-xiigenSmartSkills.runtimeProof.invoke-frdp-p01-row12-cursor-token-baseline-v1_FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1_frdp-p01-cursor-token-savings-baseline-positive_request-core-response-2026-06-28T13-50-15-212Z.json"
+    },
+    {
+      "layer": "cursor_host_qa_runner",
+      "finding": "The Row12 runner passes marker/scenario_id/pair_id only through command-side redactedInput and correlationId; it does not prove they reach core CheckSetInputs.",
+      "evidence": "FRDP-row12-hostVisibleRuntimeProofQA.js lines 237-244 pass redactedInput marker/scenario_id/pair_id; lines 134-142 validate prompt hash/correlation/request host facts; the runner report copies request_status with marker/scenario/pair from runner validation.",
+      "path": "C:/Projects/cursor-xiigen-smart-skills/test/host-qa/FRDP-row12-hostVisibleRuntimeProofQA.js"
+    },
+    {
+      "layer": "cursor_extension_host_request_builder",
+      "finding": "buildHostRequest creates CheckSetInputs from fixed cursor_* keys and does not merge marker/scenario_id/pair_id from runtime proof options or redactedInput.",
+      "evidence": "src/extension.ts lines 440-450 list CheckSetInputs keys; marker/scenario_id/pair_id are absent.",
+      "path": "C:/Projects/cursor-xiigen-smart-skills/src/extension.ts"
+    },
+    {
+      "layer": "llm_mvp_core_reference_projection",
+      "finding": "Core reference projection reads marker/scenario_id/pair_id only from request.CheckSetInputs and falls back to not-provided when absent.",
+      "evidence": "43.SmartSkillsDomain/XiigenExtensionApiService.cs lines 775-789 call ReadFirstValueOrDefault(request.CheckSetInputs, \"not-provided\", ...).",
+      "path": "43.SmartSkillsDomain/XiigenExtensionApiService.cs"
+    },
+    {
+      "layer": "llm_mvp_core_existing_contract_test",
+      "finding": "The direct core contract test includes marker/scenario_id/pair_id in CheckSetInputs, so the core-side projection path is already designed to preserve them when the host supplies them structurally.",
+      "evidence": "Tests/XiigenExtensionApiContractsTests.cs lines 531-545 set marker/scenario_id/pair_id in CheckSetInputs; lines 605-607 assert the Row12 projection contains marker and scenarioId.",
+      "path": "Tests/XiigenExtensionApiContractsTests.cs"
+    }
+  ],
+  "issue_classification": {
+    "evidence_capture_issue": false,
+    "product_code_or_reference_propagation_issue": true,
+    "narrower_label": "Cursor host/runtime-proof request propagation gap",
+    "reason_ru": "Слой evidence/eval уже может показать расхождение и не должен переписывать старые raw artifacts. Чтобы CheckSetResults.references стал полным, runtime-proof host request должен передать marker/scenario_id/pair_id как структурные CheckSetInputs или core/host contract должен быть расширен. Это требует product/host code work и rerun, не post-hoc evidence patch."
+  },
+  "why_not_fixed_in_this_worker": [
+    "Allowed write scope is evidence/test/runner planning layer only.",
+    "The missing values are already in the immutable raw core-response evidence from the previous run.",
+    "The smallest real fix changes host/product request propagation in C:/Projects/cursor-xiigen-smart-skills/src/extension.ts or the core/host contract, then requires a fresh Row12 Path A rerun.",
+    "Changing old evidence files would hide the actual run behavior and is forbidden by the work order."
+  ],
+  "next_bounded_worker_order": {
+    "id": "REFERENCE-PRESERVATION-ROW12-CURSOR-HOST-PROPAGATION-FIX-01",
+    "verdict_to_consume": "NEEDS_PRODUCT_CODE_WORK_ORDER",
+    "human_goal_ru": "Сделать так, чтобы Row12 marker/scenario_id/pair_id доходили до llm_mvp_core как структурные CheckSetInputs и затем появились внутри CheckSetResults.references после fresh Path A rerun.",
+    "recommended_scope": [
+      "In C:/Projects/cursor-xiigen-smart-skills/src/extension.ts, extend runtime-proof request construction so marker/scenario_id/pair_id from the command input are copied into XiigenExtensionRequest.CheckSetInputs when present.",
+      "Keep raw prompt redaction unchanged and do not copy private prompt text outside the request payload.",
+      "Update or add host QA assertions in C:/Projects/cursor-xiigen-smart-skills/test/host-qa/FRDP-row12-hostVisibleRuntimeProofQA.js so the runner fails unless parsed CheckSetResults.references marker/scenario_id/pair_id equal the Row12 constants.",
+      "If the chosen design changes the shared core/host contract instead, add or adjust llm_mvp_core tests so CheckSetResults.references is asserted directly, not only by string containment in row12_core_api_quality_projection.",
+      "Rerun Row12 Path A into a new evidence folder; do not modify previous evidence folders."
+    ],
+    "suggested_verification": [
+      "Parse the new Row12 request JSON and assert CheckSetInputs.marker, CheckSetInputs.scenario_id, and CheckSetInputs.pair_id are present.",
+      "Parse the new Row12 core-response JSON and assert CheckSetResults.references marker/scenario_id/pair_id equal the expected Row12 values.",
+      "Run the updated host QA runner command that generated Row12 Path A evidence.",
+      "Run the narrow product/host tests touched by the implementation.",
+      "Run git diff --check and git status --short for changed scope."
+    ],
+    "forbidden_scope": [
+      "Do not edit old evidence folders.",
+      "Do not claim token savings, semantic quality, product readiness, training, checkpoint promotion, or locator update from this fix.",
+      "Do not commit or push unless a separate order grants that boundary."
+    ]
+  },
+  "honesty_block": {
+    "claim_scope": "One Row12 Cursor reference-preservation diagnosis packet; no product fix and no evidence-layer fix claimed.",
+    "evidence_scope": "Eight inspected source/evidence records: existing eval packet, Row12 request JSON, Row12 core-response JSON, Row12 runner report JSON, Cursor host QA runner JS, Cursor extension source snippet, core service snippet, and core contract test snippet.",
+    "count_claimed": "1 diagnosis packet; 1 verdict; 0 code fixes; 0 reruns; 0 token savings, semantic quality, product readiness, training, checkpoint, locator, commit, or push claims.",
+    "independent_evidence_count": 8,
+    "subagent_id_or_NONE": "NONE",
+    "downgrade_needed": "yes for any fixed/readiness claim; no for the narrow diagnosis verdict."
+  },
+  "verification_plan_for_this_packet": [
+    "Parse diagnosis.json with ConvertFrom-Json.",
+    "Run git diff --check on changed files.",
+    "Run git status --short for changed scope."
+  ]
+}

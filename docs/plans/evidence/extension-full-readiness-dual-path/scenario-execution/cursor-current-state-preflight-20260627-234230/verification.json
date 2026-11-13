@@ -1,0 +1,65 @@
+{
+  "packet": "cursor-current-state-preflight-20260627-234230",
+  "created_at": "2026-06-27T23:42:30+03:00",
+  "claim_scope": "Cursor current-state scenario coverage preflight only",
+  "evidence_scope": [
+    "prep scenario files read",
+    "prior Cursor preflight evidence read",
+    "current Cursor process inventory",
+    "current top-level Cursor window inventory",
+    "one safe Storage Error screenshot",
+    "new packet files in this folder"
+  ],
+  "checks": {
+    "json_parse_before_verification_file": {
+      "status": "pass",
+      "files": [
+        "result.json",
+        "window-inventory.json"
+      ]
+    },
+    "git_diff_check_before_verification_file": {
+      "status": "pass",
+      "command": "git diff --check -- docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/cursor-current-state-preflight-20260627-234230"
+    },
+    "markdown_placeholder_scan": {
+      "status": "pass",
+      "patterns": [
+        "TODO",
+        "TBD",
+        "PLACEHOLDER",
+        "raw dump",
+        "RAW DUMP",
+        "???"
+      ]
+    },
+    "line_endings_md_json": {
+      "status": "pass_after_normalization",
+      "format": "LF UTF-8 no BOM"
+    },
+    "screenshot_safety": {
+      "status": "pass",
+      "file": "current-storage-error-screenregion.png",
+      "visual_inspection": "Shows Cursor Storage Error and repository-local state.vscdb path; no PIN/password/token/email/browser auth screen."
+    }
+  },
+  "known_failed_or_downgraded_checks": [
+    {
+      "check": "initial broad rg with wildcard path",
+      "status": "tooling_failed_then_rerun_or_downgraded",
+      "reason": "Windows path wildcard was passed directly to rg; conclusion was not based on that failed command."
+    },
+    {
+      "check": "first Win32 inventory pid field",
+      "status": "downgraded",
+      "reason": "PowerShell $PID name collision made PID fields invalid; clean inventory was rerun and saved to window-inventory.json."
+    }
+  ],
+  "result": {
+    "path_a_status": "not_found_for_exact_scenario",
+    "path_b_status": "blocked_current_storage_modal",
+    "safe_input_path_available_now": false,
+    "prompt_submitted": false,
+    "parent_should_commit_push": false
+  }
+}

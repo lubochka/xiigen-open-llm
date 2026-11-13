@@ -1,0 +1,81 @@
+{
+  "packet_id": "governance-repair-inline-script-timeout-20260627-060712",
+  "subagent_id": "current_bounded_subagent",
+  "status": "PASS",
+  "active_task_sentence_source": "current unquoted Luba work order in this conversation",
+  "changed_files": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/skills/code-execution-SKILL.md",
+    "docs/skills/ui-testing-SKILL.md",
+    "docs/skills/phase-planning-SKILL.md"
+  ],
+  "evidence_packet_files": [
+    "docs/plans/evidence/extension-full-readiness-dual-path/governance-repair-inline-script-timeout-20260627-060712/governance-repair-inline-script-timeout-20260627-060712.md",
+    "docs/plans/evidence/extension-full-readiness-dual-path/governance-repair-inline-script-timeout-20260627-060712/governance-repair-inline-script-timeout-20260627-060712.json"
+  ],
+  "rules_added_or_verified": [
+    {
+      "rule": "UI/runtime/executor work orders must not use huge inline shell scripts.",
+      "threshold": "Use a script-file runner when the command exceeds 20 nonblank lines, 4000 characters, or contains more than one function/class.",
+      "status": "ADDED"
+    },
+    {
+      "rule": "Node REPL execution must avoid Node REPL top-level redeclaration by using var, scoped blocks, or fresh names.",
+      "status": "ADDED"
+    },
+    {
+      "rule": "A Node REPL declaration collision is a work-order/tooling failure, not a product blocker.",
+      "status": "ADDED"
+    },
+    {
+      "rule": "When a sub-agent times out due tool-command construction, the next step is preflight-only script-file prep/execution, not retrying a huge command.",
+      "status": "ADDED"
+    },
+    {
+      "rule": "Parent/subagent-only boundaries and no-stop rules remain in force.",
+      "status": "PRESERVED"
+    }
+  ],
+  "forbidden_actions": {
+    "product_code_edits": false,
+    "product_execution": false,
+    "cursor_ui": false,
+    "tests_or_builds": false,
+    "commit_or_push": false,
+    "web_or_external_ai": false,
+    "nested_subagents": false
+  },
+  "verification": {
+    "targeted_phrase_check": {
+      "status": "PASS",
+      "command": "rg -n \"huge inline shell scripts|script-file runner|Node REPL top-level redeclaration|preflight-only script-file prep/execution|tool-command construction failure|Windows error 206\" AGENTS.md CLAUDE.md docs\\skills\\code-execution-SKILL.md docs\\skills\\ui-testing-SKILL.md docs\\skills\\phase-planning-SKILL.md",
+      "files_with_matches": [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "docs/skills/code-execution-SKILL.md",
+        "docs/skills/ui-testing-SKILL.md",
+        "docs/skills/phase-planning-SKILL.md"
+      ]
+    },
+    "changed_tracked_files_check": {
+      "status": "PASS",
+      "command": "git diff --name-only -- AGENTS.md CLAUDE.md docs\\skills\\code-execution-SKILL.md docs\\skills\\ui-testing-SKILL.md docs\\skills\\phase-planning-SKILL.md"
+    },
+    "json_parse": {
+      "status": "PASS",
+      "command": "Get-Content -Raw \"docs\\plans\\evidence\\extension-full-readiness-dual-path\\governance-repair-inline-script-timeout-20260627-060712\\governance-repair-inline-script-timeout-20260627-060712.json\" | ConvertFrom-Json | Out-Null; Write-Output \"PASS json parse\"",
+      "result": "PASS json parse"
+    },
+    "git_diff_check": {
+      "status": "PASS",
+      "command": "git diff --check -- AGENTS.md CLAUDE.md docs\\skills\\code-execution-SKILL.md docs\\skills\\ui-testing-SKILL.md docs\\skills\\phase-planning-SKILL.md",
+      "result": "exit code 0, no whitespace output"
+    },
+    "packet_whitespace_check": {
+      "status": "PASS",
+      "command": "Select-String -Path <packet md/json> -Pattern \"[ \\t]$\"",
+      "result": "no trailing whitespace matches"
+    }
+  }
+}

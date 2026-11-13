@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "packet_id": "prompt-to-task-manifest-checkpoint-ref-fix-20260628T162147Z",
+  "task_id": "PROMPT-TO-TASK-MANIFEST-CHECKPOINT-REF-FIX-01",
+  "workspace": "C:\\Projects\\llm_mvp_core_codex_sync_20260628",
+  "changed_files": [
+    "artifacts/smart-skills-semantic-quality-completion/p7f-prompt-to-task-missing-coverage-repair/prompt-to-task-p7f-candidate-manifest.json"
+  ],
+  "mismatch": {
+    "failing_component": "PromptToTask",
+    "failing_gates": [
+      "P11 fresh-load",
+      "P12 no-op continue-training"
+    ],
+    "failure": "Manifest checkpoint ref mismatch",
+    "cause": "candidate manifest contained absolute checkpointRef and manifestRef for C:\\Projects\\llm_mvp_core while tests loaded repo-relative files from C:\\Projects\\llm_mvp_core_codex_sync_20260628",
+    "loader_contract": "PromptToTaskMachine.LoadCheckpointAsync resolves manifest refs relative to the manifest directory and requires them to match the passed checkpoint and manifest paths"
+  },
+  "fix": {
+    "type": "fixture_manifest_ref_portability",
+    "product_loader_changed": false,
+    "checkpoint_json_changed": false,
+    "checkpoint_promotion_or_locator_update": false,
+    "refs_after": {
+      "checkpointRef": "prompt-to-task-p7f-candidate-checkpoint.json",
+      "manifestRef": "prompt-to-task-p7f-candidate-manifest.json",
+      "sourceManifestRef": "prompt-to-task-p7f-source-manifest.json"
+    }
+  },
+  "verification": [
+    {
+      "name": "P11/P12 focused lifecycle gates",
+      "command_ref": "p11-p12-command.txt",
+      "output_ref": "p11-p12-output.log",
+      "result_ref": "p11-p12-result.json",
+      "exit_code": 0,
+      "passed": 2,
+      "failed": 0,
+      "total": 2
+    },
+    {
+      "name": "PromptToTask adjacent asset lifecycle tests",
+      "command_ref": "asset-lifecycle-command.txt",
+      "output_ref": "asset-lifecycle-output.log",
+      "result_ref": "asset-lifecycle-result.json",
+      "exit_code": 0,
+      "passed": 5,
+      "failed": 0,
+      "total": 5
+    }
+  ],
+  "claims_not_made": [
+    "full semantic quality",
+    "product readiness",
+    "token savings",
+    "checkpoint promotion",
+    "locator update",
+    "unified Row12/P01 gate",
+    "SkillSelection source-disjoint runtime eval"
+  ],
+  "honesty_block": {
+    "claim_scope": "bounded PromptToTask manifest checkpoint ref fix only",
+    "evidence_scope": "one manifest fixture diff plus two dotnet test commands and command logs in this packet",
+    "count_claimed": "2 test commands; 7 tests passed; 0 failed",
+    "independent_evidence_count": 2,
+    "subagent_id_or_NONE": "NONE",
+    "downgrade_needed": "no for PromptToTask P11/P12 ref fix; yes for broader semantic/product readiness"
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "schema": "xiigen.extension_full_readiness_dual_path.row16_prep_asset_lifecycle_roundtrip.v1",
+  "verdict": "ROW16_PREP_FIX_DONE_REVIEW_REQUIRED",
+  "scenario_number": 16,
+  "scenario_id": "frdp-p01-cursor-asset-lifecycle-roundtrip",
+  "host": "Cursor",
+  "prepared_at_date": "2026-06-26",
+  "prep_only": true,
+  "roundtrip_executed": false,
+  "row16_marked_accepted": false,
+  "human_language": "ru",
+  "human_summary_ru": "Подготовка Row16 исправлена: текст написан по-русски, источник и хэши названы точно, шаг fresh-load больше не оставлен на усмотрение исполнителя. Roundtrip не запускался, Row16 не принят.",
+  "current_counts_basis": {
+    "total_scenarios": 28,
+    "scoped_accepted_rows": [12, 13, 14, 15],
+    "scoped_accepted_count": 4,
+    "product_readiness_full_pass": 0,
+    "full_joined_pass": 0,
+    "remaining": 24
+  },
+  "source_asset_root_identified": {
+    "source_root": "C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-learnability-training-continue/row14-3-staged-continue-training-export-20260626T103934Z/staged-export",
+    "checkpoint": {
+      "file": "skill-selection-checkpoint.json",
+      "absolute_path": "C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-learnability-training-continue/row14-3-staged-continue-training-export-20260626T103934Z/staged-export/skill-selection-checkpoint.json",
+      "sha256": "c0f3047e80610f3852928c04d2ecd8f89857d5e20726b2dc391892ff73ac9dbb",
+      "hash_verified_during_this_fix": true,
+      "hash_source_note_ru": "Во время этого fix файл был заново проверен через Get-FileHash SHA256; полученный хэш совпал с expected hash."
+    },
+    "manifest": {
+      "file": "skill-selection-manifest.json",
+      "absolute_path": "C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-learnability-training-continue/row14-3-staged-continue-training-export-20260626T103934Z/staged-export/skill-selection-manifest.json",
+      "sha256": "4ae155818ac6351009626a37f22de56202ec1133c8a2728ab39be2f4dba90475",
+      "hash_verified_during_this_fix": true,
+      "hash_source_note_ru": "Во время этого fix файл был заново проверен через Get-FileHash SHA256; полученный хэш совпал с expected hash."
+    },
+    "source_basis_ru": [
+      "Row14.3 staged export сообщает staged continue-training/export от base 8 pairs к staged 10 pairs.",
+      "Row14.4 fresh-load evidence сообщает Fresh import=True, Fresh checkpoint load=True, selected skill client-adaptive-learning-loop и expected skill client-adaptive-learning-loop.",
+      "Row14.4 fresh-load использовал SkillSelectionMachine.ImportAsync и SkillSelectionMachine.LoadCheckpointAsync.",
+      "Во время этого fix checkpoint и manifest были заново проверены через SHA256; оба хэша совпали с expected hash."
+    ],
+    "missing_artifact_rule_ru": "Если source root, checkpoint или manifest отсутствуют по точному пути, execution обязан остановиться с ROW16_CORE_LIFECYCLE_EXECUTION_NEEDS_PARENT_DECISION, назвать отсутствующий путь и не подставлять другой asset root."
+  },
+  "what_row16_proves_when_executed_ru": [
+    "Backup/export копия Row14 staged adaptive asset создается внутри Row16 evidence без изменения исходника.",
+    "Share/package readback не меняет checkpoint или manifest hashes.",
+    "Asset импортируется в свежий временный user asset root внутри Row16 evidence.",
+    "Fresh-load загружает imported manifest/checkpoint через тот же core API path, который Row14.4 использовал для fresh-load.",
+    "Cleanup/quarantine удерживает временное состояние внутри Row16 evidence и не трогает production/common/user locator root."
+  ],
+  "not_proven_by_prep_or_core_roundtrip_ru": [
+    "product readiness",
+    "token savings",
+    "full semantic quality",
+    "broad training readiness",
+    "checkpoint mutation или promotion",
+    "locator update",
+    "host UI readiness",
+    "full joined pass",
+    "full extension readiness",
+    "Row16 board acceptance"
+  ],
+  "fresh_load_probe_rule": {
+    "existing_row16_entrypoint_preapproved": false,
+    "no_agent_judgment_ru": "Нельзя оставлять условную формулировку, выбирать похожий скрипт на глаз или менять API path без review.",
+    "required_fallback_ru": "Execution sub-agent должен создать маленький test-only .NET harness внутри текущего Row16 run folder и остановиться на review перед использованием, если current work order заранее не разрешил reviewed harness.",
+    "harness_files_under_run_folder": [
+      "row16-fresh-load-probe/Row16FreshLoadProbe.csproj",
+      "row16-fresh-load-probe/Program.cs"
+    ],
+    "exact_command_template": "dotnet run --project \"<ROW16_RUN_FOLDER>\\row16-fresh-load-probe\\Row16FreshLoadProbe.csproj\" -- --asset-root \"<ROW16_RUN_FOLDER>\\fresh-user-asset-root\" --evidence-dir \"<ROW16_RUN_FOLDER>\\fresh-load-probe\" --expected-checkpoint-sha256 \"c0f3047e80610f3852928c04d2ecd8f89857d5e20726b2dc391892ff73ac9dbb\" --expected-manifest-sha256 \"4ae155818ac6351009626a37f22de56202ec1133c8a2728ab39be2f4dba90475\"",
+    "same_core_api_path_as_row14_4": [
+      "Read imported skill-selection-manifest.json.",
+      "Construct LearningMachineExport from manifest fields and imported checkpoint/manifest paths.",
+      "Create a new SkillSelectionMachine.",
+      "Call SkillSelectionMachine.ImportAsync.",
+      "Call SkillSelectionMachine.LoadCheckpointAsync.",
+      "Write readback fields manifestLoaded, checkpointLoaded, machineId, domainTag, version, trainedPairCount.",
+      "Hash checkpoint and manifest after load.",
+      "Write Russian markdown report and machine JSON report into fresh-load-probe."
+    ],
+    "forbidden_in_harness_ru": [
+      "training",
+      "eval",
+      "DecideFromTrainedState",
+      "checkpoint mutation",
+      "promotion",
+      "locator update",
+      "production/common/user locator root write",
+      "host UI action"
+    ],
+    "review_before_use_required": true,
+    "stop_status_if_harness_created_but_not_reviewed": "ROW16_FRESH_LOAD_HARNESS_CREATED_REVIEW_REQUIRED"
+  },
+  "execution_substeps_ru": [
+    {
+      "step": 1,
+      "name_ru": "Preflight и scope lock",
+      "rule_ru": "Создать один timestamped run folder только внутри Row16 evidence, записать source paths/hashes и non-mutation flags до любых копий.",
+      "required_evidence_ru": ["preflight JSON", "source hashes before", "production_mutation=false", "locator_update=false", "promotion=false", "training_performed=false", "host_ui_run=false"]
+    },
+    {
+      "step": 2,
+      "name_ru": "Backup/export copy",
+      "rule_ru": "Скопировать checkpoint и manifest из точного source root в run-<UTC>/backup-export/ и доказать, что source hashes не изменились.",
+      "required_evidence_ru": ["source hashes before", "backup/export hashes", "source hashes after", "source unchanged=true"]
+    },
+    {
+      "step": 3,
+      "name_ru": "Share/package copy",
+      "rule_ru": "Создать test-only share/package artifact внутри Row16 run folder; если это архив, распаковать его в readback folder перед сравнением.",
+      "required_evidence_ru": ["package listing", "readback checkpoint hash", "readback manifest hash", "archive hash is not a substitute for extracted file hashes"]
+    },
+    {
+      "step": 4,
+      "name_ru": "Import into fresh temporary user asset root",
+      "rule_ru": "Создать run-<UTC>/fresh-user-asset-root/ и импортировать туда asset из share/package readback; если share/package step FAIL, остановиться и не импортировать.",
+      "required_evidence_ru": ["fresh root path", "fresh root inside Row16 run folder", "imported files exist", "imported hashes equal source"]
+    },
+    {
+      "step": 5,
+      "name_ru": "Fresh-load probe",
+      "rule_ru": "Использовать только reviewed Row16 test-only harness из fresh_load_probe_rule. Без review harness не запускать.",
+      "required_evidence_ru": ["harness files", "review status", "exact command", "manifestLoaded", "checkpointLoaded", "machineId", "domainTag", "version", "trainedPairCount", "training_performed=false"]
+    },
+    {
+      "step": 6,
+      "name_ru": "Hash comparison после fresh-load",
+      "rule_ru": "Повторно сравнить source, backup/export, share readback и fresh-import hashes после fresh-load.",
+      "required_evidence_ru": ["all checkpoint hashes equal expected source hash", "all manifest hashes equal expected source hash", "source unchanged before/after"]
+    },
+    {
+      "step": 7,
+      "name_ru": "Cleanup/quarantine",
+      "rule_ru": "Source evidence не удалять. При PASS оставить reports/evidence; при FAIL quarantined run folder, причина FAIL и NEEDS_PARENT_DECISION.",
+      "required_evidence_ru": ["cleanup summary", "kept artifacts", "removed disposable cache only if any", "quarantine path if failed", "no production/common/user locator touched"]
+    },
+    {
+      "step": 8,
+      "name_ru": "Human-readable execution packet",
+      "rule_ru": "Создать русский markdown report и JSON report внутри Row16 run folder.",
+      "required_evidence_ru": ["changed files", "source asset root", "all compared hashes", "fresh-load command or harness review stop status", "PASS/FAIL", "narrow claim", "non-claims"]
+    }
+  ],
+  "files_and_hashes_to_compare": [
+    {
+      "artifact_ru": "source checkpoint before/after",
+      "file": "skill-selection-checkpoint.json",
+      "expected_sha256": "c0f3047e80610f3852928c04d2ecd8f89857d5e20726b2dc391892ff73ac9dbb"
+    },
+    {
+      "artifact_ru": "source manifest before/after",
+      "file": "skill-selection-manifest.json",
+      "expected_sha256": "4ae155818ac6351009626a37f22de56202ec1133c8a2728ab39be2f4dba90475"
+    },
+    {
+      "artifact_ru": "backup/export checkpoint and manifest",
+      "expected_ru": "hashes equal source"
+    },
+    {
+      "artifact_ru": "share/package readback checkpoint and manifest",
+      "expected_ru": "hashes equal source"
+    },
+    {
+      "artifact_ru": "fresh temporary import checkpoint and manifest",
+      "expected_ru": "hashes equal source"
+    },
+    {
+      "artifact_ru": "post-fresh-load source checkpoint and manifest",
+      "expected_ru": "source hashes unchanged from preflight"
+    }
+  ],
+  "pass_criteria_ru": [
+    "Точный Row14 staged-export source root существует.",
+    "Source checkpoint и manifest существуют.",
+    "Source checkpoint и manifest перед копированием совпадают с expected SHA256 из prep.",
+    "Backup/export copies match source hashes.",
+    "Share/package readback files match source hashes.",
+    "Fresh temporary import files match source hashes.",
+    "Reviewed fresh-load harness successfully loads imported asset from fresh-user-asset-root.",
+    "Fresh-load readback подтверждает manifestLoaded=true, checkpointLoaded=true, machineId=skill-selection-machine, domainTag=SmartSkillsDomain.SkillSelection, version=1.0.0, trainedPairCount=10.",
+    "Source hashes remain unchanged before and after operations.",
+    "No production/common/user locator path is mutated.",
+    "No checkpoint promotion or locator update is performed.",
+    "No training, eval, or model mutation is performed.",
+    "Evidence states scoped core asset lifecycle proof only.",
+    "Row16 remains not accepted until separate review."
+  ],
+  "fail_criteria_ru": [
+    "Source root, checkpoint, or manifest missing.",
+    "Any source hash differs from expected Row14 staged-export hash.",
+    "Any backup/export, share readback, or fresh-import hash differs from source.",
+    "Fresh-load harness is missing, unreviewed, or run with a different unapproved command.",
+    "Fresh-load fails from the temporary root.",
+    "Fresh-load readback does not confirm machine/domain/version/trainedPairCount.",
+    "Any production/common/user locator, promoted checkpoint, or shared product state is touched.",
+    "Training, eval, promotion, or locator update is performed.",
+    "Cleanup cannot prove temporary state stayed inside Row16 evidence.",
+    "Executor cannot prove a path is temporary and inside the current Row16 run folder."
+  ],
+  "ui_path_decision_ru": {
+    "prep_is_core_asset_lifecycle_only": true,
+    "local_ui_run_now": false,
+    "full_board_acceptance_likely_needs_ui_later": true,
+    "plain_ru": "Этот prep не разрешает host UI действия. Если для board acceptance нужен host-visible restored behavior, это отдельный UI path после core lifecycle proof и review."
+  },
+  "scope_locks": {
+    "product_readiness_claimed": false,
+    "token_savings_claimed": false,
+    "full_semantic_quality_claimed": false,
+    "training_readiness_claimed": false,
+    "checkpoint_mutation_or_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "host_ui_readiness_claimed": false,
+    "full_joined_pass_claimed": false,
+    "full_extension_readiness_claimed": false,
+    "git_actions_performed": false
+  },
+  "next_work_order_text_ru": [
+    "Ты bounded sub-agent executor в проекте C:\\Projects\\llm_mvp_core.",
+    "Task: Execute Row16 core asset lifecycle roundtrip only, using reviewed Row16 prep md/json. Do not mark Row16 accepted.",
+    "Allowed write: only under C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-asset-lifecycle-roundtrip\\.",
+    "Fresh-load rule: create a small test-only Row16 harness under the Row16 run folder, using SkillSelectionMachine.ImportAsync and SkillSelectionMachine.LoadCheckpointAsync; stop for review with ROW16_FRESH_LOAD_HARNESS_CREATED_REVIEW_REQUIRED before using it unless reviewed-harness approval is explicit.",
+    "Forbidden: production code edits, git, training/eval/checkpoint mutation/promotion/locator update, host UI actions, broad repo audit, marking Row16 accepted.",
+    "Return ROW16_CORE_LIFECYCLE_EXECUTION_DONE_REVIEW_REQUIRED only for completed scoped execution with evidence, or ROW16_CORE_LIFECYCLE_EXECUTION_NEEDS_PARENT_DECISION for a real blocker."
+  ],
+  "changed_files_by_this_fix": [
+    "C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-asset-lifecycle-roundtrip/row16-prep-asset-lifecycle-roundtrip.md",
+    "C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-asset-lifecycle-roundtrip/row16-prep-asset-lifecycle-roundtrip.json"
+  ],
+  "narrow_claim_supported_ru": "Row16 prep artifacts были исправлены: markdown стал русскоязычным и человекочитаемым, JSON содержит matching русские человекочитаемые поля, source asset root и хэши названы точно, execution substeps и PASS/FAIL rules заданы явно, а fresh-load больше не оставлен на agent judgment. Row16 roundtrip не запускался, Row16 не passed и не accepted."
+}

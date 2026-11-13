@@ -1,0 +1,194 @@
+{
+  "packet_type": "row10_s5a_launch_storage_diagnostic_prep",
+  "verdict": "PASS_PREP",
+  "blocked_marker": "BLOCKED_MISSING_LAUNCH_DIAGNOSTIC_DETAILS",
+  "created_by": "bounded-subagent Row10-S5a",
+  "created_local": "2026-06-27T05:16:00+03:00",
+  "prep_only": true,
+  "source_salvage": [
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-product-readiness-product-workflow\\row10-s5-cursor-launch-recovery-no-send-20260627-045817\\row10-s5-timeout-salvage.md",
+    "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-product-readiness-product-workflow\\row10-s5-cursor-launch-recovery-no-send-20260627-045817\\row10-s5-timeout-salvage.json"
+  ],
+  "work_order_limits": {
+    "no_cursor_launch": true,
+    "no_ui_automation": true,
+    "no_live_process_manipulation": true,
+    "no_product_runtime_execution": true,
+    "no_tests_or_builds_except_json_text_checks": true,
+    "no_code_board_status_edits": true,
+    "no_commit_push": true,
+    "no_web_external_ai": true,
+    "no_nested_subagents": true
+  },
+  "known_from_salvage": {
+    "cursor_exe": "C:\\Users\\lubao\\AppData\\Local\\Programs\\cursor\\Cursor.exe",
+    "route_command": "xiigenSmartSkills.panel",
+    "storage_failure_evidence": "Saved S5 salvage reports Storage Error and SQLITE_CANTOPEN: unable to open database file.",
+    "desktop_lock_overlay_evidence": "Saved S5 salvage reports Windows lock/PIN overlay evidence.",
+    "not_claimed": [
+      "No live Cursor state was verified by this packet.",
+      "No interactive XIIGen panel readiness was verified by this packet.",
+      "No product readiness or full S5 no-send UI pass is claimed by this packet."
+    ]
+  },
+  "missing_launch_diagnostic_details": {
+    "marker": "BLOCKED_MISSING_LAUNCH_DIAGNOSTIC_DETAILS",
+    "does_not_break_prep_packet": true,
+    "blocks_future_launch_focus_execution_until_resolved": true,
+    "fields": [
+      "Full previous Cursor launch argument array; salvage packet confirms executable path and --command xiigenSmartSkills.panel, but is not a complete argument readback.",
+      "Exact --extensionDevelopmentPath if the future run must be Extension Development Host.",
+      "Stale Cursor handling decision: isolate with clean --user-data-dir/--extensions-dir only, or use a separately authorized close-stale-process step.",
+      "Concrete future-run evidence folder for launch execution.",
+      "Desktop session state immediately before future UI step: unlocked, no lock/PIN overlay, no secret surface visible."
+    ]
+  },
+  "safety_constraints": [
+    "Do not launch Cursor in S5a prep.",
+    "Do not perform UI automation in S5a prep.",
+    "Do not manipulate or close live processes in S5a prep.",
+    "Do not type a prompt or press send in future steps without a separate work order.",
+    "Do not capture screenshots containing secrets, PIN, account details, tokens, keys, or private text.",
+    "Do not make product readiness claims from this prep packet.",
+    "Do not run tests, builds, or product runtime for this prep packet.",
+    "Do not edit code, board, status, git history, commits, or pushes."
+  ],
+  "micro_steps": [
+    {
+      "id": "S5a-01",
+      "name_ru": "no-UI command/path validation",
+      "current_status": "PREP_READY_FOR_FUTURE_NO_UI_DIAGNOSTIC",
+      "purpose_ru": "Проверить путь к Cursor и route string без запуска Cursor.",
+      "future_commands": [
+        "$cursorExe = 'C:\\Users\\lubao\\AppData\\Local\\Programs\\cursor\\Cursor.exe'",
+        "$routeCommand = 'xiigenSmartSkills.panel'",
+        "Test-Path -LiteralPath $cursorExe -PathType Leaf",
+        "Get-Item -LiteralPath $cursorExe",
+        "Get-FileHash -LiteralPath $cursorExe -Algorithm SHA256"
+      ],
+      "expected_evidence_files": [
+        "s5a-01-cursor-path-validation.json",
+        "s5a-01-command-path-validation-transcript.txt"
+      ],
+      "pass_criteria": [
+        "cursor_exe_exists = true.",
+        "File metadata and SHA256 are captured.",
+        "route_command = xiigenSmartSkills.panel.",
+        "No Cursor process is launched."
+      ],
+      "blocked_criteria": [
+        "Cursor exe path is missing or not a file.",
+        "Route command string is empty or changed without a plan update.",
+        "Any command unexpectedly launches Cursor or opens UI."
+      ]
+    },
+    {
+      "id": "S5a-02",
+      "name_ru": "storage path/user-data/temp dir validation",
+      "current_status": "PREP_READY_FOR_FUTURE_NO_UI_STORAGE_DIAGNOSTIC",
+      "purpose_ru": "Убрать риск SQLITE_CANTOPEN через clean isolated storage и write/delete probes before launch.",
+      "future_commands": [
+        "$runRoot = 'C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-product-readiness-product-workflow\\row10-s5a-future-run-YYYYMMDD-HHMMSS'",
+        "$userDataDir = Join-Path $runRoot 'user-data-clean'",
+        "$extensionsDir = Join-Path $runRoot 'extensions-clean'",
+        "$tempDir = Join-Path $runRoot 'temp'",
+        "New-Item -ItemType Directory -Force -Path $userDataDir, $extensionsDir, $tempDir",
+        "Set-Content / Remove-Item write-delete probes in each clean directory",
+        "Capture env:TEMP, env:TMP, and [System.IO.Path]::GetTempPath()"
+      ],
+      "expected_evidence_files": [
+        "s5a-02-storage-path-validation.json",
+        "s5a-02-storage-path-validation-transcript.txt"
+      ],
+      "pass_criteria": [
+        "Clean user-data-clean, extensions-clean, and temp dirs are created inside the future-run evidence folder.",
+        "Write/delete probe succeeds in each directory.",
+        "Paths are local, readable, writable, and not reused from the failed S5 user-data-quoted-retry.",
+        "Future launch args will use the clean dirs, not the prior failed storage path."
+      ],
+      "blocked_criteria": [
+        "Any directory cannot be created.",
+        "Any write/delete probe fails.",
+        "Future run root is not chosen.",
+        "Path policy requires closing stale Cursor but no close-stale-process work order exists."
+      ]
+    },
+    {
+      "id": "S5a-03",
+      "name_ru": "desktop foreground/lock overlay preflight",
+      "current_status": "PREP_READY_FOR_FUTURE_UI_SCOPED_PREFLIGHT",
+      "purpose_ru": "Проверить перед route discovery, что Windows session не находится на lock/PIN overlay и evidence capture не захватит секреты.",
+      "future_procedure": [
+        "Confirm the desktop is unlocked before any Cursor launch/focus attempt.",
+        "Confirm no Windows lock/PIN/account prompt is visible.",
+        "Confirm no token, password, private account detail, or secret-bearing window is visible in the capture area.",
+        "If screenshot evidence is required by a future work order, capture only a redacted/safe screenshot and save redaction metadata.",
+        "Abort before any prompt typing or send action if lock/PIN overlay appears."
+      ],
+      "expected_evidence_files": [
+        "s5a-03-desktop-preflight.json",
+        "s5a-03-redaction-note.json"
+      ],
+      "pass_criteria": [
+        "Desktop is confirmed unlocked immediately before launch/focus.",
+        "No lock/PIN overlay is visible.",
+        "Screenshot policy says no secrets captured and no credentials entered.",
+        "No prompt typed and no prompt sent."
+      ],
+      "blocked_criteria": [
+        "Lock/PIN overlay is visible.",
+        "Any secret-bearing surface would be captured.",
+        "Operator cannot confirm desktop foreground state.",
+        "Future work order does not allow UI/screenshot evidence."
+      ]
+    },
+    {
+      "id": "S5a-04",
+      "name_ru": "future launch/focus no-send route discovery",
+      "current_status": "BLOCKED_MISSING_LAUNCH_DIAGNOSTIC_DETAILS",
+      "purpose_ru": "Only after S5a-01 through S5a-03 pass, perform a future minimal launch/focus route discovery without typing or sending a prompt.",
+      "future_command_skeleton": [
+        "$cursorExe = 'C:\\Users\\lubao\\AppData\\Local\\Programs\\cursor\\Cursor.exe'",
+        "$userDataDir = '<future-run-root>\\user-data-clean'",
+        "$extensionsDir = '<future-run-root>\\extensions-clean'",
+        "$extensionDevelopmentPath = '<BLOCKED_MISSING_EXTENSION_DEVELOPMENT_PATH>'",
+        "$argList = @('--user-data-dir', $userDataDir, '--extensions-dir', $extensionsDir, '--extensionDevelopmentPath', $extensionDevelopmentPath, '--command', 'xiigenSmartSkills.panel')",
+        "Start-Process -FilePath $cursorExe -ArgumentList $argList -PassThru"
+      ],
+      "expected_evidence_files": [
+        "s5a-04-launch-command.json",
+        "s5a-04-start-process-result.json",
+        "s5a-04-window-inventory.json",
+        "s5a-04-storage-log-search.txt",
+        "s5a-04-no-send-route-discovery-redacted.png"
+      ],
+      "pass_criteria": [
+        "S5a-01, S5a-02, and S5a-03 are already PASS in the same future run packet.",
+        "Full argument array is recorded before launch.",
+        "Launch uses clean --user-data-dir and --extensions-dir.",
+        "No Storage Error dialog and no SQLITE_CANTOPEN are observed in saved logs.",
+        "Route discovery reaches xiigenSmartSkills.panel without prompt typed and without prompt sent.",
+        "Claim remains route discovery only, not product readiness."
+      ],
+      "blocked_criteria": [
+        "Any previous micro-step is not PASS.",
+        "--extensionDevelopmentPath remains unknown when Extension Development Host is required.",
+        "Lock/PIN overlay appears.",
+        "Storage Error or SQLITE_CANTOPEN reappears.",
+        "Any prompt would need to be typed or sent."
+      ]
+    }
+  ],
+  "markdown_json_agreement_keys": {
+    "verdict": "PASS_PREP",
+    "blocked_marker": "BLOCKED_MISSING_LAUNCH_DIAGNOSTIC_DETAILS",
+    "micro_step_ids": [
+      "S5a-01",
+      "S5a-02",
+      "S5a-03",
+      "S5a-04"
+    ],
+    "prep_only": true,
+    "s5a_04_execution_status": "BLOCKED_MISSING_LAUNCH_DIAGNOSTIC_DETAILS"
+  }
+}

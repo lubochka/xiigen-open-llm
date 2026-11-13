@@ -1,0 +1,194 @@
+{
+  "schema": "xiigen.extension_readiness.next_scenario_prep.v1",
+  "artifact_type": "scenario_prep_only",
+  "created_by": "current_bounded_next_scenario_prep_subagent",
+  "created_at_local": "2026-06-26T00:00:00+03:00",
+  "scenario_number": "21.1",
+  "scenario_id": "frdp-p01-codex-ui-input-surface-discovery-before-send",
+  "scenario_name_ru": "Сценарий Row21.1: безопасное обнаружение Codex Desktop/UI input surface до отправки",
+  "selected_after": {
+    "row": 21,
+    "scenario_id": "frdp-p01-codex-codex-chat-ui-marker",
+    "accepted_status": "PASS_SCOPED_BLOCKER",
+    "reason_ru": "Row21 принят только как scoped blocker evidence: Путь A supporting entrypoint/adaptor/core-boundary proof, Путь B точный blocker UI_INPUT_CONTROL_NOT_FOUND, prompt не typed/pasted/sent, clipboard не использовался. Board/state говорят сначала найти clean marker-only Codex Desktop/UI input surface или confirmed composer/input locator before any paste/send."
+  },
+  "why_this_exists_ru": "Это ближайший обязательный Codex gap после Row21. Row22 численно следующий, но board/state не должны переходить к token-savings run, пока безопасный pre-send input surface или точный blocker не установлен.",
+  "proves_only": [
+    "confirmed Codex composer/input locator before paste/send",
+    "or safe screenshot/focus rectangle before paste/send",
+    "or preserved exact blocker explaining why safe input target is unavailable"
+  ],
+  "does_not_prove": [
+    "не доказывает готовность продукта",
+    "Codex UI route pass",
+    "visible marker in Codex UI",
+    "prompt sent through Codex UI",
+    "token savings",
+    "semantic quality",
+    "training/learnability",
+    "checkpoint promotion",
+    "locator update",
+    "full extension readiness"
+  ],
+  "context_counts": {
+    "total_scenarios": 28,
+    "scoped_accepted": 10,
+    "product_readiness_full_pass": 0,
+    "full_joined_pass": 0,
+    "remaining": 18
+  },
+  "path_a": {
+    "label_ru": "Путь A",
+    "mode": "supporting_readback_only",
+    "run_product_or_tests": false,
+    "description_ru": "Путь A применим только как readback уже существующих Row21 artifacts. Он не является UI proof и не доказывает host readiness.",
+    "future_commands": [
+      "$root = 'C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-codex-codex-chat-ui-marker'",
+      "$joined = Get-Content -LiteralPath \"$root\\row21-joined-comparison.json\" -Raw | ConvertFrom-Json",
+      "$blocker = Get-Content -LiteralPath \"$root\\path-b-ui\\row21-path-b-blocker.json\" -Raw | ConvertFrom-Json",
+      "$route = Get-Content -LiteralPath \"$root\\row21-route-20260626-201314\\row21-route-status.json\" -Raw | ConvertFrom-Json"
+    ],
+    "expected_evidence": [
+      "path-a-existing-row21-readback.json",
+      "path-a-existing-row21-readback.md"
+    ]
+  },
+  "path_b": {
+    "label_ru": "Путь B",
+    "target_app_window_ru": "Локальное Codex Desktop окно с process/title Codex.",
+    "session_login_preflight_ru": [
+      "Подтвердить, что окно Codex найдено по process/title/bounds.",
+      "Подтвердить usable session без захвата email/password/token/recovery code/account details/private content.",
+      "Если signed-in/usable state нельзя подтвердить безопасно, остановиться с AUTH_OR_SESSION_PRECHECK_BLOCKED.",
+      "Если два монитора или окна перекрываются, записать monitor layout/window bounds и остановиться при target ambiguity."
+    ],
+    "strict_no_blind_input_rule_ru": "не использовать слепой ввод: не печатать, не вставлять, не отправлять, не нажимать Enter, не использовать clipboard и не применять keyboard shortcuts до подтвержденного safe input target.",
+    "safe_strategies_before_blocker": [
+      {
+        "name_ru": "UIA-first locator discovery",
+        "steps_ru": [
+          "Enumerate top-level windows by process/title with a per-operation timeout and write immediate partial evidence.",
+          "Capture bounds/monitor layout for the candidate Codex window with a per-operation timeout and write immediate partial evidence.",
+          "Capture only redacted shallow UIA control data first; do not run unbounded full-tree traversal.",
+          "Capture redacted UIA raw view tree only if shallow UIA completed, wrote partial evidence, and remaining runtime is safely below eight minutes.",
+          "Find confirmed Edit/TextBox/composer-sized Document candidate.",
+          "Reject broad RootWebArea and whole-window targets.",
+          "Require enabled/focusable state, bounds inside Codex window, and composer-sized geometry.",
+          "Click only the confirmed candidate center and capture focus readback; do not type."
+        ]
+      },
+      {
+        "name_ru": "screenshot/focus-rectangle discovery",
+        "steps_ru": [
+          "Capture redacted screenshot preserving only layout needed for input target discovery.",
+          "Stop if private content cannot be safely redacted.",
+          "Create focus rectangle evidence image.",
+          "Reject whole-window/sidebar/file-tree/chat-history/private-content regions.",
+          "Click only the confirmed rectangle and capture focus/caret evidence; do not type."
+        ]
+      },
+      {
+        "name_ru": "accessibility-name cross-check",
+        "steps_ru": [
+          "Record accessible name/automation id only if UIA exposes composer/prompt/message input/edit semantics.",
+          "Cross-check the accessibility candidate against screenshot bounds.",
+          "Reject absent, ambiguous, duplicated, broad document, or whole-window candidates."
+        ]
+      }
+    ],
+    "success_status": "INPUT_SURFACE_CONFIRMED_PRE_SEND",
+    "success_criteria_ru": [
+      "Codex window is confirmed and safely visible.",
+      "Confirmed composer/input locator or screenshot/focus rectangle exists before paste/send.",
+      "Exact bounds and focus readback are recorded.",
+      "No prompt was typed, pasted, or sent.",
+      "Clipboard was not used.",
+      "No secrets captured.",
+      "Report says: не доказывает готовность продукта."
+    ],
+    "blocked_statuses": [
+      "UI_INPUT_CONTROL_NOT_FOUND",
+      "AUTH_OR_SESSION_PRECHECK_BLOCKED",
+      "PRIVATE_CONTENT_REDACTION_UNSAFE",
+      "WINDOW_OVERLAP_OR_TARGET_AMBIGUOUS",
+      "FOCUS_CONFIRMATION_FAILED"
+    ],
+    "rejection_criteria_ru": [
+      "Blind input was used.",
+      "Prompt was typed, pasted, or sent.",
+      "Clipboard was used.",
+      "Broad RootWebArea or whole-window rectangle was accepted as input.",
+      "Screenshot keeps private chat/account/workspace content unredacted.",
+      "Locator lacks bounds, enabled/focusable state, or reproducible readback.",
+      "Evidence claims Codex UI route pass or product readiness from discovery only.",
+      "Board/state/code/governance files were edited."
+    ],
+    "diagnostic_timeout_partial_evidence_contract_ru": {
+      "per_operation_timeout_rule": "Каждая UIA/control tree/window discovery/screenshot/focus-readback операция должна иметь явный таймаут на каждую UIA-операцию и собственный stop condition до запуска следующего шага.",
+      "partial_evidence_contract": "После каждого успешного sub-step сразу записать small partial evidence artifact с именем шага, timestamp, summary, produced artifact paths и last_successful_sub_step. Ledger/checklist row не считается evidence artifact.",
+      "timeout_report_contract": "Если операция timed out, финальный report/status должен назвать last successful sub-step, exact artifact paths already written, timeout operation, elapsed time, and no product readiness claim.",
+      "stop_before_eight_minutes_rule": "Если sub-agent приближается к 8 минутам общего runtime, он обязан остановиться до 8 минут с partial evidence, а не продолжать до 10-minute tool timeout.",
+      "mandatory_micro_step_order": [
+        "1. Enumerate candidate windows by process/title first and write partial evidence.",
+        "2. Capture bounds/monitor layout for the selected Codex window and write partial evidence.",
+        "3. Run shallow UIA only and write partial evidence.",
+        "4. Attempt raw UIA only if shallow UIA completed, partial evidence exists, and elapsed runtime remains safely below 8 minutes.",
+        "5. Never run full-tree unbounded UIA traversal."
+      ],
+      "preserved_safety_rules": [
+        "не использовать слепой ввод",
+        "no typing/paste/send/Enter/clipboard/keyboard shortcuts before confirmed safe target",
+        "no secrets captured",
+        "no Codex UI route pass or product readiness claim from discovery only"
+      ]
+    }
+  },
+  "exact_evidence_filenames": [
+    "path-a-existing-row21-readback.json",
+    "path-a-existing-row21-readback.md",
+    "path-b-input-surface-discovery-monitor-layout.json",
+    "path-b-input-surface-discovery-window-focus-candidate.json",
+    "path-b-input-surface-discovery-uia-control-tree-redacted.json",
+    "path-b-input-surface-discovery-uia-raw-tree-redacted.json",
+    "path-b-input-surface-discovery-safe-screenshot-redacted.png",
+    "path-b-input-surface-discovery-focus-rectangle.png",
+    "path-b-input-surface-discovery-focus-readback.json",
+    "path-b-input-surface-discovery-no-blind-input-attestation.txt",
+    "path-b-input-surface-discovery-video.mp4",
+    "path-b-input-surface-discovery-blocker.json",
+    "path-b-input-surface-discovery-report.md",
+    "path-b-input-surface-discovery-status.json",
+    "path-b-input-surface-discovery-partial-evidence.jsonl",
+    "path-b-input-surface-discovery-window-enumeration.json",
+    "path-b-input-surface-discovery-shallow-uia-redacted.json",
+    "path-b-input-surface-discovery-timeout-partial-report.md"
+  ],
+  "next_work_order_text_ru": "Ты bounded scenario execution sub-agent for Row21.1 `frdp-p01-codex-ui-input-surface-discovery-before-send`. Не запускай product/runtime/tests/builds и не делай commit/push. Используй этот prep как сценарий. Цель: подтвердить clean marker-only Codex Desktop/UI input surface или confirmed composer/input locator before any paste/send, либо сохранить точный blocker. Путь A: только readback существующих Row21 artifacts, без product/runtime execution. Путь B: работай с локальным Codex Desktop окном, сначала session/login preflight, затем UIA-first locator discovery, затем screenshot/focus-rectangle discovery, затем accessibility-name cross-check если доступно. Строго: не использовать слепой ввод, не печатать, не вставлять, не отправлять, не использовать clipboard, не нажимать Enter и не использовать keyboard shortcuts до подтвержденного safe input target. Успех только INPUT_SURFACE_CONFIRMED_PRE_SEND с exact bounds/focus readback/no secrets/no input. Иначе запиши один точный blocker: UI_INPUT_CONTROL_NOT_FOUND, AUTH_OR_SESSION_PRECHECK_BLOCKED, PRIVATE_CONTENT_REDACTION_UNSAFE, WINDOW_OVERLAP_OR_TARGET_AMBIGUOUS или FOCUS_CONFIRMATION_FAILED. Не утверждай product readiness, Codex UI route pass, token savings, semantic quality, training/learnability, checkpoint promotion, locator update или full extension readiness. Создай только exact evidence filenames из prep folder и верни evidence packet. Таймауты/partial evidence обязательны: задай таймаут на каждую UIA-операцию, window discovery, control tree query, raw UIA query, screenshot/crop/redaction and focus readback operation. После каждого успешного sub-step немедленно записывай small partial evidence artifact; if timeout happens, final report/status must include last successful sub-step and exact artifact paths already written. Micro-step order is mandatory: window enumeration first, then bounds/monitor, then shallow UIA only, then raw UIA only if shallow UIA completed and wrote partial evidence; no full-tree unbounded traversal. Если общий runtime приближается к 8 минутам, остановиться до 8 минут с partial evidence вместо ожидания 10-minute timeout. Эти правила не отменяют safety: не использовать слепой ввод, no secrets captured, no product readiness claim.",
+  "validation_requirements": {
+    "json_parse": "ConvertFrom-Json",
+    "required_phrases": [
+      "Сценарий",
+      "Путь A",
+      "Путь B",
+      "не использовать слепой ввод",
+      "точный blocker",
+      "не доказывает готовность продукта",
+      "таймаут на каждую UIA-операцию",
+      "partial evidence",
+      "остановиться до 8 минут",
+      "shallow UIA"
+    ],
+    "diff_check": "git diff --check"
+  },
+  "non_claims": {
+    "product_execution_performed": false,
+    "runtime_probe_performed": false,
+    "ui_action_performed": false,
+    "tests_or_builds_run": false,
+    "commit_or_push_performed": false,
+    "board_or_state_edited": false,
+    "product_readiness_claim": false,
+    "independent_prep_review_performed": false
+  },
+  "parent_will_perform_commit_push_after_review": true
+}

@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "row13.1.quality_failure_diagnosis.v1",
+  "status": "ROW13_1_DIAGNOSIS_NEEDS_TRAINING",
+  "generatedAtUtc": "2026-06-26T06:53:17Z",
+  "subagentId": "Row13.1-bounded-subagent",
+  "row13ExistingRunPath": "C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-semantic-quality-heldout/run-20260626T063333Z",
+  "currentObservedResult": {
+    "heldOutCount": 4,
+    "commonPassCount": 0,
+    "candidatePassCount": 0,
+    "candidateRowsEvidenceFeature": "NO_TRAINED_STATE_AVAILABLE",
+    "meaning": "The automated/core held-out selector did not choose the expected universal-only skill on any of the four accepted P24 held-out rows. The result does not prove product readiness, semantic success, token savings, or promotion readiness."
+  },
+  "rootCauseSeparation": {
+    "harnessBug": {
+      "causalForZeroOfFour": false,
+      "finding": "The existing wrapper command output labels the run as ROW13_1_FIX_PASS even while commonPassCount and candidatePassCount are both zero. That is a reporting/status wording defect, and the P25 source asserts artifact and claim-lock properties rather than a pass-count gate. It did not cause the selector to fail the four rows."
+    },
+    "trainedStateMissingOrNotLoaded": {
+      "causalForCandidate": true,
+      "finding": "The candidate manifest and checkpoint files exist and SkillSelectionMachine.LoadCheckpointAsync validates the checkpoint path. The candidate checkpoint has trained metadata, but it has no applicable profile coverage for the four held-out expected skill ids and candidatePositionWeights is empty, so DecideFromTrainedState returns no selected skills with NO_TRAINED_STATE_AVAILABLE."
+    },
+    "commonModelGenuinelyFailsHeldOut": {
+      "causalForCommon": true,
+      "finding": "The common checkpoint produces decisions, but all four decisions select wrong alternatives: implementation-integrity/test-integrity/plan-review for e2e-test-matrix, claim-verification for no-product-decisions, verification-before-completion/plan-review for output-skepticism, and test-integrity for self-verification."
+    },
+    "expectedScenariosTooStrictOrInvalid": {
+      "invalidScenarioFound": false,
+      "finding": "The P24 rows are marked runtimeInvocationReady, notUsedForTraining, commonTrainingAllowed=false, source/pair disjoint, universal-only, and leakage controls blocked. They are strict because current checkpoints do not contain or learn the expected held-out skill ids, but the inspected row metadata does not support invalidating them."
+    },
+    "deterministicShortcutOrLeakage": {
+      "shortcutLeakageFound": false,
+      "finding": "The existing report shows exact prompt, source id, path, filename, candidate order, and pair id authority blocked for all four rows, with candidate-order invariance for both common and candidate. This supports only the existing leakage-control check, not a product-readiness or semantic-success claim."
+    }
+  },
+  "inspectedEvidence": {
+    "row13Report": "row13-1-semantic-quality-heldout-report.json",
+    "row13ScenarioResults": "row13-1-scenario-results.jsonl",
+    "row13WrapperCommandOutput": "row13-1-wrapper-command-output.txt",
+    "p24Rows": "artifacts/smart-skills-semantic-quality-completion/p24-skillselection-runtime-holdout-rows/p24-runtime-holdout-rows.jsonl",
+    "p25WrapperSource": "Tests/SmartSkillsSemanticQualityP25RuntimeHoldoutComparisonTests.cs",
+    "row13GeneratedWrapperSource": "row13-1-wrapper/Program.cs",
+    "skillSelectionMachine": "43.SmartSkillsDomain/SkillSelectionMachine.cs",
+    "skillSelectionLogicalHierarchy": "43.SmartSkillsDomain/SkillSelectionLogicalHierarchy.cs",
+    "candidateManifest": "artifacts/smart-skills-semantic-quality-completion/p17e-skillselection-lifecycle-import-export/production-export/skill-selection-manifest.json",
+    "candidateCheckpoint": "artifacts/smart-skills-semantic-quality-completion/p17e-skillselection-lifecycle-import-export/production-export/skill-selection-checkpoint.json"
+  },
+  "coverageEvidence": {
+    "expectedHeldOutSkillIds": [
+      "e2e-test-matrix",
+      "no-product-decisions",
+      "output-skepticism",
+      "self-verification"
+    ],
+    "candidateContainsExpectedExactIds": false,
+    "candidateContainsExpectedUnderscoreIds": false,
+    "commonContainsExpectedExactIds": false,
+    "commonContainsExpectedUnderscoreIds": false,
+    "candidateSkillSelectionProfileCount": 5,
+    "candidatePromptContextProfileCount": 2,
+    "candidateTrainedPairIdsCount": 19,
+    "candidateTrainedPromptKeysCount": 17
+  },
+  "mutationBoundary": {
+    "trainingPerformed": false,
+    "checkpointMutated": false,
+    "locatorUpdatePerformed": false,
+    "promotionPerformed": false,
+    "liveCursorUiRun": false,
+    "gitActionsPerformed": false
+  },
+  "safeFixDecision": {
+    "codeOrHarnessFixApplied": false,
+    "rerunPerformed": false,
+    "reason": "A local code or wrapper patch cannot honestly make the current checkpoints select held-out skills that are absent from their trained semantic profile coverage. Fixing the wrapper status wording would improve reporting but would not fix Row13.1 quality."
+  },
+  "exactNextTrainingWorkOrder": {
+    "requestedArtifactType": "training/DPO candidate state plus new held-out evidence",
+    "authorityQuoteNeeded": "Fresh Luba approval is required before any training, checkpoint write, locator change, promotion, commit, or push.",
+    "allowedWritesWhenApproved": [
+      "a new bounded training artifact folder",
+      "a new candidate checkpoint/export artifact folder",
+      "a new Row13.1 evidence folder under docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-semantic-quality-heldout/"
+    ],
+    "forbiddenWrites": [
+      "do not mutate models/skill-selection/skill-selection-v1",
+      "do not overwrite user/common models",
+      "do not update locators or promotion state",
+      "do not train on the P24 held-out rows themselves"
+    ],
+    "tasks": [
+      "Build an approved, source-disjoint training/DPO set that teaches canonical hyphenated skill ids for e2e-test-matrix, no-product-decisions, output-skepticism, and self-verification, with hard negatives matching the Row13.1 alternatives.",
+      "Train or continue-train the SkillSelection semantic units/final-selection state using only approved training rows and preserve P24 rows as held-out evaluation only.",
+      "Validate that exported candidate state contains canonical hyphenated skill ids for the target universal-only skills before held-out evaluation.",
+      "Rerun Row13.1 automated/core held-out evaluation into a new evidence folder and parse all generated JSON.",
+      "Report heldOutCount, commonPassCount, candidatePassCount, leakage-control counts, and model/checkpoint hash before/after with no readiness, token-savings, promotion, or semantic-success overclaim."
+    ],
+    "targetGate": "candidatePassCount should reach 4/4 on the accepted P24 held-out rows before any quality success claim is considered; common baseline should remain separately reported."
+  }
+}

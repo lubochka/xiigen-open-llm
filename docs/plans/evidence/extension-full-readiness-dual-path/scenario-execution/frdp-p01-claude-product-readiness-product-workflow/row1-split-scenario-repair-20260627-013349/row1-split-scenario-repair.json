@@ -1,0 +1,308 @@
+{
+  "artifact_type": "row1_split_only_scenario_repair",
+  "scenario_row": 1,
+  "scenario_id": "frdp-p01-claude-product-readiness-product-workflow",
+  "created_by_subagent": "Dalton the 2nd / 019f0610-7555-7ff3-8f59-3d40babb17ad",
+  "created_at_local": "2026-06-27T01:33:49+03:00",
+  "claim_scope": "Только плановый ремонт читаемости Row1 split-артефакта.",
+  "evidence_scope": [
+    "Этот пакет фиксирует разбиение Row1 на малые будущие сценарии.",
+    "Этот пакет не является выполнением продукта, UI, runtime, тестов, eval, heldout или training."
+  ],
+  "count_claimed": {
+    "total_scenarios": 28,
+    "scoped_accepted": 14,
+    "done_human": "Готово в scope: 14/28",
+    "product_ready_full_pass": 0,
+    "product_ready_human": "Product-ready: 0/28",
+    "remaining": 14,
+    "row1_sub_scenarios": 7,
+    "each_sub_scenario_timebox_minutes_max": 10
+  },
+  "current_packet_result": "PASS",
+  "current_packet_is_execution": false,
+  "current_packet_is_product_readiness": false,
+  "subagent_id_or_NONE": "Dalton the 2nd / 019f0610-7555-7ff3-8f59-3d40babb17ad",
+  "row1_overall_intent": "Row1 в будущем должен проверить Claude extension product workflow от пользовательского запроса до видимого ответа в Claude, с одним и тем же сценарием через boundary, token/accounting, semantic quality, lifecycle, checkpoint, locator и host-visible behavior evidence.",
+  "russian_key_phrases": [
+    "Сценарий",
+    "Что проверяет",
+    "Что не доказывает",
+    "Запрещено",
+    "Критерии"
+  ],
+  "global_rules": {
+    "dual_path_same_scenario_rule": "Automatic path и локальный Claude UI/agent path должны проверять один и тот же текст сценария, marker/correlation id, expected response contract и поля сравнения доказательств, где это возможно.",
+    "product_ready_lock": "Нельзя утверждать product readiness до прохождения всех sub-сценариев Row1, независимой проверки доказательств и финального Row1 review.",
+    "unknown_claude_route": "Если точный маршрут Claude неизвестен, это discovery scenario, а не общий stop/blocker для всего плана.",
+    "do_not_invent_claude_host_capability": true,
+    "forbidden_current_work": [
+      "product execution",
+      "runtime execution",
+      "UI execution",
+      "tests",
+      "eval",
+      "heldout",
+      "training",
+      "mutation",
+      "send action",
+      "checkpoint promotion",
+      "locator update",
+      "code edits",
+      "board edits",
+      "commit",
+      "push"
+    ]
+  },
+  "sub_scenarios": [
+    {
+      "id": "S1",
+      "title": "Сценарий S1 - Row1 same-scenario contract и prompt package",
+      "timebox_minutes_max": 10,
+      "purpose": "Определить точный единый сценарий, который позже должны использовать automatic path и локальный Claude path.",
+      "proves": "Что проверяет: существует стабильный Row1 scenario contract: текст пользовательского запроса, marker/correlation id, expected response shape, имена будущих evidence-файлов, non-claim locks и поля сравнения.",
+      "does_not_prove": "Что не доказывает: extension/core behavior, Claude host behavior, token savings, semantic quality, lifecycle readiness, checkpoint promotion, locator update, visible answer или product readiness.",
+      "inputs": [
+        "Текущая Row1 строка board",
+        "Счетчики product-readiness action plan",
+        "Счетчики status dashboard",
+        "Этот split packet"
+      ],
+      "allowed_actions": [
+        "Создать planning-only contract packet в будущей Row1 evidence subfolder",
+        "Назвать один и тот же prompt/marker",
+        "Перечислить ожидаемые будущие evidence-файлы"
+      ],
+      "forbidden_actions": [
+        "Запрещено запускать product/runtime/UI/tests/eval/heldout/training",
+        "Запрещено отправлять prompt в Claude",
+        "Запрещено менять checkpoint/locator/model/product code",
+        "Запрещено редактировать board/action plan/dashboard",
+        "Запрещено stage/commit/push"
+      ],
+      "pass_criteria": "Критерии PASS: contract packet содержит точный prompt, marker, expected answer contract, evidence filenames, forbidden actions и claim locks; JSON parses; reviewer понимает будущие действия без догадок.",
+      "needs_fix_criteria": "Критерии NEEDS_FIX: prompt, marker, expected response, evidence filenames или claim locks расплывчаты.",
+      "blocked_criteria": "Критерии BLOCKED: из текущих planning artifacts нельзя определить приемлемый non-mutating scenario text.",
+      "next_review_requirement": "Independent planning review contract packet до любого automatic или Claude-route execution work order."
+    },
+    {
+      "id": "S2",
+      "title": "Сценарий S2 - Automatic path до extension/core boundary",
+      "timebox_minutes_max": 10,
+      "purpose": "Подготовить или, только при отдельной execution authority, позже выполнить automatic path до extension/core boundary для того же Row1 scenario, если доступен approved non-mutating entrypoint.",
+      "proves": "Что проверяет: максимум то, что тот же Row1 request может дойти до approved adapter/core boundary и создать structured boundary packet.",
+      "does_not_prove": "Что не доказывает: Claude local host readiness, visible Claude answer, full extension readiness, token savings, semantic improvement, lifecycle readiness, product readiness или formal joined pass.",
+      "inputs": [
+        "S1 contract",
+        "Ссылки на существующие boundary evidence",
+        "Approved non-mutating command/callable entrypoint при отдельной авторизации"
+      ],
+      "allowed_actions": [
+        "В этом planning split только перечислить required evidence fields",
+        "В будущем отдельно авторизованном execution packet запустить только точный approved non-mutating boundary command, если он существует",
+        "Сохранить request/response/log/status artifacts только при отдельной авторизации запуска"
+      ],
+      "forbidden_actions": [
+        "Запрещено изобретать entrypoint",
+        "Запрещено запускать broad tests",
+        "Запрещено вызывать mutating training/lifecycle/checkpoint/locator operations",
+        "Запрещено использовать helper-only proof как Claude host proof",
+        "Запрещено stage/commit/push"
+      ],
+      "pass_criteria": "Критерии PASS: будущий packet называет точный approved command/entrypoint, записывает тот же marker, structured request/response, exit status если запуск был разрешен, и boundary-only claim locks.",
+      "needs_fix_criteria": "Критерии NEEDS_FIX: command/entrypoint отсутствует, неоднозначен, мутирующий или не связан с S1 same scenario.",
+      "blocked_criteria": "Критерии BLOCKED: approved non-mutating automatic route недоступен; отсутствие route фиксируется как boundary blocker, не как product failure.",
+      "next_review_requirement": "Independent review должен проверить, что route approved, non-mutating, same-scenario и boundary-only."
+    },
+    {
+      "id": "S3",
+      "title": "Сценарий S3 - Claude auth/session preflight",
+      "timebox_minutes_max": 10,
+      "purpose": "Установить, можно ли безопасно проверить реальную Claude host session до любого input или send action.",
+      "proves": "Что проверяет: максимум то, что named Claude program/window/session target доступен, signed in или явно not signed in, и безопасен для будущей no-send работы.",
+      "does_not_prove": "Что не доказывает: input route, message send, visible answer, extension behavior, product readiness или Claude readiness.",
+      "inputs": [
+        "S1 contract",
+        "Текущая формулировка host-route blocker"
+      ],
+      "allowed_actions": [
+        "В будущем отдельно авторизованном host-preflight packet открыть или сфокусировать точное named Claude app/window",
+        "Сделать redacted session-state evidence",
+        "Записать program/window title, account/session state и no-secrets confirmation"
+      ],
+      "forbidden_actions": [
+        "Запрещено захватывать secrets",
+        "Запрещено вводить credentials",
+        "Запрещено отправлять prompts",
+        "Запрещено выводить login из stale screenshots",
+        "Запрещено использовать browser/private pages без явной authority",
+        "Запрещено менять product/runtime state",
+        "Запрещено stage/commit/push"
+      ],
+      "pass_criteria": "Критерии PASS: exact program/window target назван; signed-in или logged-out state видим и redacted; no secrets captured; имена evidence-файлов записаны.",
+      "needs_fix_criteria": "Критерии NEEDS_FIX: window target, account state или redaction instructions неполные.",
+      "blocked_criteria": "Критерии BLOCKED: Claude opens anonymously/logged out, требуются credentials, или allowed host window не найден. Следующий шаг - login recovery или human-assisted session step с no secrets captured.",
+      "next_review_requirement": "Independent review screenshots/logs на redaction, exact window identity и no-send compliance."
+    },
+    {
+      "id": "S4",
+      "title": "Сценарий S4 - Claude input route discovery без send",
+      "timebox_minutes_max": 10,
+      "purpose": "Обнаружить, существует ли безопасный input route в реальном Claude host без отправки сообщения.",
+      "proves": "Что проверяет: максимум то, что input surface существует и может быть идентифицирован, либо что точный input route неизвестен.",
+      "does_not_prove": "Что не доказывает: message delivery, answer generation, extension behavior, product readiness или local host pass.",
+      "inputs": [
+        "S1 contract",
+        "S3 session packet",
+        "Exact host/window target если S3 passed"
+      ],
+      "allowed_actions": [
+        "В будущем отдельно авторизованном discovery packet inspect visible UI controls",
+        "Click/focus только при authorization",
+        "Capture screenshots of the route",
+        "Записать control names/coordinates только как route evidence"
+      ],
+      "forbidden_actions": [
+        "Запрещено send или submit text",
+        "Запрещено вставлять полный Row1 prompt",
+        "Запрещено использовать unsupported automation, меняющую host state",
+        "Запрещено вызывать product/runtime/UI execution beyond discovery",
+        "Запрещено stage/commit/push"
+      ],
+      "pass_criteria": "Критерии PASS: exact input route documented with visible control evidence и no send action occurred.",
+      "needs_fix_criteria": "Критерии NEEDS_FIX: route evidence ambiguous, screenshot не показывает target, или action log недостаточно детален.",
+      "blocked_criteria": "Критерии BLOCKED: input control не найден или его нельзя безопасно сфокусировать. Unknown route остается discovery blocker и не останавливает весь план.",
+      "next_review_requirement": "Independent route review должен подтвердить no-send behavior и exact route evidence."
+    },
+    {
+      "id": "S5",
+      "title": "Сценарий S5 - Claude same-scenario no-send dry run",
+      "timebox_minutes_max": 10,
+      "purpose": "Доказать только то, что S1 same-scenario prompt можно подготовить для Claude local path без submit.",
+      "proves": "Что проверяет: максимум local no-send preparation того же scenario marker и prompt в approved route.",
+      "does_not_prove": "Что не доказывает: что Claude получил prompt, сгенерировал answer, использовал extension, улучшил quality, сэкономил tokens или достиг product readiness.",
+      "inputs": [
+        "S1 contract",
+        "S3 preflight PASS",
+        "S4 route PASS"
+      ],
+      "allowed_actions": [
+        "В будущем отдельно авторизованном dry-run packet поместить только safe marker или shortened no-send draft, если это разрешено route",
+        "Capture screenshot before any send",
+        "Remove/clear draft если authorized и safe"
+      ],
+      "forbidden_actions": [
+        "Запрещено pressing Enter/Send",
+        "Запрещено full prompt submission",
+        "Запрещено hidden background send",
+        "Запрещено training/eval/heldout/checkpoint/locator actions",
+        "Запрещено product readiness claim",
+        "Запрещено stage/commit/push"
+      ],
+      "pass_criteria": "Критерии PASS: evidence показывает same marker/no-send prompt preparation, no send action, clear before/after status и cleanup или explicit non-cleanup note.",
+      "needs_fix_criteria": "Критерии NEEDS_FIX: no-send boundary unclear или prompt/marker не связан с S1.",
+      "blocked_criteria": "Критерии BLOCKED: route не позволяет safe no-send draft preparation.",
+      "next_review_requirement": "Independent review должен проверить same-scenario marker и no-send boundary до любого будущего send-authorized work."
+    },
+    {
+      "id": "S6",
+      "title": "Сценарий S6 - Row1 component-evidence dependency ledger",
+      "timebox_minutes_max": 10,
+      "purpose": "Сопоставить компоненты Row1 workflow с отдельными accepted evidence requirements до любого joined claim.",
+      "proves": "Что проверяет: максимум то, что существует dependency map для adapter/core, token/accounting, semantic quality, lifecycle, checkpoint, locator и Claude host behavior.",
+      "does_not_prove": "Что не доказывает: любую metric, host answer, token savings, semantic improvement, lifecycle readiness, checkpoint promotion, locator update или product readiness.",
+      "inputs": [
+        "S1 contract",
+        "S2 boundary plan/status",
+        "S3-S5 Claude route statuses",
+        "Текущие board/action plan/status dashboard counters"
+      ],
+      "allowed_actions": [
+        "Создать planning ledger, где для каждого component перечислены required accepted evidence packet, current status и claim lock"
+      ],
+      "forbidden_actions": [
+        "Запрещено запускать metrics/eval/training/tests",
+        "Запрещено менять model/checkpoint/locator",
+        "Запрещено объединять stale helper-only artifacts в host proof",
+        "Запрещено увеличивать counters",
+        "Запрещено редактировать board/action plan/dashboard",
+        "Запрещено commit/push"
+      ],
+      "pass_criteria": "Критерии PASS: каждый Row1 component имеет required evidence, status, non-claim lock и named next packet.",
+      "needs_fix_criteria": "Критерии NEEDS_FIX: component missing, mixed with another claim или не имеет evidence filename requirements.",
+      "blocked_criteria": "Критерии BLOCKED: current planning artifacts не идентифицируют достаточно component categories; missing component source фиксируется как blocker для ledger completion.",
+      "next_review_requirement": "Independent review должен подтвердить, что ledger не превращает guard/schema/trace/marker evidence в readiness."
+    },
+    {
+      "id": "S7",
+      "title": "Сценарий S7 - Evidence packaging и final Row1 review gate",
+      "timebox_minutes_max": 10,
+      "purpose": "Определить, как Row1 evidence будет упаковано и проверено, когда все prior sub-scenarios завершены.",
+      "proves": "Что проверяет: существуют packaging/review rules, предотвращающие overclaim.",
+      "does_not_prove": "Что не доказывает: product readiness, joined pass, Claude readiness или любой missing component.",
+      "inputs": [
+        "Reviewed packets from S1-S6, каждый с PASS или accepted blocker status"
+      ],
+      "allowed_actions": [
+        "Подготовить final Row1 review checklist",
+        "Подготовить JSON schema/fields для будущего review"
+      ],
+      "forbidden_actions": [
+        "Запрещено mark product-ready early",
+        "Запрещено hide blockers",
+        "Запрещено treat marker-only as local pass",
+        "Запрещено treat boundary/API as host readiness",
+        "Запрещено treat trace as savings",
+        "Запрещено treat schema as training",
+        "Запрещено treat checkpoint candidate as promotion",
+        "Запрещено commit/push"
+      ],
+      "pass_criteria": "Критерии PASS: final review gate требует, чтобы все sub-scenarios passed или имели accepted blockers, все claim locks preserved, а counters не менялись до отдельного accepted final review.",
+      "needs_fix_criteria": "Критерии NEEDS_FIX: final review checklist позволяет readiness claim из partial, stale, helper-only, marker-only или unreviewed evidence.",
+      "blocked_criteria": "Критерии BLOCKED: любой prerequisite packet missing или unreviewed.",
+      "next_review_requirement": "Independent final Row1 review после появления всех required packets; до этого product_readiness_claim=false и formal_joined_pass=false."
+    }
+  ],
+  "claim_locks": {
+    "product_readiness_claim": false,
+    "formal_joined_pass": false,
+    "claude_host_readiness_claim": false,
+    "token_savings_claim": false,
+    "semantic_quality_claim": false,
+    "training_or_learnability_claim": false,
+    "checkpoint_promotion_claim": false,
+    "locator_update_claim": false
+  },
+  "product_ready_lock_conditions": [
+    "S1-S7 завершены с accepted evidence.",
+    "Automatic path и local Claude path используют один и тот же scenario, где это возможно.",
+    "Unknown Claude route questions resolved через discovery или accepted blockers.",
+    "Component evidence для boundary, token, semantic quality, lifecycle, checkpoint, locator и host-visible behavior accepted и reviewed.",
+    "Final Row1 review explicitly passes и counters обновлены отдельным authorized board/status action."
+  ],
+  "exact_next_subagent_work_order": {
+    "role": "bounded Row1 S1 same-scenario contract planning sub-agent",
+    "max_active_time_minutes": 10,
+    "current_authority_quote": "Ты bounded Row1 split-only scenario repair sub-agent в C:\\Projects\\llm_mvp_core. Max 10 minutes. Planning-only; no product/runtime/UI execution.",
+    "task": "Создать один planning-only S1 contract packet для Row1 frdp-p01-claude-product-readiness-product-workflow в новой Row1 evidence subfolder. Определить exact same-scenario prompt text, marker/correlation id, expected response contract, future evidence filenames, claim locks и PASS/NEEDS_FIX/BLOCKED criteria. Не запускать product/runtime/UI/tests/eval/heldout/training. Не редактировать board/action plan/dashboard/code/AGENTS/CLAUDE/skills. No commit/push.",
+    "allowed_reads": [
+      "Этот row1-split-scenario-repair.md/json",
+      "Product-readiness scenario board/action plan/status dashboard",
+      "Next-scenario selection after Row28 files",
+      "Plan file only if needed for scenario names"
+    ],
+    "allowed_writes": [
+      "Одна новая S1 planning evidence folder под docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-claude-product-readiness-product-workflow/ с одним Markdown packet и одним JSON packet only"
+    ],
+    "forbidden": [
+      "product/runtime/UI/tests/eval/heldout/training",
+      "board/action plan/dashboard/code/AGENTS/CLAUDE/skills edits",
+      "commit/push"
+    ],
+    "return": "PASS/NEEDS_FIX, files changed, commands run, exact next work order. No commit/push."
+  },
+  "files_changed": [
+    "docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-claude-product-readiness-product-workflow/row1-split-scenario-repair-20260627-013349/row1-split-scenario-repair.md",
+    "docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-claude-product-readiness-product-workflow/row1-split-scenario-repair-20260627-013349/row1-split-scenario-repair.json"
+  ]
+}

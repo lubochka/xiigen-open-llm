@@ -1,0 +1,135 @@
+{
+  "scenarioId": "codex-full-extension-runtime-20260627-090817",
+  "phase": {
+    "number": 4,
+    "total": 10,
+    "nameRu": "Подготовить живое runtime-доказательство в реальных host UI",
+    "currentStepRu": "Codex real UI scenario prep",
+    "whatThisSolvesRu": "Будущий агент получает точный сценарий проверки Codex app/plugin/chat UI тем же смысловым запросом, который проверяется через boundary path.",
+    "whatThisDoesNotSolveRu": "Этот сценарий не запускает Codex UI, не отправляет prompt и не доказывает product readiness."
+  },
+  "prepSliceStatus": {
+    "totalActions": 4,
+    "doneActionsAfterPacketVerification": 4,
+    "inProgressActionsAfterPacketVerification": 0,
+    "remainingActionsInsidePrepSlice": 0,
+    "productReadinessCount": 0,
+    "productReadinessStatement": "Product readiness count remains 0"
+  },
+  "preconditions": [
+    "Codex app visible and unlocked; no password/PIN captured.",
+    "Correct Codex thread/project/plugin surface identified.",
+    "If login/session prompt appears, agent stops before credentials and user completes login locally.",
+    "If model/reasoning tier is visible and wrong, record MODEL_TIER_WARNING; do not fake or silently fix it.",
+    "If target window or plugin surface is not found, return TARGET_WINDOW_NOT_FOUND."
+  ],
+  "exactPrompt": "Через XIIGen Smart Skills разберись с задачей: пользователь хочет улучшить документацию продукта так, чтобы она была понятна человеку. Переведи запрос в универсальную задачу, найди универсальный план оркестрации и выбери подходящие скилы. Используй только универсальную часть без привязки к конкретному языку программирования, фреймворку или стеку.",
+  "promptPurpose": [
+    "prompt to task",
+    "task to orchestration plan",
+    "task or plan to skills",
+    "universal non-stack-specific behavior"
+  ],
+  "dualPathSameScenarioProof": {
+    "title": "Dual-path same-scenario proof",
+    "pathA": {
+      "name": "Path A",
+      "kind": "non-UI installed Codex plugin/adapter boundary path",
+      "prompt": "same exactPrompt",
+      "expectedEvidence": [
+        "XiigenExtensionRequest",
+        "RequestedSkills",
+        "AvailableSkills",
+        "core response",
+        "adapter or plugin trace",
+        "hostSelectorOrScorerAdded=false"
+      ],
+      "claimBoundary": "Path A proves only adapter/core boundary and does not prove Codex chat UI readiness."
+    },
+    "pathB": {
+      "name": "Path B",
+      "kind": "real Codex UI path",
+      "prompt": "same exactPrompt",
+      "exactSteps": [
+        "Open the unlocked Codex app window.",
+        "Choose the correct thread/project/plugin route for XIIGen Smart Skills.",
+        "Capture screenshot before typing, with no secrets visible.",
+        "Type exactPrompt.",
+        "Capture screenshot before submit showing the prompt and correct surface.",
+        "Submit the prompt.",
+        "Wait for visible answer or visible error.",
+        "Capture screenshot after response.",
+        "Collect trace or correlation evidence if available.",
+        "Write human summary of what appeared in Codex UI."
+      ],
+      "expectedEvidence": [
+        "window inventory",
+        "screenshot before prompt",
+        "screenshot before submit",
+        "screenshot after response or error",
+        "core request/response/trace",
+        "adapter/plugin trace",
+        "redaction log",
+        "human summary"
+      ],
+      "claimBoundary": "Path B is required for Codex UI proof; marker-only screenshots are insufficient."
+    }
+  },
+  "antiSubstitutionRules": [
+    "JSON/log/core trace alone is not Codex UI proof.",
+    "marker-only screenshot is not full UI proof.",
+    "Codex adapter proof is not Codex chat UI readiness.",
+    "Core success without visible Codex UI response remains boundary evidence only.",
+    "Path A without Path B is not live Codex UI readiness."
+  ],
+  "acceptanceCriteria": [
+    {
+      "verdict": "PASS",
+      "meaningRu": "Path A и Path B выполнены с тем же prompt; ответ виден в Codex UI; core trace найден; redaction log чистый; host не подменил selector/scorer."
+    },
+    {
+      "verdict": "PARTIAL",
+      "meaningRu": "Есть только часть доказательств, например boundary path без полного UI path."
+    },
+    {
+      "verdict": "BLOCKED_LOGIN_REQUIRED",
+      "meaningRu": "Codex просит login/session/credentials; агент остановился до ввода credentials."
+    },
+    {
+      "verdict": "TARGET_WINDOW_NOT_FOUND",
+      "meaningRu": "Нужное окно или surface Codex не найдены."
+    },
+    {
+      "verdict": "RESPONSE_NOT_VISIBLE",
+      "meaningRu": "Trace есть, но ответ не виден в Codex UI."
+    },
+    {
+      "verdict": "CORE_TRACE_MISSING",
+      "meaningRu": "Видимый UI ответ есть, но нет core/correlation trace."
+    },
+    {
+      "verdict": "WRONG_THREAD_OR_SURFACE",
+      "meaningRu": "Сценарий выполнен не в правильном thread/project/plugin route."
+    },
+    {
+      "verdict": "MODEL_TIER_WARNING",
+      "meaningRu": "Виден неожиданный model/reasoning tier; это warning, не readiness proof."
+    }
+  ],
+  "notProvenByThisScenarioPrep": [
+    "token savings",
+    "semantic quality",
+    "learnability/training",
+    "DPO",
+    "promotion/locator",
+    "Claude readiness",
+    "Cursor readiness",
+    "full product readiness"
+  ],
+  "formatRequirements": {
+    "encoding": "UTF-8 no BOM",
+    "lineEndings": "LF",
+    "trailingWhitespace": "forbidden",
+    "jsonParseClean": true
+  }
+}

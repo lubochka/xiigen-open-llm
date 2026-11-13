@@ -1,0 +1,162 @@
+{
+  "scenario_id": "frdp-p01-codex-codex-chat-ui-marker",
+  "row": 21,
+  "title_ru": "Сценарий 21: восстановление маршрута Codex UI или точный blocker",
+  "purpose_ru": "Сценарий 21 проверяет, можно ли отправить marker prompt через локальный Codex Desktop/UI в установленный Codex plugin и увидеть ответ в Codex UI. После Row20 он нужен потому, что Row20 доказал только installed Codex plugin JS entrypoint до adapter/core boundary, но не доказал Codex Desktop UI route.",
+  "success_meaning_ru": "Успех означает confirmed Codex Desktop UI input, отправку того же marker prompt через UI и видимый response/marker в Codex UI, при наличии supporting Path A evidence.",
+  "does_not_prove_ru": [
+    "не доказывает готовность продукта",
+    "не доказывает token savings",
+    "не доказывает semantic quality",
+    "не доказывает training/learnability",
+    "не доказывает checkpoint promotion",
+    "не доказывает locator update unless separately proven"
+  ],
+  "marker_prompt": "Row21 Codex UI route marker. Use installed XIIGen Smart Skills Codex plugin if available. Return a short visible marker: ROW21_CODEX_UI_ROUTE_MARKER.",
+  "expected_visible_marker": "ROW21_CODEX_UI_ROUTE_MARKER",
+  "path_a": {
+    "label_ru": "Путь A",
+    "role_ru": "automated/supporting proof; supporting only, not replacement for UI",
+    "plugin_root": "C:\\Users\\lubao\\.codex\\plugins\\cache\\xiigen-local\\codex-xiigen-smart-skills\\0.1.0+codex.runtime04e-20260616-231500",
+    "entrypoint_ps1": "C:\\Users\\lubao\\.codex\\plugins\\cache\\xiigen-local\\codex-xiigen-smart-skills\\0.1.0+codex.runtime04e-20260616-231500\\src\\codex-entrypoint.ps1",
+    "exact_commands_ru": [
+      "$scenarioDir = \"C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-codex-codex-chat-ui-marker\"",
+      "$pluginRoot = \"C:\\Users\\lubao\\.codex\\plugins\\cache\\xiigen-local\\codex-xiigen-smart-skills\\0.1.0+codex.runtime04e-20260616-231500\"",
+      "$entrypoint = Join-Path $pluginRoot \"src\\codex-entrypoint.ps1\"",
+      "$pathADir = Join-Path $scenarioDir \"path-a-entrypoint\"",
+      "New-Item -ItemType Directory -Force -Path $pathADir | Out-Null",
+      "& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $entrypoint -Method \"prompt-to-task\" -UserPromptOrTaskText \"Row21 Codex UI route marker. Use installed XIIGen Smart Skills Codex plugin if available. Return a short visible marker: ROW21_CODEX_UI_ROUTE_MARKER.\" -HostFactsJson '{\"row\":\"21\",\"scenario\":\"frdp-p01-codex-codex-chat-ui-marker\",\"path\":\"A\",\"supporting_only\":\"true\"}' -RequestedSkillsJson '[\"codex-xiigen-smart-skills:xiigen-smart-skills\"]' -AvailableSkillsJson '[\"codex-xiigen-smart-skills:xiigen-smart-skills\"]' -CheckSetInputsJson '{\"row21_marker\":\"ROW21_CODEX_UI_ROUTE_MARKER\",\"ui_route_required\":\"true\"}' -ProvenanceJson '{\"scenario\":\"Row21\",\"path\":\"A\",\"claim_boundary\":\"supporting_entrypoint_only\"}' -CorrelationId \"row21-path-a-codex-entrypoint\" -RequestPath (Join-Path $pathADir \"row21-path-a-request.json\") -ResponsePath (Join-Path $pathADir \"row21-path-a-response.json\") -TracePath (Join-Path $pathADir \"row21-path-a-trace.json\") -DebugEnabled *>&1 | Tee-Object -FilePath (Join-Path $pathADir \"row21-path-a-entrypoint-console.log\")"
+    ],
+    "expected_outputs": [
+      "path-a-entrypoint/row21-path-a-plugin-entrypoint-file.json",
+      "path-a-entrypoint/row21-path-a-entrypoint-files.json",
+      "path-a-entrypoint/row21-path-a-request.json",
+      "path-a-entrypoint/row21-path-a-response.json",
+      "path-a-entrypoint/row21-path-a-trace.json",
+      "path-a-entrypoint/row21-path-a-entrypoint-console.log",
+      "path-a-entrypoint/row21-path-a-response-normalized.json"
+    ],
+    "pass_criteria_ru": [
+      "request содержит CorrelationId row21-path-a-codex-entrypoint",
+      "request содержит ROW21_CODEX_UI_ROUTE_MARKER",
+      "response и trace существуют и парсятся как JSON",
+      "claim ограничен supporting entrypoint/adaptor boundary"
+    ],
+    "rejection_criteria_ru": [
+      "entrypoint отсутствует",
+      "response/trace не созданы",
+      "JSON не парсится",
+      "Path A назван UI proof"
+    ]
+  },
+  "path_b": {
+    "label_ru": "Путь B",
+    "role_ru": "local Codex Desktop/UI route attempt; решающий путь для UI pass или точный blocker",
+    "target_window_ru": "Локальное приложение Codex Desktop, подтвержденное окно Codex с workspace/thread C:\\Projects\\llm_mvp_core, если он уже открыт.",
+    "session_login_preflight_ru": [
+      "Сделать screenshot до ввода: path-b-ui/row21-path-b-preflight-desktop-or-window.png",
+      "Подтвердить, что окно является Codex Desktop, по title/process/bounds/visible chrome.",
+      "Если открыт anonymous/login screen, не вводить секреты и классифицировать UI_AUTH_REQUIRED_NO_SECRETS_CAPTURED.",
+      "Если есть риск захвата секретов, abort или redaction; no secrets captured."
+    ],
+    "ui_strategies_if_clean_uia_not_exposed_ru": [
+      "Strategy 1 UIA-first: найти Codex top-level window, найти composer Edit/TextBox/Document control, сохранить redacted UIA tree, подтвердить input bounds screenshot, затем clipboard-safe paste только в подтвержденный input.",
+      "Strategy 2 screenshot/focus-confirmed fallback: если clean UIA controls не exposed, подтвердить target window и composer rectangle screenshot, сделать click только по подтвержденному rectangle, проверить focus/caret screenshot, затем paste; если focus не подтвержден, не использовать слепой ввод."
+    ],
+    "forbidden_ru": [
+      "не использовать слепой ввод",
+      "не вставлять prompt в неподтвержденное окно",
+      "не отправлять prompt без screenshot/focus/input evidence",
+      "не захватывать секреты"
+    ],
+    "two_monitor_overlap_fallback_ru": [
+      "Сохранить monitor layout metadata: path-b-ui/row21-path-b-monitor-layout.json.",
+      "Если возможно безопасно, переместить Codex Desktop на primary monitor без ввода текста.",
+      "Если окно перекрыто или target ambiguous, abort с UI_TARGET_OCCLUDED_OR_AMBIGUOUS.",
+      "Если несколько Codex windows и нужный workspace/thread нельзя доказать, abort с MULTIPLE_CODEX_WINDOWS_AMBIGUOUS."
+    ],
+    "expected_outputs": [
+      "path-b-ui/row21-path-b-preflight-desktop-or-window.png",
+      "path-b-ui/row21-path-b-uia-window-tree-redacted.json",
+      "path-b-ui/row21-path-b-window-focus-candidate.json",
+      "path-b-ui/row21-path-b-input-target-confirmed.png",
+      "path-b-ui/row21-path-b-after-submit.png",
+      "path-b-ui/row21-path-b-visible-response.png",
+      "path-b-ui/row21-path-b-ui-route-result.json",
+      "path-b-ui/row21-path-b-screen-recording.mp4",
+      "path-b-ui/row21-path-b-blocker.json",
+      "path-b-ui/row21-path-b-no-blind-input-attestation.txt"
+    ],
+    "pass_criteria_ru": [
+      "целевое окно Codex Desktop подтверждено до ввода",
+      "prompt введен только в подтвержденный Codex UI input",
+      "visible marker/response появился в Codex UI",
+      "evidence не содержит секреты",
+      "Path A artifacts доступны для same-scenario comparison"
+    ],
+    "rejection_criteria_ru": [
+      "blind input или неподтвержденный target input",
+      "response виден только в terminal/log/Path A, но не в Codex UI",
+      "секреты попали в screenshot/video",
+      "нет точной blocker classification при UI failure"
+    ]
+  },
+  "blocker_classification": {
+    "exact_blocker_phrase_ru": "точный blocker",
+    "definition_ru": "Точный blocker означает, что executor безопасно пытался подготовить UI route по правилам Path B, но конкретная доказанная причина не позволила дойти до confirmed UI submit или visible UI response.",
+    "diff_from_pass_ru": "Pass показывает confirmed UI input + prompt submit + visible response в Codex UI; blocker показывает доказанную причину, почему это нельзя безопасно выполнить сейчас.",
+    "classes": [
+      "CODEX_DESKTOP_NOT_RUNNING",
+      "UI_AUTH_REQUIRED_NO_SECRETS_CAPTURED",
+      "UI_INPUT_CONTROL_NOT_FOUND",
+      "UI_TARGET_OCCLUDED_OR_AMBIGUOUS",
+      "MULTIPLE_CODEX_WINDOWS_AMBIGUOUS",
+      "FOCUS_NOT_CONFIRMED_ABORTED",
+      "CLIPBOARD_OR_SECRET_RISK_ABORTED",
+      "NO_VISIBLE_RESPONSE_AFTER_CONFIRMED_SUBMIT"
+    ],
+    "required_evidence": [
+      "path-b-ui/row21-path-b-blocker.json",
+      "screenshot/UIA metadata без секретов",
+      "path-b-ui/row21-path-b-no-blind-input-attestation.txt"
+    ]
+  },
+  "joined_comparison": {
+    "expected_files": [
+      "row21-joined-comparison.json",
+      "row21-joined-comparison.md"
+    ],
+    "required_fields": [
+      "scenario_id",
+      "path_a_status",
+      "path_b_status",
+      "same_marker_used",
+      "ui_route_result",
+      "blocker_class_or_null",
+      "claim_boundary",
+      "non_claims"
+    ],
+    "claim_boundary_ru": "Joined comparison не доказывает готовность продукта; он доказывает только UI route pass или exact blocker для Row21."
+  },
+  "success_criteria_ru": [
+    "Сценарий 21 выполнен как same-scenario dual path.",
+    "Путь A artifacts показывают supporting entrypoint/adaptor boundary.",
+    "Путь B показывает confirmed Codex Desktop UI route с visible marker или точный blocker.",
+    "Evidence не содержит секреты.",
+    "Joined comparison отделяет pass от blocker."
+  ],
+  "rejection_criteria_ru": [
+    "Нет Path B evidence.",
+    "Path A выдан за UI proof.",
+    "Использован или не исключен blind input.",
+    "Нет точной blocker classification.",
+    "Evidence содержит секреты.",
+    "Есть claim о product readiness/token savings/semantic quality/training/checkpoint promotion/locator update."
+  ],
+  "validation_required_for_prep": [
+    "JSON parses with ConvertFrom-Json",
+    "Select-String confirms required phrases",
+    "git diff --check"
+  ],
+  "next_work_order_text_ru": "Исполнитель Row21: выполнять только после отдельного разрешения на product/UI execution. 1) Выполни Path A из row21-prep-codex-chat-ui-route.md: создай path-a-entrypoint, проверь package/entrypoint files, запусти codex-entrypoint.ps1 с marker prompt ROW21_CODEX_UI_ROUTE_MARKER, сохрани request/response/trace/console/normalized response. 2) Выполни Path B в локальном Codex Desktop: сначала screenshot preflight, затем session/login preflight без секретов, затем подтверждение target window и input через UIA-first strategy; если clean UIA controls не exposed, используй screenshot/focus-confirmed fallback. Не использовать слепой ввод: prompt можно paste/send только после подтвержденного Codex input и focus. 3) Если UI target/input/focus/session нельзя подтвердить, не вводи prompt и запиши точный blocker с class, failed step, screenshot/UIA evidence и no-secrets/no-blind-input attestation. 4) Если prompt отправлен и visible marker появился в Codex UI, сохрани screenshots/result JSON. 5) Создай row21-joined-comparison.json и row21-joined-comparison.md. Верни только narrow claim: Row21 UI route pass или Row21 exact blocker; не доказывает готовность продукта, token savings, semantic quality, training/learnability, checkpoint promotion или locator update."
+}

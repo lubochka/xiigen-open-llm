@@ -1,0 +1,248 @@
+{
+  "schema_version": "frdp.row12.cursor.semantic_quality_prep.v1",
+  "created_at_utc": "2026-06-28T14:53:42Z",
+  "worker_id": "quality-semantic-row12-cursor-prep",
+  "status": "PASS_PREP_READY_TO_SCORE",
+  "worktree": "C:/Projects/llm_mvp_core_codex_sync_20260628",
+  "evidence_folder": "docs/plans/evidence/extension-full-readiness-dual-path/quality-semantic-row12-cursor-prep-20260628T145342Z/",
+  "claim_scope": "Preparation only for a narrow Row12 Cursor semantic-output evaluation. No semantic quality, token savings, training, readiness, checkpoint promotion, locator update, all-extension readiness, or full product readiness is claimed.",
+  "eval_question": {
+    "scope": "Same Cursor row12 scenario and pair only.",
+    "scenario_id": "frdp-p01-cursor-token-savings-baseline",
+    "pair_id": "frdp-p01-row12-cursor-token-baseline-v1",
+    "marker": "FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1",
+    "prompt_hash": "sha256:7140fd94d9e6df18b4abef4f13317146ef41a5db7ba1953e8579ffcb783cb374",
+    "question": "Does the existing Path A core-response convert the row12 prompt into a universal task, a universal orchestration plan, and an allowed skill selection, while preserving non-claims and avoiding deterministic shortcut or candidate-position leakage as final authority?",
+    "not_the_question": "This does not ask about full semantic quality, quality improvement, token savings, training, common readiness, target promotion, all-extension readiness, or full product readiness."
+  },
+  "expected_outputs": {
+    "next_eval_verdicts": [
+      "PASS_NARROW_ROW12_SEMANTIC_EVAL",
+      "FAIL_ROW12_SEMANTIC_EVAL",
+      "BLOCKED_MISSING_OUTPUT"
+    ],
+    "next_eval_files": [
+      "eval.ru.md",
+      "eval.json"
+    ],
+    "required_eval_sections": [
+      "source mapping",
+      "rubric results",
+      "prompt_to_task score",
+      "task_to_plan score",
+      "task_to_skills score",
+      "shortcut and leakage guard",
+      "non-claims",
+      "8-group board impact",
+      "next bounded action"
+    ]
+  },
+  "rubric": [
+    {
+      "id": "SQ-ROW12-01",
+      "name": "same scenario mapping",
+      "pass_check": "scenario_id, pair_id, marker, and prompt hash match join/token/status evidence",
+      "fail_check": "any mapping mismatch or missing mapping field"
+    },
+    {
+      "id": "SQ-ROW12-02",
+      "name": "source boundary",
+      "pass_check": "semantic scoring uses Path A core request/response/trace only; Path B is route evidence only",
+      "fail_check": "Path B screenshot, token delta, status board, or checkpoint is scored as semantic output"
+    },
+    {
+      "id": "SQ-ROW12-03",
+      "name": "prompt to universal task",
+      "pass_check": "nested prompt_to_task JSON parses and contains task_id, task_title, task_type, constraints, deliverables, acceptance_gates, raw prompt hash/redaction, and explicit non-claims",
+      "fail_check": "missing required task fields, unparsed nested JSON, or task is Cursor-only instead of universal"
+    },
+    {
+      "id": "SQ-ROW12-04",
+      "name": "task type fit",
+      "pass_check": "task_type is compatible with the synthetic request; expected narrow value from current evidence is plan_only_or_approval_gated_task",
+      "fail_check": "task_type contradicts the request or lacks written rationale"
+    },
+    {
+      "id": "SQ-ROW12-05",
+      "name": "universal orchestration plan",
+      "pass_check": "nested task_to_plan JSON parses, has exactly 3 ordered steps, and each step has uses plus one verification gate",
+      "fail_check": "step count is not 3, a gate is missing, or the plan is a host-only script"
+    },
+    {
+      "id": "SQ-ROW12-06",
+      "name": "skill selection",
+      "pass_check": "nested task_to_skills JSON parses and selected skills are allowed: prompt-to-task, task-to-plan, task-to-skills, evidence-ledger",
+      "fail_check": "unapproved skill appears, required route skill is missing, or selection source is hidden"
+    },
+    {
+      "id": "SQ-ROW12-07",
+      "name": "non-claims",
+      "pass_check": "semantic_quality_claimed, token_savings_claimed, readiness_claimed, training_started, checkpoint_mutation, locator_update, and external_ai_used remain false",
+      "fail_check": "any forbidden claim is true or implied as proven"
+    },
+    {
+      "id": "SQ-ROW12-08",
+      "name": "no deterministic shortcut or position leakage",
+      "pass_check": "deterministic/baseline/candidate-order/candidate-position evidence is diagnostic, baseline, eval, or internal only and not final semantic authority",
+      "fail_check": "hidden dictionary/scorer, exact prompt replay, candidate order, or candidate position is treated as semantic authority"
+    },
+    {
+      "id": "SQ-ROW12-09",
+      "name": "no masquerade",
+      "pass_check": "token counts, screenshots, checkpoints, and status rows are not used as quality proof",
+      "fail_check": "a non-quality evidence type is used to prove semantic quality"
+    },
+    {
+      "id": "SQ-ROW12-10",
+      "name": "overclaim lock",
+      "pass_check": "report states evidence supports only a narrow Row12 Cursor semantic-output eval",
+      "fail_check": "report claims full semantic quality, quality improvement, token savings, training, common readiness, target promotion, all-extension readiness, or full product readiness"
+    }
+  ],
+  "sources_to_use": {
+    "path_a_core_request": "docs/plans/evidence/extension-full-readiness-dual-path/row12-cursor-timeout-fix-final-20260628T134935Z/xiigen-cursor-xiigenSmartSkills.runtimeProof.invoke-frdp-p01-row12-cursor-token-baseline-v1_FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1_frdp-p01-cursor-token-savings-baseline-positive_request-request-2026-06-28T13-50-15-212Z.json",
+    "path_a_core_response": "docs/plans/evidence/extension-full-readiness-dual-path/row12-cursor-timeout-fix-final-20260628T134935Z/xiigen-cursor-xiigenSmartSkills.runtimeProof.invoke-frdp-p01-row12-cursor-token-baseline-v1_FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1_frdp-p01-cursor-token-savings-baseline-positive_request-core-response-2026-06-28T13-50-15-212Z.json",
+    "path_a_core_trace": "docs/plans/evidence/extension-full-readiness-dual-path/row12-cursor-timeout-fix-final-20260628T134935Z/xiigen-cursor-xiigenSmartSkills.runtimeProof.invoke-frdp-p01-row12-cursor-token-baseline-v1_FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1_frdp-p01-cursor-token-savings-baseline-positive_request-core-trace-2026-06-28T13-50-15-212Z.json",
+    "path_a_runner_report": "docs/plans/evidence/extension-full-readiness-dual-path/row12-cursor-timeout-fix-final-20260628T134935Z/row12-host-visible-runner-report.json",
+    "join_report": "docs/plans/evidence/extension-full-readiness-dual-path/row12-cursor-joined-path-a-b-20260628T142044Z/join-report.json",
+    "token_review": "docs/plans/evidence/extension-full-readiness-dual-path/token-row12-cursor-review-20260628T143616Z/review-report.json",
+    "status_board": "docs/plans/evidence/extension-full-readiness-dual-path/status-after-row12-token-review-20260628-174621/status-board.json",
+    "path_b_route_boundary_only": "docs/plans/evidence/extension-full-readiness-dual-path/row12-cursor-path-b-real-ui-20260628T140709Z/path-b-ui-report.json"
+  },
+  "sources_not_to_use": [
+    "external AI or internet",
+    "hidden evaluator service",
+    "raw external AI output",
+    "hidden deterministic dictionary/scorer masquerading as semantic quality",
+    "Path B screenshots as semantic output",
+    "token delta as quality proof",
+    "old ledger/checklist/status rows as completed eval cycles",
+    "training/checkpoint/locator artifacts as quality proof"
+  ],
+  "observed_from_inputs": {
+    "path_a_core_response_success": true,
+    "path_a_core_response_status": "core_boundary_partial_no_semantic_quality_claim",
+    "path_a_selected_skills": [
+      "prompt-to-task",
+      "task-to-plan",
+      "task-to-skills",
+      "evidence-ledger"
+    ],
+    "path_a_nested_outputs_available_for_scoring": [
+      "CheckSetResults.prompt_to_task",
+      "CheckSetResults.task_to_plan",
+      "CheckSetResults.task_to_skills"
+    ],
+    "path_b_submitted_to_core": false,
+    "token_counts": {
+      "before_tokens": 6209,
+      "after_tokens": 6209,
+      "delta_tokens": 0,
+      "token_savings_proven": false
+    }
+  },
+  "next_bounded_action": {
+    "worker": "QUALITY-SEMANTIC-ROW12-CURSOR-EVAL-01",
+    "allowed_scope": [
+      "read listed sources",
+      "parse Path A core-response and nested prompt_to_task/task_to_plan/task_to_skills JSON",
+      "apply the rubric in this prep packet",
+      "write one eval folder under docs/plans/evidence/extension-full-readiness-dual-path/quality-semantic-row12-cursor-eval-<timestamp>/"
+    ],
+    "forbidden_scope": [
+      "code edits",
+      "governance edits",
+      "skills edits",
+      "external AI send",
+      "training",
+      "checkpoint mutation",
+      "locator update",
+      "commit",
+      "push"
+    ],
+    "starting_commands": [
+      "$Core = Get-Content -LiteralPath 'docs/plans/evidence/extension-full-readiness-dual-path/row12-cursor-timeout-fix-final-20260628T134935Z/xiigen-cursor-xiigenSmartSkills.runtimeProof.invoke-frdp-p01-row12-cursor-token-baseline-v1_FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1_frdp-p01-cursor-token-savings-baseline-positive_request-core-response-2026-06-28T13-50-15-212Z.json' -Raw | ConvertFrom-Json",
+      "$Task = $Core.CheckSetResults.prompt_to_task | ConvertFrom-Json",
+      "$Plan = $Core.CheckSetResults.task_to_plan | ConvertFrom-Json",
+      "$Skills = $Core.CheckSetResults.task_to_skills | ConvertFrom-Json"
+    ],
+    "blocked_condition": "If any source JSON or nested JSON parse fails, write BLOCKED_MISSING_OUTPUT with the exact file or field.",
+    "success_condition": "Write eval.ru.md and eval.json with a narrow verdict, rubric table, source refs, non-claims, and 8-group board impact."
+  },
+  "non_claims": {
+    "semantic_quality_claimed": false,
+    "semantic_eval_executed_by_this_prep": false,
+    "token_savings_claimed": false,
+    "readiness_claimed": false,
+    "training_started": false,
+    "checkpoint_mutated": false,
+    "locator_update_claimed": false,
+    "external_ai_used": false,
+    "commit_or_push_done": false
+  },
+  "overclaim_locks": [
+    "READY_TO_SCORE means only that Path A core-response appears available for the next bounded scoring worker.",
+    "A passing next eval may support only narrow Row12 Cursor semantic-output scoring.",
+    "No full semantic quality claim is allowed without held-out/source-disjoint scoring, before/after comparison, ablation/no-leakage/no-memorization controls, and regression guard.",
+    "Token review remains reviewed_not_proven because 6209 -> 6209 gives delta 0.",
+    "Path B remains route evidence only because submitted_to_core=false."
+  ],
+  "eight_group_status_board_mapping": {
+    "current_board_after_prep": [
+      {
+        "id": 1,
+        "name": "Cursor row12 dual-path same-scenario coverage",
+        "status": "done_narrow",
+        "prep_effect": "unchanged"
+      },
+      {
+        "id": 2,
+        "name": "All-extensions readiness",
+        "status": "remaining",
+        "prep_effect": "unchanged"
+      },
+      {
+        "id": 3,
+        "name": "Token savings",
+        "status": "reviewed_not_proven",
+        "prep_effect": "unchanged"
+      },
+      {
+        "id": 4,
+        "name": "Semantic quality",
+        "status": "remaining",
+        "prep_effect": "prep-only next-action evidence; no eval executed"
+      },
+      {
+        "id": 5,
+        "name": "Training and learnability",
+        "status": "remaining",
+        "prep_effect": "unchanged"
+      },
+      {
+        "id": 6,
+        "name": "Backup/export/import/share/continue-training lifecycle",
+        "status": "remaining",
+        "prep_effect": "unchanged"
+      },
+      {
+        "id": 7,
+        "name": "Checkpoint promotion and locator update",
+        "status": "remaining",
+        "prep_effect": "unchanged"
+      },
+      {
+        "id": 8,
+        "name": "Full product readiness",
+        "status": "remaining",
+        "prep_effect": "unchanged"
+      }
+    ],
+    "possible_after_next_eval_pass": "Group 4 may move only to reviewed_narrow_row12_only, not full semantic quality."
+  },
+  "verification_expectations_for_this_prep": {
+    "parse_output_json": "required",
+    "git_diff_check": "required",
+    "forbidden_overclaim_marker_scan": "required"
+  }
+}

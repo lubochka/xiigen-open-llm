@@ -1,0 +1,124 @@
+{
+  "schema_version": "next-scenario-selection/v1",
+  "generated_at_local": "2026-06-27T00:05:43+03:00",
+  "decision_status": "NEEDS_PLAN_REPAIR",
+  "claim_scope": "planning/orchestration selection only",
+  "evidence_scope": [
+    "product-readiness-scenario-board.md",
+    "product-readiness-scenario-board.json",
+    "product-readiness-action-plan.md",
+    "targeted Row24 JSON extraction from scenario board"
+  ],
+  "count_claimed": {
+    "total_scenarios": 28,
+    "scoped_accepted": 12,
+    "product_readiness_full_pass": 0,
+    "full_joined_pass": 0,
+    "remaining": 16
+  },
+  "independent_evidence_count": 0,
+  "subagent_id_or_NONE": "Meitner the 2nd / 019f05bf-ef3a-7230-b34d-2bbf7522a1f1",
+  "downgrade_needed": "Selection only; no product/runtime/UI/tests/eval/heldout were run, and no readiness claim is opened.",
+  "current_status": {
+    "commit_context_from_work_order": "01ea4a864 pushed accepted scoped evidence/status boundary",
+    "total_scenarios": 28,
+    "scoped_accepted": 12,
+    "product_ready_full_pass": 0,
+    "remaining": 16
+  },
+  "excluded": [
+    {
+      "scenario_number": 23,
+      "scenario_id": "frdp-p01-codex-semantic-quality-heldout",
+      "reason": "Parked as BLOCKED_NO_APPROVED_INPUT_PATH; approved concrete input/path candidate count is 0."
+    },
+    {
+      "scenario_number": 24,
+      "scenario_id": "frdp-p01-codex-learnability-training-continue",
+      "reason": "Current work order forbids Row24 unless board explicitly says Row24 independent. Board Row24 does not explicitly say independent."
+    }
+  ],
+  "selected": {
+    "scenario_number": 27,
+    "scenario_id": "frdp-p01-codex-checkpoint-promotion-reload",
+    "host": "Codex",
+    "selection_type": "scenario-prep repair before execution",
+    "board_automated_core_api_status": "Accepted guard-only; checkpoint/locator readback and direct-promotion rejection tests passed.",
+    "board_local_real_program_status": "Blocked with reason; Codex reload from candidate checkpoint is not proven.",
+    "board_joined_status": "Blocked with next action; no joined pass.",
+    "board_next_concrete_action": "Run non-mutating checkpoint candidate load/rollback proof first; promotion requires a separate explicit work order.",
+    "why_safe_without_fresh_luba_approval": [
+      "Does not depend on Row23 input/path.",
+      "Does not use Row24.",
+      "Can start as prep-only scenario repair without product/runtime/UI/tests/eval/heldout.",
+      "Promotion is explicitly forbidden by the board unless separately authorized.",
+      "Existing guard-only evidence gives a bounded prep target: non-mutating candidate load/readback/rollback."
+    ],
+    "why_not_next_execution_now": [
+      "Current task is planning/orchestration, not product execution.",
+      "The user explicitly forbids product/runtime/UI/tests/eval/heldout in this step.",
+      "Row27 still needs human-readable Russian prep and review before any execution work order."
+    ]
+  },
+  "human_summary_ru": {
+    "done": "Принято 12 scoped evidence/status элементов; product-ready full pass = 0; full joined pass = 0.",
+    "current": "Следующий безопасный target: Row27 prep-only для Codex checkpoint candidate load/readback/rollback. Смысл: подготовить, но не запускать, сценарий немутирующей проверки кандидата checkpoint; promotion и readiness claims закрыты.",
+    "remaining": "Остается 16 строк без product-ready full pass. Row23 заблокирован без approved input/path. Row24 пропущен, потому что board не говорит, что он independent. Остальные категории: Codex checkpoint/locator prep, Codex DPO/lifecycle planning, Claude route repair, Cursor remaining guards/product workflow, final product workflow rows after stronger sub-evidence."
+  },
+  "exact_next_subagent_work_order": {
+    "max_minutes": 10,
+    "task_type": "planning/scenario-prep repair only",
+    "cwd": "C:\\Projects\\llm_mvp_core",
+    "allowed_reads": [
+      "docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-scenario-board.md",
+      "docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-scenario-board.json",
+      "docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-action-plan.md",
+      "Row27 referenced evidence links only, if needed for exact prep wording"
+    ],
+    "allowed_write_scope": [
+      "docs/plans/evidence/extension-full-readiness-dual-path/scenario-instructions/row27-checkpoint-prep-<timestamp>/row27-checkpoint-prep.md",
+      "docs/plans/evidence/extension-full-readiness-dual-path/scenario-instructions/row27-checkpoint-prep-<timestamp>/row27-checkpoint-prep.json"
+    ],
+    "required_output": [
+      "Human-readable Russian prep for Row27 frdp-p01-codex-checkpoint-promotion-reload.",
+      "Explain phase meaning, step meaning, done/current/remaining.",
+      "Name exact scenario purpose: non-mutating checkpoint candidate load/readback/rollback proof for Codex, with promotion forbidden.",
+      "Include exact allowed future evidence types, exact forbidden actions, exact pass/fail/blocker statuses, and claim locks.",
+      "Include a 10-minute execution split recommendation: prep now; execution only after prep review accepts it."
+    ],
+    "forbidden": [
+      "Do not run product/runtime/UI/tests/eval/heldout.",
+      "Do not mutate checkpoint, locator, production config, model files, or training artifacts.",
+      "Do not promote a checkpoint.",
+      "Do not stage, commit, push, edit code, edit AGENTS/CLAUDE/skills, or edit board/action-plan files.",
+      "Do not claim product readiness, checkpoint promotion, host readiness, formal joined pass, or full extension readiness."
+    ],
+    "return_statuses": [
+      "ROW27_PREP_READY",
+      "ROW27_PREP_BLOCKED"
+    ]
+  },
+  "commands_run": [
+    "Get-ChildItem -Path docs/plans/evidence/extension-full-readiness-dual-path -Force | Select-Object Name,LastWriteTime,Length",
+    "Get-Content -Path docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-scenario-board.md -Raw",
+    "Get-Content -Path docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-scenario-board.json -Raw",
+    "Get-Content -Path docs/plans/evidence/extension-full-readiness-dual-path/product-readiness-action-plan.md -Raw",
+    "PowerShell JSON extraction for rows 1-10 and 24-28 from product-readiness-scenario-board.json",
+    "PowerShell JSON extraction for board counts",
+    "PowerShell JSON extraction for Row24",
+    "Get-Date -Format yyyyMMdd-HHmmss",
+    "New-Item -ItemType Directory -Force -Path docs/plans/evidence/extension-full-readiness-dual-path/next-scenario-selection-20260627-000543"
+  ],
+  "files_changed": [
+    "docs/plans/evidence/extension-full-readiness-dual-path/next-scenario-selection-20260627-000543/next-scenario-selection.md",
+    "docs/plans/evidence/extension-full-readiness-dual-path/next-scenario-selection-20260627-000543/next-scenario-selection.json"
+  ],
+  "no_commit_push": true,
+  "product_execution_run": false,
+  "runtime_run": false,
+  "ui_run": false,
+  "tests_run": false,
+  "eval_run": false,
+  "heldout_run": false,
+  "readiness_claim_opened": false
+}

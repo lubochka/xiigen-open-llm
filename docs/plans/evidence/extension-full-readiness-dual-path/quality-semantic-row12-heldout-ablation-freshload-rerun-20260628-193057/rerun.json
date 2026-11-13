@@ -1,0 +1,73 @@
+{
+    "task_id":  "QUALITY-SEMANTIC-ROW12-HELDOUT-ABLATION-FRESHLOAD-RERUN-01",
+    "created_utc":  "2026-06-28T16:36:41.0682523Z",
+    "workspace":  "C:\\Projects\\llm_mvp_core_codex_sync_20260628",
+    "evidence_folder":  "docs\\plans\\evidence\\extension-full-readiness-dual-path\\quality-semantic-row12-heldout-ablation-freshload-rerun-20260628-193057",
+    "bounded_worker":  true,
+    "subagent_id_or_NONE":  "NONE",
+    "command":  {
+                    "dotnet_test_no_restore":  "dotnet test Tests\\LlmFromScratch.Tests.csproj -p:IsTestProject=true --filter \"FullyQualifiedName~PromptToTaskPhase04UniversalContractTests|FullyQualifiedName~ApiDashboardSourceDisjointGuardTests|FullyQualifiedName~SmartSkillsSemanticQualityP11FreshLoadTests|FullyQualifiedName~SmartSkillsSemanticQualityP12ContinueTrainingTests|FullyQualifiedName~OrchestrationReasoningP9EvalAblationTests|FullyQualifiedName~OrchestrationReasoningP9BEvalAblationRerunTests\" --no-restore --logger \"console;verbosity=normal\"",
+                    "restore_ran":  false,
+                    "no_restore_exit_code":  0,
+                    "log":  "01_dotnet_test_no_restore.log"
+                },
+    "results":  {
+                    "total_tests":  14,
+                    "passed":  14,
+                    "failed":  0,
+                    "test_total_time":  "2.9850 Seconds",
+                    "p11_fresh_load_green":  true,
+                    "p12_continue_training_green":  true,
+                    "prompt_to_task_phase04_green":  true,
+                    "api_dashboard_source_disjoint_guard_green":  true,
+                    "orchestration_reasoning_p9_ablation_green":  true,
+                    "orchestration_reasoning_p9b_ablation_rerun_green":  true
+                },
+    "claim_boundaries":  {
+                             "p11_p12_fixed_in_this_gate":  true,
+                             "product_readiness_claimed":  false,
+                             "semantic_quality_claimed":  false,
+                             "token_savings_claimed":  false,
+                             "full_semantic_quality_can_be_claimed":  false,
+                             "downgrade_reason":  "Focused post-fix gate is green, but it does not run or accept the SkillSelection true source-disjoint runtime eval; existing evidence/state still records P22 accepted rows = 0."
+                         },
+    "remaining_blockers":  [
+                               {
+                                   "id":  "P22-SKILLSELECTION-SOURCE-DISJOINT-RUNTIME-EVAL",
+                                   "status":  "BLOCKING_FULL_SEMANTIC_QUALITY",
+                                   "evidence":  "03_p22_accepted_rows_scan.log found prior heldout/state evidence: SkillSelection source-disjoint runtime eval missing; accepted_p22_eval_rows / p22_accepted_rows = 0.",
+                                   "current_rerun_scope":  "Not included in the requested focused test filter."
+                               }
+                           ],
+    "next_bounded_work_order":  {
+                                    "id":  "SKILLSELECTION-TRUE-SOURCE-DISJOINT-RUNTIME-EVAL-01",
+                                    "objective":  "Create and run accepted SkillSelection runtime eval rows that close P22 accepted rows = 0.",
+                                    "required_controls":  [
+                                                              "source/pair/id disjointness",
+                                                              "candidate-order controls",
+                                                              "filename/path/title controls",
+                                                              "exact prompt replay controls",
+                                                              "no training use",
+                                                              "side-by-side runtime comparison"
+                                                          ],
+                                    "expected_artifacts":  [
+                                                               "accepted eval row ledger",
+                                                               "runtime comparison results",
+                                                               "review/self-check packet",
+                                                               "focused P22 test rerun"
+                                                           ]
+                                },
+    "report_generation_notes":  [
+                                    "Initial report parse wrote zero counts because command log text contained NUL separators; rerun files were rewritten after NUL normalization in 07_rewrite_rerun_files_after_nul_parse.log."
+                                ],
+    "evidence_logs":  [
+                          "00_create_folder.log",
+                          "01_dotnet_test_no_restore.log",
+                          "02_extract_and_context_scan.log",
+                          "03_p22_accepted_rows_scan.log",
+                          "04_write_rerun_files.log",
+                          "05_parse_rerun_json.log",
+                          "06_inspect_test_log_tail.log",
+                          "07_rewrite_rerun_files_after_nul_parse.log"
+                      ]
+}

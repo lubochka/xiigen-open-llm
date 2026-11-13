@@ -1,0 +1,76 @@
+{
+  "packet": "ROW12_CURSOR_ACCOUNT_SURFACE_RERUN_PACKET",
+  "status": "AUTH_BLOCKED_WITH_EVIDENCE",
+  "run_folder": "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-token-savings-baseline\\auth-preflight-row12\\run-20260625-085305",
+  "files_created": [
+    "account-surface-discovery-rerun.json",
+    "account-surface-discovery-rerun.md",
+    "account-surface-discovery-rerun-accounts-crop.png",
+    "account-surface-discovery-rerun-accounts-crop2.png",
+    "account-surface-discovery-rerun-accounts-crop3.png",
+    "account-surface-discovery-rerun-accounts-crop4.png"
+  ],
+  "commands_or_surfaces_checked": [
+    {
+      "surface": "existing Cursor Extension Development Host window",
+      "result": "found",
+      "evidence": {
+        "process": "Cursor.exe",
+        "pid": 31020,
+        "window_title": "[Extension Development Host] \u25cf cursor-xiigen-smart-skills - Cursor"
+      }
+    },
+    {
+      "surface": "foreground activation",
+      "result": "blocked",
+      "evidence": [
+        "SetForegroundWindow returned false; foreground remained Claude with PID 26280.",
+        "AttachThreadInput returned true and SetForegroundWindow returned true, but GetForegroundWindow still reported Claude with PID 26280."
+      ]
+    },
+    {
+      "surface": "Command Palette search: Accounts",
+      "result": "attempted_but_not_reliably_delivered_to_cursor",
+      "evidence": [
+        "Ctrl+Shift+P was attempted only after foreground attempts.",
+        "Cropped visual checks did not show the command palette or account results.",
+        "UI Automation exposed only the outer Chromium window/caption controls, not command palette contents."
+      ]
+    },
+    {
+      "surface": "Command Palette search: Sign In",
+      "result": "attempted_but_not_reliably_delivered_to_cursor",
+      "evidence": [
+        "No sign-in command was opened.",
+        "No Enter/Invoke action was used.",
+        "No browser login was started."
+      ]
+    },
+    {
+      "surface": "Command Palette search: Cursor: Sign In",
+      "result": "attempted_but_not_reliably_delivered_to_cursor",
+      "evidence": [
+        "No Cursor sign-in command was opened.",
+        "No Enter/Invoke action was used.",
+        "No browser login was started."
+      ]
+    }
+  ],
+  "visible_session_cues": [
+    "No reliable signed-in account label was observed.",
+    "No reliable anonymous/logged-out label was observed.",
+    "No reliable login recovery prompt was observed.",
+    "The evidence supports only that bounded discovery was blocked by focus/automation delivery before account-session state could be determined."
+  ],
+  "screenshot_status": {
+    "status": "safe_cropped_focus_evidence_created",
+    "secrets_captured": false,
+    "account_identifiers_captured": false,
+    "notes": [
+      "Crops show editor/palette-area state only and no account identifiers.",
+      "No screenshot of an account/profile surface was captured because no such surface was opened."
+    ]
+  },
+  "human_explanation": "Bounded account-surface discovery could not determine Cursor auth state because the existing Cursor Extension Development Host window was present, but Windows foreground activation did not transfer focus from the Codex/Claude host to Cursor. Command Palette probes for Accounts, Sign In, and Cursor: Sign In were attempted without pressing Enter or opening login, but the visual and UI Automation evidence did not show a reliable command palette or account/session surface in Cursor. No secrets were captured, no login/browser action was started, and row12 was not run.",
+  "next_smallest_action": "Have a human or trusted host-control step manually foreground the existing Cursor Extension Development Host window and confirm Ctrl+Shift+P opens the Command Palette, then rerun the same no-login account-surface discovery. Do not run row12 until the auth preflight status is resolved."
+}

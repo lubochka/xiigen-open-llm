@@ -1,0 +1,118 @@
+{
+  "scenario_id": "cursor-full-extension-runtime-after-unlock-20260627-090159",
+  "phase": {
+    "number": 4,
+    "of": 10,
+    "human_name": "живой runtime в реальном Cursor UI",
+    "status": "blocked until local unlock/login, but scenario prep can be completed"
+  },
+  "product_readiness": {
+    "claim": "Product readiness count remains 0",
+    "count": 0
+  },
+  "preconditions": [
+    "Windows locally unlocked by user; no PIN/password captured.",
+    "Cursor target window '[Extension Development Host] cursor-xiigen-smart-skills - Cursor' visible.",
+    "If Cursor login required, open browser login only if user is present; agent stops before credential entry.",
+    "After user completes login, rerun preflight before prompt submission.",
+    "Storage Error modal must be screenshotted first; destructive options are forbidden unless separately authorized."
+  ],
+  "exact_prompt": "Проверь короткий запрос: \"Нужно составить понятный план проверки API-дешборда без привязки к конкретному стеку\". Сформируй универсальную задачу, предложи план оркестрации и выбери подходящие скилы из доступных.",
+  "dual_path_same_scenario_proof": {
+    "label": "Dual-path same-scenario proof",
+    "path_a": {
+      "label": "Path A",
+      "kind": "automated/boundary",
+      "goal": "Run or reference the non-UI Cursor adapter boundary path with the same redacted prompt.",
+      "required_evidence": [
+        "XiigenExtensionRequest",
+        "RequestedSkills",
+        "AvailableSkills",
+        "core response",
+        "adapter trace",
+        "hostSelectorOrScorerAdded=false"
+      ],
+      "does_not_prove": "real Cursor UI"
+    },
+    "path_b": {
+      "label": "Path B",
+      "kind": "real Cursor UI",
+      "goal": "Use the real Cursor Extension Development Host UI after unlock/login with the same exact prompt.",
+      "steps": [
+        "Capture desktop screenshot before actions.",
+        "Find the target Cursor window by title, pid, handle, and bounds.",
+        "Focus the target Cursor window.",
+        "Capture screenshot of the active target window.",
+        "Resolve login/storage modal only under the safe precondition rules.",
+        "Open XIIGen Smart Skills through command palette, panel, or chat participant route.",
+        "Type the exact prompt.",
+        "Capture screenshot before submit.",
+        "Submit the prompt.",
+        "Wait for response or timeout.",
+        "Capture screenshot after response.",
+        "Save core trace or correlation id if available.",
+        "Save adapter trace if available."
+      ],
+      "expected_visible_markers": [
+        "XIIGen Smart Skills route or label is visible.",
+        "The response shows structured task, orchestration plan, selected skills, or a core warning/error.",
+        "The result is not a UI-only fake response without core trace."
+      ]
+    }
+  },
+  "acceptance_criteria": {
+    "PASS": [
+      "Path A and Path B use the same exact prompt.",
+      "Path A includes XiigenExtensionRequest, RequestedSkills, AvailableSkills, core response, and no host selector/scorer.",
+      "Path B shows prompt before submit and response after submit in real Cursor UI screenshots.",
+      "Trace or correlation id connects UI run to core call.",
+      "no PIN/password captured."
+    ],
+    "PARTIAL": [
+      "Path A passed but Path B has incomplete UI evidence.",
+      "Path B shows response but trace/correlation id is missing.",
+      "Core returned a visible warning/error rather than a full success response."
+    ],
+    "BLOCKED_LOGIN_REQUIRED": [
+      "Windows, Cursor, or browser requests login, PIN, password, 2FA, or another secret.",
+      "Agent stops before credential entry."
+    ],
+    "BLOCKED_STORAGE_MODAL": [
+      "Storage Error modal blocks the scenario and no safe non-destructive action is clear."
+    ],
+    "TARGET_WINDOW_NOT_FOUND": [
+      "The target Cursor Extension Development Host window is absent from window inventory."
+    ],
+    "RESPONSE_NOT_VISIBLE": [
+      "Prompt was submitted but no visible response appeared in Cursor UI."
+    ],
+    "CORE_TRACE_MISSING": [
+      "UI response is visible but no core request/response/trace/correlation id proves llm_mvp_core involvement."
+    ]
+  },
+  "required_evidence_after_execution": [
+    "screenshots",
+    "window inventory",
+    "core request/response/trace",
+    "adapter trace",
+    "no-secret/redaction log",
+    "human summary"
+  ],
+  "not_proven_by_this_scenario": [
+    "token savings",
+    "semantic quality improvement",
+    "learnability/training",
+    "DPO quality",
+    "checkpoint mutation/promotion",
+    "locator update",
+    "full Claude readiness",
+    "full Codex readiness",
+    "product readiness of all extensions"
+  ],
+  "format_requirements": [
+    "All text files UTF-8 no BOM.",
+    "LF line endings.",
+    "No trailing whitespace.",
+    "scenario.json parse clean."
+  ]
+}

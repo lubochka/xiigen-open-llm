@@ -1,0 +1,288 @@
+{
+  "schema_version": "row13.3a.ui_scenario_prep.v1",
+  "status": "ROW13_3A_UI_SCENARIO_PREP_PASS",
+  "created_utc": "2026-06-26T08:29:42Z",
+  "bounded_actor": "Row13.3a bounded sub-agent",
+  "task_boundary": {
+    "scenario_prep_only": true,
+    "cursor_launched": false,
+    "ui_automation_run": false,
+    "training_run": false,
+    "checkpoint_mutated": false,
+    "locator_mutated": false,
+    "model_mutated": false,
+    "production_code_edited": false,
+    "git_actions_performed": false,
+    "readiness_claimed": false
+  },
+  "source_inputs": {
+    "row13_1c_results": "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-semantic-quality-heldout\\row13-1c-heldout-rerun-staged-candidate-20260626T074556Z\\row13-1c-scenario-results.jsonl",
+    "row13_1a_prompt_rows": "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-semantic-quality-heldout\\row13-1a-universal-only-dpo-rows-20260626T070919Z\\row13-1a-universal-only-dpo-rows.jsonl",
+    "cursor_extension_repo": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills",
+    "row12_runner": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\test\\host-qa\\ROW12-cursor-panel-visibility-runner.ps1"
+  },
+  "chosen_ui_duplicate_probe": {
+    "source": "Row13.1a universal-only DPO row",
+    "row_id": "ROW13_1A_DPO_OUTPUT_SKEPTICISM_002",
+    "prompt": "The user challenges whether a reported pass is real when the evidence only proves a boundary marker and does not prove the broader readiness claim.",
+    "prompt_sha256": "eca453b1fd9e7c925a21287bd52d3b8c907405efac387d7ebb2d8b6db2e60dd4",
+    "expected_skill": "output-skepticism",
+    "available_skill_ids": [
+      "output-skepticism",
+      "verification-before-completion",
+      "phase-completion-packager",
+      "plan-review"
+    ],
+    "expected_rejected_skill_ids": [
+      "verification-before-completion",
+      "phase-completion-packager",
+      "plan-review"
+    ],
+    "source_disjoint_caveat": "This UI prompt is copied from a Row13.1a synthetic universal-only row, not from held-out Row13.1c exact prompt text. It is source-disjoint from held-out ids, paths, filenames, pair ids, source refs, and candidate-order shortcuts per the Row13.1a row note. A UI pass with this prompt may support live panel routing for this probe only; it must not be claimed as held-out semantic-quality proof.",
+    "no_vendor_output_note": "The source Row13.1a row states that no vendor output was copied, paraphrased, scored, or distilled.",
+    "row13_1c_reference_only": {
+      "row_id": "P24-SS-HOLDOUT-OUTPUT-SKEPTICISM-001",
+      "expected_skill_ids": [
+        "output-skepticism"
+      ],
+      "candidate_selected_skill_ids": [
+        "output-skepticism"
+      ],
+      "candidate_pass": true,
+      "candidate_confidence": 0.75,
+      "runtime_invocation_method": "SkillSelectionMachine.DecideFromTrainedState",
+      "exact_prompt_blocked": true,
+      "source_id_blocked": true,
+      "path_blocked": true,
+      "filename_blocked": true,
+      "candidate_order_blocked": true,
+      "pair_id_blocked": true,
+      "use_in_ui_scenario": "reference-only expected behavior alignment; do not reuse or claim held-out exact prompt evidence"
+    }
+  },
+  "human_readable_ui_steps": [
+    {
+      "step": 1,
+      "action": "Launch Cursor Extension Development Host with temporary user profile and extension directory.",
+      "details": "Use Cursor.exe with --extensionDevelopmentPath pointing to the XIIGen extension repo, --extensionTestsPath pointing to a bounded host QA runner/test file, --user-data-dir set to a temp directory, --extensions-dir set to a temp directory, --disable-workspace-trust, --skip-welcome, --skip-release-notes, --skip-onboarding, --disable-telemetry, --disable-updates, --force-renderer-accessibility, --remote-debugging-address=127.0.0.1, --remote-debugging-port=<free local port>, --new-window, and workspace path set to the extension repo."
+    },
+    {
+      "step": 2,
+      "action": "Open the XIIGen Smart Skills panel.",
+      "details": "Invoke the real contributed command xiigenSmartSkills.panel, whose title is XIIGen: Open Smart Skills Panel. Do not use xiigenSmartSkills.__test.panelSubmitHandler or xiigenSmartSkills.runtimeProof.invoke for real UI proof."
+    },
+    {
+      "step": 3,
+      "action": "Type the chosen Row13.1a prompt into the XIIGen prompt textbox.",
+      "details": "Target textarea#xiigen-smart-skills-prompt / accessible label XIIGen task prompt. The field value must equal the chosen prompt exactly, and its SHA-256 must equal eca453b1fd9e7c925a21287bd52d3b8c907405efac387d7ebb2d8b6db2e60dd4."
+    },
+    {
+      "step": 4,
+      "action": "For Row13.3b panel-open/type-only, stop before submit and capture evidence.",
+      "details": "Capture screenshot, DOM/CDP selector proof, prompt field value, prompt hash, target id/source/session/context, and runner metadata. No panel submission, no core invocation, and no selected skill claim is allowed in Row13.3b if submit is not clicked."
+    },
+    {
+      "step": 5,
+      "action": "For a later submit/result row, click Submit to llm_mvp_core.",
+      "details": "Click button#xiigen-smart-skills-submit only in the authorized submit/result phase. Wait for xiigenSmartSkills.submitStatus followed by xiigenSmartSkills.submitResult or equivalent rendered result status."
+    },
+    {
+      "step": 6,
+      "action": "Capture screenshot, DOM, runtime, and core evidence.",
+      "details": "Capture the visible webview screenshot, CDP DOM snapshots proving the selectors and typed value, runner JSON/MD reports, runtime evidence directory refs, core request/response/trace refs, and rendered result text/hash."
+    }
+  ],
+  "expected_evidence_fields": {
+    "real_cursor_ui_webview_target_found": {
+      "required": true,
+      "minimum_evidence": [
+        "extension_development_host=true",
+        "host_kind=Cursor",
+        "candidate_target_count > 0 or browser_candidate_target_count > 0",
+        "target url/title/source indicates vscode-webview and XIIGen Smart Skills",
+        "selectors_found['#xiigen-smart-skills-prompt']=true",
+        "selectors_found['#xiigen-smart-skills-submit']=true"
+      ]
+    },
+    "prompt_field_value_equals_probe": {
+      "required": true,
+      "expected_value": "The user challenges whether a reported pass is real when the evidence only proves a boundary marker and does not prove the broader readiness claim.",
+      "expected_sha256": "eca453b1fd9e7c925a21287bd52d3b8c907405efac387d7ebb2d8b6db2e60dd4"
+    },
+    "submit_clicked": {
+      "required_for_row13_3b": false,
+      "required_for_later_submit_result_phase": true,
+      "minimum_evidence": [
+        "submit_button_click_invoked=true",
+        "submit_button_clicked_by_probe=true",
+        "submit_selector_context_matches_visibility_context=true"
+      ]
+    },
+    "panel_submission_path_ran": {
+      "required_for_row13_3b": false,
+      "required_for_later_submit_result_phase": true,
+      "minimum_evidence": [
+        "panel_submission_path_invoked=true",
+        "entrypointName=xiigenSmartSkills.panel",
+        "entrypointType=panel-webview-submit",
+        "hostMessageType=xiigenSmartSkills.submitPrompt"
+      ]
+    },
+    "core_invoked_with_staged_candidate": {
+      "required_for_row13_3b": false,
+      "required_for_later_submit_result_phase_if_supported": true,
+      "current_support_status": "not_confirmed_in_Row13.3a",
+      "limitation_to_record_if_no_supported_knob": "The inspected Cursor extension forwards prompt/method/available skills to llm_mvp_core and supports PHASE40_CURSOR_RUNTIME_EVIDENCE_DIR plus target-locator config. Row13.3a did not verify a Cursor-side or core-side staged-candidate/checkpoint selection knob. If Row13.3 execution cannot supply a documented staged-candidate selector, report core_invoked=true only and staged_candidate_used=not_supported_or_not_configured; do not claim Row13.1c staged candidate duplicate."
+    },
+    "result_rendered": {
+      "required_for_row13_3b": false,
+      "required_for_later_submit_result_phase": true,
+      "minimum_evidence": [
+        "result_rendered_in_webview=true",
+        "result_text_sha256 is non-empty",
+        "result_status_text captured",
+        "responseRef and traceRef captured if emitted"
+      ]
+    },
+    "selected_skill_equals_expected": {
+      "required_for_row13_3b": false,
+      "required_for_later_submit_result_phase": true,
+      "expected_skill": "output-skepticism",
+      "minimum_evidence": [
+        "core response SelectedSkills or selectedSkillIds includes output-skepticism",
+        "available skill ids match the chosen probe set, if the UI path can pass them",
+        "no candidate-position/order shortcut evidence is used as selection authority"
+      ]
+    }
+  },
+  "real_ui_vs_test_only_distinction": {
+    "real_ui_required_indicators": [
+      "Command path is xiigenSmartSkills.panel, not xiigenSmartSkills.__test.panelSubmitHandler.",
+      "Visible webview DOM observed with textarea#xiigen-smart-skills-prompt and button#xiigen-smart-skills-submit.",
+      "Prompt value is set in the visible webview field and read back from the same selector/context.",
+      "Submit, when authorized, is caused by clicking button#xiigen-smart-skills-submit in the selected webview context.",
+      "Panel artifact reports panelUiCreated=true, visiblePromptInputPresent=true, visibleSubmitButtonPresent=true, and panelSubmissionPathInvoked=true after submit."
+    ],
+    "test_only_disqualifiers": [
+      "commandName=xiigenSmartSkills.__test.panelSubmitHandler",
+      "artifactKind=TEST_ONLY_HANDLER_ONLY_BOUNDARY",
+      "handlerPathOnly=true",
+      "fullUiEvidence=false",
+      "visibleWebviewObserved=false",
+      "desktopTextareaTypingProof=false",
+      "panelSubmissionPathInvoked=false",
+      "evidenceBoundary=handler_path_only_not_visible_webview_ui_proof"
+    ],
+    "classification_rule": "A handler-only or runtime-proof command can be useful as boundary evidence, but it is not Row13.3 live Cursor UI duplicate evidence. Row13.3 UI evidence requires a real Cursor Extension Development Host webview target plus visible prompt-field proof."
+  },
+  "existing_row12_runner_parameterization": {
+    "runner_path": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\test\\host-qa\\ROW12-cursor-panel-visibility-runner.ps1",
+    "can_be_parameterized_for_row13_3": "partial",
+    "supported_without_code_change": [
+      "Cursor Extension Development Host launch with temp --user-data-dir and --extensions-dir",
+      "real xiigenSmartSkills.panel command invocation",
+      "CDP/WebView selector inspection",
+      "screenshot capture",
+      "PHASE40_CURSOR_RUNTIME_EVIDENCE_DIR propagation",
+      "typeability proof mode with generated row12-ui-typeability-probe-$stamp",
+      "submit/result proof mode with generated row12-ui-submit-result-probe-$stamp"
+    ],
+    "not_supported_without_code_change_or_wrapper": [
+      "arbitrary Row13 prompt text injection",
+      "asserting prompt_field_value equals the chosen Row13.1a probe",
+      "asserting selected skill equals output-skepticism from the chosen Row13 probe",
+      "explicit staged-candidate/checkpoint selector"
+    ],
+    "observed_parameters": [
+      "-CursorExe",
+      "-ExtensionRoot",
+      "-EvidenceBase",
+      "-HostReadyTimeoutSec",
+      "-WindowReadyTimeoutSec",
+      "-PanelSettleSec",
+      "-PanelHoldMs",
+      "-SubmitResultWaitMs",
+      "-SubmitResultCdpTimeoutSec",
+      "-TypeabilityProofOnly",
+      "-SubmitResultProof",
+      "-KeepCursorOpen"
+    ],
+    "observed_runner_env_vars": [
+      "ROW12_PANEL_HOST_REPORT",
+      "ROW12_PANEL_READY_MARKER",
+      "ROW12_PANEL_HOLD_MS",
+      "PHASE40_CURSOR_RUNTIME_EVIDENCE_DIR"
+    ],
+    "row13_3b_panel_open_type_only_command_shape": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\test\\host-qa\\ROW12-cursor-panel-visibility-runner.ps1\" -CursorExe \"C:\\Users\\lubao\\AppData\\Local\\Programs\\cursor\\Cursor.exe\" -ExtensionRoot \"C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\" -EvidenceBase \"<new Row13.3b evidence folder>\" -TypeabilityProofOnly -PanelHoldMs 120000 -KeepCursorOpen",
+    "row13_3b_pass_condition": "PASS only if the runner/wrapper supports the exact chosen Row13 prompt override and the captured field value/hash matches it. If only stock Row12 -TypeabilityProofOnly is used, the result can prove panel typeability for the generated Row12 probe, not Row13.3 chosen-prompt typing."
+  },
+  "expected_evidence_files_for_execution_phase": [
+    "start-info JSON with command_line, temp user_data_dir, temp extensions_dir, remote_debugging_port, run_mode, and no_git_action_run=true",
+    "visible screenshot PNG of Cursor Extension Development Host with XIIGen Smart Skills panel",
+    "runner JSON report with cdp targets, selector proof, prompt field value/hash, and mode",
+    "runner MD report summarizing the same evidence and non-claims",
+    "CDP protocol DOM snapshot files for the selected webview target/context",
+    "runtime-evidence core request JSON, response JSON, host trace JSON, and latest normalized response when submit is authorized",
+    "stdout/stderr logs from the runner",
+    "short-temp-runtime-paths JSON copied into evidence root"
+  ],
+  "test_only_overclaim_avoidance": {
+    "allowed_claim_after_row13_3b_panel_open_type_only": "Cursor Extension Development Host opened XIIGen panel and accepted exact Row13 prompt text in the visible prompt textbox, if exact text/hash evidence is present.",
+    "forbidden_claims_after_row13_3b": [
+      "selected skill equals output-skepticism",
+      "core invoked",
+      "staged candidate used",
+      "semantic quality proven",
+      "full UI duplicate passed",
+      "product readiness",
+      "training or checkpoint promotion"
+    ],
+    "allowed_claim_after_later_submit_result_phase": "The live Cursor panel submitted this exact prompt through the panel path to llm_mvp_core and rendered a result, if submit/core/result/test-only-false evidence is present.",
+    "forbidden_claims_even_after_submit_result_phase": [
+      "full semantic quality",
+      "common model readiness",
+      "token savings",
+      "training success",
+      "checkpoint promotion",
+      "all-host readiness",
+      "held-out exact-prompt duplicate, because chosen UI prompt is Row13.1a source-disjoint synthetic wording"
+    ]
+  },
+  "json_parse_check": {
+    "required": true,
+    "command": "Get-Content -Raw -LiteralPath <this json> | ConvertFrom-Json | Out-Null"
+  },
+  "next_small_work_order_row13_3b": {
+    "title": "Row13.3b panel open/type only",
+    "artifact_type": "runtime UI evidence only",
+    "allowed_actions": [
+      "launch Cursor Extension Development Host with temp profile/extensions",
+      "open xiigenSmartSkills.panel",
+      "type the chosen Row13.1a prompt into textarea#xiigen-smart-skills-prompt",
+      "capture screenshot/DOM/runtime metadata proving real UI target and exact field value/hash"
+    ],
+    "forbidden_actions": [
+      "click submit",
+      "run UI submit/result automation",
+      "train",
+      "mutate checkpoints",
+      "mutate locators",
+      "mutate models",
+      "edit production code",
+      "git stage/commit/push",
+      "claim readiness or skill-selection success"
+    ],
+    "precondition": "Use a runner/wrapper that can set the exact Row13.1a prompt. Stock Row12 -TypeabilityProofOnly uses row12-ui-typeability-probe-$stamp and is insufficient for Row13.3 chosen-prompt equality.",
+    "pass_evidence": [
+      "real Cursor UI/webview target found",
+      "XIIGen Smart Skills panel visible",
+      "textarea#xiigen-smart-skills-prompt exists",
+      "field value equals chosen prompt",
+      "field value SHA-256 equals eca453b1fd9e7c925a21287bd52d3b8c907405efac387d7ebb2d8b6db2e60dd4",
+      "submit_button_clicked=false",
+      "core_invoked=false",
+      "test_only_handler_used=false"
+    ],
+    "parent_will_perform_commit_push_after_review": true
+  }
+}

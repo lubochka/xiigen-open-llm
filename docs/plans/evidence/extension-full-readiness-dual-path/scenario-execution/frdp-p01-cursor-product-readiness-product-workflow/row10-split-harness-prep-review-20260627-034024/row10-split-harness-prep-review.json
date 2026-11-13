@@ -1,0 +1,138 @@
+{
+  "schema_version": "row10-split-harness-prep-review/v1",
+  "artifact_type": "bounded_review_packet",
+  "generated_at_local": "2026-06-27T03:40:24+03:00",
+  "subagent_id": "bounded-subagent-reviewer-row10",
+  "verdict": "NEEDS_FIX",
+  "claim_scope": "bounded sub-agent review of Row10 Cursor split/harness prep",
+  "evidence_scope": [
+    "read target Markdown",
+    "read target JSON",
+    "ran JSON parse",
+    "ran MD/JSON consistency checks",
+    "ran targeted text checks",
+    "ran whitespace scan",
+    "ran git diff --check"
+  ],
+  "count_claimed": 8,
+  "independent_evidence_count": 8,
+  "downgrade_needed": true,
+  "downgrade_reason": "Non-execution is verified only from packet contents and this reviewer's own actions, not from external runtime/process logs.",
+  "target_files": [
+    "docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-product-readiness-product-workflow/row10-split-harness-prep-20260627-033319/row10-split-harness-prep.md",
+    "docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-product-readiness-product-workflow/row10-split-harness-prep-20260627-033319/row10-split-harness-prep.json"
+  ],
+  "checks": {
+    "json_parse": "PASS",
+    "json_sub_scenario_count": 7,
+    "json_sub_scenario_ids": [
+      "Row10-S1",
+      "Row10-S2",
+      "Row10-S3",
+      "Row10-S4",
+      "Row10-S5",
+      "Row10-S6",
+      "Row10-S7"
+    ],
+    "markdown_unique_sub_scenario_count": 7,
+    "markdown_json_id_and_human_meaning_agreement": "PASS",
+    "all_json_sub_scenarios_have_path_a_and_path_b": "PASS",
+    "all_max_active_minutes_lte_10": "PASS",
+    "claim_locks_false_count": 12,
+    "claim_locks_total": 12,
+    "whitespace_scan": "PASS",
+    "git_diff_check": "PASS",
+    "auth_session_preflight": "PASS",
+    "browser_login_recovery_if_anonymous": "PASS",
+    "future_ui_steps_exact_enough_global": "PASS",
+    "claim_locks_present": "PASS",
+    "strict_dual_path_for_all_7_sub_scenarios": "NEEDS_FIX",
+    "deterministic_pass_blocked_evidence_language": "NEEDS_FIX"
+  },
+  "passing_coverage": [
+    "Auth/session preflight is present.",
+    "Browser login recovery is present for anonymous/lost/wrong-account Cursor state.",
+    "Secret-safety wording is present, including no secrets captured.",
+    "Global future UI steps name the Cursor target, XIIGen panel, textarea, submit button, before/after screenshot pattern, visible result/error evidence, and forbidden substitutions.",
+    "Claim locks keep product readiness and related claims false.",
+    "The packet states that product/runtime/UI/tests/training were not executed and contains no such output evidence."
+  ],
+  "blocking_findings": [
+    {
+      "id": "F1",
+      "severity": "blocking",
+      "title": "Strict dual-path coverage is not explicit for all 7 sub-scenarios.",
+      "evidence": [
+        "Markdown line 19 makes Path A global and qualified with where possible.",
+        "Row10-S1 Markdown line 56 and JSON path_b explicitly say no UI execution / scripted future UI only.",
+        "Row10-S4 Path A does not explicitly anchor the guard harness to llm_mvp_core boundary/API/host-boundary evidence.",
+        "Row10-S5 Path A does not explicitly name the automated/API/host-boundary interface or required evidence.",
+        "Row10-S6 Path A does not explicitly name the automated/API/host-boundary interface or required evidence."
+      ],
+      "required_fixes": [
+        "In both Markdown and JSON, decide and state whether Row10-S1 is prep-only and excluded from executable dual-path coverage, or add a real Path B Cursor UI proof requirement for S1.",
+        "For Row10-S4, Row10-S5, and Row10-S6, rewrite Path A in both Markdown and JSON to name the exact llm_mvp_core automated/boundary/API/host-boundary interface or artifact expected for the future slice.",
+        "If the exact Path A interface is intentionally unknown, add a BLOCKED criterion: missing Path A boundary/API interface means the slice cannot execute.",
+        "Keep the same marker and prompt hash requirements across both paths for every executable slice."
+      ]
+    },
+    {
+      "id": "F2",
+      "severity": "blocking",
+      "title": "Some evidence language is optional where PASS/BLOCKED should be deterministic.",
+      "evidence": [
+        "Row10-S5 Path B says capture screenshots if available.",
+        "Some refs are described as if available or if surfaced without per-slice BLOCKED handling.",
+        "Global UI steps are exact enough, but per-slice rows should point to mandatory evidence or explicit BLOCKED outcomes."
+      ],
+      "required_fixes": [
+        "Replace if available / if surfaced wording for required UI evidence with capture the screenshot/ref or mark BLOCKED.",
+        "In both Markdown and JSON, make mandatory evidence filenames explicit per executable slice or reference the global filename pattern as required evidence."
+      ]
+    }
+  ],
+  "non_execution_statement": {
+    "reviewer_ran_product_execution": false,
+    "reviewer_ran_cursor_ui": false,
+    "reviewer_ran_tests_or_builds": false,
+    "reviewer_ran_training": false,
+    "reviewer_ran_checkpoint_or_locator_operation": false,
+    "reviewer_used_web_or_external_ai": false,
+    "reviewer_used_nested_subagents": false,
+    "reviewer_changed_code_or_board_status": false,
+    "reviewer_git_stage_commit_push": false,
+    "reviewer_created_review_packet_only": true
+  },
+  "required_next_work": {
+    "next_bounded_subagent_task": "repair the Row10 prep packet only",
+    "allowed_write_scope": [
+      "row10-split-harness-prep.md",
+      "row10-split-harness-prep.json",
+      "one repair evidence packet folder if the parent work order allows it"
+    ],
+    "must_fix": [
+      "F1 strict dual-path coverage for all 7 sub-scenarios or explicit S1 prep-only exemption",
+      "F2 deterministic required evidence and PASS/BLOCKED language"
+    ],
+    "must_verify_after_repair": [
+      "JSON parse",
+      "Markdown/JSON agreement on 7 sub-scenarios",
+      "strict dual-path coverage",
+      "auth/session and browser login recovery",
+      "claim locks",
+      "no execution claims",
+      "whitespace/diff checks"
+    ],
+    "forbidden": [
+      "product execution",
+      "Cursor UI execution",
+      "tests/builds except parse/text checks",
+      "code edits outside target prep files",
+      "board/status edits",
+      "commit/push",
+      "web",
+      "external AI",
+      "nested subagents"
+    ]
+  }
+}

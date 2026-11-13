@@ -1,0 +1,198 @@
+{
+  "artifact_type": "micro_step_05_webview_metadata_feasibility_prep",
+  "language": "ru",
+  "micro_step": "Микро-шаг 05",
+  "scenario": "frdp-p01-codex-ui-input-surface-discovery-before-send",
+  "prep_only": true,
+  "implementation_authorized_now": false,
+  "product_runtime_ui_tests_executed": false,
+  "runtime_probe_executed_by_this_prep": false,
+  "commit_push_authorized": false,
+  "purpose_ru": "После UIA/accessibility timeouts проверить только feasibility уже существующего безопасного read-only Electron/Chromium/WebView metadata endpoint для Codex PID/window, не выполняя сам микро-сценарий.",
+  "target_context": {
+    "process": "Codex",
+    "pid": 13508,
+    "hwnd_hex": "0x1038E",
+    "bounds": {
+      "left": -2071,
+      "top": 204,
+      "width": 1283,
+      "height": 733,
+      "right": -788,
+      "bottom": 937
+    },
+    "previous_blockers": [
+      "Micro-step 02 shallow UIA ControlView did not confirm input/composer.",
+      "Micro-step 03 accessibility query failed/timed out and did not confirm input/composer.",
+      "Micro-step 04 lower-band UIA execution timed out and was shut down.",
+      "Previous UIA/accessibility methods failed or timed out.",
+      "Do not repeat UIA traversal."
+    ]
+  },
+  "method": {
+    "name": "webview metadata feasibility only",
+    "read_only": true,
+    "summary_ru": "Будущий executor может только читать process/command-line metadata, безопасные read-only environment hints, уже открытые local listening ports и только HTTP GET к уже существующим локальным /json/version или /json/list endpoint.",
+    "allowed_operations": [
+      "Get-CimInstance Win32_Process for PID 13508 and attributable child processes",
+      "Get-Process metadata readback",
+      "Get-NetTCPConnection for already-listening local ports",
+      "netstat -ano as read-only fallback",
+      "HTTP GET to existing local /json/version",
+      "HTTP GET to existing local /json/list"
+    ],
+    "allowed_endpoint_paths": [
+      "/json/version",
+      "/json/list"
+    ],
+    "allowed_local_hosts": [
+      "127.0.0.1",
+      "::1"
+    ],
+    "forbidden_actions": [
+      "do not enable remote debugging",
+      "do not restart Codex",
+      "do not attach a debugger that mutates state",
+      "do not create or forward ports",
+      "do not use WebSocket CDP attach",
+      "do not use browser automation",
+      "не использовать Runtime.evaluate",
+      "не использовать Input.*",
+      "не отправлять",
+      "do not type",
+      "do not click",
+      "do not paste",
+      "do not use Send",
+      "do not press Enter",
+      "do not use clipboard",
+      "do not mutate DOM or app state",
+      "do not run product/runtime/UI/tests",
+      "do not commit or push"
+    ],
+    "privacy_rules": [
+      "Redact or hash private titles, URLs, workspace paths, account strings, and message text.",
+      "Store metadata sufficient for attribution and feasibility only.",
+      "Do not read prompt/message content."
+    ]
+  },
+  "attribution_rules": {
+    "usable_endpoint_requires": [
+      "listener already existed before probing",
+      "listener is bound to loopback only",
+      "owning PID is 13508 or attributable Codex child process",
+      "parent process chain leads to PID 13508 when using a child listener",
+      "command line or path identifies the same Codex app family",
+      "HTTP GET /json/version or /json/list returns Electron/Chromium metadata",
+      "metadata can be associated with Codex PID/window without private text capture"
+    ],
+    "block_if_endpoint_not_attributable": true
+  },
+  "runtime_limits": {
+    "stop_before_minutes": 8,
+    "per_operation_timeout_required": true,
+    "process_metadata_timeout_seconds": 15,
+    "port_enumeration_timeout_seconds": 20,
+    "http_get_timeout_seconds": 2,
+    "classification_timeout_seconds": 10,
+    "partial_evidence_after_each_substep": true
+  },
+  "future_executor_steps": [
+    {
+      "id": "05.0",
+      "title_ru": "Создать start marker",
+      "timeout": "shell timeout 10 seconds",
+      "partial_evidence": "micro-step-05-start-marker.json",
+      "notes": "Record target PID/HWND/bounds, previous blockers, forbidden actions, product_readiness_claim=false, and literal не доказывает готовность продукта."
+    },
+    {
+      "id": "05.1",
+      "title_ru": "Прочитать process and command-line metadata",
+      "timeout": "shell timeout 15 seconds per command",
+      "partial_evidence": "micro-step-05-process-metadata.json",
+      "blocker_if_failed": "CODEX_PROCESS_METADATA_UNAVAILABLE"
+    },
+    {
+      "id": "05.2",
+      "title_ru": "Перечислить already-listening local ports",
+      "timeout": "shell timeout 20 seconds",
+      "partial_evidence": "micro-step-05-listening-ports.json",
+      "blocker_if_failed": "WEBVIEW_METADATA_ENDPOINT_NOT_FOUND"
+    },
+    {
+      "id": "05.3",
+      "title_ru": "Выполнить только HTTP GET metadata from existing endpoint",
+      "timeout": "HTTP GET timeout 2 seconds each",
+      "partial_evidence": [
+        "micro-step-05-endpoint-version-redacted.json",
+        "micro-step-05-endpoint-list-redacted.json"
+      ],
+      "blocker_if_failed": "WEBVIEW_METADATA_HTTP_GET_FAILED"
+    },
+    {
+      "id": "05.4",
+      "title_ru": "Классифицировать feasibility and attribution",
+      "timeout": "shell timeout 10 seconds",
+      "partial_evidence": "micro-step-05-attribution-classification.json",
+      "success_if": "WEBVIEW_METADATA_ENDPOINT_FEASIBLE_READONLY",
+      "blocker_if_failed": "WEBVIEW_METADATA_ENDPOINT_NOT_ATTRIBUTABLE_TO_CODEX_PID_WINDOW"
+    },
+    {
+      "id": "05.5",
+      "title_ru": "Записать status/report",
+      "timeout": "shell timeout 10 seconds",
+      "partial_evidence": [
+        "micro-step-05-status.json",
+        "micro-step-05-report.md"
+      ]
+    }
+  ],
+  "success_criteria": {
+    "status": "WEBVIEW_METADATA_ENDPOINT_FEASIBLE_READONLY",
+    "requires_safe_existing_local_endpoint": true,
+    "requires_attribution_to_codex_pid_window": true,
+    "proves_only": "ability to inspect webview metadata only",
+    "does_not_prove_prompt_send": true,
+    "does_not_prove_product_readiness": true,
+    "required_literal": "не доказывает готовность продукта"
+  },
+  "blocker_criteria": [
+    "CODEX_PROCESS_METADATA_UNAVAILABLE",
+    "WEBVIEW_METADATA_ENDPOINT_NOT_FOUND",
+    "WEBVIEW_METADATA_ENDPOINT_NOT_LOCAL_ONLY",
+    "WEBVIEW_METADATA_ENDPOINT_NOT_ATTRIBUTABLE_TO_CODEX_PID_WINDOW",
+    "WEBVIEW_METADATA_HTTP_GET_FAILED",
+    "WEBVIEW_METADATA_UNSAFE_OR_PRIVATE_TEXT_RISK",
+    "RUNTIME_APPROACHING_8_MINUTES_WITH_PARTIAL_EVIDENCE"
+  ],
+  "exact_evidence_filenames": [
+    "micro-step-05-start-marker.json",
+    "micro-step-05-process-metadata.json",
+    "micro-step-05-listening-ports.json",
+    "micro-step-05-endpoint-version-redacted.json",
+    "micro-step-05-endpoint-list-redacted.json",
+    "micro-step-05-attribution-classification.json",
+    "micro-step-05-blocker.json",
+    "micro-step-05-status.json",
+    "micro-step-05-report.md"
+  ],
+  "required_validation_phrases": [
+    "Микро-шаг 05",
+    "webview metadata",
+    "read-only",
+    "не использовать Runtime.evaluate",
+    "не использовать Input.*",
+    "не отправлять",
+    "не доказывает готовность продукта"
+  ],
+  "non_claims_ru": [
+    "Этот prep не выполняет микро-сценарий.",
+    "Этот prep не проверяет наличие endpoint.",
+    "Этот prep не запускает product/runtime/UI/tests.",
+    "Этот prep не выполняет HTTP GET.",
+    "Этот prep не отправляет prompt.",
+    "Этот prep не подтверждает input/composer locator.",
+    "Этот prep не доказывает готовность продукта."
+  ],
+  "independent_prep_review_required": true,
+  "next_work_order_text_ru": "Ты bounded Row21.1 micro-step 05 executor. Выполни только webview metadata feasibility для Codex target PID 13508 HWND 0x1038E bounds left=-2071 top=204 width=1283 height=733, после UIA/accessibility timeouts и остановленного micro-step 04 lower-band UIA timeout. Не запускай product/runtime/UI/tests, не делай commit/push. Не повторяй UIA traversal. Метод строго read-only: прочитай process/command-line metadata для PID 13508 и attributable child processes, затем перечисли уже listening local ports через Get-NetTCPConnection или netstat -ano. Используй только уже существующий loopback endpoint 127.0.0.1 или ::1, если он уже listening и attributable to Codex PID/window. Разрешены только HTTP GET /json/version и /json/list с timeout 2 seconds; redacted metadata only. Не включай remote debugging, не перезапускай Codex, не attach debugger that mutates state, не используй WebSocket CDP attach, не использовать Runtime.evaluate, не использовать Input.*, не отправлять, не typing/clicking/paste/Send/Enter/clipboard/hotkeys, не mutate DOM/app state. Stop before 8 minutes, every operation has timeout, write partial evidence after each sub-step. Evidence files: micro-step-05-start-marker.json, micro-step-05-process-metadata.json, micro-step-05-listening-ports.json, micro-step-05-endpoint-version-redacted.json, micro-step-05-endpoint-list-redacted.json, micro-step-05-attribution-classification.json, micro-step-05-status.json, micro-step-05-report.md, and micro-step-05-blocker.json if blocked. Success: WEBVIEW_METADATA_ENDPOINT_FEASIBLE_READONLY only when a safe existing local endpoint is attributable to Codex PID/window and proves ability to inspect webview metadata only, not prompt sending. Blocker: no safe endpoint found, endpoint not local-only, endpoint not attributable to Codex PID/window, HTTP GET failed, privacy risk, or runtime approaching 8 minutes with partial evidence. Final report must explicitly say: не доказывает готовность продукта."
+}

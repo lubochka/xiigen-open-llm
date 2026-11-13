@@ -1,0 +1,85 @@
+{
+  "schema_version": "row13.3b.runner_capability_prep.v1",
+  "status": "ROW13_3B_RUNNER_PREP_PASS",
+  "created_utc": "2026-06-26T08:45:47Z",
+  "bounded_actor": "Row13.3b bounded sub-agent",
+  "task_boundary": {
+    "runner_prep_only": true,
+    "cursor_launched": false,
+    "ui_automation_run": false,
+    "training_run": false,
+    "checkpoint_mutated": false,
+    "locator_mutated": false,
+    "model_mutated": false,
+    "production_extension_source_edited": false,
+    "git_actions_performed": false,
+    "readiness_claimed": false
+  },
+  "inputs_inspected": {
+    "row12_runner": "C:\\Users\\lubao\\Documents\\xiigen\\extensions reasearch\\cursor-xiigen-smart-skills\\test\\host-qa\\ROW12-cursor-panel-visibility-runner.ps1",
+    "row13_3a_prep_json": "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-semantic-quality-heldout\\row13-3a-ui-scenario-prep-20260626T082942Z\\row13-3a-ui-scenario-prep.json"
+  },
+  "row12_runner_capability": {
+    "supports_exact_prompt_override_for_TypeabilityProofOnly": false,
+    "evidence": [
+      "Runner param block exposes CursorExe, ExtensionRoot, EvidenceBase, timeout/hold settings, TypeabilityProofOnly, SubmitResultProof, and KeepCursorOpen; it does not expose a prompt parameter.",
+      "Line 4562 assigns TypeabilityProofOnly text from the hardcoded generated value row12-ui-typeability-probe-$stamp.",
+      "Line 4705 passes that local $typeabilityProbeText into Invoke-Row12CdpWebViewDomInspection."
+    ],
+    "stock_runner_supported_scope": "TypeabilityProofOnly can set/read back a generated Row12 probe, but cannot by itself prove exact Row13.3 prompt equality.",
+    "exact_prompt_override": "not supported directly by stock Row12 runner"
+  },
+  "row13_3_prompt": {
+    "source": "Row13.3a chosen_ui_duplicate_probe",
+    "prompt": "The user challenges whether a reported pass is real when the evidence only proves a boundary marker and does not prove the broader readiness claim.",
+    "prompt_sha256": "eca453b1fd9e7c925a21287bd52d3b8c907405efac387d7ebb2d8b6db2e60dd4"
+  },
+  "minimal_safe_path": {
+    "wrapper_only_possible": true,
+    "source_fix_required": false,
+    "created_wrapper_script": "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-semantic-quality-heldout\\row13-3b-runner-prep-20260626T084547Z\\ROW13-3b-exact-prompt-typeability-wrapper.ps1",
+    "how_it_works": "The wrapper copies the Row12 runner into this evidence folder and patches only the local copy's TypeabilityProofOnly prompt assignment to the Row13.3 exact prompt. The production runner and extension source are not edited.",
+    "do_not_launch_Cursor": "This prep did not run the wrapper with -Run and did not launch Cursor."
+  },
+  "next_Row13_3b_command": "powershell -ExecutionPolicy Bypass -File \"C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-semantic-quality-heldout\\row13-3b-runner-prep-20260626T084547Z\\ROW13-3b-exact-prompt-typeability-wrapper.ps1\" -Run",
+  "next_work_order": {
+    "title": "Row13.3b actual Cursor panel open/type proof",
+    "allowed_actions": [
+      "run the evidence-local wrapper command above",
+      "launch Cursor Extension Development Host with temp profile/extensions",
+      "open the real xiigenSmartSkills.panel",
+      "use TypeabilityProofOnly to set textarea#xiigen-smart-skills-prompt to the exact Row13.3 prompt",
+      "capture screenshot, DOM/CDP selector proof, field value/readback, hash, target/session/context metadata"
+    ],
+    "forbidden_actions": [
+      "do not click submit",
+      "do not train",
+      "do not mutate checkpoints/locators/models",
+      "do not edit production extension source",
+      "do not perform git actions",
+      "do not claim readiness, semantic quality, selected skill, staged candidate use, or core invocation"
+    ],
+    "pass_evidence": [
+      "TypeabilityProofOnly mode is true",
+      "textarea#xiigen-smart-skills-prompt exists in the real Cursor webview",
+      "readback value equals the exact prompt",
+      "readback/probe sha256 equals eca453b1fd9e7c925a21287bd52d3b8c907405efac387d7ebb2d8b6db2e60dd4",
+      "submit_button_click_invoked is false",
+      "core_path_invoked_by_probe is false",
+      "panel_submission_path_invoked_by_probe is false"
+    ]
+  },
+  "max_expected_run_time": "about 5-6 minutes with PanelHoldMs=120000, HostReadyTimeoutSec=90, WindowReadyTimeoutSec=45, PanelSettleSec=4, and SubmitResultCdpTimeoutSec=30",
+  "cleanup_expectations": {
+    "default": "Do not pass -KeepCursorOpen for the recommended command; the copied Row12 runner closes launched Cursor processes in its finally cleanup.",
+    "manual_inspection_option": "If -KeepCursorOpen is added, the operator must close the launched Cursor window manually.",
+    "evidence_retained": "Runner reports, screenshots, DOM/CDP artifacts, logs, copied temp-runtime diagnostics, the patched runner copy, and wrapper metadata remain under the Row13.3b prep/evidence folder."
+  },
+  "readback_phrases": [
+    "exact prompt override",
+    "TypeabilityProofOnly",
+    "do not launch Cursor",
+    "next Row13.3b command"
+  ],
+  "parent_will_perform_commit_push_after_review": true
+}

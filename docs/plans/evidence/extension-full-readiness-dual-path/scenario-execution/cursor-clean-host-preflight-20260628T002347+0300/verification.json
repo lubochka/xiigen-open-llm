@@ -1,0 +1,54 @@
+{
+    "schema":  "xiigen.cursor.clean_host_preflight.verification.formatting_fix.v1",
+    "packet":  "cursor-clean-host-preflight-20260628T002347+0300",
+    "created_at":  "2026-06-28T00:37:11.9462997+03:00",
+    "claim_scope":  "Verification for sanitized Cursor clean-host preflight packet after formatting fix-loop.",
+    "unchanged_findings":  {
+                               "clean_host_launched":  true,
+                               "storage_error_absent":  true,
+                               "path_b_status":  "blocked_login_required_after_clean_launch",
+                               "prompt_entered":  false,
+                               "prompt_submitted":  false
+                           },
+    "runtime_storage_absent":  {
+                                   "cursor_user_data_exists":  false,
+                                   "cursor_extensions_exists":  false,
+                                   "ok":  true
+                               },
+    "formatting_fix":  {
+                           "normalized_extensions":  [
+                                                         ".md",
+                                                         ".json",
+                                                         ".log"
+                                                     ],
+                           "retained_text_files":  [
+                                                       "action-log.md",
+                                                       "launch-command.json",
+                                                       "launch-stderr.log",
+                                                       "launch-stdout.log",
+                                                       "process-inventory.json",
+                                                       "README.md",
+                                                       "redaction-log.md",
+                                                       "result.json",
+                                                       "runtime-storage-manifest.json",
+                                                       "ui-summary.md",
+                                                       "verification.json",
+                                                       "window-inventory.json"
+                                                   ],
+                           "encoding":  "UTF-8 without BOM",
+                           "line_endings":  "LF",
+                           "trailing_whitespace":  "removed",
+                           "eof_policy":  "non-empty text files end with exactly one LF; empty text files may be zero bytes"
+                       },
+    "required_checks":  {
+                            "json_parse":  "rerun after writing this file; see final no-write pass in parent/sub-agent report",
+                            "git_diff_check":  "git diff --check -- docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/cursor-clean-host-preflight-20260628T002347+0300",
+                            "text_scan":  "byte-level scan for BOM, CR, trailing whitespace, and extra blank EOF",
+                            "deprecated_wording_scan":  "README.md and result.json scan for deprecated product readiness terms",
+                            "mojibake_scan":  "README.md and result.json scan for common mojibake markers"
+                        },
+    "limitations":  [
+                        "This formatting fix did not restage files and did not commit or push.",
+                        "If parent had stale staged content, parent should restage this folder before rerunning cached commit gates."
+                    ]
+}

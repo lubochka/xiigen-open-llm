@@ -1,0 +1,61 @@
+{
+  "schema": "frdp.claude.anchored_dual_path.blocker.v1",
+  "subagent_id": "CLAUDE-ANCHORED-DUAL-PATH-SCENARIO-15",
+  "marker": "FRDP-P01-ROW12-CLAUDE-ANCHORED-DUAL-PATH-V1",
+  "scenario_id": "frdp-p01-claude-anchored-dual-path",
+  "pair_id": "frdp-p01-row12-claude-anchored-v1",
+  "prompt_sha256": "f1c7299220fbf3c8027dc700a0980e0732761d9af028e9e3e6c8c28dc34feafa",
+  "claim_scope": "Path A anchored Claude extension adapter/core invocation completed; Path B local Claude UI/app was found but same-prompt submit was blocked before mutation because a safe blank/new-chat control could not be invoked.",
+  "evidence_scope": [
+    "scenario-prep.ru.md written first with exact anchors and prompt",
+    "path-a-claude-adapter-probe.mjs executed with exit 0",
+    "path-a-request.json contains marker/scenario_id/pair_id in UserPromptOrTaskText",
+    "path-a-core-trace.json prompt hash matches prompt_sha256 and external_ai_used=false",
+    "path-a-response.json Success=true with core_boundary_partial_no_semantic_quality_claim",
+    "path-b-preflight.json found a visible local Claude app window",
+    "path-b-accessibility-preflight.json found Claude UI elements without dumping private text",
+    "path-b-blocker.json records no New Chat control found; same_prompt_submitted=false; screenshots_captured=0"
+  ],
+  "path_a": {
+    "status": "completed_narrow_core_adapter_path",
+    "route": "C:/Projects/claude-xiigen-smart-skills/src/claude-entrypoint.js -> C:/Projects/llm_mvp_core/tools/xiigen-extension-core-api.ps1",
+    "request_path": "path-a-request.json",
+    "core_trace_path": "path-a-core-trace.json",
+    "host_trace_path": "path-a-host-trace.json",
+    "response_path": "path-a-response.json",
+    "summary_path": "path-a-summary.json",
+    "request_contains_all_anchors": true,
+    "core_trace_prompt_hash_matches": true,
+    "response_contains_all_anchors": false,
+    "product_readiness_claimed": false
+  },
+  "path_b": {
+    "status": "blocked_before_submit",
+    "preflight_path": "path-b-preflight.json",
+    "accessibility_preflight_path": "path-b-accessibility-preflight.json",
+    "blocker_path": "path-b-blocker.json",
+    "visible_claude_window_found": true,
+    "new_chat_control_found": false,
+    "same_prompt_submitted": false,
+    "screenshots_captured": 0,
+    "no_secrets_typed": true,
+    "no_secrets_captured": true,
+    "blocker": "Could not invoke a visible New Chat control before submitting; avoiding capture or mutation of an existing conversation."
+  },
+  "join": {
+    "status": "not_run_because_path_b_blocked",
+    "same_prompt_hash_join_available": false,
+    "dual_path_same_scenario_proven": false,
+    "downgrade": "Evidence supports Path A anchored adapter/core invocation and Path B local UI blocker only."
+  },
+  "not_claimed": [
+    "product readiness",
+    "token savings",
+    "semantic quality",
+    "training",
+    "checkpoint promotion",
+    "locator update",
+    "full live Claude UI same-prompt completion"
+  ],
+  "next_smallest_bounded_action": "Manually open a blank authenticated Claude chat with no private content visible, or expose a reliable local New Chat UI control/shortcut, then rerun the same Path B probe with the same marker/scenario_id/pair_id/prompt hash."
+}

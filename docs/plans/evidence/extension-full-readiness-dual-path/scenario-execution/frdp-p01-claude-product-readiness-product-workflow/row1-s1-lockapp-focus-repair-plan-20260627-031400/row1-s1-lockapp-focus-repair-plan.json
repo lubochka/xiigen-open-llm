@@ -1,0 +1,172 @@
+{
+  "artifact_type": "row1_s1_lockapp_focus_repair_plan",
+  "artifact_status": "PASS_REPAIR_PLAN",
+  "created_at_local_timestamp_folder": "20260627-031400",
+  "packet_folder": "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-claude-product-readiness-product-workflow\\row1-s1-lockapp-focus-repair-plan-20260627-031400",
+  "claim_scope": "Planning/repair packet only for Row1 S1 Claude route-discovery after LockApp/focus failure; not product execution.",
+  "evidence_scope": [
+    "Read workflow folder inventory.",
+    "Read previous baseline Row1 S1 no-send route discovery packet.",
+    "Read previous focused Row1 S1 no-send route discovery packet with LockApp/focus failure.",
+    "Read approved Row1 S1 route-discovery prep packet.",
+    "Read Row1 S1 route-discovery prep review packet.",
+    "Did not visually inspect PNG crops.",
+    "Did not run desktop automation, product execution, prompt typing, prompt send, product tests/builds/eval/training, external AI/web, nested subagents, commit, or push."
+  ],
+  "count_claimed": {
+    "new_repair_plan_packet_folders": 1,
+    "new_packet_files": 2,
+    "desktop_automation_runs": 0,
+    "prompt_typing_actions": 0,
+    "prompt_send_actions": 0,
+    "product_readiness_claims": 0
+  },
+  "independent_evidence_count": 5,
+  "subagent_id_or_NONE": "bounded-sub-agent-planner-current-session / platform_id_not_available",
+  "downgrade_needed": false,
+  "product_ready": false,
+  "verdict": "PASS_REPAIR_PLAN",
+  "decision": {
+    "selected_option": "A",
+    "selected_option_text": "repair Claude route discovery with a stricter multi-monitor/window-activation script",
+    "not_selected_B_reason_ru": "Парковка Row1 и переход к другому сценарию может быть scheduler choice, но не является лучшим repair step, потому что остается безопасный no-send путь проверки.",
+    "not_selected_C_reason_ru": "Ручная раскладка окна человеком нужна только если строгая preflight-проверка снова докажет LockApp/LogonUI, locked desktop, отсутствие Claude window, login/credential requirement, или невозможность privacy-safe capture."
+  },
+  "lockapp_failure_analysis_ru": [
+    "Claude process/window existed, but foreground/focus was not confirmed.",
+    "SetForegroundWindow did not confirm Claude foreground.",
+    "WScript.Shell.AppActivate returned true, but foreground still was not confirmed as Claude.",
+    "UI Automation saw root Claude window only and did not reveal compose/input controls.",
+    "CopyFromScreen crops were black/blank; PrintWindow crops were blank/chrome-only.",
+    "After one focus-only chrome/titlebar click at 730,178, foreground became LockApp / Windows Default Lock Screen.",
+    "Evidence supports route unknown, not route impossible."
+  ],
+  "next_subagent_work_order": {
+    "role": "bounded Row1 S1 Claude LockApp-focus no-send route-discovery repair sub-agent",
+    "max_active_time_minutes": 10,
+    "requested_artifact_type": "no-send route-discovery repair packet",
+    "allowed_write_scope": [
+      "Create one new packet folder under C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-claude-product-readiness-product-workflow\\row1-s1-lockapp-focus-nosend-route-discovery-YYYYMMDD-HHMMSS\\",
+      "Write only new evidence files inside that folder.",
+      "Do not edit existing files."
+    ],
+    "read_scope": [
+      "Previous Row1 S1 no-send packets.",
+      "This repair-plan packet.",
+      "No broad repo search unless needed to locate those packet files."
+    ],
+    "implementation_authorized_now": true,
+    "exact_current_luba_quote": "Ты bounded sub-agent planner/reviewer для repair Row1 Claude route-discovery после LockApp/focus failure. Максимум активной работы: 10 минут. Это planning/repair, не product execution.",
+    "quoted_transcripts_state_old_plans_are_evidence_only": true,
+    "direct_luba_questions_answered_first": true,
+    "parent_will_perform_commit_push_after_review": true,
+    "commit_push_boundary_owner": "parent_orchestrator_only_if_explicitly_authorized_later",
+    "forbidden": [
+      "Product execution.",
+      "Host UI prompt send.",
+      "Prompt typing or paste.",
+      "Enter, Send, submit, Run, or equivalent.",
+      "Credential entry.",
+      "Secret/account/private-chat capture.",
+      "Product tests/builds/eval/heldout/training.",
+      "Code/governance/skill/plan/status edits.",
+      "Commit or push.",
+      "External AI/web.",
+      "Nested subagents.",
+      "Mouse clicks; this repair attempt must use no-click activation only."
+    ],
+    "required_script_behavior": [
+      "Treat stale pid/hwnd from prior packets as evidence only; re-enumerate current windows at runtime.",
+      "Sample foreground window 3 times before any focus action using GetForegroundWindow, GetWindowThreadProcessId, process name, and title.",
+      "If any foreground sample is LockApp, LogonUI, Windows Default Lock Screen, or inaccessible interactive desktop, stop as BLOCKED_LOCKAPP_PRE_ACTION without clicking or capturing Claude UI.",
+      "Enumerate monitors using System.Windows.Forms.Screen.AllScreens and record bounds/working area.",
+      "Enumerate Claude candidates using EnumWindows, IsWindowVisible, GetWindowText, GetWindowRect, DwmGetWindowAttribute extended frame bounds if available, GetWindowThreadProcessId, Get-Process, and process path if accessible.",
+      "Filter candidates to visible top-level process claude windows with safe generic Claude title, not minimized, width >= 600, height >= 400, and not LockApp/LogonUI/shell/desktop.",
+      "Select candidate with largest visible intersection with primary monitor working area.",
+      "If needed, restore/place selected Claude window inside primary DISPLAY2 working area using ShowWindowAsync and SetWindowPos with safe margins; no mouse click.",
+      "Activate using ShowWindowAsync, BringWindowToTop, AttachThreadInput for the activation attempt, SetForegroundWindow, and optionally WScript.Shell.AppActivate only after exact candidate selection.",
+      "After activation, resample foreground 3 times.",
+      "If foreground becomes LockApp/LogonUI, stop as BLOCKED_LOCKAPP_AFTER_ACTIVATION.",
+      "If foreground is not selected Claude, stop as BLOCKED_FOREGROUND_NOT_CLAUDE.",
+      "Only after foreground is confirmed as Claude, run read-only UI Automation discovery and privacy-safe crop capture.",
+      "Never save raw full-window screenshots; keep full capture in memory only if needed to compute redacted crops.",
+      "Stop before typing, paste, Enter, Send, submit, Run, credential entry, or any model-backed response."
+    ],
+    "required_evidence_files": [
+      "lockapp-focus-nosend-action-log.md",
+      "lockapp-focus-nosend-preflight.json",
+      "lockapp-focus-nosend-window-candidates.json",
+      "lockapp-focus-nosend-activation-log.json",
+      "lockapp-focus-nosend-uia-summary.json",
+      "capture_quality.json",
+      "claude_top_status_redacted.png if privacy-safe",
+      "claude_bottom_compose_redacted.png if privacy-safe",
+      "claude_route_control_redacted.png if privacy-safe",
+      "route_discovery_packet.md",
+      "route_discovery_packet.json"
+    ],
+    "crop_requirements": [
+      "claude_top_status_redacted.png: top 160 px of selected Claude bounds; hard-redact rightmost 360 px and account/avatar/profile areas before saving.",
+      "claude_bottom_compose_redacted.png: bottom 260 px; hard-redact any prior chat content and keep only non-secret composer/input geometry if safe.",
+      "claude_route_control_redacted.png: small crop around candidate input/extension control only if UIA/geometry identifies it and it can be saved without private/chat/account/secret content.",
+      "capture_quality.json must record crop rectangle, source method, foreground confirmation state, redaction rectangles, mean luminance/variance, blank/black detection, and route_evidence true/false."
+    ],
+    "pass_criteria": [
+      "Foreground preflight proves desktop is not LockApp/LogonUI.",
+      "Exact current Claude window target is selected by runtime enumeration, not stale pid/hwnd.",
+      "Selected Claude foreground is confirmed after activation.",
+      "Route candidate is documented as visible input/compose control or visible extension/plugin entrypoint.",
+      "Evidence proves prompts_typed=0, prompts_sent=0, model_backed_responses_invoked=0.",
+      "Saved crops, if any, are privacy-safe/redacted and non-blank.",
+      "product_readiness_claim=false and claude_host_readiness_claim=false."
+    ],
+    "needs_fix_criteria": [
+      "JSON does not parse.",
+      "Action log omits a required preflight/activation step.",
+      "Candidate selection is ambiguous.",
+      "A crop is black/blank but still claimed as route evidence.",
+      "Redaction rectangles are missing for saved crops.",
+      "Route control is too vague for a later executor to reproduce.",
+      "Packet claims product or host readiness."
+    ],
+    "blocked_criteria": [
+      "LockApp/LogonUI is foreground before or after activation.",
+      "No Claude window is found.",
+      "Claude requires login/credentials.",
+      "Input/extension route is not visible.",
+      "Safe evidence capture would expose secrets, account identifiers, private chat history, credentials, or raw private content.",
+      "Any continuation would require prompt typing, prompt send, credential entry, or model-backed response."
+    ],
+    "required_verification": [
+      "JSON parse for route_discovery_packet.json.",
+      "git diff --check -- <new packet folder>.",
+      "Supplemental git diff --no-index --check -- NUL <created-md/json> for untracked files."
+    ]
+  },
+  "claim_locks": {
+    "product_readiness_claim": false,
+    "claude_host_readiness_claim": false,
+    "visible_answer_claim": false,
+    "token_savings_claim": false,
+    "semantic_quality_claim": false,
+    "training_or_learnability_claim": false,
+    "checkpoint_promotion_claim": false,
+    "locator_update_claim": false
+  },
+  "source_evidence_files": [
+    "row1-s1-no-send-route-discovery-20260627-030112\\row1-s1-no-send-route-discovery.md",
+    "row1-s1-no-send-route-discovery-20260627-030112\\row1-s1-no-send-route-discovery.json",
+    "row1-s1-no-send-focused-route-discovery-20260627-030621\\route_discovery_packet.md",
+    "row1-s1-no-send-focused-route-discovery-20260627-030621\\route_discovery_packet.json",
+    "row1-s1-route-discovery-prep-20260627-021451\\row1-s1-route-discovery-prep.md",
+    "row1-s1-route-discovery-prep-20260627-021451\\row1-s1-route-discovery-prep.json",
+    "row1-s1-route-discovery-prep-review-20260627-025125\\row1-s1-route-discovery-prep-review.md",
+    "row1-s1-route-discovery-prep-review-20260627-025125\\row1-s1-route-discovery-prep-review.json"
+  ],
+  "verification": {
+    "json_parse": "PASS via PowerShell ConvertFrom-Json",
+    "git_diff_check": "PASS: git diff --check produced no output for the created packet folder",
+    "no_index_diff_check_md": "PASS: git diff --no-index --check produced no whitespace-error output for the created Markdown file",
+    "no_index_diff_check_json": "PASS: git diff --no-index --check produced no whitespace-error output for the created JSON file"
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "schema_version": "row28-scenario-prep/v1",
+  "artifact_type": "scenario_prep_only",
+  "created_at_local": "2026-06-27T00:53:47+03:00",
+  "subagent_id_or_NONE": "Arendt the 2nd / 019f05eb-d4d3-7752-8455-d1e49a1f4ef9",
+  "scenario": {
+    "row": 28,
+    "scenario_id": "frdp-p01-codex-locator-update-reload",
+    "host": "Codex",
+    "status": "PREP_ONLY_READY_FOR_REVIEW",
+    "purpose_plain_language_ru": "Подготовить безопасную будущую проверку locator update/reload без изменения production locator: dry-run/staging locator update object, reload readback, rollback object, и доказательство, что hash production locator до и после не изменился."
+  },
+  "claim_evidence_guard": {
+    "claim_scope": "Row28 scenario-prep only for future safe locator update/reload evidence",
+    "evidence_scope": [
+      "product-readiness-scenario-board.md/json",
+      "product-readiness-action-plan.md/json",
+      "phase-14-user-visible-status-dashboard.md",
+      "next-scenario-selection-after-row27.md/json",
+      "Row27 prep/execution evidence for locator/reload relationship only"
+    ],
+    "count_claimed": {
+      "total_scenarios": 28,
+      "scoped_accepted": 13,
+      "product_ready_full_pass": 0,
+      "remaining": 15,
+      "full_joined_pass": 0
+    },
+    "independent_evidence_count": 13,
+    "subagent_id_or_NONE": "Arendt the 2nd / 019f05eb-d4d3-7752-8455-d1e49a1f4ef9",
+    "downgrade_needed": false,
+    "narrow_claim_supported": "scenario prep only; no execution, no readiness, no locator mutation"
+  },
+  "human_status_line": {
+    "done": "13/28 scoped evidence rows accepted",
+    "current": "Row28 frdp-p01-codex-locator-update-reload prep-only repair",
+    "remaining": "15 scenario rows still open",
+    "product_ready_full_pass": "0/28",
+    "full_joined_pass": 0
+  },
+  "why_row27_is_not_enough": {
+    "row27_supported_scope": "temp/staging checkpoint reload and rollback path only",
+    "row27_did_not_prove": [
+      "production locator update",
+      "production locator update/reload readiness",
+      "real checkpoint promotion",
+      "product readiness",
+      "host UI readiness",
+      "semantic quality",
+      "training",
+      "token savings"
+    ],
+    "row28_distinct_question": "whether a locator update/reload path can be safely checked through dry-run/staging locator object, reload readback, rollback object, and unchanged production locator hash"
+  },
+  "forbidden": {
+    "real_production_locator_update": true,
+    "production_locator_mutation": true,
+    "real_checkpoint_promotion": true,
+    "production_checkpoint_mutation": true,
+    "product_readiness_claim": true,
+    "full_joined_pass_claim": true,
+    "semantic_quality_claim": true,
+    "training_claim": true,
+    "token_savings_claim": true,
+    "product_runtime_ui_tests_eval_heldout_training_in_this_prep": true,
+    "code_tools_agents_claude_skills_board_action_plan_dashboard_edits": true,
+    "stage_commit_push": true
+  },
+  "safe_two_path_strategy": {
+    "path_a_automatic": {
+      "name": "dry-run/staging locator update object",
+      "required_steps": [
+        "create row28 execution folder",
+        "identify production locator source-of-truth candidate read-only",
+        "record production-locator-before-hash.json",
+        "create staging-locator-update-object.json only inside execution folder",
+        "perform reload/readback only against staging/dry-run locator object",
+        "write staging-locator-readback.json and reload-readback.json",
+        "create rollback-object.json and rollback-readback.json",
+        "record production-locator-after-hash.json",
+        "write production-locator-unchanged-proof.json with matching before/after hashes",
+        "write row28-execution-report.md/json with non-claims"
+      ],
+      "production_locator_hash_must_remain_unchanged": true
+    },
+    "path_b_local_ui_host": {
+      "allowed_only_if_exact_route_exists": true,
+      "exact_route_requires": [
+        "app/window target",
+        "signed-in/session preflight if needed",
+        "exact clicks/typing/expected visible state",
+        "exact screenshot/video moments",
+        "no secrets captured"
+      ],
+      "if_route_missing": "record row28-ui-blocker.md/json with host_ui_route_found=false and ui_execution_ran=false; do not fake pass",
+      "must_use_same_staging_scenario_as_path_a": true
+    }
+  },
+  "criteria": {
+    "PASS_SCOPED": [
+      "production locator source-of-truth candidate identified read-only",
+      "before and after production locator hash files exist and parse",
+      "before/after production locator hash values match exactly",
+      "staging locator update object exists only inside Row28 execution folder",
+      "reload/readback used staging/dry-run locator object only",
+      "reload-readback confirms staging locator object was read back",
+      "rollback object/readback exists and stays inside Row28 execution folder",
+      "production-locator-unchanged-proof.json records production_locator_hash_unchanged=true",
+      "UI/host path either exact-route evidence or honest blocker",
+      "all claim locks remain false"
+    ],
+    "NEEDS_FIX": [
+      "JSON evidence missing or unparsable",
+      "report not human-readable Russian",
+      "locator source-of-truth path ambiguous or guessed",
+      "staging locator object could write to production locator",
+      "before/after production locator hash proof missing",
+      "reload/readback lacks staging object correlation",
+      "rollback object/readback missing",
+      "UI path claims pass without exact route or evidence",
+      "wording implies unsupported readiness or quality/training/token claims"
+    ],
+    "BLOCKED": [
+      "BLOCKED_LOCATOR_SOURCE_OF_TRUTH_NOT_FOUND",
+      "BLOCKED_NO_SAFE_DRY_RUN_LOCATOR_ROUTE",
+      "BLOCKED_PRODUCTION_HASH_UNVERIFIABLE",
+      "BLOCKED_ROLLBACK_OBJECT_UNSAFE_OR_MISSING",
+      "BLOCKED_HOST_UI_ROUTE_NOT_FOUND",
+      "BLOCKED_AUTH_OR_SECRET_RISK"
+    ]
+  },
+  "next_execution_subagent_work_order": {
+    "role": "bounded Row28 execution sub-agent",
+    "max_minutes": 10,
+    "implementation_authorized_now": "after Row28 prep review PASS for scoped non-mutating dry-run/staging execution",
+    "requires_separate_future_authorization": "only if execution would mutate production locator/checkpoint, promote a checkpoint, train/eval models, or make product-readiness claims",
+    "execution_authority_after_prep_review": "after Row28 prep review PASS; no fresh Luba approval needed for scoped non-mutating dry-run/staging execution; fresh Luba approval is required only if execution would mutate production locator/checkpoint, promote a checkpoint, train/eval models, or make product-readiness claims.",
+    "current_authority_quote": "Next selected safe target: Row28 frdp-p01-codex-locator-update-reload, but only scenario-prep repair first.",
+    "task": "After Row28 prep review PASS, execute Row28 only as scoped non-mutating dry-run/staging locator update/reload proof.",
+    "allowed_write_scope": [
+      "docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-codex-locator-update-reload/row28-execution-<timestamp>/"
+    ],
+    "required_future_evidence_files": [
+      "preflight.json",
+      "production-locator-before-hash.json",
+      "staging-locator-update-object.json",
+      "staging-locator-readback.json",
+      "reload-readback.json",
+      "rollback-object.json",
+      "rollback-readback.json",
+      "production-locator-after-hash.json",
+      "production-locator-unchanged-proof.json",
+      "row28-execution-report.md",
+      "row28-execution-report.json",
+      "row28-ui-blocker.md if no exact host route exists",
+      "row28-ui-blocker.json if no exact host route exists"
+    ],
+    "required_future_validation": [
+      "JSON parses for generated JSON files",
+      "git diff --check -- <row28-execution-folder>",
+      "return PASS_SCOPED/NEEDS_FIX/BLOCKED with commands run, files changed, and non-claims"
+    ],
+    "forbidden": [
+      "real production locator update",
+      "production locator mutation",
+      "real checkpoint promotion",
+      "production checkpoint mutation",
+      "product/runtime/UI/tests/eval/heldout/training outside exact allowed Row28 evidence path",
+      "code/tools/AGENTS/CLAUDE/skills/board/action-plan/dashboard edits",
+      "stage/commit/push"
+    ],
+    "expected_report_line": "Row28 execution status: done=<dry-run/staging locator evidence files created>, current=<PASS_SCOPED|NEEDS_FIX|BLOCKED reason>, remaining=<host/UI route or reviewer acceptance still needed>; product_readiness_claim=false; locator_update_claim=false; production_locator_hash_unchanged=<true|false|not_proven>."
+  },
+  "claim_locks": {
+    "product_readiness_claim": false,
+    "formal_joined_pass": false,
+    "host_ui_readiness_claim": false,
+    "locator_update_claim": false,
+    "real_production_locator_update": false,
+    "checkpoint_promotion_claim": false,
+    "semantic_quality_claim": false,
+    "training_claim": false,
+    "token_savings_claim": false
+  },
+  "non_claims_for_this_prep": [
+    "I did not run product/runtime/UI/tests/eval/heldout/training.",
+    "I did not update production locator.",
+    "I did not promote a checkpoint.",
+    "I did not prove locator update readiness.",
+    "I did not prove host/UI readiness.",
+    "I did not prove product readiness.",
+    "This is scenario prep only."
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "packet_type": "row10_s5_timeout_salvage",
+  "target_folder": "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\scenario-execution\\frdp-p01-cursor-product-readiness-product-workflow\\row10-s5-cursor-launch-recovery-no-send-20260627-045817",
+  "created_by": "current bounded sub-agent Row10-S5 timeout salvage/review",
+  "created_utc": "2026-06-27T02:12:57.1091046Z",
+  "work_order_limits": {
+    "read_salvage_only": true,
+    "no_ui": true,
+    "no_cursor_launch": true,
+    "no_live_process_manipulation": true,
+    "no_product_runtime_execution": true,
+    "no_tests_or_builds_except_json_text_checks": true,
+    "no_code_board_status_edits": true,
+    "no_commit_push": true,
+    "no_web_external_ai": true,
+    "no_nested_subagents": true
+  },
+  "verdict": "PASS_SALVAGE_BLOCKED_CURSOR_STORAGE_OR_LOCK",
+  "summary_ru": "Сохраненные артефакты Kepler согласованно поддерживают узкий salvage-вывод: Cursor был запущен с командой xiigenSmartSkills.panel, route найден в manifest summary, процесс/окно Cursor были зафиксированы, затем сценарий был заблокирован Windows lock/PIN overlay и retry storage failure SQLITE_CANTOPEN. Это не является полным S5 no-send UI pass.",
+  "findings": {
+    "cursor_executable_launch_command_found": {
+      "status": "SUPPORTED",
+      "trusted_narrowly": true,
+      "evidence": [
+        "launch-command.json: cursor_exe C:\\Users\\lubao\\AppData\\Local\\Programs\\cursor\\Cursor.exe and args include --command xiigenSmartSkills.panel",
+        "launch-command-quoted-retry.json: cursor_exe C:\\Users\\lubao\\AppData\\Local\\Programs\\cursor\\Cursor.exe and argument_line includes --command xiigenSmartSkills.panel"
+      ]
+    },
+    "start_process_evidence_found": {
+      "status": "SUPPORTED",
+      "trusted_narrowly": true,
+      "evidence": [
+        "launch-start-process-result.json: started_process_id 12652, started_process_name Cursor",
+        "launch-start-process-result-quoted-retry.json: started_process_id 11344, started_process_name Cursor"
+      ]
+    },
+    "extension_manifest_route_found": {
+      "status": "SUPPORTED",
+      "trusted_narrowly": true,
+      "evidence": [
+        "route-manifest-summary.json: activation_events includes onCommand:xiigenSmartSkills.panel",
+        "route-manifest-summary.json: route_commands includes command xiigenSmartSkills.panel",
+        "route-manifest-summary.json: no_send_route_candidate.command is xiigenSmartSkills.panel"
+      ]
+    },
+    "cursor_process_window_evidence_found": {
+      "status": "SUPPORTED",
+      "trusted_narrowly": true,
+      "evidence": [
+        "cursor-window-process-monitor-inventory.json: window title [Extension Development Host] ... Cursor and process id 12652",
+        "cursor-window-process-monitor-inventory-quoted-retry.json: windows include Storage Error dialog and [Extension Development Host] cursor-xiigen-smart-skills - Cursor, process id 11344"
+      ]
+    },
+    "storage_error_sqlite_cantopen_evidence_found": {
+      "status": "SUPPORTED",
+      "trusted_narrowly": true,
+      "evidence": [
+        "cursor-window-process-monitor-inventory-quoted-retry.json: main_window_title/window_title Storage Error",
+        "cursor-user-data-xiigen-log-search-quoted-retry.txt: repeated SQLITE_CANTOPEN unable to open database file entries from user-data-quoted-retry logs",
+        "user-data-quoted-retry\\logs\\20260627T050419\\main.log: repeated StorageIPC#init and uncaught exception SQLITE_CANTOPEN entries",
+        "compact saved-text aggregation: 529 SQLITE_CANTOPEN matches across saved text artifacts/logs, including duplicate search output"
+      ]
+    },
+    "windows_pin_lock_overlay_evidence_found": {
+      "status": "SUPPORTED_NARROWLY",
+      "trusted_narrowly": true,
+      "evidence": [
+        "viewed cursor-window-route-crop-redacted.png: Windows-style lock/PIN surface with sensitive center redacted",
+        "viewed cursor-window-route-crop-redacted-quoted-retry.png: Windows-style lock/PIN surface with sensitive center redacted",
+        "screenshot-redaction-note.json: reason says Screenshot showed Windows lock/PIN overlay instead of Cursor UI; credentials not captured and not entered",
+        "screenshot-capture-metadata-quoted-retry.json: redactions include center lock account/PIN region"
+      ],
+      "downgrade": "Credential/account/PIN content is intentionally redacted; claim is limited to overlay presence and redaction metadata, not unredacted credential inspection."
+    },
+    "zero_prompts_typed_sent_supported": {
+      "status": "SUPPORTED_AS_PACKET_PROTOCOL_CLAIM",
+      "trusted_narrowly": true,
+      "evidence": [
+        "launch-command.json: prompt_typed 0, prompt_sent 0, model_backed_response_invoked false",
+        "launch-command-quoted-retry.json: prompt_typed 0, prompt_sent 0",
+        "route-manifest-summary.json: no_send_route_candidate prompt_typed 0 and prompt_sent 0",
+        "cursor-window-process-monitor-inventory.json: prompt_typed 0 and prompt_sent 0",
+        "cursor-window-process-monitor-inventory-quoted-retry.json: prompt_typed 0 and prompt_sent 0",
+        "screenshot-capture-metadata-quoted-retry.json: prompt_typed 0 and prompt_sent 0",
+        "screenshot-redaction-note.json: prompt_typed 0 and prompt_sent 0"
+      ],
+      "downgrade": "This supports Kepler packet/protocol no-send status; it is not an independent low-level UI input event audit."
+    }
+  },
+  "not_claimed": [
+    "I did not verify live Cursor state.",
+    "I did not run Cursor.",
+    "I did not inspect or manipulate live UI.",
+    "I did not inspect or manipulate live processes.",
+    "I did not run product runtime, tests, or builds.",
+    "I did not verify an interactive XIIGen panel.",
+    "I did not verify full S5 product readiness."
+  ],
+  "next_bounded_task": {
+    "name": "S5a launch command/storage diagnostic prep",
+    "scope_ru": "Разбить S5 на меньшую prep-задачу без UI execution: подготовить exact clean launch/storage diagnostic plan, stale Cursor handling plan, clean user-data strategy, expected artifacts, and no-send guard.",
+    "candidate_variants": [
+      "S5a launch command/storage diagnostic prep",
+      "S5a close stale Cursor + clean user-data launch plan"
+    ],
+    "explicit_no_ui_execution_until_scoped": true,
+    "recommended_work_order": "Bounded sub-agent for Row10-S5a prep only. Read S5 salvage packet and plan requirements. Do not launch Cursor or inspect UI. Produce S5a clean launch/storage diagnostic prep with exact command, expected evidence files, stale-process handling plan, clean user-data strategy, and no-send guard. No code/status/git edits."
+  },
+  "verification": {
+    "json_parse_check": "PASS",
+    "trailing_whitespace_check": "PASS",
+    "final_newline_check": "PASS"
+  }
+}
