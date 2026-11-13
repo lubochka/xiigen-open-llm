@@ -1,0 +1,238 @@
+﻿{
+    "schema_version":  "1.0",
+    "generated_at_utc":  "2026-05-24T21:27:46.6862736Z",
+    "goal":  "Validate that project wiki can view Angular client, .NET server, and SQL stored procedures as one business system without using validation projects as generic training source.",
+    "validation_only":  true,
+    "systems":  [
+                    {
+                        "system_id":  "dynamic-business-system",
+                        "included_projects":  [
+                                                  "bizguide-client",
+                                                  "GenieDynamicApp",
+                                                  "GenieDynamicServer"
+                                              ],
+                        "relation_status":  "partially_validated_multi_client_to_server"
+                    },
+                    {
+                        "system_id":  "game-board-system",
+                        "included_projects":  [
+                                                  "geniesoftGameMVP",
+                                                  "wizGameserver",
+                                                  "geniesoftGameMVPServer"
+                                              ],
+                        "relation_status":  "validated_client_to_wizGameserver_unknown_for_named_server"
+                    },
+                    {
+                        "system_id":  "askapedia-legacy-fullstack-sql",
+                        "included_projects":  [
+                                                  "askapediaweb"
+                                              ],
+                        "relation_status":  "validated_fullstack_with_sql_stored_procedures"
+                    },
+                    {
+                        "system_id":  "genietasks-legacy-system",
+                        "included_projects":  [
+                                                  "genietasks"
+                                              ],
+                        "relation_status":  "validated_legacy_dotnet_with_angularjs_assets_sql_needs_more_evidence"
+                    }
+                ],
+    "projects":  [
+                     {
+                         "project_id":  "bizguide-client",
+                         "role":  "client",
+                         "path":  "C:/Projects/bizguide-client",
+                         "stack":  "Angular",
+                         "version":  "13.0.0",
+                         "language":  "TypeScript 4.4.3",
+                         "evidence":  [
+                                          "package.json @angular/core ~13.0.0",
+                                          "src/services/server.ts uses HttpClient",
+                                          "src/services/server.ts calls /Login/login, /Dynamic/searchDocuments, /Convert/storeDynamic"
+                                      ]
+                     },
+                     {
+                         "project_id":  "GenieDynamicApp",
+                         "role":  "client",
+                         "path":  "C:/Projects/GenieDynamicApp",
+                         "stack":  "React",
+                         "version":  "17.0.1",
+                         "language":  "JavaScript",
+                         "evidence":  [
+                                          "package.json react ^17.0.1",
+                                          "package.json axios ^0.21.1",
+                                          "src/pages and src/utils redux actions use axios"
+                                      ]
+                     },
+                     {
+                         "project_id":  "geniesoftGameMVP",
+                         "role":  "client",
+                         "path":  "C:/Projects/geniesoftGameMVP",
+                         "stack":  "Angular",
+                         "version":  "10.0.6",
+                         "language":  "TypeScript 3.9.9",
+                         "evidence":  [
+                                          "package.json @angular/core ~10.0.6",
+                                          "src/app/_services/board.service.ts uses HttpClient",
+                                          "board.service.ts calls /Board/* and /Login/* endpoints"
+                                      ]
+                     },
+                     {
+                         "project_id":  "GenieDynamicServer",
+                         "role":  "server",
+                         "path":  "C:/Projects/GenieDynamicServer",
+                         "stack":  ".NET Core ASP.NET Web API",
+                         "version":  "netcoreapp3.1",
+                         "language":  "C#",
+                         "evidence":  [
+                                          "TestXLS/GenieDynamicServer.csproj TargetFramework netcoreapp3.1",
+                                          "Startup.cs maps controllers",
+                                          "Controllers include DynamicController, ConvertController, LoginController"
+                                      ]
+                     },
+                     {
+                         "project_id":  "wizGameserver",
+                         "role":  "server",
+                         "path":  "C:/Projects/wizGameserver",
+                         "stack":  ".NET Core ASP.NET Web API",
+                         "version":  "netcoreapp3.1",
+                         "language":  "C#",
+                         "evidence":  [
+                                          "WebApplication2.csproj TargetFramework netcoreapp3.1",
+                                          "Startup.cs maps controllers",
+                                          "Controllers include BoardController, DynamicController, LoginController"
+                                      ]
+                     },
+                     {
+                         "project_id":  "geniesoftGameMVPServer",
+                         "role":  "server",
+                         "path":  "C:/Projects/geniesoftGameMVPServer",
+                         "stack":  ".NET Core ASP.NET Web API",
+                         "version":  "netcoreapp3.1",
+                         "language":  "C#",
+                         "evidence":  [
+                                          "geniesoftGameMVPServer.csproj TargetFramework netcoreapp3.1",
+                                          "Startup.cs maps controllers",
+                                          "WeatherForecastController is present; Board endpoint evidence not found in this project"
+                                      ]
+                     },
+                     {
+                         "project_id":  "genietasks",
+                         "role":  "legacy_server",
+                         "path":  "C:/Projects/genietasks",
+                         "stack":  "ASP.NET Framework + AngularJS assets",
+                         "version":  ".NET Framework 4.6",
+                         "language":  "C# + JavaScript",
+                         "evidence":  [
+                                          "A1ProjectManagement.csproj TargetFrameworkVersion v4.6",
+                                          "WebApiConfig.cs maps HTTP routes",
+                                          "package.json and node_modules show legacy AngularJS client assets"
+                                      ]
+                     },
+                     {
+                         "project_id":  "askapediaweb",
+                         "role":  "legacy_fullstack_with_sql",
+                         "path":  "C:/Projects/askapediaweb",
+                         "stack":  "ASP.NET Framework + AngularJS + SQL Server stored procedures",
+                         "version":  ".NET Framework 3.5/4.5.2/4.6.1",
+                         "language":  "C# + JavaScript + T-SQL",
+                         "evidence":  [
+                                          "AskapediaWeb.csproj TargetFrameworkVersion v3.5",
+                                          "Askapedia.Data.csproj and Askapedia.csproj TargetFrameworkVersion v4.6.1",
+                                          "DbUpdates/3 - storedProceduresUpdate.sql defines GetGenStatistics/GetRelatedQuestions"
+                                      ]
+                     }
+                 ],
+    "cross_repository_edges":  [
+                                   {
+                                       "edge_id":  "bizguide-client-to-GenieDynamicServer",
+                                       "confidence":  "high",
+                                       "status":  "validated_by_two_evidence_types",
+                                       "client_project":  "bizguide-client",
+                                       "server_project":  "GenieDynamicServer",
+                                       "route_family":  [
+                                                            "/Login/login",
+                                                            "/Dynamic/searchDocuments",
+                                                            "/Dynamic/storeDocument",
+                                                            "/Convert/storeDynamic"
+                                                        ],
+                                       "evidence":  [
+                                                        "bizguide-client/src/services/server.ts route strings",
+                                                        "GenieDynamicServer/TestXLS Controllers: LoginController, DynamicController, ConvertController"
+                                                    ]
+                                   },
+                                   {
+                                       "edge_id":  "geniesoftGameMVP-to-wizGameserver",
+                                       "confidence":  "high",
+                                       "status":  "validated_by_two_evidence_types",
+                                       "client_project":  "geniesoftGameMVP",
+                                       "server_project":  "wizGameserver",
+                                       "route_family":  [
+                                                            "/Board/subjects",
+                                                            "/Board/cards",
+                                                            "/Board/savanswer",
+                                                            "/Login/login"
+                                                        ],
+                                       "evidence":  [
+                                                        "geniesoftGameMVP/src/app/_services/board.service.ts route strings",
+                                                        "wizGameserver/WebApplication2 Controllers: BoardController, LoginController"
+                                                    ]
+                                   },
+                                   {
+                                       "edge_id":  "askapediaweb-angularjs-to-askapedia-stored-procedures",
+                                       "confidence":  "high",
+                                       "status":  "validated_by_two_evidence_types",
+                                       "client_project":  "askapediaweb",
+                                       "server_project":  "askapediaweb",
+                                       "database_project":  "askapediaweb",
+                                       "route_family":  [
+                                                            "compaigns/getCompaigns",
+                                                            "questions/saveLead",
+                                                            "GetGenStatistics",
+                                                            "GetRelatedQuestions"
+                                                        ],
+                                       "evidence":  [
+                                                        "AskapediaWeb/scripts/compaigns/* uses $http routes",
+                                                        "askapedia DbUpdates SQL files define stored procedures",
+                                                        "multiple csproj files identify legacy ASP.NET server projects"
+                                                    ]
+                                   },
+                                   {
+                                       "edge_id":  "GenieDynamicApp-to-GenieDynamicServer",
+                                       "confidence":  "medium",
+                                       "status":  "validated_by_client_http_and_server_route_family",
+                                       "client_project":  "GenieDynamicApp",
+                                       "server_project":  "GenieDynamicServer",
+                                       "route_family":  [
+                                                            "axios calls",
+                                                            "api controller route family"
+                                                        ],
+                                       "evidence":  [
+                                                        "GenieDynamicApp package.json axios and source axios calls",
+                                                        "GenieDynamicServer/TestXLS Controllers expose api/[controller] routes"
+                                                    ]
+                                   }
+                               ],
+    "unknowns":  [
+                     {
+                         "unknown_id":  "geniesoftGameMVP-to-geniesoftGameMVPServer-board-routes",
+                         "status":  "unknown_not_enough_evidence",
+                         "reason":  "client calls /Board/* but geniesoftGameMVPServer scan only found WeatherForecastController; stronger matching server evidence is wizGameserver BoardController"
+                     },
+                     {
+                         "unknown_id":  "stored-procedure-coverage-outside-askapediaweb",
+                         "status":  "unknown_not_enough_evidence",
+                         "reason":  "SQL stored procedure definitions were found in askapediaweb and one sql file in genietasks; no procedure definitions found in the .NET Core server projects during targeted scan"
+                     }
+                 ],
+    "gate":  {
+                 "required_client_projects":  3,
+                 "discovered_client_projects":  3,
+                 "required_server_projects":  5,
+                 "discovered_server_projects":  5,
+                 "stored_procedure_project_count":  1,
+                 "cross_stack_edges_with_two_evidence_types":  3,
+                 "unknowns_recorded_instead_of_guessed":  2,
+                 "passed":  true
+             }
+}

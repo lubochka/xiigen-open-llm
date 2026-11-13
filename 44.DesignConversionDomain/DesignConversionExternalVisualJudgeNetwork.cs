@@ -1,0 +1,230 @@
+// Copyright (C) 2026 Luba Karpenko, Genie Soft LTD
+// Licensed under GNU Affero General Public License v3.0.
+// SPDX-License-Identifier: AGPL-3.0-only
+// See LICENSE file. Original project: <https://github.com/lubochka/xiigen-open-llm>
+
+namespace DesignConversionDomain;
+
+using System.Net;
+using System.Net.Sockets;
+using AgentInfrastructure;
+
+public static class DesignConversionExternalVisualJudgeNetwork
+{
+    public const string DnsResolutionFailedErrorCode = "EXTERNAL_VISUAL_JUDGE_DNS_RESOLUTION_FAILED";
+    public const string DnsEmptyErrorCode = "EXTERNAL_VISUAL_JUDGE_DNS_EMPTY";
+    public const string DestinationBlockedErrorCode = "EXTERNAL_VISUAL_JUDGE_DNS_DESTINATION_BLOCKED";
+    public const string SocketConnectFailedErrorCode = "EXTERNAL_VISUAL_JUDGE_PINNED_CONNECT_FAILED";
+    // Four covers common IPv4/IPv6 primary+secondary DNS answers without unbounded socket fan-out.
+    public const int MaxPinnedAddressAttempts = 4;
+
+    private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(15);
+
+    public static HttpClient CreateSecureHttpClient()
+        => CreateSecureHttpClient(null, null);
+
+    public static HttpClient CreateSecureHttpClient(
+        Func<string, CancellationToken, Task<OperationResult<IReadOnlyList<IPAddress>>>>? resolveAddressesAsync,
+        Func<IPAddress, int, CancellationToken, ValueTask<Stream>>? connectSocketAsync)
+        => new(CreateSecureSocketsHttpHandler(resolveAddressesAsync, connectSocketAsync), disposeHandler: true)
+        {
+            Timeout = Timeout.InfiniteTimeSpan
+        };
+
+    public static SocketsHttpHandler CreateSecureSocketsHttpHandler(
+        Func<string, CancellationToken, Task<OperationResult<IReadOnlyList<IPAddress>>>>? resolveAddressesAsync = null,
+        Func<IPAddress, int, CancellationToken, ValueTask<Stream>>? connectSocketAsync = null)
+    {
+        var handler = new SocketsHttpHandler
+        {
+            AllowAutoRedirect = false,
+            AutomaticDecompression = DecompressionMethods.None,
+            ConnectTimeout = DefaultTimeout,
+            PooledConnectionLifetime = TimeSpan.Zero,
+            PooledConnectionIdleTimeout = TimeSpan.Zero,
+            UseProxy = false,
+            Proxy = null
+        };
+
+        handler.ConnectCallback = async (context, cancellationToken) =>
+        {
+            var connected = await ConnectPinnedAsync(
+                context.DnsEndPoint,
+                resolveAddressesAsync,
+                connectSocketAsync,
+                cancellationToken);
+            if (!connected.IsSuccess)
+                throw new HttpRequestException(connected.ErrorMessage);
+
+            return connected.Value!;
+        };
+
+        return handler;
+    }
+
+    public static async Task<OperationResult<Stream>> ConnectPinnedAsync(
+        DnsEndPoint endPoint,
+        Func<string, CancellationToken, Task<OperationResult<IReadOnlyList<IPAddress>>>>? resolveAddressesAsync = null,
+        Func<IPAddress, int, CancellationToken, ValueTask<Stream>>? connectSocketAsync = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (endPoint is null || string.IsNullOrWhiteSpace(endPoint.Host))
+        {
+            return OperationResult<Stream>.Fail(
+                "External visual judge DNS target is invalid.",
+                DnsResolutionFailedErrorCode);
+        }
+
+        if (endPoint.Port <= 0 || endPoint.Port > 65535)
+        {
+            return OperationResult<Stream>.Fail(
+                "External visual judge DNS target is invalid.",
+                DnsResolutionFailedErrorCode);
+        }
+
+        var resolver = resolveAddressesAsync ?? ResolveWithSystemDnsAsync;
+        OperationResult<IReadOnlyList<IPAddress>> resolved;
+        try
+        {
+            resolved = await resolver(endPoint.Host.Trim(), cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch
+        {
+            return OperationResult<Stream>.Fail(
+                "External visual judge DNS resolution failed.",
+                DnsResolutionFailedErrorCode);
+        }
+
+        if (!resolved.IsSuccess)
+        {
+            return OperationResult<Stream>.Fail(
+                "External visual judge DNS resolution failed.",
+                DnsResolutionFailedErrorCode);
+        }
+
+        var addresses = NormalizeResolvedAddresses(resolved.Value);
+        if (addresses.Length == 0)
+        {
+            return OperationResult<Stream>.Fail(
+                "External visual judge DNS resolution returned no usable addresses.",
+                DnsEmptyErrorCode);
+        }
+
+        if (addresses.Any(DesignConversionBrowserPngEvidenceInspector.IsBlockedDestinationAddress))
+        {
+            return OperationResult<Stream>.Fail(
+                "External visual judge DNS resolution returned a blocked destination.",
+                DestinationBlockedErrorCode);
+        }
+
+        var connector = connectSocketAsync ?? ConnectSocketAsync;
+        var attemptedCount = 0;
+        var lastFailureKind = "none";
+        foreach (var address in addresses.Take(MaxPinnedAddressAttempts))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            attemptedCount++;
+            try
+            {
+                var stream = await connector(address, endPoint.Port, cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    stream?.Dispose();
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
+                if (stream is not null)
+                    return OperationResult<Stream>.Ok(stream);
+
+                lastFailureKind = "null_stream";
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                lastFailureKind = ClassifyPinnedConnectFailure(exception);
+            }
+        }
+
+        return OperationResult<Stream>.Fail(
+            $"External visual judge pinned connection failed. attempted_count={attemptedCount}; last_failure_kind={lastFailureKind}.",
+            SocketConnectFailedErrorCode);
+    }
+
+    private static string ClassifyPinnedConnectFailure(Exception exception)
+        => exception switch
+        {
+            SocketException => "socket_exception",
+            IOException => "io_exception",
+            TimeoutException => "timeout_exception",
+            OperationCanceledException => "timeout_exception",
+            _ => "connector_exception"
+        };
+
+    private static IPAddress[] NormalizeResolvedAddresses(IReadOnlyList<IPAddress>? resolvedAddresses)
+    {
+        if (resolvedAddresses is null)
+            return [];
+
+        var addresses = new List<IPAddress>(resolvedAddresses.Count);
+        var seen = new HashSet<IPAddress>();
+        foreach (var address in resolvedAddresses)
+        {
+            if (address is null || !seen.Add(address))
+                continue;
+
+            addresses.Add(address);
+        }
+
+        return addresses.ToArray();
+    }
+
+    private static async Task<OperationResult<IReadOnlyList<IPAddress>>> ResolveWithSystemDnsAsync(
+        string host,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            return OperationResult<IReadOnlyList<IPAddress>>.Ok(
+                await Dns.GetHostAddressesAsync(host, cancellationToken));
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch
+        {
+            return OperationResult<IReadOnlyList<IPAddress>>.Fail(
+                "External visual judge DNS resolution failed.",
+                DnsResolutionFailedErrorCode);
+        }
+    }
+
+    private static async ValueTask<Stream> ConnectSocketAsync(
+        IPAddress address,
+        int port,
+        CancellationToken cancellationToken)
+    {
+        var socket = new Socket(address.AddressFamily, SocketType.Stream, ProtocolType.Tcp)
+        {
+            NoDelay = true
+        };
+
+        try
+        {
+            await socket.ConnectAsync(new IPEndPoint(address, port), cancellationToken);
+            return new NetworkStream(socket, ownsSocket: true);
+        }
+        catch
+        {
+            socket.Dispose();
+            throw;
+        }
+    }
+}

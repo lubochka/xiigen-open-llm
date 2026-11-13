@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+<ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>ExperimentsV2</AssemblyName>
+    <RootNamespace>ExperimentsV2</RootNamespace>
+  </PropertyGroup>
+
+  <!-- Microsoft.CodeAnalysis.CSharp (Roslyn) for E01, E02, E05 — MIT License -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+  </ItemGroup>
+
+  <!-- Копии исходников внутри каталогов опытов не принадлежат этой сборке.
+       Каждый изолированный узел опыта перечисляет свои копии явно и собирает их
+       сам; здесь они подбирались шаблоном по умолчанию, и одиннадцать копий
+       одной и той же библиотеки давали столкновения одинаковых типов. -->
+  <ItemGroup>
+    <Compile Remove="Experiments/Rp01Micro/**/*.cs" />
+    <!-- Исключение из исключения: собственные варианты опыта про метку цикла
+         do-while нужны его запускателю, он берёт их именно отсюда. -->
+    <Compile Include="Experiments/Rp01Micro/NKu01/**/*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\01.Tokenizer\Tokenizer.csproj" />
+    <ProjectReference Include="..\12.SearchEngine\SearchEngine.csproj" />
+    <ProjectReference Include="..\07.GraphEngine\GraphEngine.csproj" />
+    <ProjectReference Include="..\12.SemanticCompiler\SemanticCompiler.csproj" />
+    <ProjectReference Include="..\21.AgentInfrastructure\AgentInfrastructure.csproj" />
+    <ProjectReference Include="..\22.AgentAlgorithms\AgentAlgorithms.csproj" />
+    <ProjectReference Include="..\23.OssEquivalents\OssEquivalents.csproj" />
+    <ProjectReference Include="..\23.SemanticCompilerAdapter\SemanticCompilerAdapter.csproj" />
+    <ProjectReference Include="..\29.SemanticCompiler\SemanticCompiler.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>SemanticCompiler</AssemblyName>
+    <RootNamespace>SemanticCompiler</RootNamespace>
+  </PropertyGroup>
+
+  <!-- Roslyn (Microsoft.CodeAnalysis.CSharp) for AST-level tokenization (E01, E17) — MIT -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\29.SemanticCompiler\SemanticCompiler.csproj" />
+  </ItemGroup>
+
+  <!-- FIX-AST: the sibling cache and the cached extraction overload are internal;
+       the permanent test for them lives in the test project. -->
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>LlmFromScratch.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>

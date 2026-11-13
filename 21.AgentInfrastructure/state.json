@@ -1,0 +1,49 @@
+{
+  "subproject": "21.AgentInfrastructure",
+  "covers": ["21 AgentInfrastructure"],
+  "status": "complete",
+  "implemented_date": "2026-04-30",
+  "dna_compliance": {
+    "operation_result_envelope": true,
+    "base_service": true,
+    "fabric_first_interfaces": true,
+    "no_typed_model_classes": true,
+    "idempotency": "N/A",
+    "outbox_pattern": "N/A",
+    "standard_event_envelope": true,
+    "atomic_writes": "via ICodeWriter + temp-file pattern",
+    "zero_tech_debt": true
+  },
+  "fabric_interfaces": ["IConfigurationProvider","ICodeReader","ICodeWriter","ILlmClient","ISessionStorage"],
+  "stages": [
+    {"id":1,"name":"ConfigurationLoader","description":"Layered config with deep merge (global → project → AGENTS.md)"},
+    {"id":2,"name":"CodebaseIndexer","description":"Roslyn symbol extraction + PageRank scoring"},
+    {"id":3,"name":"ContextAssembler","description":"Token-budget-aware context selection"},
+    {"id":4,"name":"AgentLoop","description":"ReAct cycle with compaction and max-iteration guard"},
+    {"id":5,"name":"ToolRegistry + PermissionGate","description":"Tool dispatch with 3-tier permission model"},
+    {"id":6,"name":"FileChangeApplier","description":"Search-and-replace patch with ambiguity detection"},
+    {"id":7,"name":"SessionStateStore","description":"Full session persistence to SQLite"}
+  ],
+  "test_coverage": {
+    "test_file": "Tests/AgentInfrastructureTests.cs",
+    "total_tests": 30,
+    "passing": 30,
+    "external_parity": false,
+    "categories": [
+      "ConfigurationLoader (4 tests)",
+      "CodebaseIndexer (3 tests)",
+      "TokenCounter (3 tests)",
+      "ContextAssembler (3 tests)",
+      "AgentState (3 tests)",
+      "AgentLoop (4 tests)",
+      "PermissionGate (4 tests)",
+      "FileChangeApplier (4 tests)",
+      "SessionStateStore (2 tests)"
+    ]
+  },
+  "external_dependencies": [
+    {"name":"Microsoft.CodeAnalysis.CSharp","version":"4.12.0","license":"MIT"},
+    {"name":"Microsoft.Data.Sqlite","version":"9.0.4","license":"MIT"}
+  ],
+  "notes": "Windows Forms desktop host omitted; all library stages are fully tested via fabric mocks."
+}

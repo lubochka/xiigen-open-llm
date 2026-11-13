@@ -1,0 +1,373 @@
+{
+  "schema_version": "1.0",
+  "artifact_scope": "plugin_project_documentation_rag_scenario_matrix",
+  "generated_at_utc": "2026-05-25T11:30:00Z",
+  "status": "required_for_plugin_orchestration_plan",
+  "source_plan": "43.LearningLocalWikiData/PLAN-PLUGIN-ORCHESTRATION-PROMPT-SUITE-GATE-v1.md",
+  "global_rule": "Each project group must name documentation sources, Document RAG sources, plugin test scenarios, and fallback behavior before plugin orchestration coverage can be claimed.",
+  "all_prompt_scope": "Every row uses ORCHESTRATOR-PROMPT-PLUGIN-EXPECTED-RESULTS-v1.json as the prompt-by-prompt expected-result source. Unsupported prompt/project combinations must return missing-evidence or wrong-scope blocked state, not a fake pass.",
+  "rows": [
+    {
+      "project_group_id": "bizguide_client_single_angular",
+      "project_roots": [
+        "C:/Projects/bizguide-client"
+      ],
+      "repo_scope_class": "single_angular_repo",
+      "business_system_role": "Angular client validation target; linked server must be discovered or explicitly marked missing before any full-system claim.",
+      "documentation_sources": [
+        "README*",
+        "package.json",
+        "angular.json",
+        "tsconfig*.json",
+        "src/app/**/*.{ts,html,scss,css,md}"
+      ],
+      "document_rag_sources": [
+        ".xiigen/wiki-domain/evidence/**",
+        ".xiigen/wiki-domain/documentation/**",
+        ".xiigen/wiki-domain/system-map/**",
+        ".xiigen/wiki-domain/model-manifest*.json"
+      ],
+      "plugin_test_scenarios": [
+        "detect Angular project scope from active repo",
+        "build wiki query plan for UI route/component/service flow",
+        "link UI action to API call when evidence exists",
+        "return missing linked-server evidence when server root is absent",
+        "execute all prompt expected-result rows through Visual Studio and VS Code entrypoints with wrong-scope blocking where needed"
+      ],
+      "expected_prompt_manifest_scope": "all_source_prompt_ids_from_ORCHESTRATOR_PROMPT_PLUGIN_EXPECTED_RESULTS",
+      "missing_source_fallback": [
+        "If README/design docs are missing, inspect angular.json, package.json, routes, components, services, and generated wiki evidence.",
+        "If .xiigen/wiki-domain is missing, generate project-local wiki evidence before plugin prompt probe.",
+        "If server evidence cannot be found, block linked Angular/.NET/SQL claim for this project row."
+      ],
+      "blocked_if_missing": [
+        "active Angular repo root",
+        "generated or source-code evidence",
+        "linked server evidence for full-system claims"
+      ],
+      "status": "described_not_executed"
+    },
+    {
+      "project_group_id": "genie_dynamic_linked_system",
+      "project_roots": [
+        "C:/Projects/GenieDynamicApp",
+        "C:/Projects/GenieDynamicServer"
+      ],
+      "repo_scope_class": "linked_angular_dotnet_pair",
+      "business_system_role": "Linked Angular client and .NET server validation target; SQL evidence must be discovered for stored procedure claims.",
+      "documentation_sources": [
+        "README*",
+        "package.json",
+        "angular.json",
+        "*.sln",
+        "**/*.csproj",
+        "appsettings*.json",
+        "Program.cs",
+        "**/*Controller*.cs",
+        "**/*Endpoint*.cs",
+        "**/*Service*.cs",
+        "**/*.sql"
+      ],
+      "document_rag_sources": [
+        ".xiigen/wiki-domain/evidence/**",
+        ".xiigen/wiki-domain/documentation/**",
+        ".xiigen/wiki-domain/system-map/**",
+        ".xiigen/wiki-domain/model-manifest*.json"
+      ],
+      "plugin_test_scenarios": [
+        "detect linked Angular + .NET system from active and linked repos",
+        "trace UI action to API endpoint to server service",
+        "trace persistence and SQL stored procedure evidence when present",
+        "answer advanced wiki questions with exact evidence",
+        "return missing SQL evidence when stored procedures are absent"
+      ],
+      "expected_prompt_manifest_scope": "all_source_prompt_ids_from_ORCHESTRATOR_PROMPT_PLUGIN_EXPECTED_RESULTS",
+      "missing_source_fallback": [
+        "If generated wiki evidence is absent, generate it for both roots before probing.",
+        "If SQL scripts or stored procedure calls are absent, block stored-procedure-specific claims and continue non-SQL linked-system validation.",
+        "If client/server link cannot be proven, block linked-system claim."
+      ],
+      "blocked_if_missing": [
+        "client root",
+        "server root",
+        "client-server route/API evidence for linked-system claim"
+      ],
+      "status": "described_not_executed"
+    },
+    {
+      "project_group_id": "geniesoft_game_mvp_linked_system",
+      "project_roots": [
+        "C:/Projects/geniesoftGameMVP",
+        "C:/Projects/geniesoftGameMVPServer"
+      ],
+      "repo_scope_class": "linked_angular_dotnet_pair",
+      "business_system_role": "Linked client/server validation target for cross-repository business flow tracing.",
+      "documentation_sources": [
+        "README*",
+        "package.json",
+        "angular.json",
+        "*.sln",
+        "**/*.csproj",
+        "appsettings*.json",
+        "Program.cs",
+        "**/*Controller*.cs",
+        "**/*Endpoint*.cs",
+        "**/*Service*.cs",
+        "**/*.sql"
+      ],
+      "document_rag_sources": [
+        ".xiigen/wiki-domain/evidence/**",
+        ".xiigen/wiki-domain/documentation/**",
+        ".xiigen/wiki-domain/system-map/**",
+        ".xiigen/wiki-domain/model-manifest*.json"
+      ],
+      "plugin_test_scenarios": [
+        "detect linked repository group",
+        "trace screen/component/service/API flow",
+        "trace DTO and persistence impact",
+        "validate advanced prompt planning over the linked system",
+        "block missing stored-procedure evidence when SQL cannot be found"
+      ],
+      "expected_prompt_manifest_scope": "all_source_prompt_ids_from_ORCHESTRATOR_PROMPT_PLUGIN_EXPECTED_RESULTS",
+      "missing_source_fallback": [
+        "Generate wiki evidence for both roots if .xiigen output is absent.",
+        "Use source routes/controllers/services when documentation is absent.",
+        "Block full SQL flow claim until SQL procedure evidence is found."
+      ],
+      "blocked_if_missing": [
+        "client root",
+        "server root",
+        "client-server evidence for linked-system claim"
+      ],
+      "status": "described_not_executed"
+    },
+    {
+      "project_group_id": "wiz_game_server_server_scope",
+      "project_roots": [
+        "C:/Projects/wizGameserver"
+      ],
+      "repo_scope_class": "single_dotnet_repo",
+      "business_system_role": ".NET server validation target; linked client is not assumed unless discovered.",
+      "documentation_sources": [
+        "README*",
+        "*.sln",
+        "**/*.csproj",
+        "appsettings*.json",
+        "Program.cs",
+        "**/*Controller*.cs",
+        "**/*Endpoint*.cs",
+        "**/*Service*.cs",
+        "**/*.sql"
+      ],
+      "document_rag_sources": [
+        ".xiigen/wiki-domain/evidence/**",
+        ".xiigen/wiki-domain/documentation/**",
+        ".xiigen/wiki-domain/system-map/**",
+        ".xiigen/wiki-domain/model-manifest*.json"
+      ],
+      "plugin_test_scenarios": [
+        "detect .NET server scope",
+        "trace endpoint to service to persistence",
+        "identify SQL stored procedure or missing SQL evidence",
+        "return missing linked-client evidence for full Angular/.NET claim"
+      ],
+      "expected_prompt_manifest_scope": "all_source_prompt_ids_from_ORCHESTRATOR_PROMPT_PLUGIN_EXPECTED_RESULTS",
+      "missing_source_fallback": [
+        "Use solution/project files and server source if docs are absent.",
+        "Generate wiki evidence if .xiigen output is absent.",
+        "Do not claim Angular + .NET linked system without a linked client root."
+      ],
+      "blocked_if_missing": [
+        "server root",
+        "server source evidence"
+      ],
+      "status": "described_not_executed"
+    },
+    {
+      "project_group_id": "genietasks_project_scope",
+      "project_roots": [
+        "C:/Projects/genietasks"
+      ],
+      "repo_scope_class": "project_scope_to_classify_from_files",
+      "business_system_role": "Validation target whose stack must be classified from files before probe execution.",
+      "documentation_sources": [
+        "README*",
+        "package.json",
+        "angular.json",
+        "*.sln",
+        "**/*.csproj",
+        "appsettings*.json",
+        "Program.cs",
+        "**/*.sql",
+        "src/**"
+      ],
+      "document_rag_sources": [
+        ".xiigen/wiki-domain/evidence/**",
+        ".xiigen/wiki-domain/documentation/**",
+        ".xiigen/wiki-domain/system-map/**",
+        ".xiigen/wiki-domain/model-manifest*.json"
+      ],
+      "plugin_test_scenarios": [
+        "classify repo stack before selecting scenario expectations",
+        "run all prompt rows that match discovered stack",
+        "return wrong-scope or missing-evidence blocked state for unsupported prompt rows",
+        "record exact stack evidence used for classification"
+      ],
+      "expected_prompt_manifest_scope": "all_source_prompt_ids_from_ORCHESTRATOR_PROMPT_PLUGIN_EXPECTED_RESULTS",
+      "missing_source_fallback": [
+        "If stack cannot be classified from docs, inspect source file markers.",
+        "If generated wiki evidence is absent, generate it before probe.",
+        "If neither docs nor source markers identify stack, block with missing evidence."
+      ],
+      "blocked_if_missing": [
+        "project root",
+        "stack classification evidence"
+      ],
+      "status": "described_not_executed"
+    },
+    {
+      "project_group_id": "askapediaweb_project_scope",
+      "project_roots": [
+        "C:/Projects/askapediaweb"
+      ],
+      "repo_scope_class": "project_scope_to_classify_from_files",
+      "business_system_role": "Validation target whose Angular/.NET role must be classified from files before plugin probes.",
+      "documentation_sources": [
+        "README*",
+        "package.json",
+        "angular.json",
+        "*.sln",
+        "**/*.csproj",
+        "appsettings*.json",
+        "Program.cs",
+        "**/*.sql",
+        "src/**"
+      ],
+      "document_rag_sources": [
+        ".xiigen/wiki-domain/evidence/**",
+        ".xiigen/wiki-domain/documentation/**",
+        ".xiigen/wiki-domain/system-map/**",
+        ".xiigen/wiki-domain/model-manifest*.json"
+      ],
+      "plugin_test_scenarios": [
+        "classify repo stack before selecting scenario expectations",
+        "run prompt rows for discovered stack",
+        "block unsupported full-system claims with missing linked evidence",
+        "record documentation/RAG/source evidence used for the answer"
+      ],
+      "expected_prompt_manifest_scope": "all_source_prompt_ids_from_ORCHESTRATOR_PROMPT_PLUGIN_EXPECTED_RESULTS",
+      "missing_source_fallback": [
+        "If docs are absent, inspect source markers.",
+        "If .xiigen outputs are absent, generate wiki evidence first.",
+        "If stack remains unknown, block with missing evidence."
+      ],
+      "blocked_if_missing": [
+        "project root",
+        "stack classification evidence"
+      ],
+      "status": "described_not_executed"
+    },
+    {
+      "project_group_id": "xiigen_flows_translated_full_stack",
+      "project_roots": [
+        "C:/Projects/xiigen-flows-dot-net-angular"
+      ],
+      "repo_scope_class": "translated_xiigen_flows_repo",
+      "business_system_role": "Translated full-stack XIIGen validation target for plugin orchestration scenarios.",
+      "documentation_sources": [
+        "README*",
+        "package.json",
+        "angular.json",
+        "*.sln",
+        "**/*.csproj",
+        "appsettings*.json",
+        "Program.cs",
+        "**/*Controller*.cs",
+        "**/*Endpoint*.cs",
+        "**/*Service*.cs",
+        "**/*.sql"
+      ],
+      "document_rag_sources": [
+        ".xiigen/wiki-domain/evidence/**",
+        ".xiigen/wiki-domain/documentation/**",
+        ".xiigen/wiki-domain/system-map/**",
+        ".xiigen/wiki-domain/model-manifest*.json"
+      ],
+      "plugin_test_scenarios": [
+        "run every orchestrator prompt expected-result row against translated flows scope",
+        "verify plugin passes active repo scope to XIIGen",
+        "verify query plan, selected units, evidence checks, and blocked states",
+        "verify no plugin-local semantic routing"
+      ],
+      "expected_prompt_manifest_scope": "all_source_prompt_ids_from_ORCHESTRATOR_PROMPT_PLUGIN_EXPECTED_RESULTS",
+      "missing_source_fallback": [
+        "Generate wiki evidence if absent.",
+        "Use source and project metadata when docs are absent.",
+        "Block any flow claim whose evidence cannot be found in source or generated wiki outputs."
+      ],
+      "blocked_if_missing": [
+        "translated project root",
+        "plugin entrypoint",
+        "XIIGen orchestration response"
+      ],
+      "status": "described_not_executed"
+    },
+    {
+      "project_group_id": "xiigen_platform_translated_full_stack",
+      "project_roots": [
+        "C:/Projects/xiigen-platform-dot-net-angular"
+      ],
+      "repo_scope_class": "translated_xiigen_platform_repo",
+      "business_system_role": "Translated full-stack XIIGen platform validation target for plugin orchestration scenarios.",
+      "documentation_sources": [
+        "README*",
+        "package.json",
+        "angular.json",
+        "*.sln",
+        "**/*.csproj",
+        "appsettings*.json",
+        "Program.cs",
+        "**/*Controller*.cs",
+        "**/*Endpoint*.cs",
+        "**/*Service*.cs",
+        "**/*.sql"
+      ],
+      "document_rag_sources": [
+        ".xiigen/wiki-domain/evidence/**",
+        ".xiigen/wiki-domain/documentation/**",
+        ".xiigen/wiki-domain/system-map/**",
+        ".xiigen/wiki-domain/model-manifest*.json"
+      ],
+      "plugin_test_scenarios": [
+        "run every orchestrator prompt expected-result row against translated platform scope",
+        "verify plugin passes active repo scope to XIIGen",
+        "verify query plan, selected units, evidence checks, and blocked states",
+        "verify no plugin-local semantic routing"
+      ],
+      "expected_prompt_manifest_scope": "all_source_prompt_ids_from_ORCHESTRATOR_PROMPT_PLUGIN_EXPECTED_RESULTS",
+      "missing_source_fallback": [
+        "Generate wiki evidence if absent.",
+        "Use source and project metadata when docs are absent.",
+        "Block any platform claim whose evidence cannot be found in source or generated wiki outputs."
+      ],
+      "blocked_if_missing": [
+        "translated project root",
+        "plugin entrypoint",
+        "XIIGen orchestration response"
+      ],
+      "status": "described_not_executed"
+    }
+  ],
+  "gate": {
+    "PLUGIN_PROJECT_DOC_RAG_SCENARIO_MATRIX_exists": true,
+    "all_validation_project_groups_have_matrix_row": true,
+    "all_project_rows_have_documentation_sources": true,
+    "all_project_rows_have_document_rag_sources": true,
+    "all_project_rows_have_plugin_test_scenarios": true,
+    "all_project_rows_have_missing_source_fallback": true,
+    "missing_docs_do_not_block_when_source_code_evidence_exists": true,
+    "missing_client_server_sql_link_blocks_full_linked_system_claim": true,
+    "actual_plugin_execution_complete": false
+  },
+  "next_action": "Use this matrix while building ORCHESTRATOR-PROMPT-PLUGIN-EXPECTED-RESULTS-v1.json and while executing PLUGIN-ORCHESTRATION-PROMPT-SUITE-GATE.json."
+}

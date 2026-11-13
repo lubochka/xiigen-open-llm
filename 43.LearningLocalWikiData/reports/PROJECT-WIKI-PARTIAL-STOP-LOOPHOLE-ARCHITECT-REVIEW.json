@@ -1,0 +1,58 @@
+{
+    "report_scope":  "architect_loophole_review",
+    "generated_at_utc":  "2026-05-25T12:12:43.2926281Z",
+    "mode":  "ARCHITECT",
+    "verdict":  "LOOPHOLE_FOUND_AND_GOVERNANCE_PATCHED",
+    "not_a_completion_report":  true,
+    "active_goal_reached":  false,
+    "stop_allowed":  false,
+    "loophole":  {
+                     "id":  "HOLE-025",
+                     "name":  "partial_progress_stop_boundary",
+                     "what_allowed_the_stop":  "A useful implementation slice, report, commit/push, or lower-level gate could be treated as a user-facing stop boundary even though the active state still had goal_reached=false, stop_allowed=false, and next_action was non-empty.",
+                     "why_it_is_invalid":  "The active plan\u0027s full goal is plugin orchestration through real Visual Studio and VS Code user-facing entrypoints for orchestrator prompt scenarios. A partial checkpoint does not satisfy that goal.",
+                     "required_behavior":  "Re-read state before any final response. If goal_reached=false, stop_allowed=false, and next_action is non-empty, final response is forbidden; execute next_action instead."
+                 },
+    "patched_files":  [
+                          "AGENTS.md",
+                          "CLAUDE.md",
+                          "docs/HOW-TO-USE-SKILLS.md",
+                          "43.LearningLocalWikiData/PLAN-PLUGIN-ORCHESTRATION-PROMPT-SUITE-GATE-v1.md",
+                          "43.LearningLocalWikiData/PLAN-PROJECT-WIKI-CROSS-STACK-ADVANCED-GAP-CLOSURE-v1.md",
+                          "43.LearningLocalWikiData/STATE-PROJECT-WIKI-CROSS-STACK-ADVANCED-GAP-CLOSURE.json"
+                      ],
+    "architect_review_checks":  [
+                                    {
+                                        "check":  "Can a commit or push end the plan while next_action exists?",
+                                        "result":  "NO",
+                                        "evidence":  "AGENTS.md OP-26 and plan section 9 say commit/push is a checkpoint only."
+                                    },
+                                    {
+                                        "check":  "Can a lower-level gate pass end the parent plan?",
+                                        "result":  "NO",
+                                        "evidence":  "AGENTS.md OP-26 and CLAUDE.md partial-progress firewall forbid lower-level gate substitution."
+                                    },
+                                    {
+                                        "check":  "Can an honest partial report be used as a final response?",
+                                        "result":  "NO",
+                                        "evidence":  "AGENTS.md OP-26 forbids final response when state has goal_reached=false and next_action is non-empty."
+                                    },
+                                    {
+                                        "check":  "Can a failed gate with known remediation be called a blocker?",
+                                        "result":  "NO",
+                                        "evidence":  "AGENTS.md OP-26 says blocker is invalid when next_action is non-empty."
+                                    },
+                                    {
+                                        "check":  "Is the unresolved plugin orchestration action still visible?",
+                                        "result":  "YES",
+                                        "evidence":  "State next_action remains the automated host invocation harness for VS Code and Visual Studio."
+                                    }
+                                ],
+    "score_audit":  {
+                        "violation":  "stopped after partial progress while the plan remained open",
+                        "penalty":  -1000,
+                        "recorded_in_state":  true
+                    },
+    "remaining_required_next_action":  "Create and run automated host invocation harness: VS Code extension-development command/chat execution with XIIGEN_WIKI_CONTEXT_HOOK, and Visual Studio experimental-instance command/tool-window invocation with XIIGEN_WIKI_CONTEXT_HOOK; persist per-prompt host evidence.",
+    "allowed_claim_after_this_report":  "Protocol loophole patched; plan execution still in progress."
+}

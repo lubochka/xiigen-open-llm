@@ -1,0 +1,13 @@
+// Copyright (C) 2026 Luba Karpenko, Genie Soft LTD
+// Licensed under GNU Affero General Public License v3.0.
+// SPDX-License-Identifier: AGPL-3.0-only
+// See LICENSE file. Original project: <https://github.com/lubochka/xiigen-open-llm>
+
+namespace OssEquivalents;
+
+// Describes one Machine Control Protocol tool: name, description, and parameter schema.
+// This is the .NET equivalent of the tool descriptor in @modelcontextprotocol/sdk.
+public sealed record McpToolDefinition(
+    string                     Name,
+    string                     Description,
+    Dictionary<string, object> ParameterSchema);

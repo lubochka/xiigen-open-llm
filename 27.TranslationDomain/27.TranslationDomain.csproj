@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- 00.Core provides ILearningMachine<TDomain>, ILogicalFlow, ILogicalOrchestrator, and all shared contracts. -->
+    <ProjectReference Include="..\00.Core\Core.csproj" />
+    <!-- 14.ContinuousLearning provides the domain-neutral held-out scoring contracts. -->
+    <ProjectReference Include="..\14.ContinuousLearning\ContinuousLearning.csproj" />
+    <!-- 11.DPO provides DPO (Direct Preference Optimization) training infrastructure. -->
+    <ProjectReference Include="..\11.DPO\DPO.csproj" />
+    <!-- 26.TrainableRouter provides direction-adapter routing primitives for multi-language pairs. -->
+    <ProjectReference Include="..\26.TrainableRouter\TrainableRouter.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Проверкам нужен доступ к минимальному барьеру наблюдения перед условной публикацией:
+         поздний конфликт двух писателей иначе пришлось бы ловить ожиданием по времени, то есть
+         случайностью. Открывается ровно одна сборка проверок и ровно для наблюдения; продуктовая
+         поверхность сборки остаётся прежней. -->
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>LlmFromScratch.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>

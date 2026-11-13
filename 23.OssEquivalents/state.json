@@ -1,0 +1,51 @@
+{
+  "subproject": "23.OssEquivalents",
+  "covers": ["23 OssEquivalents"],
+  "status": "complete",
+  "implemented_date": "2026-04-30",
+  "dna_compliance": {
+    "operation_result_envelope": true,
+    "base_service": true,
+    "fabric_first_interfaces": true,
+    "no_typed_model_classes": true,
+    "idempotency": "N/A",
+    "outbox_pattern": "N/A",
+    "standard_event_envelope": true,
+    "atomic_writes": "via SQLite transactions in StateCheckpointer",
+    "zero_tech_debt": true
+  },
+  "fabric_interfaces": ["ILlmClientWithSchema","IToolExecutor"],
+  "oss_equivalents": [
+    {"oss":"@modelcontextprotocol/sdk","dotnet":"McpTransport + McpToolDispatcher","notes":"Named-pipe server"},
+    {"oss":"gray-matter","dotnet":"FrontmatterParser + SkillFileLoader","notes":"YamlDotNet MIT"},
+    {"oss":"vectra","dotnet":"Sub-project 06 IVectorStorage","notes":"Reused"},
+    {"oss":"graphology","dotnet":"Sub-project 07 IGraphStorage","notes":"Reused"},
+    {"oss":"ts-morph","dotnet":"RoslynCodeAnalyzer + CallGraphBuilder","notes":"Roslyn MIT"},
+    {"oss":"zod + instructor","dotnet":"SchemaValidator + StructuredLlmClient","notes":"Pure C#"},
+    {"oss":"@langchain/langgraph","dotnet":"AgentStateMachine + StateCheckpointer","notes":"SQLite MIT"},
+    {"oss":"nano-graphrag","dotnet":"Sub-project 08 HybridRetriever","notes":"Reused"}
+  ],
+  "test_coverage": {
+    "test_file": "Tests/OssEquivalentsTests.cs",
+    "total_tests": 35,
+    "passing": 35,
+    "external_parity": false,
+    "categories": [
+      "FrontmatterParser (5 tests)",
+      "SkillFileLoader (3 tests)",
+      "McpToolDispatcher (4 tests)",
+      "RoslynCodeAnalyzer (3 tests)",
+      "CallGraphBuilder (2 tests)",
+      "SchemaValidator (5 tests)",
+      "StructuredLlmClient / InMemoryStructuredLlmClient (5 tests)",
+      "AgentStateMachine (4 tests)",
+      "StateCheckpointer (4 tests)"
+    ]
+  },
+  "external_dependencies": [
+    {"name":"YamlDotNet","version":"16.3.0","license":"MIT"},
+    {"name":"Microsoft.Data.Sqlite","version":"9.0.4","license":"MIT"},
+    {"name":"Microsoft.CodeAnalysis.CSharp","version":"4.12.0","license":"MIT"}
+  ],
+  "notes": "Reuses sub-projects 06, 07, 08 for vectra/graphology/nano-graphrag equivalents. McpTransport uses Windows named pipes."
+}

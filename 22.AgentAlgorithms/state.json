@@ -1,0 +1,53 @@
+{
+  "subproject": "22.AgentAlgorithms",
+  "covers": ["22 AgentAlgorithms"],
+  "status": "complete",
+  "implemented_date": "2026-04-30",
+  "dna_compliance": {
+    "operation_result_envelope": true,
+    "base_service": true,
+    "fabric_first_interfaces": true,
+    "no_typed_model_classes": true,
+    "idempotency": "N/A",
+    "outbox_pattern": "N/A",
+    "standard_event_envelope": true,
+    "atomic_writes": "N/A",
+    "zero_tech_debt": true
+  },
+  "fabric_interfaces": ["ISymbolGraphProvider","ISemanticSearchProvider","IAgentMessageBus","ILlmGateway"],
+  "algorithms": [
+    {"id":"22a","name":"AgentPipeline","description":"Four-stage pipeline: index → context → LLM → apply"},
+    {"id":"22b","name":"RepoMapBuilder","description":"Static Roslyn-based symbol map with in-degree PageRank"},
+    {"id":"22c","name":"ReactAgentLoop","description":"ReAct pattern with compaction and max-iteration guard"},
+    {"id":"22d","name":"ContextWindowManager","description":"Token-budget context selection + compaction"},
+    {"id":"22e","name":"SemanticRanker","description":"Sort chunks by semantic relevance score"},
+    {"id":"22f","name":"ContextCompactor","description":"Summarize older turns to free context window"},
+    {"id":"22g","name":"AgentOrchestrator","description":"Multi-agent task routing"},
+    {"id":"22h","name":"PermissionModel","description":"Three-tier rule-based tool permission check"},
+    {"id":"22i","name":"RulesFileParser","description":"AGENTS.md / CLAUDE.md section and @allow/@deny parsing"},
+    {"id":"22j","name":"ComplexTaskDecomposer","description":"Heuristic conjunction-based task splitting"},
+    {"id":"22k","name":"TodoList","description":"Task tracking with completion status"}
+  ],
+  "test_coverage": {
+    "test_file": "Tests/AgentAlgorithmsTests.cs",
+    "total_tests": 33,
+    "passing": 33,
+    "external_parity": false,
+    "categories": [
+      "AgentPipeline (3 tests)",
+      "RepoMapBuilder (3 tests)",
+      "ReactAgentLoop (4 tests)",
+      "ContextCompactor (3 tests)",
+      "SemanticRanker (3 tests)",
+      "ContextWindowManager (3 tests)",
+      "AgentOrchestrator (3 tests)",
+      "PermissionModel (4 tests)",
+      "RulesFileParser (4 tests)",
+      "ComplexTaskDecomposer (3 tests)"
+    ]
+  },
+  "external_dependencies": [
+    {"name":"Microsoft.CodeAnalysis.CSharp","version":"4.12.0","license":"MIT"}
+  ],
+  "notes": "All algorithms are pure-C# from-scratch. No external parity. RepoMapBuilder uses Roslyn for AST traversal."
+}

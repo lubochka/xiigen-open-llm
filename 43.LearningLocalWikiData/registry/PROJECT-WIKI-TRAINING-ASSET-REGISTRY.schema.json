@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Wiki Training Asset Registry",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at_utc",
+    "source_root",
+    "training_continuation_blocked_until_registry_validated",
+    "status_counts",
+    "entries"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "generated_at_utc": { "type": "string" },
+    "source_root": { "type": "string" },
+    "training_continuation_blocked_until_registry_validated": { "type": "boolean" },
+    "status_counts": {
+      "type": "object",
+      "required": [ "accepted", "rejected", "experimental_no_authority", "blocked" ],
+      "properties": {
+        "accepted": { "type": "integer", "minimum": 0 },
+        "rejected": { "type": "integer", "minimum": 0 },
+        "experimental_no_authority": { "type": "integer", "minimum": 0 },
+        "blocked": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "batch_id",
+          "unit_name",
+          "unit_version",
+          "status",
+          "train_rows",
+          "heldout_rows",
+          "train_path",
+          "heldout_path",
+          "runner_report_path",
+          "metrics",
+          "checkpoint_ref",
+          "manifest_ref",
+          "locator_key",
+          "remote_unit_id",
+          "checkpoint_allowed_as_continuation",
+          "allowed_next_action",
+          "source_authority",
+          "import_export_status",
+          "locator_status",
+          "artifact_integrity",
+          "artifact_checksum",
+          "warnings"
+        ],
+        "properties": {
+          "batch_id": { "type": "string" },
+          "unit_name": { "type": "string" },
+          "unit_version": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": [ "accepted", "rejected", "experimental_no_authority", "blocked" ]
+          },
+          "train_rows": {},
+          "heldout_rows": {},
+          "train_path": { "type": "string" },
+          "heldout_path": { "type": "string" },
+          "runner_report_path": { "type": "string" },
+          "metrics": { "type": "object" },
+          "checkpoint_ref": { "type": "string" },
+          "manifest_ref": { "type": "string" },
+          "locator_key": { "type": "string" },
+          "remote_unit_id": { "type": "string" },
+          "checkpoint_allowed_as_continuation": { "type": "boolean" },
+          "allowed_next_action": { "type": "string" },
+          "source_authority": { "type": "string" },
+          "import_export_status": {
+            "type": "string",
+            "enum": [
+              "manifest_present",
+              "manifest_derivable_but_not_registry_linked",
+              "checkpoint_reference_only",
+              "not_publishable_baseline_only"
+            ]
+          },
+          "locator_status": { "type": "string" },
+          "artifact_integrity": { "type": "string" },
+          "artifact_checksum": { "type": "string" },
+          "warnings": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}
