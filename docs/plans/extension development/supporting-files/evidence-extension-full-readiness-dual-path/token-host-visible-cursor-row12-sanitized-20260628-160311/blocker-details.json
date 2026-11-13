@@ -1,0 +1,85 @@
+{
+  "schema_version": "frdp.row12.cursor_host_visible_blocker_details.v1",
+  "status": "BLOCKED_CURSOR_HOST_VISIBLE_HARNESS_FAILED",
+  "blocker_summary": "The Cursor extension command surface exists and partial request/core-response files were produced, but no existing bounded row12 host-visible runner was found, and the evidence-only --extensionTestsPath runner did not complete the required runner report/latest/host-trace/core-trace/entrypoint/redacted trace packet.",
+  "not_blocked_by": [
+    {
+      "item": "extension command definition",
+      "evidence": [
+        "C:\\Projects\\cursor-xiigen-smart-skills\\package.json:18",
+        "C:\\Projects\\cursor-xiigen-smart-skills\\package.json:35",
+        "C:\\Projects\\cursor-xiigen-smart-skills\\package.json:129",
+        "C:\\Projects\\cursor-xiigen-smart-skills\\src\\extension.ts:116",
+        "C:\\Projects\\cursor-xiigen-smart-skills\\src\\extension.ts:148"
+      ]
+    }
+  ],
+  "missing_or_failed_paths": [
+    {
+      "path": "C:\\Projects\\cursor-xiigen-smart-skills\\package.json",
+      "finding": "Scripts expose install-smoke and docs verification only; no row12 host-visible command runner script was found."
+    },
+    {
+      "path": "C:\\Projects\\cursor-xiigen-smart-skills\\test\\phase10\\phase10CursorFullExtensionProof.js",
+      "finding": "Existing runtimeProof QA invokes xiigenSmartSkills.runtimeProof.invoke, but it is phase10-specific and does not accept the row12 marker/prompt hash as a bounded external input."
+    },
+    {
+      "path": "C:\\Projects\\cursor-xiigen-smart-skills\\test\\host-qa\\HOST-IMPL-CURSOR-01-extensionHostQA.js",
+      "finding": "Existing host QA uses hardcoded HOST-IMPL prompts and does not parameterize row12 marker/prompt hash."
+    },
+    {
+      "path": "C:\\Projects\\llm_mvp_core\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\token-host-visible-cursor-row12-20260628-155302\\row12-host-visible-command-runner.test.js",
+      "finding": "Evidence-only runner was passed through --extensionTestsPath. It produced partial request/core-response files during the cursor.cmd attempt, but did not complete runner report, latest response, host trace, core trace, entrypoint response, or redacted trace."
+    }
+  ],
+  "attempted_commands": [
+    {
+      "command": "Cursor.exe --extensionDevelopmentPath C:\\Projects\\cursor-xiigen-smart-skills --extensionTestsPath <evidence>\\row12-host-visible-command-runner.test.js --user-data-dir <evidence>\\cursor-user-data --extensions-dir <evidence>\\cursor-extensions-dir --headless --new-window C:\\Projects\\cursor-xiigen-smart-skills",
+      "exit_code": 0,
+      "observed_result": "Cursor profile/cache files appeared, but runner report and required trace refs did not."
+    },
+    {
+      "command": "cursor.cmd --extensionDevelopmentPath C:\\Projects\\cursor-xiigen-smart-skills --extensionTestsPath <evidence>\\row12-host-visible-command-runner.test.js --user-data-dir <evidence>\\cursor-user-data-cmd --extensions-dir <evidence>\\cursor-extensions-dir-cmd --headless --new-window C:\\Projects\\cursor-xiigen-smart-skills",
+      "exit_code": 0,
+      "observed_result": "stdout/stderr were empty. Cursor profile/cache files and partial request/core-response files appeared, but runner report, latest response, host trace, core trace, entrypoint response, and redacted trace did not."
+    }
+  ],
+  "exact_next_bounded_work_order": {
+    "title": "Implement repo-internal Cursor Extension Host row12 no-send runtimeProof runner",
+    "allowed_write_scope": [
+      "C:\\Projects\\cursor-xiigen-smart-skills\\test\\host-qa\\FRDP-row12-hostVisibleRuntimeProofQA.js",
+      "C:\\Projects\\cursor-xiigen-smart-skills\\scripts\\run-frdp-row12-host-visible.ps1",
+      "C:\\Projects\\cursor-xiigen-smart-skills\\package.json only if adding a single narrow script entry is required"
+    ],
+    "forbidden": [
+      "No core API behavior changes",
+      "No token savings claim",
+      "No broad tests/builds",
+      "No active manual UI",
+      "No external AI/web",
+      "No training/DPO/checkpoint mutation",
+      "No git stage/commit/push"
+    ],
+    "implementation_requirements": [
+      "Invoke vscode.commands.executeCommand('xiigenSmartSkills.runtimeProof.invoke', row12Input) from a runner inside the Cursor extension repo test tree.",
+      "Accept evidence root from an explicit env var or script parameter.",
+      "Use marker FRDP-P01-ROW12-CURSOR-TOKEN-SAVINGS-BASELINE-V1.",
+      "Use prompt hash sha256:7140fd94d9e6df18b4abef4f13317146ef41a5db7ba1953e8579ffcb783cb374 and fail if the computed prompt hash differs.",
+      "Use method prompt-to-task and requested/available skills prompt-to-task, task-to-plan, task-to-skills, evidence-ledger.",
+      "Write runner report with command result, entrypoint refs, host trace refs, redaction check, no-claims locks, and Cursor CLI command used.",
+      "Validate core_request_ref, core_response_ref, core_trace_ref, host_trace_ref, entrypoint_response_ref, redacted_trace_ref, latest_ref exist.",
+      "Validate full prompt appears only in request payload by contract and does not appear in response/trace/display artifacts.",
+      "Validate token_savings_claimed=false, semantic_quality_claimed=false, readiness_claimed=false, external_ai_used=false."
+    ],
+    "verification_commands": [
+      "Run only the new narrow Cursor Extension Host row12 script.",
+      "Parse the runner report JSON and all generated JSON trace refs.",
+      "Run git diff --check -- <changed files>."
+    ],
+    "handoff_after_pass": "Create a new llm_mvp_core evidence folder and rerun the paired row12 token measurement against the host-visible trace refs using the same marker/prompt hash."
+  },
+  "token_savings_claimed": false,
+  "semantic_quality_claimed": false,
+  "readiness_claimed": false,
+  "parent_will_perform_commit_push_after_review": true
+}

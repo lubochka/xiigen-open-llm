@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "status": "BLOCKED_NO_COMPARABLE_BEFORE_AFTER_TRACE",
+  "blocked_scenario": "Claude same-scenario dual-path join",
+  "blocked_join_folder": "C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/claude-same-scenario-dual-path-join-20260628-145508/",
+  "required_for_measurement": {
+    "paired_inputs": "Two traces for the same scenario: baseline/before and adaptive/after.",
+    "same_scenario_refs": [
+      "scenario_id",
+      "pair_id",
+      "host_name",
+      "method",
+      "debug_enabled",
+      "prompt_hash",
+      "tokenizer_name",
+      "tokenizer_version",
+      "tokenizer_accounting_type"
+    ],
+    "required_token_fields": [
+      "mode",
+      "token_count_input",
+      "token_count_output",
+      "token_count_total",
+      "visible_answer_hash",
+      "artifact_refs",
+      "prompt_redacted",
+      "answer_redacted",
+      "contains_raw_private_content",
+      "token_savings_claimed",
+      "semantic_quality_claimed",
+      "learnability_claimed"
+    ],
+    "comparable_accounting": "Both sides must use the same tokenizer/accounting source, such as xiigen-heuristic-word-punctuation v1 from TokenTraceAccounting."
+  },
+  "missing_from_claude_path_a": [
+    "baseline mode trace",
+    "adaptive mode trace",
+    "token_count_input",
+    "token_count_output",
+    "token_count_total",
+    "visible_answer_hash",
+    "pair validation result",
+    "quality/token claim gate result for the pair"
+  ],
+  "missing_from_claude_path_b": [
+    "canonical visible answer text or redacted text reference for token counting",
+    "TokenTraceAccounting-shaped trace",
+    "baseline/adaptive mode label",
+    "token_count_input",
+    "token_count_output",
+    "token_count_total",
+    "same tokenizer/accounting fields",
+    "pair validation result"
+  ],
+  "scripts_or_accounting_found": [
+    {
+      "path": "C:/Projects/llm_mvp_core/43.SmartSkillsDomain/TokenTraceAccounting.cs",
+      "usefulness": "Defines the required trace shape, heuristic token counter, and baseline/adaptive pair validation."
+    },
+    {
+      "path": "C:/Projects/llm_mvp_core/tests/ExtensionTokenTraceAccountingTests.cs",
+      "usefulness": "Documents expected stable fields and explicitly blocks token delta alone from passing quality or claiming savings."
+    },
+    {
+      "path": "C:/Projects/llm_mvp_core/tools/token-quality-runner.ps1",
+      "usefulness": "Static scenario-pack runner; not evidence that the Claude join already has paired before/after traces."
+    },
+    {
+      "path": "C:/Projects/llm_mvp_core/tools/frdp-row12-cursor-token-trace-harness.ps1",
+      "usefulness": "Closest exact next token measurement route for Cursor row12 spec; not a Claude joined-scenario measurement."
+    }
+  ],
+  "next_bounded_fix": {
+    "preferred_existing_path": "Run the existing Cursor row12 harness against C:/Projects/llm_mvp_core/docs/plans/evidence/extension-full-readiness-dual-path/scenario-execution/frdp-p01-cursor-token-savings-baseline/row12-workload-spec.json, if the next worker is authorized to measure Cursor.",
+    "claude_specific_path": "Create or parameterize a Claude no-send token harness that emits baseline/adaptive TokenTraceAccounting-shaped traces for the exact joined Claude prompt, then write pair-validation.json and quality/token gate evidence.",
+    "minimum_acceptance": [
+      "baseline and adaptive traces parse as JSON",
+      "scenario_id, pair_id, host_name, method, debug_enabled, prompt_hash, tokenizer_name, tokenizer_version, tokenizer_accounting_type match",
+      "mode values are baseline and adaptive",
+      "token_count_input, token_count_output, and token_count_total are present on both traces",
+      "token_savings_claimed=false and semantic_quality_claimed=false in traces",
+      "any delta is labeled observation only until quality/non-regression gates are separately proven"
+    ]
+  },
+  "non_claims": [
+    "No token savings measured.",
+    "No token savings claimed.",
+    "No quality improvement claimed.",
+    "No semantic quality claimed.",
+    "No learnability, DPO, training, checkpoint mutation, checkpoint promotion, locator update, product readiness, all-host readiness, or host UI readiness claimed."
+  ],
+  "parent_will_perform_commit_push_after_review": true
+}

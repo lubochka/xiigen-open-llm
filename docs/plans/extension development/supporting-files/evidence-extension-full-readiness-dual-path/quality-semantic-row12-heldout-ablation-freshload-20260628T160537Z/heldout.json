@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "packet_id": "quality-semantic-row12-heldout-ablation-freshload-20260628T160537Z",
+  "task_id": "QUALITY-SEMANTIC-ROW12-HELDOUT-ABLATION-FRESHLOAD-01",
+  "workspace": "C:\\Projects\\llm_mvp_core_codex_sync_20260628",
+  "packet_folder": "C:\\Projects\\llm_mvp_core_codex_sync_20260628\\docs\\plans\\evidence\\extension-full-readiness-dual-path\\quality-semantic-row12-heldout-ablation-freshload-20260628T160537Z",
+  "verdict": "PARTIAL_NEEDS_WORK",
+  "full_semantic_quality_proven": false,
+  "product_readiness_claimed": false,
+  "semantic_quality_claimed": false,
+  "token_savings_claimed": false,
+  "checkpoint_promotion_claimed": false,
+  "commit_or_push_run": false,
+  "evidence_basis": "already collected/logged evidence only; no broad searches or tests were run during this bounded repair",
+  "focused_test_run": {
+    "command_ref": "dotnet-test-command.txt",
+    "output_ref": "dotnet-test-output.log",
+    "result_ref": "dotnet-test-result.json",
+    "total_tests": 14,
+    "passed_tests": 12,
+    "failed_tests": 2,
+    "exit_code": 1,
+    "failed_tests_detail": [
+      {
+        "test": "LlmFromScratch.Tests.SmartSkillsSemanticQualityP11FreshLoadTests.P11FreshLoadsComponentCheckpointsThroughProjectPaths",
+        "gate": "P11 fresh-load",
+        "failure": "Manifest checkpoint ref mismatch",
+        "component": "PromptToTask"
+      },
+      {
+        "test": "LlmFromScratch.Tests.SmartSkillsSemanticQualityP12ContinueTrainingTests.P12RecordsNoOpContinueAndPreservesHeldOutBehavior",
+        "gate": "P12 no-op continue-training",
+        "failure": "Manifest checkpoint ref mismatch",
+        "component": "PromptToTask"
+      }
+    ]
+  },
+  "semantic_precondition_findings": {
+    "source_disjoint_heldout": {
+      "status": "partial",
+      "supports": [
+        "ApiDashboard source-disjoint guard tests passed in the prior focused run.",
+        "OrchestrationReasoning P9/P9B source-disjoint held-out style component checks passed in the prior focused run.",
+        "SkillSelection held-out dataset exists."
+      ],
+      "blocks": [
+        "No unified Row12/P01 source-disjoint runtime eval gate covers PromptToTask, OrchestrationReasoning, and SkillSelection together.",
+        "SkillSelection true source-disjoint runtime eval is missing; P22 accepted rows = 0."
+      ]
+    },
+    "ablations_no_leakage_no_memorization_no_candidate_position_authority": {
+      "status": "partial",
+      "supports": [
+        "PromptToTask Phase04 source-id/family ablation passed in the prior focused run.",
+        "OrchestrationReasoning P9/P9B ablation gates passed in the prior focused run.",
+        "SkillSelection held-out material includes candidate-order and leakage controls."
+      ],
+      "blocks": [
+        "SkillSelection controls have no accepted true runtime eval because P22 accepted rows = 0.",
+        "PromptToTask Phase04 is narrow baseline evidence and not full semantic quality."
+      ]
+    },
+    "fresh_load_from_saved_state": {
+      "status": "blocked",
+      "supports": [
+        "OrchestrationReasoning P9B passed in the prior focused run."
+      ],
+      "blocks": [
+        "Current P11 failed on PromptToTask manifest checkpoint ref mismatch."
+      ]
+    },
+    "continue_training_backup_export_import_rollback": {
+      "status": "blocked",
+      "supports": [
+        "Existing P12 material records no-op continue intent, but it was not reproduced cleanly in the current workspace."
+      ],
+      "blocks": [
+        "Current P12 failed on PromptToTask manifest checkpoint ref mismatch.",
+        "No backup/export/import/rollback continue-training proof was run in this bounded packet."
+      ]
+    }
+  },
+  "exact_blockers": [
+    "Full semantic quality not proven.",
+    "P11 fresh-load failed: Manifest checkpoint ref mismatch on PromptToTask.",
+    "P12 continue-training failed: Manifest checkpoint ref mismatch on PromptToTask.",
+    "SkillSelection source-disjoint runtime eval missing; P22 accepted rows = 0.",
+    "No unified Row12/P01 same-scenario gate across PromptToTask, OrchestrationReasoning, and SkillSelection.",
+    "No current local/user adaptive continue-training proof with backup/export/import and rollback."
+  ],
+  "next_bounded_work_orders": [
+    {
+      "id": "PTT-P11-P12-MANIFEST-PORTABILITY-FIX-01",
+      "objective": "Repair PromptToTask candidate manifest/checkpoint references for the sync workspace and rerun only P11/P12 focused tests.",
+      "constraints": [
+        "no product code edits",
+        "no checkpoint promotion",
+        "no broad test run"
+      ]
+    },
+    {
+      "id": "SKILLSELECTION-TRUE-SOURCE-DISJOINT-RUNTIME-EVAL-01",
+      "objective": "Create/run accepted SkillSelection runtime eval rows so the P22 accepted rows = 0 blocker is closed.",
+      "required_controls": [
+        "source/pair/id disjointness",
+        "candidate-order controls",
+        "filename/path/title controls",
+        "exact prompt replay controls",
+        "no training use"
+      ]
+    },
+    {
+      "id": "ROW12-P01-UNIFIED-HELDOUT-ABLATION-GATE-01",
+      "objective": "Create same-scenario Row12/P01 gate across PromptToTask, OrchestrationReasoning, and SkillSelection.",
+      "required_controls": [
+        "no marker leakage",
+        "no exact prompt memorization",
+        "no candidate-position final authority"
+      ]
+    },
+    {
+      "id": "ROW12-P01-FRESHLOAD-CONTINUE-ROLLBACK-01",
+      "objective": "Run local/test-only fresh-load and continue-training with backup/export/import and rollback after P11/P12 repair.",
+      "constraints": [
+        "do not mutate production/common checkpoints",
+        "do not promote locators"
+      ]
+    }
+  ],
+  "honesty_block": {
+    "claim_scope": "bounded repair packet only, based on already collected/logged evidence",
+    "evidence_scope": "existing command logs/evidence from the prior focused run; no new broad search or tests in this repair",
+    "count_claimed": "14 tests executed in prior focused run; 12 passed; 2 failed; 2 packet files created/repaired in this turn",
+    "independent_evidence_count": "prior command logs plus this exact file creation and verification",
+    "subagent_id_or_NONE": "bounded-sub-agent-worker-current-session",
+    "downgrade_needed": "yes; evidence supports PARTIAL_NEEDS_WORK only"
+  }
+}
