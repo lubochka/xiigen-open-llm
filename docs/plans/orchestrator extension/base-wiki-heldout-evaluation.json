@@ -1,0 +1,88 @@
+﻿{
+    "evaluation_id":  "base-wiki-heldout-evaluation-session-01",
+    "base_model_id":  "xiigen-small-doc-wiki-base",
+    "status":  "HELDOUT_QA_FAILED_QUERY_PLANNING_NOT_VALIDATED",
+    "status_reason":  "DPO training metrics pass on repeated exposure, but checkpoint-backed held-out Q/A preference remains far below acceptance and the required ProjectWikiQueryPlanningFlow has not been validated.",
+    "evaluated_at":  "2026-05-15T10:01:52.7811751+03:00",
+    "runner_verified":  true,
+    "runner_project":  "C:/Projects/llm_mvp_core/experiments-v2/INTERNAL-TRAIN-READY-V191/runner/InternalTrainReadyDpoRunner/InternalTrainReadyDpoRunner.csproj",
+    "runner_metric_scope":  "DPO training only",
+    "heldout_pairset_path":  "C:\\Users\\lubao\\Documents\\xiigen\\llm mvp\\orchestrator extension\\base-wiki-runs\\session-01-batch-003\\base-wiki-heldout-candidates-50.jsonl",
+    "metrics":  {
+                    "generic_documentation_qa_accuracy":  0.2857142857142857,
+                    "query_plan_accuracy":  null,
+                    "required_touchpoint_recall":  null,
+                    "multi_hop_sequence_accuracy":  null,
+                    "citation_format_accuracy":  1,
+                    "missing_evidence_abstention_accuracy":  1,
+                    "hallucination_rate":  0.68,
+                    "answer_contract_accuracy":  1,
+                    "cpu_ms_per_question":  null,
+                    "elapsed_ms_per_question":  131.891068,
+                    "peak_ram_mb":  57.015625
+                },
+    "acceptance_gate":  {
+                            "generic_documentation_qa_accuracy_min":  0.9,
+                            "query_plan_accuracy_min":  0.9,
+                            "required_touchpoint_recall_min":  0.95,
+                            "multi_hop_sequence_accuracy_min":  0.9,
+                            "citation_format_accuracy_min":  0.98,
+                            "missing_evidence_abstention_accuracy_min":  0.95,
+                            "hallucination_rate_max":  0.0,
+                            "passed":  false
+                        },
+    "hard_failures":  [
+                          {
+                              "code":  "HELDOUT_QA_BELOW_THRESHOLD",
+                              "message":  "Generic documentation Q/A accuracy is 0.286, below 0.90; hallucination rate is 0.680, above 0.00."
+                          },
+                          {
+                              "code":  "QUERY_PLANNING_FLOW_NOT_VALIDATED",
+                              "message":  "ProjectWikiQueryPlanningFlow has not yet produced held-out query-plan metrics; answer evaluation is incomplete without question -> query plan -> retrieval -> answer trace."
+                          },
+                          {
+                              "code":  "HASH_TOKEN_RUNNER_NOT_GENERALIZING",
+                              "message":  "The hash-token DPO runner improves in-batch metrics but does not improve held-out Q/A preference after repeated exposure."
+                          }
+                      ],
+    "next_required_action":  "Add and validate ProjectWikiQueryPlanningFlow before adding more same-shape rows. Then evaluate query plan -> retrieval -> answer trace, and only after that revisit tokenizer/generation or embedding/KNN answer architecture.",
+    "latest_dpo_run":  {
+                           "run_id":  "base-wiki-session-01-batch-003-20260515-1005",
+                           "source_path":  "C:\\Users\\lubao\\Documents\\xiigen\\llm mvp\\orchestrator extension\\base-wiki-runs\\session-01-batch-003\\base-wiki-train-50.jsonl",
+                           "final_accuracy":  1,
+                           "final_reward_margin":  0.021053027361631393,
+                           "final_loss":  0.68267858028411865,
+                           "gate_passed":  true
+                       },
+    "project_wiki_domain_test":  {
+                                     "command":  "dotnet test C:/Projects/llm_mvp_core/Tests/LlmFromScratch.Tests.csproj --filter ProjectWikiDomainTests",
+                                     "passed":  12,
+                                     "failed":  0,
+                                     "total":  12,
+                                     "duration_seconds":  8
+                                 },
+    "evaluator_gap_path":  "C:/Users/lubao/Documents/xiigen/llm mvp/orchestrator extension/base-wiki-heldout-evaluator-gap.md",
+    "latest_repeat_training_run":  {
+                                       "run_id":  "base-wiki-session-01-batch-004-repeat10-500-20260515-1100",
+                                       "pair_count":  500,
+                                       "final_accuracy":  1,
+                                       "final_reward_margin":  0.02374749258160591,
+                                       "average_accuracy":  0.86328125,
+                                       "average_reward_margin":  0.024884983664378524,
+                                       "total_elapsed_ms":  102735.5645
+                                   },
+    "latest_checkpoint_backed_heldout_run":  {
+                                                 "run_id":  "base-wiki-heldout-repeat10-500-dpo-margin-20260515-1105",
+                                                 "row_count":  50,
+                                                 "generic_documentation_qa_accuracy":  0.2857142857142857,
+                                                 "citation_format_accuracy":  1,
+                                                 "missing_evidence_abstention_accuracy":  1,
+                                                 "hallucination_rate":  0.68,
+                                                 "answer_contract_accuracy":  1,
+                                                 "total_elapsed_ms":  6594.5534,
+                                                 "elapsed_ms_per_question":  131.891068,
+                                                 "cpu_percent":  12.765032352304557,
+                                                 "peak_ram_mb":  57.015625,
+                                                 "passed":  false
+                                             }
+}

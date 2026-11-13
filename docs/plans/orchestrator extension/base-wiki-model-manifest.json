@@ -1,0 +1,102 @@
+﻿{
+    "unit_id":  "xiigen-small-doc-wiki-base",
+    "unit_type":  "base_project_wiki_model",
+    "unit_role":  "generic_documentation_qa_base",
+    "domain_tag":  "project_wiki_documentation",
+    "version":  "v0.1-session-01",
+    "status":  "BASE_MODEL_HELDOUT_QA_FAILED_RUNNER_ARCHITECTURE_REMEDIATION_REQUIRED",
+    "status_reason":  "Repeated DPO exposure passes training metrics but fails checkpoint-backed held-out Q/A and does not yet prove trainable wiki query planning. Base model remains not accepted.",
+    "created_at":  "2026-05-14T00:00:00+03:00",
+    "required_before_project_adapters":  true,
+    "contains_project_local_facts":  false,
+    "project_scope":  "generic_only",
+    "accepted_project_adapters_allowed":  false,
+    "contracts":  {
+                      "remote_unit_manifest":  {
+                                                   "path":  "C:/Projects/llm_mvp_core/25.ModelServer/Remote/RemoteUnitManifest.cs",
+                                                   "type":  "ModelServer.Contracts.RemoteUnitManifest"
+                                               },
+                      "model_repository":  {
+                                               "path":  "C:/Projects/llm_mvp_core/25.ModelServer/Contracts/IModelRepository.cs",
+                                               "type":  "ModelServer.Contracts.IModelRepository",
+                                               "upload_signature_observed":  "UploadAsync(GeneratedCapabilityCheckpointManifest manifest, string serverBaseUrl, CancellationToken ct = default)"
+                                           },
+                      "trainable_router":  {
+                                               "path":  "C:/Projects/llm_mvp_core/26.TrainableRouter/Contracts/ITrainableRoutingFlow.cs",
+                                               "type":  "TrainableRouter.Contracts.ITrainableRoutingFlow"
+                                           }
+                  },
+    "runner":  {
+                   "runner_project":  "C:/Projects/llm_mvp_core/experiments-v2/INTERNAL-TRAIN-READY-V191/runner/InternalTrainReadyDpoRunner/InternalTrainReadyDpoRunner.csproj",
+                   "runner_status":  "AVAILABLE_FOR_DPO_TRAINING",
+                   "runner_metric_scope":  "DPO training metrics only; not a held-out Q/A evaluator",
+                   "runner_command_template":  "dotnet run --project \"C:/Projects/llm_mvp_core/experiments-v2/INTERNAL-TRAIN-READY-V191/runner/InternalTrainReadyDpoRunner/InternalTrainReadyDpoRunner.csproj\" -- --source \"\u003cbase-wiki-train-jsonl\u003e\" --run-id \"\u003cbase-wiki-run-id\u003e\" --context 96 --batch-size 16 --save-every 25"
+               },
+    "training_contract":  {
+                              "train_rows_per_step":  50,
+                              "heldout_rows_per_step":  50,
+                              "compiled_prompt_in_training":  true,
+                              "required_train_fields":  [
+                                                            "id",
+                                                            "prompt",
+                                                            "chosen",
+                                                            "rejected"
+                                                        ],
+                              "required_heldout_fields":  [
+                                                              "id",
+                                                              "question",
+                                                              "expected_query_plan",
+                                                              "expected_answer_type",
+                                                              "expected_evidence_shape",
+                                                              "must_abstain_if_missing_evidence"
+                                                          ],
+                              "required_rejected_marker":  "[WRONG:"
+                          },
+    "acceptance_gate":  {
+                            "generic_documentation_qa_accuracy_min":  0.9,
+                            "query_plan_accuracy_min":  0.9,
+                            "required_touchpoint_recall_min":  0.95,
+                            "multi_hop_sequence_accuracy_min":  0.9,
+                            "citation_format_accuracy_min":  0.98,
+                            "missing_evidence_abstention_accuracy_min":  0.95,
+                            "hallucination_rate_max":  0.0,
+                            "answer_contract_required_fields":  [
+                                                                    "project_id",
+                                                                    "documentation_version",
+                                                                    "evidence_ids",
+                                                                    "confidence"
+                                                                ],
+                            "project_specific_facts_required":  false,
+                            "passed":  false,
+                            "generic_documentation_qa_accuracy_current":  0.2857142857142857,
+                            "citation_format_accuracy_current":  1,
+                            "missing_evidence_abstention_accuracy_current":  1,
+                            "hallucination_rate_current":  0.68,
+                            "answer_contract_accuracy_current":  1
+                        },
+    "artifact_policy":  {
+                            "manifest_location":  "git",
+                            "weights_location":  "IModelRepository artifact storage",
+                            "weights_committed_to_git":  false,
+                            "local_weight_cache_allowed":  true
+                        },
+    "next_required_action":  "Fix the base wiki model training architecture before SESSION-02: add and validate ProjectWikiQueryPlanningFlow, then run held-out wiki Q/A. The current hash-token DPO runner is insufficient by itself.",
+    "latest_training_run":  {
+                                "batch_id":  "session-01-batch-003",
+                                "run_id":  "base-wiki-session-01-batch-003-20260515-1005",
+                                "result_root":  "C:\\Projects\\llm_mvp_core\\experiments-v2\\INTERNAL-TRAIN-READY-V191\\results\\base-wiki-session-01-batch-003-20260515-1005",
+                                "pair_count":  50,
+                                "final_accuracy":  1,
+                                "final_reward_margin":  0.021053027361631393,
+                                "final_loss":  0.68267858028411865,
+                                "gate_passed":  true,
+                                "report_path":  "C:/Users/lubao/Documents/xiigen/llm mvp/orchestrator extension/base-wiki-runs/session-01-batch-003/base-wiki-dpo-runner-report.json"
+                            },
+    "project_wiki_domain_test":  {
+                                     "command":  "dotnet test C:/Projects/llm_mvp_core/Tests/LlmFromScratch.Tests.csproj --filter ProjectWikiDomainTests",
+                                     "passed":  12,
+                                     "failed":  0,
+                                     "total":  12,
+                                     "duration_seconds":  8
+                                 }
+}
