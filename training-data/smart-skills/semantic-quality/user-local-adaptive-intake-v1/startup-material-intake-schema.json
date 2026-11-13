@@ -1,0 +1,401 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xiigen.local/schemas/user-local-adaptive-startup-material-intake-v1.json",
+  "title": "User Local Adaptive Startup Material Intake v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "intake_id",
+    "capture_timestamp_utc",
+    "project_root_hash",
+    "sources",
+    "outputs",
+    "common_checkpoint_guard",
+    "privacy",
+    "q6_05_later_hooks"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "user-local-adaptive-startup-material-intake-v1"
+    },
+    "intake_id": {
+      "type": "string",
+      "pattern": "^ulai-[a-z0-9][a-z0-9._-]*$"
+    },
+    "capture_timestamp_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "project_root_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/source_ref"
+      }
+    },
+    "outputs": {
+      "$ref": "#/$defs/output_refs"
+    },
+    "common_checkpoint_guard": {
+      "$ref": "#/$defs/common_checkpoint_guard"
+    },
+    "privacy": {
+      "$ref": "#/$defs/privacy_flags"
+    },
+    "q6_05_later_hooks": {
+      "$ref": "#/$defs/q6_05_later_hooks"
+    }
+  },
+  "$defs": {
+    "source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "source_kind",
+        "source_path_redacted",
+        "source_path_hash",
+        "source_sha256",
+        "project_root_hash",
+        "capture_timestamp_utc",
+        "no_raw_text",
+        "raw_private_text_committed"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "pattern": "^src-[a-z0-9][a-z0-9._-]*$"
+        },
+        "source_kind": {
+          "type": "string",
+          "enum": [
+            "agents_md",
+            "claude_md",
+            "skill_file"
+          ]
+        },
+        "source_path_redacted": {
+          "type": "string",
+          "description": "A non-sensitive label such as <project-root>/AGENTS.md or <project-root>/docs/skills/<skill-id>.md."
+        },
+        "source_path_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "source_sha256": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "project_root_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "capture_timestamp_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "no_raw_text": {
+          "const": true
+        },
+        "raw_private_text_committed": {
+          "const": false
+        }
+      }
+    },
+    "output_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "user_local_adaptive_refs",
+        "dpo_candidate_refs",
+        "common_model_rows_created",
+        "common_training_rows_created"
+      ],
+      "properties": {
+        "user_local_adaptive_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/adaptive_ref"
+          }
+        },
+        "dpo_candidate_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/dpo_candidate_ref"
+          }
+        },
+        "common_model_rows_created": {
+          "const": false
+        },
+        "common_training_rows_created": {
+          "const": false
+        }
+      }
+    },
+    "adaptive_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref_id",
+        "target_leg",
+        "storage_scope",
+        "source_ids",
+        "contains_raw_private_text"
+      ],
+      "properties": {
+        "ref_id": {
+          "type": "string",
+          "pattern": "^adaptive-ref-[a-z0-9][a-z0-9._-]*$"
+        },
+        "target_leg": {
+          "const": "user_adaptive"
+        },
+        "storage_scope": {
+          "const": "user_local_profile"
+        },
+        "source_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "contains_raw_private_text": {
+          "const": false
+        }
+      }
+    },
+    "dpo_candidate_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_ref_id",
+        "domain",
+        "target_leg",
+        "source_ids",
+        "chosen_ref",
+        "rejected_ref",
+        "contains_raw_private_text",
+        "training_allowed_now"
+      ],
+      "properties": {
+        "candidate_ref_id": {
+          "type": "string",
+          "pattern": "^dpo-candidate-ref-[a-z0-9][a-z0-9._-]*$"
+        },
+        "domain": {
+          "type": "string",
+          "enum": [
+            "PromptToTask",
+            "OrchestrationReasoning",
+            "SkillSelection",
+            "ResultGap",
+            "ArchitectBehavior"
+          ]
+        },
+        "target_leg": {
+          "const": "user_adaptive"
+        },
+        "source_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "chosen_ref": {
+          "type": "string"
+        },
+        "rejected_ref": {
+          "type": "string"
+        },
+        "contains_raw_private_text": {
+          "const": false
+        },
+        "training_allowed_now": {
+          "const": false
+        }
+      }
+    },
+    "common_checkpoint_guard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "before_hashes",
+        "after_hashes",
+        "unchanged",
+        "mutation_allowed"
+      ],
+      "properties": {
+        "before_hashes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/checkpoint_hash"
+          }
+        },
+        "after_hashes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/checkpoint_hash"
+          }
+        },
+        "unchanged": {
+          "const": true
+        },
+        "mutation_allowed": {
+          "const": false
+        }
+      }
+    },
+    "checkpoint_hash": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_id",
+        "path_redacted",
+        "sha256"
+      ],
+      "properties": {
+        "model_id": {
+          "type": "string"
+        },
+        "path_redacted": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        }
+      }
+    },
+    "privacy_flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_private_text_committed",
+        "redacted_refs_only",
+        "source_hashes_allowed",
+        "synthetic_examples_only",
+        "common_row_write_allowed"
+      ],
+      "properties": {
+        "raw_private_text_committed": {
+          "const": false
+        },
+        "redacted_refs_only": {
+          "const": true
+        },
+        "source_hashes_allowed": {
+          "const": true
+        },
+        "synthetic_examples_only": {
+          "const": true
+        },
+        "common_row_write_allowed": {
+          "const": false
+        }
+      }
+    },
+    "q6_05_later_hooks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "backup_hook_ref",
+        "export_hook_ref",
+        "import_hook_ref",
+        "share_hook_ref",
+        "implemented_now"
+      ],
+      "properties": {
+        "backup_hook_ref": {
+          "type": "string"
+        },
+        "export_hook_ref": {
+          "type": "string"
+        },
+        "import_hook_ref": {
+          "type": "string"
+        },
+        "share_hook_ref": {
+          "type": "string"
+        },
+        "implemented_now": {
+          "const": false
+        }
+      }
+    }
+  },
+  "x-synthetic-example": {
+    "schema_version": "user-local-adaptive-startup-material-intake-v1",
+    "intake_id": "ulai-example-redacted",
+    "capture_timestamp_utc": "2026-06-11T00:00:00Z",
+    "project_root_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "sources": [
+      {
+        "source_id": "src-agents-md",
+        "source_kind": "agents_md",
+        "source_path_redacted": "<project-root>/AGENTS.md",
+        "source_path_hash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "source_sha256": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "project_root_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+        "capture_timestamp_utc": "2026-06-11T00:00:00Z",
+        "no_raw_text": true,
+        "raw_private_text_committed": false
+      }
+    ],
+    "outputs": {
+      "user_local_adaptive_refs": [
+        {
+          "ref_id": "adaptive-ref-startup-policy",
+          "target_leg": "user_adaptive",
+          "storage_scope": "user_local_profile",
+          "source_ids": [
+            "src-agents-md"
+          ],
+          "contains_raw_private_text": false
+        }
+      ],
+      "dpo_candidate_refs": [
+        {
+          "candidate_ref_id": "dpo-candidate-ref-startup-style",
+          "domain": "ArchitectBehavior",
+          "target_leg": "user_adaptive",
+          "source_ids": [
+            "src-agents-md"
+          ],
+          "chosen_ref": "redacted-ref:chosen-local-policy",
+          "rejected_ref": "redacted-ref:rejected-local-policy",
+          "contains_raw_private_text": false,
+          "training_allowed_now": false
+        }
+      ],
+      "common_model_rows_created": false,
+      "common_training_rows_created": false
+    },
+    "common_checkpoint_guard": {
+      "before_hashes": [],
+      "after_hashes": [],
+      "unchanged": true,
+      "mutation_allowed": false
+    },
+    "privacy": {
+      "raw_private_text_committed": false,
+      "redacted_refs_only": true,
+      "source_hashes_allowed": true,
+      "synthetic_examples_only": true,
+      "common_row_write_allowed": false
+    },
+    "q6_05_later_hooks": {
+      "backup_hook_ref": "q6-05-backup-hook-not-implemented",
+      "export_hook_ref": "q6-05-export-hook-not-implemented",
+      "import_hook_ref": "q6-05-import-hook-not-implemented",
+      "share_hook_ref": "q6-05-share-hook-not-implemented",
+      "implemented_now": false
+    }
+  }
+}

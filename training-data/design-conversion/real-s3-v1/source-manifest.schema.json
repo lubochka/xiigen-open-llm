@@ -1,0 +1,283 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://llm-mvp-core.local/schemas/design-conversion/real-s3-v1/source-manifest.schema.json",
+  "title": "DesignConversion real S3 source manifest",
+  "description": "Schema for real source design manifests. This scaffold is not evidence by itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "x_scaffold_status": {
+    "placeholder_not_real": true,
+    "evidence_status": "schema_only_not_real_evidence"
+  },
+  "$comment": "placeholder_not_real=true; schema-only scaffold, not readiness evidence.",
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "dataset_id",
+    "created_utc",
+    "source_design_id",
+    "source_kind",
+    "source_design_tree",
+    "screenshots",
+    "provenance",
+    "license",
+    "privacy",
+    "evidence_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "bundle_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^real-s3-v1:[a-z0-9][a-z0-9._:-]*$"
+    },
+    "dataset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_design_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable source design id or redacted source ref. Do not use user ids or raw local paths."
+    },
+    "source_kind": {
+      "type": "string",
+      "enum": [
+        "figma",
+        "canva",
+        "other"
+      ]
+    },
+    "source_design_tree": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tree_ref",
+        "tree_format",
+        "tree_sha256",
+        "source_identity_hash",
+        "raw_prompt_included",
+        "absolute_path_included"
+      ],
+      "properties": {
+        "tree_ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Bundle-local or redacted artifact ref only."
+        },
+        "tree_format": {
+          "type": "string",
+          "enum": [
+            "figma-json",
+            "canva-json",
+            "html-css",
+            "other"
+          ]
+        },
+        "tree_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source_identity_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "raw_prompt_included": {
+          "type": "boolean",
+          "const": false
+        },
+        "absolute_path_included": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "screenshots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "screenshot_ref",
+          "kind",
+          "width",
+          "height",
+          "sha256",
+          "captured_utc",
+          "license_or_authority_ref"
+        ],
+        "properties": {
+          "screenshot_ref": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Bundle-local or redacted artifact ref only."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "source_expected",
+              "candidate_actual",
+              "visual_diff",
+              "other"
+            ]
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          },
+          "captured_utc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "license_or_authority_ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_manifest_ref",
+        "source_uri_or_local_ref",
+        "source_sha256",
+        "provenance_refs",
+        "reviewer_ref",
+        "raw_user_id_included",
+        "absolute_path_included"
+      ],
+      "properties": {
+        "source_manifest_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_uri_or_local_ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Redacted URI or bundle-local ref only."
+        },
+        "source_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "provenance_refs": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "reviewer_ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Redacted reviewer role/ref, not a user id."
+        },
+        "raw_user_id_included": {
+          "type": "boolean",
+          "const": false
+        },
+        "absolute_path_included": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "license_or_authority_ref",
+        "rights_scope",
+        "allows_training",
+        "allows_evaluation",
+        "contains_user_private_data"
+      ],
+      "properties": {
+        "license_or_authority_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rights_scope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "allows_training": {
+          "type": "boolean"
+        },
+        "allows_evaluation": {
+          "type": "boolean"
+        },
+        "contains_user_private_data": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_prompt_included",
+        "raw_file_system_path_included",
+        "raw_user_id_included",
+        "secrets_included",
+        "redaction_policy"
+      ],
+      "properties": {
+        "raw_prompt_included": {
+          "type": "boolean",
+          "const": false
+        },
+        "raw_file_system_path_included": {
+          "type": "boolean",
+          "const": false
+        },
+        "raw_user_id_included": {
+          "type": "boolean",
+          "const": false
+        },
+        "secrets_included": {
+          "type": "boolean",
+          "const": false
+        },
+        "redaction_policy": {
+          "type": "string",
+          "enum": [
+            "bundle_refs_and_hashes_only"
+          ]
+        }
+      }
+    },
+    "evidence_status": {
+      "type": "string",
+      "enum": [
+        "real_source_manifest_ready",
+        "placeholder_not_real"
+      ]
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "nonEmptyStringArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

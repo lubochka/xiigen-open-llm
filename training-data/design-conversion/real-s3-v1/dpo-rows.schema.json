@@ -1,0 +1,404 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://llm-mvp-core.local/schemas/design-conversion/real-s3-v1/dpo-rows.schema.json",
+  "title": "DesignConversion real S3 DPO JSONL row",
+  "description": "Schema for one JSONL DPO row aligned with DesignConversionDpoDatasetBuilder safe row shape.",
+  "type": "object",
+  "additionalProperties": false,
+  "x_scaffold_status": {
+    "placeholder_not_real": true,
+    "evidence_status": "schema_only_not_real_evidence"
+  },
+  "$comment": "placeholder_not_real=true; this schema does not contain real DPO or visual evidence.",
+  "required": [
+    "schema_version",
+    "dataset_id",
+    "split",
+    "row_id",
+    "record_identity_hash",
+    "unit_id",
+    "domain_tag",
+    "source_kind",
+    "source_identity_hash",
+    "source_group_id",
+    "pair_family",
+    "usefulness_score",
+    "prompt",
+    "chosen",
+    "rejected",
+    "candidate_result",
+    "teacher_labels",
+    "teaching_point",
+    "curriculum_tier",
+    "validation_outcome",
+    "metadata",
+    "leakage_guard"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "dataset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "split": {
+      "type": "string",
+      "enum": [
+        "train",
+        "held_out"
+      ]
+    },
+    "row_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "record_identity_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "unit_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain_tag": {
+      "type": "string",
+      "const": "DesignConversionDomain"
+    },
+    "source_kind": {
+      "type": "string",
+      "enum": [
+        "figma",
+        "canva",
+        "other",
+        "unknown"
+      ]
+    },
+    "source_identity_hash": {
+      "$ref": "#/$defs/sha256"
+    },
+    "source_group_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pair_family": {
+      "type": "string",
+      "minLength": 1
+    },
+    "usefulness_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "prompt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domain_tag",
+        "unit_id",
+        "source",
+        "internal_unit_state_hash",
+        "internal_vector_dimensions",
+        "pair_family",
+        "raw_prompt_included"
+      ],
+      "properties": {
+        "domain_tag": {
+          "type": "string",
+          "const": "DesignConversionDomain"
+        },
+        "unit_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "kind",
+            "identity_hash",
+            "structure_hash"
+          ],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "minLength": 1
+            },
+            "identity_hash": {
+              "$ref": "#/$defs/sha256"
+            },
+            "structure_hash": {
+              "$ref": "#/$defs/sha256"
+            }
+          }
+        },
+        "internal_unit_state_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "internal_vector_dimensions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pair_family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "raw_prompt_included": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "chosen": {
+      "$ref": "#/$defs/safeCandidateResult"
+    },
+    "rejected": {
+      "$ref": "#/$defs/safeCandidateResult"
+    },
+    "candidate_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chosen",
+        "rejected"
+      ],
+      "properties": {
+        "chosen": {
+          "$ref": "#/$defs/safeCandidateResult"
+        },
+        "rejected": {
+          "$ref": "#/$defs/safeCandidateResult"
+        }
+      }
+    },
+    "teacher_labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preferred_result_ref",
+        "rejected_result_ref",
+        "preference_label",
+        "score_margin",
+        "pair_family",
+        "defect_categories"
+      ],
+      "properties": {
+        "preferred_result_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rejected_result_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "preference_label": {
+          "type": "string",
+          "const": "chosen_over_rejected"
+        },
+        "score_margin": {
+          "type": "number"
+        },
+        "pair_family": {
+          "type": "string",
+          "minLength": 1
+        },
+        "defect_categories": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "teaching_point": {
+      "type": "string",
+      "minLength": 1
+    },
+    "curriculum_tier": {
+      "type": "string",
+      "enum": [
+        "tier_1_high_confidence",
+        "tier_2_standard",
+        "tier_3_review"
+      ]
+    },
+    "validation_outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accepted_for_training",
+        "quarantined",
+        "license_allows_training",
+        "contains_user_private_data",
+        "unit_id_present",
+        "outcome"
+      ],
+      "properties": {
+        "accepted_for_training": {
+          "type": "boolean"
+        },
+        "quarantined": {
+          "type": "boolean"
+        },
+        "license_allows_training": {
+          "type": "boolean"
+        },
+        "contains_user_private_data": {
+          "type": "boolean",
+          "const": false
+        },
+        "unit_id_present": {
+          "type": "boolean"
+        },
+        "outcome": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "required": [
+        "schema",
+        "record_identity_scope",
+        "source_identity_scope",
+        "result_identity_scope",
+        "candidate_result_scope",
+        "teacher_labels_scope",
+        "validation_outcome_scope",
+        "raw_source_request_id_included",
+        "raw_source_manifest_ref_included",
+        "raw_reviewer_ref_included",
+        "raw_license_id_included",
+        "raw_candidate_ids_included",
+        "local_paths_included"
+      ],
+      "properties": {
+        "schema": {
+          "type": "string",
+          "const": "dcm-dpo-dataset-row-v2"
+        },
+        "record_identity_scope": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "source_identity_scope": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "result_identity_scope": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "candidate_result_scope": {
+          "type": "string",
+          "const": "safe_hash_ref"
+        },
+        "teacher_labels_scope": {
+          "type": "string",
+          "const": "derived_from_accepted_record"
+        },
+        "validation_outcome_scope": {
+          "type": "string",
+          "const": "accepted_record_booleans"
+        },
+        "raw_source_request_id_included": {
+          "type": "string",
+          "const": "False"
+        },
+        "raw_source_manifest_ref_included": {
+          "type": "string",
+          "const": "False"
+        },
+        "raw_reviewer_ref_included": {
+          "type": "string",
+          "const": "False"
+        },
+        "raw_license_id_included": {
+          "type": "string",
+          "const": "False"
+        },
+        "raw_candidate_ids_included": {
+          "type": "string",
+          "const": "False"
+        },
+        "local_paths_included": {
+          "type": "string",
+          "const": "False"
+        }
+      }
+    },
+    "leakage_guard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_prompt_included",
+        "raw_file_system_path_included",
+        "raw_user_id_included",
+        "secrets_included",
+        "redacted_refs_only"
+      ],
+      "properties": {
+        "raw_prompt_included": {
+          "type": "boolean",
+          "const": false
+        },
+        "raw_file_system_path_included": {
+          "type": "boolean",
+          "const": false
+        },
+        "raw_user_id_included": {
+          "type": "boolean",
+          "const": false
+        },
+        "secrets_included": {
+          "type": "boolean",
+          "const": false
+        },
+        "redacted_refs_only": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "safeCandidateResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result_ref",
+        "result_hash",
+        "visual_score",
+        "accepted"
+      ],
+      "properties": {
+        "result_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "visual_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "accepted": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

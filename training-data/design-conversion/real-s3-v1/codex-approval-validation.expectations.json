@@ -1,0 +1,117 @@
+{
+  "artifact_type": "codex_approval_validation_expectations",
+  "artifact_status": "expectations_only_not_approval",
+  "created_date": "2026-06-30",
+  "dataset_id": "real-s3-v1",
+  "approval_intake_queue_artifact_is_not_approval": true,
+  "approval_granted_by_this_artifact": false,
+  "validation_required": true,
+  "next_bounded_worker_required": "approval-validation-worker",
+  "governance_markers_applied": [
+    "approval_intake_template_required_fields",
+    "approval_validation_worker_required_before_resume",
+    "approval_denied_or_missing_routes_to_replacement_or_blocked_queue",
+    "approval_intake_queue_artifact_is_not_approval",
+    "three_impasse_audits_before_final_hold_under_no_stops",
+    "resume_trigger_must_be_machine_actionable"
+  ],
+  "required_fields": [
+    "approver",
+    "authority_basis",
+    "approval_date",
+    "scope",
+    "allowed_scenes",
+    "excluded_scenes/mail_decision",
+    "license_decision",
+    "training_rights",
+    "evaluation_rights",
+    "provenance_source_authority",
+    "screenshot_image_usage",
+    "restrictions",
+    "validation_required"
+  ],
+  "validation_worker_must_check": {
+    "json_parse": true,
+    "schema_match": "training-data/design-conversion/real-s3-v1/codex-approval-packet.schema.json",
+    "all_required_fields_present": true,
+    "approver_authority_basis_checkable": true,
+    "approval_date_present_and_specific": true,
+    "scope_consistent_with_login_cart_only": true,
+    "allowed_scenes_include_login_and_cart_only_unless_explicitly_validated": true,
+    "mail_remains_excluded_unless_mail_decision_explicitly_changes_it": true,
+    "license_decision_explicit_not_package_metadata_assumed": true,
+    "training_rights_explicit": true,
+    "evaluation_rights_explicit": true,
+    "provenance_source_authority_ties_source_bundle_to_login_cart": true,
+    "screenshot_image_usage_explicit": true,
+    "restrictions_explicit": true,
+    "no_local_absolute_paths": true,
+    "no_forbidden_external_worktree_paths": true,
+    "approval_bypass_absent": true,
+    "template_or_schema_not_treated_as_approval": true,
+    "no_schema_source_manifest_before_validation_pass": true,
+    "no_dpo_labels_before_validation_pass": true,
+    "no_training_or_checkpoint_before_validation_pass": true,
+    "no_evaluation_or_heldout_measurement_before_validation_pass": true,
+    "no_upload_or_promotion_before_validation_pass": true,
+    "no_tests_builds_browser_e2e_or_product_work_before_validation_pass": true
+  },
+  "case_routes": [
+    {
+      "case_id": "no_approval_packet",
+      "input_condition": "approval packet missing",
+      "expected_status": "waiting_queue_not_final_hold_until_impasse_threshold",
+      "required_route": "keep approval-intake queue open with machine-actionable resume trigger",
+      "resume_trigger": "supply a packet matching the codex approval packet schema and expectations, then run approval-validation-worker",
+      "approval_granted": false,
+      "product_or_training_resume_allowed": false
+    },
+    {
+      "case_id": "approval_packet_supplied",
+      "input_condition": "packet supplied by Luba or external authority",
+      "expected_status": "validation_required_before_resume",
+      "required_route": "bounded approval-validation worker checks schema, field completeness, authority, scope, rights, restrictions, provenance, and no-bypass rules",
+      "resume_trigger": "validation PASS artifact from approval-validation-worker",
+      "approval_granted_by_packet_text_alone": false,
+      "product_or_training_resume_allowed_before_validation_pass": false
+    },
+    {
+      "case_id": "approval_denied_or_unclear",
+      "input_condition": "approval denied, missing fields, unclear scope, unclear rights, or invalid authority",
+      "expected_status": "replacement_or_blocked_queue",
+      "required_route": "route to replacement-source search, decision-prep, or explicit blocked queue with exact missing input",
+      "resume_trigger": "replacement source approval packet or corrected packet followed by approval-validation-worker",
+      "approval_granted": false,
+      "product_or_training_resume_allowed": false
+    }
+  ],
+  "future_next_action": {
+    "only_allowed_next_worker_after_packet_is_supplied": "approval-validation-worker",
+    "not_allowed_as_next_action": [
+      "schema-valid source manifest",
+      "DPO labels",
+      "held-out measurements",
+      "checkpoint",
+      "training run",
+      "evaluation run",
+      "upload",
+      "promotion",
+      "tests",
+      "builds",
+      "browser",
+      "e2e",
+      "product implementation"
+    ],
+    "approval_validation_pass_is_not_product_readiness": true
+  },
+  "forbidden_claims": [
+    "template grants approval",
+    "schema grants approval",
+    "expectations grant approval",
+    "approval text alone resumes schema source work",
+    "approval text alone resumes DPO or training",
+    "mail is included without explicit mail decision",
+    "login/cart scope silently expands",
+    "product readiness follows from intake artifacts"
+  ]
+}

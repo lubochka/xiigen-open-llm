@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "skill-selection-heldout-v1.schema.json",
+  "title": "SkillSelection held-out evaluation row v1",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "heldout_set_id",
+    "row_id",
+    "machine_target",
+    "split_role",
+    "task_prompt_ref",
+    "redacted_task_text",
+    "expected_selected_skill_ids",
+    "expected_rejected_skills",
+    "candidate_skill_ids",
+    "candidate_order_permutations",
+    "wrong_skill_categories",
+    "source_skill_refs",
+    "source_disjoint_markers",
+    "leakage_checks",
+    "training_allowed",
+    "semantic_quality_claimed",
+    "raw_private_text_copied",
+    "technical_execution_refs_excluded"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "type": "integer"
+    },
+    "heldout_set_id": {
+      "const": "skill-selection-heldout-v1",
+      "type": "string"
+    },
+    "machine_target": {
+      "const": "SkillSelectionMachine",
+      "type": "string"
+    },
+    "split_role": {
+      "const": "held_out_evaluation",
+      "type": "string"
+    },
+    "expected_selected_skill_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "expected_rejected_skills": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "skill_id",
+          "reason",
+          "error_code",
+          "wrong_skill_category"
+        ]
+      }
+    },
+    "candidate_order_permutations": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "training_allowed": {
+      "const": false,
+      "type": "boolean"
+    },
+    "semantic_quality_claimed": {
+      "const": false,
+      "type": "boolean"
+    },
+    "raw_private_text_copied": {
+      "const": false,
+      "type": "boolean"
+    },
+    "technical_execution_refs_excluded": {
+      "const": true,
+      "type": "boolean"
+    }
+  }
+}

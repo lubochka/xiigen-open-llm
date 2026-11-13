@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "cross-project-transfer-fixtures-v1.schema.json",
+  "title": "Cross-project transfer fixture row v1",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version",
+    "fixture_id",
+    "fixture_kind",
+    "project_alias",
+    "project_root_ref",
+    "project_root_hash",
+    "source_profile_refs",
+    "mode",
+    "input_prompt_ref",
+    "redacted_prompt_summary",
+    "expected_structured_task",
+    "expected_orchestration_plan",
+    "expected_skills",
+    "negative_controls",
+    "deterministic_control_expectations",
+    "contract_refs",
+    "raw_private_text_copied",
+    "training_or_evaluation_run"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "cross-project-transfer-fixture-v1"
+    },
+    "fixture_kind": {
+      "const": "fixture_matrix_only_not_evaluation_result"
+    },
+    "project_alias": {
+      "enum": [
+        "xiigen-mvp",
+        "xiigen-platform-dot-net-angular"
+      ]
+    },
+    "project_root_ref": {
+      "type": "string",
+      "pattern": "^<redacted-project-root:[a-z0-9\\-.]+>$"
+    },
+    "project_root_hash": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "source_profile_refs": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string"
+      }
+    },
+    "mode": {
+      "enum": [
+        "common_only",
+        "common_plus_adaptive"
+      ]
+    },
+    "input_prompt_ref": {
+      "type": "string",
+      "pattern": "^redacted-ref:"
+    },
+    "redacted_prompt_summary": {
+      "type": "string",
+      "minLength": 16
+    },
+    "expected_structured_task": {
+      "type": "object",
+      "required": [
+        "task_type",
+        "goal",
+        "constraints",
+        "forbidden_actions",
+        "required_evidence",
+        "implementation_authorized"
+      ],
+      "properties": {
+        "implementation_authorized": {
+          "const": false
+        }
+      }
+    },
+    "expected_orchestration_plan": {
+      "type": "object",
+      "required": [
+        "scenario_family",
+        "required_gates",
+        "artifact_scope",
+        "result_scope"
+      ]
+    },
+    "expected_skills": {
+      "type": "object",
+      "required": [
+        "chosen",
+        "rejected_with_reasons"
+      ],
+      "properties": {
+        "chosen": {
+          "type": "array",
+          "minItems": 1
+        },
+        "rejected_with_reasons": {
+          "type": "array",
+          "minItems": 1
+        }
+      }
+    },
+    "negative_controls": {
+      "type": "array",
+      "minItems": 3,
+      "contains": {
+        "const": "exact_prompt_lookup"
+      }
+    },
+    "deterministic_control_expectations": {
+      "type": "object",
+      "required": [
+        "exact_prompt_lookup",
+        "filename_or_bm25_route",
+        "candidate_position_order"
+      ]
+    },
+    "raw_private_text_copied": {
+      "const": false
+    },
+    "training_or_evaluation_run": {
+      "const": false
+    }
+  }
+}

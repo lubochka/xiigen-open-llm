@@ -1,0 +1,114 @@
+{
+  "artifact_type": "codex_safe_candidate_route",
+  "route_status": "candidate_route_only_not_training_ready",
+  "created_date": "2026-06-30",
+  "dataset_id": "real-s3-v1",
+  "source_bundle_ref": "real-s3-v1:figma-candidate-source-manifest-intake-2026-06-30",
+  "subagent_id_or_NONE": "safe-candidate-route-worker",
+  "active_task_sentence_source": "current_unquoted_luba_instruction",
+  "claim_scope": "bounded safe-candidate-route artifact only; no schema-valid source manifest, DPO labels, training, evaluation, checkpoint, upload, or promotion readiness claimed",
+  "evidence_scope": [
+    "training-data/design-conversion/real-s3-v1/codex-source-manifest.candidate.json",
+    "training-data/design-conversion/real-s3-v1/codex-source-manifest.authority-review.json",
+    "training-data/design-conversion/real-s3-v1/codex-source-privacy-review.json"
+  ],
+  "count_claimed": 1,
+  "independent_evidence_count": 3,
+  "downgrade_needed": "yes_training_readiness_not_supported",
+  "input_scene_ids_seen": [
+    "mail",
+    "login",
+    "cart"
+  ],
+  "excluded_scenes": [
+    {
+      "scene_id": "mail",
+      "route_decision": "excluded_from_any_future_schema_valid_source_manifest_attempt",
+      "reason": "privacy_not_cleared_person_name_like_ui_strings",
+      "privacy_text_scan": "needs_manual_review_person_name_like_ui_strings_present",
+      "privacy_finding_summary": "person_name_like_visible_strings_present_redacted",
+      "requires_owner_privacy_authority_or_replacement": true,
+      "required_before_reconsideration": [
+        "owner_privacy_authority_or_replacement",
+        "full_privacy_review_covering_raw_prompts_raw_user_ids_secrets_private_data_and_screenshot_contents"
+      ],
+      "usable_for_training": false,
+      "promotion_upload": "blocked"
+    }
+  ],
+  "candidate_scenes": [
+    {
+      "scene_id": "login",
+      "status": "narrow_text_privacy_candidate_only",
+      "privacy_text_scan": "pass_narrow_no_secrets_found",
+      "image_pixel_privacy": "not_reviewed",
+      "authority_license_training_evaluation_rights": "not_proven_or_blocked",
+      "schema_valid_source_manifest_eligible": false,
+      "usable_for_training": false,
+      "promotion_upload": "blocked"
+    },
+    {
+      "scene_id": "cart",
+      "status": "narrow_text_privacy_candidate_only",
+      "privacy_text_scan": "pass_narrow_no_secrets_found",
+      "image_pixel_privacy": "not_reviewed",
+      "authority_license_training_evaluation_rights": "not_proven_or_blocked",
+      "schema_valid_source_manifest_eligible": false,
+      "usable_for_training": false,
+      "promotion_upload": "blocked"
+    }
+  ],
+  "image_pixel_privacy": "not_reviewed",
+  "authority_license_training_evaluation_rights": {
+    "authoritative_provenance": "not_proven",
+    "reviewer_or_owner_authority_ref": "missing",
+    "license_or_rights_approval": "blocked_pending_luba_or_owner_approval",
+    "training_rights": "not_proven",
+    "evaluation_rights": "not_proven"
+  },
+  "route_locks": {
+    "schema_valid_source_manifest_created": false,
+    "usable_for_training": false,
+    "promotion_upload": "blocked",
+    "dpo_labels_created": false,
+    "held_out_measurement_created": false,
+    "checkpoint_manifest_created": false,
+    "training_run_started": false,
+    "upload_or_promotion_started": false,
+    "source_candidate_files_edited": false,
+    "source_schema_files_edited": false
+  },
+  "downstream_worker_simulation": {
+    "attempt_to_use_mail_in_future_schema_valid_source_manifest": "blocked_by_route",
+    "attempt_to_treat_login_or_cart_as_training_ready": "blocked",
+    "pass_condition": "mail remains excluded; login and cart remain candidate-only until image pixel privacy, owner/license/training/evaluation rights, DPO labels, held-out measurement, and checkpoint evidence exist"
+  },
+  "remaining_not_proven_queue": [
+    "image pixel privacy review or explicit image exclusion decision",
+    "authoritative provenance and reviewer or owner authority ref",
+    "license or rights approval beyond package metadata",
+    "training rights approval",
+    "evaluation rights approval",
+    "schema source identity hash and stable source_design_id",
+    "schema-valid source manifest eligibility",
+    "schema-shaped DPO chosen/rejected labels",
+    "held-out measurement with source-disjoint integrity proof",
+    "checkpoint manifest, trained weights, and probes",
+    "promotion/upload approval"
+  ],
+  "forbidden_actions_confirmed_by_artifact": [
+    "no source candidate file edits",
+    "no schema-valid source manifest created",
+    "no DPO labels created",
+    "no held-out measurements created",
+    "no checkpoint manifests created",
+    "no training upload promotion tests builds browser e2e git stage commit push branch or PR"
+  ],
+  "claim_locks": [
+    "schema != training",
+    "candidate route != source-manifest readiness",
+    "narrow text privacy candidate != image privacy clearance",
+    "candidate scene != DPO training row",
+    "blocked promotion_upload remains blocked"
+  ]
+}
