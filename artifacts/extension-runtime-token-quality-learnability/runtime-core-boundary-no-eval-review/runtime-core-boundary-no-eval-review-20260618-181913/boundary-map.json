@@ -1,0 +1,141 @@
+{
+  "schema": "xiigen.runtime_core_boundary_no_eval_review.boundary_map.v1",
+  "work_order_id": "RUNTIME-CORE-BOUNDARY-NO-EVAL-REVIEW-SLICE",
+  "run_id": "runtime-core-boundary-no-eval-review-20260618-181913",
+  "generated_at_local": "2026-06-18T18:19:13+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "scope": {
+    "artifact_type": "review",
+    "implementation_authorized": false,
+    "source_code_changed": false,
+    "eval_executed": false,
+    "external_ai_or_model_called": false,
+    "training_started": false,
+    "checkpoint_locator_target_manifest_mutated": false,
+    "git_writes_used": false
+  },
+  "core_boundary": {
+    "request_contract": "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs: XiigenExtensionRequest",
+    "target_locator_contract": "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs: XiigenTargetLocator",
+    "response_contract": "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs: XiigenExtensionResponse",
+    "debug_trace_contract": "43.SmartSkillsDomain/XiigenExtensionApiContracts.cs: XiigenDebugTrace",
+    "public_service_entrypoint": "43.SmartSkillsDomain/XiigenExtensionApiService.cs: ProcessHostExtensionRequest",
+    "helper_endpoint": "tools/xiigen-extension-core-api.ps1",
+    "core_logic_chain": [
+      "PromptToTaskMachine.Translate",
+      "OrchestrationReasoningMachine.Plan",
+      "SkillSelectionMachine.DecideFromTrainedState"
+    ],
+    "claim_locks_observed": {
+      "runtime_extension_claimed": false,
+      "semantic_quality_claimed": false,
+      "host_runtime_claimed_by_core_trace": false
+    }
+  },
+  "host_boundary_map": [
+    {
+      "host": "Claude",
+      "request_enters_at": "C:/Projects/claude-xiigen-smart-skills/src/claude-entrypoint.js",
+      "launcher_or_host_surface": "src/claude-entrypoint.ps1 and Claude Code plugin SessionStart hook",
+      "core_api_used": "tools/xiigen-extension-core-api.ps1 -> SmartSkillsDomain.XiigenExtensionApiService.ProcessHostExtensionRequest",
+      "debug_surface": "visible redacted shape: xiigen <method> : input/output",
+      "evidence_exists": [
+        "HOST-IMPL-01 adapter functionality report",
+        "RUNTIME-02 Claude Code plugin hook packet",
+        "QSG-21 LIVE_PLUGIN_HOOK packet"
+      ],
+      "current_evidence_class": "narrow_live_host_surface_plugin_hook",
+      "full_live_ui_chat_proven": false,
+      "notes": "Hook evidence is useful and target-bound, but not full Claude chat UI readiness."
+    },
+    {
+      "host": "Cursor",
+      "request_enters_at": "C:/Projects/cursor-xiigen-smart-skills/src/extension.ts",
+      "launcher_or_host_surface": "Cursor Extension Host command xiigen.smartSkills.select; helper script is local-only",
+      "core_api_used": "invokeCoreApi spawns tools/xiigen-extension-core-api.ps1",
+      "debug_surface": "CursorDisplayText appends exact redacted xiigen method/input/output block when debug is enabled",
+      "evidence_exists": [
+        "HOST-IMPL-CURSOR-01 adapter functionality report",
+        "RUNTIME-03 Cursor Extension Host command packet",
+        "QSG-21 EXTENSION_HOST packet"
+      ],
+      "current_evidence_class": "narrow_live_host_surface_extension_host_command",
+      "full_live_ui_chat_proven": false,
+      "notes": "Command path is proven; chat participant and full UI remain gaps."
+    },
+    {
+      "host": "Codex",
+      "request_enters_at": "C:/Projects/codex-xiigen-smart-skills/src/codex-entrypoint.js",
+      "launcher_or_host_surface": "src/codex-entrypoint.ps1, installed cache entrypoint, QSG-21 app-server plugin path",
+      "core_api_used": "invokeXiigenCore spawns tools/xiigen-extension-core-api.ps1",
+      "debug_surface": "createVisibleAnswerDisplay shows core text plus redacted xiigen method/input/output block",
+      "evidence_exists": [
+        "HOST-IMPL-03 component/source-entrypoint QA",
+        "RUNTIME-04 installed-cache/plugin-entrypoint packet",
+        "QSG-21 CODEX_APP_SERVER_PLUGIN packet"
+      ],
+      "current_evidence_class": "narrow_live_host_surface_app_server_or_installed_cache_plugin",
+      "full_live_ui_chat_proven": false,
+      "notes": "App-server/plugin evidence exists; desktop UI/chat visible conversation remains missing."
+    }
+  ],
+  "evidence_gap_matrix": [
+    {
+      "evidence_type": "static_code_map",
+      "accepted_for": "boundary shape and source-level thin-adapter review",
+      "not_accepted_for": "runtime behavior or readiness"
+    },
+    {
+      "evidence_type": "handler_level_test",
+      "accepted_for": "direct contract/service behavior",
+      "not_accepted_for": "host adapter load or UI/chat proof"
+    },
+    {
+      "evidence_type": "cli_helper_or_local_adapter",
+      "accepted_for": "request formatting and core boundary reachability",
+      "not_accepted_for": "live host UI/chat/app readiness"
+    },
+    {
+      "evidence_type": "dashboard_api_or_core_trace",
+      "accepted_for": "core request/response behavior",
+      "not_accepted_for": "full extension readiness"
+    },
+    {
+      "evidence_type": "narrow_live_host_surface",
+      "accepted_for": "named surface only, when same-run request/response/trace/visible output exist",
+      "not_accepted_for": "final readiness, quality, token savings, learnability, or another host/surface"
+    },
+    {
+      "evidence_type": "full_live_ui_chat_app_proof",
+      "accepted_for": "the named host-visible user journey only",
+      "not_accepted_for": "quality, token savings, learnability, or final readiness without their gates",
+      "current_status": "not fully present for all three hosts"
+    }
+  ],
+  "boundary_risks": [
+    "Historical runtimeEvidence booleans can be broader than their evidenceScope and need normalization before readiness review.",
+    "Claude hook evidence must not be substituted for full Claude chat UI proof.",
+    "Cursor Extension Host command evidence must not be substituted for chat participant UI proof.",
+    "Codex installed-cache/app-server plugin evidence must not be substituted for desktop UI/chat proof.",
+    "Core baseline, counter, KNN, and candidate-position mechanisms must remain labelled support/baseline/diagnostics only while semantic_quality_claimed remains false.",
+    "Adapter presentation logic is allowed, but adapters must not add semantic selection, DPO, training, model, target promotion, or corpus parsing logic."
+  ],
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "quality_improvement_claimed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "full_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "strict_quality03_ready": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false,
+    "actual_eval_can_be_next": false
+  },
+  "next_bounded_action": "RUNTIME-EVIDENCE-CLASSIFICATION-NORMALIZATION-01"
+}

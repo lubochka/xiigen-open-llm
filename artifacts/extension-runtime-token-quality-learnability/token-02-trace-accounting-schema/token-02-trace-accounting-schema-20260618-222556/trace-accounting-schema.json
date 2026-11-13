@@ -1,0 +1,815 @@
+{
+  "schema": "xiigen.token_02_trace_accounting_schema.v1",
+  "work_order_id": "TOKEN-02-TRACE-ACCOUNTING-SCHEMA-01",
+  "run_id": "token-02-trace-accounting-schema-20260618-222556",
+  "generated_at_local": "2026-06-18T22:25:56+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "artifact_role": "Trace/accounting schema freeze for later capture packets. Static schema evidence only.",
+  "source_refs_read": {
+    "plan": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 4.2.2, Section 4.3.1, Section 9, Section 11",
+    "state": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "token_01_scenario_pair_ledger": "artifacts/extension-runtime-token-quality-learnability/token-01-scenario-pairing-prep/token-01-scenario-pairing-prep-20260618-221337/scenario-pair-ledger.json"
+  },
+  "current_token_01_context": {
+    "hosts": [
+      "Claude",
+      "Cursor",
+      "Codex"
+    ],
+    "methods": [
+      "prompt-to-task",
+      "orchestration-plan",
+      "skill-selection"
+    ],
+    "pair_ids_total": 9,
+    "pair_ids": [
+      "TOKEN-PAIR-CLAUDE-PROMPT-TO-TASK-001",
+      "TOKEN-PAIR-CLAUDE-ORCHESTRATION-PLAN-001",
+      "TOKEN-PAIR-CLAUDE-SKILL-SELECTION-001",
+      "TOKEN-PAIR-CURSOR-PROMPT-TO-TASK-001",
+      "TOKEN-PAIR-CURSOR-ORCHESTRATION-PLAN-001",
+      "TOKEN-PAIR-CURSOR-SKILL-SELECTION-001",
+      "TOKEN-PAIR-CODEX-PROMPT-TO-TASK-001",
+      "TOKEN-PAIR-CODEX-ORCHESTRATION-PLAN-001",
+      "TOKEN-PAIR-CODEX-SKILL-SELECTION-001"
+    ],
+    "narrow_core_boundary_pairs_may_be_prepared_only": [
+      "TOKEN-PAIR-CLAUDE-PROMPT-TO-TASK-001",
+      "TOKEN-PAIR-CLAUDE-ORCHESTRATION-PLAN-001",
+      "TOKEN-PAIR-CLAUDE-SKILL-SELECTION-001",
+      "TOKEN-PAIR-CODEX-PROMPT-TO-TASK-001",
+      "TOKEN-PAIR-CODEX-ORCHESTRATION-PLAN-001",
+      "TOKEN-PAIR-CODEX-SKILL-SELECTION-001"
+    ],
+    "deferred_or_blocked_pairs_no_capture_now": [
+      "TOKEN-PAIR-CURSOR-PROMPT-TO-TASK-001",
+      "TOKEN-PAIR-CURSOR-ORCHESTRATION-PLAN-001",
+      "TOKEN-PAIR-CURSOR-SKILL-SELECTION-001"
+    ],
+    "token_01_claim_locks_false": {
+      "token_savings_claimed": false,
+      "token_savings_claim_allowed": false,
+      "quality_improvement_claimed": false,
+      "quality_improvement_claim_allowed": false,
+      "semantic_quality_claimed": false,
+      "semantic_readiness_claimed": false,
+      "learnability_claimed": false,
+      "live_host_readiness_claimed": false,
+      "full_claude_chat_ui_claimed": false,
+      "full_cursor_chat_ui_claimed": false,
+      "full_codex_chat_ui_claimed": false,
+      "full_host_readiness_claimed": false,
+      "common_readiness_claimed": false,
+      "training_ready_claimed": false,
+      "target_promotion_claimed": false,
+      "locator_update_claimed": false,
+      "final_readiness_claimed": false,
+      "product_readiness_claimed": false
+    }
+  },
+  "artifact_limits": {
+    "runtime_host_execution_performed": false,
+    "external_ai_or_model_call_performed": false,
+    "eval_or_quality_scoring_performed": false,
+    "training_dpo_checkpoint_or_locator_mutation_performed": false,
+    "token_savings_claimed": false,
+    "token_savings_claim_allowed": false,
+    "evidence_class": "report_static_evidence"
+  },
+  "future_capture_files_contract": {
+    "baseline_trace_jsonl": "baseline-token-traces.jsonl, one JSON object per baseline trace row using required_jsonl_fields.",
+    "adaptive_trace_jsonl": "adaptive-token-traces.jsonl, one JSON object per adaptive trace row using required_jsonl_fields.",
+    "pair_integrity_report_json": "token-pairing-integrity-report.json using pair_integrity_json_fields.",
+    "token_accounting_report_json": "token-accounting-report.json using token_accounting_report_json_fields.",
+    "raw_private_trace_ledger_json": "token-raw-private-trace-ledger.json; private refs only, raw content must not be committed.",
+    "redacted_trace_ledger_json": "token-redacted-trace-ledger.json; committed redacted refs and hashes only.",
+    "quality_prerequisite_ref": "quality-comparison-report.* for the same pair_id, required before any savings claim.",
+    "token_delta_report_json": "token-delta-report.json later only after pairing PASS and quality non-regression PASS."
+  },
+  "required_jsonl_fields": [
+    {
+      "path": "schema_version",
+      "type": "string",
+      "required": true,
+      "rule": "xiigen.extension_token_trace_accounting_row.v1"
+    },
+    {
+      "path": "record_type",
+      "type": "string enum",
+      "required": true,
+      "rule": "baseline_trace|adaptive_trace"
+    },
+    {
+      "path": "trace_id",
+      "type": "string",
+      "required": true,
+      "rule": "unique stable id"
+    },
+    {
+      "path": "trace_side",
+      "type": "string enum",
+      "required": true,
+      "rule": "baseline_common_no_adaptive|adaptive_user_local_target"
+    },
+    {
+      "path": "pair_id",
+      "type": "string",
+      "required": true,
+      "rule": "same TOKEN-01 pair id on both rows"
+    },
+    {
+      "path": "scenario_id",
+      "type": "string",
+      "required": true,
+      "rule": "same TOKEN-01 scenario id on both rows"
+    },
+    {
+      "path": "scenario_pack_ref",
+      "type": "string path/ref",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "host.host_name",
+      "type": "string enum",
+      "required": true,
+      "rule": "Claude|Cursor|Codex"
+    },
+    {
+      "path": "host.host_type",
+      "type": "string",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "host.host_runtime_surface",
+      "type": "string",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "host.host_runtime_version",
+      "type": "string",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "host.adapter_version",
+      "type": "string",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "host.host_entrypoint",
+      "type": "string",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "method.method_id",
+      "type": "string enum",
+      "required": true,
+      "rule": "prompt-to-task|orchestration-plan|skill-selection"
+    },
+    {
+      "path": "method.debug_enabled",
+      "type": "boolean",
+      "required": true,
+      "rule": "same on both rows"
+    },
+    {
+      "path": "method.invocation_options_hash_sha256",
+      "type": "sha256",
+      "required": true,
+      "rule": "same on both rows"
+    },
+    {
+      "path": "method.expected_answer_contract_ref",
+      "type": "string path/ref",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "prompt.canonical_prompt_text_sha256",
+      "type": "sha256",
+      "required": true,
+      "rule": "same on both rows"
+    },
+    {
+      "path": "prompt.canonical_prompt_redacted_ref",
+      "type": "string path/ref",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "prompt.raw_prompt_ref_private",
+      "type": "private ref",
+      "required": true,
+      "rule": "must not commit raw content"
+    },
+    {
+      "path": "prompt.prompt_privacy_class",
+      "type": "string enum",
+      "required": true,
+      "rule": "public_redacted|private_user|project_private|synthetic_redacted"
+    },
+    {
+      "path": "prompt.task_id",
+      "type": "string|null",
+      "required": true,
+      "rule": "same on both rows"
+    },
+    {
+      "path": "prompt.source_split_id",
+      "type": "string",
+      "required": true,
+      "rule": "same on both rows"
+    },
+    {
+      "path": "evidence.evidence_classification",
+      "type": "string enum",
+      "required": true,
+      "rule": "live_ui_chat_host_runtime|live_cli_host_runtime|handler_level_core_evidence|cli_helper_evidence|api_dashboard_evidence|report_static_evidence|package_smoke_evidence|test_only_adapter_evidence|narrow_live_host_surface|installed_skill_surface_plus_direct_installed_plugin_cache_adapter_to_llm_mvp_core_core_boundary|blocked_deferred_cursor_relaunch"
+    },
+    {
+      "path": "evidence.live_scope",
+      "type": "string enum",
+      "required": true,
+      "rule": "live_host|narrow_host_surface|non_live_core_boundary|static_schema_only|deferred_blocked"
+    },
+    {
+      "path": "evidence.host_surface_evidence_ref",
+      "type": "string path/ref|null",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "evidence.core_request_ref",
+      "type": "string path/ref",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "evidence.core_response_ref",
+      "type": "string path/ref",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "evidence.debug_trace_ref",
+      "type": "string path/ref|null",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "evidence.correlation_id",
+      "type": "string",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "evidence.raw_input_ref_private",
+      "type": "private ref",
+      "required": true,
+      "rule": "must not commit raw content"
+    },
+    {
+      "path": "evidence.raw_output_ref_private",
+      "type": "private ref",
+      "required": true,
+      "rule": "must not commit raw content"
+    },
+    {
+      "path": "evidence.redacted_input_ref",
+      "type": "string path/ref",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "evidence.redacted_output_ref",
+      "type": "string path/ref",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "model.model_mode",
+      "type": "string enum",
+      "required": true,
+      "rule": "common_baseline|adaptive_common_plus_user_model"
+    },
+    {
+      "path": "model.adaptive_enabled",
+      "type": "boolean",
+      "required": true,
+      "rule": "false for baseline, true for adaptive"
+    },
+    {
+      "path": "model.common_model_ref",
+      "type": "string path/ref",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "model.baseline_common_target_locator_ref",
+      "type": "string path/ref|null",
+      "required": true,
+      "rule": "baseline required"
+    },
+    {
+      "path": "model.adaptive_target_locator_ref",
+      "type": "string path/ref|null",
+      "required": true,
+      "rule": "adaptive required"
+    },
+    {
+      "path": "model.adaptive_model_manifest_ref",
+      "type": "string path/ref|null",
+      "required": true,
+      "rule": "adaptive required"
+    },
+    {
+      "path": "model.user_local_checkpoint_id",
+      "type": "string|null",
+      "required": true,
+      "rule": "null for baseline, required for adaptive"
+    },
+    {
+      "path": "model.target_checkpoint_id",
+      "type": "string|null",
+      "required": true,
+      "rule": "adaptive required"
+    },
+    {
+      "path": "model.fresh_load_ref",
+      "type": "string path/ref|null",
+      "required": true,
+      "rule": "adaptive required"
+    },
+    {
+      "path": "target_locator.target_locator_mode",
+      "type": "string",
+      "required": true,
+      "rule": "same except explicit adaptive variable"
+    },
+    {
+      "path": "target_locator.locator_ref",
+      "type": "string path/ref",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "target_locator.locator_candidate_id",
+      "type": "string|null",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "target_locator.target_checkpoint_id",
+      "type": "string|null",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "target_locator.rollback_checkpoint_id",
+      "type": "string|null",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "target_locator.activation_scope",
+      "type": "string",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "tokenizer_accounting.accounting_version",
+      "type": "string",
+      "required": true,
+      "rule": "xiigen-token-accounting.v1"
+    },
+    {
+      "path": "tokenizer_accounting.tokenizer_name",
+      "type": "string",
+      "required": true,
+      "rule": "xiigen-heuristic-word-punctuation"
+    },
+    {
+      "path": "tokenizer_accounting.tokenizer_version",
+      "type": "string",
+      "required": true,
+      "rule": "v1"
+    },
+    {
+      "path": "tokenizer_accounting.tokenizer_accounting_type",
+      "type": "string enum",
+      "required": true,
+      "rule": "heuristic|exact; current heuristic"
+    },
+    {
+      "path": "tokenizer_accounting.counted_spans_policy_id",
+      "type": "string",
+      "required": true,
+      "rule": "xiigen-counted-spans-v1"
+    },
+    {
+      "path": "tokenizer_accounting.normalization_policy_id",
+      "type": "string",
+      "required": true,
+      "rule": "xiigen-token-normalization-v1"
+    },
+    {
+      "path": "tokenizer_accounting.estimate_or_exact",
+      "type": "string enum",
+      "required": true,
+      "rule": "estimate|exact; current estimate"
+    },
+    {
+      "path": "tokenizer_accounting.counted_spans",
+      "type": "object",
+      "required": true,
+      "rule": "per span present/ref/hash/token_count"
+    },
+    {
+      "path": "tokenizer_accounting.total_input_tokens",
+      "type": "integer >= 0",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "tokenizer_accounting.total_output_tokens",
+      "type": "integer >= 0",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "tokenizer_accounting.total_trace_tokens",
+      "type": "integer >= 0",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "tokenizer_accounting.repeated_run_index",
+      "type": "integer >= 1",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "tokenizer_accounting.repeated_run_group_id",
+      "type": "string",
+      "required": true,
+      "rule": "required"
+    },
+    {
+      "path": "redaction.redaction_policy_id",
+      "type": "string",
+      "required": true,
+      "rule": "xiigen-redaction-v1"
+    },
+    {
+      "path": "redaction.redaction_policy_version",
+      "type": "string",
+      "required": true,
+      "rule": "v1"
+    },
+    {
+      "path": "redaction.redaction_status",
+      "type": "string enum",
+      "required": true,
+      "rule": "PASS_REDACTED_REFS_PRESENT|FAIL_REDACTION_POLICY_MISMATCH|PRIVATE_REFS_ONLY_NOT_COMMITTABLE"
+    },
+    {
+      "path": "redaction.raw_private_content_committed_to_repo",
+      "type": "boolean",
+      "required": true,
+      "rule": "must be false"
+    },
+    {
+      "path": "quality_prerequisite.quality_non_regression_required_before_token_claim",
+      "type": "boolean",
+      "required": true,
+      "rule": "must be true"
+    },
+    {
+      "path": "quality_prerequisite.quality_pair_id",
+      "type": "string|null",
+      "required": true,
+      "rule": "must equal pair_id before savings"
+    },
+    {
+      "path": "quality_prerequisite.quality_comparison_ref",
+      "type": "string path/ref|null",
+      "required": true,
+      "rule": "required before savings"
+    },
+    {
+      "path": "quality_prerequisite.quality_non_regression_status",
+      "type": "string enum",
+      "required": true,
+      "rule": "NOT_RUN|PASS|FAIL|INCONCLUSIVE"
+    },
+    {
+      "path": "claim_locks.token_savings_claim_allowed",
+      "type": "boolean",
+      "required": true,
+      "rule": "false for capture packet until valid quality+delta gate"
+    },
+    {
+      "path": "claim_locks.quality_improvement_claim_allowed",
+      "type": "boolean",
+      "required": true,
+      "rule": "false until quality gate"
+    }
+  ],
+  "baseline_row_invariants": {
+    "trace_side": "baseline_common_no_adaptive",
+    "model_mode": "common_baseline",
+    "adaptive_enabled": false,
+    "user_local_checkpoint_id": null,
+    "adaptive_model_manifest_ref": null,
+    "rule": "No adaptive artifact may be read or referenced by baseline except as a forbidden mismatch finding."
+  },
+  "adaptive_row_invariants": {
+    "trace_side": "adaptive_user_local_target",
+    "model_mode": "adaptive_common_plus_user_model",
+    "adaptive_enabled": true,
+    "required_refs": [
+      "user_local_checkpoint_id",
+      "target_checkpoint_id",
+      "adaptive_model_manifest_ref",
+      "adaptive_target_locator_ref",
+      "fresh_load_ref"
+    ],
+    "rule": "Adaptive row must name the exact user-local/adaptive/target refs tied to the same pair_id and evidence class."
+  },
+  "pair_integrity_json_fields": {
+    "schema_version": "xiigen.token_pairing_integrity_report.v1",
+    "pair_id": "string required",
+    "scenario_id": "string required",
+    "baseline_trace_id": "string required",
+    "adaptive_trace_id": "string required",
+    "baseline_trace_ref": "path/ref required",
+    "adaptive_trace_ref": "path/ref required",
+    "same_host": "boolean required",
+    "same_prompt_hash": "boolean required",
+    "same_method": "boolean required",
+    "same_evidence_class": "boolean required",
+    "same_target_locator_mode_except_adaptive_variable": "boolean required",
+    "same_tokenizer_accounting": "boolean required",
+    "same_redaction_policy": "boolean required",
+    "baseline_common_no_adaptive_ref_present": "boolean required",
+    "adaptive_user_local_target_ref_present": "boolean required",
+    "quality_non_regression_prereq_status": "NOT_RUN|PASS|FAIL|INCONCLUSIVE required",
+    "failure_labels": "array of labels from trace-validation-checklist.json required",
+    "pairing_integrity_status": "PASS|FAIL|INCONCLUSIVE required; PASS forbidden while quality prereq is not PASS for token savings",
+    "token_savings_claim_allowed": "boolean required; false unless pairing PASS and same-pair quality non-regression PASS"
+  },
+  "token_accounting_report_json_fields": {
+    "schema_version": "xiigen.token_accounting_report.v1",
+    "accounting_version": "xiigen-token-accounting.v1",
+    "pair_id": "string required",
+    "scenario_id": "string required",
+    "baseline_trace_ref": "path/ref required",
+    "adaptive_trace_ref": "path/ref required",
+    "tokenizer_name": "xiigen-heuristic-word-punctuation or exact tokenizer name, identical on both rows",
+    "tokenizer_version": "v1 or exact tokenizer version, identical on both rows",
+    "tokenizer_accounting_type": "heuristic|exact, identical on both rows",
+    "counted_spans_policy_id": "xiigen-counted-spans-v1, identical on both rows",
+    "counted_spans": [
+      {
+        "span": "host_user_prompt_input",
+        "purpose": "User prompt as received by the host surface or approved same-class adapter.",
+        "compare_rule": "same prompt sha256 on both rows"
+      },
+      {
+        "span": "xiigen_core_request_payload",
+        "purpose": "Request sent into XiigenExtensionApiService/core boundary.",
+        "compare_rule": "same request fields except baseline/adaptive model refs"
+      },
+      {
+        "span": "xiigen_core_response_payload",
+        "purpose": "Core response returned to adapter/host.",
+        "compare_rule": "same method and evidence class"
+      },
+      {
+        "span": "debug_trace_visible_payload",
+        "purpose": "Debug trace shown or recorded when debug_enabled is true.",
+        "compare_rule": "same debug setting on both rows"
+      },
+      {
+        "span": "host_visible_output",
+        "purpose": "Visible answer/error text emitted by host surface or scoped adapter.",
+        "compare_rule": "same evidence class; no live claim from non-live output"
+      }
+    ],
+    "baseline_counts": "object with total_input_tokens,total_output_tokens,total_trace_tokens,per_span_counts",
+    "adaptive_counts": "object with total_input_tokens,total_output_tokens,total_trace_tokens,per_span_counts",
+    "repeated_run_policy": "object with run_count,min_required_runs,variance_method,variance_threshold,inconclusive_on_high_variance",
+    "comparison_method": "predeclared method; no savings PASS if pairing/quality/variance fail",
+    "pair_integrity_ref": "path/ref required",
+    "quality_comparison_ref": "path/ref required before savings can be allowed",
+    "claim_locks": "object; all false in capture packet until later valid delta+quality gate"
+  },
+  "tokenizer_accounting_freeze": {
+    "accounting_version": "xiigen-token-accounting.v1",
+    "tokenizer_name": "xiigen-heuristic-word-punctuation",
+    "tokenizer_version": "v1",
+    "tokenizer_accounting_type": "heuristic",
+    "estimate_or_exact": "estimate",
+    "counted_spans_policy_id": "xiigen-counted-spans-v1",
+    "normalization_policy_id": "xiigen-token-normalization-v1",
+    "counted_spans": [
+      {
+        "span": "host_user_prompt_input",
+        "purpose": "User prompt as received by the host surface or approved same-class adapter.",
+        "compare_rule": "same prompt sha256 on both rows"
+      },
+      {
+        "span": "xiigen_core_request_payload",
+        "purpose": "Request sent into XiigenExtensionApiService/core boundary.",
+        "compare_rule": "same request fields except baseline/adaptive model refs"
+      },
+      {
+        "span": "xiigen_core_response_payload",
+        "purpose": "Core response returned to adapter/host.",
+        "compare_rule": "same method and evidence class"
+      },
+      {
+        "span": "debug_trace_visible_payload",
+        "purpose": "Debug trace shown or recorded when debug_enabled is true.",
+        "compare_rule": "same debug setting on both rows"
+      },
+      {
+        "span": "host_visible_output",
+        "purpose": "Visible answer/error text emitted by host surface or scoped adapter.",
+        "compare_rule": "same evidence class; no live claim from non-live output"
+      }
+    ],
+    "change_rule": "If a future exact tokenizer replaces heuristic accounting, both baseline/adaptive rows for the pair must use the same new accounting fields and this schema version must be superseded; mixed heuristic/exact pairs fail."
+  },
+  "redaction_contract": {
+    "redaction_policy_id": "xiigen-redaction-v1",
+    "redaction_policy_version": "v1",
+    "same_policy_for_baseline_and_adaptive_required": true,
+    "raw_private_content_committed_to_repo_allowed": false,
+    "private_refs_required": [
+      "raw_prompt_ref_private",
+      "raw_input_ref_private",
+      "raw_output_ref_private"
+    ],
+    "committed_refs_required": [
+      "canonical_prompt_redacted_ref",
+      "redacted_input_ref",
+      "redacted_output_ref"
+    ],
+    "hashes_required": [
+      "canonical_prompt_text_sha256",
+      "input_text_sha256",
+      "output_text_sha256"
+    ]
+  },
+  "target_locator_common_adaptive_refs_contract": {
+    "baseline_required": [
+      "common_model_ref",
+      "baseline_common_target_locator_ref",
+      "target_locator_mode",
+      "locator_ref",
+      "activation_scope"
+    ],
+    "adaptive_required": [
+      "common_model_ref",
+      "adaptive_target_locator_ref",
+      "adaptive_model_manifest_ref",
+      "user_local_checkpoint_id",
+      "target_checkpoint_id",
+      "fresh_load_ref",
+      "target_locator_mode",
+      "locator_ref",
+      "activation_scope"
+    ],
+    "pair_rule": "All target locator fields must match except the explicit baseline/adaptive variable. Missing adaptive refs fail with MISMATCH_ADAPTIVE_REF."
+  },
+  "quality_non_regression_prerequisite": {
+    "required_before_token_savings_claim": true,
+    "same_pair_id_required": true,
+    "status_now": "NOT_RUN",
+    "accepted_future_status_for_savings": "PASS",
+    "missing_or_inconclusive_effect": "QUALITY_PREREQ_NOT_PASSED; token_savings_claim_allowed=false"
+  },
+  "failure_labels": [
+    {
+      "label": "MISMATCH_HOST",
+      "equivalent_plan_labels": [
+        "MISSING_HOST_PAIR"
+      ],
+      "use_when": "Baseline and adaptive rows do not have the same host_name, host_type, host_runtime_surface, host_runtime_version, adapter_version, host_entrypoint, or live scope.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISMATCH_PROMPT",
+      "equivalent_plan_labels": [
+        "INVALID_PAIR_DIFFERENT_PROMPT_OR_METHOD"
+      ],
+      "use_when": "scenario_id, pair_id, canonical_prompt_text_sha256, task_id, expected_answer_contract, privacy_class, or source_split_id differ.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISMATCH_METHOD",
+      "equivalent_plan_labels": [
+        "INVALID_PAIR_DIFFERENT_PROMPT_OR_METHOD"
+      ],
+      "use_when": "method, debug_enabled, invocation_options_hash_sha256, counted pipeline step, or scenario method differs.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISMATCH_EVIDENCE_CLASS",
+      "equivalent_plan_labels": [
+        "INVALID_PAIR_DIFFERENT_EVIDENCE_CLASS",
+        "DASHBOARD_API_HELPER_HANDLER_ONLY_TOKEN_TRACE"
+      ],
+      "use_when": "evidence_classification or live_scope differs, or helper/dashboard/API/handler evidence is used as live host token-savings evidence.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false; scoped evidence may remain diagnostics only"
+    },
+    {
+      "label": "MISMATCH_TOKENIZER_ACCOUNTING",
+      "equivalent_plan_labels": [
+        "INVALID_TOKENIZER_ACCOUNTING_PAIR"
+      ],
+      "use_when": "tokenizer_name, tokenizer_version, tokenizer_accounting_type, accounting_version, counted_spans_policy_id, estimate_or_exact, normalization_policy_id, or token_count fields differ in method or scope.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISMATCH_REDACTION",
+      "equivalent_plan_labels": [
+        "FAIL_REDACTION_POLICY_MISMATCH"
+      ],
+      "use_when": "redaction_policy_id, redaction_policy_version, raw/private refs, redacted refs, prompt/output hashes, or redaction_status are missing or inconsistent.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISMATCH_ADAPTIVE_REF",
+      "equivalent_plan_labels": [
+        "MISSING_ADAPTIVE_USER_LOCAL_TARGET_REF",
+        "MISSING_ADAPTIVE_MODEL",
+        "INVALID_TARGET_LOCATOR_PAIR"
+      ],
+      "use_when": "Adaptive row lacks exact user_local_checkpoint_id, target_checkpoint_id, adaptive_model_manifest_ref, adaptive_target_locator_ref, fresh_load_ref, or differs outside the explicit baseline/adaptive variable.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "QUALITY_PREREQ_NOT_PASSED",
+      "equivalent_plan_labels": [
+        "QUALITY_NON_REGRESSION_NOT_PASSED",
+        "FAIL_QUALITY_REGRESSION"
+      ],
+      "use_when": "quality_comparison_ref for the same pair_id is missing, inconclusive, mixed-class, not PASS, or shows adaptive quality regression.",
+      "effect": "token_savings_claim_allowed=false even if adaptive token count is lower"
+    },
+    {
+      "label": "MISSING_TOKEN_ACCOUNTING_REPORT",
+      "equivalent_plan_labels": [
+        "MISSING_TOKEN_ACCOUNTING_REPORT"
+      ],
+      "use_when": "No token accounting report records counted spans, tokenizer/accounting version, pair id, baseline/adaptive refs, thresholds, repeated-run policy, and variance handling.",
+      "effect": "token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+      "equivalent_plan_labels": [
+        "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF"
+      ],
+      "use_when": "Baseline row does not prove common/no-adaptive isolation or contains adaptive artifact reads.",
+      "effect": "token_savings_claim_allowed=false"
+    }
+  ],
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "token_savings_claim_allowed": false,
+    "quality_improvement_claimed": false,
+    "quality_improvement_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "full_claude_chat_ui_claimed": false,
+    "full_cursor_chat_ui_claimed": false,
+    "full_codex_chat_ui_claimed": false,
+    "full_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  },
+  "what_this_proves": [
+    "The required trace/accounting JSONL and JSON field contract for future capture packets is defined.",
+    "Future token comparison must validate pair integrity and quality non-regression before any token savings claim.",
+    "Current TOKEN-01 narrow/deferred runtime evidence is represented without overclaim."
+  ],
+  "what_this_does_not_prove": [
+    "Token savings.",
+    "Quality improvement or quality non-regression.",
+    "Live Claude/Cursor/Codex runtime readiness.",
+    "Adaptive model availability, fresh-load, target promotion, learnability, DPO, checkpoint mutation, final readiness, or product readiness."
+  ]
+}

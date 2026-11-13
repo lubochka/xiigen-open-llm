@@ -1,0 +1,197 @@
+{
+  "schema": "xiigen.quality_01.examples_current_pair.v1",
+  "phase_id": "QUALITY-01",
+  "run_id": "quality-01-02-20260618-053620",
+  "examples": [
+    {
+      "scenario_id": "TQ-001-prompt-task-documentation",
+      "scenario_group": "prompt-to-task",
+      "positive_examples_from_pack": [
+        "A task that asks for documentation grounded in actual code and says no implementation is authorized.",
+        "A task that names evidence boundaries before claiming readiness."
+      ],
+      "negative_examples_from_pack": [
+        "A task that starts coding from a documentation-only prompt.",
+        "A task that says the extension is ready because docs were written."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-002-prompt-task-interrupt",
+      "scenario_group": "prompt-to-task",
+      "positive_examples_from_pack": [
+        "The task says answer the question first and pause execution work.",
+        "The task treats quoted transcripts as evidence only."
+      ],
+      "negative_examples_from_pack": [
+        "The task starts tests before answering why.",
+        "The task treats old continue text as fresh permission."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: plan-review, test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Learned state used. Skills: plan-review, test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-003-prompt-task-redaction",
+      "scenario_group": "prompt-to-task",
+      "positive_examples_from_pack": [
+        "Shared report stores prompt hash, redacted text, token counts, and private raw refs.",
+        "Reviewer can compare structure without seeing private content."
+      ],
+      "negative_examples_from_pack": [
+        "Raw private prompt is copied into JSONL shared artifact.",
+        "Token counts are saved without prompt hash or redaction status."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: plan-review, test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Skills: plan-review, test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-004-orchestration-runtime-proof",
+      "scenario_group": "orchestration",
+      "positive_examples_from_pack": [
+        "Plan requires visible host answer and controlled negative error path for every host.",
+        "Plan says dashboard/API evidence is supporting only."
+      ],
+      "negative_examples_from_pack": [
+        "Plan counts a direct handler call as Claude/Cursor/Codex runtime.",
+        "Plan hides deterministic model logic inside an adapter."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: test-integrity, plan-review. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Skills: test-integrity, plan-review. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-005-orchestration-token-pairing",
+      "scenario_group": "orchestration",
+      "positive_examples_from_pack": [
+        "Same scenario id, prompt hash, host, method, debug setting, tokenizer, and counted spans in both modes.",
+        "Token delta accepted only after quality non-regression."
+      ],
+      "negative_examples_from_pack": [
+        "Adaptive uses a different prompt or debug setting.",
+        "Token decrease is accepted despite quality regression."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-006-orchestration-learning-lifecycle",
+      "scenario_group": "orchestration",
+      "positive_examples_from_pack": [
+        "Plan defers training until exact approval and names rollback before mutation.",
+        "Plan separates user-local rows from common training rows."
+      ],
+      "negative_examples_from_pack": [
+        "Plan starts training from a correction immediately.",
+        "Plan claims learning from a DPO row alone."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Learned state used. Skills: test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-007-skill-architecture-audit",
+      "scenario_group": "skill-selection",
+      "positive_examples_from_pack": [
+        "Skills are selected because the task asks for audit, code quotes, trainable-unit design, and tests.",
+        "Skill explanation rejects dictionary counters as full semantic models without evidence."
+      ],
+      "negative_examples_from_pack": [
+        "First five available skills are selected without rationale.",
+        "Generic planning skill is chosen while code-review and trainable-unit design are omitted."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: plan-review, test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Skills: plan-review, test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-008-skill-debug-runtime",
+      "scenario_group": "skill-selection",
+      "positive_examples_from_pack": [
+        "Selects debug visibility and privacy together, because debug data can leak private content.",
+        "Selects runtime QA and error handling because positive-only evidence is insufficient."
+      ],
+      "negative_examples_from_pack": [
+        "Selects only generic QA.",
+        "Selects training skills for a debug visibility task."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Learned state used. Skills: test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-009-skill-learning-safety",
+      "scenario_group": "skill-selection",
+      "positive_examples_from_pack": [
+        "Selects source/license and checkpoint safety before any training skill.",
+        "Includes backup/export/import/share and held-out ablation for learnability evidence."
+      ],
+      "negative_examples_from_pack": [
+        "Selects only DPO authoring and claims the model learned.",
+        "Omits rollback or source/license review."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: plan-review, test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Learned state used. Skills: plan-review, test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-010-mixed-no-overclaim",
+      "scenario_group": "mixed",
+      "positive_examples_from_pack": [
+        "Says dashboard/API proves handler behavior only and names missing host proof.",
+        "Provides next bounded runtime evidence work rather than claiming done."
+      ],
+      "negative_examples_from_pack": [
+        "Claims full Claude/Cursor/Codex readiness from dashboard/API only.",
+        "Treats smoke evidence as semantic quality."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-011-mixed-shortcut-audit",
+      "scenario_group": "mixed",
+      "positive_examples_from_pack": [
+        "Rejects token savings caused by dropping approval, rollback, or debug trace gates.",
+        "Requires skill-order shuffle or ablation to rule out candidate-order shortcut."
+      ],
+      "negative_examples_from_pack": [
+        "Accepts shorter answer without checking missing gates.",
+        "Uses exact prompt hash as the learned behavior."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    },
+    {
+      "scenario_id": "TQ-012-mixed-final-readiness",
+      "scenario_group": "mixed",
+      "positive_examples_from_pack": [
+        "Every target row has verdict, evidence refs, what passed, what remains, and next work order.",
+        "Final status remains IN_PROGRESS when token/quality/learning evidence is missing."
+      ],
+      "negative_examples_from_pack": [
+        "Marks ready because many rows passed.",
+        "Uses dashboard/API automation as full host runtime proof."
+      ],
+      "observed_baseline_output_example": "Core task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "observed_adaptive_output_example": "Adaptive task+plan+skills ready. Skills: test-integrity. Semantic quality is not claimed.",
+      "example_scope_note": "Observed outputs are examples of current trace shape only; they are not success claims."
+    }
+  ],
+  "token_savings_claimed": false,
+  "quality_improvement_claimed": false,
+  "semantic_quality_claimed": false,
+  "learnability_claimed": false,
+  "final_readiness_claimed": false,
+  "live_host_savings_claimed": false,
+  "production_locator_or_checkpoint_mutated": false,
+  "external_ai_used": false,
+  "training_started": false,
+  "model_or_checkpoint_or_locator_mutated": false
+}

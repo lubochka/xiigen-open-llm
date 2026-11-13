@@ -1,0 +1,59 @@
+{
+  "work_order_id": "QUALITY-PRODUCT-ORCHESTRATION-EXPANDED-V1-TRAINING-AUTHORIZATION-EVAL-02",
+  "generated_at_utc": "2026-06-22T07:22:54.548Z",
+  "requested_review_floor": 4,
+  "real_cycle_count": 4,
+  "hidden_deterministic_shortcut_found": false,
+  "unfixed_findings_open": false,
+  "cycles": [
+    {
+      "cycle": 1,
+      "focus": "Scope, no-git, no-external-call boundary",
+      "inspected_files": [
+        "tools/quality-product-orchestration-expanded-v1-training-authorization-eval.js",
+        "runtime-runner/Program.cs",
+        "state-entry.json"
+      ],
+      "finding": "The runner must not reuse the older Q4 script pattern that calls git or writes production model/index files.",
+      "fix": "This runner avoids git commands entirely, writes checkpoints only under the new artifact leaf, and records production_locator_updated=false.",
+      "recheck": "Command summary records only dotnet runtime runner plus validation; no git command is spawned."
+    },
+    {
+      "cycle": 2,
+      "focus": "Hidden deterministic shortcut and held-out leakage",
+      "inspected_files": [
+        "training-data/smart-skills/semantic-quality/orchestration-reasoning-expanded-v1/orchestration-reasoning-expanded-dpo.jsonl",
+        "orchestration-leakage-ablation-checks.json",
+        "orchestration-runtime-eval-results.jsonl"
+      ],
+      "finding": "Older Q4 aggregate patterns could pass by embedding held-out expected scenario refs; that would be label leakage.",
+      "fix": "The new runner materializes learned patterns from train rows only and checks that held-out expected scenario refs are absent from learned patterns.",
+      "recheck": "Ablation report records learned_patterns_exclude_held_out_expected_scenario_refs=true and held-out exact runtime readiness remains false."
+    },
+    {
+      "cycle": 3,
+      "focus": "Project runtime path and allowed architecture level",
+      "inspected_files": [
+        "43.SmartSkillsDomain/OrchestrationReasoningMachine.cs",
+        "43.SmartSkillsDomain/OrchestrationReasoningScenarioUnit.cs",
+        "model-lifecycle-evidence.json"
+      ],
+      "finding": "A pure JSON scorer would not prove runtime eval.",
+      "fix": "The generated C# runner uses ProjectReference to 43.SmartSkillsDomain and runs OrchestrationReasoningMachine.SaveCheckpointAsync, LoadCheckpointAsync, ImportAsync, ContinueTrainingFromLearnedState, and Plan.",
+      "recheck": "runtime-runner-output.json records trained_runtime_eval_executed=true, while claims remain false."
+    },
+    {
+      "cycle": 4,
+      "focus": "Artifact completeness, state coherence, and no-overclaim wording",
+      "inspected_files": [
+        "completion-report-ru.md",
+        "completion-report.json",
+        "selected-follow-up-work-order.json",
+        "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+      ],
+      "finding": "The packet could be misread as PASS_AS_TRAINED_FEATURE if the failure is not explicit.",
+      "fix": "Reports state that runtime eval was executed but trained feature readiness is disproven: held-out accuracy is below the pass bar and the exact next work order is scenario generalization repair.",
+      "recheck": "Validation rejects true values for semantic_quality_claimed, product_ready_claimed, full_host_ready_claimed, production_locator_updated, or pass_as_trained_feature."
+    }
+  ]
+}

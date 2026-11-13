@@ -1,0 +1,203 @@
+{
+  "schema": "xiigen.quality_01.future_runner_input_contract.v1",
+  "phase_id": "QUALITY-01-EVAL-PROMPT-PACK-AND-RUBRIC-PREP",
+  "run_id": "quality-01-eval-prompt-pack-rubric-20260618-093007",
+  "generated_at_local": "2026-06-18T09:40:17+03:00",
+  "runner_may_start_now": false,
+  "contract_purpose": "Input schema for a later eval-only runner. This phase does not implement or execute the runner.",
+  "allowed_route_for_later_eval_only_runner": "USER_ADAPTIVE_EVAL_ONLY",
+  "excluded_routes": [
+    "EVIDENCE_ONLY",
+    "COMMON_BLOCKED"
+  ],
+  "required_pre_run_gates": [
+    {
+      "gate_id": "G1_CURRENT_APPROVAL",
+      "required": true,
+      "must_include": [
+        "exact user-local eval-only approval quote",
+        "scenario ids and pair ids",
+        "approved user-local root",
+        "external AI/web allowed=false unless separately authorized",
+        "training/model/checkpoint/locator mutation allowed=false"
+      ]
+    },
+    {
+      "gate_id": "G2_PRIVACY_REDACTION",
+      "required": true,
+      "must_include": [
+        "raw_private_input_ref stored outside common repo training",
+        "redacted_shared_evidence_ref",
+        "privacy_class",
+        "redaction_status",
+        "no private text copied into common datasets"
+      ]
+    },
+    {
+      "gate_id": "G3_SOURCE_SEPARATION",
+      "required": true,
+      "must_include": [
+        "source_ref",
+        "doc_id",
+        "route=USER_ADAPTIVE_ONLY_EVAL_ONLY_LATER",
+        "common_training_allowed=false",
+        "source rows not mixed with common train/held-out rows"
+      ]
+    },
+    {
+      "gate_id": "G4_NO_COMMON_MUTATION_LOCK",
+      "required": true,
+      "must_include": [
+        "common sets unchanged",
+        "common checkpoints unchanged",
+        "common manifests unchanged",
+        "repo fixtures unchanged except redacted evidence artifacts"
+      ]
+    },
+    {
+      "gate_id": "G5_NO_TRAINING_MUTATION_LOCK",
+      "required": true,
+      "must_include": [
+        "training_started=false",
+        "continue_training_started=false",
+        "DPO training started=false",
+        "model/checkpoint/target/locator mutated=false"
+      ]
+    },
+    {
+      "gate_id": "G6_EVIDENCE_LABELS",
+      "required": true,
+      "must_include": [
+        "evidence_scope=local_private_eval_only",
+        "what_this_proves narrow block",
+        "what_this_does_not_prove block",
+        "no semantic quality, quality improvement, token savings, learnability, live-host readiness, common readiness, strict QUALITY-03, target promotion, or locator update"
+      ]
+    },
+    {
+      "gate_id": "G7_EVIDENCE_ONLY_EXCLUSION",
+      "required": true,
+      "must_include": [
+        "5 EVIDENCE_ONLY scenarios excluded from eval/training inputs",
+        "33 EVIDENCE_ONLY pair rows excluded from eval/training inputs",
+        "evidence-only rows may be referenced only as control/no-overclaim context"
+      ]
+    },
+    {
+      "gate_id": "G8_ROLLBACK_SAFETY_IF_TRAINING_LATER_AUTHORIZED",
+      "required": true,
+      "must_include": [
+        "training remains inactive in eval-only run",
+        "if a later separate training approval exists, require base checkpoint sha, target checkpoint sha, rollback checkpoint sha, backup/export/import refs, fresh-load refs, held-out/ablation refs, and locator mutation approval before any promotion",
+        "eval-only evidence cannot be reinterpreted as rollback or promotion proof"
+      ]
+    }
+  ],
+  "input_schema": {
+    "scenario_id": {
+      "type": "string",
+      "required": true,
+      "allowed_values": [
+        "TQ-001-prompt-task-documentation",
+        "TQ-002-prompt-task-interrupt",
+        "TQ-003-prompt-task-redaction",
+        "TQ-006-orchestration-learning-lifecycle",
+        "TQ-007-skill-architecture-audit",
+        "TQ-008-skill-debug-runtime",
+        "TQ-009-skill-learning-safety"
+      ]
+    },
+    "pair_id": {
+      "type": "string",
+      "required": true,
+      "allowed_values_ref": "eval-prompt-pack.json#/route_counts/USER_ADAPTIVE_EVAL_ONLY"
+    },
+    "route": {
+      "type": "string",
+      "required": true,
+      "const": "USER_ADAPTIVE_EVAL_ONLY"
+    },
+    "approval_ref": {
+      "type": "string",
+      "required": true,
+      "must_be_current_explicit_user_local_eval_only_approval": true
+    },
+    "user_local_root_ref": {
+      "type": "string",
+      "required": true
+    },
+    "raw_private_input_ref": {
+      "type": "string",
+      "required": true,
+      "storage": "approved user-local/private root only"
+    },
+    "redacted_shared_evidence_ref": {
+      "type": "string",
+      "required": true,
+      "storage": "repo artifact ok if redacted"
+    },
+    "source_ref": {
+      "type": "string",
+      "required": true
+    },
+    "doc_id": {
+      "type": "string",
+      "required": true
+    },
+    "privacy_redaction_status": {
+      "type": "string",
+      "required": true,
+      "allowed_values": [
+        "PASS_REDACTED",
+        "PRIVATE_ONLY_NO_SHARED_TEXT"
+      ]
+    },
+    "baseline_output_ref": {
+      "type": "string",
+      "required_later_for_scoring": true
+    },
+    "adaptive_output_ref": {
+      "type": "string",
+      "required_later_for_scoring": true
+    },
+    "host_name": {
+      "type": "string",
+      "required": true,
+      "allowed_values": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ]
+    },
+    "method": {
+      "type": "string",
+      "required": true,
+      "allowed_values": [
+        "prompt-to-task",
+        "orchestration-plan",
+        "skill-selection"
+      ]
+    },
+    "no_common_mutation_attestation": {
+      "type": "boolean",
+      "required": true,
+      "const": true
+    },
+    "no_training_mutation_attestation": {
+      "type": "boolean",
+      "required": true,
+      "const": true
+    },
+    "no_model_checkpoint_locator_mutation_attestation": {
+      "type": "boolean",
+      "required": true,
+      "const": true
+    }
+  },
+  "output_contract_for_later_runner": {
+    "must_label_scope": "local_private_eval_only",
+    "must_write_scores_only_after_runner_authorized": true,
+    "must_keep_claim_locks_false": true,
+    "must_not_export_raw_private_text_to_common_repo": true
+  }
+}

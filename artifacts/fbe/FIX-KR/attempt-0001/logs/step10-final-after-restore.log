@@ -1,0 +1,35 @@
+=== STEP 10: FINAL state — file restored, full read-back, build, final run on the final source ===
+--- whole ScoreAsync text block read back from disk (lines 36-40) ---
+        var text = $"{request.OriginalPrompt} {request.TaskSlice} {request.RequiredDirection} {request.DomainHint}"
+            .Replace(RoutingProfileTrainer.CSharpFrom, RoutingProfileTrainer.CSharpTo, StringComparison.OrdinalIgnoreCase) // FIX-KR: read the key in the spelling the lesson wrote it in; the writer already stores "C#" as "csharp".
+            .Replace(RoutingProfileTrainer.DotNetFrom, RoutingProfileTrainer.DotNetTo, StringComparison.OrdinalIgnoreCase) // The same replacement the writer applies to ".NET", in the writer's own order, from the writer's own constants.
+            .ToLowerInvariant(); // Lowercase last, exactly as before, so an already canonical request is left unchanged.
+        var scored = request.CandidateUnitIds
+--- file size: ---
+  82 4755 26.TrainableRouter/Training/BaselineKeywordCandidateGenerator.cs
+--- count of Replace calls in the reader (must be 2) ---
+2
+--- count of mutation markers left behind (must be 0) ---
+0
+--- build ---
+    6 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:11.02
+EXITCODE_STEP10_BUILD=0
+--- final run: new class + neighbour classes of the same product code ---
+Test run for C:\Projects\llm_mvp_core\Tests\bin\Release\net9.0\LlmFromScratch.Tests.dll (.NETCoreApp,Version=v9.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:04.15]     LlmFromScratch.Tests.DistributedModelArchitectureTests.TrainableRoutingFlow_RoutesPromptToBestCandidateAndExposesLogicalFlowResult [FAIL]
+  Failed LlmFromScratch.Tests.DistributedModelArchitectureTests.TrainableRoutingFlow_RoutesPromptToBestCandidateAndExposesLogicalFlowResult [4 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 25
+Actual:   24
+  Stack Trace:
+     at LlmFromScratch.Tests.DistributedModelArchitectureTests.TrainableRoutingFlow_RoutesPromptToBestCandidateAndExposesLogicalFlowResult() in C:\Projects\llm_mvp_core\Tests\DistributedModelArchitectureTests.cs:line 221
+--- End of stack trace from previous location ---
+Results File: C:\Projects\llm_mvp_core\artifacts\fbe\FIX-KR\attempt-0001\results\step10-final\step10-final.trx
+
+Failed!  - Failed:     1, Passed:    33, Skipped:     0, Total:    34, Duration: 93 ms - LlmFromScratch.Tests.dll (net9.0)
+EXITCODE_STEP10_TEST=1

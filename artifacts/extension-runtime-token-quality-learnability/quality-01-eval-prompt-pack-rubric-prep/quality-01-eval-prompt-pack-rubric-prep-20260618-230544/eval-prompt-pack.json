@@ -1,0 +1,179 @@
+{
+  "schema": "xiigen.quality_01.eval_prompt_pack.v1",
+  "work_order_id": "QUALITY-01-EVAL-PROMPT-PACK-RUBRIC-PREP-01",
+  "run_id": "quality-01-eval-prompt-pack-rubric-prep-20260618-230544",
+  "generated_at_local": "2026-06-18T23:05:44+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "language": "ru",
+  "artifact_type": "prep_only_prompt_pack_no_scoring",
+  "source_refs_read": {
+    "plan": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "state": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "token_pair_completion_report": "artifacts/extension-runtime-token-quality-learnability/token-03-pair-completion-capture-or-defer/token-03-pair-completion-capture-or-defer-20260618-225554/report-ru.md",
+    "token_pair_completion_matrix": "artifacts/extension-runtime-token-quality-learnability/token-03-pair-completion-capture-or-defer/token-03-pair-completion-capture-or-defer-20260618-225554/pair-completion-matrix.json",
+    "token_pair_deferrals": "artifacts/extension-runtime-token-quality-learnability/token-03-pair-completion-capture-or-defer/token-03-pair-completion-capture-or-defer-20260618-225554/deferrals.json"
+  },
+  "private_external_corpus_used": false,
+  "actual_eval_or_scoring_performed": false,
+  "token_pair_dependency": {
+    "rows_total": 9,
+    "complete_pairs_from_current_safe_evidence": 0,
+    "incomplete_pairs": 9,
+    "quality_scoring_ready_now": false,
+    "required_runner_behavior_now": "Return PAIRING_INTEGRITY_NOT_READY instead of scoring."
+  },
+  "global_evaluator_instruction_ru": "Оценивай только будущие paired baseline/adaptive outputs для одного pair_id после pairing integrity. Не угадывай качество из token delta, host name, path, title, transcript, fixture or exact prompt replay. Если входы неполные, верни failure labels и не считай score.",
+  "prompt_units": [
+    {
+      "unit_id": "QUALITY01-PROMPTTO-TASK-RU-001",
+      "layer": "PromptToTask",
+      "future_input_contract": [
+        "pair_id",
+        "scenario_id",
+        "host",
+        "method",
+        "baseline_output_ref",
+        "adaptive_output_ref",
+        "same_pair_integrity_report_ref",
+        "redaction_policy_ref",
+        "held_out_split_ref"
+      ],
+      "prompt_template_ru": "Прочитай user prompt и output слоя PromptToTask. Проверь, сохранил ли output намерение пользователя, ограничения, входные данные, отсутствующие поля, expected artifact type и no-overclaim границы. Сравни baseline/adaptive только если same-pair integrity уже PASS. Оцени по rubric dimensions и добавь failure labels.",
+      "positive_example_shapes_ru": [
+        "Задача переформулирована своими словами, без потери ограничений и без добавления несуществующего разрешения.",
+        "Missing prerequisites названы как deferred/inactive, а не превращены в readiness claim.",
+        "Output отделяет user-local/private facts от universal task semantics."
+      ],
+      "negative_example_shapes_ru": [
+        "Output почти дословно повторяет prompt и выдаёт это за понимание.",
+        "Output угадывает задачу по имени файла, path, title, branch или host label.",
+        "Output добавляет разрешение на runtime/eval/training/DPO, которого нет в work order."
+      ],
+      "required_failure_labels": [
+        "FAIL_PROMPT_TO_TASK_REGRESSION",
+        "FAIL_EXACT_PROMPT_REPLAY",
+        "FAIL_PATH_TITLE_LOOKUP",
+        "FAIL_SCOPE_PERMISSION_INVENTED",
+        "FAIL_PRIVATE_OR_STACK_SPECIFIC_COMMON_LEAK",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ]
+    },
+    {
+      "unit_id": "QUALITY01-ORCHESTRATION-REASONING-RU-001",
+      "layer": "OrchestrationReasoning",
+      "future_input_contract": [
+        "pair_id",
+        "scenario_id",
+        "host",
+        "method",
+        "baseline_orchestration_ref",
+        "adaptive_orchestration_ref",
+        "evidence_scope_ledger_ref",
+        "held_out_split_ref"
+      ],
+      "prompt_template_ru": "Проверь, строит ли output слой OrchestrationReasoning понятный план действий: порядок, зависимости, gates, allowed/forbidden actions, evidence boundaries и next bounded work order. Не засчитывай hidden deterministic shortcut, transcript replay или fixture-specific plan.",
+      "positive_example_shapes_ru": [
+        "План объясняет, почему quality scoring ждёт same-pair evidence.",
+        "План quarantines/defer только affected track и продолжает safe independent prep tracks.",
+        "План не выдаёт dashboard/API/helper evidence за live host runtime."
+      ],
+      "negative_example_shapes_ru": [
+        "План перескакивает от prep к actual eval без разрешения.",
+        "План использует один host-specific пример как universal orchestration rule.",
+        "План утверждает semantic quality без held-out/ablation/no-memorization evidence."
+      ],
+      "required_failure_labels": [
+        "FAIL_ORCHESTRATION_REGRESSION",
+        "FAIL_DETERMINISTIC_BASELINE_ONLY",
+        "FAIL_HOST_SPECIFIC_FIXTURE_RULE",
+        "FAIL_EVIDENCE_SCOPE_OVERCLAIM",
+        "FAIL_SOURCE_DISJOINT_SPLIT",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ]
+    },
+    {
+      "unit_id": "QUALITY01-SKILL-SELECTION-RU-001",
+      "layer": "SkillSelection",
+      "future_input_contract": [
+        "pair_id",
+        "scenario_id",
+        "host",
+        "method",
+        "candidate_skills_ref",
+        "baseline_skill_selection_ref",
+        "adaptive_skill_selection_ref",
+        "source_disjoint_check_ref"
+      ],
+      "prompt_template_ru": "Проверь, выбраны ли skills/tools по смыслу задачи, ограничениям, evidence type и permission scope. Нельзя засчитывать выбор по keyword-only, candidate order, filename, host label или static mapping unless explicitly labelled as baseline/internal diagnostic.",
+      "positive_example_shapes_ru": [
+        "Выбран skill, который соответствует requested artifact type и forbidden actions.",
+        "Нерелевантные skills отклонены с понятной причиной.",
+        "Selection сохраняет universal/common semantics отдельно от user-local/private context."
+      ],
+      "negative_example_shapes_ru": [
+        "Skill выбран только потому, что совпало слово в названии.",
+        "Private/project-specific detail перенесён в common skill rule.",
+        "Selection claims learned semantic routing, хотя evidence только dictionary/regex/static mapping."
+      ],
+      "required_failure_labels": [
+        "FAIL_SKILL_SELECTION_REGRESSION",
+        "FAIL_KEYWORD_ONLY_SELECTION",
+        "FAIL_CANDIDATE_ORDER_BIAS",
+        "FAIL_PRIVATE_OR_STACK_SPECIFIC_COMMON_LEAK",
+        "FAIL_ABLATION_EXPLAINS_GAIN",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ]
+    },
+    {
+      "unit_id": "QUALITY01-FINAL-USEFULNESS-RU-001",
+      "layer": "FinalUsefulness",
+      "future_input_contract": [
+        "pair_id",
+        "scenario_id",
+        "host",
+        "method",
+        "baseline_final_answer_ref",
+        "adaptive_final_answer_ref",
+        "rubric_score_refs",
+        "reviewer_notes_ref"
+      ],
+      "prompt_template_ru": "Проверь финальный ответ для пользователя: полезность, точность, честные границы, ясный next step, отсутствие claims вне evidence. Не засчитывай token reduction как качество и не засчитывай eval-only evidence как learnability/readiness.",
+      "positive_example_shapes_ru": [
+        "Ответ решает пользовательскую задачу в разрешённом scope.",
+        "Ответ явно говорит, что доказывает пакет и что не доказывает.",
+        "Ответ даёт следующий bounded work order для каждого открытого gap."
+      ],
+      "negative_example_shapes_ru": [
+        "Ответ заявляет quality improvement без scored outputs.",
+        "Ответ заявляет learnability из DPO row или checkpoint existence.",
+        "Ответ скрывает ограничение 0/9 complete token pairs."
+      ],
+      "required_failure_labels": [
+        "FAIL_FINAL_USEFULNESS_REGRESSION",
+        "FAIL_QUALITY_CLAIM_WITHOUT_SCORE",
+        "FAIL_TOKEN_DELTA_AS_QUALITY",
+        "FAIL_LEARNABILITY_OVERCLAIM",
+        "FAIL_READINESS_OVERCLAIM",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ]
+    }
+  ],
+  "scoring_execution_locked": true,
+  "next_bounded_work_order": "QUALITY-02-SCORER-EVAL-ONLY-RUNNER-PREP-01",
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "token_savings_claim_allowed": false,
+    "quality_improvement_claimed": false,
+    "quality_improvement_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "full_host_readiness_claimed": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  }
+}

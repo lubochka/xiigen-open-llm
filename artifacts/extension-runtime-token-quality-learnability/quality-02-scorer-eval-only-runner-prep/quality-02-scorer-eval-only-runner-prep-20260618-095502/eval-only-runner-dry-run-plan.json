@@ -1,0 +1,93 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner_dry_run_plan.v1",
+  "phase_id": "QUALITY-02-SCORER-EVAL-ONLY-RUNNER-PREP-NO-EVAL-EXECUTION",
+  "run_id": "quality-02-scorer-eval-only-runner-prep-20260618-095502",
+  "generated_at_local": "2026-06-18T09:55:02+03:00",
+  "status": "DRY_RUN_PLAN_PREPARED_NO_EVAL_EXECUTION",
+  "runner_execution_now_allowed": false,
+  "host_runtime_now_allowed": false,
+  "model_calls_now_allowed": false,
+  "training_now_allowed": false,
+  "source_code_edit_now_allowed": false,
+  "dry_run_goal": "Make the future eval-only runner concrete enough to parse QUALITY-01 inputs, classify routes, and emit score-output skeleton rows without running eval.",
+  "input_artifacts": [
+    "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/eval-prompt-pack.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/eval-prompt-pack.jsonl",
+    "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/quality-rubric-ru.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/future-runner-input-contract.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/quality-claim-firewall.json"
+  ],
+  "dry_run_steps": [
+    {
+      "step_id": "DRY-01-LOAD-QUALITY01-PACK",
+      "action": "Parse eval-prompt-pack.json/jsonl and confirm 12 scenario rows.",
+      "allowed_now": true,
+      "forbidden_now": "Do not call host, model, scorer, external AI, training, checkpoint, or locator."
+    },
+    {
+      "step_id": "DRY-02-LOAD-RUBRIC",
+      "action": "Parse quality-rubric-ru.json and confirm four layers with 0..4 anchors.",
+      "allowed_now": true,
+      "forbidden_now": "Do not assign scores."
+    },
+    {
+      "step_id": "DRY-03-LOAD-INPUT-CONTRACT",
+      "action": "Parse future-runner-input-contract.json and verify gates G1..G8.",
+      "allowed_now": true,
+      "forbidden_now": "Do not treat runner_may_start_now=false as runnable."
+    },
+    {
+      "step_id": "DRY-04-ROUTE-CLASSIFY",
+      "action": "Classify 7 USER_ADAPTIVE_EVAL_ONLY scenarios as runnable later only and 5 EVIDENCE_ONLY scenarios as non-runnable.",
+      "allowed_now": true,
+      "forbidden_now": "Do not include evidence-only rows in eval/training inputs."
+    },
+    {
+      "step_id": "DRY-05-EMIT-SKELETON",
+      "action": "Emit score-output schema examples with NOT_SCORED_DRY_RUN_ONLY or NON_RUNNABLE_EVIDENCE_ONLY statuses.",
+      "allowed_now": true,
+      "forbidden_now": "Do not write PASS/FAIL score results."
+    },
+    {
+      "step_id": "DRY-06-NO-OVERCLAIM-CHECK",
+      "action": "Verify all claim locks remain false and forbidden readiness words are not used as truthy claims.",
+      "allowed_now": true,
+      "forbidden_now": "Do not set quality_improvement_claimed, semantic_readiness_claimed, token_savings_claimed, learnability_claimed, common_readiness_claimed, strict_quality03_ready, training_ready_claimed, target_promotion_claimed, locator_update_claimed, or final_readiness_claimed to true."
+    }
+  ],
+  "future_runner_sequence_after_separate_authority": [
+    "Require exact current approval for local/private eval-only scoring scope.",
+    "Load QUALITY-01 pack and rubric.",
+    "Load approved baseline/adaptive output refs for the same pair_id.",
+    "Reject rows without source/privacy/pairing gates.",
+    "Score PromptToTask, OrchestrationReasoning, SkillSelection and final usefulness separately.",
+    "Write reviewer notes and failure labels for every row.",
+    "Keep semantic_quality_claim_allowed=false unless later gates explicitly pass.",
+    "Write comparison/regression guard reports only after all scored rows are valid."
+  ],
+  "dry_run_expected_counts": {
+    "scenario_total": 12,
+    "user_adaptive_eval_only_scenarios": 7,
+    "user_adaptive_eval_only_pair_rows": 21,
+    "evidence_only_scenarios": 5,
+    "evidence_only_pair_rows": 33,
+    "common_blocked_scenarios": 12,
+    "common_blocked_pair_rows": 54
+  },
+  "output_artifacts_from_this_phase": [
+    "scorer-contract.json",
+    "scorer-contract.md",
+    "eval-only-runner-dry-run-plan.json",
+    "eval-only-runner-dry-run-plan.md",
+    "score-output-schema.json",
+    "score-output-schema.jsonl",
+    "score-output-schema.md",
+    "quality02-preflight-validation.json",
+    "quality02-preflight-validation.md",
+    "no-overclaim-firewall-quality02.json",
+    "no-overclaim-firewall-quality02.md",
+    "next-phase-selection.json",
+    "next-phase-selection.md",
+    "summary-ru.md"
+  ]
+}

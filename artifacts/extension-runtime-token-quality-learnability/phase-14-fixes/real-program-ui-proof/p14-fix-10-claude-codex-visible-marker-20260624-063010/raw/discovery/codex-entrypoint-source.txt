@@ -1,0 +1,544 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
+export const XIIGEN_REQUEST_FIELDS = Object.freeze([
+  'HostName',
+  'HostType',
+  'Method',
+  'UserPromptOrTaskText',
+  'HostFacts',
+  'DebugEnabled',
+  'RequestedSkills',
+  'AvailableSkills',
+  'CheckSetInputs',
+  'Provenance',
+  'CorrelationId',
+  'TargetLocator'
+]);
+
+export const DEFAULT_CORE_ROOT = 'C:/Projects/llm_mvp_core';
+export const DEFAULT_CORE_ENDPOINT = `${DEFAULT_CORE_ROOT}/tools/xiigen-extension-core-api.ps1`;
+export const DEBUG_SETTING_NAME = 'xiigenSmartSkills.debug';
+export const DEFAULT_DEBUG_ENABLED = false;
+
+function asArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function asObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+}
+
+function asStringRecord(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, recordValue]) => [
+      key,
+      typeof recordValue === 'string' ? recordValue : JSON.stringify(recordValue)
+    ])
+  );
+}
+
+function parseJsonOrDefault(value, fallback) {
+  if (value === undefined || value === null || value === '') {
+    return fallback;
+  }
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
+function parseJsonArrayOrDefault(value, fallback) {
+  if (value === undefined || value === null || value === '') {
+    return fallback;
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed;
+    }
+  } catch {
+    // Windows PowerShell native invocation can strip JSON string quotes from
+    // array arguments before Node sees argv. Fall through to the safe
+    // bracket-list parser for skill ids only.
+  }
+
+  if (typeof value !== 'string') {
+    return fallback;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed.startsWith('[') || !trimmed.endsWith(']')) {
+    return fallback;
+  }
+
+  const body = trimmed.slice(1, -1).trim();
+  if (!body) {
+    return [];
+  }
+
+  const items = body.split(',').map((item) => item.trim()).filter(Boolean);
+  const safeSkillId = /^[A-Za-z0-9._:-]+$/;
+  return items.length > 0 && items.every((item) => safeSkillId.test(item))
+    ? items
+    : fallback;
+}
+
+function envFlagEnabled(name) {
+  const value = process.env[name];
+  return typeof value === 'string' && /^(1|true|yes|on)$/iu.test(value.trim());
+}
+
+function createCorrelationId() {
+  const timePart = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).slice(2, 10);
+  return `codex-${timePart}-${randomPart}`;
+}
+
+export function createXiigenExtensionRequest(options = {}) {
+  const method = options.method ?? 'prompt-to-task';
+  const targetLocator = createTargetLocator(options);
+  const hostFacts = {
+    ...asObject(options.hostFacts),
+    target_locator_present: targetLocator ? 'true' : 'false',
+    target_locator_candidate_id: targetLocator?.LocatorCandidateId ?? '',
+    target_candidate_id: targetLocator?.TargetCandidateId ?? '',
+    target_locator_mode: targetLocator?.LocatorMode ?? ''
+  };
+  const checkSetInputs = asStringRecord(options.checkSetInputs);
+  if (targetLocator || options.targetLocatorRequired || envFlagEnabled('XIIGEN_TARGET_LOCATOR_REQUIRED')) {
+    checkSetInputs.qsg19_target_locator_required = 'true';
+  }
+  const provenance = {
+    host: 'codex',
+    entrypoint: 'xiigen.smartSkills.select',
+    package: 'codex-xiigen-smart-skills',
+    target_locator_contract: 'TargetLocator request field passed to llm_mvp_core',
+    ...asObject(options.provenance)
+  };
+
+  return {
+    HostName: 'Codex',
+    HostType: 'codex',
+    Method: method,
+    UserPromptOrTaskText: options.userPromptOrTaskText ?? '',
+    HostFacts: hostFacts,
+    DebugEnabled: Boolean(options.debugEnabled),
+    RequestedSkills: asArray(options.requestedSkills),
+    AvailableSkills: asArray(options.availableSkills),
+    CheckSetInputs: checkSetInputs,
+    Provenance: provenance,
+    CorrelationId: options.correlationId ?? createCorrelationId(),
+    TargetLocator: targetLocator
+  };
+}
+
+export function createCoreInvocationArgs(options = {}) {
+  const endpoint = options.coreEndpoint ?? DEFAULT_CORE_ENDPOINT;
+  const args = [
+    '-NoProfile',
+    '-ExecutionPolicy',
+    'Bypass',
+    '-File',
+    endpoint,
+    '-RequestPath',
+    options.requestPath,
+    '-ResponsePath',
+    options.responsePath,
+    '-TracePath',
+    options.tracePath
+  ];
+
+  if (options.coreRoot) {
+    args.push('-CoreRoot', options.coreRoot);
+  }
+
+  return { executable: 'powershell.exe', endpoint, args };
+}
+
+function ensureParentDirectory(filePath) {
+  const parent = path.dirname(filePath);
+  if (parent && parent !== '.' && !fs.existsSync(parent)) {
+    fs.mkdirSync(parent, { recursive: true });
+  }
+}
+
+function writeJsonFile(filePath, value) {
+  ensureParentDirectory(filePath);
+  fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+function readJsonFileIfPresent(filePath) {
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
+
+  return JSON.parse(fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, ''));
+}
+
+function readJsonFileRequired(filePath) {
+  return JSON.parse(fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, ''));
+}
+
+function resolveFromBase(candidatePath, basePath) {
+  if (!candidatePath) {
+    return candidatePath;
+  }
+
+  return path.isAbsolute(candidatePath)
+    ? path.normalize(candidatePath)
+    : path.resolve(basePath, candidatePath);
+}
+
+function resolveCoreEndpoint(options = {}) {
+  const coreRoot = resolveFromBase(options.coreRoot ?? DEFAULT_CORE_ROOT, process.cwd());
+  if (options.coreApiScript) {
+    return resolveFromBase(options.coreApiScript, coreRoot);
+  }
+
+  return path.join(coreRoot, 'tools', 'xiigen-extension-core-api.ps1');
+}
+
+function inferAssetRoot(refs = {}) {
+  const first = Object.values(refs).find((value) => typeof value === 'string' && value.length > 0);
+  if (!first) {
+    return '';
+  }
+
+  const normalized = first.replace(/\\/g, '/');
+  const marker = normalized.search(/\/(prompt-to-task|orchestration-reasoning|skill-selection)\//u);
+  return marker > 0 ? normalized.slice(0, marker) : '';
+}
+
+function stringifyLocatorRefValue(value) {
+  if (value === undefined || value === null) {
+    return '';
+  }
+
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  try {
+    const json = JSON.stringify(value);
+    return json === undefined ? '' : json;
+  } catch {
+    return typeof value === 'object' ? '[unserializable_locator_ref]' : String(value);
+  }
+}
+
+function locatorRefArrayKey(value, index) {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    const machineId = value.machine_id ?? value.machineId ?? value.MachineId;
+    if (machineId && String(machineId).trim().length > 0) {
+      return `proposed_locator_refs.${String(machineId).trim()}`;
+    }
+  }
+
+  return `proposed_locator_refs.${index + 1}`;
+}
+
+function normalizeLocatorRefs(refs) {
+  if (Array.isArray(refs)) {
+    return Object.fromEntries(refs.map((value, index) => [
+      locatorRefArrayKey(value, index),
+      stringifyLocatorRefValue(value)
+    ]));
+  }
+
+  if (refs && typeof refs === 'object') {
+    return Object.fromEntries(Object.entries(refs).map(([key, value]) => [
+      key,
+      stringifyLocatorRefValue(value)
+    ]));
+  }
+
+  return {};
+}
+
+function createTargetLocator(options = {}) {
+  const jsonText = options.targetLocatorJson ?? process.env.XIIGEN_TARGET_LOCATOR_JSON ?? '';
+  const pathText = options.targetLocatorPath ?? process.env.XIIGEN_TARGET_LOCATOR_PATH ?? '';
+  const raw = jsonText
+    ? parseJsonOrDefault(jsonText, null)
+    : pathText
+      ? readJsonFileRequired(resolveFromBase(pathText, options.coreRoot ?? DEFAULT_CORE_ROOT))
+      : null;
+  const locatorRefs = raw?.proposed_locator_refs ?? raw?.proposedLocatorRefs ?? raw?.LocatorRefs ?? raw?.locatorRefs ?? {};
+  const targetRefs = raw?.proposed_target_refs ?? raw?.proposedTargetRefs ?? {};
+  const rollbackRefs = raw?.rollback_refs ?? raw?.rollbackRefs ?? {};
+  const userRoot = options.userAdaptiveAssetRoot
+    ?? process.env.XIIGEN_USER_ADAPTIVE_ASSET_ROOT
+    ?? raw?.activated_asset_root
+    ?? raw?.UserAdaptiveAssetRoot
+    ?? raw?.userAdaptiveAssetRoot
+    ?? inferAssetRoot(targetRefs);
+  const rollbackRoot = options.rollbackAssetRoot
+    ?? process.env.XIIGEN_ROLLBACK_ASSET_ROOT
+    ?? raw?.RollbackAssetRoot
+    ?? raw?.rollbackAssetRoot
+    ?? inferAssetRoot(rollbackRefs);
+  const locatorId = options.locatorCandidateId
+    ?? process.env.XIIGEN_LOCATOR_CANDIDATE_ID
+    ?? raw?.locator_candidate_id
+    ?? raw?.LocatorCandidateId
+    ?? raw?.locatorCandidateId;
+  const targetId = options.targetCandidateId
+    ?? process.env.XIIGEN_TARGET_CANDIDATE_ID
+    ?? raw?.target_candidate_id
+    ?? raw?.TargetCandidateId
+    ?? raw?.targetCandidateId;
+  const rollbackId = options.rollbackCandidateId
+    ?? process.env.XIIGEN_ROLLBACK_CANDIDATE_ID
+    ?? raw?.rollback_candidate_id
+    ?? raw?.RollbackCandidateId
+    ?? raw?.rollbackCandidateId;
+
+  if (!raw && !userRoot && !rollbackRoot && !locatorId && !targetId && !rollbackId) {
+    return null;
+  }
+
+  return {
+    LocatorCandidateId: locatorId ?? 'codex-host-target-locator',
+    TargetCandidateId: targetId ?? 'codex-host-target',
+    RollbackCandidateId: rollbackId ?? 'codex-host-rollback',
+    UserAdaptiveAssetRoot: userRoot ? resolveFromBase(userRoot, options.coreRoot ?? DEFAULT_CORE_ROOT) : '',
+    RollbackAssetRoot: rollbackRoot ? resolveFromBase(rollbackRoot, options.coreRoot ?? DEFAULT_CORE_ROOT) : '',
+    LocatorMode: options.locatorMode ?? process.env.XIIGEN_LOCATOR_MODE ?? raw?.LocatorMode ?? raw?.locatorMode ?? 'target',
+    LocatorRefs: normalizeLocatorRefs(locatorRefs)
+  };
+}
+
+function redactedTargetLocator(targetLocator) {
+  if (!targetLocator) {
+    return null;
+  }
+
+  return {
+    present: true,
+    locatorCandidateId: targetLocator.LocatorCandidateId,
+    targetCandidateId: targetLocator.TargetCandidateId,
+    rollbackCandidateId: targetLocator.RollbackCandidateId,
+    locatorMode: targetLocator.LocatorMode,
+    userAdaptiveAssetRoot: path.basename(targetLocator.UserAdaptiveAssetRoot || ''),
+    rollbackAssetRoot: path.basename(targetLocator.RollbackAssetRoot || ''),
+    locatorRefKeys: Object.keys(targetLocator.LocatorRefs || {}).sort()
+  };
+}
+
+export function invokeXiigenCore(options = {}) {
+  const extensionRoot = resolveFromBase(options.extensionRoot ?? process.cwd(), process.cwd());
+  const requestPath = resolveFromBase(options.requestPath ?? 'xiigen-codex-request.json', extensionRoot);
+  const responsePath = resolveFromBase(options.responsePath ?? 'xiigen-codex-response.json', extensionRoot);
+  const tracePath = resolveFromBase(options.tracePath ?? 'xiigen-codex-trace.json', extensionRoot);
+  const coreRoot = resolveFromBase(options.coreRoot ?? DEFAULT_CORE_ROOT, process.cwd());
+  const coreEndpoint = resolveCoreEndpoint({ ...options, coreRoot });
+  const request = createXiigenExtensionRequest(options);
+
+  writeJsonFile(requestPath, request);
+
+  const invocation = createCoreInvocationArgs({
+    coreEndpoint,
+    coreRoot,
+    requestPath,
+    responsePath,
+    tracePath
+  });
+  const processResult = spawnSync(invocation.executable, invocation.args, {
+    encoding: 'utf8',
+    windowsHide: true
+  });
+  const response = readJsonFileIfPresent(responsePath);
+
+  return {
+    invocation,
+    requestPath,
+    responsePath,
+    tracePath,
+    request,
+    response,
+    exitCode: processResult.status,
+    signal: processResult.signal,
+    stdout: processResult.stdout ?? '',
+    stderr: processResult.stderr ?? '',
+    targetLocator: redactedTargetLocator(request.TargetLocator),
+    runtimeSmokeClaimed: false,
+    semanticQualityClaimed: Boolean(response?.SemanticQualityClaimed ?? response?.semantic_quality_claimed ?? false),
+    hostSemanticRanking: false,
+    modelTrainingInHost: false,
+    corpusParsingInHost: false,
+    dpoGenerationInHost: false,
+    learnedModelMutationInHost: false,
+    externalAiUsed: false
+  };
+}
+
+export function createRedactedDebugPayload(options = {}) {
+  return {
+    method: options.method ?? 'prompt-to-task',
+    host: 'codex',
+    payload: 'redacted'
+  };
+}
+
+export function createDebugTraceDisplay(options = {}) {
+  if (!Boolean(options.debugEnabled)) {
+    return '';
+  }
+
+  const method = options.method ?? 'prompt-to-task';
+  return `xiigen ${method} :\ninput: <redacted>\noutput: <redacted>`;
+}
+
+function responseValue(response, pascalName, camelName, fallback) {
+  if (!response || typeof response !== 'object') {
+    return fallback;
+  }
+
+  return response[pascalName] ?? response[camelName] ?? fallback;
+}
+
+export function createVisibleAnswerDisplay(options = {}) {
+  const method = options.method ?? options.result?.request?.Method ?? 'prompt-to-task';
+  const response = options.response ?? options.result?.response ?? null;
+  const exitCode = options.exitCode ?? options.result?.exitCode ?? null;
+  const stderr = options.stderr ?? options.result?.stderr ?? '';
+  const success = Boolean(responseValue(response, 'Success', 'success', false));
+  const status = responseValue(response, 'Status', 'status', exitCode === 0 ? 'no_response_file' : 'core_api_failed');
+  const chatDisplayText = responseValue(response, 'ChatDisplayText', 'chatDisplayText', '');
+  const debugMarker = `xiigen ${method} :`;
+  const markerIndex = typeof chatDisplayText === 'string' ? chatDisplayText.indexOf(debugMarker) : -1;
+  const visibleCoreText = markerIndex >= 0
+    ? chatDisplayText.slice(0, markerIndex).trim()
+    : String(chatDisplayText || '').trim();
+  const debugDisplay = createDebugTraceDisplay({
+    debugEnabled: options.debugEnabled ?? responseValue(response, 'DebugEnabled', 'debugEnabled', false),
+    method
+  });
+  const lines = [];
+
+  if (success) {
+    lines.push(visibleCoreText || `XIIGen ${method} completed with status ${status}.`);
+  } else {
+    const errorText = stderr ? ` ${stderr.trim()}` : '';
+    lines.push(`XIIGen Codex adapter error (${status}).${errorText}`.trim());
+  }
+
+  if (debugDisplay) {
+    lines.push(debugDisplay);
+  }
+
+  return lines.join('\n');
+}
+
+export const xiigenCodexEntrypoint = Object.freeze({
+  hostName: 'Codex',
+  hostType: 'codex',
+  entrypointId: 'xiigen.smartSkills.select',
+  sourceStatus: 'current_request_wiring',
+  implementationSource: 'src/codex-entrypoint.js',
+  sourceInvokesCoreEndpoint: true,
+  powershellEntrypointRole: 'legacy_launcher_only',
+  powershellEntrypointAcceptedAsImplementation: false,
+  requestContract: 'XiigenExtensionRequest',
+  responseContract: 'XiigenExtensionResponse',
+  requestFields: XIIGEN_REQUEST_FIELDS,
+  coreEndpoint: DEFAULT_CORE_ENDPOINT,
+  endpointParameters: Object.freeze(['-RequestPath', '-ResponsePath', '-TracePath']),
+  optionalEndpointParameters: Object.freeze(['-CoreRoot']),
+  debugSettingName: DEBUG_SETTING_NAME,
+  defaultDebugEnabled: DEFAULT_DEBUG_ENABLED,
+  debugDisplayShape: 'xiigen <method> :\\ninput: <redacted>\\noutput: <redacted>',
+  runtimeSmokeClaimed: false,
+  semanticQualityClaimed: false,
+  semanticRankingInHost: false,
+  modelTrainingInHost: false,
+  corpusParsingInHost: false,
+  dpoGenerationInHost: false,
+  learnedModelMutationInHost: false,
+  deterministicSkillSelectionAuthorityInHost: false
+});
+
+export function describeXiigenCodexEntrypoint() {
+  return { ...xiigenCodexEntrypoint };
+}
+
+function parseCliArgs(argv) {
+  const parsed = {};
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (!token.startsWith('--')) {
+      continue;
+    }
+
+    const key = token.slice(2);
+    const next = argv[index + 1];
+    if (next === undefined || next.startsWith('--')) {
+      parsed[key] = true;
+      continue;
+    }
+
+    parsed[key] = next;
+    index += 1;
+  }
+
+  return parsed;
+}
+
+function optionsFromCliArgs(argv) {
+  const parsed = parseCliArgs(argv);
+  return {
+    method: parsed.method,
+    userPromptOrTaskText: parsed['user-prompt-or-task-text'] ?? '',
+    hostFacts: parseJsonOrDefault(parsed['host-facts-json'], {}),
+    debugEnabled: Boolean(parsed['debug-enabled']),
+    requestedSkills: parseJsonArrayOrDefault(parsed['requested-skills-json'], []),
+    availableSkills: parseJsonArrayOrDefault(parsed['available-skills-json'], []),
+    checkSetInputs: parseJsonOrDefault(parsed['check-set-inputs-json'], {}),
+    provenance: parseJsonOrDefault(parsed['provenance-json'], {}),
+    correlationId: parsed['correlation-id'],
+    coreRoot: parsed['core-root'],
+    coreApiScript: parsed['core-api-script'],
+    requestPath: parsed['request-path'],
+    responsePath: parsed['response-path'],
+    tracePath: parsed['trace-path'],
+    extensionRoot: parsed['extension-root'],
+    targetLocatorPath: parsed['target-locator-path'],
+    targetLocatorJson: parsed['target-locator-json'],
+    userAdaptiveAssetRoot: parsed['user-adaptive-asset-root'],
+    rollbackAssetRoot: parsed['rollback-asset-root'],
+    locatorCandidateId: parsed['locator-candidate-id'],
+    targetCandidateId: parsed['target-candidate-id'],
+    rollbackCandidateId: parsed['rollback-candidate-id'],
+    locatorMode: parsed['locator-mode'],
+    targetLocatorRequired: Boolean(parsed['target-locator-required'])
+  };
+}
+
+function runCli() {
+  const result = invokeXiigenCore(optionsFromCliArgs(process.argv.slice(2)));
+  if (result.stderr) {
+    process.stderr.write(result.stderr);
+  }
+
+  if (result.stdout) {
+    process.stdout.write(result.stdout);
+  }
+
+  process.exitCode = typeof result.exitCode === 'number' ? result.exitCode : 1;
+}
+
+const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : '';
+if (invokedPath && path.resolve(fileURLToPath(import.meta.url)).toLowerCase() === invokedPath.toLowerCase()) {
+  runCli();
+}

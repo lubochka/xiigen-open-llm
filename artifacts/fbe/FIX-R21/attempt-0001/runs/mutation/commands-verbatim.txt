@@ -1,0 +1,64 @@
+Команды шага 13 записи приёмки (каталог runs/mutation). Дописано 10.11.2026 при ремонте улик слайса.
+
+ДОСЛОВНОСТЬ. Эти команды ДОСЛОВНЫ: они взяты из сохранённого скрипта
+artifacts/fbe/FIX-R21/attempt-0001/run-mutation.sh (последняя запись 06:58:48,264 местного
+времени), который и был выполнен: журнал mutation-journal.txt начат в
+started_utc=2026-11-10T04:58:59Z (= 06:58:59 местного), через 11 секунд после записи скрипта,
+и содержит ровно те ключи, которые пишет скрипт, в том же порядке, до finished_utc=
+2026-11-10T05:01:07Z (= 07:01:07 местного).
+НЕ записана дословно только команда запуска самого скрипта: её текст не восстановим; по
+журналу известно лишь, что скрипт отработал целиком и ни одна из его ветвей «ABORT» не
+сработала (кодов 90, 91, 92 не было: журнал заполнен до конца).
+
+Подстановки скрипта, раскрытые дословно по его тексту:
+  REPO=/c/Projects/llm_mvp_core
+  EV=$REPO/artifacts/fbe/FIX-R21/attempt-0001
+  RUN=$EV/runs/mutation
+  SCRATCH=/c/Users/lubao/AppData/Local/Temp/claude/b44bbae46294784a/8793fc8d-1332-4588-8161-7473318bae55/scratchpad/fixr21
+  PROD=12.SemanticCompiler/Prediction/MethodKnn.cs
+  ORIGINAL_SHA=2bb6349423309ad3845e0e3131f120d7724f1e5e16f782c6968067744525a69a
+  LOG=$RUN/mutation-journal.txt
+
+Команды в порядке выполнения, с кодом возврата каждой. Коды взяты из mutation-journal.txt;
+где журнал код не записывал, так и сказано, а приведён записанный результат.
+
+ 1. mkdir -p "$RUN" "$SCRATCH"
+    — код не записывался; каталоги существуют.
+ 2. cd "$REPO" || exit 90
+    — успех (иначе журнал остался бы пустым, а он заполнен).
+ 3. SHA_BEFORE=$(sha256sum "$PROD" | cut -d' ' -f1)
+    — sha_before_mutation=2bb6349423309ad3845e0e3131f120d7724f1e5e16f782c6968067744525a69a;
+      sha_before_matches_fingerprint=yes; код не записывался.
+ 4. cp "$PROD" "$SCRATCH/MethodKnn.original.cs"
+    — external_copy_sha=2bb6349423309ad3845e0e3131f120d7724f1e5e16f782c6968067744525a69a; код не записывался.
+ 5. HITS=$(grep -c 'ThenBy(group => group.Min(item => item.Distance))' "$PROD")
+    — distance_rule_line_occurrences=1.
+ 6. LINE_NO=$(grep -n 'ThenBy(group => group.Min(item => item.Distance))' "$PROD" | cut -d: -f1)
+    — distance_rule_line_number=358.
+ 7. grep -v 'ThenBy(group => group.Min(item => item.Distance))' "$SCRATCH/MethodKnn.original.cs" > "$PROD"
+    — мутация продукта; sha_after_mutation=16248bfb8670c3355f89798df9d939cd60ca2ca421e80db4823dc511af60d6e0.
+ 8. grep -v 'ThenBy(group => group.Min(item => item.Distance))' "$SCRATCH/MethodKnn.original.cs" > "$SCRATCH/MethodKnn.expected-mutant.cs"
+    — sha_independently_built_expected_mutant=16248bfb8670c3355f89798df9d939cd60ca2ca421e80db4823dc511af60d6e0;
+      mutation_was_exactly_the_declared_edit=yes.
+ 9. dotnet build 12.SemanticCompiler/SemanticCompiler.csproj -c Release > "$RUN/m1-build-product.log" 2>&1
+    — код 0 (mutant_build_product_exit=0).
+10. dotnet build Tests/LlmFromScratch.Tests.csproj -c Release > "$RUN/m2-build-tests.log" 2>&1
+    — код 0 (mutant_build_tests_exit=0).
+11. dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build \
+      --filter "FullyQualifiedName~MethodKnnTieReachedThroughFacadeTests" \
+      --results-directory "$RUN" --logger "trx;LogFileName=mutant-new-tests.trx" \
+      > "$RUN/m3-new-tests-under-mutation.log" 2>&1
+    — код 1 (mutant_new_tests_exit=1); итог журнала:
+      Failed!  - Failed:     1, Passed:     2, Skipped:     0, Total:     3, Duration: 752 ms - LlmFromScratch.Tests.dll (net9.0)
+12. dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build \
+      --filter "FullyQualifiedName~MethodKnnTieIsResolvedByDistanceTests" \
+      --results-directory "$RUN" --logger "trx;LogFileName=mutant-existing-tests.trx" \
+      > "$RUN/m4-existing-tests-under-mutation.log" 2>&1
+    — код 1 (mutant_existing_tests_exit=1); итог журнала:
+      Failed!  - Failed:     3, Passed:     2, Skipped:     0, Total:     5, Duration: 940 ms - LlmFromScratch.Tests.dll (net9.0)
+13. cp "$SCRATCH/MethodKnn.original.cs" "$PROD"
+    — восстановление; sha_after_restore=2bb6349423309ad3845e0e3131f120d7724f1e5e16f782c6968067744525a69a;
+      restore_proven_by_fingerprint_match=yes.
+
+Записи «echo ... >> "$LOG"» и «date -u» между командами — служебные строки самого журнала,
+они воспроизведены в run-mutation.sh и здесь не дублируются.

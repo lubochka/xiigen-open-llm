@@ -1,0 +1,24 @@
+# RP14 — first-hand source routes, provenance and code ownership
+
+## Repo/refs
+- **P**: `lubochka/xiigen-planning@llm_plan3`; **D**: `llm mvp/design to code session`; **R**: D/replanning. P uses `original task.md`, `task prompt.md`, `task prompt.txt`, `goal of the round.md`, `Алгоритм создания ДПО.md`, `Исполнение кода без внешней модели.md`, original S00–S10 and task sources. Check actual path existence; do not assume a title is content.
+- **W**: D/`09.09.26WorkLeft-*` especially 00, 01, 02, 03, COVERAGE, MECH, RESEARCH, PROMPTS, TASK-PROMPTS-TRAINING and `09.09.26WorkLeft-RAG-MASTER-INDEX.md` with NDJSON/MD primary links. A RAG hit is a locator only.
+- **G**: P/`llm mvp/dpo legal build`, `active-codex-execution-01-authority-requirements-ledger.md`, `-04-dpo-legal-model-policy.md`, `-05-dpo-data-training-measurement-guide.md`, `-06-ilearningdynamicgraph-architecture-brief.md`, `LeftToWorkDPO*`.
+- **F**: P/`llm mvp/llm dynamic flow`, `DECISIONS-LOCKED.md`, `ARBITER-KNN-AUTHORITY-AMENDMENT-v1.md`, `DYNAMIC-FLOW-ARCHITECTURE-PLAN-v1_0-DRAFT.md`, `DYNAMIC-FLOW-HIGH-LEVEL-DESIGN-AMENDMENT-v1.md`, E51-* proof and current scenarios.
+- **V**: P/`llm mvp/visual studio & visual studio code continue` and `LeftToWork-CONTINUE-*`, current DTC/IDE integration sources. Not necessarily in D.
+- **R**: `previous rounds thinking results.md` (historical discussion, not acceptance), `PARALLEL-R01-R03-JOIN.md`, `PARALLEL-R01-R25-CONTRACT.md`, `R01-R25-TO-CODE-SLICES-STRATEGY.md`, `results/R01..R25` (all own carriers), R04/R05/R06/R07/R08/R13/R16/R17/R18/R21/R22/R23/R24/R25 live docs, and published RP01–RP11 packages.
+- **K**: `lubochka/llm_mvp_core@codex/dpo-implementation` current AGENTS.md/CLAUDE.md, `docs/skills`, `01.Tokenizer/BpeTokenizer.cs`, `05.Embeddings/EmbeddingModel.cs`, `06.VectorSearch/IVectorIndex.cs`, `BruteForceIndex.cs`, `HnswIndex.cs`, `10.LoRA`, `11.DPO/DpoTrainer.cs`, `18.CapabilityTraining/LlmIngredientLogicalUnits.cs`, `21.AgentInfrastructure/Logical/KnnLogicalUnit.cs`, `23.SemanticCompilerAdapter/TrainingVectorBuilder.cs`; discover actual feedback/Unit/Flow/Orchestrator/Graph consumers with code search and full-file reads.
+
+## Evidence observed during pack design versus still unverified
+Current P/F/`DECISIONS-LOCKED.md` includes D-01 OperationResult, D-03 semantic compression, D-05 project LoRA, D-06 replay, D-07 StackDetector before normalization, D-08 stratification, D-10 BM25+kNN, D-11 TensorCore, D-14 approval/idle/promotion, D-15 arbiter final authority. P/F/`ARBITER-KNN-AUTHORITY-AMENDMENT` separates retrieval hints from mandatory final acceptance; negative and warning exemplars may be informative, never automatically viable actions. R/RP02 documents earlier current-K `KnnLogicalUnit` first-hit use and codebook mismatch; re-open **current** K blob before proposing a code change. R/RP05 describes existing user correction feedback which **does not** satisfy governed Chinese-dual-authored DPO policy automatically. This pack has not traced the complete current K runtime or executed it.
+
+## Mandatory visited record per task
+`source_id | repo@ref/HEAD | path/blob:lines | P/G/F/V/W/R/K | primary_or_RAG | read_depth (DISCOVERED/STRUCTURE_READ/CONTENT_READ/PRIMARY_TRACED/CODE_TRACED/OBSERVED) | original requirement | exact law meaning | caller→consumer | status/conflict | owner | next action`.
+
+A secondary excerpt, prior Rxx note or stale commit is never marked current primary code. A source that does not resolve is `NOT_FOUND/UNREAD` with reproduction, not a license to invent a law or method.
+
+## Exclusive write boundaries
+- **RP14 may own only a minimal, separately authorized domain-law transition record/compatibility registry/consumer rebinding seam not already implemented**, and only after live scope/design/review. A registry state is **not** the Student model, LoRA, vector codebook, graph learned state or DPO ledger.
+- RP02 remains owner of mapper, representation, kNN scoring/k/index internals and codebook migration. RP03/RP04 own Unit/Flow and Orch/Graph. RP05/RP10 own feedback/student state transaction and promotion. RP01 owns DPO. RP09 owns full examiner. RP11 owns causal credit. RP06/S08–S10 own DTC/IDE host/release. Cross-owner changes are section-bound proposal until owner approves.
+- One branch/file/state writer at a time; concurrent **readers/panel designers** permitted. Preserve all Rxx `results/Rxx/*` including earlier errors and repair attribution.
+- Model calls/weights/data/cost/native code changes have separate permission gates. GitHub planning publication is not external/provider/product release authority.

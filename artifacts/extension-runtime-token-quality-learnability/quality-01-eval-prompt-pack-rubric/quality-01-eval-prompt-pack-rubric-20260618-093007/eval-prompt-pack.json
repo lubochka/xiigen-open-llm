@@ -1,0 +1,1603 @@
+{
+  "schema": "xiigen.quality_01.eval_prompt_pack.v1",
+  "phase_id": "QUALITY-01-EVAL-PROMPT-PACK-AND-RUBRIC-PREP",
+  "run_id": "quality-01-eval-prompt-pack-rubric-20260618-093007",
+  "generated_at_local": "2026-06-18T09:40:17+03:00",
+  "status": "PROMPT_PACK_PREPARED_NO_EVAL_NO_QUALITY_CLAIM",
+  "input_refs": {
+    "plan": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "state": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "scenario_pack_json": "artifacts/extension-runtime-token-quality-learnability/scenario-pack-token-quality-v1.json",
+    "scenario_pack_jsonl": "artifacts/extension-runtime-token-quality-learnability/scenario-pack-token-quality-v1.jsonl",
+    "previous_policy_folder": "artifacts/extension-runtime-token-quality-learnability/quality-controls-user-adaptive-eval-policy/quality-controls-user-adaptive-eval-policy-20260618-090220",
+    "user_adaptive_scenario_matrix": "artifacts/extension-runtime-token-quality-learnability/quality-controls-user-adaptive-eval-policy/quality-controls-user-adaptive-eval-policy-20260618-090220/user-adaptive-scenario-matrix.json",
+    "user_adaptive_scenario_matrix_jsonl": "artifacts/extension-runtime-token-quality-learnability/quality-controls-user-adaptive-eval-policy/quality-controls-user-adaptive-eval-policy-20260618-090220/user-adaptive-scenario-matrix.jsonl",
+    "evidence_only_scenario_matrix": "artifacts/extension-runtime-token-quality-learnability/quality-controls-user-adaptive-eval-policy/quality-controls-user-adaptive-eval-policy-20260618-090220/evidence-only-scenario-matrix.json",
+    "evidence_only_scenario_matrix_jsonl": "artifacts/extension-runtime-token-quality-learnability/quality-controls-user-adaptive-eval-policy/quality-controls-user-adaptive-eval-policy-20260618-090220/evidence-only-scenario-matrix.jsonl",
+    "eval_only_gates": "artifacts/extension-runtime-token-quality-learnability/quality-controls-user-adaptive-eval-policy/quality-controls-user-adaptive-eval-policy-20260618-090220/eval-only-gates.json",
+    "previous_next_phase_selection": "artifacts/extension-runtime-token-quality-learnability/quality-controls-user-adaptive-eval-policy/quality-controls-user-adaptive-eval-policy-20260618-090220/next-plan-phase-selection.json"
+  },
+  "counts": {
+    "scenario_total": 12,
+    "user_adaptive_eval_only_scenarios": 7,
+    "user_adaptive_eval_only_pair_rows": 21,
+    "evidence_only_scenarios": 5,
+    "evidence_only_pair_rows": 33,
+    "common_blocked_scenarios": 12,
+    "common_blocked_pair_rows": 54
+  },
+  "route_counts": {
+    "USER_ADAPTIVE_EVAL_ONLY": {
+      "scenario_count": 7,
+      "pair_row_count": 21,
+      "scenario_ids": [
+        "TQ-001-prompt-task-documentation",
+        "TQ-002-prompt-task-interrupt",
+        "TQ-003-prompt-task-redaction",
+        "TQ-006-orchestration-learning-lifecycle",
+        "TQ-007-skill-architecture-audit",
+        "TQ-008-skill-debug-runtime",
+        "TQ-009-skill-learning-safety"
+      ]
+    },
+    "EVIDENCE_ONLY": {
+      "scenario_count": 5,
+      "pair_row_count": 33,
+      "scenario_ids": [
+        "TQ-004-orchestration-runtime-proof",
+        "TQ-005-orchestration-token-pairing",
+        "TQ-010-mixed-no-overclaim",
+        "TQ-011-mixed-shortcut-audit",
+        "TQ-012-mixed-final-readiness"
+      ]
+    },
+    "COMMON_BLOCKED": {
+      "scenario_count": 12,
+      "pair_row_count": 54,
+      "scenario_ids": [
+        "TQ-001-prompt-task-documentation",
+        "TQ-002-prompt-task-interrupt",
+        "TQ-003-prompt-task-redaction",
+        "TQ-004-orchestration-runtime-proof",
+        "TQ-005-orchestration-token-pairing",
+        "TQ-006-orchestration-learning-lifecycle",
+        "TQ-007-skill-architecture-audit",
+        "TQ-008-skill-debug-runtime",
+        "TQ-009-skill-learning-safety",
+        "TQ-010-mixed-no-overclaim",
+        "TQ-011-mixed-shortcut-audit",
+        "TQ-012-mixed-final-readiness"
+      ]
+    }
+  },
+  "route_meanings": {
+    "USER_ADAPTIVE_EVAL_ONLY": "Prepared only for a later local/private eval-only runner after exact approval and privacy gates. Not runnable in this phase.",
+    "EVIDENCE_ONLY": "Control/review evidence only. Excluded from eval/training inputs now.",
+    "COMMON_BLOCKED": "Strict/common route blocked until permissive source/license/common source exists."
+  },
+  "machine_targets_required_for_all_scenarios": [
+    {
+      "layer_id": "prompt_to_task",
+      "machine_target": "PromptToTaskMachine",
+      "label": "prompt -> task",
+      "question_ru": "Сохранил ли ответ цель пользователя, ограничения, route/privacy boundary и превратил prompt в универсальную задачу без запуска запрещенных действий?",
+      "pass_rule": "score >= 4 and no critical failure",
+      "pass_example_ru": "Задача явно говорит: подготовить rubric/prompt-pack, не запускать eval/training, raw private refs держать отдельно, claims оставить closed.",
+      "fail_example_ru": "Ответ сразу запускает training/eval, теряет approval boundary или копирует private/user-local материал в common route.",
+      "failure_codes": [
+        "FAIL_PROMPT_TO_TASK_REGRESSION",
+        "FAIL_APPROVAL_BOUNDARY",
+        "FAIL_SOURCE_DISJOINT_SPLIT",
+        "FAIL_SOURCE_LEAKAGE",
+        "FAIL_MEMORIZATION_EXACT_PROMPT",
+        "FAIL_NARROW_STAGED_ONLY",
+        "FAIL_OVERCLAIM"
+      ],
+      "forbidden_shortcuts": [
+        "exact prompt replay",
+        "old state next_action as approval",
+        "private path/source id as semantic authority"
+      ]
+    },
+    {
+      "layer_id": "orchestration_reasoning",
+      "machine_target": "OrchestrationReasoningMachine",
+      "label": "task -> plan",
+      "question_ru": "Выстроен ли безопасный порядок phases/gates: preparation, parent review, scorer prep, и только после отдельного approval возможен eval-only runner?",
+      "pass_rule": "score >= 4 and phase order preserved",
+      "pass_example_ru": "План отделяет user-adaptive eval-only prep от evidence-only controls и common-blocked strict route.",
+      "fail_example_ru": "План запускает eval до approval или открывает QUALITY-03 strict route при COMMON_ALLOWED 0/12.",
+      "failure_codes": [
+        "FAIL_ORCHESTRATION_REGRESSION",
+        "FAIL_PHASE_ORDER",
+        "FAIL_RUNTIME_SUBSTITUTION",
+        "FAIL_HELD_OUT_MISSING",
+        "FAIL_ABLATION_EXPLAINS_GAIN",
+        "FAIL_NARROW_STAGED_ONLY",
+        "FAIL_OVERCLAIM"
+      ],
+      "forbidden_shortcuts": [
+        "dashboard/API/helper as host runtime proof",
+        "quality before pairing/source gates",
+        "common strict route without license packet"
+      ]
+    },
+    {
+      "layer_id": "skill_selection",
+      "machine_target": "SkillSelectionMachine",
+      "label": "task/plan -> skills",
+      "question_ru": "Выбраны ли skills/checksets из смысла задачи, а не из candidate order, filename, path, prompt hash или source id?",
+      "pass_rule": "score >= 4 and no leakage signal",
+      "pass_example_ru": "Для prompt-pack/rubric prep выбраны quality_eval, source/privacy review, no-overclaim review и future runner contract; training/runtime skills не запускаются.",
+      "fail_example_ru": "Skill выбран по порядку списка, имени файла, host stack keyword или старому prompt hash.",
+      "failure_codes": [
+        "FAIL_SKILL_SELECTION_REGRESSION",
+        "FAIL_LEAKAGE_SIGNAL",
+        "FAIL_CANDIDATE_ORDER_SHORTCUT",
+        "FAIL_NO_MEMORIZATION_CONTROL",
+        "FAIL_DETERMINISTIC_BASELINE_ONLY",
+        "FAIL_NARROW_STAGED_ONLY",
+        "FAIL_SKILL_MISSING"
+      ],
+      "forbidden_shortcuts": [
+        "candidate order",
+        "filename/path/title/source-id signal",
+        "host package detail as semantic selector"
+      ]
+    },
+    {
+      "layer_id": "final_usefulness",
+      "machine_target": "FinalOutputUsefulness",
+      "label": "final usefulness",
+      "question_ru": "Полезен ли финальный ответ человеку: ясно говорит, что подготовлено, что не доказано, какие routes открыты/закрыты и что делать следующим bounded шагом?",
+      "pass_rule": "score >= 4 and no overclaim",
+      "pass_example_ru": "Краткий русский статус: prompt/rubric prep ready for review; eval/training/model/locator не запускались; next action parent review или QUALITY-02 prep.",
+      "fail_example_ru": "Сырой JSON без человеческой интерпретации, скрытый READY/DONE для качества или отсутствие next bounded action.",
+      "failure_codes": [
+        "FAIL_HUMAN_UNREADABLE",
+        "FAIL_OVERCLAIM",
+        "FAIL_QUALITY_REGRESSION",
+        "INCONCLUSIVE_REVIEW",
+        "SEMANTIC_CLAIM_BLOCKED_NARROW_LAYER_EVIDENCE"
+      ],
+      "forbidden_shortcuts": [
+        "PASS label without evidence refs",
+        "averaging away failed layer",
+        "token delta as quality proof"
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-001-prompt-task-documentation",
+      "scenario_group": "prompt-to-task",
+      "prompt_text": "Turn this request into a universal task: create human-readable documentation for an extension API with a simple diagram, no-code algorithms, short code quotations, and clear boundaries about what the evidence proves.",
+      "prompt_sha256": "f599dff02c7e15c8236fccbc2ad8f8ec0743ddf5c1f2dc6a2c0cbe884bce16d7",
+      "methods_to_run_later_only": [
+        "prompt-to-task"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "USER_ADAPTIVE_EVAL_ONLY",
+      "route_source_policy_route": "USER_ADAPTIVE_ONLY_EVAL_ONLY_LATER",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "user_local_private_raw_redacted_repo_evidence_only",
+      "allowed_use": "Только подготовка для будущего local/private eval-only runner после отдельного approval; сейчас не запускать eval/training и не делать claims.",
+      "source_refs": [
+        {
+          "source_ref": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "doc_id": "EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md#documentation-no-overclaim-evidence-boundary",
+          "source_basis": "Existing documentation and no-overclaim plan references, universalized away from project paths.",
+          "universalization_rule": "Keep documentation, diagram, algorithm, quote, and evidence-boundary requirements; remove repository layout and implementation-stack assumptions."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "bounded documentation task",
+            "deliverables include diagram, no-code algorithm, short code quotes, evidence boundary"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "if called, route to documentation plan without implementation"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "documentation",
+            "architecture-review",
+            "code-reference-grounding"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "human-readable task summary with no runtime/training claim"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 3,
+      "pair_ids_for_route": [
+        "TQ-001-prompt-task-documentation|Claude|prompt-to-task|debug-false",
+        "TQ-001-prompt-task-documentation|Codex|prompt-to-task|debug-false",
+        "TQ-001-prompt-task-documentation|Cursor|prompt-to-task|debug-false"
+      ],
+      "common_blocked_pair_row_count": 3,
+      "common_blocked_pair_ids": [
+        "TQ-001-prompt-task-documentation|Claude|prompt-to-task|debug-false",
+        "TQ-001-prompt-task-documentation|Codex|prompt-to-task|debug-false",
+        "TQ-001-prompt-task-documentation|Cursor|prompt-to-task|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "A task that asks for documentation grounded in actual code and says no implementation is authorized.",
+        "A task that names evidence boundaries before claiming readiness."
+      ],
+      "negative_examples_from_current_refs": [
+        "A task that starts coding from a documentation-only prompt.",
+        "A task that says the extension is ready because docs were written."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "no_common_training",
+          "no_checkpoint_mutation",
+          "no_locator_update",
+          "no_readiness_claims"
+        ],
+        "why_blocked_now": [],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-002-prompt-task-interrupt",
+      "scenario_group": "prompt-to-task",
+      "prompt_text": "Convert this instruction into a task: when the human asks why, says pause, or asks answer only, answer first and do not continue execution until fresh permission is given.",
+      "prompt_sha256": "6cdae328248b90679e7c26b0e7cc56bb4c8fd9e121430b8f3552cf69179214d9",
+      "methods_to_run_later_only": [
+        "prompt-to-task"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "USER_ADAPTIVE_EVAL_ONLY",
+      "route_source_policy_route": "USER_ADAPTIVE_ONLY_EVAL_ONLY_LATER",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "user_local_private_raw_redacted_repo_evidence_only",
+      "allowed_use": "Только подготовка для будущего local/private eval-only runner после отдельного approval; сейчас не запускать eval/training и не делать claims.",
+      "source_refs": [
+        {
+          "source_ref": "C:\\Users\\lubao\\Documents\\xiigen\\extensions  - orchestration based on our data\\problem with authority.txt",
+          "doc_id": "problem-with-authority.txt#human-interrupt-hard-pause-lines-43279-43328",
+          "source_basis": "Human-interrupt governance references, universalized as an answer-first task boundary.",
+          "universalization_rule": "Keep interrupt, answer-first, and fresh-permission semantics; remove named user/session details."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "answer-first interrupt task",
+            "fresh continuation permission requirement",
+            "no hidden cleanup before answer"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "if called, suspend execution work until permission is present"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "authority-governance",
+            "conversation-safety",
+            "plan-review"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "plain answer before any next action"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 3,
+      "pair_ids_for_route": [
+        "TQ-002-prompt-task-interrupt|Claude|prompt-to-task|debug-false",
+        "TQ-002-prompt-task-interrupt|Codex|prompt-to-task|debug-false",
+        "TQ-002-prompt-task-interrupt|Cursor|prompt-to-task|debug-false"
+      ],
+      "common_blocked_pair_row_count": 3,
+      "common_blocked_pair_ids": [
+        "TQ-002-prompt-task-interrupt|Claude|prompt-to-task|debug-false",
+        "TQ-002-prompt-task-interrupt|Codex|prompt-to-task|debug-false",
+        "TQ-002-prompt-task-interrupt|Cursor|prompt-to-task|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "The task says answer the question first and pause execution work.",
+        "The task treats quoted transcripts as evidence only."
+      ],
+      "negative_examples_from_current_refs": [
+        "The task starts tests before answering why.",
+        "The task treats old continue text as fresh permission."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "no_common_training",
+          "no_checkpoint_mutation",
+          "no_locator_update",
+          "no_readiness_claims"
+        ],
+        "why_blocked_now": [],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-003-prompt-task-redaction",
+      "scenario_group": "prompt-to-task",
+      "prompt_text": "Create a task for capturing extension input and output so reviewers can compare quality and tokens while raw private content stays in private artifacts and shared reports contain redacted text plus hashes.",
+      "prompt_sha256": "4401a0d1294e7a3992e74127182a9a8ed7e14838d11dc388ea0d2aa8c03a47bb",
+      "methods_to_run_later_only": [
+        "prompt-to-task"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "USER_ADAPTIVE_EVAL_ONLY",
+      "route_source_policy_route": "USER_ADAPTIVE_ONLY_EVAL_ONLY_LATER",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "user_local_private_raw_redacted_repo_evidence_only",
+      "allowed_use": "Только подготовка для будущего local/private eval-only runner после отдельного approval; сейчас не запускать eval/training и не делать claims.",
+      "source_refs": [
+        {
+          "source_ref": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "doc_id": "EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md#evidence-separation-redaction",
+          "source_basis": "Token trace and privacy/redaction methodology references, universalized for any extension host.",
+          "universalization_rule": "Keep trace, redaction, hash, and reviewer-comparison semantics; remove private project content."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "privacy-safe trace capture task",
+            "raw private refs separated from shared redacted refs",
+            "hash and token count fields named"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "if called, include redaction validation before comparison"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "privacy-redaction",
+            "token-measurement",
+            "quality-review"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "clear task with shared/private artifact split"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 3,
+      "pair_ids_for_route": [
+        "TQ-003-prompt-task-redaction|Claude|prompt-to-task|debug-false",
+        "TQ-003-prompt-task-redaction|Codex|prompt-to-task|debug-false",
+        "TQ-003-prompt-task-redaction|Cursor|prompt-to-task|debug-false"
+      ],
+      "common_blocked_pair_row_count": 3,
+      "common_blocked_pair_ids": [
+        "TQ-003-prompt-task-redaction|Claude|prompt-to-task|debug-false",
+        "TQ-003-prompt-task-redaction|Codex|prompt-to-task|debug-false",
+        "TQ-003-prompt-task-redaction|Cursor|prompt-to-task|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "Shared report stores prompt hash, redacted text, token counts, and private raw refs.",
+        "Reviewer can compare structure without seeing private content."
+      ],
+      "negative_examples_from_current_refs": [
+        "Raw private prompt is copied into JSONL shared artifact.",
+        "Token counts are saved without prompt hash or redaction status."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "no_common_training",
+          "no_checkpoint_mutation",
+          "no_locator_update",
+          "no_readiness_claims"
+        ],
+        "why_blocked_now": [],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-004-orchestration-runtime-proof",
+      "scenario_group": "orchestration",
+      "prompt_text": "Build a universal orchestration plan to prove an extension works in Claude, Cursor, and Codex host runtime paths, with visible answer, debug trace, correlation id, negative error path, and no hidden logic inside host adapters.",
+      "prompt_sha256": "f14b79556e6d39af03bbdae20314fb2b7d07c5b34a5cc2b69543747552f58f5e",
+      "methods_to_run_later_only": [
+        "orchestration-plan"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "EVIDENCE_ONLY",
+      "route_source_policy_route": "EVIDENCE_ONLY_NO_EVAL_OR_TRAINING_NOW",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "shared_control_evidence_only_no_eval_training_input",
+      "allowed_use": "Только reference/control/review context; сейчас не использовать как eval/training input.",
+      "source_refs": [
+        {
+          "source_ref": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "doc_id": "EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md#runtime-proof-depth-gate",
+          "source_basis": "Runtime proof depth gate and thin-adapter references, universalized across extension hosts.",
+          "universalization_rule": "Keep host-runtime evidence fields and thin-adapter boundary; avoid concrete package scripts or local helper paths."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "if called, identify runtime proof task and no-overclaim boundary"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "per-host positive path",
+            "per-host negative/error path",
+            "correlation id and debug trace capture",
+            "adapter hidden-logic review"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "runtime-QA",
+            "debug-visibility",
+            "architecture-boundary-review"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "phase plan that separates runtime proof from token/quality/learnability"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 3,
+      "pair_ids_for_route": [
+        "TQ-004-orchestration-runtime-proof|Claude|orchestration-plan|debug-false",
+        "TQ-004-orchestration-runtime-proof|Codex|orchestration-plan|debug-false",
+        "TQ-004-orchestration-runtime-proof|Cursor|orchestration-plan|debug-false"
+      ],
+      "common_blocked_pair_row_count": 3,
+      "common_blocked_pair_ids": [
+        "TQ-004-orchestration-runtime-proof|Claude|orchestration-plan|debug-false",
+        "TQ-004-orchestration-runtime-proof|Codex|orchestration-plan|debug-false",
+        "TQ-004-orchestration-runtime-proof|Cursor|orchestration-plan|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "Plan requires visible host answer and controlled negative error path for every host.",
+        "Plan says dashboard/API evidence is supporting only."
+      ],
+      "negative_examples_from_current_refs": [
+        "Plan counts a direct handler call as Claude/Cursor/Codex runtime.",
+        "Plan hides deterministic model logic inside an adapter."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "eval_execution",
+          "training",
+          "common_mutation",
+          "readiness_claims"
+        ],
+        "why_blocked_now": [
+          "control_or_review_evidence_only",
+          "no_user_local_eval_only_approval",
+          "runtime_readiness_must_not_be_overclaimed"
+        ],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-005-orchestration-token-pairing",
+      "scenario_group": "orchestration",
+      "prompt_text": "Plan token before/after measurement for the same extension prompt with baseline local adaptation disabled and adaptive local model enabled, using the same host, method, debug setting, tokenizer, and expected answer contract.",
+      "prompt_sha256": "c3f886c224a9a25d6a72de30538c7608259413c188db80e3ab12550bf313998c",
+      "methods_to_run_later_only": [
+        "orchestration-plan"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "EVIDENCE_ONLY",
+      "route_source_policy_route": "EVIDENCE_ONLY_NO_EVAL_OR_TRAINING_NOW",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "shared_control_evidence_only_no_eval_training_input",
+      "allowed_use": "Только reference/control/review context; сейчас не использовать как eval/training input.",
+      "source_refs": [
+        {
+          "source_ref": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "doc_id": "EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md#token-before-after-pairing",
+          "source_basis": "Token before/after hard methodology gate, universalized as a measurement plan.",
+          "universalization_rule": "Keep paired measurement fields and quality dependency; remove project-specific runner implementation details."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "if called, identify paired token measurement task"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "baseline run",
+            "adaptive run",
+            "pair validation",
+            "variance handling",
+            "quality non-regression gate"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "token-measurement",
+            "quality-review",
+            "runtime-QA"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "measurement design that rejects invalid pairs"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 3,
+      "pair_ids_for_route": [
+        "TQ-005-orchestration-token-pairing|Claude|orchestration-plan|debug-false",
+        "TQ-005-orchestration-token-pairing|Codex|orchestration-plan|debug-false",
+        "TQ-005-orchestration-token-pairing|Cursor|orchestration-plan|debug-false"
+      ],
+      "common_blocked_pair_row_count": 3,
+      "common_blocked_pair_ids": [
+        "TQ-005-orchestration-token-pairing|Claude|orchestration-plan|debug-false",
+        "TQ-005-orchestration-token-pairing|Codex|orchestration-plan|debug-false",
+        "TQ-005-orchestration-token-pairing|Cursor|orchestration-plan|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "Same scenario id, prompt hash, host, method, debug setting, tokenizer, and counted spans in both modes.",
+        "Token delta accepted only after quality non-regression."
+      ],
+      "negative_examples_from_current_refs": [
+        "Adaptive uses a different prompt or debug setting.",
+        "Token decrease is accepted despite quality regression."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "eval_execution",
+          "training",
+          "common_mutation",
+          "readiness_claims"
+        ],
+        "why_blocked_now": [
+          "control_or_review_evidence_only",
+          "no_user_local_eval_only_approval",
+          "token_savings_must_not_be_overclaimed"
+        ],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-006-orchestration-learning-lifecycle",
+      "scenario_group": "orchestration",
+      "prompt_text": "Plan the local learning lifecycle after a corrected AI output: create a DPO candidate, keep private rows user-local, require approval before training, continue from existing checkpoint, fresh-load the target, run source-disjoint held-out and ablation checks, then prove rollback.",
+      "prompt_sha256": "4016452c767263358aa2fb7fa043a253c1b186f9fe486c9faea73cadc94e5c3a",
+      "methods_to_run_later_only": [
+        "orchestration-plan"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "USER_ADAPTIVE_EVAL_ONLY",
+      "route_source_policy_route": "USER_ADAPTIVE_ONLY_EVAL_ONLY_LATER",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "user_local_private_raw_redacted_repo_evidence_only",
+      "allowed_use": "Только подготовка для будущего local/private eval-only runner после отдельного approval; сейчас не запускать eval/training и не делать claims.",
+      "source_refs": [
+        {
+          "source_ref": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "doc_id": "EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md#learnability-dpo-lifecycle",
+          "source_basis": "Learnability and DPO lifecycle plan references, universalized away from private project rows.",
+          "universalization_rule": "Keep ordering and evidence gates for learning; do not authorize training or checkpoint mutation."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "if called, identify local learning lifecycle task and no-mutation boundary"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "DPO candidate",
+            "privacy/source gate",
+            "approval gate",
+            "continue-training from existing checkpoint",
+            "fresh-load",
+            "held-out/ablation",
+            "rollback"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "DPO-authoring",
+            "model-lifecycle",
+            "source-license-review",
+            "checkpoint-safety"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "ordered lifecycle with all mutation gates deferred until approval"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 3,
+      "pair_ids_for_route": [
+        "TQ-006-orchestration-learning-lifecycle|Claude|orchestration-plan|debug-false",
+        "TQ-006-orchestration-learning-lifecycle|Codex|orchestration-plan|debug-false",
+        "TQ-006-orchestration-learning-lifecycle|Cursor|orchestration-plan|debug-false"
+      ],
+      "common_blocked_pair_row_count": 3,
+      "common_blocked_pair_ids": [
+        "TQ-006-orchestration-learning-lifecycle|Claude|orchestration-plan|debug-false",
+        "TQ-006-orchestration-learning-lifecycle|Codex|orchestration-plan|debug-false",
+        "TQ-006-orchestration-learning-lifecycle|Cursor|orchestration-plan|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "Plan defers training until exact approval and names rollback before mutation.",
+        "Plan separates user-local rows from common training rows."
+      ],
+      "negative_examples_from_current_refs": [
+        "Plan starts training from a correction immediately.",
+        "Plan claims learning from a DPO row alone."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "no_common_training",
+          "no_checkpoint_mutation",
+          "no_locator_update",
+          "no_readiness_claims"
+        ],
+        "why_blocked_now": [],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-007-skill-architecture-audit",
+      "scenario_group": "skill-selection",
+      "prompt_text": "Select skills for a universal trainable-architecture audit that must include human-readable findings, code quotes, no-code explanations, concrete before/after fixes, and tests without pretending a dictionary counter is semantic learning.",
+      "prompt_sha256": "523c9713450f2267e86ac272e975ce07eaa85aae3489dadfab4b705ff3ab250d",
+      "methods_to_run_later_only": [
+        "skill-selection"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "USER_ADAPTIVE_EVAL_ONLY",
+      "route_source_policy_route": "USER_ADAPTIVE_ONLY_EVAL_ONLY_LATER",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "user_local_private_raw_redacted_repo_evidence_only",
+      "allowed_use": "Только подготовка для будущего local/private eval-only runner после отдельного approval; сейчас не запускать eval/training и не делать claims.",
+      "source_refs": [
+        {
+          "source_ref": "C:/Users/lubao/Documents/xiigen/llm mvp/skills loading as an ai extension/skills-inventory-universal-vs-project-specific.md",
+          "doc_id": "skills-inventory-universal-vs-project-specific.md#universal-core-vs-project-adapter-skill-registry",
+          "source_basis": "Trainable unit audit references, universalized as skill-selection evidence.",
+          "universalization_rule": "Keep audit/readability/trainable-unit semantics; remove concrete class names unless supplied by the host output under review."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "if called, identify architecture audit task"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "if called, require review and repair phases"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "architecture-audit",
+            "code-review",
+            "trainable-unit-design",
+            "documentation-readability",
+            "test-design"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "selected skills with semantic evidence for each"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 3,
+      "pair_ids_for_route": [
+        "TQ-007-skill-architecture-audit|Claude|skill-selection|debug-false",
+        "TQ-007-skill-architecture-audit|Codex|skill-selection|debug-false",
+        "TQ-007-skill-architecture-audit|Cursor|skill-selection|debug-false"
+      ],
+      "common_blocked_pair_row_count": 3,
+      "common_blocked_pair_ids": [
+        "TQ-007-skill-architecture-audit|Claude|skill-selection|debug-false",
+        "TQ-007-skill-architecture-audit|Codex|skill-selection|debug-false",
+        "TQ-007-skill-architecture-audit|Cursor|skill-selection|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "Skills are selected because the task asks for audit, code quotes, trainable-unit design, and tests.",
+        "Skill explanation rejects dictionary counters as full semantic models without evidence."
+      ],
+      "negative_examples_from_current_refs": [
+        "First five available skills are selected without rationale.",
+        "Generic planning skill is chosen while code-review and trainable-unit design are omitted."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "no_common_training",
+          "no_checkpoint_mutation",
+          "no_locator_update",
+          "no_readiness_claims"
+        ],
+        "why_blocked_now": [],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-008-skill-debug-runtime",
+      "scenario_group": "skill-selection",
+      "prompt_text": "Select skills for a task that asks the extension to show programmer debug input/output, redacted shared traces, controlled error handling, and host runtime proof for Claude, Cursor, and Codex.",
+      "prompt_sha256": "129ac9443f3c57984c8ea82cc5a780b7fe2f45f75b583d5e4a746c047c8d9db4",
+      "methods_to_run_later_only": [
+        "skill-selection"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "USER_ADAPTIVE_EVAL_ONLY",
+      "route_source_policy_route": "USER_ADAPTIVE_ONLY_EVAL_ONLY_LATER",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "user_local_private_raw_redacted_repo_evidence_only",
+      "allowed_use": "Только подготовка для будущего local/private eval-only runner после отдельного approval; сейчас не запускать eval/training и не делать claims.",
+      "source_refs": [
+        {
+          "source_ref": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "doc_id": "EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md#runtime-debug-visibility",
+          "source_basis": "Debug visibility and host runtime proof references, universalized for skill selection.",
+          "universalization_rule": "Keep debug/runtime/privacy/error semantics; avoid using one host helper as the universal path."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "if called, identify debug/runtime proof task"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "if called, require positive and negative host paths"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "extension-runtime",
+            "debug-visibility",
+            "privacy-redaction",
+            "error-handling",
+            "runtime-QA"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "selected skills with host-neutral evidence"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 3,
+      "pair_ids_for_route": [
+        "TQ-008-skill-debug-runtime|Claude|skill-selection|debug-false",
+        "TQ-008-skill-debug-runtime|Codex|skill-selection|debug-false",
+        "TQ-008-skill-debug-runtime|Cursor|skill-selection|debug-false"
+      ],
+      "common_blocked_pair_row_count": 3,
+      "common_blocked_pair_ids": [
+        "TQ-008-skill-debug-runtime|Claude|skill-selection|debug-false",
+        "TQ-008-skill-debug-runtime|Codex|skill-selection|debug-false",
+        "TQ-008-skill-debug-runtime|Cursor|skill-selection|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "Selects debug visibility and privacy together, because debug data can leak private content.",
+        "Selects runtime QA and error handling because positive-only evidence is insufficient."
+      ],
+      "negative_examples_from_current_refs": [
+        "Selects only generic QA.",
+        "Selects training skills for a debug visibility task."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "no_common_training",
+          "no_checkpoint_mutation",
+          "no_locator_update",
+          "no_readiness_claims"
+        ],
+        "why_blocked_now": [],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-009-skill-learning-safety",
+      "scenario_group": "skill-selection",
+      "prompt_text": "Select skills for turning a corrected AI output into a local learning signal while protecting source/license boundaries, target and rollback checkpoint safety, backup/export/import/share, and no-memorization evaluation.",
+      "prompt_sha256": "b3b857088fe575095161a85d33cf016768e1a506e0d23e7b0a29bf42929223be",
+      "methods_to_run_later_only": [
+        "skill-selection"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "USER_ADAPTIVE_EVAL_ONLY",
+      "route_source_policy_route": "USER_ADAPTIVE_ONLY_EVAL_ONLY_LATER",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "user_local_private_raw_redacted_repo_evidence_only",
+      "allowed_use": "Только подготовка для будущего local/private eval-only runner после отдельного approval; сейчас не запускать eval/training и не делать claims.",
+      "source_refs": [
+        {
+          "source_ref": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "doc_id": "EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md#dpo-source-quality-and-rollback-safety",
+          "source_basis": "DPO, source/license, checkpoint, and portability references, universalized for skill selection.",
+          "universalization_rule": "Keep learning-safety skill semantics; do not authorize training or name private data as common training source."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "if called, identify learning-signal safety task"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "if called, require DPO, approval, checkpoint, evaluation, rollback, portability phases"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "DPO-authoring",
+            "source-license-review",
+            "checkpoint-safety",
+            "model-lifecycle",
+            "backup-export-import-share",
+            "held-out-ablation"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "selected skills with safety rationale and no training claim"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 3,
+      "pair_ids_for_route": [
+        "TQ-009-skill-learning-safety|Claude|skill-selection|debug-false",
+        "TQ-009-skill-learning-safety|Codex|skill-selection|debug-false",
+        "TQ-009-skill-learning-safety|Cursor|skill-selection|debug-false"
+      ],
+      "common_blocked_pair_row_count": 3,
+      "common_blocked_pair_ids": [
+        "TQ-009-skill-learning-safety|Claude|skill-selection|debug-false",
+        "TQ-009-skill-learning-safety|Codex|skill-selection|debug-false",
+        "TQ-009-skill-learning-safety|Cursor|skill-selection|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "Selects source/license and checkpoint safety before any training skill.",
+        "Includes backup/export/import/share and held-out ablation for learnability evidence."
+      ],
+      "negative_examples_from_current_refs": [
+        "Selects only DPO authoring and claims the model learned.",
+        "Omits rollback or source/license review."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "no_common_training",
+          "no_checkpoint_mutation",
+          "no_locator_update",
+          "no_readiness_claims"
+        ],
+        "why_blocked_now": [],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-010-mixed-no-overclaim",
+      "scenario_group": "mixed",
+      "prompt_text": "Given dashboard/API evidence and one handler-level trace, decide what can be claimed, what cannot be claimed, and what next evidence is needed before saying Claude, Cursor, and Codex extensions are fully functional.",
+      "prompt_sha256": "a1152cc2b139681267e4d9f1f153f7bda6ddb6a8b07c709f0a343ab8531e789e",
+      "methods_to_run_later_only": [
+        "prompt-to-task",
+        "orchestration-plan",
+        "skill-selection"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "EVIDENCE_ONLY",
+      "route_source_policy_route": "EVIDENCE_ONLY_NO_EVAL_OR_TRAINING_NOW",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "shared_control_evidence_only_no_eval_training_input",
+      "allowed_use": "Только reference/control/review context; сейчас не использовать как eval/training input.",
+      "source_refs": [
+        {
+          "source_ref": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "doc_id": "EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md#no-overclaim-evidence-separation",
+          "source_basis": "Evidence separation and no-overclaim matrix references, universalized as a mixed reasoning scenario.",
+          "universalization_rule": "Keep evidence separation; avoid treating any one helper or dashboard path as a host-runtime substitute."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "readiness gap review task",
+            "evidence types separated"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "dashboard/API supporting evidence",
+            "host runtime proof still required",
+            "next bounded work order"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "runtime-evidence-review",
+            "test-integrity",
+            "plan-review",
+            "documentation"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "what this proves, what this does not prove, next independent track"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 9,
+      "pair_ids_for_route": [
+        "TQ-010-mixed-no-overclaim|Claude|orchestration-plan|debug-false",
+        "TQ-010-mixed-no-overclaim|Claude|prompt-to-task|debug-false",
+        "TQ-010-mixed-no-overclaim|Claude|skill-selection|debug-false",
+        "TQ-010-mixed-no-overclaim|Codex|orchestration-plan|debug-false",
+        "TQ-010-mixed-no-overclaim|Codex|prompt-to-task|debug-false",
+        "TQ-010-mixed-no-overclaim|Codex|skill-selection|debug-false",
+        "TQ-010-mixed-no-overclaim|Cursor|orchestration-plan|debug-false",
+        "TQ-010-mixed-no-overclaim|Cursor|prompt-to-task|debug-false",
+        "TQ-010-mixed-no-overclaim|Cursor|skill-selection|debug-false"
+      ],
+      "common_blocked_pair_row_count": 9,
+      "common_blocked_pair_ids": [
+        "TQ-010-mixed-no-overclaim|Claude|prompt-to-task|debug-false",
+        "TQ-010-mixed-no-overclaim|Claude|orchestration-plan|debug-false",
+        "TQ-010-mixed-no-overclaim|Claude|skill-selection|debug-false",
+        "TQ-010-mixed-no-overclaim|Codex|prompt-to-task|debug-false",
+        "TQ-010-mixed-no-overclaim|Codex|orchestration-plan|debug-false",
+        "TQ-010-mixed-no-overclaim|Codex|skill-selection|debug-false",
+        "TQ-010-mixed-no-overclaim|Cursor|prompt-to-task|debug-false",
+        "TQ-010-mixed-no-overclaim|Cursor|orchestration-plan|debug-false",
+        "TQ-010-mixed-no-overclaim|Cursor|skill-selection|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "Says dashboard/API proves handler behavior only and names missing host proof.",
+        "Provides next bounded runtime evidence work rather than claiming done."
+      ],
+      "negative_examples_from_current_refs": [
+        "Claims full Claude/Cursor/Codex readiness from dashboard/API only.",
+        "Treats smoke evidence as semantic quality."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "eval_execution",
+          "training",
+          "common_mutation",
+          "readiness_claims"
+        ],
+        "why_blocked_now": [
+          "control_or_review_evidence_only",
+          "no_user_local_eval_only_approval",
+          "no_overclaim_guard_only"
+        ],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-011-mixed-shortcut-audit",
+      "scenario_group": "mixed",
+      "prompt_text": "Audit an answer that selected skills and shortened the plan. Decide whether it improved quality or used deterministic shortcuts such as candidate order, exact prompt hash, source path, title match, or hidden omission of required gates.",
+      "prompt_sha256": "73a567ed3f4a34c4dbe914e0a431ddd8ef726c15b2e75071177cebab3978325e",
+      "methods_to_run_later_only": [
+        "prompt-to-task",
+        "orchestration-plan",
+        "skill-selection"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "EVIDENCE_ONLY",
+      "route_source_policy_route": "EVIDENCE_ONLY_NO_EVAL_OR_TRAINING_NOW",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "shared_control_evidence_only_no_eval_training_input",
+      "allowed_use": "Только reference/control/review context; сейчас не использовать как eval/training input.",
+      "source_refs": [
+        {
+          "source_ref": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "doc_id": "EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md#deterministic-shortcut-no-overclaim",
+          "source_basis": "Deterministic shortcut and quality regression references, universalized as a mixed audit.",
+          "universalization_rule": "Keep shortcut taxonomy and quality-vs-token distinction; remove concrete private path examples."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "shortcut audit task",
+            "quality/token distinction"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "compare required gates before/after",
+            "reject omitted-gate savings",
+            "record ablation or shuffle check"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "quality-review",
+            "shortcut-audit",
+            "skill-selection-invariance",
+            "token-measurement"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "verdict with shortcut evidence and quality regression status"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 9,
+      "pair_ids_for_route": [
+        "TQ-011-mixed-shortcut-audit|Claude|orchestration-plan|debug-false",
+        "TQ-011-mixed-shortcut-audit|Claude|prompt-to-task|debug-false",
+        "TQ-011-mixed-shortcut-audit|Claude|skill-selection|debug-false",
+        "TQ-011-mixed-shortcut-audit|Codex|orchestration-plan|debug-false",
+        "TQ-011-mixed-shortcut-audit|Codex|prompt-to-task|debug-false",
+        "TQ-011-mixed-shortcut-audit|Codex|skill-selection|debug-false",
+        "TQ-011-mixed-shortcut-audit|Cursor|orchestration-plan|debug-false",
+        "TQ-011-mixed-shortcut-audit|Cursor|prompt-to-task|debug-false",
+        "TQ-011-mixed-shortcut-audit|Cursor|skill-selection|debug-false"
+      ],
+      "common_blocked_pair_row_count": 9,
+      "common_blocked_pair_ids": [
+        "TQ-011-mixed-shortcut-audit|Claude|prompt-to-task|debug-false",
+        "TQ-011-mixed-shortcut-audit|Claude|orchestration-plan|debug-false",
+        "TQ-011-mixed-shortcut-audit|Claude|skill-selection|debug-false",
+        "TQ-011-mixed-shortcut-audit|Codex|prompt-to-task|debug-false",
+        "TQ-011-mixed-shortcut-audit|Codex|orchestration-plan|debug-false",
+        "TQ-011-mixed-shortcut-audit|Codex|skill-selection|debug-false",
+        "TQ-011-mixed-shortcut-audit|Cursor|prompt-to-task|debug-false",
+        "TQ-011-mixed-shortcut-audit|Cursor|orchestration-plan|debug-false",
+        "TQ-011-mixed-shortcut-audit|Cursor|skill-selection|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "Rejects token savings caused by dropping approval, rollback, or debug trace gates.",
+        "Requires skill-order shuffle or ablation to rule out candidate-order shortcut."
+      ],
+      "negative_examples_from_current_refs": [
+        "Accepts shorter answer without checking missing gates.",
+        "Uses exact prompt hash as the learned behavior."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "eval_execution",
+          "training",
+          "common_mutation",
+          "readiness_claims"
+        ],
+        "why_blocked_now": [
+          "control_or_review_evidence_only",
+          "no_user_local_eval_only_approval",
+          "shortcut_audit_cannot_be_training_or_quality_claim"
+        ],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    },
+    {
+      "record_type": "scenario_prompt",
+      "scenario_id": "TQ-012-mixed-final-readiness",
+      "scenario_group": "mixed",
+      "prompt_text": "Create a final readiness matrix for extension runtime, token before/after, quality, learnability, backup/export/import/share, continue-training, DPO, rollback, documentation, and no-overclaim without marking the product ready while any row is missing.",
+      "prompt_sha256": "f77aef68c89593bb7e735f44064c12f5e7143eb0e69a874c78ae2ced05ea4956",
+      "methods_to_run_later_only": [
+        "prompt-to-task",
+        "orchestration-plan",
+        "skill-selection"
+      ],
+      "hosts_later_only": [
+        "Claude",
+        "Cursor",
+        "Codex"
+      ],
+      "modes_later_only": [
+        "baseline_common_model_only",
+        "adaptive_common_plus_user_model"
+      ],
+      "route": "EVIDENCE_ONLY",
+      "route_source_policy_route": "EVIDENCE_ONLY_NO_EVAL_OR_TRAINING_NOW",
+      "common_strict_route": "COMMON_BLOCKED",
+      "privacy_route": "shared_control_evidence_only_no_eval_training_input",
+      "allowed_use": "Только reference/control/review context; сейчас не использовать как eval/training input.",
+      "source_refs": [
+        {
+          "source_ref": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "doc_id": "EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md#final-readiness-matrix",
+          "source_basis": "Target outcome matrix and final readiness references, universalized as a closure-matrix scenario.",
+          "universalization_rule": "Keep closure rows and no-overclaim status; do not claim completion from narrow evidence."
+        }
+      ],
+      "machine_targets": [
+        {
+          "layer_id": "prompt_to_task",
+          "machine_target": "PromptToTaskMachine",
+          "target_label": "prompt -> task",
+          "expected_outputs_from_scenario_pack": [
+            "final readiness matrix task",
+            "missing rows keep in-progress status"
+          ],
+          "pass_rule": "score >= 4 and no critical failure",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "orchestration_reasoning",
+          "machine_target": "OrchestrationReasoningMachine",
+          "target_label": "task -> plan",
+          "expected_outputs_from_scenario_pack": [
+            "ten readiness checks",
+            "per-row PASS/FAIL/IN_PROGRESS",
+            "next bounded work order for every gap"
+          ],
+          "pass_rule": "score >= 4 and phase order preserved",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "skill_selection",
+          "machine_target": "SkillSelectionMachine",
+          "target_label": "task/plan -> skills",
+          "expected_outputs_from_scenario_pack": [
+            "final-readiness-review",
+            "runtime-QA",
+            "token-measurement",
+            "quality-review",
+            "model-lifecycle",
+            "documentation"
+          ],
+          "pass_rule": "score >= 4 and no leakage signal",
+          "no_score_executed_in_this_phase": true
+        },
+        {
+          "layer_id": "final_usefulness",
+          "machine_target": "FinalOutputUsefulness",
+          "target_label": "final usefulness",
+          "expected_outputs_from_scenario_pack": [
+            "readiness matrix with no DONE/READY overclaim"
+          ],
+          "pass_rule": "score >= 4 and no overclaim",
+          "no_score_executed_in_this_phase": true
+        }
+      ],
+      "pair_row_count_for_route": 9,
+      "pair_ids_for_route": [
+        "TQ-012-mixed-final-readiness|Claude|orchestration-plan|debug-false",
+        "TQ-012-mixed-final-readiness|Claude|prompt-to-task|debug-false",
+        "TQ-012-mixed-final-readiness|Claude|skill-selection|debug-false",
+        "TQ-012-mixed-final-readiness|Codex|orchestration-plan|debug-false",
+        "TQ-012-mixed-final-readiness|Codex|prompt-to-task|debug-false",
+        "TQ-012-mixed-final-readiness|Codex|skill-selection|debug-false",
+        "TQ-012-mixed-final-readiness|Cursor|orchestration-plan|debug-false",
+        "TQ-012-mixed-final-readiness|Cursor|prompt-to-task|debug-false",
+        "TQ-012-mixed-final-readiness|Cursor|skill-selection|debug-false"
+      ],
+      "common_blocked_pair_row_count": 9,
+      "common_blocked_pair_ids": [
+        "TQ-012-mixed-final-readiness|Claude|prompt-to-task|debug-false",
+        "TQ-012-mixed-final-readiness|Claude|orchestration-plan|debug-false",
+        "TQ-012-mixed-final-readiness|Claude|skill-selection|debug-false",
+        "TQ-012-mixed-final-readiness|Codex|prompt-to-task|debug-false",
+        "TQ-012-mixed-final-readiness|Codex|orchestration-plan|debug-false",
+        "TQ-012-mixed-final-readiness|Codex|skill-selection|debug-false",
+        "TQ-012-mixed-final-readiness|Cursor|prompt-to-task|debug-false",
+        "TQ-012-mixed-final-readiness|Cursor|orchestration-plan|debug-false",
+        "TQ-012-mixed-final-readiness|Cursor|skill-selection|debug-false"
+      ],
+      "positive_examples_from_current_refs": [
+        "Every target row has verdict, evidence refs, what passed, what remains, and next work order.",
+        "Final status remains IN_PROGRESS when token/quality/learning evidence is missing."
+      ],
+      "negative_examples_from_current_refs": [
+        "Marks ready because many rows passed.",
+        "Uses dashboard/API automation as full host runtime proof."
+      ],
+      "limitations": {
+        "route_limitations": [
+          "eval_execution",
+          "training",
+          "common_mutation",
+          "readiness_claims"
+        ],
+        "why_blocked_now": [
+          "control_or_review_evidence_only",
+          "no_user_local_eval_only_approval",
+          "final_readiness_must_remain_closed"
+        ],
+        "quality_score_executed": false,
+        "eval_runner_executed": false,
+        "training_or_model_mutation_executed": false,
+        "common_training_allowed": false
+      }
+    }
+  ],
+  "claim_locks": {
+    "token_savings_claimed_or_ready": false,
+    "quality_improvement_claimed_or_ready": false,
+    "semantic_quality_claimed_or_ready": false,
+    "semantic_readiness_claimed_or_ready": false,
+    "learnability_claimed_or_ready": false,
+    "live_host_readiness_claimed_or_ready": false,
+    "common_readiness_claimed_or_ready": false,
+    "strict_quality_03_ready_claimed_or_ready": false,
+    "training_ready_claimed_or_ready": false,
+    "target_promotion_claimed_or_ready": false,
+    "locator_update_claimed_or_ready": false,
+    "final_readiness_claimed_or_ready": false
+  },
+  "execution_locks": {
+    "eval_runner_executed": false,
+    "training_started": false,
+    "model_checkpoint_locator_mutated": false,
+    "source_code_edited": false,
+    "external_web_or_ai_used": false
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schema": "xiigen.quality_02.current_pair_scorer_contract.v1",
+  "phase_id": "QUALITY-02",
+  "run_id": "quality-01-02-20260618-053620",
+  "contract_type": "deterministic_transparent_rubric_scoring_helper",
+  "evaluation_authority_limits": [
+    "Allowed as evaluation helper only.",
+    "Not trainable semantic authority.",
+    "Does not solve tasks with external AI.",
+    "Does not mutate source/model/checkpoint/locator.",
+    "Does not prove token savings, quality improvement, semantic quality, learnability or final readiness."
+  ],
+  "required_input_refs_per_row": [
+    "baseline.raw_private_trace_ref",
+    "baseline.redacted_trace_ref",
+    "adaptive.raw_private_trace_ref",
+    "adaptive.redacted_trace_ref",
+    "scenario_ref",
+    "quality_03_pair_ref"
+  ],
+  "required_layers": [
+    "prompt_to_task",
+    "orchestration_reasoning",
+    "skill_selection",
+    "final_output_usefulness"
+  ],
+  "score_scale": {
+    "min": 0,
+    "max": 5,
+    "passing_layer_score_min": 4,
+    "needs_repair_layer_score_min": 3,
+    "fail_layer_score_max": 2
+  },
+  "rules": [
+    "Every pair must have matching pair_id, scenario_id, host, method, prompt_hash, tokenizer_accounting_version and redaction_policy.",
+    "Scores use only raw_response_text, selected_skills, check_set_results, warnings/errors and row flags from current TOKEN-03/TOKEN-04 traces.",
+    "A layer is capped below PASS when output does not spell out scenario-specific expected behavior.",
+    "Any observed overclaim or forbidden mutation/external-AI/training uncertainty fails the row.",
+    "limited_observed_non_regression may be true only when adaptive score is not below baseline and pair integrity passes.",
+    "quality_non_regression_passed remains false here because strict source-disjoint and controls are not proven."
+  ],
+  "output_rows_expected": 54,
+  "token_savings_claimed": false,
+  "quality_improvement_claimed": false,
+  "semantic_quality_claimed": false,
+  "learnability_claimed": false,
+  "final_readiness_claimed": false,
+  "live_host_savings_claimed": false,
+  "production_locator_or_checkpoint_mutated": false,
+  "external_ai_used": false,
+  "training_started": false,
+  "model_or_checkpoint_or_locator_mutated": false
+}

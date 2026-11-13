@@ -1,0 +1,1158 @@
+{
+  "schema_version": "next-knn-review-1",
+  "date": "2026-10-27",
+  "checked_current_head": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+  "historical_snapshot": "846144464a856cd3f118bcfc0165c8117b06c167",
+  "book_snapshot": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+  "requested_scope": [
+    "RETENTION-M1-01",
+    "KNN-DOMAIN-PRINCIPLES-01",
+    "P125-TRANSLATION-MEMORY-INGRESS"
+  ],
+  "recommendations": [
+    "RETENTION-M1-01",
+    "KNN-DOMAIN-PRINCIPLES-01"
+  ],
+  "review_scope_ru": "Следующие содержательные примеры после TCTX/HCL/PQ/WC/AST/E25/E18/E40. RET — изменение агрегации обучаемой памяти. KDP — ручной критерий чтения с новым opt-in переносом. P125 не включён как новый метод.",
+  "selected_cases": [
+    {
+      "id": "RETENTION-M1-01",
+      "recommendation": "recommended_as_learned_memory_update_policy",
+      "stage_ru": "Обновление входных весов маршрута в обучаемой памяти; после допуска урока и до последующего выбора плана.",
+      "title_ru": "Новый парафраз добавляется к памяти маршрута вместо замены прежнего",
+      "old_ru": "На каждом уроке пара остаётся в KNN-памяти, но InputFeatureWeights маршрута целиком заменяются признаками последнего урока. Это исправно реализованная политика последнего представителя; старый маршрут не имеет накопленного представления всех формулировок.",
+      "new_ru": "Для того же FlowRef берётся максимум старого и свежего веса каждого входного токена. Другие поля берутся из нового урока; tokenizer, формула выбора, индекс и составитель плана остаются прежними.",
+      "learned_state_ru": "Таблица входных токенов с положительными весами на FlowRef и память правильных пар запрос→план. Максимум весов задан кодом, сами токены и их принадлежность маршруту приходят из уроков. Нейронных весов, LoRA/DPO и optimizer updates нет.",
+      "baseline_validity_ru": "В прочитанном коде нет сломанной реализации обещанной union: A явно присваивает BuildWeights последнего урока, B вводит иную политику агрегации. Это не неправильный локальный индекс HCL и не потеря уже переданного поля ingress. Более широкое продуктовое обещание удерживать каждую прежнюю формулировку здесь не устанавливается; при таком обещании тот же недостаток можно назвать дефектом retention-контракта. Вывод ограничен сменой политики памяти на согласованных уроках.",
+      "panel": [
+        {
+          "phase": "after-preparation",
+          "id": "RQ1",
+          "query": "validate payment approval ledger audit",
+          "A_correct": true,
+          "B_correct": true,
+          "A_flow": "LAB-A",
+          "B_flow": "LAB-A"
+        },
+        {
+          "phase": "after-preparation",
+          "id": "RQ2",
+          "query": "check invoice consent journal review",
+          "A_correct": false,
+          "B_correct": false,
+          "A_flow": null,
+          "B_flow": null
+        },
+        {
+          "phase": "after-preparation",
+          "id": "RQ3",
+          "query": "validate payment receipt email summary",
+          "A_correct": true,
+          "B_correct": true,
+          "A_flow": "LAB-B",
+          "B_flow": "LAB-B"
+        },
+        {
+          "phase": "after-preparation",
+          "id": "RQ4",
+          "query": "schedule backups policy cron",
+          "A_correct": true,
+          "B_correct": true,
+          "A_flow": null,
+          "B_flow": null
+        },
+        {
+          "phase": "after-next-lesson",
+          "id": "RQ1",
+          "query": "validate payment approval ledger audit",
+          "A_correct": false,
+          "B_correct": true,
+          "A_flow": "LAB-B",
+          "B_flow": "LAB-A"
+        },
+        {
+          "phase": "after-next-lesson",
+          "id": "RQ2",
+          "query": "check invoice consent journal review",
+          "A_correct": true,
+          "B_correct": true,
+          "A_flow": "LAB-A",
+          "B_flow": "LAB-A"
+        },
+        {
+          "phase": "after-next-lesson",
+          "id": "RQ3",
+          "query": "validate payment receipt email summary",
+          "A_correct": true,
+          "B_correct": true,
+          "A_flow": "LAB-B",
+          "B_flow": "LAB-B"
+        },
+        {
+          "phase": "after-next-lesson",
+          "id": "RQ4",
+          "query": "schedule backups policy cron",
+          "A_correct": true,
+          "B_correct": true,
+          "A_flow": null,
+          "B_flow": null
+        }
+      ],
+      "example": {
+        "A": {
+          "query": "validate payment approval ledger audit",
+          "selected_flow": "LAB-B",
+          "actual_body": "Validate receipt, then email the receipt.",
+          "correct": false,
+          "source_id": "RET_A_EXAMPLE"
+        },
+        "B": {
+          "query": "validate payment approval ledger audit",
+          "selected_flow": "LAB-A",
+          "actual_body": "Validate approval, then persist the ledger.",
+          "correct": true,
+          "source_id": "RET_B_EXAMPLE"
+        }
+      },
+      "learned_state_counts": {
+        "pairs_both": [
+          0,
+          2,
+          3
+        ],
+        "flows_both": [
+          0,
+          2,
+          2
+        ],
+        "all_input_feature_entries_A": [
+          0,
+          8,
+          8
+        ],
+        "all_input_feature_entries_B": [
+          0,
+          8,
+          12
+        ],
+        "updated_flow_input_entries_after_A": 4,
+        "updated_flow_input_entries_after_B": 8
+      },
+      "causal_example": {
+        "query": "validate payment approval ledger audit",
+        "A_after_input_scores": {
+          "LAB-A": 0,
+          "LAB-B": 2
+        },
+        "B_after_input_scores": {
+          "LAB-A": 4,
+          "LAB-B": 2
+        },
+        "derived_from": "saved InputFeatureWeights and query tokens; no new model call"
+      },
+      "budget": {
+        "train_calls_per_arm": 3,
+        "lessons_per_arm": 3,
+        "response_calls_per_arm": 8,
+        "before_responses": 4,
+        "after_responses": 4,
+        "state_exports_per_arm": 3,
+        "save_restore_runs": 0,
+        "optimizer_updates": 0,
+        "warmups": 0,
+        "repeats": 0
+      },
+      "costs": {
+        "A": {
+          "third_train_ms": 0.0965,
+          "third_train_allocated_bytes": 10576,
+          "after-preparation": {
+            "reads": 4,
+            "elapsed_ms": 48.7291,
+            "allocated_bytes": 326496
+          },
+          "after-next-lesson": {
+            "reads": 4,
+            "elapsed_ms": 1.1167,
+            "allocated_bytes": 127136
+          },
+          "TrainOrchestrationBatchAsync": {
+            "calls": 3,
+            "elapsed_ms": 47.7059,
+            "allocated_bytes": 70896
+          },
+          "GeneratePlanAsync": {
+            "calls": 8,
+            "elapsed_ms": 49.8458,
+            "allocated_bytes": 453632
+          }
+        },
+        "B": {
+          "third_train_ms": 2.9409,
+          "third_train_allocated_bytes": 11752,
+          "after-preparation": {
+            "reads": 4,
+            "elapsed_ms": 74.2677,
+            "allocated_bytes": 326496
+          },
+          "after-next-lesson": {
+            "reads": 4,
+            "elapsed_ms": 1.2916,
+            "allocated_bytes": 130280
+          },
+          "TrainOrchestrationBatchAsync": {
+            "calls": 3,
+            "elapsed_ms": 51.6312,
+            "allocated_bytes": 47448
+          },
+          "GeneratePlanAsync": {
+            "calls": 8,
+            "elapsed_ms": 75.5593,
+            "allocated_bytes": 456776
+          }
+        }
+      },
+      "cost_deltas": {
+        "third_train_allocated_bytes": 1176,
+        "after_four_reads_allocated_bytes": 3144,
+        "after_four_reads_elapsed_ms": 0.1749,
+        "all_eight_reads_elapsed_ms": 25.7135,
+        "preparation_four_reads_elapsed_ms": 25.5386
+      },
+      "cost_judgment_ru": "Измеренные добавки1176B на третий Train и3144B на четыре последующих чтения малы в абсолютном размере. Надёжная структурная цена — четыре дополнительных признака. Единичные wall/allocations не устанавливают устойчивую цену. Почти вся разница суммарного времени ответов уже существовала до третьего урока:48.7291vs74.2677мс при одинаковом обученном состоянии. После вмешательства1.1167vs1.2916мс за4чтения; причинный speedup/slowdown не заявляется.",
+      "current_integration": {
+        "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+        "status": "experimental_B_not_transferred_to_named_product_Train",
+        "explanation_ru": "Текущий42.ProjectWikiDomain/PromptFlowGroundingModel.Train L17–24 всё ещё заменяет веса. Исправление FindLearnedPair L74–88 ограничивает извлечение выбранным flow; это отдельный IDENTITY-ремонт, не max-merge RETENTION."
+      },
+      "formula": {
+        "update": "w_B(v)=max(w_old(v),w_new_lesson(v)); absent weight=0",
+        "reader": "s(q,w)=sum_v 1[v in q] w(v)",
+        "consequence": "w_B>=w_old componentwise and q_v>=0 => s(q,w_B)>=s(q,w_old)",
+        "limits_ru": "Это сумма совпавших весов, не cosine/Jaccard и не нормированная вероятность. Неравенство относится к входному score одного маршрута. Оно не доказывает правильность всех маршрутов, KNN-плана, конфликтующих исправлений или всего GeneratePlanAsync."
+      },
+      "book": {
+        "source_id": "BOOK_RET_INNER",
+        "section": "AppendixB.1",
+        "pdf_page": 797,
+        "translation_ru": "каноническое скалярное произведение",
+        "bridge_ru": "Книга даёт обозначение суммы попарных произведений. Наш вывод о неубывании score следует из max-обновления и неотрицательного запроса в коде; отдельной теоремы книги о retention этого проекта нет.",
+        "paraphrase_ru": "каноническое скалярное произведение"
+      },
+      "limitations_ru": [
+        "Четыре узких запроса: три положительных и один контроль отказа; не независимое языковое обобщение.",
+        "Два согласованных парафраза одного плана, а не противоречащие исправления; union может удерживать устаревшие признаки.",
+        "Все16сохранённых ответов проверены по route,FlowRef и целому телу; один верный ID без правильного тела не засчитывался.",
+        "Сравнение выполнено в общей экспериментальной проекции. GetOrchestratorAsync/plugin/полныйFlow wrapper не исполнялись; cold restore не проверялся.",
+        "Порядок и состав токенов отныне не стираются только в InputFeatureWeights; другие поля остаются свежими, поэтому весь learner не становится коммутативным/порядконезависимым."
+      ],
+      "source_ids": [
+        "RET_REPORT",
+        "RET_CARD",
+        "RET_A_RAW",
+        "RET_A_STATES",
+        "RET_A_COST",
+        "RET_A_CODE",
+        "RET_B_RAW",
+        "RET_B_STATES",
+        "RET_B_COST",
+        "RET_B_CODE",
+        "RET_PROJECTION",
+        "RET_CURRENT_TRAIN",
+        "RET_CURRENT_READER",
+        "RET_SCORE",
+        "RET_A_EXAMPLE",
+        "RET_B_EXAMPLE",
+        "BOOK_RET_INNER"
+      ]
+    },
+    {
+      "id": "KNN-DOMAIN-PRINCIPLES-01",
+      "short_id": "KDP01",
+      "recommendation": "recommended_as_manual_readout_method_with_current_opt_in_transfer",
+      "title_ru": "Ограниченная ручная поправка выбирает более подходящий ответ из той же памяти",
+      "stage_ru": "После HNSW-поиска и native vector/BM25/pattern fusion; перед argmax и выдачей сохранённого Output.",
+      "old_ru": "Тот же замороженный encoder создаёт embedding; HNSW возвращает кандидатов; исправный native reader складывает0.45vector+0.35BM25+0.20pattern и выбирает максимум. Эта общая мера может почти не различать нужное время или текущий этап.",
+      "new_ru": "Вызывающая сторона явно подключает каталог фиксированных функций своего профиля. Каждая оценивает вход запроса и вход сохранённого примера; ограниченная добавка меняет порядок этих же кандидатов. Функция не получает Output и не сочиняет новый ответ.",
+      "learned_state_ru": "Обучение памяти записывает примеры и их индекс, используя frozen Transformer. Функции времени/подэтапа написаны человеком и от новых уроков не учатся. Успех здесь — более полезное чтение имеющихся знаний, не лучшее обучение нейронной модели.",
+      "baseline_validity_ru": "A корректно реализует зафиксированную fusion-формулу. Изменение добавляет другой критерий уместности, а не чинит ошибку арифметики, индексирования или потерянное поле. Копия native reader совпала с native Unit на40S0ответах по сохранённому отчёту.",
+      "historical_panel": [
+        {
+          "state": "S0",
+          "profile": "CS",
+          "B_arm": "B12",
+          "A_correct": 4,
+          "B_correct": 4,
+          "total": 8,
+          "improved_ids": [],
+          "regressed_ids": []
+        },
+        {
+          "state": "S0",
+          "profile": "EN",
+          "B_arm": "B123",
+          "A_correct": 8,
+          "B_correct": 8,
+          "total": 8,
+          "improved_ids": [],
+          "regressed_ids": []
+        },
+        {
+          "state": "S0",
+          "profile": "RU",
+          "B_arm": "B1",
+          "A_correct": 5,
+          "B_correct": 8,
+          "total": 8,
+          "improved_ids": [
+            "E02",
+            "E07",
+            "E08"
+          ],
+          "regressed_ids": []
+        },
+        {
+          "state": "S0",
+          "profile": "HE",
+          "B_arm": "B1",
+          "A_correct": 6,
+          "B_correct": 8,
+          "total": 8,
+          "improved_ids": [
+            "E02",
+            "E08"
+          ],
+          "regressed_ids": []
+        },
+        {
+          "state": "S0",
+          "profile": "OR",
+          "B_arm": "B2",
+          "A_correct": 4,
+          "B_correct": 8,
+          "total": 8,
+          "improved_ids": [
+            "E02",
+            "E04",
+            "E05",
+            "E06"
+          ],
+          "regressed_ids": []
+        },
+        {
+          "state": "S1",
+          "profile": "CS",
+          "B_arm": "B12",
+          "A_correct": 6,
+          "B_correct": 6,
+          "total": 8,
+          "improved_ids": [],
+          "regressed_ids": []
+        },
+        {
+          "state": "S1",
+          "profile": "EN",
+          "B_arm": "B123",
+          "A_correct": 8,
+          "B_correct": 8,
+          "total": 8,
+          "improved_ids": [],
+          "regressed_ids": []
+        },
+        {
+          "state": "S1",
+          "profile": "RU",
+          "B_arm": "B1",
+          "A_correct": 5,
+          "B_correct": 8,
+          "total": 8,
+          "improved_ids": [
+            "E02",
+            "E07",
+            "E08"
+          ],
+          "regressed_ids": []
+        },
+        {
+          "state": "S1",
+          "profile": "HE",
+          "B_arm": "B1",
+          "A_correct": 6,
+          "B_correct": 8,
+          "total": 8,
+          "improved_ids": [
+            "E02",
+            "E08"
+          ],
+          "regressed_ids": []
+        },
+        {
+          "state": "S1",
+          "profile": "OR",
+          "B_arm": "B2",
+          "A_correct": 5,
+          "B_correct": 8,
+          "total": 8,
+          "improved_ids": [
+            "E02",
+            "E05",
+            "E06"
+          ],
+          "regressed_ids": []
+        }
+      ],
+      "example": {
+        "A": {
+          "profile": "RU",
+          "arm": "A",
+          "state": "S1",
+          "row": "E02",
+          "input": "Задание: Продолжи глаголом писать, без дополнений, с точкой. Префикс: Вчера Олег",
+          "expected": "писал.",
+          "actual": "пишет.",
+          "correct": false,
+          "chosenExampleId": "S01",
+          "confidence": 0.82,
+          "candidateIds": [
+            "S01",
+            "S02",
+            "T01",
+            "T02",
+            "S03",
+            "T03",
+            "T04",
+            "S04"
+          ],
+          "nativeScores": {
+            "S01": 0.6460025161504745,
+            "S02": 0.643696017563343,
+            "T01": 0.6426601752638816,
+            "T02": 0.64086694419384,
+            "S03": 0.639372082054615,
+            "T03": 0.6313093483448029,
+            "T04": 0.6170055836439132,
+            "S04": 0.6005014687776566
+          },
+          "finalScores": {
+            "S01": 0.6460025161504745,
+            "S02": 0.643696017563343,
+            "T01": 0.6426601752638816,
+            "T02": 0.64086694419384,
+            "S03": 0.639372082054615,
+            "T03": 0.6313093483448029,
+            "T04": 0.6170055836439132,
+            "S04": 0.6005014687776566
+          },
+          "principleNotes": [],
+          "source_id": "KDP_RU_S1_A"
+        },
+        "B1": {
+          "profile": "RU",
+          "arm": "B1",
+          "state": "S1",
+          "row": "E02",
+          "input": "Задание: Продолжи глаголом писать, без дополнений, с точкой. Префикс: Вчера Олег",
+          "expected": "писал.",
+          "actual": "писал.",
+          "correct": true,
+          "chosenExampleId": "S02",
+          "confidence": 0.91,
+          "candidateIds": [
+            "S01",
+            "S02",
+            "T01",
+            "T02",
+            "S03",
+            "T03",
+            "T04",
+            "S04"
+          ],
+          "nativeScores": {
+            "S01": 0.6460025161504745,
+            "S02": 0.643696017563343,
+            "T01": 0.6426601752638816,
+            "T02": 0.64086694419384,
+            "S03": 0.639372082054615,
+            "T03": 0.6313093483448029,
+            "T04": 0.6170055836439132,
+            "S04": 0.6005014687776566
+          },
+          "finalScores": {
+            "S01": 0.44600251615047454,
+            "S02": 0.843696017563343,
+            "T01": 0.44266017526388163,
+            "T02": 0.8408669441938401,
+            "S03": 0.639372082054615,
+            "T03": 0.6313093483448029,
+            "T04": 0.6170055836439132,
+            "S04": 0.6005014687776566
+          },
+          "principleNotes": [
+            "S01|ru.time-frame|applicable=True|value=-1.0000|запрос past, кандидат habitual",
+            "S02|ru.time-frame|applicable=True|value=1.0000|запрос past, кандидат past",
+            "T01|ru.time-frame|applicable=True|value=-1.0000|запрос past, кандидат habitual",
+            "T02|ru.time-frame|applicable=True|value=1.0000|запрос past, кандидат past",
+            "S03|ru.time-frame|applicable=False|value=0.0000|время не определено: запрос past, кандидат нет",
+            "T03|ru.time-frame|applicable=False|value=0.0000|время не определено: запрос past, кандидат нет",
+            "T04|ru.time-frame|applicable=False|value=0.0000|время не определено: запрос past, кандидат нет",
+            "S04|ru.time-frame|applicable=False|value=0.0000|время не определено: запрос past, кандидат нет"
+          ],
+          "source_id": "KDP_RU_S1_B1"
+        }
+      },
+      "quality_scope_ru": "Таблица относится к исходному опыту26октября,21плечо,336сохранённых наблюдений,40различных экзаменационных входов. Новые27тестов переноса — другая проверка и не новые A/B5/8→8/8.",
+      "new_current_transfer": {
+        "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+        "transfer_commit": "45995820648eeb7db007e79cac0dc52f0a2f6691",
+        "scope": "opt_in_API_in_18.CapabilityTraining",
+        "entrypoints": [
+          "TransformerEmbeddingKnnLogicalUnit<TOutput>.Train(...,candidatePrinciples=null)",
+          "WithCandidatePrinciples(catalog)",
+          "ExecuteAsync -> KnnCandidatePrincipleRanker.Rank -> stored Output"
+        ],
+        "built_in_profiles": [
+          "RU time-frame",
+          "OR predecessor-stage"
+        ],
+        "shared_state_ru": "WithCandidatePrinciples передаёт те же model,tokenizer,embeddingModel,index,examples; не переобучает и не пересчитывает embeddings.",
+        "default_ru": "При null/пустом каталоге новый ranker не вызывается, прежний выбор,confidence,evidence и ingredients сохраняются. Есть source-тесты этого пути.",
+        "admission_ru": "ДубликатID,чужойprofile,неизвестныеversion/scope и веса вне[0,1]/NaN/Infinity отвергаются. Неприменимая или нечисловая оценка функции даёт0. Сама полезная функция должна быть передана явно; автоматический выбор каталога по всему продукту этим переносом не доказан.",
+        "execution_receipt": "Author commit reports27/27 new tests and222/223 scoped tests,twice; old census failure separately described. No test or model run executed in this review.",
+        "test_scope_ru": "Исходник тестов проверяет совместимость,доступ rule к native Unit,ограничение ответов памятью,семантику ручных функций ичисленные границы. Полной новой8строчнойпанелиRU/ORиcomparative resources там нет."
+      },
+      "formula": {
+        "native": "s0=0.45*v+0.35*b+0.20*p, each v,b,p in[0,1]",
+        "bonus": "delta=(0.2/m)*sum_j w_j*z_j; z_j=clip(f_j,-1,1) when applicable and finite, else0; 0<=w_j<=1; m=number_of_functions",
+        "final": "s1=s0+delta; m=0 returns s0 exactly",
+        "bound": "|delta|<=0.2*mean(w)<=0.2; |delta_a-delta_b|<=0.4; a strict native gap>0.4 cannot reverse",
+        "denominator_ru": "Деление на количество функций, НЕ на сумму весов. Неприменимые функции остаются в знаменателе.",
+        "confidence": "round(clamp(0.50+0.49*s1,0,0.99),2)",
+        "qualification_ru": "s1 может выйти из[0,1]; это score, не вероятность. Новый порог допуска ответа не добавлен. Приgap≤0.4 переворот возможен, но не гарантирован и не обязан быть правильным."
+      },
+      "book": {
+        "source_id": "BOOK_KDP_MARGIN",
+        "section": "Definition6.59,Eq6.44",
+        "pdf_page": 221,
+        "translation_ru": "внешний отступ",
+        "bridge_ru": "В книге margin определён для attention logits. Здесь заимствуется алгебра разности числовых оценок; KDP softmax не добавляет. Граница0.4 выведена из продуктовых clamp и bounds весов, а не дана книгой как теорема о KNN.",
+        "paraphrase_ru": "внешний отступ"
+      },
+      "costs": {
+        "historical_whole_run_wall_seconds": 7.948,
+        "historical_whole_run_peak_bytes": 73809920,
+        "paired_latency": "NOT_MEASURED",
+        "paired_allocations": "NOT_MEASURED",
+        "paired_state_size": "NOT_MEASURED",
+        "new_transfer_paired_resources": "NOT_MEASURED"
+      },
+      "limitations_ru": [
+        "Ноль новых ошибок на малой исторической панели не доказывает отсутствие ухудшений времени,памяти или на произвольных входах.",
+        "Вычисления функций проходят по каждому уже найденному кандидату; сравнительная цена не измерена и не объявляется нулевой.",
+        "RU/HE/EN тут задачи продолжения суффикса из известной памяти, не общий перевод или владение языком. Род и морфологические признаки не выучивались этим массивом.",
+        "HE воспроизводит3/4собственных уроков; улучшение reader6/8→8/8 не доказывает приобретение новой дозы. В текущем factory нет отдельного встроенного HEпрофиля.",
+        "Полезность уже присутствует наS0, поэтому не заявлять ускоренное обучение. Частотная функция не меняет ответы; C#/EN не улучшаются.",
+        "Старый40/40restore oracle восстанавливал Text/Output/Instruction/Prefix из fixture и функции из Arms. Это не полное доказательство восстановления saved memory; слабость подробно установлена планом74.",
+        "Opt-in native API уже реализован, но автоматическая маршрутизацияKDR,широкийProductHostE2E,полныйrestore иполная ресурсная квалификация из этого не следуют."
+      ],
+      "source_ids": [
+        "KDP_REPORT",
+        "KDP_RAW",
+        "KDP_QUALIFICATION",
+        "KDP_OLD_RULES",
+        "KDP_CURRENT_ADMISSION",
+        "KDP_CURRENT_BONUS",
+        "KDP_CURRENT_TIME",
+        "KDP_CURRENT_STAGE",
+        "KDP_CURRENT_FACTORY",
+        "KDP_CURRENT_FIT",
+        "KDP_CURRENT_EXECUTE",
+        "KDP_TEST_COMPAT",
+        "KDP_TEST_BOUNDS",
+        "KDP_TRANSFER_PLAN",
+        "KDP_RESTORE_LIMIT",
+        "KDP_TRANSFER_COMMIT",
+        "KDP_RU_S1_A",
+        "KDP_RU_S1_B1",
+        "BOOK_KDP_MARGIN"
+      ]
+    }
+  ],
+  "excluded_cases": [
+    {
+      "id": "P125-TRANSLATION-MEMORY-INGRESS",
+      "recommendation": "exclude_as_new_method_showcase",
+      "reason_ru": "Контраст11/24→19/24 исправляет доставку уже заданных PhraseMappings в существующий Executor. Это ingress-ремонт, по смыслу той же нежелательной категории, что HCL. Отдельный native P1250/24→19/24 показывает действие обучения памяти, но A вообще не обучался: это не сравнение двух исправных способов с одинаковыми8уроками.",
+      "historical_metrics": {
+        "ingress_same8lessons_A_correct": 11,
+        "ingress_same8lessons_B_correct": 19,
+        "total": 24,
+        "composition_A": "0/8",
+        "composition_B": "8/8",
+        "false_accepts_A": 1,
+        "false_accepts_B": 3,
+        "precision_among_accepted_A": "11/12",
+        "precision_among_accepted_B": "19/22",
+        "serialized_state_A_bytes": 7515,
+        "serialized_state_B_bytes": 8954
+      },
+      "losses_ru": "cc01 do not delete the file становится удали файл; cc04 did you delete the file превращается в команду. Обе строки раньше не принимались. Прежние правильные ответы не потеряны, но ошибочные принятия выросли1→3.",
+      "learned_state_ru": "Explicit source→target mappings частей урока заполняют exact/phrase/shared-KNN память. Это реальное обучение памяти, но соответствия action/object заранее даны, а механизм композиции уже существовал.",
+      "raw_access_ru": "При дополнительном чтении comparison.json GitHub вернул LFS pointer(size8632), не данные. Поэтому новые самостоятельные raw-счётчики P125 не заявлены; для исключения использован первичный отчёт и явно записанный тип изменения.",
+      "source_ids": [
+        "P125_INGRESS_REPORT",
+        "P125_NATIVE_REPORT"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "RET_REPORT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/report.md",
+      "line_start": 16,
+      "line_end": 69,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/report.md#L16-L69",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/root-primary/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/report.md",
+      "sha256": "dc88ea5c22948b3d4e6cf46c7ea3ad66927ed3eff13a7597f096923d160f322a",
+      "role": "historical paired experiment report"
+    },
+    {
+      "id": "RET_CARD",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "docs/plans/replanning-possible-diffs/experimets/cards/N61-mode1-retention-and-identity.md",
+      "line_start": 199,
+      "line_end": 279,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/docs/plans/replanning-possible-diffs/experimets/cards/N61-mode1-retention-and-identity.md#L199-L279",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION/card.md",
+      "sha256": "e79c5fd43de9fb92f5cd4eb4ef39e5226a5f84adbe991804fe96b3b362676633",
+      "role": "frozen lessons, explicit factor, outcome rubric and budget"
+    },
+    {
+      "id": "RET_A_RAW",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/A/raw-answers.json",
+      "line_start": 1,
+      "line_end": 406,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/A/raw-answers.json#L1-L406",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION-M1-01/A/raw-answers.json",
+      "sha256": "f2e609c210239881af80d55e457c921b23be776ed5bc0bd5675e442282e291ce",
+      "role": "saved eight response records; independently recounted"
+    },
+    {
+      "id": "RET_A_STATES",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/A/states.json",
+      "line_start": 1,
+      "line_end": 340,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/A/states.json#L1-L340",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION-M1-01/A/states.json",
+      "sha256": "5d0624ec8b63913015d686b08282331e1c24c05e52a3b09e2b961a621270dc2f",
+      "role": "saved three learned states; feature vectors inspected"
+    },
+    {
+      "id": "RET_A_COST",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/A/costs.json",
+      "line_start": 1,
+      "line_end": 104,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/A/costs.json#L1-L104",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION-M1-01/A/costs.json",
+      "sha256": "cb368a9b9edc406020ea1a64c38de1e6ac9fe5b574147321c11f51348c6b7a46",
+      "role": "per-call observations; no causal speed claim"
+    },
+    {
+      "id": "RET_A_CODE",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "35.ExperimentsV2/Experiments/Rp01Micro/N61Mode1/RETENTION/A/PromptFlowGroundingModel.cs",
+      "line_start": 17,
+      "line_end": 24,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/Experiments/Rp01Micro/N61Mode1/RETENTION/A/PromptFlowGroundingModel.cs#L17-L24",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION/A/PromptFlowGroundingModel.cs",
+      "sha256": "554c8bda82480c83a5755fb61853f95ebb7c57e8eaf91b64aa659429485d8eaf",
+      "role": "actual A/B update policy"
+    },
+    {
+      "id": "RET_B_RAW",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/B/raw-answers.json",
+      "line_start": 1,
+      "line_end": 411,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/B/raw-answers.json#L1-L411",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION-M1-01/B/raw-answers.json",
+      "sha256": "ac508c9da8626eb7fbee3356f45fe03595f76520f02475a794b015a75913555c",
+      "role": "saved eight response records; independently recounted"
+    },
+    {
+      "id": "RET_B_STATES",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/B/states.json",
+      "line_start": 1,
+      "line_end": 344,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/B/states.json#L1-L344",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION-M1-01/B/states.json",
+      "sha256": "5720aeddc22a0a12f514a59ed86c3abed77d2cc7c0e5cbcd4166426a17077519",
+      "role": "saved three learned states; feature vectors inspected"
+    },
+    {
+      "id": "RET_B_COST",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/B/costs.json",
+      "line_start": 1,
+      "line_end": 104,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/B/costs.json#L1-L104",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION-M1-01/B/costs.json",
+      "sha256": "e822aa3ce3dfead743fcebeb948d47bf0d8ec3d4fe0a36c23f2ad14bc648fffd",
+      "role": "per-call observations; no causal speed claim"
+    },
+    {
+      "id": "RET_B_CODE",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "35.ExperimentsV2/Experiments/Rp01Micro/N61Mode1/RETENTION/B/PromptFlowGroundingModel.cs",
+      "line_start": 17,
+      "line_end": 37,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/Experiments/Rp01Micro/N61Mode1/RETENTION/B/PromptFlowGroundingModel.cs#L17-L37",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION/B/PromptFlowGroundingModel.cs",
+      "sha256": "44ebe261b9eb25e8ca5cfdebe07aa6a3d41ea4afef273652bdf6bf1ce74882c5",
+      "role": "actual A/B update policy"
+    },
+    {
+      "id": "RET_PROJECTION",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/A/manifest.json",
+      "line_start": 1,
+      "line_end": 52,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/A/manifest.json#L1-L52",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION-M1-01/A/manifest.json",
+      "sha256": "63949917150a2ca349e025c0ebd25b4d785b65ba59f9b72f0af6d65d0cb7ae90",
+      "role": "scope of shared source projection; full product Flow not executed"
+    },
+    {
+      "id": "RET_CURRENT_TRAIN",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "42.ProjectWikiDomain/PromptFlowGroundingModel.cs",
+      "line_start": 17,
+      "line_end": 24,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/42.ProjectWikiDomain/PromptFlowGroundingModel.cs#L17-L24",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/42.ProjectWikiDomain/PromptFlowGroundingModel.cs",
+      "sha256": "342c409f3b3648eef9d4909ae7162594bfc2b487c1e13cb6c9cece51293444ca",
+      "role": "current product still replaces per-flow weights"
+    },
+    {
+      "id": "RET_CURRENT_READER",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "42.ProjectWikiDomain/PromptFlowGroundingModel.cs",
+      "line_start": 26,
+      "line_end": 88,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/42.ProjectWikiDomain/PromptFlowGroundingModel.cs#L26-L88",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/42.ProjectWikiDomain/PromptFlowGroundingModel.cs",
+      "sha256": "342c409f3b3648eef9d4909ae7162594bfc2b487c1e13cb6c9cece51293444ca",
+      "role": "route scoring and separate same-flow retrieval repair"
+    },
+    {
+      "id": "RET_SCORE",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "42.ProjectWikiDomain/PromptFlowGroundingModel.cs",
+      "line_start": 147,
+      "line_end": 205,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/42.ProjectWikiDomain/PromptFlowGroundingModel.cs#L147-L205",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/42.ProjectWikiDomain/PromptFlowGroundingModel.cs",
+      "sha256": "342c409f3b3648eef9d4909ae7162594bfc2b487c1e13cb6c9cece51293444ca",
+      "role": "positive capped counts and unnormalised sum over matching tokens"
+    },
+    {
+      "id": "RET_A_EXAMPLE",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/A/raw-answers.json",
+      "line_start": 191,
+      "line_end": 251,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/A/raw-answers.json#L191-L251",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION-M1-01/A/raw-answers.json",
+      "sha256": "f2e609c210239881af80d55e457c921b23be776ed5bc0bd5675e442282e291ce",
+      "role": "exact retention query and actual selected plan/body after lesson three"
+    },
+    {
+      "id": "RET_B_EXAMPLE",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/B/raw-answers.json",
+      "line_start": 191,
+      "line_end": 254,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/N61-MODE1/results/RETENTION-M1-01/B/raw-answers.json#L191-L254",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/RETENTION-M1-01/B/raw-answers.json",
+      "sha256": "ac508c9da8626eb7fbee3356f45fe03595f76520f02475a794b015a75913555c",
+      "role": "exact retention query and actual selected plan/body after lesson three"
+    },
+    {
+      "id": "KDP_REPORT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/KDP01/results/attempt-01/report.md",
+      "line_start": 17,
+      "line_end": 220,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/report.md#L17-L220",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/report.md",
+      "sha256": "d1750d4d9c0918c69f9e5228ae70b328fcd6b34ed7c365a35ff359a2349d1321",
+      "role": "historical quality, native agreement and limits"
+    },
+    {
+      "id": "KDP_RAW",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+      "line_start": 1,
+      "line_end": 14802,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json#L1-L14802",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+      "sha256": "17f5933bfb4ded8f2ad3a37f5890760381738d40fd24fe7e328435a16ff90737",
+      "role": "336 saved rows; all 42 state/arm/profile groups recounted"
+    },
+    {
+      "id": "KDP_QUALIFICATION",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/KDP01/results/attempt-01/qualification.json",
+      "line_start": 1,
+      "line_end": 692,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/qualification.json#L1-L692",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/qualification.json",
+      "sha256": "2776cd7c62c0dbed1009cec996e4faa918fbd0db088e52c93757802913d33f20",
+      "role": "HE3/4 acquisition qualification; do not claim general learned morphology"
+    },
+    {
+      "id": "KDP_OLD_RULES",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+      "line_start": 280,
+      "line_end": 331,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/Principles.cs#L280-L331",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+      "sha256": "f1472cf2c052e013101627d0a2c990236f55afb3f6530f11d7633e3c5e7e65e3",
+      "role": "manual time-frame signs in original experiment"
+    },
+    {
+      "id": "KDP_CURRENT_ADMISSION",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "18.CapabilityTraining/KnnCandidatePrinciples.cs",
+      "line_start": 157,
+      "line_end": 245,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/18.CapabilityTraining/KnnCandidatePrinciples.cs#L157-L245",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/18.CapabilityTraining/KnnCandidatePrinciples.cs",
+      "sha256": "53339c5462b55472895ab79d192c842096e01fcb53aac89a90b4d59e7f6fa9d3",
+      "role": "profile/version/scope/id checks and finite weights in [0,1]"
+    },
+    {
+      "id": "KDP_CURRENT_BONUS",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "18.CapabilityTraining/KnnCandidatePrinciples.cs",
+      "line_start": 248,
+      "line_end": 316,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/18.CapabilityTraining/KnnCandidatePrinciples.cs#L248-L316",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/18.CapabilityTraining/KnnCandidatePrinciples.cs",
+      "sha256": "53339c5462b55472895ab79d192c842096e01fcb53aac89a90b4d59e7f6fa9d3",
+      "role": "exact bounded adjustment and deterministic argmax"
+    },
+    {
+      "id": "KDP_CURRENT_TIME",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "18.CapabilityTraining/KnnCandidatePrinciples.cs",
+      "line_start": 320,
+      "line_end": 446,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/18.CapabilityTraining/KnnCandidatePrinciples.cs#L320-L446",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/18.CapabilityTraining/KnnCandidatePrinciples.cs",
+      "sha256": "53339c5462b55472895ab79d192c842096e01fcb53aac89a90b4d59e7f6fa9d3",
+      "role": "manual explicit time-frame reader"
+    },
+    {
+      "id": "KDP_CURRENT_STAGE",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "18.CapabilityTraining/KnnCandidatePrinciples.cs",
+      "line_start": 447,
+      "line_end": 550,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/18.CapabilityTraining/KnnCandidatePrinciples.cs#L447-L550",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/18.CapabilityTraining/KnnCandidatePrinciples.cs",
+      "sha256": "53339c5462b55472895ab79d192c842096e01fcb53aac89a90b4d59e7f6fa9d3",
+      "role": "manual predecessor-stage reader"
+    },
+    {
+      "id": "KDP_CURRENT_FACTORY",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "18.CapabilityTraining/KnnCandidatePrinciples.cs",
+      "line_start": 553,
+      "line_end": 574,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/18.CapabilityTraining/KnnCandidatePrinciples.cs#L553-L574",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/18.CapabilityTraining/KnnCandidatePrinciples.cs",
+      "sha256": "53339c5462b55472895ab79d192c842096e01fcb53aac89a90b4d59e7f6fa9d3",
+      "role": "built-in factories only RU time-frame and OR predecessor-stage"
+    },
+    {
+      "id": "KDP_CURRENT_FIT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+      "line_start": 102,
+      "line_end": 198,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/18.CapabilityTraining/LlmIngredientLogicalUnits.cs#L102-L198",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+      "sha256": "7f4f0b85e37baa8179808f843e88ea27342cadf100df11996ab90c2f5dd36691",
+      "role": "memory/index learning; opt-in wrapper shares existing learned state"
+    },
+    {
+      "id": "KDP_CURRENT_EXECUTE",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+      "line_start": 225,
+      "line_end": 332,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/18.CapabilityTraining/LlmIngredientLogicalUnits.cs#L225-L332",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+      "sha256": "7f4f0b85e37baa8179808f843e88ea27342cadf100df11996ab90c2f5dd36691",
+      "role": "rank candidates then return stored Output; native fusion and confidence formula"
+    },
+    {
+      "id": "KDP_TEST_COMPAT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "Tests/KnnDomainPrincipleLearningTests.cs",
+      "line_start": 19,
+      "line_end": 174,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/Tests/KnnDomainPrincipleLearningTests.cs#L19-L174",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/Tests/KnnDomainPrincipleLearningTests.cs",
+      "sha256": "f2602b6b8320f9a579dc8b0c23d91c9d360106312abd8312393744d4d1ca3ba1",
+      "role": "test source: empty catalog compatibility, callback reaches real Unit, output stays in learned memory"
+    },
+    {
+      "id": "KDP_TEST_BOUNDS",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "Tests/KnnDomainPrincipleLearningTests.cs",
+      "line_start": 244,
+      "line_end": 463,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/Tests/KnnDomainPrincipleLearningTests.cs#L244-L463",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/Tests/KnnDomainPrincipleLearningTests.cs",
+      "sha256": "f2602b6b8320f9a579dc8b0c23d91c9d360106312abd8312393744d4d1ca3ba1",
+      "role": "test source: bounded score, gaps, deterministic order, nonfinite values and foreign profile"
+    },
+    {
+      "id": "KDP_TRANSFER_PLAN",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "docs/plans/replanning-possible-diffs/fixes-based-on-experiments/74-knn-domain-constructor-transfer.md",
+      "line_start": 20,
+      "line_end": 75,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/74-knn-domain-constructor-transfer.md#L20-L75",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/plan74.md",
+      "sha256": "ee0e9bff844c7d5c779d29bc26498edf4ddcf3b4f4e844b53c548253117bd4f5",
+      "role": "historical panel attribution and resource qualification"
+    },
+    {
+      "id": "KDP_RESTORE_LIMIT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "docs/plans/replanning-possible-diffs/fixes-based-on-experiments/74-knn-domain-constructor-transfer.md",
+      "line_start": 127,
+      "line_end": 142,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/74-knn-domain-constructor-transfer.md#L127-L142",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/current/plan74.md",
+      "sha256": "ee0e9bff844c7d5c779d29bc26498edf4ddcf3b4f4e844b53c548253117bd4f5",
+      "role": "old restore oracle reconstructs example values from fixture; 40/40 is not full saved-memory proof"
+    },
+    {
+      "id": "KDP_TRANSFER_COMMIT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "45995820648eeb7db007e79cac0dc52f0a2f6691",
+      "url": "https://github.com/lubochka/llm_mvp_core/commit/45995820648eeb7db007e79cac0dc52f0a2f6691",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-knn-src/KDP-transfer-commit.json",
+      "role": "author-reported transfer execution:27/27 new tests;222/223 scoped tests; no comparative resources"
+    },
+    {
+      "id": "KDP_RU_S1_A",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+      "line_start": 6693,
+      "line_end": 6735,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json#L6693-L6735",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+      "sha256": "17f5933bfb4ded8f2ad3a37f5890760381738d40fd24fe7e328435a16ff90737",
+      "role": "exact same-memory Russian E02 query and candidate scores"
+    },
+    {
+      "id": "KDP_RU_S1_B1",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+      "line_start": 7334,
+      "line_end": 7385,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json#L7334-L7385",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+      "sha256": "17f5933bfb4ded8f2ad3a37f5890760381738d40fd24fe7e328435a16ff90737",
+      "role": "exact same-memory Russian E02 query and candidate scores"
+    },
+    {
+      "id": "BOOK_RET_INNER",
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0797-0800-appendix-b-notation-summary.md",
+      "line_start": 27,
+      "line_end": 35,
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0797-0800-appendix-b-notation-summary.md#L27-L35",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/source-book/0797-0800-appendix-b-notation-summary.md",
+      "sha256": "4452d9724d244ed7f1e232a8df464d944d961772b24795027b17596900680f9f",
+      "role": "AppendixB.1,PDF797: скалярное произведение notation, not a retention theorem"
+    },
+    {
+      "id": "BOOK_KDP_MARGIN",
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0221-0224-ch06-margin-flatness-and-relative-emergence.md",
+      "line_start": 44,
+      "line_end": 50,
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0221-0224-ch06-margin-flatness-and-relative-emergence.md#L44-L50",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/source-book/0221-0224-ch06-margin-flatness-and-relative-emergence.md",
+      "sha256": "9be846fdcae7613e3320b595cf99990a2e78486bddffcaef35471dd391055e6b",
+      "role": "Def6.59 Eq6.44,PDF221: margin of attention scores; only algebra transferred"
+    },
+    {
+      "id": "P125_INGRESS_REPORT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/translation-memory-ingress-01/report.md",
+      "line_start": 1,
+      "line_end": 80,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/translation-memory-ingress-01/report.md#L1-L80",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/root-primary/docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/translation-memory-ingress-01/report.md",
+      "sha256": "2a7c8b2d4276ac3d60e13fcd06062da6db7515372f6e9d1dd9d665251c916c3a",
+      "role": "explicit transport repair, same8lessons,24queries and false acceptances"
+    },
+    {
+      "id": "P125_NATIVE_REPORT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/P125-enru-memory-01/report.md",
+      "line_start": 1,
+      "line_end": 92,
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/P125-enru-memory-01/report.md#L1-L92",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/root-primary/docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/P125-enru-memory-01/report.md",
+      "sha256": "9bbba2f449c32417f01ed112945ad9d3cf7691f0328417aeb50a4b0d7fd5cd59",
+      "role": "native memory lesson acquisition and mixed generalisation/edge outcome"
+    }
+  ],
+  "verification": {
+    "model_training_runs": 0,
+    "inference_calls": 0,
+    "builds": 0,
+    "tests_run": 0,
+    "remote_writes": 0,
+    "deliverables_modified": false,
+    "network": "GitHub plugin reads only",
+    "ret_answers_recounted": 16,
+    "ret_before_hash_equal": true,
+    "ret_features_inspected": true,
+    "kdp_raw_rows_recounted": 336,
+    "kdp_group_count": 42,
+    "test_counts": "author-reported; no independent rerun",
+    "unused_fetch": "RET Program.cs first assumed path returned404; not used as evidence",
+    "lfs_pointer": "P125 comparison.json pointer is not raw verification",
+    "local_ref_ranges_validated": true
+  },
+  "skills_reused_from_previous_pass": [
+    {
+      "name": "human-readable-architecture-audit-SKILL.md",
+      "status": "read_full",
+      "line_ranges": [
+        [
+          1,
+          442
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/human-readable-architecture-audit-SKILL.md",
+      "sha256": "1ed20703e5312fd0a253c81a38f3819db0ad630839cfdddd0bc93c0b25f56622"
+    },
+    {
+      "name": "human-communication-GLOSSARY.md",
+      "status": "read_full",
+      "line_ranges": [
+        [
+          1,
+          47
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/human-communication-GLOSSARY.md",
+      "sha256": "4e33a09e80032891589a238c22e873bcbb31c3082ddf34b99e9db5fcfc507c6f"
+    },
+    {
+      "name": "code-examination-SKILL.md",
+      "status": "read_full",
+      "line_ranges": [
+        [
+          1,
+          376
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/code-examination-SKILL.md",
+      "sha256": "d314e7af9d213c91f845fd4b5dcc523988c4d3f42c936edd13108eef7f8f94ae"
+    },
+    {
+      "name": "intent-to-plan-SKILL.md",
+      "status": "read_full",
+      "line_ranges": [
+        [
+          1,
+          225
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/intent-to-plan-SKILL.md",
+      "sha256": "6badf16a2c44775c262065caaf28027e764929d89d8e9946a1a44f07c9fdaa1f"
+    },
+    {
+      "name": "prompt-patch-authoring-SKILL.md",
+      "status": "read_full",
+      "line_ranges": [
+        [
+          1,
+          242
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/prompt-patch-authoring-SKILL.md",
+      "sha256": "1fde99b237856cff0a314eb3967827b06a95faa08b0cea36ca2eb5a3c01b631b"
+    },
+    {
+      "name": "plan-review-SKILL.md",
+      "status": "read_relevant_sections_not_full",
+      "line_ranges": [
+        [
+          1,
+          240
+        ],
+        [
+          2080,
+          2165
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/plan-review-SKILL.md",
+      "sha256": "a1e50fa762a994796640c471d8419f51abaccb587c7e62e5896d826a399853a4"
+    }
+  ],
+  "skill_application_ru": "Архитектурный разбор отделяетwriter/learned state/reader/productentry;code-examination сверяетactualcode иraw;planning/review удерживают исходный вопрос иправильныйbaseline;communication объясняет простыми словами иотделяетформулуоттеоремыобэффективности. Большойplan-review ранее прочитан адресно,полнаязагрузка не заявляется."
+}

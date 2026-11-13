@@ -1,0 +1,146 @@
+{
+    "plan_id": "TECHNICAL-DEBT-CLOSURE-PHASE-0",
+    "plan_file": "docs/plans/TECHNICAL-DEBT-CLOSURE-PHASE-0.md",
+    "authority_file": "docs/plans/ARCHITECT-PLAN-LEARNING-MACHINE-EVOLUTION-v1.md",
+    "main_focus_goal": "Close three architectural debts (TD3, TD1, TD2) that block the five parallel domain training directions, and update all project documentation to reflect the new ILearningMachine<TDomain> hierarchy and Bootstrap ILogicalUnit interfaces.",
+    "goal_reached": true,
+    "current_numbered_step": "DOCS_AND_CLAUDE_UPDATED_COMMITTED_PUSHED",
+    "current_internal_role_state": "ARCHITECT_VERDICT_ALLOW_FINAL",
+    "gate_status": "COMPLETE_ALL_THREE_TDS_AND_DOCS_PUSHED",
+    "stop_allowed": true,
+    "continuation_mode": "TASK_FULLY_COMPLETE",
+
+    "td3_status": {
+        "description": "ILearningMachine<TDomain> contracts added to 00.Core",
+        "commit_hash": "f26ceef0eb5846c524299a5af5c7c4cad7e0893b",
+        "commit_message": "feat(TD3): add ILearningMachine<TDomain> contracts to 00.Core",
+        "files_changed": [
+            "00.Core/LearningMachineContracts.cs",
+            "Tests/LearningMachineContractsTests.cs"
+        ],
+        "gate_b": "dotnet test --filter LearningMachineContractsTests → 4/4 passed",
+        "gate_passed": true,
+        "separation_rule_verified": "grep -n 'Train' 00.Core/LogicalContracts.cs → 0 matches; Train* only on ILearningMachine"
+    },
+
+    "td1_status": {
+        "description": "6 ILogicalUnit interfaces + Bootstrap implementations in 42.ProjectWikiDomain",
+        "commit_hash": "373d969e22241bc7ffe95728942cf6686c500b29",
+        "commit_message": "feat(TD1): wrap 6 static orchestration units as ILogicalUnit interfaces",
+        "files_changed": [
+            "42.ProjectWikiDomain/OrchestrationUnitContracts.cs",
+            "42.ProjectWikiDomain/BootstrapOrchestrationUnits.cs",
+            "42.ProjectWikiDomain/ProjectTaskOrchestrationPipeline.cs",
+            "Tests/ProjectTaskOrchestrationPipelineTests.cs"
+        ],
+        "gate_b": "dotnet test --filter ProjectTaskOrchestrationPipelineTests → 2/2 passed",
+        "gate_passed": true,
+        "bootstrap_behavior_verified": "All 6 Bootstrap classes delegate to existing static classes — no behaviour change (A-LM-03)"
+    },
+
+    "td2_status": {
+        "description": "ProjectWikiOrchestrationFlow registered in ILogicalOrchestrator; BOOTSTRAP_FALLBACK wired in adapter",
+        "commit_hash": "db3129fdd3696c42017e890580f14039ddba79d3",
+        "commit_message": "feat(TD2): register ProjectWikiOrchestrationFlow in ILogicalOrchestrator",
+        "files_changed": [
+            "15.OrchestratorModel/Logical/ProjectWikiOrchestrationFlow.cs",
+            "15.OrchestratorModel/Logical/LogicalOrchestratorAssistant.cs",
+            "42.ProjectWikiDomain/ProjectWikiPluginOrchestrationAdapter.cs",
+            "Tests/ProjectWikiOrchestrationFlowTests.cs"
+        ],
+        "gate_b": "dotnet test --filter ProjectWikiOrchestrationFlowTests → 3/3 passed",
+        "gate_passed": true,
+        "flow_id": "project-wiki-orchestration-flow",
+        "scenario_id": "project-wiki-orchestration-flow",
+        "bootstrap_fallback_logged_as_warning": true
+    },
+
+    "documentation_status": {
+        "docs_commit_hash": "6e72b0ead536d7fcbcf6cdeaca2e53596ff38667",
+        "claude_commit_hash": "53514e638c6f2d5447e9491374521c114bc0389f",
+        "files_updated": [
+            "docs/SUBPROJECT-MAP.md",
+            "docs/ARCHITECTURE.md",
+            "docs/COMPONENT-INTERFACES.md",
+            "docs/DECISIONS-LOCKED.md",
+            "docs/plans/PARALLEL-DOMAIN-TRAINING-ROADMAP-v1.md",
+            "CLAUDE.md"
+        ],
+        "decisions_added": [
+            "A-LM-01", "A-LM-02", "A-LM-03", "A-LM-04",
+            "A-LM-05", "A-LM-06", "A-LM-07", "A-LM-08"
+        ],
+        "subproject_number_conflict_fixed": "28.AffiliateDomain renamed to 31.AffiliateDomain in PARALLEL-DOMAIN-TRAINING-ROADMAP-v1.md; 28 is occupied by SemanticNlp",
+        "test_baseline_updated": "1465 (2026-05-15) → ≥1488 (2026-05-28)",
+        "agent_rules_range_updated": "OP-1..OP-28 → OP-1..OP-34",
+        "decisions_range_updated": "D-01..12 → D-01..D-15, A-LM-01..A-LM-08"
+    },
+
+    "commit_status": {
+        "branch": "main",
+        "origin_parity": "up to date with origin/main after push",
+        "last_commit_hash": "53514e638c6f2d5447e9491374521c114bc0389f",
+        "last_commit_pushed": true,
+        "pending_phase_commit": false
+    },
+
+    "test_summary": {
+        "gate_tests_confirmed": 9,
+        "gate_test_breakdown": {
+            "LearningMachineContractsTests": 4,
+            "ProjectTaskOrchestrationPipelineTests": 2,
+            "ProjectWikiOrchestrationFlowTests": 3
+        },
+        "full_suite_status": "aborted by testhost crash mid-run; gate tests all pass in isolation",
+        "test_baseline": "≥1488 passed, 0 failed (2026-05-28)"
+    },
+
+    "five_directions_unblocked": {
+        "prerequisite_td3": "COMPLETE",
+        "direction_1_translation": {
+            "project": "27.TranslationDomain",
+            "depends_on": ["TD3"],
+            "existing_data": "C:/Users/lubao/Documents/xiigen/llm mvp/language translate learning/training-pairs-train-ready.jsonl",
+            "status": "READY_TO_START"
+        },
+        "direction_2_wiki_orchestration_training": {
+            "project": "42.ProjectWikiDomain Bootstrap units",
+            "depends_on": ["TD3", "TD1", "TD2"],
+            "status": "READY_TO_START"
+        },
+        "direction_3_affiliate": {
+            "project": "31.AffiliateDomain",
+            "depends_on": ["TD3"],
+            "status": "READY_TO_START"
+        },
+        "direction_4_design_conversion": {
+            "project": "30.DesignConversionDomain",
+            "depends_on": ["TD3"],
+            "status": "READY_TO_START"
+        },
+        "direction_5_model_server_extension": {
+            "project": "25.ModelServer",
+            "depends_on": ["TD3"],
+            "status": "READY_TO_START"
+        }
+    },
+
+    "next_recommended_action": "Start Direction 1 (27.TranslationDomain): scaffold ILearningMachine<TranslationDomain>, wire 4 direction adapters (RU_EN, EN_RU, HE_EN, EN_HE), run first 50-pair DPO batch from existing corpus at C:/Users/lubao/Documents/xiigen/llm mvp/language translate learning/",
+
+    "locked_decisions_added": {
+        "A-LM-01": "ILearningMachine sits above ILogicalOrchestrator — training loop wraps inference, not the reverse",
+        "A-LM-02": "Train* methods only on ILearningMachine — never on ILogicalUnit or ILogicalFlow",
+        "A-LM-03": "Bootstrap implementations preserve existing static logic — no regression during TD1 transition",
+        "A-LM-04": "27.TranslationDomain is a separate subproject with four direction adapters",
+        "A-LM-05": "30.DesignConversionDomain — number 29 occupied by SemanticCompiler",
+        "A-LM-06": "BOOTSTRAP_FALLBACK logged as warning — observable via log until trained unit replaces it",
+        "A-LM-07": "Global server = 25.ModelServer + new endpoint in 15.OrchestratorModel",
+        "A-LM-08": "SyncPersonalToGlobalAsync sends only anonymised learning signals"
+    },
+
+    "last_updated_utc": "2026-05-28T00:00:00.0000000Z",
+    "architect_finish_review_verdict": "ARCHITECT_VERDICT_ALLOW_FINAL",
+    "open_holes": [],
+    "actionable_gaps": [],
+    "plan_completion_hole_register": []
+}

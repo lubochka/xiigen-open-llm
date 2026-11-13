@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "work_order": "B18-EXTERNAL-AI-AND-TOOL-AUDIT",
+  "artifact_kind": "external_ai_tool_audit",
+  "verdict": "PASS_PENDING_PARENT_REVIEW",
+  "passed": true,
+  "claim_scope": "Static/local evidence audit only. No external AI, web, browser, image, host runtime, build, test, dotnet run, training, model/corpus/DPO work, or final acceptance was executed in this B18 slice.",
+  "plan_refs": [
+    "B15 HOST-05 / cross-host no external AI and thin-host rules",
+    "B17 row: External AI requested for data generation -> B18",
+    "B18 external AI and tool ban",
+    "B19 anti-loophole register",
+    "B20 CM-18 / CM-18A / CM-18B / CM-19",
+    "B21 final acceptance gate"
+  ],
+  "completion_claim_allowed": false,
+  "full_extension_completion_claimed": false,
+  "semantic_quality_claimed": false,
+  "external_ai_used_in_b18": false,
+  "browser_image_web_used_in_b18": false,
+  "host_runtime_used_in_b18": false,
+  "training_model_corpus_dpo_started_in_b18": false,
+  "audit_sources": {
+    "plan": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-FULL-EXTENSIONS-PLAN-v3.md",
+    "state": "docs/plans/ORCHESTRATION-AND-PROMPT-TO-TASK-EXTENSIONS-STATE.json",
+    "host_08i_matrix": "artifacts/host-qa/HOST-08G/HOST-08G-cross-host-qa-evidence-matrix.json",
+    "b16_review": "artifacts/no-hidden-determinism/B16-no-hidden-determinism-review.json",
+    "b17_matrix": "artifacts/mental-experiment/B17-mental-experiment-matrix.json",
+    "api_boundary_reports": "artifacts/api-boundary/*.json",
+    "host_qa_reports": "artifacts/host-qa/**"
+  },
+  "tool_classes": [
+    {
+      "tool_class": "bounded_sub_agents",
+      "status": "used",
+      "authorization_source": "Current and prior Luba bounded work orders explicitly used EXECUTOR_INTERNAL sub-agent slices.",
+      "evidence_refs": [
+        "state accepted slices record parent/sub-agent work orders and commits",
+        "B18 current instruction: You are EXECUTOR_INTERNAL sub-agent"
+      ],
+      "could_masquerade_as_trainable_unit_implementation": true,
+      "required_claim_downgrade": "Sub-agent packets/reports are process evidence only; they cannot substitute for trainable unit implementation, host runtime/UI evidence, or final completion.",
+      "accepted_as_semantic_evidence": false
+    },
+    {
+      "tool_class": "Claude host path / Claude runtime smoke / Claude hook QA",
+      "status": "used_diagnostic_only",
+      "authorization_source": "Luba previously authorized installed Claude host smoke; accepted state records narrow scope only.",
+      "evidence_refs": [
+        "state cl_04 accepted as narrow real Claude host-runtime smoke only; web_search_requests=0 and web_fetch_requests=0 in parent facts",
+        "state host_08e accepted as Claude hook-command/source QA only, full_chat_ui_evidence=false",
+        "HOST-08I matrix: Claude full_chat_ui_evidence proved=false"
+      ],
+      "could_masquerade_as_trainable_unit_implementation": true,
+      "required_claim_downgrade": "Claude smoke/hook QA is diagnostic or hook-command QA only; it cannot claim full Claude chat UI evidence, semantic quality, or final extension completion.",
+      "accepted_as_semantic_evidence": false
+    },
+    {
+      "tool_class": "Cursor Extension Host / Cursor chat participant / Cursor handler-level adapter",
+      "status": "used_and_partly_blocked_deferred",
+      "authorization_source": "Cursor Extension Host QA was authorized by bounded HOST-08 work orders; full chat participant path remained blocked/deferred.",
+      "evidence_refs": [
+        "state cu_04/CU-04R3 accepted as command-entrypoint smoke only with Cursor internal aiserver unauthenticated attempts recorded and extension_external_ai_used=false",
+        "state host_08b accepted real Cursor Extension Host command/panel QA evidence",
+        "state host_08d accepted handler-level chat QA with full_chat_ui_evidence=false",
+        "state host_08h accepted Cursor orchestration-plan and skill-selection handler-level scenario QA",
+        "HOST-08I matrix: CURSOR_FULL_CHAT_UI_PARTICIPANT remains not proven"
+      ],
+      "could_masquerade_as_trainable_unit_implementation": true,
+      "required_claim_downgrade": "Cursor Extension Host command/panel and handler-level adapter evidence remains QA/diagnostic/intermediate. It cannot close full chat UI participant evidence or semantic trained-unit claims.",
+      "accepted_as_semantic_evidence": false,
+      "external_service_nuance": {
+        "cursor_host_internal_ai_service_attempted": true,
+        "cursor_host_internal_ai_service_success": false,
+        "extension_external_ai_used": false,
+        "downgrade": "Cursor internal aiserver startup attempts are recorded as host-environment noise, not XIIGen extension AI usage or semantic evidence."
+      }
+    },
+    {
+      "tool_class": "Codex plugin/app runtime / codex exec model-backed path",
+      "status": "authorized_but_not_used_for_accepted_qa",
+      "authorization_source": "Luba later authorized model-backed codex exec for a bounded smoke, then corrected that smoke cannot be an acceptance/completion gate.",
+      "evidence_refs": [
+        "state host_08f result_summary.codex_exec_model_backed_qa=false",
+        "state host_08f forbidden_scope_confirmed.model_backed_codex_exec_used=false",
+        "HOST-08I matrix: CODEX_FULL_PLUGIN_APP_RUNTIME remains not proven",
+        "B17 top gap keeps full plugin/app runtime distinction open"
+      ],
+      "could_masquerade_as_trainable_unit_implementation": true,
+      "required_claim_downgrade": "Any codex exec/model-backed smoke is at most diagnostic runtime evidence when explicitly authorized; it cannot substitute for project-owned PromptToTask/OrchestrationReasoning/SkillSelection trained-unit semantics or final completion.",
+      "accepted_as_semantic_evidence": false
+    },
+    {
+      "tool_class": "browser / image generation / web search / web fetch",
+      "status": "not_used",
+      "authorization_source": "Not authorized for B18; current work order explicitly forbids web/browser/image/external AI.",
+      "evidence_refs": [
+        "B18 current instruction forbids external AI, web/image/browser and asks for existing local evidence only",
+        "state cl_04 parent facts record web_search_requests=0 and web_fetch_requests=0 for Claude smoke",
+        "No B18 browser/image/web tool invocation occurred"
+      ],
+      "could_masquerade_as_trainable_unit_implementation": true,
+      "required_claim_downgrade": "No browser/image/web output may be used as project semantic, training, or completion evidence in this gate.",
+      "accepted_as_semantic_evidence": false
+    },
+    {
+      "tool_class": "PowerShell local tooling and scripts",
+      "status": "used_local_project_tooling",
+      "authorization_source": "Plan B18 says local shell reads/static inspection/Git status and approved project scripts are not external AI; prior work orders authorized focused PowerShell wrappers/harnesses.",
+      "evidence_refs": [
+        "tools/xiigen-extension-core-api.ps1 core endpoint",
+        "artifacts/host-qa/HOST-08B/run-HOST-08B-cursor-extension-host.ps1",
+        "artifacts/host-qa/HOST-08H/run-HOST-08H-cursor-plan-skill-scenario-qa.ps1",
+        "B18 current verification allows rg/Get-Content/git status/git log only"
+      ],
+      "could_masquerade_as_trainable_unit_implementation": true,
+      "required_claim_downgrade": "PowerShell scripts are allowed infrastructure/harness/endpoint wrappers only. They cannot replace host source code, trainable-unit semantics, UI/runtime evidence, or final completion.",
+      "accepted_as_semantic_evidence": false
+    },
+    {
+      "tool_class": "Node local tooling and JS entrypoints",
+      "status": "used_local_project_tooling",
+      "authorization_source": "Host source repairs and QA work orders authorized local Node/JS source checks and component/hook execution.",
+      "evidence_refs": [
+        "Claude source entrypoint src/claude-entrypoint.js after HOST-07B",
+        "Cursor source/test runner files after HOST-08D/HOST-08H",
+        "Codex source entrypoint src/codex-entrypoint.js after HOST-07C/HOST-08A repair",
+        "HOST-08I matrix records component/handler evidence distinctions"
+      ],
+      "could_masquerade_as_trainable_unit_implementation": true,
+      "required_claim_downgrade": "Node/JS execution can prove source/hook/component/handler wiring only at its claimed level; it cannot claim trained semantic behavior or full UI/plugin runtime when the matrix marks those false.",
+      "accepted_as_semantic_evidence": false
+    },
+    {
+      "tool_class": "dotnet local build/test/run tooling",
+      "status": "used_in_prior_focused_core_verification_not_used_in_b18",
+      "authorization_source": "Prior API/core work orders authorized focused dotnet test/build where explicitly listed; B18 forbids dotnet build/test/run.",
+      "evidence_refs": [
+        "state api_01 focused verification dotnet test XiigenExtensionApiService 6/6",
+        "state api_02 focused verification dotnet test XiigenExtensionApiContract 17/17",
+        "No dotnet command executed in B18"
+      ],
+      "could_masquerade_as_trainable_unit_implementation": true,
+      "required_claim_downgrade": "Focused dotnet tests/builds prove code/contract behavior only; they do not prove external AI output, trained semantic quality, host runtime UI, or final completion.",
+      "accepted_as_semantic_evidence": false
+    },
+    {
+      "tool_class": "Git / GitHub push",
+      "status": "used_project_publishing",
+      "authorization_source": "OP-7 and current B18 commit/push instruction require commit/push for passing report/state updates.",
+      "evidence_refs": [
+        "state records phase commits/pushes for core and host repos",
+        "B18 current instruction requires commit/push report/state if updated"
+      ],
+      "could_masquerade_as_trainable_unit_implementation": false,
+      "required_claim_downgrade": "Git/GitHub evidence proves persistence/publication only; it is not implementation, semantic quality, runtime, or completion evidence.",
+      "accepted_as_semantic_evidence": false
+    }
+  ],
+  "required_verifications": {
+    "no_external_ai_as_trainable_substitute": {
+      "passed": true,
+      "finding": "No external AI/tool output in the current accepted evidence is used as a substitute for PromptToTask, OrchestrationReasoning, or SkillSelection trained semantics.",
+      "refs": [
+        "B16 semantic_claim_status semantic_quality_claimed_observed_in_current_probe_evidence=false",
+        "API-01 semantic quality rule requires trained-model refs and learned-state/non-second-pass outputs",
+        "HOST-08I completion_claim_allowed=false"
+      ]
+    },
+    "test_only_smoke_handler_component_diagnostic_only": {
+      "passed": true,
+      "finding": "Smoke, handler-level, component-level, and report evidence remains intermediate/diagnostic and does not close full UI/runtime/plugin completion.",
+      "refs": [
+        "HOST-08I anti_masquerade_rule",
+        "B17 final_claim_firewall completion_claim_allowed=false",
+        "B21 final acceptance forbids full completion from static contracts, JSON artifacts, PowerShell helpers, smoke traces, test-only adapters, handler-level QA, component probes, or reports alone"
+      ]
+    },
+    "external_tool_permission_rule": {
+      "passed": true,
+      "finding": "Plan B18 requires exact tool family naming, explicit Luba approval, and no replacement of project-owned trainable units. Current B18 used only local/static audit commands."
+    },
+    "op45_anti_masquerade_result": {
+      "passed": true,
+      "finding": "B16 found no hidden deterministic shortcut; this B18 audit finds no external tool/model-backed evidence masquerading as learned project semantics."
+    }
+  },
+  "seven_expanded_user_checks_summary": [
+    {
+      "check": "External AI permission",
+      "status": "pass",
+      "finding": "External/model-backed paths require explicit Luba approval; B18 did not invoke them."
+    },
+    {
+      "check": "No external AI as trained semantics",
+      "status": "pass",
+      "finding": "PromptToTask/OrchestrationReasoning/SkillSelection semantic claims remain tied to project-owned trained assets and gates, not external model output."
+    },
+    {
+      "check": "Smoke/test-only not acceptance",
+      "status": "pass",
+      "finding": "Host smoke, handler-level, component, and report evidence is preserved as diagnostic/intermediate only."
+    },
+    {
+      "check": "Host thin boundary",
+      "status": "pass",
+      "finding": "Claude/Cursor/Codex host reports keep semantic ranking/training/corpus/DPO/model mutation out of host authority."
+    },
+    {
+      "check": "No hidden deterministic shortcut via tools",
+      "status": "pass",
+      "finding": "B16 and B18 jointly reject BM25/regex/static/report/tool output as learned semantic authority."
+    },
+    {
+      "check": "Browser/image/web ban",
+      "status": "pass",
+      "finding": "No browser, image generation, web search, or web fetch tool is used by B18 or accepted as evidence."
+    },
+    {
+      "check": "Completion firewall",
+      "status": "pass",
+      "finding": "completion_claim_allowed=false; final completion matrix remains unstarted."
+    }
+  ],
+  "remaining_gaps": [
+    "CLAUDE_FULL_CHAT_UI",
+    "CURSOR_FULL_CHAT_UI_PARTICIPANT",
+    "CODEX_FULL_PLUGIN_APP_RUNTIME",
+    "FINAL_COMPLETION_MATRIX"
+  ],
+  "result_summary": {
+    "tool_classes_reviewed": 9,
+    "external_ai_used_in_b18": false,
+    "browser_image_web_used_in_b18": false,
+    "host_runtime_used_in_b18": false,
+    "external_ai_as_semantic_substitute_found": false,
+    "diagnostic_evidence_overclaim_found": false,
+    "op45_anti_masquerade_passed": true,
+    "completion_claim_allowed": false,
+    "passed": true
+  },
+  "verification": {
+    "commands_performed": [
+      "git branch --show-current; git status --short",
+      "Select-String reads for AGENTS OP-4/5/7/13/17/21/22 and OP-45/OP-46",
+      "Select-String reads for CLAUDE partial-progress/test-only/external-tool/architect firewall sections",
+      "Select-String reads for plan B15/B17/B18/B19/B20/B21",
+      "Get-Content state, B16 report, B17 matrix, HOST-08G matrix",
+      "rg static/local artifact sweep for external_ai/model_backed/host_runtime/browser/image/web/PowerShell/Node/dotnet/GitHub terms"
+    ],
+    "runtime_or_external_commands_executed": false,
+    "json_parse_required_after_write": true,
+    "git_diff_check_required_after_write": true
+  },
+  "next_bounded_action": "B19-ANTI-LOOPHOLE-REGISTER-REVIEW",
+  "required_next_action": "B19-ANTI-LOOPHOLE-REGISTER-REVIEW",
+  "next_bounded_action_if_parent_accepts": "B19-ANTI-LOOPHOLE-REGISTER-REVIEW",
+  "created_at": "2026-06-07T00:00:00+03:00"
+}

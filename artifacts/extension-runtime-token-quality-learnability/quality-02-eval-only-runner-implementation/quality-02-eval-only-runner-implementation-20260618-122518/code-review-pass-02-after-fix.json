@@ -1,0 +1,259 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner_code_review_pass_after_fix.v1",
+  "review_id": "code-review-pass-02-after-fix",
+  "phase_id": "QUALITY-02-EVAL-ONLY-RUNNER-IMPLEMENTATION-NO-EVAL-EXECUTION",
+  "run_root": "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518",
+  "reviewer_role": "CODE_REVIEW_INTERNAL",
+  "requested_model": "gpt-5.5",
+  "requested_reasoning_effort": "xhigh",
+  "runtime_model_or_unavailable": "unavailable",
+  "runtime_reasoning_effort_or_unavailable": "unavailable",
+  "mode_verified_from_work_order": true,
+  "git_authority": "forbidden",
+  "commit_push_authorized": false,
+  "verdict": "FAIL",
+  "product_readiness_claimed": false,
+  "actual_approved_eval_executed": false,
+  "synthetic_fixture_only": true,
+  "evidence_scope": "local_private_eval_only",
+  "review_scope": [
+    "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+    "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunnerContracts.cs",
+    "43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Program.cs",
+    "43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+    "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+    "docs/COMPONENT-INTERFACES.md",
+    "docs/SUBPROJECT-MAP.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/"
+  ],
+  "loaded_rules_and_guides": [
+    "docs/skills/generated-code-review-SKILL.md",
+    "docs/skills/implementation-integrity-SKILL.md",
+    "docs/skills/trainable-architecture-decision-SKILL.md",
+    "docs/skills/test-integrity-SKILL.md",
+    "code-review-pass-01.md",
+    "code-review-pass-01.json",
+    "code-review-pass-01-fix-report.md",
+    "code-review-pass-01-fix-report.json",
+    "quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet.md",
+    "quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet.json"
+  ],
+  "pass_01_finding_closure": [
+    {
+      "id": "CR-01",
+      "title": "Public contract names drift from the accepted implementation packet",
+      "status": "PASS",
+      "evidence": "Runner public contracts are ExtensionEvalOnlyQualityRunner-prefixed in code and docs."
+    },
+    {
+      "id": "CR-02",
+      "title": "Required scorer-contract provenance fields are not enforced before scoring",
+      "status": "PASS",
+      "evidence": "prompt_sha256, mode=baseline_vs_adaptive_pair, and evidence_scope=local_private_eval_only are validated for scored USER_ADAPTIVE_EVAL_ONLY rows and emitted in reports."
+    },
+    {
+      "id": "CR-03",
+      "title": "Invalid public inputs can still throw instead of returning OperationResult failures",
+      "status": "FAIL_PARTIAL_FIX",
+      "evidence": "Null public parameters and unreadable/syntactically malformed JSONL improved, but JSONL with layer_inputs:null throws NullReferenceException."
+    },
+    {
+      "id": "CR-04",
+      "title": "Synthetic fixture evidence is not first-class in the generated score report",
+      "status": "PASS",
+      "evidence": "Reports and score rows expose synthetic_fixture_only=true, actual_approved_eval_executed=false, and evidence_scope=local_private_eval_only."
+    },
+    {
+      "id": "CR-05",
+      "title": "Privacy coverage only proves one non-emitted field, not all copied fields",
+      "status": "FAIL_PARTIAL_FIX",
+      "evidence": "Output refs, evidence refs, and reviewer notes are covered, but row/layer failure_codes can still leak raw private sentinel text into shared artifacts."
+    }
+  ],
+  "findings": [
+    {
+      "id": "CR2-01",
+      "severity": "HIGH",
+      "title": "Semantically malformed JSONL can throw instead of returning OperationResult failure",
+      "locations": [
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 272
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 274
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 281
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 343
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 348
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 459
+        },
+        {
+          "file": "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+          "line": 1
+        }
+      ],
+      "probe": {
+        "command": "dotnet run Quality02EvalOnlyRunner with temporary JSONL containing layer_inputs:null",
+        "status": "FAIL",
+        "evidence": "Unhandled System.NullReferenceException at ExtensionEvalOnlyQualityRunner.cs:272."
+      },
+      "why_it_matters": "Malformed input should be an OperationResult validation failure. Deserialized null collection properties are expected input-shape errors, not exceptional crash paths.",
+      "required_fix": "Validate deserialized collection properties before Count, Select, or Concat use; return validation errors for null layer_inputs, row failure_codes, layer evidence_refs, and layer failure_codes; add targeted no-report tests."
+    },
+    {
+      "id": "CR2-02",
+      "severity": "HIGH",
+      "title": "Raw private text can leak through failure_codes while raw_private_text_copied=false",
+      "locations": [
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 348
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 359
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 382
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 383
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 390
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 410
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 459
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 470
+        },
+        {
+          "file": "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+          "line": 232
+        },
+        {
+          "file": "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+          "line": 255
+        }
+      ],
+      "probe": {
+        "command": "dotnet run Quality02EvalOnlyRunner with temporary JSONL containing failure_codes:[<sentinel-redacted>]",
+        "status": "FAIL",
+        "evidence": "Command exited 0 and emitted the sentinel in report JSON, score JSONL, and human_reviewer_note."
+      },
+      "why_it_matters": "No raw private text may be copied into shared artifacts. Current tests cover raw private input refs and some copied fields but miss failure_codes, which are emitted and folded into notes.",
+      "required_fix": "Validate row-level and layer-level failure_codes with the same raw-private marker gate, and preferably all emitted input-derived string fields; add sentinel tests for both failure-code paths and assert generated artifacts contain no sentinel before RawPrivateTextCopied=false is accepted."
+    }
+  ],
+  "review_question_results": {
+    "all_5_pass_01_findings_genuinely_fixed": false,
+    "public_contract_type_names_runner_prefixed": true,
+    "prompt_sha256_mode_evidence_scope_enforced_before_scoring_and_reported": true,
+    "public_methods_return_operation_result_failures_for_null_unreadable_malformed_input": false,
+    "synthetic_fixture_evidence_first_class": true,
+    "privacy_tests_cover_named_paths_no_raw_private_text_shared_artifacts": false,
+    "core_boundary_domain_logic_program_thin": true,
+    "hidden_deterministic_shortcut_sweep_pass": true,
+    "requested_tests_and_checks_pass": true,
+    "product_claims_remain_closed": true
+  },
+  "check_results": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ExtensionEvalOnlyQualityRunner\"",
+      "status": "PASS",
+      "evidence": "Failed: 0, Passed: 11, Skipped: 0, Total: 11"
+    },
+    {
+      "command": "dotnet build 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+      "status": "PASS",
+      "evidence": "Build succeeded. 0 Warning(s), 0 Error(s)"
+    },
+    {
+      "command": "JSON parse relevant evidence/state JSON",
+      "status": "PASS",
+      "evidence": "Parsed 9 JSON files including evidence JSON and execution state."
+    },
+    {
+      "command": "JSONL parse generated rows and synthetic input",
+      "status": "PASS",
+      "evidence": "Parsed 2 JSONL files and 4 non-empty rows."
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS",
+      "evidence": "Exited 0."
+    },
+    {
+      "command": "malformed null-collection JSONL probe",
+      "status": "FAIL",
+      "evidence": "Unhandled NullReferenceException at ExtensionEvalOnlyQualityRunner.cs:272."
+    },
+    {
+      "command": "failure-code privacy sentinel probe",
+      "status": "FAIL",
+      "evidence": "Sentinel <sentinel-redacted> was emitted in shared report artifacts."
+    }
+  ],
+  "boundary_review": {
+    "project_standards": "FAIL",
+    "tests_gate_b": "FAIL",
+    "core_boundary": "PASS",
+    "thin_adapters": "PASS",
+    "hidden_deterministic_shortcut_sweep": "PASS",
+    "deterministic_helper_labels": "PASS",
+    "synthetic_fixture_boundary": "PASS",
+    "product_claims": "PASS",
+    "source_privacy": "FAIL"
+  },
+  "hidden_deterministic_shortcut_sweep": {
+    "searched": [
+      "scorer final authority",
+      "router",
+      "lookup",
+      "counter",
+      "exact prompt replay",
+      "exact source replay",
+      "static fixture",
+      "prompt hash shortcut",
+      "first-row fallback",
+      "candidate-order shortcut",
+      "filename/path/source-id authority",
+      "static threshold presented as trained logic"
+    ],
+    "found_allowed_helpers": [
+      "ExtensionQualityScoring.Score deterministic rubric scoring labelled eval-only/helper/internal-detail/baseline",
+      "Allowed host/method/privacy sets used as validation gates"
+    ],
+    "hidden_deterministic_mechanism_found": false,
+    "deterministic_helpers_not_runtime_trainable_authority": true
+  },
+  "changed_review_artifact_files": [
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-pass-02-after-fix.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-pass-02-after-fix.json"
+  ],
+  "next_action": "Run a bounded fix worker for CR2-01 and CR2-02, then perform another independent code review before any parent commit/push."
+}

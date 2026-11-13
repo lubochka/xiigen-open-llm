@@ -1,0 +1,22 @@
+# Runner preflight errors
+
+Результат: PASS.
+
+PASS: missing fields or schema inconsistencies were not found for this dry-run scope.
+
+| Check | Result |
+| --- | --- |
+| PF-01-EVAL-PACK-SCHEMA | PASS |
+| PF-02-SCENARIO-COUNT | PASS |
+| PF-03-UA-COUNTS | PASS |
+| PF-04-EVIDENCE-COUNTS | PASS |
+| PF-05-COMMON-COUNTS | PASS |
+| PF-06-SCENARIO-REQUIRED-FIELDS | PASS |
+| PF-07-SCORE-SCHEMA | PASS |
+| PF-08-LAYER-SLOTS | PASS |
+| PF-09-SAMPLE-REQUIRED-FIELDS | PASS |
+| PF-10-NOT-SCORED | PASS |
+| PF-11-EVIDENCE-NON-RUNNABLE | PASS |
+| PF-12-CLAIM-LOCKS | PASS |
+| PF-13-JOIN-COVERAGE | PASS |
+| PF-14-PER-LAYER-SCORE-SHAPE | PASS |

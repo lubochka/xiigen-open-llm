@@ -1,0 +1,131 @@
+# Рабочий журнал повторной проверки (вместо обвалившегося verification-after-repair.log)
+
+Записан 2026-11-10T08:13:54Z UTC | рабочий корень C:\Projects\llm_mvp_core
+Причина: в прежнем журнале на месте двух проверок ниже стоит обвал измерителя
+(UnicodeEncodeError: 'charmap' codec), а не результат. Прежний журнал сохранён как есть.
+Лечение обвала: sys.stdout.reconfigure(encoding='utf-8', errors='backslashreplace').
+
+## Проверка 1. Числа шести показаний против значений записи ожиданий до ремонта
+
+Источник ожидаемых значений — `expectation-before-repair.md` (пункты 1, 2, 4) и, для показаний
+восстановления, `claim-boundaries.md` (раздел «Что улики этой попытки держат»). Каждое ожидаемое
+число ниже сначала доказывается присутствием в своём файле-источнике, потом сверяется с показанием.
+
+### 1а. Ожидаемые числа действительно стоят в файле-источнике
+  [ЕСТЬ] «9 248» в expectation-before-repair.md — вхождений 4
+  [ЕСТЬ] «1 344» в expectation-before-repair.md — вхождений 1
+  [ЕСТЬ] «4 656» в expectation-before-repair.md — вхождений 3
+  [ЕСТЬ] «224» в expectation-before-repair.md — вхождений 1
+  [ЕСТЬ] «239 488» в expectation-before-repair.md — вхождений 1
+  [ЕСТЬ] «18 496» в expectation-before-repair.md — вхождений 3
+  [ЕСТЬ] «9 312» в expectation-before-repair.md — вхождений 3
+  [ЕСТЬ] «750» в expectation-before-repair.md — вхождений 1
+  [ЕСТЬ] «1573» в expectation-before-repair.md — вхождений 1
+  [ЕСТЬ] «863» в expectation-before-repair.md — вхождений 1
+  [ЕСТЬ] «1917» в expectation-before-repair.md — вхождений 1
+  [ЕСТЬ] «4 из 4» в claim-boundaries.md — вхождений 2
+  [ЕСТЬ] «3 из 4» в claim-boundaries.md — вхождений 1
+
+### 1б. Показание шести чтений (allocation-planner-vs-previous-assembler-six-readings.json)
+  [СОВПАЛО] PlannerBytesPerRepeat — семь повторов                          ожидалось [9248, 9248, 9248, 9248, 9248, 9248, 9248] получено [9248, 9248, 9248, 9248, 9248, 9248, 9248]
+  [СОВПАЛО] PreviousAssemblerBytesPerRepeat — семь повторов                ожидалось [1344, 1344, 1344, 1344, 1344, 1344, 1344] получено [1344, 1344, 1344, 1344, 1344, 1344, 1344]
+  [СОВПАЛО] PlannerMedianBytes                                             ожидалось 9248                         получено 9248
+  [СОВПАЛО] PreviousMedianBytes                                            ожидалось 1344                         получено 1344
+  [СОВПАЛО] PlannerMinBytes / PlannerMaxBytes — разброс ноль               ожидалось (9248, 9248)                 получено (9248, 9248)
+  [СОВПАЛО] PreviousMinBytes / PreviousMaxBytes — разброс ноль             ожидалось (1344, 1344)                 получено (1344, 1344)
+  [СОВПАЛО] PlannerMinusPreviousPercent                                    ожидалось 588.1                        получено 588.1
+  [СОВПАЛО] BudgetBytes (порог на шесть чтений)                            ожидалось 18496                        получено 18496
+  [СОВПАЛО] число чтений в панели                                          ожидалось 6                            получено 6
+  [СОВПАЛО] число выученных фраз                                           ожидалось 3                            получено 3
+
+### 1в. Показание плотного чтения (allocation-planner-vs-previous-assembler-dense-eight-words.json)
+  [СОВПАЛО] PlannerBytesPerRepeat — семь повторов                          ожидалось [4656, 4656, 4656, 4656, 4656, 4656, 4656] получено [4656, 4656, 4656, 4656, 4656, 4656, 4656]
+  [СОВПАЛО] PreviousAssemblerBytesPerRepeat — семь повторов                ожидалось [224, 224, 224, 224, 224, 224, 224] получено [224, 224, 224, 224, 224, 224, 224]
+  [СОВПАЛО] PlannerMedianBytes                                             ожидалось 4656                         получено 4656
+  [СОВПАЛО] PreviousMedianBytes                                            ожидалось 224                          получено 224
+  [СОВПАЛО] PlannerMinBytes / PlannerMaxBytes — разброс ноль               ожидалось (4656, 4656)                 получено (4656, 4656)
+  [СОВПАЛО] PreviousMinBytes / PreviousMaxBytes — разброс ноль             ожидалось (224, 224)                   получено (224, 224)
+  [СОВПАЛО] PlannerMinusPreviousPercent                                    ожидалось 1978.57                      получено 1978.57
+  [СОВПАЛО] BudgetBytes (порог на плотное чтение)                          ожидалось 9312                         получено 9312
+  [СОВПАЛО] покрытие планировщика / прежнего сборщика                      ожидалось (8, 8)                       получено (8, 8)
+
+### 1г. Показание целого продуктового чтения (allocation-whole-product-reading-path-six-readings.json)
+  [СОВПАЛО] ProcessBytesPerRepeat — семь повторов                          ожидалось [239488, 239488, 239488, 239488, 239488, 239488, 239488] получено [239488, 239488, 239488, 239488, 239488, 239488, 239488]
+  [СОВПАЛО] MedianBytes                                                    ожидалось 239488                       получено 239488
+  [СОВПАЛО] MinBytes / MaxBytes — разброс ноль                             ожидалось (239488, 239488)             получено (239488, 239488)
+
+### 1д. Три показания восстановления
+  [СОВПАЛО] export→import: правильных до загрузки                          ожидалось 0                            получено 0
+  [СОВПАЛО] export→import: правильных после загрузки (4 из 4)              ожидалось 4                            получено 4
+  [СОВПАЛО] save→load: правильных после загрузки (4 из 4)                  ожидалось 4                            получено 4
+  [СОВПАЛО] save→load: размер файла точки сохранения, байт                 ожидалось 4805                         получено 4805
+  [СОВПАЛО] копия без фразы «close»: правильных (3 из 4)                   ожидалось 3                            получено 3
+  [СОВПАЛО] копия с заменой цели: главная строка                           ожидалось 'закрой СЕАНСЗАМЕНА'         получено 'закрой СЕАНСЗАМЕНА'
+  [СОВПАЛО] копия с пустой памятью фраз: главная строка                    ожидалось 'закрой пользователя'        получено 'закрой пользователя'
+  [СОВПАЛО] живое загруженное состояние: правильных (4 из 4)               ожидалось 4                            получено 4
+
+### 1е. Размеры и возвраты каретки всех шести показаний
+  [СОВПАЛО] allocation-planner-vs-previous-assembler-six-readings.json     байт  1813 (не предсказывался (менялись BudgetBytes и Compared)), возвратов каретки 0
+           отпечаток sha256 6ea026df2e38703ae3cdd63bfebf5026e687a97dae34e867481630a1a553a96d
+  [СОВПАЛО] allocation-planner-vs-previous-assembler-dense-eight-words.json байт   813 (не предсказывался (менялись BudgetBytes и Compared)), возвратов каретки 0
+           отпечаток sha256 e088a2ce48adb6fd7e2a5657aeb0541aa96e88c3b529a3bd973d0c2c50bfec4b
+  [СОВПАЛО] allocation-whole-product-reading-path-six-readings.json        байт   750 (ожидался 750), возвратов каретки 0
+           отпечаток sha256 42bb38ad195438056cd12aab868e0084f5712b7eede0ae996a58b1ef9eed73c4
+  [СОВПАЛО] restore-export-import-panel.json                               байт  1573 (ожидался 1573), возвратов каретки 0
+           отпечаток sha256 d5a2f7410828002fbb76e44904709b87ebc53e973651e63cb3807013475fdea0
+  [СОВПАЛО] restore-save-load-file-panel.json                              байт   863 (ожидался 863), возвратов каретки 0
+           отпечаток sha256 506d5c6341486f8566bd2d9e60ddb52222da1fa5e1cdc0e1c292528257314f39
+  [СОВПАЛО] restore-sensitivity-on-loaded-copies.json                      байт  1917 (ожидался 1917), возвратов каретки 0
+           отпечаток sha256 8a05aa247e81c7355821cc68f1cd16c61c454d6797cbf133b83c3eead10c7671
+
+### 1ж. Счётчики прогона ремонта (repair-20.trx)
+  [СОВПАЛО] total                                                          ожидалось '20'                         получено '20'
+  [СОВПАЛО] executed                                                       ожидалось '20'                         получено '20'
+  [СОВПАЛО] passed                                                         ожидалось '20'                         получено '20'
+  [СОВПАЛО] failed                                                         ожидалось '0'                          получено '0'
+
+## Проверка 2. Все 14 прежних имён проверок входят в нынешние 20
+
+Прежний список — `fix-p54-existing-20261110T065536Z/list-tests.log`: имён 14
+Нынешний список — `fix-p54-repair-20261110T073554Z/list-tests.log`: имён 20
+
+  [СОВПАЛО] число прежних имён                                             ожидалось 14                           получено 14
+  [СОВПАЛО] число нынешних имён                                            ожидалось 20                           получено 20
+
+### 2а. Каждое прежнее имя — поимённо
+   1. [ВХОДИТ] PhraseComposition_EightWordEdge_StillRefusesAndFallsBack
+   2. [ВХОДИТ] PhraseComposition_ExamRow_KeepsTheRequiredWordAfterTraining
+   3. [ВХОДИТ] PhraseComposition_NineWordEdge_StaysOutsideTheAdmittedArea
+   4. [ВХОДИТ] PhraseComposition_PhraseOnlyRow_KeepsItsPublishedAnswer
+   5. [ВХОДИТ] PhraseComposition_RemovedLearnedPhrase_ChangesTheAnswer
+   6. [ВХОДИТ] PhraseComposition_ReplacedLearnedTarget_ShowsInTheAnswer
+   7. [ВХОДИТ] PhraseComposition_RowWithLearnedSingleWords_KeepsThePreviousAssembler
+   8. [ВХОДИТ] PhraseComposition_ThreeTrainedRows_StayCorrect
+   9. [ВХОДИТ] Planner_AlgorithmIdentity_IsRecorded
+  10. [ВХОДИТ] Planner_DenseLearnedMap_FindsFullCoverageWithFewestPhrases
+  11. [ВХОДИТ] Planner_EmptyLearnedMap_CoversNothing
+  12. [ВХОДИТ] Planner_ExamRow_ChoosesTheFullCoverageSplit
+  13. [ВХОДИТ] Planner_LongerSentenceThanAdmitted_IsNotTheProductScope
+  14. [ВХОДИТ] Planner_SameLearnedMapInReverseOrder_GivesTheSameAnswer
+
+  [СОВПАЛО] пропавших прежних имён                                         ожидалось 0                            получено 0
+  [СОВПАЛО] добавленных новых имён                                         ожидалось 6                            получено 6
+
+### 2б. Шесть новых имён (добавлены этой попыткой)
+   1. Allocation_DensestAdmittedCase_EightWordsFourteenPhrases_IsMeasuredAndBounded
+   2. Allocation_InstalledPlannerVersusPreviousAssembler_SameSixReadings_IsMeasuredAndBounded
+   3. Allocation_WholeProductReadingPathOnLoadedState_SixReadings_IsRecorded
+   4. Restore_CopiesOfLoadedStateWithoutThePhrase_TurnThePanelRedWhileTheLiveStateHolds
+   5. Restore_ExportedStateImportedIntoFreshMachine_AnswersFourOfFourWithoutRetraining
+   6. Restore_SavedCheckpointFileLoadedFresh_AnswersFourOfFourWithoutRetraining
+
+## Итог
+
+РАСХОЖДЕНИЙ НЕТ. Обе проверки, обвалившиеся в прежнем журнале, здесь напечатали результат:
+  (а) все числа шести показаний совпали со значениями записи ожиданий до ремонта;
+  (б) все 14 прежних имён проверок входят в нынешние 20, пропавших нет, новых ровно 6.
+
+Чего этот журнал НЕ доказывает: он сверяет уже записанные показания с уже записанными
+ожиданиями и не перезапускает ни сборку, ни проверки; он не доказывает правильность самого
+измерителя расхода памяти и не доказывает отсутствия регрессии расхода (см. раздел
+«Вердикт по порогу» в allocation-measurement.md).

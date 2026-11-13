@@ -1,0 +1,149 @@
+{
+  "schema": "xiigen.quality_product.readiness_layer_matrix.v1",
+  "work_order_id": "QUALITY-PRODUCT-SEMANTIC-PRODUCT-READINESS-EVIDENCE-REPAIR-01",
+  "generated_at_utc": "2026-06-22T05:51:39.637Z",
+  "product_ready": false,
+  "token_savings_claim_allowed": false,
+  "semantic_quality_claimed": false,
+  "learnability_claimed": false,
+  "readiness_layers": [
+    {
+      "layer": "core_api_runtime_readiness",
+      "status": "PASS_NARROW_CORE_API_RUNTIME_ROWS",
+      "evidence": "108/108 runtime rows pass; 54 pairs pass runtime quality gate.",
+      "claim_supported": "Direct core API runtime quality only.",
+      "not_supported": "Live host chat UI, broad semantic correctness, token savings, product readiness."
+    },
+    {
+      "layer": "host_adapter_readiness",
+      "status": "PASS_NARROW_HOST_ADAPTER_COMMAND_AND_TARGET_BOUND_EVIDENCE",
+      "evidence": "Claude/Codex staged PromptToTask and SkillSelection adapter/core binding from QSG-28; Cursor skill AvailableSkills binding from QSG-29.",
+      "claim_supported": "Host adapter or extension command binding, scoped per host.",
+      "not_supported": "Full host UI/chat readiness."
+    },
+    {
+      "layer": "full_host_runtime_readiness",
+      "status": "NEEDS_REPAIR",
+      "evidence": "Existing reports explicitly scope Claude, Cursor, and Codex evidence below full chat/UI/final host runtime.",
+      "claim_supported": "None for full host readiness.",
+      "not_supported": "Full Claude/Cursor/Codex extension readiness."
+    },
+    {
+      "layer": "semantic_quality_readiness",
+      "status": "PARTIAL_NARROW_ONLY",
+      "evidence": "PromptToTask 4/4 strict held-out pass; SkillSelection 10/12 exact held-out pass; OrchestrationReasoning 4 held-out material rows but no trained runtime eval.",
+      "claim_supported": "Narrow staged user-adaptive evidence for PromptToTask and SkillSelection only.",
+      "not_supported": "Broad semantic quality; OrchestrationReasoning semantic runtime correctness."
+    },
+    {
+      "layer": "learnability_model_readiness",
+      "status": "PARTIAL_NARROW_STAGED_USER_ADAPTIVE_ONLY",
+      "evidence": "QSG-26 and QSG-27 ran continue-training/fresh-load/ablation for staged PromptToTask and SkillSelection paths; common readiness and OrchestrationReasoning remain closed.",
+      "claim_supported": "Narrow staged user-adaptive learnability for named machines only.",
+      "not_supported": "Common model readiness, OrchestrationReasoning trained readiness, production promotion."
+    },
+    {
+      "layer": "token_savings_readiness",
+      "status": "NEEDS_REPAIR",
+      "evidence": "0 token-savings-allowed pairs out of 54; token_savings_claim_allowed=false.",
+      "claim_supported": "No token savings claim.",
+      "not_supported": "Token reduction with quality gates on same pairs."
+    },
+    {
+      "layer": "product_readiness",
+      "status": "NEEDS_REPAIR_PRODUCT_READY_FALSE",
+      "evidence": "Full host runtime, OrchestrationReasoning source-disjoint runtime eval, clean staged target root, common readiness, production promotion, and token savings remain open.",
+      "claim_supported": "product_ready=false.",
+      "not_supported": "product_ready=true."
+    }
+  ],
+  "per_host_runtime_counts": [
+    {
+      "host": "Claude",
+      "row_count": 36,
+      "fail_count": 0,
+      "needs_repair_count": 0,
+      "pass_count": 36,
+      "average_score": 4,
+      "selected_skills_zero_rows": 0,
+      "requested_skills_zero_rows": 0,
+      "required_skill_selection_absent_rows": 0
+    },
+    {
+      "host": "Codex",
+      "row_count": 36,
+      "fail_count": 0,
+      "needs_repair_count": 0,
+      "pass_count": 36,
+      "average_score": 4,
+      "selected_skills_zero_rows": 0,
+      "requested_skills_zero_rows": 0,
+      "required_skill_selection_absent_rows": 0
+    },
+    {
+      "host": "Cursor",
+      "row_count": 36,
+      "fail_count": 0,
+      "needs_repair_count": 0,
+      "pass_count": 36,
+      "average_score": 4,
+      "selected_skills_zero_rows": 0,
+      "requested_skills_zero_rows": 0,
+      "required_skill_selection_absent_rows": 0
+    }
+  ],
+  "per_method_runtime_counts": [
+    {
+      "method": "orchestration-plan",
+      "row_count": 36,
+      "fail_count": 0,
+      "needs_repair_count": 0,
+      "pass_count": 36,
+      "average_score": 4,
+      "selected_skills_zero_rows": 0,
+      "requested_skills_zero_rows": 0,
+      "required_skill_selection_absent_rows": 0
+    },
+    {
+      "method": "prompt-to-task",
+      "row_count": 36,
+      "fail_count": 0,
+      "needs_repair_count": 0,
+      "pass_count": 36,
+      "average_score": 4,
+      "selected_skills_zero_rows": 0,
+      "requested_skills_zero_rows": 0,
+      "required_skill_selection_absent_rows": 0
+    },
+    {
+      "method": "skill-selection",
+      "row_count": 36,
+      "fail_count": 0,
+      "needs_repair_count": 0,
+      "pass_count": 36,
+      "average_score": 4,
+      "selected_skills_zero_rows": 0,
+      "requested_skills_zero_rows": 0,
+      "required_skill_selection_absent_rows": 0
+    }
+  ],
+  "host_semantic_adapter_summary": {
+    "Claude": {
+      "prompt_to_task_staged_root_loaded": true,
+      "skill_selection_meaningful_row_evaluated": true,
+      "full_host_runtime_ready": false
+    },
+    "Cursor": {
+      "prompt_to_task_staged_root_loaded": true,
+      "skill_selection_available_requested_binding_qsg29": true,
+      "full_host_runtime_ready": false
+    },
+    "Codex": {
+      "prompt_to_task_staged_root_loaded": true,
+      "skill_selection_meaningful_row_evaluated": true,
+      "full_host_runtime_ready": false
+    }
+  },
+  "leakage_ablation_verdict": "PASS_LEAKAGE_ABLATION_EVIDENCE_RECORDED_PRODUCT_READINESS_STILL_FALSE",
+  "decision": "PASS_EVIDENCE_PACKET_WITH_PRODUCT_READY_FALSE_NEXT_REPAIR_REQUIRED"
+}

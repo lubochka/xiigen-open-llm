@@ -1,0 +1,15 @@
+# RP13 parent / Kiro / Codex cold-start prompt (attach exactly one task)
+
+Ты выполняешь **одну** существующую `RP13.xx` карточку пакета `Kiro-Xiigen-RP13-Causal-Hybrid-Policy-Control-Slice-Pack`. Последний пользовательский приказ — сделать RP13 как самостоятельный причинный slice, **НЕ** перепланировать весь XIIGEN и НЕ копировать/закрывать RP01–RP09.
+
+**Результат:** настоящий пользовательский input→domain law→semantic token/vector→adaptive kNN→typed Unit/Flow→async Orchestrator/Graph→Student/action/answer; на каждой границе укажи source, state, law and actual ordinary consumer. При неудаче определи, **какой механизм и какая версия state** могли быть причиной, отдели deterministic bug от learnable weakness, перечисли допустимые альтернативы и безопасно выбери малое вмешательство или `NO_UPDATE`. Настоящий выигрыш устанавливается отдельным lawful blind examination, не зелёным GitHub Windows run.
+
+**Обязательные предварительные действия:** подтвердить current SHA P/K, исходную `D/original task.md`, `D/Алгоритм создания ДПО.md`, предметные WorkLeft/RAG→primary G/F/V, релевантные ``results/Rxx` и нынешний код K вместе с вызывающими методами и consumer. Не сокращай задачу до S04 или первого найденного класса. Если нет фактической ветки/файла — `OPEN` с поисковым маршрутом, а не вымышленный API.
+
+**Роли и skills:** архитектор/decision `architect-behavior-classifier`, `trainable-architecture-decision`; source reviewer `reference-inventory-and-source-map`; planning `phase-planning`, `plan-review`; code reviewer `generated-code-review`; prompts `prompt-patch-authoring`; human-readable `output-readability-gate`, `human-readable-architecture-audit`; эксперимент `experiment-design`, `learning-path-audit`, `learning-loop-closure`. Полные реальные файлы — `K/docs/skills/*-SKILL.md`. Живой skill read receipt/identity по каждой роли, не просто названия.
+
+**Границы полномочий:** никаких teacher/GPU/model calls, DPO-pair application, grants, новые тренажёры, смена продукта, merged pull, paid расхода, выключения требуемых checks без отдельной подтверждённой scope/effect авторизации. CODEX GPT-6 Astra UltraCode отдельно выбирает урок и проверяет exact DPO пару, разрешённая внешняя open Chinese model пишет **обе final стороны**, Student отдельный и независимая конечная оценка отдельная; manual review exact candidate тоже отдельный. Определение маршрута может обучаться через другую объективную функцию — не объявляй его автоматически DPO.
+
+**План по одной карточке:** прочти полную карточку; проверь existing owners/reuse; выяви **один** user-valued gap; заморозь lawful family/rubric/control/PC budget до treatment; выполни лишь разрешённые микрозадачи; покажи GOOD/BAD/EDGE и настоящий falsifier; предъяви raw observable evidence, точный version, без утверждений за другого агента; закончи одним bounded next owner и отчётом на русском. При невозможности эффекта — source-only result с `NOT_MEASURED`, не бесконечная переоценка.
+
+**Current task:** приложенная целиком `tasks/RP13.xx.md`, а не этот вводный промпт сам по себе. Requested model/effort не доказывает actual model identity и не создаёт permissions.

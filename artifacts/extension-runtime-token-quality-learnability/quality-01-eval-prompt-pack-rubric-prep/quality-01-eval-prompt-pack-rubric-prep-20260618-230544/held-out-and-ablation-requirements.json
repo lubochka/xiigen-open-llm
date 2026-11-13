@@ -1,0 +1,153 @@
+{
+  "schema": "xiigen.quality_01.held_out_and_ablation_requirements.v1",
+  "work_order_id": "QUALITY-01-EVAL-PROMPT-PACK-RUBRIC-PREP-01",
+  "run_id": "quality-01-eval-prompt-pack-rubric-prep-20260618-230544",
+  "generated_at_local": "2026-06-18T23:05:44+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "artifact_type": "prep_only_requirements_no_eval",
+  "private_external_corpus_used": false,
+  "source_policy": {
+    "allowed_in_this_prep": [
+      "repo/local plan and state evidence refs",
+      "repo/local token pair completion artifacts",
+      "human/XIIGen-authored example shapes without private corpus content"
+    ],
+    "forbidden_in_this_prep": [
+      "private external corpus reads",
+      "raw Claude/Cursor/Codex/GPT/Gemini output as positive/negative example",
+      "vendor/model trace text as source material",
+      "DPO chosen/rejected target text",
+      "training data or checkpoint mutation"
+    ]
+  },
+  "held_out_split_requirements": {
+    "source_disjoint_required": true,
+    "held_out_prompts_required": true,
+    "minimum_future_split_metadata": [
+      "split_id",
+      "prompt_hash",
+      "scenario_id",
+      "pair_id",
+      "host",
+      "method",
+      "source_ref_class",
+      "privacy_class",
+      "license_or_authority_ref",
+      "redaction_status",
+      "nearest_neighbour_check_ref"
+    ],
+    "must_exclude_overlap_on": [
+      "prompt_hash",
+      "exact prompt text",
+      "correction text",
+      "source ref",
+      "file path",
+      "title",
+      "branch name",
+      "target locator",
+      "vendor trace",
+      "raw external AI output",
+      "nearest-neighbour source"
+    ],
+    "failure_labels": [
+      "FAIL_SOURCE_DISJOINT_SPLIT",
+      "FAIL_HELD_OUT_MISSING",
+      "FAIL_PROMPT_HASH_OVERLAP",
+      "FAIL_CORRECTION_TEXT_OVERLAP",
+      "FAIL_SOURCE_REF_OVERLAP",
+      "FAIL_NEAREST_NEIGHBOUR_SOURCE_OVERLAP",
+      "FAIL_VENDOR_TRACE_OVERLAP"
+    ]
+  },
+  "no_memorization_requirements": {
+    "required": true,
+    "future_controls": [
+      {
+        "control_id": "exact_prompt_replay_control",
+        "description_ru": "Проверяет, не является ли adaptive output replay того же prompt/transcript.",
+        "failure_label": "FAIL_EXACT_PROMPT_REPLAY"
+      },
+      {
+        "control_id": "transcript_replay_control",
+        "description_ru": "Проверяет, не скопирован ли старый transcript или vendor/model trace.",
+        "failure_label": "FAIL_TRANSCRIPT_REPLAY"
+      },
+      {
+        "control_id": "path_title_lookup_control",
+        "description_ru": "Проверяет, не объясняется ли ответ lookup по path/title/branch/locator.",
+        "failure_label": "FAIL_PATH_TITLE_LOOKUP"
+      },
+      {
+        "control_id": "private_context_leak_control",
+        "description_ru": "Проверяет, не перенесён ли private/project/stack-specific detail в universal/common rule.",
+        "failure_label": "FAIL_PRIVATE_OR_STACK_SPECIFIC_COMMON_LEAK"
+      }
+    ]
+  },
+  "ablation_requirements": {
+    "required_before_semantic_quality_claim": true,
+    "future_ablations": [
+      {
+        "ablation_id": "disable_static_fixture_rules",
+        "must_test": "Remove static fixture/path/title/exact mapping and verify claimed gain remains.",
+        "failure_label_if_gain_disappears": "FAIL_ABLATION_EXPLAINS_GAIN"
+      },
+      {
+        "ablation_id": "disable_keyword_only_selection",
+        "must_test": "Remove keyword-only skill matching and verify skill selection remains semantically correct.",
+        "failure_label_if_gain_disappears": "FAIL_KEYWORD_ONLY_SELECTION"
+      },
+      {
+        "ablation_id": "shuffle_candidate_order",
+        "must_test": "Shuffle candidates and verify selected skill does not depend on candidate order.",
+        "failure_label_if_gain_disappears": "FAIL_CANDIDATE_ORDER_BIAS"
+      },
+      {
+        "ablation_id": "remove_vendor_trace_features",
+        "must_test": "Remove vendor/model trace identifiers and verify output does not rely on them.",
+        "failure_label_if_gain_disappears": "FAIL_VENDOR_TRACE_REPLAY"
+      }
+    ]
+  },
+  "universal_vs_stack_specific_boundary": {
+    "universal_common_allowed_only_when": [
+      "rule is human/XIIGen-authored or from verified permissive source",
+      "rule describes general prompt-to-task, orchestration or skill-selection semantics",
+      "rule is redacted and source/license/privacy classified",
+      "rule passes held-out/source-disjoint and ablation controls"
+    ],
+    "must_remain_user_local_or_quarantined_when": [
+      "contains private project path, title, branch, locator or user data",
+      "depends on Claude/Cursor/Codex host-specific behavior",
+      "copies raw external AI/vendor/model output",
+      "comes from unknown or unapproved license/source",
+      "is useful only for one stack, repository or workspace"
+    ],
+    "failure_labels": [
+      "FAIL_PRIVATE_OR_STACK_SPECIFIC_COMMON_LEAK",
+      "FAIL_RAW_EXTERNAL_OUTPUT_USED_AS_EXAMPLE",
+      "FAIL_SOURCE_LICENSE_UNKNOWN",
+      "FAIL_COMMON_USER_LOCAL_MIXED"
+    ]
+  },
+  "current_quality_eval_status": {
+    "eval_authorized_now": false,
+    "scoring_authorized_now": false,
+    "reason": "This work order is prep-only and token pair completion is 0/9.",
+    "next_allowed_step": "Prepare scorer/eval-only runner contract without actual eval."
+  },
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "token_savings_claim_allowed": false,
+    "quality_improvement_claimed": false,
+    "quality_improvement_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  }
+}

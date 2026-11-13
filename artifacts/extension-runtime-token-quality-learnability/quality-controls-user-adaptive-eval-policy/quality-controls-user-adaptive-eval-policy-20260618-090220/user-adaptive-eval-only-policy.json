@@ -1,0 +1,95 @@
+{
+  "schema": "xiigen.quality_controls_user_adaptive_eval_policy.policy.v1",
+  "phase_id": "QUALITY-CONTROLS-USER-ADAPTIVE-EVAL-ONLY-POLICY-REVIEW",
+  "run_id": "quality-controls-user-adaptive-eval-policy-20260618-090220",
+  "generated_at_local": "2026-06-18T09:03:01+03:00",
+  "previous_committed_pushed_phase": {
+    "commit_sha": "f3c2d5f46",
+    "commit_message": "phase QUALITY-CONTROLS: record derived permissive source review"
+  },
+  "input_refs": {
+    "plan": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "state": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "previous_folder": "artifacts/extension-runtime-token-quality-learnability/quality-controls-derived-permissive-source-review/quality-controls-derived-permissive-source-review-20260618-084753",
+    "user_adaptive_only_continuation_map": "artifacts/extension-runtime-token-quality-learnability/quality-controls-derived-permissive-source-review/quality-controls-derived-permissive-source-review-20260618-084753/user-adaptive-only-continuation-map.json",
+    "quality03_unblock_options": "artifacts/extension-runtime-token-quality-learnability/quality-controls-derived-permissive-source-review/quality-controls-derived-permissive-source-review-20260618-084753/quality03-unblock-options.json",
+    "next_independent_plan_work": "artifacts/extension-runtime-token-quality-learnability/quality-controls-derived-permissive-source-review/quality-controls-derived-permissive-source-review-20260618-084753/next-independent-plan-work.json"
+  },
+  "counts": {
+    "accepted_permissive_common_source_packets": 0,
+    "common_allowed_scenarios": 0,
+    "common_allowed_pair_rows": 0,
+    "user_adaptive_only_scenarios": 7,
+    "user_adaptive_only_pair_rows": 21,
+    "evidence_only_scenarios": 5,
+    "evidence_only_pair_rows": 33,
+    "strict_common_quality03_ready": false
+  },
+  "decision": {
+    "user_adaptive_eval_only_policy_permitted_for_later_runner": true,
+    "permission_scope": "Future local/private/evidence-only eval-only runner planning for the 7 USER_ADAPTIVE_ONLY scenarios and 21 pair rows, after the gates in eval-only-gates.json pass.",
+    "current_phase_executes_eval": false,
+    "current_phase_creates_training_data": false,
+    "current_phase_starts_training": false,
+    "current_phase_mutates_model_checkpoint_or_locator": false,
+    "current_phase_updates_common_sets": false,
+    "common_route_remains_blocked": true,
+    "strict_quality03_remains_blocked": true
+  },
+  "allowed_operations": [
+    {
+      "operation": "record_policy_and_matrices",
+      "allowed_now": true,
+      "limits": "Artifacts/state only; no source code edits, no eval execution, no external web or AI."
+    },
+    {
+      "operation": "later_user_local_eval_only_runner",
+      "allowed_now": false,
+      "allowed_later_if_gates_pass": true,
+      "limits": "May read only approved user-local/private inputs and redacted evidence refs for the 7 USER_ADAPTIVE_ONLY scenarios; output must be labelled local/private/evidence-only."
+    },
+    {
+      "operation": "redacted_evidence_export",
+      "allowed_now": false,
+      "allowed_later_if_gates_pass": true,
+      "limits": "Only redacted, non-training, non-common evidence may be copied into repo artifacts; raw private traces stay in the approved user root."
+    },
+    {
+      "operation": "scenario_or_rubric_preparation",
+      "allowed_now": true,
+      "limits": "May define expected evidence and no-overclaim wording; must not score outputs or claim quality."
+    }
+  ],
+  "forbidden_operations": [
+    "external web search or external AI enrichment",
+    "actual training or continue-training",
+    "actual eval runner execution in this phase",
+    "creating common training rows or common datasets",
+    "mutating model, checkpoint, target, manifest, locator, or project model registry",
+    "copying private/user/session/project-specific rows into common repo training",
+    "using EVIDENCE_ONLY rows as eval or training inputs now",
+    "claiming token savings",
+    "claiming quality improvement",
+    "claiming semantic quality or semantic readiness",
+    "claiming learnability or training readiness",
+    "claiming live-host readiness",
+    "claiming common readiness or strict QUALITY-03 readiness",
+    "claiming target promotion or locator update",
+    "touching old cursor-user-data"
+  ],
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "quality_improvement_claimed": false,
+    "semantic_quality_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "common_training_allowed": false,
+    "training_ready_claimed": false,
+    "strict_quality03_ready": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false
+  },
+  "policy_statement": "The 7 USER_ADAPTIVE_ONLY scenarios may be routed only to a later user-local/private/evidence-only eval-only runner after gate approval. This policy does not authorize common training, DPO training, model/checkpoint/locator mutation, target promotion, live-host readiness, semantic quality, quality improvement, token savings, learnability, or strict common QUALITY-03."
+}

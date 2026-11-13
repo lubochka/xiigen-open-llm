@@ -1,0 +1,114 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner_implementation_packet_checks.v1",
+  "phase_id": "QUALITY-02-EVAL-ONLY-RUNNER-IMPLEMENTATION-PACKET-NO-EVAL-EXECUTION",
+  "run_id": "quality-02-eval-only-runner-implementation-packet-20260618-114340",
+  "generated_at_local": "2026-06-18T11:43:40+03:00",
+  "status": "PASS_AFTER_REVIEW_REPAIR",
+  "planned_checks": [
+    "parse implementation-packet.json",
+    "parse execution state JSON",
+    "git diff --check",
+    "verify no source-code files changed",
+    "verify no untracked source-code files were created",
+    "list exact packet files including repair artifacts",
+    "verify forbidden product claims remain false",
+    "verify forbidden cursor user data path is absent from full dirty worktree with git status --porcelain=v1",
+    "parse review-fix-forbidden-user-data-20260618-120325.json"
+  ],
+  "checks": [
+    {
+      "check": "parse implementation-packet.json",
+      "command": "Get-Content -Raw -Encoding UTF8 -LiteralPath <implementation-packet.json> | ConvertFrom-Json",
+      "result": "PASS"
+    },
+    {
+      "check": "parse implementation-packet-checks.json",
+      "command": "Get-Content -Raw -Encoding UTF8 -LiteralPath <implementation-packet-checks.json> | ConvertFrom-Json",
+      "result": "PASS_RECHECKED_AFTER_ARTIFACT_UPDATE_BY_WORKER"
+    },
+    {
+      "check": "parse execution state JSON",
+      "command": "Get-Content -Raw -Encoding UTF8 -LiteralPath docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json | ConvertFrom-Json",
+      "result": "PASS"
+    },
+    {
+      "check": "git diff --check",
+      "command": "git diff --check",
+      "result": "PASS_NO_OUTPUT"
+    },
+    {
+      "check": "no tracked or untracked source-code files changed",
+      "command": "git diff --name-only -- '*.cs' '*.csproj' '*.ps1' '*.xaml' '*.xaml.cs'; git ls-files --others --exclude-standard -- '*.cs' '*.csproj' '*.ps1' '*.xaml' '*.xaml.cs'",
+      "result": "PASS_NO_SOURCE_CODE_DIFF_OR_UNTRACKED_SOURCE"
+    },
+    {
+      "check": "exact packet files listed including repair artifacts",
+      "command": "git ls-files --others --exclude-standard -- artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340",
+      "result": "PASS_PACKET_FOLDER_UNTRACKED_ARTIFACTS_LISTED_WITH_REPAIR_FILES"
+    },
+    {
+      "check": "forbidden cursor user data path untracked generated cache removed",
+      "command": "git status --porcelain=v1 -- artifacts/extension-runtime-token-quality-learnability/qsg21-live-runtime-target-probes/cursor-extension-host/cursor-user-data; git ls-files --stage -- artifacts/extension-runtime-token-quality-learnability/qsg21-live-runtime-target-probes/cursor-extension-host/cursor-user-data; Resolve-Path + Remove-Item -LiteralPath after exact path match",
+      "result": "PASS_WAS_UNTRACKED_NOT_STAGED_OR_TRACKED_REMOVED_EXISTS_AFTER_FALSE"
+    },
+    {
+      "check": "forbidden cursor user data path absent from full dirty worktree",
+      "command": "git status --porcelain=v1 | Select-String -SimpleMatch 'artifacts/extension-runtime-token-quality-learnability/qsg21-live-runtime-target-probes/cursor-extension-host/cursor-user-data'",
+      "result": "PASS_NO_FULL_DIRTY_WORKTREE_MATCH"
+    },
+    {
+      "check": "parse review-fix-forbidden-user-data-20260618-120325.json",
+      "command": "Get-Content -Raw -Encoding UTF8 -LiteralPath <review-fix-forbidden-user-data-20260618-120325.json> | ConvertFrom-Json",
+      "result": "PASS"
+    },
+    {
+      "check": "packet claim locks all false",
+      "command": "ConvertFrom-Json implementation-packet.json and inspect forbidden_product_claim_locks",
+      "result": "PASS"
+    },
+    {
+      "check": "state packet claim locks all false",
+      "command": "ConvertFrom-Json execution state and inspect quality_02_eval_only_runner_implementation_packet.forbidden_product_claim_locks",
+      "result": "PASS"
+    }
+  ],
+  "source_code_edited": false,
+  "eval_runner_executed": false,
+  "host_runtime_started": false,
+  "external_ai_or_model_call_used": false,
+  "model_eval_executed": false,
+  "training_started": false,
+  "model_or_checkpoint_or_locator_mutated": false,
+  "claim_locks_all_false": true,
+  "review_repair": {
+    "repair_id": "review-fix-forbidden-user-data-20260618-120325",
+    "review_failure": "Forbidden untracked Cursor user-data directory was present in the dirty worktree, while the original packet check only proved absence from tracked diff and packet file set.",
+    "forbidden_path": "artifacts/extension-runtime-token-quality-learnability/qsg21-live-runtime-target-probes/cursor-extension-host/cursor-user-data",
+    "absolute_forbidden_path": "C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\qsg21-live-runtime-target-probes\\cursor-extension-host\\cursor-user-data",
+    "existed_before_repair": true,
+    "git_status_before_repair": "?? artifacts/extension-runtime-token-quality-learnability/qsg21-live-runtime-target-probes/cursor-extension-host/cursor-user-data/",
+    "git_ls_files_stage_before_repair_empty": true,
+    "classified_as_untracked_generated_runtime_user_data_cache": true,
+    "removed": true,
+    "exists_after_remove": false,
+    "full_dirty_worktree_absence_check": "PASS_NO_FULL_DIRTY_WORKTREE_MATCH"
+  },
+  "what_this_proves": [
+    "The implementation packet artifacts and state update are syntactically valid.",
+    "The slice stayed artifact/state-only and did not modify source-code files.",
+    "Product claims remain closed."
+  ],
+  "what_this_does_not_prove": [
+    "Runner implementation",
+    "eval execution",
+    "quality improvement",
+    "token savings",
+    "learnability",
+    "live host readiness",
+    "model lifecycle readiness",
+    "target promotion",
+    "locator update",
+    "final readiness"
+  ],
+  "next_action": "PARENT-REVIEW-COMMIT-QUALITY-02-EVAL-ONLY-RUNNER-IMPLEMENTATION-PACKET-NO-EVAL-EXECUTION"
+}

@@ -1,0 +1,117 @@
+{
+  "schema": "xiigen.quality_02.post_commit_check_repair.v1",
+  "repair_id": "post-commit-check-repair-20260618-quality02",
+  "created_at_local": "2026-06-18T10:23:29+03:00",
+  "subagent_role": "bounded EXECUTOR_INTERNAL + GOVERNANCE_REPAIR",
+  "trigger_commit": {
+    "sha": "15721f2db7d096683ced9e9c5a9b895149d083d7",
+    "short_sha": "15721f2db7d0",
+    "message": "phase QUALITY-02: prepare scorer eval-only runner contract"
+  },
+  "problem": {
+    "failed_check": "git diff --cached --check",
+    "masked_by_later_commit_push": true,
+    "affected_file": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/score-output-schema.jsonl",
+    "commit_range_repro_command": "git diff --check 15721f2db^ 15721f2db",
+    "commit_range_repro_status": "FAIL_BEFORE_REPAIR",
+    "trailing_whitespace_lines_reported": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ]
+  },
+  "root_cause": "PowerShell semicolon chaining allowed commit/push to proceed after a failed pre-commit check; score-output-schema.jsonl used CRLF line endings in a repo with core.autocrlf=false, so git diff --check reported trailing whitespace on all added JSONL lines.",
+  "repair_actions": [
+    {
+      "type": "artifact_format_repair",
+      "path": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/score-output-schema.jsonl",
+      "action": "normalized to LF and removed trailing spaces/tabs/carriage returns at line ends"
+    },
+    {
+      "type": "repair_packet_added",
+      "paths": [
+        "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/post-commit-check-repair-20260618-quality02.md",
+        "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/post-commit-check-repair-20260618-quality02.json"
+      ]
+    },
+    {
+      "type": "governance_skill_repair",
+      "path": "docs/skills/verification-before-completion-SKILL.md",
+      "action": "added explicit PowerShell semicolon-chain ban for verification plus staging/commit/push"
+    },
+    {
+      "type": "state_update",
+      "path": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+      "action": "recorded post-commit repair and preserved the next bounded action after parent acceptance"
+    }
+  ],
+  "claim_locks": {
+    "eval_runner_executed": false,
+    "host_runtime_started": false,
+    "model_eval_executed": false,
+    "training_started": false,
+    "model_or_checkpoint_or_locator_mutated": false,
+    "source_code_edited": false,
+    "token_savings_claimed": false,
+    "quality_improvement_claimed": false,
+    "semantic_quality_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false
+  },
+  "git_authority": {
+    "subagent_commit_push_authorized": false,
+    "subagent_staging_authorized": false,
+    "parent_will_perform_commit_push_after_review": true
+  },
+  "verification_results": [
+    {
+      "command": "git diff --check",
+      "status": "PASS",
+      "evidence": "exit 0; no output"
+    },
+    {
+      "command": "parse score-output-schema.jsonl",
+      "status": "PASS",
+      "evidence": "12 valid JSONL records"
+    },
+    {
+      "command": "parse state JSON and repair JSON",
+      "status": "PASS",
+      "evidence": "2 JSON files parsed"
+    },
+    {
+      "command": "git diff --cached --name-only",
+      "status": "PASS",
+      "evidence": "empty output; no staged files"
+    },
+    {
+      "command": "git status --short",
+      "status": "PASS",
+      "evidence": "expected repair files plus pre-existing untracked cursor-user-data folder"
+    },
+    {
+      "command": "scope check",
+      "status": "PASS",
+      "evidence": "no source-code changes; no tracked changes outside allowed scope"
+    },
+    {
+      "command": "line-ending check for score-output-schema.jsonl",
+      "status": "PASS",
+      "evidence": "12 LF, 0 CRLF"
+    }
+  ],
+  "after_parent_repair_acceptance_next_action": "QUALITY-02-ARTIFACT-RUNNER-DRY-RUN-VALIDATION-NO-EVAL"
+}

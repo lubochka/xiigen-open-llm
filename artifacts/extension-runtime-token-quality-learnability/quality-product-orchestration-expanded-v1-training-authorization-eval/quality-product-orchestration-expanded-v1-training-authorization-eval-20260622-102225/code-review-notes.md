@@ -1,0 +1,10 @@
+# Code Review Notes
+
+Проведены четыре реальные self/reviewer проверки после сборки runner-а и пакета. Они проверяли не красоту отчета, а границы: нет git, нет production locator, нет held-out label leakage, runtime идет через `43.SmartSkillsDomain`, claims не завышены.
+
+| Cycle | Focus | Finding/Fix | Recheck |
+| --- | --- | --- | --- |
+| 1 | Scope, no-git, no-external-call boundary | The runner must not reuse the older Q4 script pattern that calls git or writes production model/index files. Fix: This runner avoids git commands entirely, writes checkpoints only under the new artifact leaf, and records production_locator_updated=false. | Command summary records only dotnet runtime runner plus validation; no git command is spawned. |
+| 2 | Hidden deterministic shortcut and held-out leakage | Older Q4 aggregate patterns could pass by embedding held-out expected scenario refs; that would be label leakage. Fix: The new runner materializes learned patterns from train rows only and checks that held-out expected scenario refs are absent from learned patterns. | Ablation report records learned_patterns_exclude_held_out_expected_scenario_refs=true and held-out exact runtime readiness remains false. |
+| 3 | Project runtime path and allowed architecture level | A pure JSON scorer would not prove runtime eval. Fix: The generated C# runner uses ProjectReference to 43.SmartSkillsDomain and runs OrchestrationReasoningMachine.SaveCheckpointAsync, LoadCheckpointAsync, ImportAsync, ContinueTrainingFromLearnedState, and Plan. | runtime-runner-output.json records trained_runtime_eval_executed=true, while claims remain false. |
+| 4 | Artifact completeness, state coherence, and no-overclaim wording | The packet could be misread as PASS_AS_TRAINED_FEATURE if the failure is not explicit. Fix: Reports state that runtime eval was executed but trained feature readiness is disproven: held-out accuracy is below the pass bar and the exact next work order is scenario generalization repair. | Validation rejects true values for semantic_quality_claimed, product_ready_claimed, full_host_ready_claimed, production_locator_updated, or pass_as_trained_feature. |

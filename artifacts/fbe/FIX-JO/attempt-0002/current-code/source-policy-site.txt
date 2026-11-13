@@ -1,0 +1,31 @@
+    // создавались заново на КАЖДЫЙ урок, и вместе с ними заново строился
+    // внутренний справочник разбора по типам — именно эта повторная постройка и
+    // была главной стоимостью, а не сам объект настроек. Один общий экземпляр
+    // убирает повторную постройку; значения настроек остаются теми же.
+    private static class TrainingJsonPolicy
+    {
+        // Единственный экземпляр, только для чтения: после создания он не меняется,
+        // и ни одна точка этого файла не присваивает его свойствам новое значение.
+        internal static readonly JsonSerializerOptions Options = new()
+        {
+            // Тот же единственный преобразователь перечислений, что стоял здесь прежде:
+            // поведение разбора не меняется ни на символ.
+            Converters = { new JsonStringEnumConverter() }
+        };
+
+        // Явный статический конструктор задаёт ленивую первую подготовку: справочник
+        // разбора строится при первом обращении к этому типу, а не при загрузке сборки.
+        static TrainingJsonPolicy() { }
+    }
+
+    // TrainOnExample reads the chosen translation and stores it in the KNN store and E26 word map.
+    public void TrainOnExample(TranslationLearningExample example)
+    {
+        if (example.HeldOut) return;
+
+        // Настройки берутся у общего держателя вместо создания новых на каждый урок.
+        var opts = TrainingJsonPolicy.Options;
+        var input  = JsonSerializer.Deserialize<ExecutorInput>(example.InputJson, opts);
+        var chosen = JsonSerializer.Deserialize<ExecutorOutput>(example.ChosenOutputJson, opts);
+        if (input is null || chosen is null) return;
+

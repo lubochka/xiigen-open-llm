@@ -1,0 +1,12 @@
+# RP08 install / cold start
+
+**Purpose:** dispatch a bounded development task using current repository sources, not install a duplicate learning engine. Planning pack lives only in P=`lubochka/xiigen-planning@llm_plan3`. K=`lubochka/llm_mvp_core@codex/dpo-implementation`. Pin actual HEAD/changed blob SHAs at execution. S08 existing pack and five other product repos must not be overwritten or assumed installed.
+
+1. Read applicable live `AGENTS.md` and `CLAUDE.md` in **each** touched repository, P parent and replanning AGENTS, and actual selected skill contents (not just filenames). Read one full task, common contracts and direct primary source ranges; walk named MD/NDJSON RAG pointer to the corresponding primary source and its actual code consumer.
+2. Distinguish `PLAN_READ`, `P_DOC_WRITE`, `K_CODE_WRITE`, `MODEL_AUTHOR`, `PAIR_JUDGE`, `STUDENT_TRAIN`, `INDEPENDENT_EVAL`, `HOST_PRODUCT`, `GIT_PUBLISH` and `EXTERNAL_COST`. User authorised publication of this **planning pack on GitHub**; it is NOT automatic consent to train, spend, contact providers or release weights.
+3. Mark actual dependency/evidence status (UNKNOWN/OPEN/REUSED/PRESENT/MEASURED) and choose the smallest causal seam. CODEX case selection, external Chinese BOTH-side authoring, CODEX exact-pair judge, Student and independent examiner are different actions/receipts, never a fictional single "model" call.
+4. For code, preserve existing contracts and customer paths; minimal targeted schema/permission/replay/cancellation/restore checks only where changed. For learning, require preregistered TRAIN/OP_DEV/sealed CERT by source family, accepted parent, no-update control and actual ordinary output. No Windows Actions loop for model quality.
+5. Independently examine actual diff/evidence at exact candidate. Commit/push only authorised paths and verify remote SHA/readback. If non-atomic concurrent branch work exists, stop at lease failure, refresh, reconcile without force; never overwrite another worker.
+6. Report a short human result: mechanism/state/gain/adoption separately, valid or blocked grants, domain contrasts, wall time/PC actual vs NOT_MEASURED, reviewer exact identity or NOT_PERFORMED, commit SHA, next bounded task.
+
+Task-ready prompt: [START-PROMPT](START-PROMPT.md). Dependency board is **not** sequential task order. Never treat document "DONE" as completed product. 

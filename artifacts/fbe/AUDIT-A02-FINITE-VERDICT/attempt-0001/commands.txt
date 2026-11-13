@@ -1,0 +1,67 @@
+# Журнал команд починки A02. Каждая строка: время, команда, код возврата, файл журнала.
+[2026-11-10T09:20:51.7578369+02:00] (до правок) SHA256 файла проверок = 95F35A9BAB553DEF0F556166F3E41132F9FB4F4C6C66417E0CDF57E2DF728C6E
+[2026-11-10T09:20:51.7592868+02:00] (после правок, до мутаций) SHA256 файла проверок = 3806C8734CA29176FF7B9C3363341AF6BC2BC5D61BCE42B1572883205D8D667F
+[2026-11-10T09:20:51.7809619+02:00] dotnet build Tests/LlmFromScratch.Tests.csproj -c Release
+    exit=0  log=logs/01-build.log
+[2026-11-10T09:23:23.9970183+02:00] dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~P4801WeightingCurriculumCeilingTests" --list-tests
+    exit=0  log=logs/02-list-tests.log
+[2026-11-10T09:23:49.3662542+02:00] dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~P4801WeightingCurriculumCeilingTests" --logger "trx;LogFileName=run-01-after-fix.trx" --results-directory C:\Projects\llm_mvp_core\artifacts\fbe\AUDIT-A02-FINITE-VERDICT\attempt-0001\runs\run-01-after-fix
+    exit=0  log=logs/03-run-01-after-fix.log  trx=runs/run-01-after-fix/run-01-after-fix.trx
+[2026-11-10T09:25:03.7315251+02:00] МУТАЦИЯ M1 применена (четыре поля — литералы, признак вычислен). SHA256 файла с мутацией = 2FF41E81BD08BCA8B9BFC8BA316F7C5E47646257FE01BF8C78651921E981CBD3
+[2026-11-10T09:25:03.8069763+02:00] dotnet build Tests/LlmFromScratch.Tests.csproj -c Release
+    exit=0  log=logs/04-build-M1.log
+[2026-11-10T09:26:30.8689760+02:00] dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~P4801WeightingCurriculumCeilingTests" --logger "trx;LogFileName=run-02-mutation-M1-literals.trx" --results-directory C:\Projects\llm_mvp_core\artifacts\fbe\AUDIT-A02-FINITE-VERDICT\attempt-0001\runs\run-02-mutation-M1-literals
+    exit=1  log=logs/05-run-02-mutation-M1.log  trx=runs/run-02-mutation-M1-literals/run-02-mutation-M1-literals.trx
+[2026-11-10T09:27:20.1032935+02:00] M1 восстановлена; МУТАЦИЯ M2 применена (ветка бесконечности выключена через 'false &&'). SHA256 файла с мутацией M2 = CCD6F14D4D32D389BB0BE2E0BA2C168A25CBA3103B2B8E41B9B96236BF438D8D
+[2026-11-10T09:27:20.1811295+02:00] dotnet build Tests/LlmFromScratch.Tests.csproj -c Release
+    exit=0  log=logs/06-build-M2.log
+[2026-11-10T09:28:40.3924613+02:00] dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~P4801WeightingCurriculumCeilingTests" --logger "trx;LogFileName=run-03-mutation-M2-no-infinity.trx" --results-directory C:\Projects\llm_mvp_core\artifacts\fbe\AUDIT-A02-FINITE-VERDICT\attempt-0001\runs\run-03-mutation-M2-no-infinity
+    exit=1  log=logs/07-run-03-mutation-M2.log  trx=runs/run-03-mutation-M2-no-infinity/run-03-mutation-M2-no-infinity.trx
+[2026-11-10T09:29:34.9235661+02:00] M2 восстановлена. SHA256 файла после восстановления = 3806C8734CA29176FF7B9C3363341AF6BC2BC5D61BCE42B1572883205D8D667F ; равен до-мутационному 3806C873…D8D667F: True
+[2026-11-10T09:29:34.9856094+02:00] dotnet build Tests/LlmFromScratch.Tests.csproj -c Release
+    exit=0  log=logs/08-build-restored.log
+[2026-11-10T09:31:22.3388218+02:00] dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~P4801WeightingCurriculumCeilingTests" --logger "trx;LogFileName=run-04-after-restore.trx" --results-directory C:\Projects\llm_mvp_core\artifacts\fbe\AUDIT-A02-FINITE-VERDICT\attempt-0001\runs\run-04-after-restore
+    exit=0  log=logs/09-run-04-after-restore.log  trx=runs/run-04-after-restore/run-04-after-restore.trx
+[2026-11-10T09:32:33.5166331+02:00] git diff -- Tests/ExperimentFixes/P4801WeightingCurriculumCeilingTests.cs > diff/P4801WeightingCurriculumCeilingTests.patch ; exit=0
+[2026-11-10T09:36:14.9490921+02:00] записаны файлы улик: expectation-before-run.md, published-evidence-untouched.md, sensitivity.md, claim-boundaries.md, report.md; записывающих команд Git — 0
+# --- починка окончаний строк в сохранённой заплатке (отдельный наряд, 10.11.2026) ---
+[2026-11-10T09:52:56.8651554+02:00] проба измерителя проверена на эталоне: printf 'a\r\nb\n' | tr -dc '\r' | wc -c = 1 ; printf 'a\nb\n' | tr -dc '\r' | wc -c = 0 ; grep -c $'\r' на том же эталоне = 0 (ловушка: grep считает строки, а не возвраты)
+[2026-11-10T09:52:56.8651554+02:00] отпечаток ДО правки: wc -c = 31513 ; tr -dc '\r' | wc -c = 374 ; tr -d '\r' | sha256sum = 4944d2cb6a74f0d46207ce5d0b94a7dcffacc15c00d031bd133d72c3049ecf1f ; wc -l = 374
+[2026-11-10T09:52:56.8651554+02:00] tr -d '\r' < diff/P4801WeightingCurriculumCeilingTests.patch > <временный файл> ; cat <временный файл> > diff/P4801WeightingCurriculumCeilingTests.patch ; exit=0
+[2026-11-10T09:52:56.8651554+02:00] отпечаток ПОСЛЕ правки: wc -c = 31139 ; tr -dc '\r' | wc -c = 0 ; tr -d '\r' | sha256sum = 4944d2cb6a74f0d46207ce5d0b94a7dcffacc15c00d031bd133d72c3049ecf1f ; wc -l = 374 ; отпечатки без возвратов совпали: True ; разница в байтах 374 = числу удалённых возвратов
+[2026-11-10T09:52:56.8651554+02:00] правка подтверждена на диске независимым средством (PowerShell, ReadAllBytes): байт = 31139 ; возвратов = 0 ; sha256 файла как есть = 4944d2cb6a74f0d46207ce5d0b94a7dcffacc15c00d031bd133d72c3049ecf1f
+[2026-11-10T09:52:56.8651554+02:00] проверка структуры: первая строка начинается с 'diff --git' = True ; строк '^+++ ' = 1 ; строк '^--- ' = 1 (как до правки)
+[2026-11-10T09:52:56.8651554+02:00] git diff --check -- diff/P4801WeightingCurriculumCeilingTests.patch ; exit=2 ; предупреждений 13 (было 374); 12 из них — строки контекста из ровно одного пробела, 1 — заголовок куска, чья подпись кончается пробелом; это подлинный вывод git, не правил
+[2026-11-10T09:52:56.8651554+02:00] git diff --cached --check -- diff/P4801WeightingCurriculumCeilingTests.patch ; exit=2 ; предупреждений 374 — индекс ещё держит версию с возвратами, прав на запись в git нет; нужен повторный git add этого пути родителем
+[2026-11-10T09:52:56.8651554+02:00] git check-attr text eol: заплатка — text: unspecified (гейт её проверяет) ; logs/01-build.log и runs/.../run-01-after-fix.trx — text: unset (гейт их не проверяет) ; commands.txt — text: unset ; core.autocrlf = false
+[2026-11-10T09:52:56.8651554+02:00] записан файл line-endings-repair.md ; дописан абзац в конец report.md ; дописаны эти строки в конец commands.txt ; записывающих команд Git — 0
+[2026-11-10T10:07:38.060506+02:00] git rev-parse --abbrev-ref HEAD ; exit=0 ; codex/dpo-implementation (корень C:\Projects\llm_mvp_core)
+[2026-11-10T10:07:38.060506+02:00] проба измерителя на эталоне ДО доверия числам: эталон из 8 байт с двумя возвратами каретки ; tr -dc '\r' | wc -c = 2 (верно) ; grep -c $'\r' = 2 ожидалось, получено 0 ; exit=1 — ловушка подтверждена, по grep судить нельзя
+[2026-11-10T10:07:38.060506+02:00] wc -c < diff/<заплатка>.patch ; exit=0 ; байт = 31139
+[2026-11-10T10:07:38.060506+02:00] tr -dc '\r' < diff/<заплатка>.patch | wc -c ; exit=0 ; возвратов каретки = 0 (их убрала прежняя починка)
+[2026-11-10T10:07:38.060506+02:00] tr -dc '\n' < diff/<заплатка>.patch | wc -c ; exit=0 ; переводов строки = 374
+[2026-11-10T10:07:38.060506+02:00] sha256sum < diff/<заплатка>.patch ; exit=0 ; 4944d2cb6a74f0d46207ce5d0b94a7dcffacc15c00d031bd133d72c3049ecf1f
+[2026-11-10T10:07:38.060506+02:00] tr -d '\r' < diff/<заплатка>.patch | sha256sum ; exit=0 ; 4944d2cb6a74f0d46207ce5d0b94a7dcffacc15c00d031bd133d72c3049ecf1f — совпал с предыдущим НЕ как независимое подтверждение, а потому что возвратов в файле уже было ноль
+[2026-11-10T10:07:38.060506+02:00] sha256sum < Tests/ExperimentFixes/P4801WeightingCurriculumCeilingTests.cs ; exit=0 ; 3806c8734ca29176ff7b9c3363341af6bc2bc5d61bce42b1572883205d8d667f — совпал с ожидаемым по наряду, только поэтому удаление разрешено
+[2026-11-10T10:07:38.060506+02:00] git ls-files --error-unmatch -- diff/<заплатка>.patch ; exit=1 ; файл НЕ отслеживается — каталог улик изъят из индекса родителем
+[2026-11-10T10:07:38.060506+02:00] git diff --check -- diff/<заплатка>.patch ; exit=0 ; вывод пуст — это НЕ доказательство чистоты: гейт молчит по файлу, которого нет в индексе
+[2026-11-10T10:07:38.060506+02:00] grep -cE ' +$' diff/<заплатка>.patch ; exit=0 ; строк с хвостовым пробелом = 13 ; из них awk '/^ $/' = 12 состоят ровно из одного пробела ; одна — заголовок куска (строка 211). Подтверждает причину решения владельца
+[2026-11-10T10:07:38.060506+02:00] git check-attr text eol diff whitespace -- diff/<заплатка>.patch ; exit=0 ; всё unspecified — гейт этот файл проверял
+[2026-11-10T10:07:38.060506+02:00] grep -n 'artifacts/fbe' .gitattributes ; exit=0 ; семейство правил улик = 4 расширения (*.trx, *.log, *.txt, *.json), *.patch в нём отсутствует ; файл правил НЕ менялся — это решение владельца
+[2026-11-10T10:07:38.060506+02:00] git check-attr text diff -- artifacts/fbe/EXAMPLE/x.patch ; exit=0 ; text: unspecified — проба по вымышленному пути подтверждает, что любая заплатка под этим каталогом проверяется гейтом
+[2026-11-10T10:07:38.060506+02:00] rm -f diff/P4801WeightingCurriculumCeilingTests.patch ; exit=0 ; удалено средствами файловой системы, НЕ через git rm
+[2026-11-10T10:07:38.060506+02:00] rmdir diff ; exit=0 ; каталог опустел (0 записей) и удалён ; проба test -d — отсутствует
+[2026-11-10T10:07:38.060506+02:00] правка artifacts/fbe/AUDIT-A02-FINITE-VERDICT/attempt-0001/line-endings-repair.md ; exit=0 ; переписан раздел о результате гейта, добавлены разделы «Почему заплатка больше не версионируется», «Как воспроизвести тот же диф из хранилища», «Граница: совпадение по содержанию, а не побайтово» и «Побочное изменение за пределами „только дописать“: нормализация журнала команд»
+[2026-11-10T10:07:38.060506+02:00] правка artifacts/fbe/AUDIT-A02-FINITE-VERDICT/attempt-0001/report.md ; exit=0 ; ссылка на файл заплатки заменена указанием на раздел с причиной и командой воспроизведения ; каталог diff/ убран из перечня файлов улик
+[2026-11-10T10:07:38.060506+02:00] правка artifacts/fbe/AUDIT-A02-FINITE-VERDICT/attempt-0001/claim-boundaries.md ; exit=0 ; доказательство пункта 1 теперь ссылается на команду воспроизведения, а не на удалённый файл
+[2026-11-10T10:07:38.060506+02:00] grep -rnF 'P4801WeightingCurriculumCeilingTests.patch' artifacts/fbe/AUDIT-A02-FINITE-VERDICT ; exit=0 ; осталось 7 упоминаний: 4 — исторические строки этого журнала (наряд разрешал только дописывать, переписывать историю нельзя), 3 — в line-endings-repair.md, где два исторических и одно объясняет удаление. Висячих ссылок, утверждающих, что файл существует, нет
+[2026-11-10T10:07:38.060506+02:00] проба на смешение латиницы с кириллицей внутри слов по трём правленым файлам (python -I, кодировка задана внутри скрипта) ; exit=0 ; совпадений 0 ; одна своя опечатка найдена и исправлена до этой пробы
+[2026-11-10T10:07:38.060506+02:00] записывающих команд git за всю смену — 0 (ни add, ни rm, ни commit, ни push) ; отпечаток коммита публикации в команду воспроизведения вписывает родитель
+[2026-11-10T10:10:48.167926+02:00] правка artifacts/fbe/AUDIT-A02-FINITE-VERDICT/attempt-0001/line-endings-repair.md (вторая) ; exit=0 ; в раздел о побочной нормализации дописан проверенный способ дописки без побочного эффекта с числами этой же смены
+[2026-11-10T10:10:48.167926+02:00] СВОЯ ОШИБКА ИЗМЕРЕНИЯ, найдена и исправлена: проверка хвостовых пробелов шаблоном grep -E '[ \t]+$' дала по line-endings-repair.md ложную 1. В POSIX-шаблоне внутри скобок обратный слеш и 't' — литералы, то есть набор был {пробел, слеш, буква t}: шаблон поймал строку, кончающуюся на '*.txt', и при этом ПРОПУСТИЛ бы настоящий таб
+[2026-11-10T10:10:48.167926+02:00] калибровка верного измерителя на эталоне (строка на 't', строка с пробелом, строка с табом, чистая) ; grep -cE '[ \t]+$' = 2 (ложное срабатывание на 't' плюс пропуск таба) ; grep -cE ' +$' = 1 (верно) ; grep -cP '[ \t]+$' = 2 (верно)
+[2026-11-10T10:10:48.167926+02:00] перемер верным измерителем grep -cP '[ \t]+$' по семи файлам улик (line-endings-repair.md, report.md, claim-boundaries.md, commands.txt, expectation-before-run.md, published-evidence-untouched.md, sensitivity.md) ; exit=1 на последнем из-за нуля совпадений ; строк с хвостовым пробелом или табом = 0 во ВСЕХ семи
+[2026-11-10T10:10:48.167926+02:00] проба на остальные два вида предупреждений гейта (python -I, кодировка задана внутри скрипта) ; exit=0 ; пустых строк в конце файла = 0 во всех семи, все кончаются переводом строки ; 'пробел перед табом' = 0 во всех семи
+[2026-11-10T10:10:48.167926+02:00] состояние окончаний строк после правок: line-endings-repair.md 20448 байт / 0 возвратов / 215 переводов ; report.md 14039 / 0 / 127 ; claim-boundaries.md 6987 / 0 / 59 ; commands.txt 13878 / 59 / 59
+[2026-11-10T10:10:48.167926+02:00] НЕ ПРОВЕРЕНО и честно не доказуемо моими командами: были ли у report.md и claim-boundaries.md возвраты каретки ДО моих правок. Каталог улик изъят из индекса, базы для сверки в git нет, прежний журнал их окончаний не записывал. Сейчас в них ноль возвратов, и это для гейта благоприятно, но нормализовало ли их моё средство правки — утверждать не могу; родителю стоит это учесть
+[2026-11-10T10:10:48.167926+02:00] отпечаток файла проверок после всей работы = 3806c8734ca29176ff7b9c3363341af6bc2bc5d61bce42b1572883205d8d667f (не изменился) ; git status совпадает с началом смены, кроме исчезновения diff/ ; .gitattributes и .gitignore не тронуты ; записывающих команд git — 0

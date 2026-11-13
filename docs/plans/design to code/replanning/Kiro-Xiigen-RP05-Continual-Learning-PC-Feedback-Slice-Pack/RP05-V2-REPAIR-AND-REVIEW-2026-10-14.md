@@ -1,0 +1,25 @@
+> **RP05 V3 author-side repair/readback, 2026-10-14:** [14 direct V3 task cards and explicit model prompts](RP05-V3-LEARNING-FIRST-EXECUTABLE-TASK-REPAIR-2026-10-14.md), corresponding `tasks/RP05.xx.md` V3 first sections, README, start/board/science/minimum check and JSON manifest version 3.0. All 14 remote original task files have been read back by exact path and still retain original headings. Main defect corrected: **one new admitted pair/transaction is not one optimizer Step**; actual `DpoTrainingExecutionRequest.DpoStepCount` must be prebounded before sealed exams, if actual owner supports nondefault; UNKNOWN after ANY step never authorizes pair replay. R22 §3.5 PILOT-P12 is only a scientific proposal (12 independent C# families, not 24 independent families); EN→RU and SQL are parallel separate-recipient experiments. 0 new product tests for documentary work; focused deterministic checks are required only if a relevant dangerous code invariant later changes. Author-side Git readback is NOT a distinct CODEX Astra review, real code/weights/provider effect, measured utility or PC validation. Independent Astra review NOT_PERFORMED; actual Student B1 NOT_MEASURED. Original V2 audit preserved below as history. 
+
+# RP05 V2 — аудит конкретных исправлений, фальсификаторы, статус независимой экспертизы
+
+**Авторский документный аудит, 2026-10-14.** Отдельная CODEX GPT-6 Astra 6 UltraCode review-сессия пока **NOT_PERFORMED**. Student не обучен этим патчем, DPO пара не выпущена, новый B1 не измерен, PC fit не подтверждён. Финальный git SHA и статус проверки удалённых байтов указываются в записи публикации; не считать самопроверку независимой оценкой.
+
+## Реально изученные исходные признаки, ограничения глубины
+Прочитаны 14 RP05 child cards, основные README/SOURCE/STATE/SCIENTIFIC/BOARD/GOVERNANCE, сравнены R22 causal catalog, R23 PC lifecycle, minimum verification policy и R01–R25 existing ownership. Core source исследован выборочно, без ложного заявления о полном обходе 5k-line transaction file или всех callsites. Избранные текущие blob identities при исследовании:
+- FeedbackRouter.cs (a676058b): generic EDITED/REJECTED могут писать UserCorrection или sentinel; это ещё не Chinese-authored BOTH sides по governed RP05.
+- ContinuousLearningPipeline.cs (24ea6a7a): реализация generic cycle, не подтверждение пользовательской установки/реального Student маршрута.
+- FileDpoPairStore.Transactions.cs (a46a003a): durable transaction and replay mechanisms, оценку полноты state/retry вести на actual current route.
+- DpoTrainingExecution.cs (987abd2c) и CodeDocumentationRepositoryOwnedDpoTrainingPublicationCoordinator.cs (fde669af): существуют trainer/coordination seams, смотреть последнюю целиком затронутую реализацию до code edits.
+- KnnLogicalUnit.cs (2957816a): Search(query,k) с hits[0], пример недостаточности multi-neighbor, не семантическая функция от предметных законов.
+
+Задание RP05.00B должно выполнить **полный** интерфейс/callers/consumer audit перед любой правкой; мы не маркируем это уже выполненным. Ещё не вызваны Chinese author, CODEX case-selector, отдельный CODEX pair-judge, независимый outcome evaluator, Astra архитектурный reviewer.
+
+## Исправление scope и планирования
+- F1–F5 устраняет скрытую последовательность "все WorkLeft → все 14 задач → все 7 доменов → CI → первый B1". Ресурсные и независимые экзамены готовятся сразу; только опасный эффект ждёт своего настоящего gate.
+- 14 оригинальных полных tasks сохраняются; каждое получает отдельную конкретную V2-инструкцию: контекст/RAG/primary, алгоритм, хороший/плохой/пограничный случай и почему, failure→smallest repair, точный минимальный technical check и реальный научный output.
+- Возражение о kNN учтено: динамический k и ранжирование **условны на доменные логические законы**, связи субъектов и свойства semantic vector, а не геометрической близости самих соседей. Версия codebook/index обязательна.
+- Сохранены раздельные ILearningUnit many→many; ILearningFlow correction; async ILearningOrchestrator; higher-order ILearningDynamicGraph; существующий ILearningMachine trainer, без очередной независимой DPO машины.
+- Сохранена строгая власть CODEX GPT-6 Astra 6 UltraCode в человеческом выборе и отдельной оценке пары; внешний open Chinese автор обеих сторон; независимый экзамен outcome — третий, иной вид оценки.
+
+## Требования независимого reviewer к финальному candidate SHA
+Проверить все 14 оригинальных + V2 task prompts, refs/skills/good/bad/edge/failures, frozen exam 03B *раньше* trial 03A, подлинный принятый B0, проверяемый no-repeat journal, actual selected cold consumer, понятный state owner, law-aware domain/vector/kNN и разделённые LoRA/tokenizer, PC total cost, отсутствие случайной замены mandatory security native gate. По каждому замечанию дать exact file+section, контрпример и минимальную правку. Согласование относится **только** к проверенному конечному commit SHA: новое изменение требует дополнительного чтения. Пока reviewer не запущен — DOCUMENTARY_DRAFT / INDEPENDENT_REVIEW_NOT_PERFORMED.

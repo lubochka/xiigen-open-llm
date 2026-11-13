@@ -1,0 +1,75 @@
+# Журнал команд — адресная приёмка FIX-WC, попытка 0001
+# Корень: C:\Projects\llm_mvp_core ; ветка: codex/dpo-implementation
+# Вершина ветки на начало смены: afa7e18558e09fb3e01a729b22e68b6a2f12c817
+# Формат: порядковый номер, команда, код возврата, что увидели.
+# Код возврата снимается ОТДЕЛЬНОЙ переменной сразу после команды, не через $? после конвейера.
+
+01  git rev-parse --abbrev-ref HEAD                                  -> 0   codex/dpo-implementation
+02  git rev-parse HEAD                                               -> 0   afa7e18558e09fb3e01a729b22e68b6a2f12c817
+03  чтение Tests/ExperimentFixes/WikiFeatureReuseLearningTests.cs     -> 0   161 строка, один объявленный случай
+04  чтение 42.ProjectWikiDomain/42.ProjectWikiDomain.csproj           -> 0   записи о видимости внутреннего нет
+05  чтение 42.ProjectWikiDomain/ProjectWikiRequestRoutingTrainableModel.cs -> 0  656 строк; Route (публичный) и RouteForEvaluation (внутренний) рядом; порог 0.95
+06  git grep --text -l 'System.Runtime.CompilerServices.InternalsVisibleTo' -- '*.csproj' | wc -l -> 0  246 файлов (принятая форма записи)
+07  git grep --text -l '<InternalsVisibleTo' -- '*.csproj' | wc -l    -> 0   0 файлов (такой формы в хранилище нет)
+08  python: отпечатки целевых файлов и всего дерева показаний опыта   -> 0   записано в fingerprints-before.txt
+09  git check-attr -a .../A/after-snapshot.json                       -> 0   атрибутов нет (пустой вывод)
+10  git check-ignore -v --no-index .../A/after-snapshot.json          -> 1   нет правила игнорирования => NOT_IGNORED
+11  запись artifacts/fbe/FIX-WC/attempt-0001/expectation-before-run.md -> 0  ожидания зафиксированы ДО первой правки
+12  запись artifacts/fbe/FIX-WC/attempt-0001/fingerprints-before.txt  -> 0   7785 байт
+13  tr -dc '\r' < файл | wc -c  по двум файлам улик                   -> 0   возвратов каретки 0 в обоих (измеритель — tr, не grep -c)
+
+# --- правки (шаги 1-4 наряда) ---
+14  правка 42.ProjectWikiDomain/42.ProjectWikiDomain.csproj           -> 0   добавлен РОВНО один AssemblyAttribute InternalsVisibleTo = LlmFromScratch.Tests
+15  правка Tests/ExperimentFixes/WikiFeatureReuseLearningTests.cs     -> 0   дописаны три случая + помощники; существующий случай не тронут
+16  правка того же файла: дописана датированная пометка в заголовке   -> 0   исходный абзац сохранён, не переписан
+
+# --- дальше дописывается по ходу ---
+
+# --- сборки и прогоны ---
+17  dotnet build Tests/LlmFromScratch.Tests.csproj (после правок)     -> 0   ошибок компиляции 0; журнал build-01-after-edit.log
+18  сверка времени: библиотека домена новее исходника и csproj        -> 0   библиотека 11:15:00 новее csproj 11:09:43
+19  dotnet test --no-build --filter WikiFeatureReuseLearningTests      -> 0   найдено 4 / исполнено 4 / зелёных 4 / красных 0
+20  подсчёт исходов тремя способами по run-01-baseline.trx            -> 0   XML=4 Passed; Counters passed=4 failed=0; регвыр 4/0 — сошлись
+
+# --- мутация 1: отмена самого переноса ---
+21  копия эталона продукта в scratchpad (вне проекта)                 -> 0   42479 байт, отпечаток 0da02436...
+22  правка продукта: признаки обратно внутрь цикла эпох               -> 0   мутация внесена
+23  dotnet build                                                      -> 0   ошибок CS 0; журнал build-mut1.log
+24  сверка: библиотека новее исходника                                -> 0   11:18:59 новее 11:18:01
+25  dotnet test (фильтр тот же)                                       -> 0   4/4/4/0 — НЕ ПОКРАСНЕЛО НИЧЕГО (предсказано заранее)
+26  обратная правка + сверка отпечатка                                -> 0   0da02436... совпал, продукт возвращён
+
+# --- мутация 2: сломанное холодное восстановление ---
+27  правка FromSnapshot: веса признаков не применяются                 -> 0   мутация внесена
+28  dotnet build                                                      -> 0   ошибок CS 0; журнал build-mut2.log
+29  dotnet test                                                       -> 1   4/4/2/2 — красные: холодное восстановление (59834 против 1263) и существующий случай
+30  обратная правка + сверка отпечатка                                -> 0   0da02436... совпал
+
+# --- мутация 3: число эпох 18 -> 17 ---
+31  правка EpochCount = 17                                            -> 0   мутация внесена
+32  dotnet build                                                      -> 0   ошибок CS 0; журнал build-mut3.log
+33  dotnet test                                                       -> 1   4/4/3/1 — красный ТОЛЬКО холодное восстановление, на байтах снимка
+34  ВЫВОД: предсказание не сбылось; причина — обучение сходится за 7 правок, эпохи 8..18 пустые
+35  обратная правка EpochCount = 18 + сверка отпечатка                -> 0   0da02436... совпал
+36  запись expectation-before-fourth-mutation.md (ДО прогона мутации 4) -> 0  предсказание: красными будут все четыре
+
+# --- мутация 4: скорость обучения 0.14 -> 0.13 ---
+37  правка LearningRate = 0.13                                        -> 0   мутация внесена
+38  dotnet build                                                      -> 0   ошибок CS 0; журнал build-mut4.log
+39  dotnet test                                                       -> 1   4/4/0/4 — красные все; уверенность 0.91317 против 0.90936 вне допуска 1e-12
+40  обратная правка LearningRate = 0.14                               -> 0   мутация снята
+
+# --- возврат и итог ---
+41  сверка возврата тремя способами                                   -> 0   отпечаток совпал; побайтово тождественно эталону; git diff пуст
+42  dotnet build (на возвращённом продукте)                           -> 0   ошибок CS 0; журнал build-02-after-restore.log
+43  dotnet test (итоговый прогон)                                     -> 0   объявлено 4 / исполнено 4 / зелёных 4 / красных 0; три способа счёта сошлись
+44  dotnet test (три проверки прежнего поведения из карточки)          -> 0   3/3/3/0
+45  сверка fingerprints-before против текущего состояния              -> 0   без изменений 49, изменено 2 (оба разрешены нарядом)
+46  удаление временной копии из scratchpad + проверка чтением         -> 0   файла нет
+47  git status --porcelain                                            -> 0   мои: csproj домена, файл проверок, каталог улик; чужая правка в TranslationPhraseCoverageLearningTests.cs
+48  git rev-parse HEAD                                                -> 0   8e57eb5ef4f (сдвинулась с afa7e18558e чужими коммитами во время смены)
+49  git log afa7e18558e..HEAD --name-only                             -> 0   4 чужих коммита; пересечений с моей областью записи НЕТ
+50  git worktree list                                                 -> 0   одна рабочая копия: C:/Projects/llm_mvp_core
+
+# Записывающих команд системы контроля версий не выполнялось ни одной:
+# ни add, ни commit, ни push, ни checkout, ни reset. Коммит за родителем.

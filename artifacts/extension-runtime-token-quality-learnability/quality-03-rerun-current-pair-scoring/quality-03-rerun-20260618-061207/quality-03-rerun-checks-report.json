@@ -1,0 +1,74 @@
+{
+  "schema": "xiigen.quality_03.rerun_checks_report.v1",
+  "phase_id": "QUALITY-03-RERUN-CURRENT-PAIR-SCORING",
+  "run_id": "quality-03-rerun-20260618-061207",
+  "generated_at_local": "2026-06-18T06:12:07+03:00",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "JSON/JSONL parse",
+      "command": "Parse generated run *.json, generated *.jsonl, and execution state; compare TOKEN-03/TOKEN-04/QUALITY-01-02/rerun pair_id sets",
+      "status": "PASS",
+      "evidence": "json_files=10 jsonl_files=1 pair_sets=54 matched"
+    },
+    {
+      "name": "54 pair_id sets match TOKEN-03/TOKEN-04/QUALITY-01/02",
+      "command": "Load baseline-token-traces.json, adaptive-token-traces.json, quality-02-scorer-input-rows.json, quality-02-scorer-output-rows.json, quality-03-rerun-quality-rows.json",
+      "status": "PASS",
+      "evidence": "TOKEN-03=54 TOKEN-04=54 scorer_input=54 scorer_output=54 rerun=54; sorted pair_id sets identical"
+    },
+    {
+      "name": "forbidden truthy claims grep",
+      "command": "rg --pcre2 forbidden claim flags with value true over rerun folder and execution state",
+      "status": "PASS",
+      "evidence": "No forbidden truthy claim flags found"
+    },
+    {
+      "name": "UTF-8/no-BOM and Russian report readability",
+      "command": "Strict UTF-8 decode, BOM byte check, Cyrillic count and required Russian headings",
+      "status": "PASS",
+      "evidence": "files=15 cyrillic_chars=685; required Russian headings present"
+    },
+    {
+      "name": "git diff --check",
+      "command": "git diff --check",
+      "status": "PASS",
+      "evidence": "Exit code 0; no whitespace errors"
+    },
+    {
+      "name": "no source-like hidden deterministic changes",
+      "command": "git status --porcelain=v1 plus generated file extension classification",
+      "status": "PASS",
+      "evidence": "Only execution state, new quality-03-rerun-current-pair-scoring artifacts, and pre-existing untracked qsg21 cursor-user-data are present; generated files are .json/.jsonl/.md only"
+    },
+    {
+      "name": "self-review",
+      "command": "Read quality-03-rerun-self-review.json",
+      "status": "PASS",
+      "evidence": "No overclaim; handler-level scope, QSG28 staged/test-only, OrchestrationReasoning common fallback, source-disjoint/control limitations, and next phase recorded"
+    }
+  ],
+  "final_counts": {
+    "expected_pair_count": 54,
+    "baseline_rows_loaded": 54,
+    "adaptive_rows_loaded": 54,
+    "scorer_input_rows_loaded": 54,
+    "scorer_output_rows_loaded": 54,
+    "rerun_rows_emitted": 54,
+    "pair_integrity_passed_count": 54,
+    "pair_integrity_failed_count": 0,
+    "strict_quality_non_regression_passed_count": 0,
+    "quality_regression_failed_count": 0,
+    "quality_inconclusive_count": 54,
+    "limited_observed_non_regression_count": 54,
+    "token_savings_claim_allowed_count": 0,
+    "token_reduction_rows_observed_but_claim_closed": 0,
+    "token_increase_rows_claim_closed": 12,
+    "token_equal_rows_claim_closed": 42,
+    "baseline_total_tokens": 3189,
+    "adaptive_total_tokens": 3237,
+    "total_token_delta_adaptive_minus_baseline": 48
+  },
+  "token_savings_claim_status": "CLOSED_GLOBALLY_AND_PER_ROW",
+  "next_suggested_phase": "QUALITY-CONTROLS-SOURCE-DISJOINT-ABLATION-THEN-QUALITY-03-RERUN: add or repair source_ref/doc_id/license/train-vs-held-out metadata plus no-leakage/no-memorization/ablation controls for the current scenario pack, then rerun QUALITY-03; live-host savings additionally require same-scope live Claude/Cursor/Codex token pairs."
+}

@@ -1,0 +1,93 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner.score_range_fix_report.v1",
+  "report_id": "code-acceptance-fix-score-range-report",
+  "generated_at_local": "2026-06-18T14:18:55.6279348+03:00",
+  "boundary": {
+    "role": "bounded FIX worker",
+    "requested_model": "gpt-5.5",
+    "requested_reasoning_effort": "xhigh",
+    "git_authority": "forbidden",
+    "git_mutations_performed": false,
+    "commit_push_authorized": false,
+    "product_readiness_claimed": false
+  },
+  "fix": {
+    "status": "APPLIED",
+    "files_changed": [
+      "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+      "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/quality-02-eval-only-runner-report.json",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/quality-02-eval-only-runner-score-rows.jsonl",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/quality-02-eval-only-runner-report.md",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/checks-report.md",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/checks-report.json",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-acceptance-fix-score-range-report.md",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-acceptance-fix-score-range-report.json"
+    ],
+    "behavior": [
+      "Validate every per-layer baseline_score as an integer from 0 through 5 inclusive before scoring/report construction.",
+      "Validate every per-layer adaptive_score as an integer from 0 through 5 inclusive before scoring/report construction.",
+      "Return OperationResult failure with EVAL_ONLY_INPUT_VALIDATION_FAILED for invalid score values.",
+      "Write no report JSON, score-row JSONL, or Markdown for invalid score values.",
+      "Preserve eval-only/helper labels and false claim locks."
+    ]
+  },
+  "tests_added": [
+    "baseline_score below 0",
+    "baseline_score above 5",
+    "adaptive_score below 0",
+    "adaptive_score above 5",
+    "valid boundary values 0 and 5"
+  ],
+  "checks": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ExtensionEvalOnlyQualityRunner\"",
+      "status": "PASS",
+      "evidence": "Failed: 0, Passed: 20, Skipped: 0, Total: 20"
+    },
+    {
+      "command": "dotnet build 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+      "status": "PASS",
+      "evidence": "Build succeeded. 0 Warning(s), 0 Error(s)"
+    },
+    {
+      "command": "dotnet run --project 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj -- --input <synthetic-eval-only-input.jsonl> --output-dir <evidence-folder> --run-id quality-02-eval-only-runner-implementation-20260618-122518 --evidence-scope local_private_eval_only --synthetic-fixture-only true --actual-approved-eval-executed false",
+      "status": "PASS",
+      "evidence": "Generated report JSON, score rows JSONL and Markdown under evidence folder using synthetic rows only."
+    },
+    {
+      "command": "JSON parse evidence JSON before report-pair write",
+      "status": "PASS",
+      "evidence": "Strict JSON parse passed for 14 existing evidence JSON files."
+    },
+    {
+      "command": "JSONL parse evidence JSONL",
+      "status": "PASS",
+      "evidence": "Strict JSON.parse per non-empty line passed for 2 files and 4 rows."
+    },
+    {
+      "command": "product/readiness claim-lock scan",
+      "status": "PASS",
+      "evidence": "Generated report and claim-lock artifacts keep forbidden product/readiness claims false."
+    }
+  ],
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "quality_improvement_claimed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "strict_quality03_ready": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "actual_approved_eval_executed": false,
+    "host_runtime_started": false,
+    "training_started": false,
+    "model_checkpoint_locator_mutated": false
+  },
+  "human_board": "Code fix and eval-only evidence refresh only; no product readiness claim."
+}

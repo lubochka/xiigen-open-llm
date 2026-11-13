@@ -1,0 +1,75 @@
+{
+  "schema": "xiigen.quality_03.10g.work_order.v1",
+  "work_order_id": "QUALITY-03-NON-INTER-RATER-SOURCE-EVIDENCE-SUPPLY-AND-APPROVED-SPLIT-10G",
+  "parent_work_order_id": "QUALITY-03-NON-INTER-RATER-SOURCE-AUTHORING-APPROVAL-AND-PROOF-BUNDLE-10F",
+  "generated_at_local": "2026-06-19T17:47:11+03:00",
+  "requested_artifact_type": "source_license_consent_evidence_supply_then_approved_split_and_proof_bundle_authoring",
+  "implementation_authorized_now": true,
+  "goal": "Supply exact local source/license/consent evidence or approved redacted universal source packets for the 9 QUALITY-03 rows; only then approve corpus/split/raw-private refs and create proof bundle.",
+  "allowed_write_scope": [
+    "new timestamped artifact folder under artifacts/extension-runtime-token-quality-learnability/quality-scoring/quality-scoring-<timestamp>/",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+  ],
+  "forbidden": [
+    "git stage/commit/push/branch/checkout",
+    "external AI/web/model calls unless Luba gives a fresh explicit exception",
+    "training/DPO/checkpoint/model/locator mutation",
+    "raw external AI output as training target",
+    "false approval or false PASS"
+  ],
+  "exact_missing_files_or_decisions": [
+    {
+      "missing_item": "accepted source/license/consent packet for current QUALITY-03 sources",
+      "exact_needed": "For each candidate source_ref/doc_id/source_hash used by the 9 rows, provide source_license_ref, license_hash, license_class, consent/provenance, privacy_class, common_training_allowed, universal_only_extraction_allowed, and stack/private leakage exclusion.",
+      "current_evidence": "source-license-provenance-ledger counts license_proven_pair_rows=0 and common_training_allowed_pair_rows=0."
+    },
+    {
+      "missing_item": "approved-train-source-corpus-manifest.json approved=true",
+      "exact_needed": "Include only common-training rows with accepted license/consent, source_hash, doc_id, universal-only extraction, no stack/private leakage, and no raw external AI target text.",
+      "current_evidence": "artifacts\\extension-runtime-token-quality-learnability\\quality-scoring\\quality-scoring-20260619-174711/approved-train-source-corpus-manifest.json approved=false."
+    },
+    {
+      "missing_item": "approved-held-out-split-manifest.json approved=true",
+      "exact_needed": "Produce train/held-out rows with zero overlap by source_ref, doc_id, source_hash, path, title, prompt hash, correction text, and nearest-neighbour source.",
+      "current_evidence": "source-disjoint split counts eligible_rows_total=0, train_rows=0, heldout_rows=0."
+    },
+    {
+      "missing_item": "approved-raw-private-corpus-ref.json approved=true for replay diagnostics only",
+      "exact_needed": "Name approved raw-private replay paths/hashes, no-training role, redaction boundary, and vendor trace exclusions before no-leakage/no-memorization probes.",
+      "current_evidence": "artifacts\\extension-runtime-token-quality-learnability\\quality-scoring\\quality-scoring-20260619-174711/approved-raw-private-corpus-ref.json approved=false."
+    },
+    {
+      "missing_item": "9 approved row assignments",
+      "exact_needed": "quality-03-row-assignment-approval.jsonl must contain exactly 9 rows with approved_assignment not NONE/DEFER and matching approved train corpus, held-out split, and raw-private refs.",
+      "current_evidence": "artifacts\\extension-runtime-token-quality-learnability\\quality-scoring\\quality-scoring-20260619-174711/quality-03-row-assignment-approval.jsonl has 9 rows, all DEFERRED_NOT_APPROVED."
+    },
+    {
+      "missing_item": "row-specific controls and proof artifacts",
+      "exact_needed": "After approvals, run source-disjoint, nearest-neighbour, ablation, no-leakage, and no-memorization controls and create 54 per-row proof artifacts plus proof bundle.",
+      "current_evidence": "10F did not create proof bundle because prerequisite approval gates failed."
+    }
+  ],
+  "required_gate_sequence": [
+    "Parse all source/license/consent evidence files.",
+    "Approve train corpus only if common_training_allowed=true and license/consent is proven.",
+    "Approve held-out split only after zero overlap checks pass by all required keys.",
+    "Approve raw-private replay refs only as diagnostic/no-training inputs.",
+    "Approve exactly 9 row assignments only after all three manifests are approved.",
+    "Build row-specific NN index and run ablation/no-leakage/no-memorization controls.",
+    "Create proof bundle and 54 per-row proof artifacts only after every prior gate passes.",
+    "Run NonInterRaterProofProducer and Quality03ProofContractRunner only after valid proof bundle exists."
+  ],
+  "verify": [
+    "JSON/JSONL parse",
+    "assert no common-training row has UNKNOWN license/consent",
+    "assert train/held-out overlap count is 0",
+    "assert raw-private/vendor traces are diagnostic-only and excluded from training targets",
+    "assert exactly 9 approved row assignment rows and no approved_assignment is NONE/DEFER",
+    "producer + proof runner only if valid proof bundle is created",
+    "git diff --check",
+    "whitespace check new artifacts"
+  ],
+  "git_authority": "forbidden",
+  "parent_will_perform_commit_push_after_review": true,
+  "no_operator_question_needed": true
+}

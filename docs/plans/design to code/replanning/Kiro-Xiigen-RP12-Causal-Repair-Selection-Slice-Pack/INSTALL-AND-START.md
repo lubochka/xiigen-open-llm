@@ -1,0 +1,9 @@
+# RP12 — install and first task
+1. Open this package in P lubochka/xiigen-planning at llm_plan3; snapshot live P and K llm_mvp_core@codex/dpo-implementation HEAD. Read the full chosen task in tasks/, plus SOURCE, ARCHITECTURE, DOMAIN, GOVERNANCE and EXECUTION BOARD.
+2. Read the applicable full K/docs/skills files listed by the task, not merely their names; record read spans, role allocation and authority. Traverse WorkLeft/RAG .md/.ndjson→actual G/F/V primary→live K caller. Preserve pending Rxx and S-series requirements.
+3. In an admitted executor workspace write work/RP12.ID/ready.md, source-receipts.json, result.json, human-report-ru.md. Resolve actual owner, ordinary user path, one competing diagnosis, a positive/negative/edge/falsifier, frozen source families, finite cost and safety rules.
+4. Implement only current granted scope. Running a frozen lawful local experiment is independently useful before RP01 Student mutation. A K code edit, teacher, CODEX judge, optimizer, paid provider, private corpus export or external host deployment needs separate effects/consent grants.
+5. Never label documentation as Astra review, a test count as learned ability, or a local adapter as installed IDE. For every true experiment report independent domain goal, critical laws, uncertainty, runtime and full PC resources, old-domain retention, and actual consumer.
+6. Review exact candidate SHA independently, then verify GitHub remote blob/commit. If blocked, deliver source-bound no-change/NOT_MEASURED plus one named next owner, not a global retry loop.
+
+First wave can run 00A and 01A in parallel as separate read-only lanes; after scoped 00B and 01B, execute 02B or 02A and 05A. 05B effects remain conditional.

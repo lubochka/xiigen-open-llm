@@ -1,0 +1,106 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner_implementation_packet_review.v1",
+  "reviewed_at_local": "2026-06-18T11:43:40+03:00",
+  "reviewer_role": "bounded REVIEW_INTERNAL sub-agent",
+  "requested_model": "gpt-5.5",
+  "requested_reasoning_effort": "xhigh",
+  "verdict": "FAIL",
+  "parent_may_commit_packet_as_accepted": false,
+  "product_readiness_claimed": false,
+  "reviewed_files": [
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet-checks.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet-checks.json",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+  ],
+  "question_results": [
+    {
+      "id": 1,
+      "question": "Human-readable Russian board includes required fields",
+      "verdict": "PASS"
+    },
+    {
+      "id": 2,
+      "question": "States 10 major plan blocks and current slice is only packet/artifact evidence",
+      "verdict": "PASS"
+    },
+    {
+      "id": 3,
+      "question": "Next implementation work order names files/classes/scopes/checks/review/boundaries",
+      "verdict": "PASS"
+    },
+    {
+      "id": 4,
+      "question": "Keeps core logic in llm_mvp_core and host adapters thin",
+      "verdict": "PASS"
+    },
+    {
+      "id": 5,
+      "question": "Prohibits hidden deterministic shortcuts and labels deterministic helpers",
+      "verdict": "PASS"
+    },
+    {
+      "id": 6,
+      "question": "Preserves DPO/source/training/eval boundaries and local model lifecycle requirements",
+      "verdict": "PASS"
+    },
+    {
+      "id": 7,
+      "question": "Keeps all forbidden product claims closed",
+      "verdict": "PASS"
+    },
+    {
+      "id": 8,
+      "question": "Worker avoided source code changes and forbidden cursor-user-data",
+      "verdict": "FAIL",
+      "finding": "No tracked source-code changes were seen, but the forbidden cursor-user-data directory exists as an untracked worktree path."
+    },
+    {
+      "id": 9,
+      "question": "JSON files parse and git diff --check passes",
+      "verdict": "PASS"
+    }
+  ],
+  "checks": {
+    "json_parse_implementation_packet": "PASS",
+    "json_parse_implementation_packet_checks": "PASS",
+    "json_parse_execution_state": "PASS",
+    "git_diff_check": "PASS_NO_OUTPUT",
+    "git_diff_name_only": [
+      "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+    ],
+    "git_status_porcelain_relevant_entries": [
+      "M docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+      "?? artifacts/extension-runtime-token-quality-learnability/qsg21-live-runtime-target-probes/cursor-extension-host/cursor-user-data/",
+      "?? artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/"
+    ],
+    "forbidden_cursor_user_data_path_exists": true
+  },
+  "findings": [
+    {
+      "severity": "BLOCKING",
+      "title": "Forbidden Cursor user data directory exists in dirty worktree",
+      "path": "artifacts/extension-runtime-token-quality-learnability/qsg21-live-runtime-target-probes/cursor-extension-host/cursor-user-data/",
+      "evidence": "git status --porcelain=v1 lists the directory as untracked; Test-Path returned True.",
+      "required_fix": "Remove or quarantine the forbidden directory outside this phase scope, then rerun allowed status/diff checks."
+    },
+    {
+      "severity": "BLOCKING",
+      "title": "Packet checks use too narrow a forbidden-path test",
+      "path": "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet-checks.json",
+      "evidence": "The check covers tracked diff and the packet file set, while the review question requires avoiding forbidden cursor-user-data in the dirty scope.",
+      "required_fix": "Update checks artifacts so the forbidden-path gate covers the full dirty worktree scope."
+    }
+  ],
+  "required_fixes": [
+    "Remove the untracked forbidden cursor-user-data directory from the dirty worktree or quarantine it outside this phase with parent-approved evidence.",
+    "Update implementation-packet-checks.md and implementation-packet-checks.json to validate the full dirty scope for forbidden cursor-user-data.",
+    "Rerun JSON parse for packet/checks/state, git diff --check, git diff --name-only, and git status --porcelain=v1.",
+    "Re-submit the packet for parent review only after the forbidden path is absent from the dirty scope."
+  ],
+  "changed_review_artifact_files": [
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/review-implementation-packet-20260618-114340.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/review-implementation-packet-20260618-114340.json"
+  ]
+}

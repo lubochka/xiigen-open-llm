@@ -1,0 +1,52 @@
+diff --git a/27.TranslationDomain/TranslationMachine.cs b/27.TranslationDomain/TranslationMachine.cs
+index 720d60424c8..1b69fb32993 100644
+--- a/27.TranslationDomain/TranslationMachine.cs
++++ b/27.TranslationDomain/TranslationMachine.cs
+@@ -514,6 +514,30 @@ public sealed class TranslationMachine : ILearningMachine<TranslationDomain>
+         // Рабочий список опознаний: копия прежнего, чтобы живой список версии
+         // не менялся до публикации даже порядком своих строк.
+         var stagedIdentities = current.StructuredTrainingIdentities.ToList();
++        // Рабочий НАБОР пар «опознание примера + опознание единицы» того же рабочего списка.
++        // Он отвечает на единственный вопрос «такая пара уже записана?» и заменяет полный
++        // перебор журнала, который прежде делался заново на КАЖДЫЙ урок партии.
++        //
++        // Почему набор ЛОКАЛЬНЫЙ, а не поле машины. Он живёт ровно столько же, сколько копия
++        // списка выше: при отказе строки партии и при проигрыше сравнения-и-публикации оба
++        // выбрасываются вместе с кадром вызова. Поле объекта в этих случаях осталось бы
++        // изменённым при НЕопубликованном журнале, то есть прямо сломало бы неделимость
++        // публикации, которую держит единственная замена ссылки версии.
++        //
++        // Почему ключ — кортеж ровно из двух строк. Сравнение кортежа по умолчанию идёт
++        // сравнением по умолчанию каждой части, а для строки это сравнение ordinal и
++        // регистрозависимое — ровно то же сравнение, которое делал прежний полный перебор.
++        // Опознание источника и опознание партии в ключ не входят: они остаются метаданными
++        // ПЕРВОЙ записанной пары.
++        var stagedIdentityKeys = new HashSet<(string ExampleId, string UnitId)>(
++            // Набор заполняется из УЖЕ ГОТОВОЙ копии списка, а не вторым перебором поля версии.
++            // Иначе правка, вся суть которой — убрать лишний просмотр журнала, сама оставила бы
++            // лишний просмотр: журнал читался бы дважды на партию, в том числе когда учить нечего.
++            // Содержимое тождественно по построению, потому что копия сделана строкой выше из
++            // того же поля, а источник истины остаётся один: если это поле однажды станет
++            // ленивым или разделяемым изменяемым списком, список и набор разойтись уже не смогут.
++            stagedIdentities.Select(
++                identity => (identity.ExampleId, identity.UnitId)));
+ 
+         foreach (var example in batch.Examples.Where(example => !example.HeldOut))
+         {
+@@ -539,9 +563,13 @@ public sealed class TranslationMachine : ILearningMachine<TranslationDomain>
+             }
+ 
+             trainedUnits.Add(example.UnitId);
+-            if (!stagedIdentities.Any(identity =>
+-                    string.Equals(identity.ExampleId, example.ExampleId, StringComparison.Ordinal) &&
+-                    string.Equals(identity.UnitId, example.UnitId, StringComparison.Ordinal)))
++            // Добавление в набор САМО отвечает, была ли такая пара уже записана, и делает это
++            // за одно обращение вместо просмотра всего журнала. Истина означает «пары не было»,
++            // и тогда запись дописывается в журнал точно там же, где и прежде. Ложь означает
++            // «пара уже есть», и журнал остаётся с ПЕРВОЙ записью и её исходными метаданными.
++            // Обучение выше при этом уже состоялось: нынешний договор знакомый урок повторно
++            // обучает, но повторно не дописывает опознание, и этот порядок не меняется.
++            if (stagedIdentityKeys.Add((example.ExampleId, example.UnitId)))
+                 stagedIdentities.Add(new TranslationStructuredTrainingIdentityCheckpoint(
+                     example.ExampleId,
+                     example.SourceId,

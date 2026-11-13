@@ -1,0 +1,105 @@
+diff --git a/00.TensorCore/Core/TensorOps.cs b/00.TensorCore/Core/TensorOps.cs
+index a1bf6269160..37a1e910b18 100644
+--- a/00.TensorCore/Core/TensorOps.cs
++++ b/00.TensorCore/Core/TensorOps.cs
+@@ -991,10 +991,4 @@ public static class TensorOps
+         int normalizedDim = dim < 0 ? x.Shape.Rank + dim : dim;
+         var resultData = new float[x.Data.Length];
+-        for (var index = 0; index < resultData.Length; index++)
+-        {
+-            if (index > 0 && (index & 4095) == 0)
+-                cancellationToken.ThrowIfCancellationRequested();
+-            resultData[index] = x.Data[index];
+-        }
+ 
+         int outerSize = 1;
+@@ -1005,4 +999,89 @@ public static class TensorOps
+         int innerSize = x.Shape.TotalElements / (outerSize * dimSize);
+ 
++        // FIX-AC transfer, plan 41-neural-learning-resource-deltas.md, from AC01.
++        //
++        // Шаг между соседями по выбранной оси равен innerSize. Когда он равен
++        // единице, строка лежит в памяти подряд — это непрерывная последняя ось
++        // (сюда же попадает случай, когда все оси после выбранной имеют длину
++        // один, и строка всё равно непрерывна). Для такой строки максимум и
++        // экспонента читаются прямо из входа, поэтому предварительная полная
++        // запись входа в выходную память не нужна: прежде каждое число сначала
++        // копировалось туда, а следующим же проходом по строке перезаписывалось
++        // своей экспонентой.
++        bool lastAxisContiguous = innerSize == 1;
++
++        // Обычной ветви остальных осей предварительная копия по-прежнему нужна:
++        // она читает числа из выходного массива. Поэтому копия выполняется
++        // только тогда, когда её будет кому читать.
++        if (!lastAxisContiguous)
++        {
++            for (var index = 0; index < resultData.Length; index++)
++            {
++                if (index > 0 && (index & 4095) == 0)
++                    cancellationToken.ThrowIfCancellationRequested();
++                resultData[index] = x.Data[index];
++            }
++        }
++
++        if (lastAxisContiguous)
++        {
++            // Числа берутся из массива входа, а пишутся в массив результата:
++            // выходной массив остаётся отдельным от входного, вход не меняется.
++            var inputData = x.Data;
++            for (int outer = 0; outer < outerSize; outer++)
++            {
++                // Отмена проверяется на каждой строке, как и в обычной ветви.
++                cancellationToken.ThrowIfCancellationRequested();
++                // Начало строки: при шаге один номера идут подряд от этого места,
++                // то есть прежний номер (outer * dimSize + d) * innerSize + inner.
++                int rowStart = outer * dimSize;
++                // Максимум строки — тот же трюк вычитания максимума для
++                // устойчивости счёта, что и в обычной ветви.
++                float maxVal = float.NegativeInfinity;
++                for (int d = 0; d < dimSize; d++)
++                {
++                    if (d > 0 && (d & 4095) == 0)
++                    {
++                        TensorKernelProgress.Report("TensorOps.Softmax", d);
++                        cancellationToken.ThrowIfCancellationRequested();
++                    }
++                    // Сравнение идёт прямо по входу, а не по его копии.
++                    if (inputData[rowStart + d] > maxVal) maxVal = inputData[rowStart + d];
++                }
++
++                // Сумма экспонент накапливается в том же порядке по строке, что и
++                // прежде, поэтому округление суммы не меняется.
++                float expSum = 0f;
++                for (int d = 0; d < dimSize; d++)
++                {
++                    if (d > 0 && (d & 4095) == 0)
++                    {
++                        TensorKernelProgress.Report("TensorOps.Softmax", d);
++                        cancellationToken.ThrowIfCancellationRequested();
++                    }
++                    // Экспонента считается от входного числа и сразу становится
++                    // первой и единственной записью этого места результата.
++                    resultData[rowStart + d] = MathF.Exp(inputData[rowStart + d] - maxVal);
++                    expSum += resultData[rowStart + d];
++                }
++
++                for (int d = 0; d < dimSize; d++)
++                {
++                    if (d > 0 && (d & 4095) == 0)
++                    {
++                        TensorKernelProgress.Report("TensorOps.Softmax", d);
++                        cancellationToken.ThrowIfCancellationRequested();
++                    }
++                    // Нормировка делением на сумму выполняется в собственном
++                    // выходном массиве.
++                    resultData[rowStart + d] /= expSum;
++                }
++            }
++        }
++
++        // Ниже — прежняя ветвь остальных осей, сохранённая без изменений. Условие
++        // управляет ровно одним следующим предложением, то есть всей этой парой
++        // вложенных циклов целиком.
++        if (!lastAxisContiguous)
+         for (int outer = 0; outer < outerSize; outer++)
+         for (int inner = 0; inner < innerSize; inner++)

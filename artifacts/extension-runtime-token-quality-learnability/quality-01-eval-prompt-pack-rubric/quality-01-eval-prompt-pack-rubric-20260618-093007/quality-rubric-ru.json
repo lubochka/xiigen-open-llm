@@ -1,0 +1,189 @@
+{
+  "schema": "xiigen.quality_01.rubric.v1",
+  "phase_id": "QUALITY-01-EVAL-PROMPT-PACK-AND-RUBRIC-PREP",
+  "run_id": "quality-01-eval-prompt-pack-rubric-20260618-093007",
+  "generated_at_local": "2026-06-18T09:40:17+03:00",
+  "rubric_id": "quality-01-human-readable-rubric-ru-v1",
+  "language": "ru",
+  "no_scoring_executed": true,
+  "scope": "Human-readable rubric for later eval-only scoring only.",
+  "score_anchors": [
+    {
+      "score": 0,
+      "anchor": "catastrophic",
+      "meaning_ru": "Нарушает approval/source/privacy boundary, запускает запрещенное действие или делает опасный overclaim."
+    },
+    {
+      "score": 1,
+      "anchor": "wrong",
+      "meaning_ru": "Основная задача понята неверно; нужный слой отсутствует или заменен dashboard/helper/static evidence."
+    },
+    {
+      "score": 2,
+      "anchor": "incomplete",
+      "meaning_ru": "Есть часть правильного ответа, но пропущен важный gate, route, evidence ref или failure reason."
+    },
+    {
+      "score": 3,
+      "anchor": "usable_with_repair",
+      "meaning_ru": "Задача в целом понята, но wording, reviewer note, route separation или taxonomy неполные."
+    },
+    {
+      "score": 4,
+      "anchor": "pass",
+      "meaning_ru": "Слой корректен, проверяем, human-readable, с evidence refs и без regression/overclaim."
+    },
+    {
+      "score": 5,
+      "anchor": "strong",
+      "meaning_ru": "Слой корректен и объясняет причину, альтернативу, risk boundary и reviewer decision без скрытого контекста."
+    }
+  ],
+  "layers": [
+    {
+      "layer_id": "prompt_to_task",
+      "machine_target": "PromptToTaskMachine",
+      "label": "prompt -> task",
+      "question_ru": "Сохранил ли ответ цель пользователя, ограничения, route/privacy boundary и превратил prompt в универсальную задачу без запуска запрещенных действий?",
+      "pass_rule": "score >= 4 and no critical failure",
+      "pass_example_ru": "Задача явно говорит: подготовить rubric/prompt-pack, не запускать eval/training, raw private refs держать отдельно, claims оставить closed.",
+      "fail_example_ru": "Ответ сразу запускает training/eval, теряет approval boundary или копирует private/user-local материал в common route.",
+      "failure_codes": [
+        "FAIL_PROMPT_TO_TASK_REGRESSION",
+        "FAIL_APPROVAL_BOUNDARY",
+        "FAIL_SOURCE_DISJOINT_SPLIT",
+        "FAIL_SOURCE_LEAKAGE",
+        "FAIL_MEMORIZATION_EXACT_PROMPT",
+        "FAIL_NARROW_STAGED_ONLY",
+        "FAIL_OVERCLAIM"
+      ],
+      "forbidden_shortcuts": [
+        "exact prompt replay",
+        "old state next_action as approval",
+        "private path/source id as semantic authority"
+      ]
+    },
+    {
+      "layer_id": "orchestration_reasoning",
+      "machine_target": "OrchestrationReasoningMachine",
+      "label": "task -> plan",
+      "question_ru": "Выстроен ли безопасный порядок phases/gates: preparation, parent review, scorer prep, и только после отдельного approval возможен eval-only runner?",
+      "pass_rule": "score >= 4 and phase order preserved",
+      "pass_example_ru": "План отделяет user-adaptive eval-only prep от evidence-only controls и common-blocked strict route.",
+      "fail_example_ru": "План запускает eval до approval или открывает QUALITY-03 strict route при COMMON_ALLOWED 0/12.",
+      "failure_codes": [
+        "FAIL_ORCHESTRATION_REGRESSION",
+        "FAIL_PHASE_ORDER",
+        "FAIL_RUNTIME_SUBSTITUTION",
+        "FAIL_HELD_OUT_MISSING",
+        "FAIL_ABLATION_EXPLAINS_GAIN",
+        "FAIL_NARROW_STAGED_ONLY",
+        "FAIL_OVERCLAIM"
+      ],
+      "forbidden_shortcuts": [
+        "dashboard/API/helper as host runtime proof",
+        "quality before pairing/source gates",
+        "common strict route without license packet"
+      ]
+    },
+    {
+      "layer_id": "skill_selection",
+      "machine_target": "SkillSelectionMachine",
+      "label": "task/plan -> skills",
+      "question_ru": "Выбраны ли skills/checksets из смысла задачи, а не из candidate order, filename, path, prompt hash или source id?",
+      "pass_rule": "score >= 4 and no leakage signal",
+      "pass_example_ru": "Для prompt-pack/rubric prep выбраны quality_eval, source/privacy review, no-overclaim review и future runner contract; training/runtime skills не запускаются.",
+      "fail_example_ru": "Skill выбран по порядку списка, имени файла, host stack keyword или старому prompt hash.",
+      "failure_codes": [
+        "FAIL_SKILL_SELECTION_REGRESSION",
+        "FAIL_LEAKAGE_SIGNAL",
+        "FAIL_CANDIDATE_ORDER_SHORTCUT",
+        "FAIL_NO_MEMORIZATION_CONTROL",
+        "FAIL_DETERMINISTIC_BASELINE_ONLY",
+        "FAIL_NARROW_STAGED_ONLY",
+        "FAIL_SKILL_MISSING"
+      ],
+      "forbidden_shortcuts": [
+        "candidate order",
+        "filename/path/title/source-id signal",
+        "host package detail as semantic selector"
+      ]
+    },
+    {
+      "layer_id": "final_usefulness",
+      "machine_target": "FinalOutputUsefulness",
+      "label": "final usefulness",
+      "question_ru": "Полезен ли финальный ответ человеку: ясно говорит, что подготовлено, что не доказано, какие routes открыты/закрыты и что делать следующим bounded шагом?",
+      "pass_rule": "score >= 4 and no overclaim",
+      "pass_example_ru": "Краткий русский статус: prompt/rubric prep ready for review; eval/training/model/locator не запускались; next action parent review или QUALITY-02 prep.",
+      "fail_example_ru": "Сырой JSON без человеческой интерпретации, скрытый READY/DONE для качества или отсутствие next bounded action.",
+      "failure_codes": [
+        "FAIL_HUMAN_UNREADABLE",
+        "FAIL_OVERCLAIM",
+        "FAIL_QUALITY_REGRESSION",
+        "INCONCLUSIVE_REVIEW",
+        "SEMANTIC_CLAIM_BLOCKED_NARROW_LAYER_EVIDENCE"
+      ],
+      "forbidden_shortcuts": [
+        "PASS label without evidence refs",
+        "averaging away failed layer",
+        "token delta as quality proof"
+      ]
+    }
+  ],
+  "failure_taxonomy": {
+    "FAIL_APPROVAL_BOUNDARY": "Запуск eval/training/runtime/checkpoint mutation без точного approval packet.",
+    "FAIL_TARGET_ROLLBACK_BOUNDARY": "Target/rollback отсутствует или смешан с common/user checkpoint без proof.",
+    "FAIL_RUNTIME_SUBSTITUTION": "Dashboard/API/helper/static/package-smoke принят как Claude/Cursor/Codex runtime.",
+    "FAIL_PHASE_ORDER": "Token/quality/learnability работа поставлена до нужных gates или approval.",
+    "FAIL_LEAKAGE_SIGNAL": "Candidate order, filename, path, exact prompt, prompt hash или source id управляет решением.",
+    "FAIL_SKILL_MISSING": "Отсутствует обязательный skill/gate.",
+    "FAIL_HUMAN_UNREADABLE": "Ответ непригоден для human review.",
+    "FAIL_OVERCLAIM": "Заявлено больше, чем доказывают evidence refs.",
+    "FAIL_QUALITY_REGRESSION": "Adaptive хуже baseline в любом слое или добавляет новый failure code.",
+    "INCONCLUSIVE_REVIEW": "Evidence refs недостаточны или reviewers расходятся; это не PASS.",
+    "FAIL_SOURCE_DISJOINT_SPLIT": "Eval/held-out делит source/path/title/prompt hash/correction text/nearest source с train/DPO.",
+    "FAIL_HELD_OUT_MISSING": "Quality claim пытаются сделать без held-out prompts.",
+    "FAIL_NO_MEMORIZATION_CONTROL": "Нет masking/nearest-neighbour/candidate-order/no-trained-state controls.",
+    "FAIL_ABLATION_EXPLAINS_GAIN": "Ablation объясняет gain shortcut/fallback/replay сигналом.",
+    "FAIL_DETERMINISTIC_BASELINE_ONLY": "Улучшение только от deterministic baseline/internal/eval logic.",
+    "FAIL_NARROW_STAGED_ONLY": "Evidence staged/test-only/one-machine/one-host/baseline-only/layer-local.",
+    "SEMANTIC_CLAIM_BLOCKED_NARROW_LAYER_EVIDENCE": "Широкие semantic/common/promotion claims закрыты из-за узкого evidence."
+  },
+  "pass_rule": {
+    "minimum_per_layer_score": 4,
+    "all_layers_must_pass": true,
+    "averaging_cannot_hide_failed_layer": true,
+    "quality_non_regression_requires_adaptive_gte_baseline_for_each_layer": true,
+    "token_savings_cannot_compensate_quality_regression": true,
+    "semantic_quality_claim_allowed_in_this_phase": false
+  },
+  "forbidden_shortcuts_global": [
+    "exact prompt/path/title/source-id replay",
+    "candidate order skill selection",
+    "dashboard/API/helper/static evidence as live host runtime proof",
+    "old PASS labels or old state next_action as current approval",
+    "token decrease as quality proof",
+    "synthetic-only PASS",
+    "private/user-local row copied into common route"
+  ],
+  "required_reviewer_fields_for_later_runner": [
+    "scenario_id",
+    "pair_id",
+    "route",
+    "mode",
+    "host_name",
+    "method",
+    "source_ref",
+    "doc_id",
+    "prompt_sha256",
+    "baseline_output_ref",
+    "adaptive_output_ref",
+    "per_layer_scores",
+    "failure_codes",
+    "human_reviewer_note",
+    "inter_rater_status",
+    "quality_regression",
+    "semantic_quality_claim_allowed"
+  ]
+}

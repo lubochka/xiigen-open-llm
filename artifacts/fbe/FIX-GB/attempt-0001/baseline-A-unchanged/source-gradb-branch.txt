@@ -1,0 +1,56 @@
+                    AccumulateGrad(a, new Tensor(gradA, a.Shape));
+                }
+
+                if (b.RequiresGrad)
+                {
+                    var gradB = new float[b.Shape.TotalElements];
+                    for (int batch = 0; batch < batchSize; batch++)
+                    {
+                        int bBatch = batch % bBatchSize;
+                        int aOffset = batch * aRows * aCols;
+                        int bOffset = bBatch * bRows * bCols;
+                        int resultOffset = batch * aRows * bCols;
+                        for (int inner = 0; inner < aCols; inner++)
+                        for (int column = 0; column < bCols; column++)
+                        for (int row = 0; row < aRows; row++)
+                        {
+                            gradB[bOffset + inner * bCols + column] +=
+                                a.Data[aOffset + row * aCols + inner]
+                                * result.Grad!.Data[resultOffset + row * bCols + column];
+                        }
+                    }
+
+                    AccumulateGrad(b, new Tensor(gradB, b.Shape));
+                }
+            };
+        }
+
+        return result;
+    }
+
+    // FIX-CS transfer, plan 41-neural-learning-resource-deltas.md, from CS01.
+    //
+    // Attention scores for a causal sequence: every cell above the diagonal is
+    // computed and then immediately thrown away by the causal mask, which
+    // replaces it with negative infinity. For a sequence of length T that is
+    // T(T−1)/2 dot products whose result is never read. This computes only the
+    // cells a position can see.
+    //
+    // It is NOT a general matrix product and must not be used as one. It is
+    // valid only where the caller applies the causal mask right after, because
+    // that is what makes the skipped cells unobservable — and what makes the
+    // gradient above the diagonal zero, so the backward pass below is the same
+    // one the full product would have produced.
+    public static Tensor CausalScores(Tensor a, Tensor b)
+        => CausalScores(a, b, CancellationToken.None);
+
+    public static Tensor CausalScores(Tensor a, Tensor b, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        // The guard is deliberately narrow: anything this kernel is not certain
+        // about belongs in the ordinary product.
+        if (a.Shape.Rank != 4 || b.Shape.Rank != 4)
+            throw new ArgumentException("CausalScores требует тензоры ранга 4");
+        if (a.Shape.Dimensions[0] != b.Shape.Dimensions[0] || a.Shape.Dimensions[1] != b.Shape.Dimensions[1])
+            throw new ArgumentException("CausalScores требует одинаковые batch и head");
+

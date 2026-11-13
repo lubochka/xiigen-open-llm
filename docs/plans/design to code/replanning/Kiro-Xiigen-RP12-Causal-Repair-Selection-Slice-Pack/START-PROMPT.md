@@ -1,0 +1,8 @@
+# RP12 — single-task cold start prompt
+CURRENT TASK = RP12.__ID__. Model-requested development role: GPT-6 Luna xhigh if actually available in native runtime; a document does not set or prove model identity. Communicate in Russian. Do only this ONE task in Kiro-Xiigen-RP12-Causal-Repair-Selection-Slice-Pack/tasks/RP12.__ID__.md.
+
+Before action: open exact P llm_plan3 and K codex/dpo-implementation refs; read full task plus source, architecture, domain and governance contracts, relevant original D/WorkLeft/RAG with .ndjson→G/F/V true primary, live K full method/callers, actual Rxx status and full relevant skill sections. Do not shrink the program to S04 or treat all R01–R25 as a sequential gate.
+
+Produce ready.md: real ordinary failure; legal domain law/rights; original requirement and existing owner; actual consumer/state; hypotheses/alternate cheaper deterministic explanation; one variable versus frozen controls; independent source-family rubric/negative control, GOOD/BAD/EDGE/absention; measured time, whole PC and old-domain retention; finite effects and rollback.
+
+Perform allowed bounded source reading or real frozen experiment now. Only stage K changes or DPO/teacher/model calls when separately authorized and safe; if blocked return REUSE_NO_CHANGE / NOT_MEASURED plus exact owner and trigger. Use RP09 independent evaluator, not a second harness. Do not allow Windows coverage to substitute for quality. Separate actual Astra exact SHA review from self-review. Return evidence files, source-depth receipts, what was/was not changed, and a concise Russian report.

@@ -1,0 +1,57 @@
+heartbeat 2026-11-12T22:18:15Z: waiting for quiet build window; foreign test PID 20300 still running; my edit untouched; no build attempted
+=== BUILD ATTEMPT ===
+build_start_utc=2026-11-12T22:22:07.3435454Z
+foreign_build_or_test_processes_at_build_start=1
+BUSY_ABORT: foreign run active, build not started
+=== BUILD ATTEMPT 2 ===
+build_start_utc=2026-11-12T22:22:37.5816673Z
+foreign_build_or_test_drivers_at_build_start=0
+idle_shared_compiler_servers_observed=1 (shared, not an exclusive lock)
+command=dotnet build artifacts\fbe\Q35-SEXP-SINGLE-EXP\attempt-0001\runner\Q35SingleStepRunner.csproj -c Release
+build_exit_code=0
+build_end_utc=2026-11-12T22:23:20.4186351Z
+=== SINGLE TRAINING STEP RUN ===
+run_start_utc=2026-11-12T22:24:06.0381860Z
+foreign_build_or_test_drivers_at_run_start=7
+command=artifacts\fbe\Q35-SEXP-SINGLE-EXP\attempt-0001\runner\bin\Release\net9.0\Q35SingleStepRunner.exe experiments-v2\RP01-MICRO\PA01\repos\B experiments-v2\RP01-MICRO\PA01\results\accepted-parent-handoff.json artifacts\fbe\Q35-SEXP-SINGLE-EXP\attempt-0001\05-observed-single-step.json
+run_exit_code=2
+run_end_utc=2026-11-12T22:24:08.8641446Z
+=== DIAGNOSIS (read-only) ===
+parent bundle 000002 weights.bin: disk 43499 bytes sha 5696e6b532e86b03ab2332098f018fa1e0c26260287d3388a56aa7483b0f8392
+parent bundle 000002 manifest declares: 43500 bytes sha ba8ec8c20250bc431da4bf9993ff22c508422cd7224b5c57cec33ce7b98c6e0e
+all other payloads and manifest.json itself match their receipts
+baseline bundles 000001 in repos/A and repos/B: same one-byte shortfall (disk 43499 sha 0ae47899..., declared 43500 sha 9bdc12d7...)
+no 43500-byte weights file exists anywhere in the tree
+committed LFS pointer for 000002/weights.bin: oid sha256:5696e6b5... size 43499
+git check-attr: text unset, diff unset -> not an end-of-line conversion
+verdict: no accepted parent in this experiment family passes its own receipt; the prescribed one training step cannot be run
+=== FOREIGN PUBLICATION ===
+HEAD at my start: 917940352907eb91fef20cf2b43f8158b5211a14
+HEAD now: d114b9eaf274f1199e72648d033487c61c6e3d05
+commit d114b9eaf27 "PRINYATO Q06..." (00:24:11) contains my unverified 04.TrainingLoop/Trainer.cs change and 6 of my evidence files
+no git write command was run by me
+=== BUILD ATTEMPT 3 (after weights restore) ===
+build_start_utc=2026-11-12T22:37:45.0373583Z
+foreign_build_or_test_drivers_at_build_start=7
+BUSY_ABORT
+=== BUILD ATTEMPT 3 (after weights restore) ===
+build_start_utc=2026-11-12T22:38:12.8612107Z
+active_build_or_test_driver_processes=0
+idle_msbuild_worker_nodes_left_from_my_own_previous_build=7 (no driver present; not an active build)
+build_exit_code=0
+build_end_utc=2026-11-12T22:38:56.1624399Z
+=== SINGLE TRAINING STEP RUN 2 (after weights restore) ===
+run_start_utc=2026-11-12T22:39:09.6371255Z
+active_build_or_test_driver_processes=0
+command=artifacts\fbe\Q35-SEXP-SINGLE-EXP\attempt-0001\runner\bin\Release\net9.0\Q35SingleStepRunner.exe experiments-v2\RP01-MICRO\PA01\repos\B experiments-v2\RP01-MICRO\PA01\results\accepted-parent-handoff.json artifacts\fbe\Q35-SEXP-SINGLE-EXP\attempt-0001\05-observed-single-step.json
+run_exit_code=0
+run_end_utc=2026-11-12T22:39:11.3165139Z
+=== MINIMAL CHECK RESULT (card-prescribed) ===
+parent restored: acceptedOrdinal=2 optimizerStep=1000 modelStateSha256=db44f1a437653299b345dc83c85523aad1ba1c55d3285865fe92501e5e78e386 (equals handoff)
+lesson: "// file: One.cs" + "static int One()=>1;"  tokens=36 promptTokens=16
+one supervised step through the changed backward pass: loss=4.8934336 finite=True
+optimizer step: 1000 -> 1001
+response correct tokens: 2 of 20 before, 2 of 20 after; exact response false before and after (expected per card)
+trainer assembly module version: 14fa6bf8-3292-42e9-a2bd-419207952874
+run exit code 0
+NOT measured here: timing, exponential-call count, bitwise equality with the original experiment, full test suite

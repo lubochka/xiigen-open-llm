@@ -1,0 +1,68 @@
+Мутационный оракул на новое закрепление источника разрешения набора
+===================================================================
+
+Что проверялось
+---------------
+Новое утверждение в проверке повторного использования запечатанного набора
+(файл Tests/DesignConversionModelServerApiTests.cs, проверка
+SubmitAndEvaluateAsync_PublicRepositoryOwnedDpoContextIsHonouredBySealedDatasetReuseStop)
+закрепляет источник разрешения набора в доказательствах завершения:
+
+    improvement_loop:repository_owned_dpo_dataset_resolution_source=ExistingSealedRepositoryDataset
+
+Ожидаемое значение собрано из самого члена перечисления
+RepositoryOwnedDpoDatasetResolutionSource.ExistingSealedRepositoryDataset через
+ToString(), а не вписано строкой: при переименовании члена проверка перестанет
+собираться, а не промолчит.
+
+Мутация продукта
+----------------
+Файл:   44.DesignConversionDomain/DesignConversionImprovementLoopCoordinator.cs
+Строка: 3239, внутри AddRepositoryOwnedDpoDatasetResolutionEvidence
+
+    было:  var sourceText = resolution.Value.Source.ToString();
+    стало: var sourceText = "unavailable";
+
+Смысл мутации: на успешном разрешении продукт начинает сообщать тот же
+источник, что и в ветке отказа. Мутация собирается (это было условием оракула)
+и затрагивает только выдачу источника в строке 3242; метку повторного
+использования продукт пишет из отдельной проверки члена перечисления
+(строки 3249-3253), поэтому она мутацией не задета и оракул изолирован.
+
+Хеши продуктового файла по шагам
+--------------------------------
+до мутации          68f8270cfdc6f9312cd6e428e6c71aa778dca1cc
+под мутацией        63e6810b74db6206229e630583d2b1f4740c0810
+после восстановления 68f8270cfdc6f9312cd6e428e6c71aa778dca1cc
+
+Хеш после восстановления равен эталонному хешу вершины. Восстановление
+выполнено в том же ходе; git после восстановления не видит продуктовый файл
+изменённым.
+
+Наблюдённый результат
+---------------------
+Под мутацией (журнал run-3-mutation-red-resolution-source-pin.log):
+
+    DesignConversionModelServerApiTests.SubmitAndEvaluateAsync_PublicRepositoryOwnedDpoContextIsHonouredBySealedDatasetReuseStop [FAIL]
+    Assert.Contains() Failure: Item not found in collection
+    Not found:  "improvement_loop:repository_owned_dpo_dataset_reso"...
+    Failed!  - Failed: 1, Passed: 0, Skipped: 0, Total: 1
+    код возврата 1
+
+Покраснело именно новое закрепление источника разрешения, а не что-то смежное.
+
+После восстановления (журнал run-4-green-after-product-restore.log):
+
+    Passed!  - Failed: 0, Passed: 2, Skipped: 0, Total: 2
+    код возврата 0
+
+Граница этого оракула
+---------------------
+Оракул доказывает чувствительность ОДНОГО утверждения — закрепления источника
+разрешения. Он не доказывает чувствительность остальных четырёх добавленных
+утверждений; для них поведение продукта, которое обязано их уронить, названо в
+файле added-assertions-and-what-breaks-them.txt, но отдельными мутациями не
+проверялось.
+
+Флаг пропуска сборки (--no-build) не применялся ни в одном прогоне этого
+каталога.

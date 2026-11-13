@@ -1,0 +1,202 @@
+{
+  "schema": "xiigen.extension_runtime_token_quality_learnability.plan_review_cycle.v1",
+  "cycle_number": 5,
+  "cycle_set_id": "2026-06-17-current-plan-review-cycles",
+  "reviewer_or_subagent_id": "PLAN-REVIEW-CYCLE-05-USER-SIDE-ADAPTIVE-LIFECYCLE",
+  "model": "gpt-5.5",
+  "reasoning_effort": "xhigh",
+  "downgrade_warning_or_NONE": "NONE",
+  "current_luba_instruction": "Ты bounded execution-plan review/fix sub-agent, cycle 5 of 10, in C:\\Projects\\llm_mvp_core. Не спавни агентов. Не коммить/пушь. Не меняй ветку. Не редактируй runtime/source code.",
+  "focus": "local adaptive learning lifecycle for the user-side leg",
+  "loaded_gates": [
+    "Full Extension Definition Gate",
+    "client-adaptive-learning-loop-SKILL",
+    "plan-review model/set split",
+    "no hidden determinism",
+    "output readability",
+    "10 Review Cycle Gate"
+  ],
+  "sections_reviewed": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md sections 0, 3, 4.4, 4.4.1, 4.5, 6, 7, 8, 9, 9.1, 9.2, 10, 11",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json top-level cycle gate, active completion gate, QSG-08/QSG-13/QSG-16/QSG-19 entries and final claim booleans",
+    "artifacts/extension-runtime-token-quality-learnability/plan-review-cycles/plan-review-cycle-01.md",
+    "artifacts/extension-runtime-token-quality-learnability/plan-review-cycles/plan-review-cycle-01.json",
+    "artifacts/extension-runtime-token-quality-learnability/plan-review-cycles/plan-review-cycle-02.md",
+    "artifacts/extension-runtime-token-quality-learnability/plan-review-cycles/plan-review-cycle-02.json",
+    "artifacts/extension-runtime-token-quality-learnability/plan-review-cycles/plan-review-cycle-03.md",
+    "artifacts/extension-runtime-token-quality-learnability/plan-review-cycles/plan-review-cycle-03.json",
+    "artifacts/extension-runtime-token-quality-learnability/plan-review-cycles/plan-review-cycle-04.md",
+    "artifacts/extension-runtime-token-quality-learnability/plan-review-cycles/plan-review-cycle-04.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-08-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-08-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-08.validation.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-13-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-13-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-13.validation.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-16-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-16-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-16.validation.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-19-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-19-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-semantic-gates-19.validation.json",
+    "docs/skills/client-adaptive-learning-loop-SKILL.md"
+  ],
+  "findings_fixes": [
+    {
+      "id": "C05-F1",
+      "severity": "PASS_WITH_PLAN_FIX",
+      "finding": "Plan section 4.4 already required DPO, privacy/source/license, user-local store, continue-training, fresh-load, held-out, ablation and rollback, but did not yet require a concrete portability lifecycle acceptance gate for every Claude/Cursor/Codex full-extension path.",
+      "fix": "Added section 4.4.2 User-side adaptive portability lifecycle acceptance gate."
+    },
+    {
+      "id": "C05-F2",
+      "severity": "PASS_WITH_HOST_COVERAGE_MATRIX",
+      "finding": "The plan needed a host coverage matrix tying backup/export/import/restore/load-without-retrain/continue-training/rollback to Claude, Cursor and Codex individually.",
+      "fix": "Added a host coverage matrix requiring claude-user-local-lifecycle-report.*, cursor-user-local-lifecycle-report.*, and codex-user-local-lifecycle-report.*."
+    },
+    {
+      "id": "C05-F3",
+      "severity": "PASS_WITH_LOCAL_COMMON_SPLIT",
+      "finding": "The local/common boundary needed explicit lifecycle wording for common logic/sets/models in llm_mvp_core and user data/adaptive checkpoints in user-owned roots.",
+      "fix": "Section 4.4.2 now records the ownership boundary and requires common_assets_mutated=false."
+    },
+    {
+      "id": "C05-F4",
+      "severity": "PASS_WITH_DPO_GAP_SOURCE",
+      "finding": "DPO from AI result gaps was not explicit enough.",
+      "fix": "DPO creation now accepts host_ai_result_gap, missing_result, bad_ai_answer and user_correction, with expected-behavior source and reviewer approval for gap-only DPO rows."
+    },
+    {
+      "id": "C05-F5",
+      "severity": "PASS_WITH_LOAD_NOT_RETRAIN_GATE",
+      "finding": "Import/restore could still be mistaken for file parse or cold-start retraining evidence.",
+      "fix": "Section 4.4.2 requires load_source=imported_user_local, loaded_existing_checkpoint=true, retrained_from_zero=false, and a behavior probe before any training command."
+    },
+    {
+      "id": "C05-F6",
+      "severity": "PASS_WITH_STATE_FIX",
+      "finding": "Execution state needed to advance from cycle 4 to cycle 5 while keeping execution locked.",
+      "fix": "Updated current_phase, phase_status, phase_scope, next_action, cycles_completed_after_this_packet, current_cycle_artifacts, cycle_05_counts_toward_gate, cycle_05_finding, cycle_05_lifecycle_gate and active completion count."
+    }
+  ],
+  "plan_changed": true,
+  "plan_fix_refs": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md section 4.4.2",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md section 6 LEARN-02/LEARN-04/LEARN-05",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md section 7 required artifacts",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md section 8 pass 6",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md sections 9, 9.1 and 9.2"
+  ],
+  "state_changed": true,
+  "state_fix_refs": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json current_phase",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json active_plan_review_cycle_gate",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json active_completion_gate"
+  ],
+  "qsg_supporting_evidence": {
+    "qsg08": {
+      "continue_training_rows_accepted": 108,
+      "continue_training_gate_passed": true,
+      "learnability_claimed": false,
+      "readiness_claimed": false,
+      "use_in_cycle_05": "supporting evidence only"
+    },
+    "qsg13": {
+      "adaptive_quality_improvement_evidence_pairs": 54,
+      "adaptive_chat_text_improved_pairs": 54,
+      "token_reduction_observed_pairs": 54,
+      "learnability_claimed": false,
+      "final_readiness_claimed": false,
+      "use_in_cycle_05": "supporting evidence only"
+    },
+    "qsg16": {
+      "required_evidence_candidates_created": 10,
+      "target_promotion_done": false,
+      "locator_update_done": false,
+      "rollback_closure_done": false,
+      "final_readiness_passes": 0,
+      "use_in_cycle_05": "supporting evidence only"
+    },
+    "qsg19": {
+      "host_path_evidence_level": "handler_or_adapter_test_only_no_live_ui_chat_claim",
+      "live_ui_chat_claimed": false,
+      "runtime_extension_claimed": false,
+      "rollback_closure_done": false,
+      "final_readiness_claimed": false,
+      "use_in_cycle_05": "supporting evidence only"
+    }
+  },
+  "lifecycle_acceptance_criteria_added": [
+    "backup/export/import/share path",
+    "import to another approved device or root",
+    "restore",
+    "load-without-retrain before any training command",
+    "continue-training from imported or existing checkpoint",
+    "DPO from AI result gaps and user corrections",
+    "safety/redaction/provenance",
+    "rollback_to_imported_overlay and rollback_after_continue_training",
+    "common assets remain in llm_mvp_core",
+    "user data and adaptive checkpoints remain user-owned"
+  ],
+  "host_lifecycle_coverage_required": {
+    "Claude": {
+      "required_report": "claude-user-local-lifecycle-report.*",
+      "backup_export_import_restore_required": true,
+      "load_without_retrain_required": true,
+      "continue_training_required": true,
+      "rollback_required": true
+    },
+    "Cursor": {
+      "required_report": "cursor-user-local-lifecycle-report.*",
+      "backup_export_import_restore_required": true,
+      "load_without_retrain_required": true,
+      "continue_training_required": true,
+      "rollback_required": true
+    },
+    "Codex": {
+      "required_report": "codex-user-local-lifecycle-report.*",
+      "backup_export_import_restore_required": true,
+      "load_without_retrain_required": true,
+      "continue_training_required": true,
+      "rollback_required": true
+    }
+  },
+  "full_extension_hosts_checked": [
+    "Claude",
+    "Cursor",
+    "Codex"
+  ],
+  "proves_three_full_extensions_in_this_dimension": true,
+  "product_readiness_proven_now": false,
+  "runtime_execution_authorized_now": false,
+  "training_authorized_now": false,
+  "checkpoint_mutation_authorized_now": false,
+  "commit_push_authorized_now": false,
+  "cycle_counts_toward_10": true,
+  "cycles_completed_after_this_packet": 5,
+  "remaining_cycles_before_execution": 5,
+  "recheck_evidence": {
+    "status": "PASS",
+    "checks_run": [
+      {
+        "command": "ConvertFrom-Json docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+        "result": "PASS"
+      },
+      {
+        "command": "ConvertFrom-Json artifacts/extension-runtime-token-quality-learnability/plan-review-cycles/plan-review-cycle-05.json",
+        "result": "PASS"
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      },
+      {
+        "command": "targeted rg for export/import/backup/continue-training/DPO/user-local lifecycle terms",
+        "result": "PASS"
+      }
+    ],
+    "dotnet_test": "NOT_RUN_NOT_AUTHORIZED_FOR_PLAN_REVIEW_CYCLE_05"
+  },
+  "next_cycle_focus": "Cycle 6 should review quality improvement or another unreviewed Target Outcome Matrix row while runtime/code/training/host execution remains locked.",
+  "parent_review_disposition": "PENDING_PARENT_REVIEW"
+}

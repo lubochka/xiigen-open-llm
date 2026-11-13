@@ -1,0 +1,246 @@
+diff --git a/Tests/ExperimentFixes/ExperimentAttemptOwnershipTests.cs b/Tests/ExperimentFixes/ExperimentAttemptOwnershipTests.cs
+index cd4cc3aa722..3455d318f58 100644
+--- a/Tests/ExperimentFixes/ExperimentAttemptOwnershipTests.cs
++++ b/Tests/ExperimentFixes/ExperimentAttemptOwnershipTests.cs
+@@ -6,6 +6,7 @@
+ namespace LlmFromScratch.Tests.ExperimentFixes;
+ 
+ using System.Globalization;
++using System.Reflection;
+ using System.Security.Cryptography;
+ using System.Text;
+ using System.Text.Json.Nodes;
+diff --git a/Tests/ExperimentFixes/ProbeNeuralNetworkGradientTests.cs b/Tests/ExperimentFixes/ProbeNeuralNetworkGradientTests.cs
+index a9e536994ad..cb17636b407 100644
+--- a/Tests/ExperimentFixes/ProbeNeuralNetworkGradientTests.cs
++++ b/Tests/ExperimentFixes/ProbeNeuralNetworkGradientTests.cs
+@@ -67,7 +67,16 @@ using ExperimentsV2;
+ 
+ namespace LlmFromScratch.Tests.ExperimentFixes;
+ 
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любой подготовки данных, а освобождает ОДИН раз после
++// последнего теста класса.
++//
++// Честная граница этого испытания. Путь расписки он берёт у приёмника, а сами байты пишет своим
++// сырым вызовом записи. Поэтому здесь закрываются ровно два разрыва владения — ранний захват и
++// явное завершение попытки; перевод самой записи на приёмник остаётся отдельной работой и этим
++// слайсом не выполняется.
+ public sealed class ProbeNeuralNetworkGradientTests
++    : IClassFixture<ProbeNeuralNetworkGradientTests.AttemptScopeFixture>
+ {
+     // Размер словаря закреплённой маленькой сети: три токена, как в аудите.
+     private const int VocabularySize = 3;
+@@ -613,8 +622,28 @@ public sealed class ProbeNeuralNetworkGradientTests
+     // проверки перезаписывал опубликованную расписку. Пока папка не опубликована, прогон
+     // пишет в неё и остаётся в хранилище. После публикации тот же прогон становится
+     // проверочным и заметно уходит в игнорируемый каталог результатов испытаний.
+-    private static readonly Lazy<ExperimentEvidenceSink> Evidence = new(() =>
+-        ExperimentEvidenceSink.ForDeclaredDirectory(RepositoryRoot(), DeclaredReceiptDirectory()));
++    //
++    // Почему ленивое поле заменено фикстурой класса. Ленивое поле рождало приёмник при ПЕРВОМ
++    // обращении за путём расписки, то есть уже после измеренной работы. Фикстура класса создаётся
++    // раньше конструктора теста, поэтому захват адреса стал первым действием попытки, а завершение
++    // попытки ставится ровно один раз.
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку этого испытания и ставит её в поле класса.</summary>
++        public AttemptScopeFixture()
++            : base(RepositoryRoot(), DeclaredReceiptDirectory(), nameof(ProbeNeuralNetworkGradientTests))
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            => AttemptScope = this;
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник доказательств захваченной попытки этого класса.</summary>
++    private static ExperimentEvidenceSink Evidence =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(ProbeNeuralNetworkGradientTests) + " не была создана.")).Evidence;
+ 
+     // Путь расписки: имя файла задаёт запускатель через переменную окружения.
+     private static string ReceiptPath()
+@@ -625,7 +654,7 @@ public sealed class ProbeNeuralNetworkGradientTests
+             : "gradient-receipt.json";
+ 
+         // Путь выдаёт приёмник: он же сообщает, запись это опыта или проверочный прогон.
+-        return Evidence.Value.ResolvePath(name);
++        return Evidence.ResolvePath(name);
+     }
+ 
+     // Корень хранилища: ищется подъёмом от папки собранных проверок до файла решения.
+diff --git a/Tests/ExperimentFixes/TranslationPhraseAdmissionAlignmentTests.cs b/Tests/ExperimentFixes/TranslationPhraseAdmissionAlignmentTests.cs
+index 31c6e87b144..3ff5d4d7f21 100644
+--- a/Tests/ExperimentFixes/TranslationPhraseAdmissionAlignmentTests.cs
++++ b/Tests/ExperimentFixes/TranslationPhraseAdmissionAlignmentTests.cs
+@@ -49,7 +49,11 @@ using System.Text.Json.Serialization;
+ using AgentInfrastructure.Logical;
+ using TranslationDomain;
+ 
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любого урока обучения, а освобождает ОДИН раз после
++// последнего теста класса.
+ public sealed class TranslationPhraseAdmissionAlignmentTests
++    : IClassFixture<TranslationPhraseAdmissionAlignmentTests.AttemptScopeFixture>
+ {
+     // ── Вход первый: больший охват вытеснил допустимый разрез из двух фраз ─────
+ 
+@@ -611,18 +615,50 @@ public sealed class TranslationPhraseAdmissionAlignmentTests
+ 
+     // Приёмник улик этой попытки: каталог наряда
+     // artifacts/fbe/AUDIT-A07-PHRASE-ADMISSION/attempt-0001, подкаталог receipts.
+-    private static readonly Lazy<ExperimentFixes.ExperimentEvidenceSink> ReceiptSink = new(() =>
+-    {
+-        // Корень хранилища ищется подъёмом от каталога сборки проверок.
+-        var root = RepositoryRootOrNull()
++    //
++    // Почему ленивое поле заменено фикстурой класса. Ленивое поле рождало приёмник при ПЕРВОЙ записи
++    // улики, то есть уже после уроков обучения этого испытания. Фикстура класса создаётся раньше
++    // конструктора теста, поэтому захват адреса стал первым действием попытки, а завершение попытки
++    // ставится ровно один раз.
++
++    /// <summary>Корень рабочей копии для попытки этого испытания; его отсутствие — настоящий отказ.</summary>
++    private static string ReceiptRepositoryRoot()
++        // Отсутствие корня означает, что улики писать некуда, и это называется прямо.
++        => RepositoryRootOrNull()
+             ?? throw new InvalidOperationException("корень хранилища не найден подъёмом от " + AppContext.BaseDirectory);
+-        // Назначенный каталог улик этого наряда.
+-        var declared = Path.Combine(root, "artifacts", "fbe", "AUDIT-A07-PHRASE-ADMISSION", "attempt-0001", "receipts");
+-        // Общий приёмник решает, куда писать, и один раз сообщает об этом.
+-        var sink = ExperimentFixes.ExperimentEvidenceSink.ForDeclaredDirectory(root, declared);
+-        sink.EnsureWriteRootDirectory();
+-        return sink;
+-    });
++
++    /// <summary>Назначенный каталог улик этого наряда: адрес не меняется этим ремонтом.</summary>
++    private static string ReceiptDeclaredDirectory()
++        // Тот же адрес, что был у ленивого поля: artifacts/fbe/AUDIT-A07-PHRASE-ADMISSION/attempt-0001/receipts.
++        => Path.Combine(
++            ReceiptRepositoryRoot(), "artifacts", "fbe", "AUDIT-A07-PHRASE-ADMISSION", "attempt-0001", "receipts");
++
++    /// <summary>Захваченная попытка этого испытания: оснастка создаёт её до первого теста.</summary>
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку, ставит её в поле класса и создаёт каталог записи.</summary>
++        public AttemptScopeFixture()
++            : base(
++                ReceiptRepositoryRoot(),
++                ReceiptDeclaredDirectory(),
++                nameof(TranslationPhraseAdmissionAlignmentTests))
++        {
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            AttemptScope = this;
++
++            // Каталог записи создаётся сразу, как это делало прежнее ленивое поле.
++            Evidence.EnsureWriteRootDirectory();
++        }
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник улик захваченной попытки этого класса.</summary>
++    private static ExperimentFixes.ExperimentEvidenceSink ReceiptSink =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(TranslationPhraseAdmissionAlignmentTests) + " не была создана.")).Evidence;
+ 
+     // RepositoryRootOrNull поднимается от каталога сборки до каталога с продуктом и уликами.
+     private static string? RepositoryRootOrNull()
+@@ -659,7 +695,7 @@ public sealed class TranslationPhraseAdmissionAlignmentTests
+         // Страховка от возврата каретки внутри строкового значения.
+         var normalized = json.Replace("\r\n", "\n");
+         // Приёмник пишет байты как есть: UTF-8 без метки порядка байтов.
+-        ReceiptSink.Value.WriteTextExactly(fileName, normalized + "\n");
++        ReceiptSink.WriteTextExactly(fileName, normalized + "\n");
+     }
+ 
+     // ── вспомогательное ────────────────────────────────────────────────────────
+diff --git a/Tests/ExperimentFixes/TranslationPhraseCoverageLearningTests.cs b/Tests/ExperimentFixes/TranslationPhraseCoverageLearningTests.cs
+index 195d7800cf9..1d4afa6ef31 100644
+--- a/Tests/ExperimentFixes/TranslationPhraseCoverageLearningTests.cs
++++ b/Tests/ExperimentFixes/TranslationPhraseCoverageLearningTests.cs
+@@ -47,7 +47,11 @@ using TranslationDomain;
+ // сборщиков (TranslationTrainedUnits.cs:1025-1032): адрес, адрес по словам, выученный перевод.
+ using PhraseEntry = (string SourceKey, string[] SourceTokens, string Target);
+ 
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любого урока обучения, а освобождает ОДИН раз после
++// последнего теста класса.
+ public sealed class TranslationPhraseCoverageLearningTests
++    : IClassFixture<TranslationPhraseCoverageLearningTests.AttemptScopeFixture>
+ {
+     // Три урока опыта 54: у каждого ровно одно фразовое соответствие и ни одного
+     // однословного, поэтому область разрешения планировщика выполняется.
+@@ -1070,18 +1074,50 @@ public sealed class TranslationPhraseCoverageLearningTests
+     // artifacts/fbe/FIX-P54-PHRASE-COVERAGE/attempt-0001, подкаталог receipts. Пока каталог не
+     // опубликован, прогон пишет в него; после публикации общий приёмник уводит прогон в свежий
+     // каталог результатов испытаний и не трогает опубликованные байты.
+-    private static readonly Lazy<ExperimentFixes.ExperimentEvidenceSink> ReceiptSink = new(() =>
+-    {
+-        // Корень хранилища ищется подъёмом от каталога сборки проверок.
+-        var root = RepositoryRootOrNull()
++    //
++    // Почему ленивое поле заменено фикстурой класса. Ленивое поле рождало приёмник при ПЕРВОЙ записи
++    // улики, то есть уже после уроков обучения этого испытания. Фикстура класса создаётся раньше
++    // конструктора теста, поэтому захват адреса стал первым действием попытки, а завершение попытки
++    // ставится ровно один раз.
++
++    /// <summary>Корень рабочей копии для попытки этого испытания; его отсутствие — настоящий отказ.</summary>
++    private static string ReceiptRepositoryRoot()
++        // Отсутствие корня означает, что улики писать некуда, и это называется прямо.
++        => RepositoryRootOrNull()
+             ?? throw new InvalidOperationException("корень хранилища не найден подъёмом от " + AppContext.BaseDirectory);
+-        // Назначенный каталог улик.
+-        var declared = Path.Combine(root, "artifacts", "fbe", "FIX-P54-PHRASE-COVERAGE", "attempt-0001", "receipts");
+-        // Общий приёмник решает, куда писать, и один раз сообщает об этом.
+-        var sink = ExperimentFixes.ExperimentEvidenceSink.ForDeclaredDirectory(root, declared);
+-        sink.EnsureWriteRootDirectory();
+-        return sink;
+-    });
++
++    /// <summary>Назначенный каталог улик этого наряда: адрес не меняется этим ремонтом.</summary>
++    private static string ReceiptDeclaredDirectory()
++        // Тот же адрес, что был у ленивого поля: artifacts/fbe/FIX-P54-PHRASE-COVERAGE/attempt-0001/receipts.
++        => Path.Combine(
++            ReceiptRepositoryRoot(), "artifacts", "fbe", "FIX-P54-PHRASE-COVERAGE", "attempt-0001", "receipts");
++
++    /// <summary>Захваченная попытка этого испытания: оснастка создаёт её до первого теста.</summary>
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку, ставит её в поле класса и создаёт каталог записи.</summary>
++        public AttemptScopeFixture()
++            : base(
++                ReceiptRepositoryRoot(),
++                ReceiptDeclaredDirectory(),
++                nameof(TranslationPhraseCoverageLearningTests))
++        {
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            AttemptScope = this;
++
++            // Каталог записи создаётся сразу, как это делало прежнее ленивое поле.
++            Evidence.EnsureWriteRootDirectory();
++        }
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник улик захваченной попытки этого класса.</summary>
++    private static ExperimentFixes.ExperimentEvidenceSink ReceiptSink =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(TranslationPhraseCoverageLearningTests) + " не была создана.")).Evidence;
+ 
+     // RepositoryRootOrNull поднимается от каталога сборки до каталога с продуктом перевода и уликами.
+     private static string? RepositoryRootOrNull()
+@@ -1123,6 +1159,6 @@ public sealed class TranslationPhraseCoverageLearningTests
+         var normalized = json.Replace("\r\n", "\n");
+         // Приёмник пишет байты как есть: UTF-8 без метки порядка байтов и без возвратов каретки —
+         // ровно тот формат, в котором лежат опубликованные показания общего приёмника.
+-        ReceiptSink.Value.WriteTextExactly(fileName, normalized + "\n");
++        ReceiptSink.WriteTextExactly(fileName, normalized + "\n");
+     }
+ }

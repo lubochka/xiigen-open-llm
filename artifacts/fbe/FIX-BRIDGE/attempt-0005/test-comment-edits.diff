@@ -1,0 +1,470 @@
+diff --git a/Tests/DesignConversionModelServerApiTests.cs b/Tests/DesignConversionModelServerApiTests.cs
+index 44630a33c86..da088da4335 100644
+--- a/Tests/DesignConversionModelServerApiTests.cs
++++ b/Tests/DesignConversionModelServerApiTests.cs
+@@ -10041,7 +10041,14 @@ public sealed class DesignConversionModelServerApiTests : IDisposable
+     }
+ 
+     [Fact]
+-    public async Task SubmitAndEvaluateAsync_PublicRepositoryOwnedDpoContextReachesSubmitPathCandidateUpdate()
++    // Премиса прежней проверки была неработоспособна: её оснастка создавала
++    // корень репозитория БЕЗ запечатанного набора, поэтому репозиторный
++    // маршрут не разрешался никогда и обновление кандидата не достигалось.
++    // Оснастка починена, и проверка закрепляет объявленный договор продукта:
++    // когда точный репозиторный набор уже запечатан на диске, цикл НЕ ДОЛЖЕН
++    // синтезировать ещё один локальный учебный кандидат, потому что властью
++    // следующего учебного шага являются сохранённые байты набора.
++    public async Task SubmitAndEvaluateAsync_PublicRepositoryOwnedDpoContextIsHonouredBySealedDatasetReuseStop()
+     {
+         var artifactDbRoot = CreateArtifactDbTempRoot(
+             "repository-owned-dpo-context-public-map");
+@@ -10073,6 +10080,14 @@ public sealed class DesignConversionModelServerApiTests : IDisposable
+                 postEvaluationStateStore: TestPostEvaluationStateStore);
+             var context = CreateValidRepositoryOwnedDpoTransactionContext(
+                 repositoryRoot);
++            // Запечатываем НАСТОЯЩИЙ набор по адресу и личности этого договора.
++            // Без этого разрешение набора всегда недоступно, и ветка
++            // переиспользования, которую проверка и обязана доказывать,
++            // недостижима в принципе.
++            // Хеш описи запоминаем: ниже он становится ожиданием для
++            // доказательства, что продукт выдал опись именно этого набора.
++            var sealedManifestSha256 =
++                SealRepositoryOwnedDpoDatasetFor(context);
+             var baseRequest = CreateResponsiveSubmitPathRequest(
+                 "repository-owned-dpo-context-public-map");
+             var request = baseRequest with
+@@ -10091,28 +10106,317 @@ public sealed class DesignConversionModelServerApiTests : IDisposable
+             var result = await api.SubmitAndEvaluateAsync(request);
+ 
+             Assert.True(result.IsSuccess, result.ErrorMessage);
+-            var candidateUpdate = Assert.Single(candidateStrategy.Requests);
+-            Assert.Same(
+-                context,
+-                candidateUpdate.RepositoryOwnedDpoTransactionContext);
+-            Assert.Equal(
+-                context.RequestIdentity!.RequestIdentitySha256,
+-                candidateUpdate.RepositoryOwnedDpoTransactionContext!
+-                    .RequestIdentity!.RequestIdentitySha256);
+-            Assert.Equal(
+-                context.Address!.ManifestRelativePath,
+-                candidateUpdate.RepositoryOwnedDpoTransactionContext!
+-                    .Address!.ManifestRelativePath);
++
++            // Нулевое: оснастка действительно довела маршрут до набора.
++            // Предупреждения о недоступном наборе быть не должно — иначе
++            // проверка снова судила бы не ту ветку.
++            // Сверяем ПО НАЧАЛУ строки, а не на равенство: продукт всегда
++            // приписывает к этому предупреждению двоеточие и код ошибки, и
++            // сравнение на равенство с «голым» литералом не совпало бы
++            // никогда — такая проверка была бы пустой и пропустила бы отказ.
++            Assert.DoesNotContain(
++                result.Value!.Warnings,
++                warning => warning.StartsWith(
++                    DesignConversionImprovementLoopCoordinator
++                        .RepositoryOwnedDpoDatasetResolutionFailedWarning,
++                    StringComparison.Ordinal));
++
++            // Первое: цикл исполнялся, то есть остановка — завершение
++            // маршрута, а не пропуск цикла.
+             Assert.Contains(
+                 DesignConversionImprovementLoopThinClientJobEvaluator
+                     .SubmitPathLoopExecutedMarker,
+-                result.Value!.EvidenceRefs);
++                result.Value.EvidenceRefs);
++
++            // Второе: сработала именно досрочная остановка переиспользования.
++            Assert.Contains(
++                "submit_path_improvement_loop_stop_reason=" +
++                DesignConversionImprovementLoopCoordinator
++                    .RepositoryOwnedDpoDatasetExistingReusedStop,
++                result.Value.Warnings);
++
++            // Третье: договор соблюдён — личность запроса дошла до
++            // доказательств завершения и совпадает по ХЕШУ с присланной.
++            // Тождество объекта больше не проверяем: на этом маршруте оно
++            // ничего не значит.
++            Assert.Equal(
++                context.RequestIdentity!.RequestIdentitySha256,
++                result.Value.RuntimeStatus.Provenance[
++                    DesignConversionRepositoryOwnedDpoTransactionContext
++                        .RequestIdentitySha256MetadataKey]);
+             Assert.Contains(
+                 "improvement_loop:" +
+                 DesignConversionRepositoryOwnedDpoTransactionContext
+                     .ValidationMetadataKey +
+                 "=" + bool.TrueString,
+                 result.Value.EvidenceRefs);
++
++            // Четвёртое: источник разрешения набора — ранее запечатанный
++            // репозиторный набор. Вот это и есть доказательство
++            // переиспользования, потому что при отказе разрешения продукт
++            // пишет сюда «недоступен». Ожидаемое значение берём из самого
++            // члена перечисления, а не вписываем строкой: при переименовании
++            // члена проверка перестанет собираться, а не промолчит.
++            Assert.Contains(
++                "improvement_loop:" +
++                DesignConversionImprovementLoopCoordinator
++                    .RepositoryOwnedDpoDatasetResolutionSourceMetadataKey +
++                "=" +
++                RepositoryOwnedDpoDatasetResolutionSource
++                    .ExistingSealedRepositoryDataset.ToString(),
++                result.Value.EvidenceRefs);
++
++            // Пятое: приписана отметка переиспользования. Продукт ставит её
++            // только в ветке ранее запечатанного набора, поэтому это второе
++            // независимое доказательство той же ветки.
++            Assert.Contains(
++                DesignConversionImprovementLoopCoordinator
++                    .RepositoryOwnedDpoDatasetExistingReusedMarker,
++                result.Value.EvidenceRefs);
++
++            // Шестое: число пар взято из описи, прочитанной с диска, —
++            // оснастка выше запечатывает ровно одну пару. Это и доказывает,
++            // что набор прочитан как ранее запечатанный, а не собран заново.
++            Assert.Contains(
++                "improvement_loop:" +
++                DesignConversionImprovementLoopCoordinator
++                    .RepositoryOwnedDpoDatasetPairCountMetadataKey +
++                "=1",
++                result.Value.EvidenceRefs);
++
++            // Седьмое: хеш описи равен хешу той описи, которую оснастка выше
++            // запечатала на диск. Это сильнее числа пар: совпадение хеша
++            // доказывает, что продукт прочитал именно наш набор, а не любой
++            // другой набор с одной парой. Ожидание взято из результата
++            // запечатывания, поэтому подогнать его под продукт нельзя.
++            Assert.Contains(
++                "improvement_loop:" +
++                DesignConversionImprovementLoopCoordinator
++                    .RepositoryOwnedDpoDatasetManifestSha256MetadataKey +
++                "=" + sealedManifestSha256,
++                result.Value.EvidenceRefs);
++
++            // Восьмое: отметка состоявшегося разрешения набора. Её настоящая
++            // ценность — в безусловности: продукт ставит эту отметку первой же
++            // строкой метода выдачи доказательств разрешения, ДО всякого
++            // ветвления (согласователь цикла улучшений, строка 3225), а три
++            // величины выше выдаёт уже в успешной ветке того же метода (там
++            // же, строки 3242, 3244 и 3246). Значит, если величина появилась,
++            // отметка там уже стоит, и различать «откуда взялись величины»
++            // отметка не может. Закреплять её всё равно нужно: она — то
++            // единственное доказательство, что продукт дошёл до разрешения
++            // набора и доложил об этом независимо от исхода, поэтому она
++            // краснеет, если продукт перестанет докладывать о самом факте
++            // разрешения. Прежнее обоснование «без неё все величины выше могли
++            // бы появиться из другого места» опровергнуто независимой
++            // проверкой второго круга и заменено этим.
++            Assert.Contains(
++                DesignConversionImprovementLoopCoordinator
++                    .RepositoryOwnedDpoDatasetResolutionMarker,
++                result.Value.EvidenceRefs);
++
++            // Прежнее закрепление признака «локальный учебный кандидат не
++            // создан» снято как неопровержимое: продукт печатает это значение
++            // жёстко вписанной ложью во всех ЧЕТЫРЁХ местах выдачи и истиной
++            // не печатает нигде. Три из них — записи в список доказательств
++            // (согласователь цикла улучшений, строки 969, 3235 и 3248),
++            // четвёртое — присваивание того же признака в открытых сведениях
++            // результата, когда к результату подмешиваются данные о разрешении
++            // набора (там же, строка 3269). Перечисление имён ключей (там же,
++            // строка 4563) выдачей значения не является и в счёт не идёт.
++            // Поэтому никакое изменение поведения продукта это утверждение
++            // уронить не могло — оно падало бы только от удаления самой строки
++            // выдачи. Объявленный договор «локальный кандидат не создан»
++            // остаётся непокрытым и записан как отдельный долг покрытия.
++
++            // Девятое — вспомогательное наблюдение о внедрённой стратегии
++            // кандидатов, а НЕ договор: на этом маршруте её не опрашивают.
++            // Само по себе пустое обращение остановку переиспользования не
++            // доказывает: поток управления от неё не зависит, и при сломанной
++            // остановке список обращений тоже остался бы пустым.
++            Assert.Empty(candidateStrategy.Requests);
++        }
++        finally
++        {
++            DeleteDirectoryIfExists(artifactDbRoot);
++            DeleteDirectoryIfExists(repositoryRoot);
++        }
++    }
++
++    [Fact]
++    // ЭТО ЗАКРЕПЛЕНИЕ НАБЛЮДЕНИЯ, А НЕ ОБЪЯВЛЕННЫЙ ДОГОВОР ПРОДУКТА.
++    // Наблюдение: когда репозиторный набор обучающих пар недоступен (по
++    // адресу договора ничего не запечатано), публичный вход отправки не
++    // уходит на запасной путь и не синтезирует локального кандидата — он
++    // отказывается продолжать учебный шаг, приписывает предупреждение о
++    // недоступности набора и ставит причиной остановки «стратегия
++    // кандидатов не справилась».
++    // Честная граница: как продуктовое намерение это поведение НЕ объявлено.
++    // Вопрос «отказывать или уходить на запасной путь при недоступном
++    // наборе» задан владельцу и ею не решён. Проверка существует, чтобы
++    // наблюдённое поведение нельзя было изменить молча: если владелец
++    // выберет запасной путь, эта проверка должна осознанно покраснеть и быть
++    // переписана вместе с решением, а не остаться незамеченной.
++    // Честная граница МАРШРУТА — что именно здесь закреплено, а что нет.
++    // Закреплён ответ ОДНОГО маршрута: публичного входа отправки, которому
++    // оснастка передала базу артефактов. Настоящий механизм такой.
++    // Во-первых, обёртку авторской стратегии учителя навешивает сам публичный
++    // вход: когда база артефактов передана, он оборачивает внедрённую
++    // оснасткой стратегию кандидатов в авторскую стратегию учителя (сервер
++    // модели преобразования дизайна, файл
++    // 25.ModelServer/DesignConversion/DesignConversionModelServerApi.cs,
++    // строки 366-371). Обе проверки этого слайса базу артефактов передают,
++    // поэтому обёртка здесь есть всегда.
++    // Во-вторых, согласователь цикла улучшений обёрнутую стратегию оставляет
++    // КАК ЕСТЬ, потому что она уже реализует договор авторской стратегии
++    // учителя, и повторно её не оборачивает (согласователь цикла улучшений,
++    // строки 430-435).
++    // В-третьих, из этого следует, что ветка авторской стратегии учителя
++    // входима, и разрешение набора происходит на ПЕРВОМ обращении внутри
++    // цикла (там же, строка 946), а не на втором. Второе обращение (там же,
++    // строки 1540-1576) лежит внутри метода завершения цикла и в этих двух
++    // проверках не достигается: первое обращение возвращает результат раньше
++    // — либо остановкой переиспользования (там же, строка 990), либо отказом
++    // «стратегия кандидатов не справилась» (там же, строка 980).
++    // В-четвёртых, пар, авторованных учителем, здесь ноль не потому, что
++    // стратегии нет, а потому, что первое обращение возвращает результат ДО
++    // платного вызова учителя (там же, строка 1005).
++    // НЕ покрыто: сторож платного вызова учителя. На этом маршруте он не
++    // «недостижим», как говорилось раньше (это было следствием той же ложной
++    // посылки) — он создаётся (согласователь цикла улучшений, строки 914-917),
++    // но в этих двух проверках ни разу не выдаёт разрешение на вызов, потому
++    // что обе возвращают результат до обращения к учителю.
++    // НЕ покрыто: изъятие для чистого промаха на публичном входе отправки
++    // мертво — но по другой причине, чем говорилось раньше. Ветка достижима;
++    // мертва она потому, что у САМОГО согласователя база артефактов пуста:
++    // публичный вход отдаёт её только как базу независимых предпочтений и
++    // параметр базы артефактов согласователя не заполняет (оценщик цикла
++    // улучшений, файл
++    // 44.DesignConversionDomain/DesignConversionThinClientJobRuntime.cs,
++    // строки 693-699), а условие чистого промаха требует непустой базы
++    // артефактов (согласователь цикла улучшений, строка 955). На маршруте,
++    // где у согласователя база артефактов есть, продукт, наоборот, РАЗРЕШАЕТ
++    // создание набора при чистом промахе, и это поведение здесь не
++    // закрепляется.
++    // Поправка от независимой проверки второго круга: прежняя формулировка
++    // этого блока утверждала, что публичный вход создаёт согласователь без
++    // базы артефактов, «поэтому авторская стратегия учителя не подключается»
++    // и «разрешение набора неизбежно приходит на ВТОРОЕ обращение». Верным в
++    // ней было только одно — что база артефактов самого согласователя пуста.
++    // Неверными были причинно-следственная связь и вывод о втором обращении:
++    // обёртку навешивает публичный вход (строки 366-371 сервера модели),
++    // согласователь её сохраняет (строки 430-435), и разрешение случается на
++    // первом обращении. Вывод «изъятие для чистого промаха на этом маршруте
++    // мертво» остался верным, но держится теперь на пустой базе артефактов
++    // согласователя, а не на недостижимости ветки.
++    // Итог: отсюда НЕЛЬЗЯ заключить, что отказ — правильное поведение
++    // продукта вообще. Это ответ одного маршрута; решение о правильном
++    // поведении остаётся за владельцем и остаётся открытым.
++    public async Task SubmitAndEvaluateAsync_PublicRepositoryOwnedDpoContextWithoutSealedDatasetRefuses_ObservedBehaviourPin()
++    {
++        var artifactDbRoot = CreateArtifactDbTempRoot(
++            "repository-owned-dpo-context-public-map-unavailable");
++        var repositoryRoot = CreateRepositoryOwnedDpoContextTempRoot(
++            "repository-owned-dpo-context-public-map-unavailable");
++        try
++        {
++            var renderProvider = new RecordingRenderProvider();
++            var comparisonProvider = new RecordingComparisonProvider(
++                CreateVerdict(
++                    "repository-owned-dpo-context-map-unavailable-verdict",
++                    0.70,
++                    passed: false));
++            var visualJudge = new SubmitPathScriptedVisualJudge(
++                _ => SubmitPathJudgeScript.FromScore(0.70, cost: 0.01m));
++            var service = new DesignConversionInternalService(
++                renderProvider,
++                comparisonProvider,
++                visualJudge);
++            var candidateStrategy = new SubmitPathScriptedCandidateStrategy(
++                CreateSubmitPathCandidate(
++                    "repository-owned-dpo-context-map-unavailable-candidate",
++                    "PRIVATE_REPOSITORY_OWNED_DPO_CONTEXT_MAP_UNAVAILABLE"));
++            var api = new DesignConversionModelServerApi(
++                new DesignConversionInternalServiceThinClientJobEvaluator(service),
++                () => DateTimeOffset.Parse("2026-07-09T10:00:00Z"),
++                new JsonlDesignConversionLocalArtifactDb(artifactDbRoot),
++                improvementCandidateStrategy: candidateStrategy,
++                postEvaluationStateStore: TestPostEvaluationStateStore);
++            // Набор НЕ запечатываем: это и есть наблюдаемое условие.
++            var context = CreateValidRepositoryOwnedDpoTransactionContext(
++                repositoryRoot);
++            var baseRequest = CreateResponsiveSubmitPathRequest(
++                "repository-owned-dpo-context-public-map-unavailable");
++            var request = baseRequest with
++            {
++                RepositoryOwnedDpoTransactionContext = context,
++                Budget = baseRequest.Budget! with
++                {
++                    Tier = "pro",
++                    BudgetUsd = 1.00m,
++                    MaxImprovementCandidates = 2,
++                    MaxImprovementIterations = 1,
++                    MaxTeacherCalls = 1
++                }
++            };
++
++            var result = await api.SubmitAndEvaluateAsync(request);
++
++            // Наблюдение: сам вызов завершается успешно, отказ выражен
++            // предупреждениями и причиной остановки, а не ошибкой вызова.
++            Assert.True(result.IsSuccess, result.ErrorMessage);
++
++            // Первое наблюдение: цикл дошёл до учебного шага.
++            Assert.Contains(
++                DesignConversionImprovementLoopThinClientJobEvaluator
++                    .SubmitPathLoopExecutedMarker,
++                result.Value!.EvidenceRefs);
++
++            // Второе наблюдение: приписано предупреждение о недоступности
++            // набора, и закрепляем его ПОЛНОЙ строкой — вместе с кодом ошибки
++            // в хвосте. Весь диагноз несёт именно код: при сверке только по
++            // началу строки подмена одного кода другим оставила бы проверку
++            // зелёной, хотя причина отказа стала бы другой, а эта проверка
++            // существует ровно затем, чтобы поведение нельзя было сменить
++            // молча. Значение кода определено однозначно и потому безопасно
++            // для закрепления: продукт пропускает код через чистильщик,
++            // который допускает только заглавные латинские буквы, цифры и
++            // подчёркивание, иначе подставляет код недоступности разрешителя
++            // набора.
++            Assert.Contains(
++                DesignConversionImprovementLoopCoordinator
++                    .RepositoryOwnedDpoDatasetResolutionFailedWarning +
++                ":" + RepositoryOwnedDpoDatasetResolver.MissingErrorCode,
++                result.Value.Warnings);
++            // Прежняя дополнительная сверка по началу строки снята как
++            // мёртвая: она стояла ПОСЛЕ точного совпадения полной строки и
++            // строго им подчинена — если полная строка найдена, строка с
++            // таким началом есть заведомо, и упасть такая сверка не могла
++            // никогда. Её обоснование «ловит исчезновение самого
++            // предупреждения независимо от кода» было ложным: исчезновение
++            // ловит и точное совпадение выше.
++
++            // Третье наблюдение: причина остановки — «стратегия кандидатов
++            // не справилась», а не остановка переиспользования.
++            Assert.Contains(
++                "submit_path_improvement_loop_stop_reason=" +
++                DesignConversionImprovementLoopCoordinator
++                    .CandidateStrategyFailed,
++                result.Value.Warnings);
++            Assert.DoesNotContain(
++                "submit_path_improvement_loop_stop_reason=" +
++                DesignConversionImprovementLoopCoordinator
++                    .RepositoryOwnedDpoDatasetExistingReusedStop,
++                result.Value.Warnings);
++
++            // Четвёртое наблюдение — вспомогательное, о внедрённой стратегии
++            // кандидатов: на этом маршруте её не опрашивают. Это НЕ то же
++            // самое, что «локальный учебный кандидат не создан»: пустой
++            // список обращений говорит только о стратегии, поток управления
++            // от него не зависит, и сам по себе он отсутствие запасного пути
++            // не доказывает. Именно отсутствие запасного пути владелец и
++            // может решить иначе.
++            Assert.Empty(candidateStrategy.Requests);
+         }
+         finally
+         {
+@@ -12656,6 +12960,92 @@ public sealed class DesignConversionModelServerApiTests : IDisposable
+             SafePathSegment(scope),
+             Guid.NewGuid().ToString("N"));
+ 
++    // Текст платного эталона подаётся в договор ТОЛЬКО хешем — ниже, в
++    // личности запроса; в построение сторон обучающей пары он не передаётся
++    // вообще, поэтому непопадание текста в тела сторон эта оснастка и не
++    // проверяет: проверять нечему было бы упасть.
++    // Непопадание обеспечивает продукт, а не оснастка: правило сверки
++    // эталонных предпочтений в файле
++    // 14.ContinuousLearning/Core/DpoPairReferencePreferenceMatchingRule.cs
++    // отклоняет пару состояниями paid_reference_copied_to_chosen_side и
++    // paid_reference_copied_to_rejected_side, сравнивая стороны пары С ХЕШЕМ
++    // эталонного ответа, а не с его текстом; объявленный признак
++    // PaidReferenceOutputNeverDpoPairSide лежит в файле
++    // 14.ContinuousLearning/Core/FrozenReferenceCorpus.cs.
++    private const string RepositoryOwnedDpoPaidReferenceRawText =
++        "repository-owned-dpo-paid-reference-answer";
++
++    // Запечатывает НАСТОЯЩИЙ набор обучающих пар по адресу и личности того же
++    // договора, который присылает клиент. Без этого репозиторный маршрут
++    // никогда не разрешается, и ветка переиспользования недостижима.
++    // Возвращает хеш описи запечатанного набора: ровно это значение продукт
++    // обязан выдать в доказательствах завершения, и проверка закрепляет его
++    // против запечатанного набора, а не против вписанного руками литерала.
++    private static string SealRepositoryOwnedDpoDatasetFor(
++        DesignConversionRepositoryOwnedDpoTransactionContext context)
++    {
++        var identity = context.RequestIdentity!;
++        // Паспорт учителя берём из личности договора, иначе запечатанный набор
++        // не совпадёт с тем, что ищет разрешение набора.
++        var passport = new TrainingTeacherProvenance(
++            TrainingTeacherSourceKind.ExternalTeacherOutput,
++            OpenWeightTeacherFamily.Qwen,
++            TrainingTeacherAccessMode.LocalHostedOpenWeight,
++            TrainingTeacherHostingProvider.Ollama,
++            identity.OpenTeacher.ModelId,
++            identity.OpenTeacher.ModelVersion,
++            TrainingTeacherModelLicense.Apache20,
++            ProviderTermsChecked: false,
++            ProviderTermsAllowTraining: false,
++            ClosedProprietaryModel: false,
++            TeacherOutputUsedForTraining: true,
++            "repository-owned-dpo-submit-path-reuse",
++            InvocationCount: 1)
++        {
++            ModelArtifactDigestKind =
++                identity.OpenTeacher.ModelArtifactDigestKind,
++            ModelArtifactDigest = identity.OpenTeacher.ModelArtifactSha256
++        };
++        // Пара: сторона учителя и сторона локальной модели, с принятой
++        // лицензией и без карантина.
++        // Тему пары берём из адреса договора, а не вписываем словом: страж
++        // печатника сверяет тему пары с темой адреса точным сравнением, и
++        // вписанное слово молча расходится с адресом при любой его правке —
++        // ровно так эта оснастка и падала на «набор обучающих пар не принят».
++        var bound = DpoPairTrainingContentAuthority.Bind(new ContinuousLearning.DpoPair(
++            "build a responsive card for submit path reuse",
++            "open teacher candidate for submit path reuse",
++            "local model candidate for submit path reuse",
++            context.Address!.DomainSlug,
++            DateTimeOffset.UnixEpoch)
++        {
++            TeacherProvenance = passport,
++            GovernanceDecision = new TrainingDataGovernanceDecision(
++                licenseAccepted: true,
++                isQuarantined: false,
++                evidenceRefs:
++                [
++                    "sha256:" + Sha256Text("governance submit path reuse")
++                ]),
++            ChosenAuthorship = new DpoPairSideAuthorship(
++                DPO.Models.DpoPairSideAuthorKind.OpenTeacher,
++                passport),
++            RejectedAuthorship = new DpoPairSideAuthorship(
++                DPO.Models.DpoPairSideAuthorKind.LocalModel)
++        });
++        Assert.True(bound.IsSuccess, bound.ErrorMessage);
++        var @sealed = RepositoryOwnedDpoDatasetManifestSealer.PersistAndSeal(
++            context.Address!,
++            identity,
++            // Восклицательный знак нужен потому, что успешность привязки
++            // доказана утверждением выше, о котором компилятор не знает.
++            [bound.Value!]);
++        Assert.True(@sealed.IsSuccess, @sealed.ErrorMessage);
++        // Отдаём хеш описи наружу: ожидание в проверке должно брать его из
++        // того самого набора, который только что лёг на диск.
++        return @sealed.Value!.ManifestSha256;
++    }
++
+     private static string CreateRepositoryOwnedDpoContextTempRoot(string scope)
+     {
+         var repositoryRoot = Path.Combine(
+@@ -12691,7 +13081,9 @@ public sealed class DesignConversionModelServerApiTests : IDisposable
+         Assert.True(address.IsSuccess, address.ErrorMessage);
+         var identity = RepositoryOwnedDpoDatasetManifestSealer
+             .CreateRequestIdentity(
+-                [Sha256Text("repository-owned-dpo-paid-reference-answer")],
++                // Хеш платного эталона считаем от единственного источника
++                // текста — постоянной выше, чтобы дубля литерала не осталось.
++                [Sha256Text(RepositoryOwnedDpoPaidReferenceRawText)],
+                 new RepositoryOwnedDpoOpenTeacherIdentity(
+                     OpenWeightTeacherFamily.Qwen.ToString(),
+                     "qwen3.5:9b",

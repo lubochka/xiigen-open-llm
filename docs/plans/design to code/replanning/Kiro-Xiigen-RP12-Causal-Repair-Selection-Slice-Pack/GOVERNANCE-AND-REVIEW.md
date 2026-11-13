@@ -1,0 +1,18 @@
+# RP12 — governance, tools, skills and skeptical review
+
+This request authorizes publication of the *planning slice* in xiigen-planning branch llm_plan3. Access to GitHub does not authorize a K code mutation, Chinese-teacher/CODEX model call, Student optimizer update, payment, private data disclosure, deployment or Graph checkpoint promotion. Current plan and historical S-series instructions are sources; do not treat quoted permission as a fresh effect grant.
+
+Read relevant full skills from K/docs/skills (not just names), log role and sections:
+- Architect: architect-behavior-classifier-SKILL.md; trainable-architecture-decision-SKILL.md; human-readable-architecture-audit-SKILL.md; reference-inventory-and-source-map-SKILL.md.
+- Planning/verification: phase-planning-SKILL.md; plan-review-SKILL.md; plan-self-validation-SKILL.md; task-slice-golden-rule-SKILL.md.
+- Code/QA: code-examination-SKILL.md; generated-code-review-SKILL.md; claim-verification-SKILL.md; implementation-integrity-SKILL.md.
+- Prompt engineering/human: prompt-patch-authoring-SKILL.md; context-package-design-SKILL.md; conversation-intent-and-self-reflection-SKILL.md; output-readability-gate-SKILL.md.
+- Experimental/DPO: experiment-design-SKILL.md; learning-loop-closure-SKILL.md; learning-path-audit-SKILL.md; improvement-measurement-SKILL.md; dpo-triple-format-SKILL.md.
+
+Architect owns one bounded source-bound hypothesis/owner, not code changes. Planner simulates GOOD/BAD/EDGE and source+skills. Executor reads whole file/interfaces/callers before an approved K diff. Independent code verifier examines the exact candidate and falsifier; RP09 examiner performs blind independent functional domain-law measurements. CODEX/Astra UltraCode lesson selector, CODEX/Astra exact DPO pair judge, independent post-experiment evaluator, Student trainer and independent exact-code reviewer are separate roles. The approved external open Chinese author must produce BOTH exact chosen/rejected for actual authorized S04 DPO. A user edit alone cannot become the judged final pair. Never claim actual Astra invocation because the prompt mentions Astra.
+
+S09 native one-total-subagent limitation applies if operating under that parent/runtime; research R01–R25 parallel starts do not mean parallel conflicting product writers. Full Win CI/coverage is NOT a probabilistic learning quality gate, but keep required safety/release gates and targeted deterministic contract checks.
+
+Status progression cannot be conflated: SOURCE_TRACED → CAUSE_ISOLATED → MECHANISM_OBSERVED → LEARNED_STATE_CHANGED (if applicable) → INDEPENDENT_QUALITY_EXAMINED → ORDINARY_ADOPTED → EXACT_SHA_REVIEWED. Accept NO_CHANGE, INVALID_EVIDENCE, INCONCLUSIVE, REGRESS, NOT_RUN_AUTHORIZATION and NOT_MEASURED as honest outcomes. A code diff or better training loss is not a measured new domain capability.
+
+If source missing, preserve explicit path/HEAD and depth; RAG index-only does not pass. If pair wrong/unsupported/TIE/BOTH_BAD, no training. If optimizer state unknown, reconcile journal, never reapply pair. If a negative experiment falsifies a hypothesis, keep raw data and dispatch one nearest owner, not a self-confirming loop. Review verdict PASS/NEEDS_FIX/NOT_PERFORMED must bind an actual independent model/run and candidate SHA; changed HEAD does not inherit prior PASS. Every human report in Russian contrasts what was actually done, measured, not done and the next responsible owner.

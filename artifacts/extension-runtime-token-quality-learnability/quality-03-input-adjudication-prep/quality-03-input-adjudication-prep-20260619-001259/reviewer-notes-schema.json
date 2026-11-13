@@ -1,0 +1,214 @@
+{
+  "schema": "xiigen.quality_03.reviewer_notes_schema.v1",
+  "work_order_id": "QUALITY-03-INPUT-ADJUDICATION-PREP-01",
+  "run_id": "quality-03-input-adjudication-prep-20260619-001259",
+  "generated_at_local": "2026-06-19T00:12:59+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "language": "ru",
+  "artifact_type": "reviewer_notes_schema_no_scoring",
+  "source_refs_read": {
+    "plan_quality_sections": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "state": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "quality_01_eval_prompt_pack": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/eval-prompt-pack.json",
+    "quality_01_rubric": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/quality-rubric.json",
+    "quality_01_held_out_and_ablation_requirements": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/held-out-and-ablation-requirements.json",
+    "quality_02_eval_only_runner_contract": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-231757/eval-only-runner-contract.json",
+    "quality_02_scorer_boundary_checklist": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-231757/scorer-boundary-checklist.json",
+    "quality_02_dry_run_validation_result": "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-dry-run-validation/quality-02-eval-only-runner-dry-run-validation-20260619-000435/dry-run-validation-result.json",
+    "token_03_pair_completion_matrix": "artifacts/extension-runtime-token-quality-learnability/token-03-pair-completion-capture-or-defer/token-03-pair-completion-capture-or-defer-20260618-225554/pair-completion-matrix.json",
+    "token_03_deferrals": "artifacts/extension-runtime-token-quality-learnability/token-03-pair-completion-capture-or-defer/token-03-pair-completion-capture-or-defer-20260618-225554/deferrals.json",
+    "token_03_trace_capture_summary": "artifacts/extension-runtime-token-quality-learnability/token-03-narrow-trace-capture-or-defer/token-03-narrow-trace-capture-or-defer-20260618-224207/trace-capture-summary.json",
+    "token_03_token_traces": "artifacts/extension-runtime-token-quality-learnability/token-03-narrow-trace-capture-or-defer/token-03-narrow-trace-capture-or-defer-20260618-224207/token-traces.jsonl"
+  },
+  "purpose_ru": "Задать человекочитаемые правила будущей ручной оценки и adjudication без выполнения scoring сейчас.",
+  "hard_preconditions_before_any_score": [
+    "pairing_integrity_status == PASS",
+    "baseline_redacted_output_ref и adaptive_redacted_output_ref существуют для одного pair_id",
+    "scenario_id, host, method, evidence_class, tokenizer/accounting/redaction policy совпадают",
+    "QUALITY-01 rubric/ref и prompt pack/ref совпадают",
+    "held_out_split_ref и source_disjoint_check_ref существуют",
+    "reviewer/adjudication refs готовы",
+    "нет raw external AI/model output text как scoring prompt material",
+    "нет runtime host execution, external AI/model calls, training/DPO/checkpoint mutation в runner"
+  ],
+  "score_scale_future_only": {
+    "field": "score_0_to_4",
+    "anchors_ru": {
+      "0": "Не отвечает требованию или содержит запрещённый shortcut/overclaim.",
+      "1": "Частично релевантно, но пропускает существенные ограничения или evidence scope.",
+      "2": "Минимально приемлемо для narrow scoped answer, без quality improvement claim.",
+      "3": "Хорошо сохраняет смысл, ограничения и evidence boundaries.",
+      "4": "Сильно, ясно, устойчиво к held-out variation и не объясняется shortcut-ом."
+    },
+    "current_scores_allowed": false,
+    "current_reason_ru": "0/9 complete token pairs; этот пакет только готовит schema."
+  },
+  "reviewer_note_required_fields_future": [
+    "note_id",
+    "reviewer_id",
+    "reviewer_role",
+    "review_timestamp_utc",
+    "pair_id",
+    "scenario_id",
+    "host",
+    "method",
+    "mode: baseline|adaptive|comparison",
+    "layer: PromptToTask|OrchestrationReasoning|SkillSelection|FinalUsefulness",
+    "score_0_to_4",
+    "pass_fail: PASS|FAIL|INCONCLUSIVE",
+    "failure_labels",
+    "human_reviewer_note_ru",
+    "evidence_refs",
+    "source_disjoint_status",
+    "held_out_status",
+    "ablation_status",
+    "no_leakage_status",
+    "no_memorization_status",
+    "inter_rater_status",
+    "claim_locks"
+  ],
+  "layer_rules_ru": [
+    {
+      "layer": "PromptToTask",
+      "judge_ru": "Проверить, сохранил ли output намерение Luba/пользователя, ограничения, разрешенный artifact type и запреты; не превратил ли path/title/prompt replay в понимание.",
+      "pass_requires_ru": "Универсальная задача без project-specific leakage, invented permission, exact prompt replay или scope loss.",
+      "critical_failure_labels": [
+        "FAIL_PROMPT_TO_TASK_REGRESSION",
+        "FAIL_APPROVAL_BOUNDARY",
+        "FAIL_SOURCE_DISJOINT_SPLIT",
+        "FAIL_SOURCE_LEAKAGE",
+        "FAIL_MEMORIZATION_EXACT_PROMPT",
+        "FAIL_NARROW_STAGED_ONLY"
+      ]
+    },
+    {
+      "layer": "OrchestrationReasoning",
+      "judge_ru": "Проверить порядок фаз, gates, dependencies, allowed/forbidden actions, evidence boundaries и next bounded work order.",
+      "pass_requires_ru": "Правильный порядок: runtime/pairing prerequisites до scoring, quality non-regression до token savings, DPO/source/license/fresh-load/held-out/ablation/rollback до learnability/promotion.",
+      "critical_failure_labels": [
+        "FAIL_ORCHESTRATION_REGRESSION",
+        "FAIL_PHASE_ORDER",
+        "FAIL_RUNTIME_SUBSTITUTION",
+        "FAIL_HELD_OUT_MISSING",
+        "FAIL_ABLATION_EXPLAINS_GAIN",
+        "FAIL_NARROW_STAGED_ONLY"
+      ]
+    },
+    {
+      "layer": "SkillSelection",
+      "judge_ru": "Проверить, выбраны ли skills/tools по смыслу задачи, permission scope и evidence type, а не по candidate order, filename, path, prompt hash или static mapping.",
+      "pass_requires_ru": "Семантический выбор skills, явное отклонение нерелевантных/forbidden tools, разделение common и user-local/private context.",
+      "critical_failure_labels": [
+        "FAIL_SKILL_SELECTION_REGRESSION",
+        "FAIL_LEAKAGE_SIGNAL",
+        "FAIL_CANDIDATE_ORDER_SHORTCUT",
+        "FAIL_NO_MEMORIZATION_CONTROL",
+        "FAIL_DETERMINISTIC_BASELINE_ONLY",
+        "FAIL_NARROW_STAGED_ONLY"
+      ]
+    },
+    {
+      "layer": "FinalUsefulness",
+      "judge_ru": "Проверить, полезен ли финальный ответ человеку, честно ли он называет что доказано/не доказано, next safe action и ограничения.",
+      "pass_requires_ru": "Читаемый, полезный ответ без quality/token/learnability/readiness overclaim.",
+      "critical_failure_labels": [
+        "FAIL_HUMAN_UNREADABLE",
+        "FAIL_OVERCLAIM",
+        "FAIL_QUALITY_REGRESSION",
+        "INCONCLUSIVE_REVIEW",
+        "SEMANTIC_CLAIM_BLOCKED_NARROW_LAYER_EVIDENCE"
+      ]
+    }
+  ],
+  "global_failure_labels": [
+    "PAIRING_INTEGRITY_NOT_READY",
+    "FAIL_SOURCE_DISJOINT_SPLIT",
+    "FAIL_HELD_OUT_MISSING",
+    "FAIL_NO_MEMORIZATION_CONTROL",
+    "FAIL_ABLATION_EXPLAINS_GAIN",
+    "FAIL_NO_LEAKAGE_CONTROL",
+    "FAIL_RAW_EXTERNAL_OUTPUT_USED_AS_EXAMPLE",
+    "FAIL_PRIVATE_OR_STACK_SPECIFIC_COMMON_LEAK",
+    "FAIL_DETERMINISTIC_BASELINE_ONLY",
+    "FAIL_TRANSCRIPT_REPLAY",
+    "FAIL_EXACT_PROMPT_REPLAY",
+    "MISSING_BASELINE_REDACTED_OUTPUT_REF",
+    "MISSING_ADAPTIVE_REDACTED_OUTPUT_REF",
+    "RUBRIC_MISMATCH",
+    "FAIL_QUALITY_REGRESSION",
+    "INCONCLUSIVE_REVIEW",
+    "SEMANTIC_CLAIM_BLOCKED_NARROW_LAYER_EVIDENCE",
+    "MISSING_REVIEWER_ADJUDICATION_REF",
+    "MISSING_SOURCE_DISJOINT_METADATA",
+    "MISSING_ABLATION_NO_LEAKAGE_NO_MEMORIZATION_REF"
+  ],
+  "source_disjoint_held_out_requirements_ru": {
+    "required": true,
+    "must_exclude_overlap_on": [
+      "prompt_hash",
+      "exact prompt text",
+      "correction text",
+      "source ref",
+      "file path",
+      "title",
+      "branch name",
+      "target locator",
+      "vendor trace",
+      "raw external AI output",
+      "nearest-neighbour source"
+    ],
+    "minimum_future_split_metadata": [
+      "split_id",
+      "prompt_hash",
+      "scenario_id",
+      "pair_id",
+      "host",
+      "method",
+      "source_ref_class",
+      "privacy_class",
+      "license_or_authority_ref",
+      "redaction_status",
+      "nearest_neighbour_check_ref"
+    ],
+    "reviewer_rule_ru": "Если eval/held-out prompt shares source_ref/path/title/prompt_hash/correction/vendor trace/nearest source с training/DPO/source rows, reviewer ставит FAIL_SOURCE_DISJOINT_SPLIT и не ставит PASS."
+  },
+  "ablation_no_leakage_no_memorization_gates_ru": {
+    "required_before_semantic_quality_claim": true,
+    "gates": [
+      "common/no-trained-state baseline не объясняет gain",
+      "exact prompt/path/title/source-id masking не ломает claim",
+      "nearest-neighbour source check не показывает replay",
+      "candidate-order shuffle не меняет SkillSelection claim",
+      "vendor/model trace identifiers не используются как signal",
+      "chosen/rejected shuffle проверяется, если DPO-derived rows вовлечены"
+    ],
+    "failure_when": "Если любой контроль объясняет улучшение, результат FAIL_ABLATION_EXPLAINS_GAIN или соответствующий leakage/memorization failure, claim locks остаются false."
+  },
+  "adjudication_rules_ru": [
+    "Adjudication не превращает missing evidence в PASS.",
+    "Если reviewers расходятся больше чем на 1 point или PASS/FAIL не совпадает, status INCONCLUSIVE_REVIEW до named adjudicator decision.",
+    "Adjudicator может принять более низкий score, обновить failure taxonomy или quarantine scenario; не может разрешить token/quality/learnability claim без prerequisite evidence.",
+    "Reviewer/adjudication notes являются eval/adjudication evidence only и не становятся DPO/training target без отдельного DPO-authoring gate."
+  ],
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "token_savings_claim_allowed": false,
+    "quality_improvement_claimed": false,
+    "quality_improvement_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "full_claude_chat_ui_claimed": false,
+    "full_cursor_chat_ui_claimed": false,
+    "full_codex_chat_ui_claimed": false,
+    "full_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false,
+    "actual_eval_can_be_next": false
+  }
+}

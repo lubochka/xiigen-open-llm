@@ -1,0 +1,4 @@
+Мне нужно показать как эксперименты описанные совпадают с тем что описано в книге - и дать короткое обьяснение почему они работают - смотри внимательно текст прошлой сессии - там есть хорошие и плохие примеры. [https://chatgpt.com/g/g-p-6ab2a7ed7484819184910f583cf6aac7-llm-mvp-core/c/6ad990b0-5174-83ed-bc4e-979f5d367d54](https://chatgpt.com/g/g-p-6ab2a7ed7484819184910f583cf6aac7-llm-mvp-core/c/6ad990b0-5174-83ed-bc4e-979f5d367d54)
+\
+Описание экспериментов: https\\\\://github.com/lubochka/llm_mvp_core/tree/codex/dpo-implementation/docs/plans/replanning-possible-diffs/
+Книга по частям выкладывается тут (в процессе):https\\\\://github.com/lubochka/xiigen-planning/tree/llm_plan3/llm%20mvp/math-theory/

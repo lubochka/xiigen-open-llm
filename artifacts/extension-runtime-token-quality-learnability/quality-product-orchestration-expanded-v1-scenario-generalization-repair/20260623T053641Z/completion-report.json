@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "phase_id": "QUALITY-PRODUCT-ORCHESTRATION-EXPANDED-V1-SCENARIO-GENERALIZATION-REPAIR-03",
+  "decision": "FIXED_COMMIT_READY",
+  "evidence_leaf": "artifacts/extension-runtime-token-quality-learnability/quality-product-orchestration-expanded-v1-scenario-generalization-repair/20260623T053641Z",
+  "status_counts": {
+    "total": 12,
+    "done": 12,
+    "in_progress": 0,
+    "remaining": 0,
+    "failed": 0,
+    "next": "Parent review/acceptance boundary for repair 03; phase 04 was not started."
+  },
+  "changed_files": [
+    "43.SmartSkillsDomain/OrchestrationReasoningScenarioUnit.cs",
+    "Tests/OrchestrationReasoningExpandedV1ScenarioGeneralizationTests.cs",
+    "tools/quality-product-orchestration-expanded-v1-scenario-generalization-repair.js"
+  ],
+  "eval_summary": {
+    "schemaVersion": 1,
+    "stateId": "or-expanded-v1-generalization-repair-train-only-state",
+    "heldOutRowCount": 4,
+    "correctCount": 4,
+    "accuracy": 1,
+    "passesThresholds": true,
+    "minimumConfidence": 0.01,
+    "minimumTopTwoMargin": 0.01,
+    "hostRuntimeClaimed": false,
+    "semanticQualityClaimed": false,
+    "blockReason": "Transferable decision-structure baseline passed; semantic quality and host runtime remain unclaimed until lifecycle and host gates pass.",
+    "deterministicControlNotes": [
+      "Uses structured task signals and runtime policy fields only.",
+      "Raw prompt text, source ids, pair ids, file paths, guide titles, and exact scenario ids are not final authority.",
+      "Nearest/KNN-style overlap is a transparent baseline, not semantic quality evidence.",
+      "Transferable decision-structure mode measures non-label structure refs and forbids exact held-out scenario replay."
+    ],
+    "structureCorrectCount": 4,
+    "structureAccuracy": 1,
+    "evaluationMode": "transferable_decision_structure_baseline"
+  },
+  "eval_rows": {
+    "total": 4,
+    "passed": 4,
+    "exact_scenario_replay_rows": 0
+  },
+  "leakage_ablation": {
+    "schema_version": 1,
+    "source_only_controls_total": 4,
+    "source_only_controls_passed": 0,
+    "boilerplate_only_controls_total": 4,
+    "boilerplate_only_controls_passed": 0,
+    "exact_scenario_replay_rows": 0,
+    "filtered_label_like_decision_tokens": [
+      "decision-token:chosen",
+      "decision-token:plan"
+    ],
+    "label_like_decision_tokens_observed": [],
+    "ablation_rows": [
+      {
+        "control_id": "source-id-and-exact-scenario-ref-only-control",
+        "controls_total": 4,
+        "controls_passed": 0,
+        "passes_thresholds": false,
+        "proves": "Source ids, pair ids, manifest refs, and expected scenario refs do not pass the transferable structure gate."
+      },
+      {
+        "control_id": "boilerplate-only-label-token-control",
+        "controls_total": 4,
+        "controls_passed": 0,
+        "passes_thresholds": false,
+        "proves": "chosen_quality_reason/rejected_quality_reason labels plus chosen/plan boilerplate tokens do not pass."
+      }
+    ],
+    "hidden_deterministic_shortcut_used_as_semantic_quality": false,
+    "semantic_quality_claimed": false,
+    "host_runtime_claimed": false,
+    "notes": [
+      "Structure mode uses sanitized universal decision signals and filters label-like decision-token refs.",
+      "Source row ids, source manifest refs, pair ids, and exact held-out scenario refs are not accepted as final authority.",
+      "Boilerplate-only chosen/rejected quality labels and chosen/plan tokens are not accepted as transferable structure.",
+      "This remains a transparent deterministic baseline, not semantic quality evidence."
+    ]
+  },
+  "review_findings_fixed": {
+    "one_anchor_guard_test_added": true,
+    "boilerplate_only_ablation_added": true,
+    "label_like_decision_tokens_observed": [],
+    "phase_04_started": false
+  },
+  "tests": [
+    {
+      "id": "expanded-v1-generalization",
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter FullyQualifiedName~OrchestrationReasoningExpandedV1ScenarioGeneralizationTests --logger console;verbosity=minimal",
+      "exit_code": 0,
+      "signal": null,
+      "started_at_utc": "2026-06-23T05:58:22.167Z",
+      "finished_at_utc": "2026-06-23T05:58:52.496Z",
+      "duration_ms": 30329,
+      "passed": true,
+      "stdout_log": "artifacts/extension-runtime-token-quality-learnability/quality-product-orchestration-expanded-v1-scenario-generalization-repair/20260623T053641Z/expanded-v1-generalization.stdout.log",
+      "stderr_log": "artifacts/extension-runtime-token-quality-learnability/quality-product-orchestration-expanded-v1-scenario-generalization-repair/20260623T053641Z/expanded-v1-generalization.stderr.log"
+    },
+    {
+      "id": "orchestration-contracts",
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter FullyQualifiedName~OrchestrationReasoningContractsTests --logger console;verbosity=minimal",
+      "exit_code": 0,
+      "signal": null,
+      "started_at_utc": "2026-06-23T05:58:52.501Z",
+      "finished_at_utc": "2026-06-23T05:59:34.443Z",
+      "duration_ms": 41942,
+      "passed": true,
+      "stdout_log": "artifacts/extension-runtime-token-quality-learnability/quality-product-orchestration-expanded-v1-scenario-generalization-repair/20260623T053641Z/orchestration-contracts.stdout.log",
+      "stderr_log": "artifacts/extension-runtime-token-quality-learnability/quality-product-orchestration-expanded-v1-scenario-generalization-repair/20260623T053641Z/orchestration-contracts.stderr.log"
+    },
+    {
+      "id": "p9b-ablation-rerun",
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter FullyQualifiedName~OrchestrationReasoningP9BEvalAblationRerunTests --logger console;verbosity=minimal",
+      "exit_code": 0,
+      "signal": null,
+      "started_at_utc": "2026-06-23T05:59:34.446Z",
+      "finished_at_utc": "2026-06-23T06:02:19.833Z",
+      "duration_ms": 165387,
+      "passed": true,
+      "stdout_log": "artifacts/extension-runtime-token-quality-learnability/quality-product-orchestration-expanded-v1-scenario-generalization-repair/20260623T053641Z/p9b-ablation-rerun.stdout.log",
+      "stderr_log": "artifacts/extension-runtime-token-quality-learnability/quality-product-orchestration-expanded-v1-scenario-generalization-repair/20260623T053641Z/p9b-ablation-rerun.stderr.log"
+    }
+  ],
+  "review_cycles": [
+    {
+      "cycle": 1,
+      "checked": "Authority, scope, write boundaries, and prior leaf failure mode.",
+      "findings": [
+        "Old held-out gate measured exact unseen PatternId/ScenarioRef, which is invalid for source-disjoint train-only material."
+      ],
+      "fixes": [
+        "Added transferable_decision_structure_baseline evaluation mode with explicit no-overclaim notes."
+      ],
+      "remaining_risk": "This is still a transparent baseline, not semantic quality."
+    },
+    {
+      "cycle": 2,
+      "checked": "Plan-output safety versus weak structural matches.",
+      "findings": [
+        "One-token generalized overlap could make a plan output look ready."
+      ],
+      "fixes": [
+        "Kept one-token overlap measurable in held-out structure eval, but required at least two decision-token anchors before plan output can be ready."
+      ],
+      "remaining_risk": "Structure eval can show transfer evidence while final scenario planning remains conservative."
+    },
+    {
+      "cycle": 3,
+      "checked": "Hidden deterministic shortcut and leakage controls.",
+      "findings": [
+        "Project/scope/order/prerequisite tokens could let an older P9B ablation control pass."
+      ],
+      "fixes": [
+        "Excluded those broad ablation tokens from transfer authority and reran P9B ablation regression successfully.",
+        "Added source-id/exact-scenario-ref-only ablation with 0/4 pass."
+      ],
+      "remaining_risk": "Future token lists need the same ablation review before widening."
+    },
+    {
+      "cycle": 4,
+      "checked": "Lifecycle, dashboard, evidence packaging, and no-overclaim state.",
+      "findings": [
+        "This phase did not modify checkpoint lifecycle APIs or dashboard/API behavior."
+      ],
+      "fixes": [
+        "Packaged lifecycle-not-touched evidence, command logs, manifest hashes, Russian report, JSON report, state entry, and next work order."
+      ],
+      "remaining_risk": "Host/dashboard readiness remains unclaimed and should require a separate bounded phase."
+    },
+    {
+      "cycle": 5,
+      "checked": "Commit-blocking review findings for one-anchor readiness and label-boilerplate leakage.",
+      "findings": [
+        "Runtime guard coverage did not directly prove that one transferable decision-token can count as eval evidence while Decide remains not ready.",
+        "Transferable eval rows exposed label-like boilerplate tokens such as decision-token:chosen and decision-token:plan."
+      ],
+      "fixes": [
+        "Added a direct one-anchor guard test that passes the eval counter but asserts Decide returns IsReady=false with the two decision-token anchor block reason.",
+        "Filtered chosen/plan/token boilerplate, sanitized chosen/rejected quality-reason prefixes, and added a boilerplate-only ablation row with 0 passing controls."
+      ],
+      "remaining_risk": "This still proves only transparent deterministic structure overlap; SemanticQualityClaimed and HostRuntimeClaimed remain false."
+    }
+  ],
+  "hidden_deterministic_shortcut_audit": {
+    "result": "PASS",
+    "details": [
+      "Source-only controls did not pass.",
+      "Boilerplate-only chosen/rejected label controls did not pass.",
+      "decision-token:chosen and decision-token:plan were filtered out of observed and matched eval refs.",
+      "Exact held-out scenario refs are not accepted as final authority.",
+      "Transferable structure overlap is reported as baseline/internal detail, not semantic quality."
+    ]
+  },
+  "model_lifecycle_audit": {
+    "schema_version": 1,
+    "phase_id": "QUALITY-PRODUCT-ORCHESTRATION-EXPANDED-V1-SCENARIO-GENERALIZATION-REPAIR-03",
+    "lifecycle_code_touched": false,
+    "checkpoint_export_import_touched": false,
+    "backup_share_path_touched": false,
+    "fresh_load_touched": false,
+    "continue_training_touched": false,
+    "rollback_or_staged_target_touched": false,
+    "prior_leaf_lifecycle_status_used_as_context_only": true,
+    "claim": "No lifecycle behavior was changed in this phase; existing lifecycle boundaries remain unclaimed here except as prior evidence context."
+  },
+  "dashboard_qa_addition": {
+    "schema_version": 1,
+    "phase_id": "QUALITY-PRODUCT-ORCHESTRATION-EXPANDED-V1-SCENARIO-GENERALIZATION-REPAIR-03",
+    "dashboard_qa_added": false,
+    "reason": "The repair changes core scenario-unit evaluation metadata and tests; it does not expose a new dashboard control, dashboard route, or host API behavior.",
+    "host_chat_ui_readiness_claimed": false
+  },
+  "no_overclaim_claims": {
+    "SemanticQualityClaimed": false,
+    "HostRuntimeClaimed": false,
+    "host_runtime_claimed": false,
+    "full_extension_readiness_claimed": false,
+    "token_savings_claimed": false,
+    "semantic_quality_claimed": false,
+    "trained_model_readiness_claimed": false,
+    "target_promotion_claimed": false,
+    "host_chat_ui_readiness_claimed": false,
+    "hidden_deterministic_shortcut_used_as_semantic_quality": false,
+    "external_ai_or_web_used": false,
+    "git_used": false
+  },
+  "next_recommended_bounded_work_order": {
+    "next_work_order_selected": false,
+    "phase_04_started": false,
+    "reason": "Current task is limited to commit-blocking repair 03 findings; phase 04 is explicitly not started.",
+    "allowed_next_boundary": "Parent review/acceptance and optional parent-owned commit after acceptance only.",
+    "forbidden_claims": [
+      "semantic quality",
+      "full extension readiness",
+      "token savings",
+      "host chat UI readiness",
+      "target promotion"
+    ],
+    "git_authority": "forbidden"
+  },
+  "git_used": false
+}

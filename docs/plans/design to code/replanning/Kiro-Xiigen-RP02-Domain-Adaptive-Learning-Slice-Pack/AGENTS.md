@@ -1,0 +1,7 @@
+# RP02 local agent contract · 7.3
+
+For this Domain-Adaptive-Learning pack, dispatch ONLY [START](RP02-V7-START-PROMPT.md) → [manifest](PACKAGE-MANIFEST.json) → one complete tasks-v7 card/child plus [effective context](RP02-EFFECTIVE-CONTEXT.md). Current marker RP02_EFFECTIVE_7_3. Root V6A/17-card or generic original tasks instructions do not override this local 18-ID/3-child route. Old tasks and the Retrieval sibling are references, not a second active pack.
+
+The [runbook](RP02-V7.2-LEARN-FIRST-RUNBOOK.md) and [exam contract](RP02-V7.2-FUNCTIONAL-EXAMS-AND-TRACEABILITY.md) preserve all unique domain, vector/token, adaptive-k, next-step, LoRA and four-role requirements. They remove only conflicting process sequencing/coverage proxies. No all-domain/Windows gate before one valid isolated θ lesson. Source/no-change/review gets 0 new tests; only changed hard integrity risks get minimum verification. Do not waive real access/state/security/release obligations.
+
+Respect one phase/effect: source S, code I, update U, read-only examiner E, independent REVIEW. Accepted state is separate from trial. CODEX astra 6 ultracode selects and separately judges; external open Chinese model authors BOTH exact DPO sides. No fake invocations or promotion by publication. Reuse original WorkLeft/RAG→primary and current actual callers, not blind old status or all-book reloads. Current repair is planning-only; unrelated code, data, weights and other workers' shards are outside scope.

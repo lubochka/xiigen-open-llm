@@ -1,0 +1,1158 @@
+diff --git a/Tests/ExperimentFixes/ExperimentAttemptOwnershipTests.cs b/Tests/ExperimentFixes/ExperimentAttemptOwnershipTests.cs
+index cd4cc3aa722..02a531c4e89 100644
+--- a/Tests/ExperimentFixes/ExperimentAttemptOwnershipTests.cs
++++ b/Tests/ExperimentFixes/ExperimentAttemptOwnershipTests.cs
+@@ -6,6 +6,7 @@
+ namespace LlmFromScratch.Tests.ExperimentFixes;
+ 
+ using System.Globalization;
++using System.Reflection;
+ using System.Security.Cryptography;
+ using System.Text;
+ using System.Text.Json.Nodes;
+@@ -783,4 +784,326 @@ public sealed class ExperimentAttemptOwnershipTests
+             DeleteProbe(redirectRoot);
+         }
+     }
++
++    // Уникальное имя владельца области попытки: оно не пересекается с именами живых фикстур.
++    //
++    // Зачем уникальность. Девять переведённых испытаний занимают слоты владельцев под именами своих
++    // классов. Если проверка возьмёт такое же имя, она будет отклонена как второй захват того же
++    // владельца и упадёт по чужой причине. Хвост из случайного опознания это исключает.
++    private static string ProbeOwnerName(string purpose)
++        => "проверка-владения-" + purpose + "-" + Guid.NewGuid().ToString("N");
++
++    [Fact]
++    // Область попытки захватывает адрес в конструкторе: маркер владения есть до любой записи улик.
++    public void AttemptScopeCapturesTheAttemptAddressBeforeAnyEvidenceIsWritten()
++    {
++        var root = RepositoryRoot();                  // Корень рабочей копии: от него приёмник считает пути.
++        var declared = FreshProbeDirectory(root);     // Назначенный каталог свежий: его ещё не существует.
++        var parent = ProbeParent(declared);           // Родитель каталога убирается целиком после проверки.
++        var owner = ProbeOwnerName("ранний-захват");  // Имя владельца уникально: чужие фикстуры не задеваются.
++        var recorder = new CountingLessonRecorder();  // Счётчик стоит там, где начался бы учебный шаг.
++        ExperimentAttemptScope? scope = null;         // Область объявлена заранее: её надо освободить в любом исходе.
++
++        // Ожидаемый адрес маркера считается БЕЗ обращения к приёмнику, и это принципиально.
++        //
++        // Почему так, а не через сам приёмник. Если бы существование маркера проверялось через
++        // scope.Evidence, то при возврате к позднему захвату приёмник родился бы ровно от этого
++        // обращения, маркер появился бы, и проверка осталась бы зелёной при сломанном свойстве.
++        // Назначенный каталог испытанию известен и без приёмника, поэтому наблюдение независимо.
++        var expectedMarkerPath =
++            Path.Combine(declared, ExperimentEvidenceSink.AttemptOwnerMarkerFileName);
++
++        // До создания области маркера быть не может: это отрицательный контроль наблюдения.
++        Assert.False(
++            File.Exists(expectedMarkerPath),
++            "НАБЛЮДЕНИЕ НЕОСМЫСЛЕННО: маркер владения существует ещё до создания области — "
++                + expectedMarkerPath);
++
++        try
++        {
++            // Создание области и есть захват: данные ещё не подготовлены и обучение не начиналось.
++            scope = new ExperimentAttemptScope(root, declared, owner);
++
++            // Главное требование этого ремонта: маркер уже на диске, и это видно без приёмника.
++            Assert.True(
++                File.Exists(expectedMarkerPath),
++                "РАННЕГО ЗАХВАТА НЕТ: конструктор области не создал маркер владения — "
++                    + expectedMarkerPath);
++
++            // То же наблюдение через приёмник: адрес маркера совпадает с ожидаемым адресом.
++            Assert.Equal(expectedMarkerPath, scope.Evidence.AttemptOwnerMarkerPath);
++
++            // Каталог записи равен назначенному: свежий адрес уводить было незачем.
++            Assert.False(scope.Evidence.RedirectedFromDeclaredDirectory);
++
++            // В каталоге записи ровно один файл, и это маркер: ленивое поле дало бы ноль файлов.
++            var filesRightAfterCapture =
++                Directory.GetFiles(scope.WriteRoot, "*", SearchOption.AllDirectories);
++            Assert.Single(filesRightAfterCapture);
++            Assert.Equal(
++                ExperimentEvidenceSink.AttemptOwnerMarkerFileName,
++                Path.GetFileName(filesRightAfterCapture[0]));
++
++            // Учебный шаг на момент захвата не достигнут: порядок «сначала владение» соблюдён.
++            Assert.Equal(0, recorder.TrainingStepsReached);
++
++            // Завершения пока нет: попытка только началась, точку ставит освобождение области.
++            Assert.False(scope.AttemptCompleted);
++            Assert.Null(scope.CompletionFilePath);
++
++            // Только теперь настоящий прогон начал бы готовить данные и учить модель.
++            recorder.MarkTrainingStepReached("учебный шаг после захвата области попытки");
++
++            // Положительный контроль прибора: счётчик умеет считать, значит ноль выше осмыслен.
++            Assert.Equal(1, recorder.TrainingStepsReached);
++        }
++        finally
++        {
++            scope?.Dispose();     // Попытка завершается честно, иначе она осталась бы прерванной.
++            DeleteProbe(parent);  // Свой каталог проверки убирается; первичные улики опыта не трогаются.
++        }
++    }
++
++    [Fact]
++    // Освобождение области ставит завершение ровно один раз, и счёт улик в нём наблюдённый.
++    public void DisposingTheAttemptScopeWritesExactlyOneCompletionWithTheObservedEvidenceCount()
++    {
++        var root = RepositoryRoot();                     // Корень рабочей копии проекта.
++        var declared = FreshProbeDirectory(root);         // Свежий каталог попытки для этой проверки.
++        var parent = ProbeParent(declared);              // Родитель каталога убирается после проверки.
++        var owner = ProbeOwnerName("одно-завершение");   // Уникальный владелец этой области попытки.
++        ExperimentAttemptScope? scope = null;            // Область освобождается в любом исходе.
++
++        try
++        {
++            // Захват выполняется сразу: дальше идёт работа, которую попытка обязана накрыть.
++            scope = new ExperimentAttemptScope(root, declared, owner);
++
++            // Три улики пишутся через захваченный приёмник: второго приёмника испытание не создаёт.
++            scope.Evidence.WriteTextExactly("наблюдение-1.json", "{\"шаг\":1}\n");
++            scope.Evidence.WriteTextExactly("наблюдение-2.json", "{\"шаг\":2}\n");
++            scope.Evidence.WriteTextExactly("наблюдение-3.json", "{\"шаг\":3}\n");
++
++            // Пока область жива, завершения нет: точку ставит только освобождение.
++            Assert.False(scope.AttemptCompleted);
++
++            // Освобождение области и есть завершение попытки.
++            scope.Dispose();
++
++            // Завершение состоялось, и путь записанного файла виден наружу.
++            Assert.True(scope.AttemptCompleted);
++            Assert.NotNull(scope.CompletionFilePath);
++            Assert.True(File.Exists(scope.CompletionFilePath!));
++
++            // Файл завершения в каталоге записи ровно один.
++            Assert.Single(Directory.GetFiles(
++                scope.WriteRoot,
++                ExperimentEvidenceSink.AttemptCompletionFileName,
++                SearchOption.AllDirectories));
++
++            // Отпечаток завершения запоминается: повторное освобождение не имеет права его менять.
++            var completionFingerprintAfterFirstDispose = Convert.ToHexString(
++                SHA256.HashData(File.ReadAllBytes(scope.CompletionFilePath!)));
++
++            // Содержание завершения читается как разметка: человек обязан понять, кто что завершил.
++            var completion = JsonNode.Parse(File.ReadAllText(scope.CompletionFilePath!));
++
++            // Владелец назван человеческим именем: по нему человек узнаёт испытание.
++            Assert.Equal(owner, ReadMarkerText(completion, "владелец"));
++
++            // Опознание прогона в завершении совпадает с опознанием прогона-владельца.
++            Assert.Equal(scope.Evidence.OwnerRunIdentifier, ReadMarkerText(completion, "прогон"));
++
++            // Счёт улик равен фактически записанным трём: это наблюдение, а не постоянная величина.
++            Assert.Equal(3, completion!["файлов_доказательств"]!.GetValue<int>());
++
++            // Служебные файлы рядом есть, поэтому общий счёт строго больше счёта улик.
++            Assert.True(
++                completion["файлов_всего"]!.GetValue<int>()
++                    > completion["файлов_доказательств"]!.GetValue<int>(),
++                "СЧЁТ ФАЙЛОВ НЕ НАБЛЮДЁННЫЙ: общий счёт не превышает счёт улик, хотя служебные файлы есть.");
++
++            // Повторное освобождение не падает и второго файла завершения не пишет.
++            scope.Dispose();
++            Assert.Single(Directory.GetFiles(
++                scope.WriteRoot,
++                ExperimentEvidenceSink.AttemptCompletionFileName,
++                SearchOption.AllDirectories));
++
++            // Байты завершения после повторного освобождения те же: второй записи не было.
++            Assert.Equal(
++                completionFingerprintAfterFirstDispose,
++                Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(scope.CompletionFilePath!))));
++        }
++        finally
++        {
++            scope?.Dispose();     // Освобождение повторно безопасно: защёлка однократности уже закрыта.
++            DeleteProbe(parent);  // Свой каталог проверки убирается полностью.
++        }
++    }
++
++    [Fact]
++    // Завершённая попытка перестаёт выглядеть прерванной, а незавершённая так и называется прерванной.
++    public void CompletedAttemptIsNamedCompletedWhileAnUncompletedOneIsStillNamedInterrupted()
++    {
++        var root = RepositoryRoot();                                    // Корень рабочей копии проекта.
++        var completedDeclared = FreshProbeDirectory(root);              // Адрес попытки, которая дойдёт до конца.
++        var interruptedDeclared = FreshProbeDirectory(root);            // Адрес попытки, которая останется незавершённой.
++        var completedParent = ProbeParent(completedDeclared);           // Родитель первого каталога для уборки.
++        var interruptedParent = ProbeParent(interruptedDeclared);       // Родитель второго каталога для уборки.
++        var recorder = new CountingLessonRecorder();                    // Счётчик достижения учебного шага.
++        ExperimentAttemptScope? interrupted = null;                     // Незавершённая область живёт до конца проверки.
++
++        try
++        {
++            // Первая попытка проходит весь путь: захват, улика, завершение освобождением области.
++            var completed = new ExperimentAttemptScope(
++                root, completedDeclared, ProbeOwnerName("завершённая-попытка"));
++            completed.Evidence.WriteTextExactly("наблюдение.json", "{\"итог\":\"успех\"}\n");
++
++            // Опознание прогона-владельца запоминается до освобождения: его ждём в тексте отказа.
++            var completedRunIdentifier = completed.Evidence.OwnerRunIdentifier;
++            completed.Dispose();
++
++            // Следующий прогон по тому же адресу обязан назвать попытку завершённой, а не прерванной.
++            var afterCompleted = Assert.Throws<ExperimentAttemptOwnershipRefusedException>(() =>
++                OwnThenTrain(recorder, root, completedDeclared, PublishedEvidencePolicy.RefuseToWrite));
++            Assert.Contains(completedRunIdentifier, afterCompleted.Message, StringComparison.Ordinal);
++            Assert.Contains("попытка уже завершена", afterCompleted.Message, StringComparison.Ordinal);
++            Assert.DoesNotContain("попытка прервана", afterCompleted.Message, StringComparison.Ordinal);
++
++            // Вторая попытка остаётся незавершённой: область жива и файла завершения рядом нет.
++            interrupted = new ExperimentAttemptScope(
++                root, interruptedDeclared, ProbeOwnerName("прерванная-попытка"));
++            interrupted.Evidence.WriteTextExactly("частичное-наблюдение.json", "{\"стадия\":2}\n");
++
++            // Тот же вопрос к тому же приёмнику даёт противоположный ответ: попытка прервана.
++            var afterInterrupted = Assert.Throws<ExperimentAttemptOwnershipRefusedException>(() =>
++                OwnThenTrain(recorder, root, interruptedDeclared, PublishedEvidencePolicy.RefuseToWrite));
++            Assert.Contains(
++                interrupted.Evidence.OwnerRunIdentifier, afterInterrupted.Message, StringComparison.Ordinal);
++            Assert.Contains("попытка прервана", afterInterrupted.Message, StringComparison.Ordinal);
++            Assert.DoesNotContain("попытка уже завершена", afterInterrupted.Message, StringComparison.Ordinal);
++
++            // Ни один из двух отказов не дошёл до учебного шага: оба узнали об отказе раньше работы.
++            Assert.Equal(0, recorder.TrainingStepsReached);
++        }
++        finally
++        {
++            interrupted?.Dispose();         // Незавершённая область завершается, чтобы не оставлять мусора.
++            DeleteProbe(interruptedParent); // Второй каталог проверки убирается полностью.
++            DeleteProbe(completedParent);   // Первый каталог проверки убирается полностью.
++        }
++    }
++
++    [Fact]
++    // Второй захват того же владельца отклоняется заметно и ещё до захвата второго каталога.
++    public void SecondScopeForTheSameOwnerIsRefusedBeforeCaptureAndAllowedAfterTheFirstCompletes()
++    {
++        var root = RepositoryRoot();                            // Корень рабочей копии проекта.
++        var firstDeclared = FreshProbeDirectory(root);           // Адрес первой попытки этого владельца.
++        var secondDeclared = FreshProbeDirectory(root);          // Адрес, который владелец попросит вторым.
++        var firstParent = ProbeParent(firstDeclared);            // Родитель первого каталога для уборки.
++        var secondParent = ProbeParent(secondDeclared);          // Родитель второго каталога для уборки.
++        var owner = ProbeOwnerName("повторный-захват");          // Один и тот же владелец для обеих попыток.
++        ExperimentAttemptScope? first = null;                    // Первая область освобождается в любом исходе.
++        ExperimentAttemptScope? second = null;                   // Вторая область тоже освобождается.
++
++        try
++        {
++            // Первая область занимает слот владельца и неделимо захватывает свой каталог.
++            first = new ExperimentAttemptScope(root, firstDeclared, owner);
++
++            // Второй захват того же владельца отклоняется заметным исключением, а не молча.
++            var refusal = Assert.Throws<ExperimentAttemptScopeAlreadyOwnedException>(
++                () => new ExperimentAttemptScope(root, secondDeclared, owner));
++
++            // Отказ назван человеческими словами и показывает живой каталог первой попытки.
++            Assert.Contains(
++                "ВТОРАЯ ОБЛАСТЬ ПОПЫТКИ ТОГО ЖЕ ВЛАДЕЛЬЦА ОТКЛОНЕНА.",
++                refusal.Message, StringComparison.Ordinal);
++            Assert.Contains(owner, refusal.Message, StringComparison.Ordinal);
++            Assert.Contains(first.WriteRoot, refusal.Message, StringComparison.Ordinal);
++
++            // Отказ случился ДО захвата: второго каталога попытки на диске не появилось.
++            Assert.False(
++                Directory.Exists(secondDeclared),
++                "ОТКАЗ ОПОЗДАЛ: второй каталог попытки уже создан — " + secondDeclared);
++
++            // Первая попытка завершается честно: завершение освобождает слот владельца.
++            first.Dispose();
++            first = null;
++
++            // После завершения первой попытки тот же владелец имеет право на новую область.
++            second = new ExperimentAttemptScope(root, secondDeclared, owner);
++            Assert.True(
++                File.Exists(second.Evidence.AttemptOwnerMarkerPath),
++                "НОВАЯ ОБЛАСТЬ НЕ ЗАХВАЧЕНА: маркер владения отсутствует — "
++                    + second.Evidence.AttemptOwnerMarkerPath);
++        }
++        finally
++        {
++            second?.Dispose();          // Вторая область завершается, чтобы не оставлять прерванной попытки.
++            first?.Dispose();           // Первая область завершается, если до освобождения дело не дошло.
++            DeleteProbe(secondParent);  // Второй каталог проверки убирается полностью.
++            DeleteProbe(firstParent);   // Первый каталог проверки убирается полностью.
++        }
++    }
++
++    [Fact]
++    // Все девять переведённых испытаний берут попытку фикстурой класса, и ленивых приёмников не осталось.
++    public void EveryConvertedExperimentTestTakesItsAttemptFromAClassFixtureAndKeepsNoLazySink()
++    {
++        // Испытания перечислены типами, а не строками: переименование сломает сборку, а не проверку.
++        var converted = new[]
++        {
++            typeof(P4801WeightingCurriculumCeilingTests),
++            typeof(P4901FinitenessGovernedWarmStartTests),
++            typeof(P5201RejectedAnnotationAddressArmsTests),
++            typeof(P5801CorrectiveLessonCounterExampleArmsTests),
++            typeof(ProbeNeuralNetworkGradientTests),
++            typeof(TranslationKnnPerLessonKeyLearningTests),
++            typeof(TranslationTrainingJsonPolicyReuseAllocationTests),
++            typeof(TranslationPhraseAdmissionAlignmentTests),
++            typeof(TranslationPhraseCoverageLearningTests),
++        };
++
++        // Счёт перечисленных испытаний назван прямо: девять, ровно столько переведено этим ремонтом.
++        Assert.Equal(9, converted.Length);
++
++        foreach (var testClass in converted)
++        {
++            // Фикстуры класса ищутся среди интерфейсов: именно они дают захват до подготовки данных.
++            var attemptFixtures = testClass.GetInterfaces()
++                .Where(contract => contract.IsGenericType
++                    && contract.GetGenericTypeDefinition() == typeof(IClassFixture<>))
++                .Select(contract => contract.GetGenericArguments()[0])
++                .Where(fixture => typeof(ExperimentAttemptScope).IsAssignableFrom(fixture))
++                .ToArray();
++
++            // Ровно одна фикстура области попытки: ноль означал бы возврат к позднему захвату.
++            Assert.True(
++                attemptFixtures.Length == 1,
++                "ЗАХВАТ ДО ОБУЧЕНИЯ НЕ ОБЕСПЕЧЕН: у испытания " + testClass.Name
++                    + " фикстур области попытки "
++                    + attemptFixtures.Length.ToString(CultureInfo.InvariantCulture)
++                    + ", а должна быть ровно одна.");
++
++            // Ленивые поля приёмника ищутся среди всех полей класса, включая скрытые и статические.
++            var lazySinkFields = testClass
++                .GetFields(BindingFlags.Static | BindingFlags.Instance
++                    | BindingFlags.Public | BindingFlags.NonPublic)
++                .Where(field => field.FieldType.IsGenericType
++                    && field.FieldType.GetGenericTypeDefinition() == typeof(Lazy<>)
++                    && field.FieldType.GetGenericArguments()[0] == typeof(ExperimentEvidenceSink))
++                .Select(field => field.Name)
++                .ToArray();
++
++            // Ни одного ленивого приёмника: именно он и был поздним захватом адреса попытки.
++            Assert.True(
++                lazySinkFields.Length == 0,
++                "ПОЗДНИЙ ЗАХВАТ ВЕРНУЛСЯ: у испытания " + testClass.Name
++                    + " остались ленивые поля приёмника — " + string.Join(", ", lazySinkFields));
++        }
++    }
+ }
+diff --git a/Tests/ExperimentFixes/P4801WeightingCurriculumCeilingTests.cs b/Tests/ExperimentFixes/P4801WeightingCurriculumCeilingTests.cs
+index 8d9eac7def4..34ad6f05e73 100644
+--- a/Tests/ExperimentFixes/P4801WeightingCurriculumCeilingTests.cs
++++ b/Tests/ExperimentFixes/P4801WeightingCurriculumCeilingTests.cs
+@@ -37,7 +37,12 @@ using P4801WeightingCeiling;
+ //
+ // Продуктовый код, первая попытка, карточка и указатель этим опытом не меняются. Параметр
+ // веса в продуктовый шаг не добавляется: это отдельная продуктовая работа.
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: испытательная оснастка создаёт
++// её ДО конструктора тестового класса и до любой подготовки данных, а освобождает ОДИН раз после
++// последнего теста класса. Поэтому адрес улик занимается до обучения, а завершение попытки ставится
++// ровно один раз.
+ public sealed class P4801WeightingCurriculumCeilingTests
++    : IClassFixture<P4801WeightingCurriculumCeilingTests.AttemptScopeFixture>
+ {
+     // Размер словаря сети. Двадцать два — требование навыка устройства опытов, значение
+     // карточки («Probe22→32→22») и значение самого продукта, который объясняет его так:
+@@ -201,8 +206,32 @@ public sealed class P4801WeightingCurriculumCeilingTests
+     // опубликованные байты. Пока попытка не опубликована, прогон пишет в назначенную папку и
+     // остаётся в хранилище — это запись опыта. После публикации тот же прогон становится
+     // проверочным и заметно уходит в игнорируемый каталог результатов испытаний.
+-    private static readonly Lazy<ExperimentEvidenceSink> Evidence = new(() =>
+-        ExperimentEvidenceSink.ForDeclaredDirectory(RepositoryRoot(), AttemptDirectory()));
++    //
++    // Почему ленивое поле заменено фикстурой класса. Ленивое поле рождало приёмник при ПЕРВОЙ записи
++    // улики, то есть уже после подготовки данных и обучения: проигравший в гонке за каталог платил
++    // за обучение и только потом узнавал об отказе. Фикстура класса создаётся раньше конструктора
++    // теста, поэтому захват адреса стал первым действием попытки.
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку этого испытания и ставит её в поле класса.</summary>
++        public AttemptScopeFixture()
++            : base(RepositoryRoot(), AttemptDirectory(), nameof(P4801WeightingCurriculumCeilingTests))
++            // Поле класса заполняется только после успешного захвата: иначе область не существует.
++            => AttemptScope = this;
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник доказательств захваченной попытки этого класса.</summary>
++    //
++    // Почему обращение идёт через свойство, а не через поле. Помощники записи в этом классе
++    // статические, поэтому экземпляр фикстуры им напрямую недоступен. Свойство отдаёт приёмник
++    // захваченной области и честно падает, если область почему-то не была создана.
++    private static ExperimentEvidenceSink Evidence =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(P4801WeightingCurriculumCeilingTests) + " не была создана.")).Evidence;
+ 
+     // Доказательства пишутся в кодировке UTF-8 без метки порядка байтов, переводом строки
+     // одним знаком и без пробелов в конце строк.
+@@ -217,7 +246,7 @@ public sealed class P4801WeightingCurriculumCeilingTests
+             text.Replace("\r\n", "\n").Split('\n').Select(line => line.TrimEnd()));
+ 
+         // Запись ведётся без метки порядка байтов, в разрешённый приёмником каталог.
+-        Evidence.Value.WriteTextExactly(relativePath, normalized);
++        Evidence.WriteTextExactly(relativePath, normalized);
+     }
+ 
+     // Настройки записи: русские буквы записываются буквами, а не числовыми заменами.
+diff --git a/Tests/ExperimentFixes/P4901FinitenessGovernedWarmStartTests.cs b/Tests/ExperimentFixes/P4901FinitenessGovernedWarmStartTests.cs
+index b9fcddbcb2a..46ffe27d8c4 100644
+--- a/Tests/ExperimentFixes/P4901FinitenessGovernedWarmStartTests.cs
++++ b/Tests/ExperimentFixes/P4901FinitenessGovernedWarmStartTests.cs
+@@ -35,7 +35,11 @@ using P4901Experiment;
+ // ЧТО ЗДЕСЬ НЕ ДЕЛАЕТСЯ. Продуктовый код не меняется. Опубликованные первая и вторая попытки
+ // не меняются ни на байт: отрицательный контроль портит КОПИЮ снимка состояния в памяти, а не
+ // файл на диске. Карточка, указатель опытов и реестр переноса этим опытом не правятся.
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любой подготовки данных, а освобождает ОДИН раз после
++// последнего теста класса.
+ public sealed class P4901FinitenessGovernedWarmStartTests
++    : IClassFixture<P4901FinitenessGovernedWarmStartTests.AttemptScopeFixture>
+ {
+     // Номер попытки — ОДНО значение на весь опыт, из него выводится и каталог записи, и поле
+     // номера в расписке. Раздельные значения однажды разошлись, и расписка называла себя
+@@ -83,8 +87,28 @@ public sealed class P4901FinitenessGovernedWarmStartTests
+     // назначила карточка, и доказательства остаются в хранилище — это запись опыта. Как
+     // только попытка опубликована, тот же прогон становится проверочным: он заметно уходит в
+     // игнорируемый хранилищем каталог результатов испытаний и не трогает наблюдение.
+-    private static readonly Lazy<ExperimentEvidenceSink> Evidence = new(() =>
+-        ExperimentEvidenceSink.ForDeclaredDirectory(RepositoryRoot(), AttemptDirectory()));
++    //
++    // Почему ленивое поле заменено фикстурой класса. Ленивое поле рождало приёмник при ПЕРВОЙ записи
++    // улики, то есть уже после подготовки данных: проигравший в гонке за каталог узнавал об отказе
++    // слишком поздно. Фикстура класса создаётся раньше конструктора теста, поэтому захват адреса
++    // стал первым действием попытки, а завершение попытки ставится ровно один раз.
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку этого испытания и ставит её в поле класса.</summary>
++        public AttemptScopeFixture()
++            : base(RepositoryRoot(), AttemptDirectory(), nameof(P4901FinitenessGovernedWarmStartTests))
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            => AttemptScope = this;
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник доказательств захваченной попытки этого класса.</summary>
++    private static ExperimentEvidenceSink Evidence =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(P4901FinitenessGovernedWarmStartTests) + " не была создана.")).Evidence;
+ 
+     // Доказательства пишутся сразу в пригодном для хранилища виде: кодировка без метки
+     // порядка байтов, перевод строки одним знаком, без пробелов в конце строк.
+@@ -96,7 +120,7 @@ public sealed class P4901FinitenessGovernedWarmStartTests
+     {
+         var normalized = string.Join("\n",
+             text.Replace("\r\n", "\n").Split('\n').Select(line => line.TrimEnd()));
+-        Evidence.Value.WriteTextExactly(relativePath, normalized);
++        Evidence.WriteTextExactly(relativePath, normalized);
+     }
+ 
+     // Настройки записи: русские буквы записываются буквами, а не числовыми заменами.
+diff --git a/Tests/ExperimentFixes/P5201RejectedAnnotationAddressArmsTests.cs b/Tests/ExperimentFixes/P5201RejectedAnnotationAddressArmsTests.cs
+index db97f983f64..c6810b828f9 100644
+--- a/Tests/ExperimentFixes/P5201RejectedAnnotationAddressArmsTests.cs
++++ b/Tests/ExperimentFixes/P5201RejectedAnnotationAddressArmsTests.cs
+@@ -33,7 +33,11 @@ using TranslationDomain;
+ // SemanticTokenizerUnit, исполнитель ExecutorUnit и проверяющий QualityVerifierUnit.
+ // Уроки подаются их собственным методом обучения TrainOnExample, и обученное состояние
+ // читается обычным путём «разборщик → исполнитель». Продуктовый код опытом не меняется.
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любого урока обучения, а освобождает ОДИН раз после
++// последнего теста класса.
+ public sealed class P5201RejectedAnnotationAddressArmsTests
++    : IClassFixture<P5201RejectedAnnotationAddressArmsTests.AttemptScopeFixture>
+ {
+     // Тема запроса, под которой продуктовый конструктор кладёт урок исполнителя.
+     private const string TopicDomain = "general";
+@@ -134,8 +138,28 @@ public sealed class P5201RejectedAnnotationAddressArmsTests
+     // Пока попытка не опубликована, прогон пишет в неё и остаётся в хранилище — это запись
+     // опыта. После публикации тот же прогон становится проверочным и заметно уходит в
+     // игнорируемый каталог результатов испытаний, не трогая наблюдение.
+-    private static readonly Lazy<ExperimentEvidenceSink> Evidence = new(() =>
+-        ExperimentEvidenceSink.ForDeclaredDirectory(RepositoryRoot(), AttemptDirectory()));
++    //
++    // Почему ленивое поле заменено фикстурой класса. В этом испытании есть настоящие уроки обучения,
++    // поэтому поздний захват был особенно дорогим: проигравший в гонке за каталог оплачивал обучение
++    // и только потом узнавал об отказе. Фикстура класса создаётся раньше конструктора теста, поэтому
++    // захват адреса стал первым действием попытки, а завершение ставится ровно один раз.
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку этого испытания и ставит её в поле класса.</summary>
++        public AttemptScopeFixture()
++            : base(RepositoryRoot(), AttemptDirectory(), nameof(P5201RejectedAnnotationAddressArmsTests))
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            => AttemptScope = this;
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник доказательств захваченной попытки этого класса.</summary>
++    private static ExperimentEvidenceSink Evidence =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(P5201RejectedAnnotationAddressArmsTests) + " не была создана.")).Evidence;
+ 
+     // Доказательства пишутся в кодировке UTF-8 без метки порядка байтов, с переводом
+     // строки одним знаком и без пробелов в конце строк: таким файл и должен родиться.
+@@ -149,7 +173,7 @@ public sealed class P5201RejectedAnnotationAddressArmsTests
+             text.Replace("\r\n", "\n").Split('\n').Select(line => line.TrimEnd()));
+ 
+         // Запись ведётся без метки порядка байтов, в разрешённый приёмником каталог.
+-        Evidence.Value.WriteTextExactly(relativePath, normalized);
++        Evidence.WriteTextExactly(relativePath, normalized);
+     }
+ 
+     // Число ячеек закрытого словаря обученной единицы наблюдается только для чтения.
+diff --git a/Tests/ExperimentFixes/P5801CorrectiveLessonCounterExampleArmsTests.cs b/Tests/ExperimentFixes/P5801CorrectiveLessonCounterExampleArmsTests.cs
+index a0e4f9156e4..1a871b067cf 100644
+--- a/Tests/ExperimentFixes/P5801CorrectiveLessonCounterExampleArmsTests.cs
++++ b/Tests/ExperimentFixes/P5801CorrectiveLessonCounterExampleArmsTests.cs
+@@ -33,7 +33,11 @@ using TranslationDomain;
+ // она есть, и равенство состояний в плечах A и B — свойство продукта, а не слепота опыта.
+ //
+ // Продуктовый код, первая попытка, карточка и указатель опытов этим опытом не меняются.
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любого урока обучения, а освобождает ОДИН раз после
++// последнего теста класса.
+ public sealed class P5801CorrectiveLessonCounterExampleArmsTests
++    : IClassFixture<P5801CorrectiveLessonCounterExampleArmsTests.AttemptScopeFixture>
+ {
+     // Направление этого профиля проверки.
+     private const TranslationDirection Direction = TranslationDirection.EN_RU;
+@@ -142,8 +146,28 @@ public sealed class P5801CorrectiveLessonCounterExampleArmsTests
+     // Пока попытка не опубликована, прогон пишет в неё и остаётся в хранилище — это запись
+     // опыта. После публикации тот же прогон становится проверочным и заметно уходит в
+     // игнорируемый каталог результатов испытаний, не трогая наблюдение.
+-    private static readonly Lazy<ExperimentEvidenceSink> Evidence = new(() =>
+-        ExperimentEvidenceSink.ForDeclaredDirectory(RepositoryRoot(), AttemptDirectory()));
++    //
++    // Почему ленивое поле заменено фикстурой класса. В этом испытании есть настоящие уроки обучения,
++    // поэтому поздний захват был особенно дорогим: проигравший в гонке за каталог оплачивал обучение
++    // и только потом узнавал об отказе. Фикстура класса создаётся раньше конструктора теста, поэтому
++    // захват адреса стал первым действием попытки, а завершение ставится ровно один раз.
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку этого испытания и ставит её в поле класса.</summary>
++        public AttemptScopeFixture()
++            : base(RepositoryRoot(), AttemptDirectory(), nameof(P5801CorrectiveLessonCounterExampleArmsTests))
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            => AttemptScope = this;
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник доказательств захваченной попытки этого класса.</summary>
++    private static ExperimentEvidenceSink Evidence =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(P5801CorrectiveLessonCounterExampleArmsTests) + " не была создана.")).Evidence;
+ 
+     // Доказательства пишутся в кодировке UTF-8 без метки порядка байтов, с переводом строки
+     // одним знаком и без пробелов в конце строк: таким файл и должен родиться.
+@@ -157,7 +181,7 @@ public sealed class P5801CorrectiveLessonCounterExampleArmsTests
+             text.Replace("\r\n", "\n").Split('\n').Select(line => line.TrimEnd()));
+ 
+         // Запись ведётся без метки порядка байтов, в разрешённый приёмником каталог.
+-        Evidence.Value.WriteTextExactly(relativePath, normalized);
++        Evidence.WriteTextExactly(relativePath, normalized);
+     }
+ 
+     // Настройки записи доказательств: русские буквы записываются буквами.
+diff --git a/Tests/ExperimentFixes/ProbeNeuralNetworkGradientTests.cs b/Tests/ExperimentFixes/ProbeNeuralNetworkGradientTests.cs
+index a9e536994ad..cb17636b407 100644
+--- a/Tests/ExperimentFixes/ProbeNeuralNetworkGradientTests.cs
++++ b/Tests/ExperimentFixes/ProbeNeuralNetworkGradientTests.cs
+@@ -67,7 +67,16 @@ using ExperimentsV2;
+ 
+ namespace LlmFromScratch.Tests.ExperimentFixes;
+ 
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любой подготовки данных, а освобождает ОДИН раз после
++// последнего теста класса.
++//
++// Честная граница этого испытания. Путь расписки он берёт у приёмника, а сами байты пишет своим
++// сырым вызовом записи. Поэтому здесь закрываются ровно два разрыва владения — ранний захват и
++// явное завершение попытки; перевод самой записи на приёмник остаётся отдельной работой и этим
++// слайсом не выполняется.
+ public sealed class ProbeNeuralNetworkGradientTests
++    : IClassFixture<ProbeNeuralNetworkGradientTests.AttemptScopeFixture>
+ {
+     // Размер словаря закреплённой маленькой сети: три токена, как в аудите.
+     private const int VocabularySize = 3;
+@@ -613,8 +622,28 @@ public sealed class ProbeNeuralNetworkGradientTests
+     // проверки перезаписывал опубликованную расписку. Пока папка не опубликована, прогон
+     // пишет в неё и остаётся в хранилище. После публикации тот же прогон становится
+     // проверочным и заметно уходит в игнорируемый каталог результатов испытаний.
+-    private static readonly Lazy<ExperimentEvidenceSink> Evidence = new(() =>
+-        ExperimentEvidenceSink.ForDeclaredDirectory(RepositoryRoot(), DeclaredReceiptDirectory()));
++    //
++    // Почему ленивое поле заменено фикстурой класса. Ленивое поле рождало приёмник при ПЕРВОМ
++    // обращении за путём расписки, то есть уже после измеренной работы. Фикстура класса создаётся
++    // раньше конструктора теста, поэтому захват адреса стал первым действием попытки, а завершение
++    // попытки ставится ровно один раз.
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку этого испытания и ставит её в поле класса.</summary>
++        public AttemptScopeFixture()
++            : base(RepositoryRoot(), DeclaredReceiptDirectory(), nameof(ProbeNeuralNetworkGradientTests))
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            => AttemptScope = this;
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник доказательств захваченной попытки этого класса.</summary>
++    private static ExperimentEvidenceSink Evidence =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(ProbeNeuralNetworkGradientTests) + " не была создана.")).Evidence;
+ 
+     // Путь расписки: имя файла задаёт запускатель через переменную окружения.
+     private static string ReceiptPath()
+@@ -625,7 +654,7 @@ public sealed class ProbeNeuralNetworkGradientTests
+             : "gradient-receipt.json";
+ 
+         // Путь выдаёт приёмник: он же сообщает, запись это опыта или проверочный прогон.
+-        return Evidence.Value.ResolvePath(name);
++        return Evidence.ResolvePath(name);
+     }
+ 
+     // Корень хранилища: ищется подъёмом от папки собранных проверок до файла решения.
+diff --git a/Tests/ExperimentFixes/TranslationKnnPerLessonKeyLearningTests.cs b/Tests/ExperimentFixes/TranslationKnnPerLessonKeyLearningTests.cs
+index 5f32ad425e3..abfb8170b5d 100644
+--- a/Tests/ExperimentFixes/TranslationKnnPerLessonKeyLearningTests.cs
++++ b/Tests/ExperimentFixes/TranslationKnnPerLessonKeyLearningTests.cs
+@@ -42,7 +42,11 @@ using LlmFromScratch.Tests.ExperimentFixes;
+ // различных адресов ОДНОГО урока. Самих различных адресов по всей панели
+ // меньше, потому что уроки панели попадают в одни и те же адреса. Называть
+ // сумму m «числом различных адресов» — ложный ярлык, и он здесь запрещён.
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любого урока обучения, а освобождает ОДИН раз после
++// последнего теста класса.
+ public sealed class TranslationKnnPerLessonKeyLearningTests
++    : IClassFixture<TranslationKnnPerLessonKeyLearningTests.AttemptScopeFixture>
+ {
+     // Тема урока: как в панели карточки.
+     private const string Topic = "general";
+@@ -102,8 +106,28 @@ public sealed class TranslationKnnPerLessonKeyLearningTests
+         RepositoryRoot(), "artifacts", "fbe", "FIX-P60", "attempt-0001");
+ 
+     // Куда этому прогону разрешено писать: решает общий приёмник доказательств.
+-    private static readonly Lazy<ExperimentEvidenceSink> Evidence = new(() =>
+-        ExperimentEvidenceSink.ForDeclaredDirectory(RepositoryRoot(), AttemptDirectory()));
++    //
++    // Почему ленивое поле заменено фикстурой класса. В этом испытании есть настоящие уроки обучения,
++    // поэтому поздний захват означал оплату обучения до того, как станет известен отказ. Фикстура
++    // класса создаётся раньше конструктора теста, поэтому захват адреса стал первым действием
++    // попытки, а завершение попытки ставится ровно один раз.
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку этого испытания и ставит её в поле класса.</summary>
++        public AttemptScopeFixture()
++            : base(RepositoryRoot(), AttemptDirectory(), nameof(TranslationKnnPerLessonKeyLearningTests))
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            => AttemptScope = this;
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник доказательств захваченной попытки этого класса.</summary>
++    private static ExperimentEvidenceSink Evidence =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(TranslationKnnPerLessonKeyLearningTests) + " не была создана.")).Evidence;
+ 
+     // Доказательства пишутся в пригодном для хранилища виде: без метки порядка
+     // байтов, перевод строки одним знаком, без пробелов в конце строк.
+@@ -114,7 +138,7 @@ public sealed class TranslationKnnPerLessonKeyLearningTests
+             text.Replace("\r\n", "\n").Split('\n').Select(line => line.TrimEnd()));
+ 
+         // Запись выполняется приёмником, который и выбрал разрешённый каталог.
+-        Evidence.Value.WriteTextExactly(relativePath, normalized);
++        Evidence.WriteTextExactly(relativePath, normalized);
+     }
+ 
+     // Три адреса, под которые продуктовая запись урока кладёт один и тот же урок.
+diff --git a/Tests/ExperimentFixes/TranslationPhraseAdmissionAlignmentTests.cs b/Tests/ExperimentFixes/TranslationPhraseAdmissionAlignmentTests.cs
+index 31c6e87b144..48e15103a71 100644
+--- a/Tests/ExperimentFixes/TranslationPhraseAdmissionAlignmentTests.cs
++++ b/Tests/ExperimentFixes/TranslationPhraseAdmissionAlignmentTests.cs
+@@ -47,9 +47,14 @@ namespace LlmFromScratch.Tests;
+ using System.Text.Json;
+ using System.Text.Json.Serialization;
+ using AgentInfrastructure.Logical;
++using LlmFromScratch.Tests.ExperimentFixes;
+ using TranslationDomain;
+ 
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любого урока обучения, а освобождает ОДИН раз после
++// последнего теста класса.
+ public sealed class TranslationPhraseAdmissionAlignmentTests
++    : IClassFixture<TranslationPhraseAdmissionAlignmentTests.AttemptScopeFixture>
+ {
+     // ── Вход первый: больший охват вытеснил допустимый разрез из двух фраз ─────
+ 
+@@ -611,18 +616,50 @@ public sealed class TranslationPhraseAdmissionAlignmentTests
+ 
+     // Приёмник улик этой попытки: каталог наряда
+     // artifacts/fbe/AUDIT-A07-PHRASE-ADMISSION/attempt-0001, подкаталог receipts.
+-    private static readonly Lazy<ExperimentFixes.ExperimentEvidenceSink> ReceiptSink = new(() =>
+-    {
+-        // Корень хранилища ищется подъёмом от каталога сборки проверок.
+-        var root = RepositoryRootOrNull()
++    //
++    // Почему ленивое поле заменено фикстурой класса. Ленивое поле рождало приёмник при ПЕРВОЙ записи
++    // улики, то есть уже после уроков обучения этого испытания. Фикстура класса создаётся раньше
++    // конструктора теста, поэтому захват адреса стал первым действием попытки, а завершение попытки
++    // ставится ровно один раз.
++
++    /// <summary>Корень рабочей копии для попытки этого испытания; его отсутствие — настоящий отказ.</summary>
++    private static string ReceiptRepositoryRoot()
++        // Отсутствие корня означает, что улики писать некуда, и это называется прямо.
++        => RepositoryRootOrNull()
+             ?? throw new InvalidOperationException("корень хранилища не найден подъёмом от " + AppContext.BaseDirectory);
+-        // Назначенный каталог улик этого наряда.
+-        var declared = Path.Combine(root, "artifacts", "fbe", "AUDIT-A07-PHRASE-ADMISSION", "attempt-0001", "receipts");
+-        // Общий приёмник решает, куда писать, и один раз сообщает об этом.
+-        var sink = ExperimentFixes.ExperimentEvidenceSink.ForDeclaredDirectory(root, declared);
+-        sink.EnsureWriteRootDirectory();
+-        return sink;
+-    });
++
++    /// <summary>Назначенный каталог улик этого наряда: адрес не меняется этим ремонтом.</summary>
++    private static string ReceiptDeclaredDirectory()
++        // Тот же адрес, что был у ленивого поля: artifacts/fbe/AUDIT-A07-PHRASE-ADMISSION/attempt-0001/receipts.
++        => Path.Combine(
++            ReceiptRepositoryRoot(), "artifacts", "fbe", "AUDIT-A07-PHRASE-ADMISSION", "attempt-0001", "receipts");
++
++    /// <summary>Захваченная попытка этого испытания: оснастка создаёт её до первого теста.</summary>
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку, ставит её в поле класса и создаёт каталог записи.</summary>
++        public AttemptScopeFixture()
++            : base(
++                ReceiptRepositoryRoot(),
++                ReceiptDeclaredDirectory(),
++                nameof(TranslationPhraseAdmissionAlignmentTests))
++        {
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            AttemptScope = this;
++
++            // Каталог записи создаётся сразу, как это делало прежнее ленивое поле.
++            Evidence.EnsureWriteRootDirectory();
++        }
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник улик захваченной попытки этого класса.</summary>
++    private static ExperimentFixes.ExperimentEvidenceSink ReceiptSink =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(TranslationPhraseAdmissionAlignmentTests) + " не была создана.")).Evidence;
+ 
+     // RepositoryRootOrNull поднимается от каталога сборки до каталога с продуктом и уликами.
+     private static string? RepositoryRootOrNull()
+@@ -659,7 +696,7 @@ public sealed class TranslationPhraseAdmissionAlignmentTests
+         // Страховка от возврата каретки внутри строкового значения.
+         var normalized = json.Replace("\r\n", "\n");
+         // Приёмник пишет байты как есть: UTF-8 без метки порядка байтов.
+-        ReceiptSink.Value.WriteTextExactly(fileName, normalized + "\n");
++        ReceiptSink.WriteTextExactly(fileName, normalized + "\n");
+     }
+ 
+     // ── вспомогательное ────────────────────────────────────────────────────────
+diff --git a/Tests/ExperimentFixes/TranslationPhraseCoverageLearningTests.cs b/Tests/ExperimentFixes/TranslationPhraseCoverageLearningTests.cs
+index 195d7800cf9..782fe316979 100644
+--- a/Tests/ExperimentFixes/TranslationPhraseCoverageLearningTests.cs
++++ b/Tests/ExperimentFixes/TranslationPhraseCoverageLearningTests.cs
+@@ -42,12 +42,17 @@ using System.Text.Encodings.Web;
+ using System.Text.Json;
+ using System.Text.Json.Serialization;
+ using AgentInfrastructure.Logical;
++using LlmFromScratch.Tests.ExperimentFixes;
+ using TranslationDomain;
+ // PhraseEntry — та же форма записи выученной фразы, которую продукт строит для обоих своих
+ // сборщиков (TranslationTrainedUnits.cs:1025-1032): адрес, адрес по словам, выученный перевод.
+ using PhraseEntry = (string SourceKey, string[] SourceTokens, string Target);
+ 
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любого урока обучения, а освобождает ОДИН раз после
++// последнего теста класса.
+ public sealed class TranslationPhraseCoverageLearningTests
++    : IClassFixture<TranslationPhraseCoverageLearningTests.AttemptScopeFixture>
+ {
+     // Три урока опыта 54: у каждого ровно одно фразовое соответствие и ни одного
+     // однословного, поэтому область разрешения планировщика выполняется.
+@@ -1070,18 +1075,50 @@ public sealed class TranslationPhraseCoverageLearningTests
+     // artifacts/fbe/FIX-P54-PHRASE-COVERAGE/attempt-0001, подкаталог receipts. Пока каталог не
+     // опубликован, прогон пишет в него; после публикации общий приёмник уводит прогон в свежий
+     // каталог результатов испытаний и не трогает опубликованные байты.
+-    private static readonly Lazy<ExperimentFixes.ExperimentEvidenceSink> ReceiptSink = new(() =>
+-    {
+-        // Корень хранилища ищется подъёмом от каталога сборки проверок.
+-        var root = RepositoryRootOrNull()
++    //
++    // Почему ленивое поле заменено фикстурой класса. Ленивое поле рождало приёмник при ПЕРВОЙ записи
++    // улики, то есть уже после уроков обучения этого испытания. Фикстура класса создаётся раньше
++    // конструктора теста, поэтому захват адреса стал первым действием попытки, а завершение попытки
++    // ставится ровно один раз.
++
++    /// <summary>Корень рабочей копии для попытки этого испытания; его отсутствие — настоящий отказ.</summary>
++    private static string ReceiptRepositoryRoot()
++        // Отсутствие корня означает, что улики писать некуда, и это называется прямо.
++        => RepositoryRootOrNull()
+             ?? throw new InvalidOperationException("корень хранилища не найден подъёмом от " + AppContext.BaseDirectory);
+-        // Назначенный каталог улик.
+-        var declared = Path.Combine(root, "artifacts", "fbe", "FIX-P54-PHRASE-COVERAGE", "attempt-0001", "receipts");
+-        // Общий приёмник решает, куда писать, и один раз сообщает об этом.
+-        var sink = ExperimentFixes.ExperimentEvidenceSink.ForDeclaredDirectory(root, declared);
+-        sink.EnsureWriteRootDirectory();
+-        return sink;
+-    });
++
++    /// <summary>Назначенный каталог улик этого наряда: адрес не меняется этим ремонтом.</summary>
++    private static string ReceiptDeclaredDirectory()
++        // Тот же адрес, что был у ленивого поля: artifacts/fbe/FIX-P54-PHRASE-COVERAGE/attempt-0001/receipts.
++        => Path.Combine(
++            ReceiptRepositoryRoot(), "artifacts", "fbe", "FIX-P54-PHRASE-COVERAGE", "attempt-0001", "receipts");
++
++    /// <summary>Захваченная попытка этого испытания: оснастка создаёт её до первого теста.</summary>
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку, ставит её в поле класса и создаёт каталог записи.</summary>
++        public AttemptScopeFixture()
++            : base(
++                ReceiptRepositoryRoot(),
++                ReceiptDeclaredDirectory(),
++                nameof(TranslationPhraseCoverageLearningTests))
++        {
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            AttemptScope = this;
++
++            // Каталог записи создаётся сразу, как это делало прежнее ленивое поле.
++            Evidence.EnsureWriteRootDirectory();
++        }
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник улик захваченной попытки этого класса.</summary>
++    private static ExperimentFixes.ExperimentEvidenceSink ReceiptSink =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(TranslationPhraseCoverageLearningTests) + " не была создана.")).Evidence;
+ 
+     // RepositoryRootOrNull поднимается от каталога сборки до каталога с продуктом перевода и уликами.
+     private static string? RepositoryRootOrNull()
+@@ -1123,6 +1160,6 @@ public sealed class TranslationPhraseCoverageLearningTests
+         var normalized = json.Replace("\r\n", "\n");
+         // Приёмник пишет байты как есть: UTF-8 без метки порядка байтов и без возвратов каретки —
+         // ровно тот формат, в котором лежат опубликованные показания общего приёмника.
+-        ReceiptSink.Value.WriteTextExactly(fileName, normalized + "\n");
++        ReceiptSink.WriteTextExactly(fileName, normalized + "\n");
+     }
+ }
+diff --git a/Tests/ExperimentFixes/TranslationTrainingJsonPolicyReuseAllocationTests.cs b/Tests/ExperimentFixes/TranslationTrainingJsonPolicyReuseAllocationTests.cs
+index 24112da5b1a..a7efbc21ebf 100644
+--- a/Tests/ExperimentFixes/TranslationTrainingJsonPolicyReuseAllocationTests.cs
++++ b/Tests/ExperimentFixes/TranslationTrainingJsonPolicyReuseAllocationTests.cs
+@@ -28,7 +28,11 @@ using LlmFromScratch.Tests.ExperimentFixes;
+ // другое число, и узкий порог покраснел бы не по вине продукта. Поэтому число
+ // попадает в доказательства, а утверждение держит только заведомо широкую
+ // границу — см. комментарий у самой границы.
++// Фикстура класса ниже даёт этому испытанию ранний захват попытки: оснастка создаёт её ДО
++// конструктора тестового класса и до любого урока обучения, а освобождает ОДИН раз после
++// последнего теста класса.
+ public sealed class TranslationTrainingJsonPolicyReuseAllocationTests
++    : IClassFixture<TranslationTrainingJsonPolicyReuseAllocationTests.AttemptScopeFixture>
+ {
+     // Число уроков в измеряемом окне: как в исходном опыте JO1.
+     private const int LessonCount = 16;
+@@ -92,8 +96,31 @@ public sealed class TranslationTrainingJsonPolicyReuseAllocationTests
+     // доказательств: пока попытка не опубликована, прогон пишет в назначенный
+     // каталог; как только она опубликована, тот же прогон уходит в игнорируемый
+     // каталог результатов испытаний и не трогает опубликованное наблюдение.
+-    private static readonly Lazy<ExperimentEvidenceSink> Evidence = new(() =>
+-        ExperimentEvidenceSink.ForDeclaredDirectory(RepositoryRoot(), AttemptDirectory()));
++    //
++    // Почему ленивое поле заменено фикстурой класса. В этом испытании есть настоящие уроки обучения,
++    // поэтому поздний захват означал оплату обучения до того, как станет известен отказ. Фикстура
++    // класса создаётся раньше конструктора теста, поэтому захват адреса стал первым действием
++    // попытки, а завершение попытки ставится ровно один раз.
++    public sealed class AttemptScopeFixture : ExperimentAttemptScope
++    {
++        /// <summary>Захватывает попытку этого испытания и ставит её в поле класса.</summary>
++        public AttemptScopeFixture()
++            : base(
++                RepositoryRoot(),
++                AttemptDirectory(),
++                nameof(TranslationTrainingJsonPolicyReuseAllocationTests))
++            // Поле класса заполняется только после успешного захвата: иначе области не существует.
++            => AttemptScope = this;
++    }
++
++    /// <summary>Захваченная попытка этого класса: её ставит фикстура до первого теста.</summary>
++    private static AttemptScopeFixture? AttemptScope;
++
++    /// <summary>Приёмник доказательств захваченной попытки этого класса.</summary>
++    private static ExperimentEvidenceSink Evidence =>
++        (AttemptScope ?? throw new InvalidOperationException(
++            "Область попытки не захвачена: фикстура класса " +
++            nameof(TranslationTrainingJsonPolicyReuseAllocationTests) + " не была создана.")).Evidence;
+ 
+     // Доказательства пишутся сразу в пригодном для хранилища виде: без метки
+     // порядка байтов, перевод строки одним знаком, без пробелов в конце строк.
+@@ -104,7 +131,7 @@ public sealed class TranslationTrainingJsonPolicyReuseAllocationTests
+             text.Replace("\r\n", "\n").Split('\n').Select(line => line.TrimEnd()));
+ 
+         // Запись выполняется приёмником, который и выбрал разрешённый каталог.
+-        Evidence.Value.WriteTextExactly(relativePath, normalized);
++        Evidence.WriteTextExactly(relativePath, normalized);
+     }
+ 
+     [Fact]
+diff --git a/docs/plans/replanning-possible-diffs/experimets/00-README.md b/docs/plans/replanning-possible-diffs/experimets/00-README.md
+index f6d7a7addf6..eef60d1b012 100644
+--- a/docs/plans/replanning-possible-diffs/experimets/00-README.md
++++ b/docs/plans/replanning-possible-diffs/experimets/00-README.md
+@@ -1,7 +1,7 @@
+ # Эксперименты: действующая навигация после P131 — 3 ноября 2026
+ 
+ <!-- CURRENT-EXECUTOR-20261112-BB1 -->
+-**12 ноября — действующее дополнение: [контекст после F03](../fixes-based-on-experiments/audits/2026-11-12/executor-context-and-index-repair.md).** Начало исполнения задаёт [индекс переносов](../fixes-based-on-experiments/01-registry.md#executor-next), а конкретный опыт — назначенный ID из [индекса опытов](cards/00-execution-index.md). Пересчёт исторических raw не является повтором PRIMARY; новая native-приёмка writer отдельно учитывает реальный selector/setup. Для обоих видов карточек обязательны применимые CTX12, русский отчёт, точный remaining и немедленный STOP/NEXT.
++**12 ноября — действующее дополнение: [контекст после F03](../fixes-based-on-experiments/audits/2026-11-12/executor-context-and-index-repair.md).** Начало исполнения задаёт [индекс переносов](../fixes-based-on-experiments/01-registry.md#executor-next): технические51+3 уже проверены, следующий остатокR01. Конкретный опыт задаётся назначенным ID из [индекса опытов](cards/00-execution-index.md). Пересчёт исторических raw не является повтором PRIMARY; новая native-приёмка writer отдельно учитывает реальный selector/setup. Файл, вызывающий метод и полный класс связываются до discovery. Для обоих видов карточек обязательны применимые CTX12, русский отчёт, точный remaining и немедленный STOP/NEXT.
+ 
+ **Уточнение 4 ноября — [161: поручение после Q01/POSTQ011](../fixes-based-on-experiments/codex-161-postq011-executor-context-repair-2026-11-04.md).** Переносы первыми; экспериментальная работа — только в разрешённом заранее ожидаемом ожидании переноса от 30 минут либо после завершения переносов/исправлений. Не повторять записанный PRIMARY ради технической приёмки. Q001–Q011 приняты как разборы; Q012 этой документной правкой не назначен. Для P06/P12 и соседней E-SFT-MOMENT-CONTINUITY добавлены границы настоящего importer и собственного состояния; 131 основные строки и прежние научные результаты сохраняются.
+ 
+diff --git a/docs/plans/replanning-possible-diffs/experimets/46-qa-execution-test-repair-and-fresh-results-2026-11-03.md b/docs/plans/replanning-possible-diffs/experimets/46-qa-execution-test-repair-and-fresh-results-2026-11-03.md
+index 8f2fa81cee5..40d3ed343a8 100644
+--- a/docs/plans/replanning-possible-diffs/experimets/46-qa-execution-test-repair-and-fresh-results-2026-11-03.md
++++ b/docs/plans/replanning-possible-diffs/experimets/46-qa-execution-test-repair-and-fresh-results-2026-11-03.md
+@@ -1,7 +1,9 @@
+ # QA переноса: запуск, исправление тестов и доказательство свежего результата
+ 
+ <!-- EXECUTOR-CONTEXT-20261112-BB1 -->
+-**12 ноября — обязательны [CTX12-TRX/SCOPE/FINAL/WAIT](../fixes-based-on-experiments/audits/2026-11-12/executor-context-and-index-repair.md).** Не считать `outcome` регулярным выражением по всему TRX: summary тоже содержит исход. Выбирать UnitTestResult, identities/data rows и Counters по XML-схеме. У mutation-marker сохранено 10=9+1, не два отказа. До запуска составить caller manifest, обнаружить static/Lazy/class fixture и полный расход selector. После последней кодовой правки нужны свежая сборка и соответствующая приёмка; ранний green и журнал процесса её не заменяют. Для назначенной QA тесты и их доказательная адаптация разрешены и обязательны.
++**12 ноября — обязательны [CTX12-TRX/SCOPE/FINAL/WAIT](../fixes-based-on-experiments/audits/2026-11-12/executor-context-and-index-repair.md).** Не считать `outcome` регулярным выражением по всему TRX: summary тоже содержит исход. Выбирать UnitTestResult, identities/data rows и Counters по XML-схеме. У mutation-marker сохранено 10=9+1, не два отказа. До запуска составить карту файл → метод вызова → полный класс → discovered cases, обнаружить static/Lazy/class fixture и полный расход selector. Соседний класс того же файла нельзя потерять из-за фильтра по имени файла. После последней кодовой правки нужны свежая сборка и соответствующая приёмка; ранний green и журнал процесса её не заменяют. Снимок входов включает новые ещё не отслеживаемые исходники, если их подбирает project glob. Изменение входов во время сборки требует нового устойчивого снимка, а не приписывания сборке прежнего commit. Для назначенной QA тесты и их доказательная адаптация разрешены и обязательны.
++
++Практический пример повторной QA: CS0246 у наследника существующего `ExperimentAttemptScope` возник из-за отсутствующего `using` его пространства имён. Правильный ремонт — добавить нужный импорт по объявлению типа, сохранить первый compiler log и пересобрать; неправильный — исключить тестовый файл или поменять его смысл ради сборки. Инвентаризация также должна быть ограниченной: известные входы проекта и новые исходники его compile-каталогов, без обхода старых результатов и вложенных рабочих копий. Задержка инструмента не доказывает смерть дочернего процесса; подготовка доказательств не должна бесконечно заменять саму назначенную проверку.
+ 
+ **Конкретные примеры Q01/Q02 и порядок ожидания — [161](../fixes-based-on-experiments/codex-161-postq011-executor-context-repair-2026-11-04.md).** Включать его применимую часть прямо в поручение вместе с этим QA-стеком. Первый Q01 25/29 был отказом подготовки, итоговый 29/29 — адресной приёмкой; нельзя приписывать им RED→GREEN старого продукта или полный suite. Правильный нулевой результат намеренно ошибочного ответа проверяет измеритель при сохранённом положительном контроле; учебное 0→0 остаётся непригодным доказательством усвоения. Q02: expected нового builder `TENSE=PAST` отличается от сохранения legacy `TENSE_PAST` в PAIR-removal; глобальное обновление всех expected неправильно. Команды, пути вывода, карта навыков и эскалация конкретного спорного договора приведены в 161, §3–6.
+ 
+diff --git a/docs/plans/replanning-possible-diffs/experimets/cards/00-execution-index.md b/docs/plans/replanning-possible-diffs/experimets/cards/00-execution-index.md
+index e6d6ed94085d0b95143d2e6a99f66a3f4de06876..52f9e3ee3a5780e819abb9345a589139a682c35f 100644
+GIT binary patch
+delta 241
+zcmeDD<+1RO$A+hjj8>BiawOR=Y`EC3aItCnhZ24<!A%#tFKoQ9?_$G+T^BZ(8fqI)
+zx6|d3n10|07dz*M3%f7&T<o~8b-Lp#R#Abi7xrA(cVX|vrXT}DJ%tNvH@{>&%P2An
+zXk5d^rVASsE^NQB;llol%@-S|FSy4gGX2wA4j~?ei!DIWofmd1T-Y&v{bW{I9-u|L
+zfqEK&uzNc940g%M+nC#$ZCToFSr~zs35c127{q4<Vm2UV2VxE&<^*CcAm#>Q9w6og
+UVm=_|2Vwyr7Tj*jB6P+A096rZ&j0`b
+
+delta 104
+zcmZ4Z$D{L?$A+hjEY=DadpB1xon@SSo~3OvmzZF4Dr<WxD<cpy0WmWWvj8zjj17p{
+kftUk`If0l9h`E872Z(urm=B2gfmi^D1-GZN3hl7~06EAXUjP6A
+
+diff --git a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/01-registry.md b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/01-registry.md
+index cea5ad7f811..dbb8baec494 100644
+--- a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/01-registry.md
++++ b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/01-registry.md
+@@ -4,11 +4,13 @@
+ <a id="executor-next"></a>
+ ## Действующий вход после аудита 12 ноября
+ 
+-**Сейчас выполнять F03: назначенную проверку восьми дополнительных классов, создающих приёмник результатов.** Их точные пути указаны в [инструкции](audits/2026-11-12/executor-context-and-index-repair.md). Эти классы не входили в прежние 86 успешных проверок. Затем исправить захват каталога до подготовки и обучения, явное завершение попытки и общий доступ к журналам в рамках R01. После R01 — внешний итог процесса R02 и обязательные ограничения результата R03. Это уточнение существующего задания, без новых работ в счётчике.
++**Следующий ремонт — F03/R01: захватить каталог до подготовки и обучения у настоящих вызывающих, явно завершать попытку и передать внешние журналы тому же владельцу.** Проверку дополнительных вызывающих повторно брать из очереди не нужно: в `6b52307dc26` опубликованы 51/51 и отдельные 3/3 контрольного класса; XML и коды завершения перечитаны. Это закрывает назначенный пробел выборки, но не весь F03. После R01 — внешний итог процесса R02, затем обязательные ограничения результата R03. [Точные остатки и доказательства](audits/2026-11-12/executor-context-and-index-repair.md). Новых работ в счётчике нет.
++
++R01 уже ведёт существующая линия исполнителя F03. Повторная QA этого индекса проверяет результат и совместимость; она не назначает второго исполнителя того же переноса. Локальный код в работе и начатый прогон не являются принятым завершением R01.
+ 
+ **Уже исправлено:** три замечания второй рецензии — ожидаемое поле source при разрешённой подстановке окружения, недоказанная ссылка на DLL и число полей маркера. Они опубликованы в `ce245ae2d3a` класса ACCEPT; повторять исправление не нужно. Подтверждающая рецензия учитывается по её фактическому результату. Весь F03 этим коммитом не закрыт.
+ 
+-**Связь с карточками:** F03/B05 соответствует уточнённому R01; далее R02/B06 и R03/B14 по [плану после A07](audits/2026-11-12/post-admission/codex-repair-plan.md). Открыты также проверки двух отдельных процессов, новой попытки при повторном запуске и запрета записи после завершения. [Точное поручение, охват, навыки и примеры](audits/2026-11-12/executor-context-and-index-repair.md). Исторический DRAFT bb1 и его сохранённые 86/86 остаются доказательством своего ограниченного объёма.
++**Связь с карточками:** F03/B05 соответствует уточнённому R01; далее R02/B06 и R03/B14 по [плану после A07](audits/2026-11-12/post-admission/codex-repair-plan.md). Открыты также проверки двух отдельных процессов, новой попытки при повторном запуске и запрета записи после завершения. [Точное поручение, охват, навыки и примеры](audits/2026-11-12/executor-context-and-index-repair.md). Исторический DRAFT bb1 и его сохранённые 86/86 остаются доказательством своего ограниченного объёма. В карте проверки указывать полный класс и метод: файл `TranslationBatchTypeMismatchRollbackTests.cs` содержит ещё и `TranslationBatchTypeMismatchRollbackControlTests`, которому принадлежит вызов приёмника. Имя файла не является фильтром всех его тестов.
+ 
+ Q01/Q02, раздельные итоги Q03, shell-host и spawn-counting сохраняют свои поздние приёмки; их не выполнять заново по старым NEXT ниже. A07 wiring также принят. Ресурсы/after-load A07, confidence R05 и прочие R04–R11 остаются самостоятельными остатками существующего плана. Новых work IDs или результатов опытов этой правкой нет. Если пользователь назначил конкретный ID, действует его назначение. Все нижние датированные NEXT читаются как история; эта ссылка — текущая точка входа.
+ 
+diff --git a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/03-test-and-execution-contract.md b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/03-test-and-execution-contract.md
+index 3ece535b05a..5e75531e4db 100644
+--- a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/03-test-and-execution-contract.md
++++ b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/03-test-and-execution-contract.md
+@@ -1,7 +1,7 @@
+ # Общий контракт тестов, исполнителя и отчёта
+ 
+ <!-- EXECUTOR-CONTEXT-20261112-BB1 -->
+-**12 ноября: обязательное дополнение к назначенному исполнению — [контекст после F03](audits/2026-11-12/executor-context-and-index-repair.md).** Включать CTX12-SCOPE/TRX/FINAL/WAIT/TERMINAL прямо в поручение. Caller manifest строится до изменения общего API; 86/86 подтверждают выбранные классы, не всех callers. Owner должен предшествовать настоящему fixture/setup/model call, а не только synthetic OwnThenTrain. Источник каждого результата и независимый внешний terminal обязательны; runtime запрет исследователю не запрещает QA назначенному исполнителю.
++**12 ноября: обязательное дополнение к назначенному исполнению — [контекст после F03](audits/2026-11-12/executor-context-and-index-repair.md).** Включать CTX12-SCOPE/TRX/FINAL/WAIT/TERMINAL прямо в поручение. Caller manifest строится до изменения общего API: файл → вызывающий метод → полный класс → discovery cases. Имя файла не заменяет имена всех классов внутри него; пример — дополнительный TranslationBatchTypeMismatchRollbackControlTests. 86/86 подтверждают выбранную область, не всех callers. Owner должен предшествовать настоящему fixture/setup/model call, а не только synthetic OwnThenTrain. Источник каждого результата и независимый внешний terminal обязательны; runtime запрет исследователю не запрещает QA назначенному исполнителю.
+ 
+ <!-- XIIGEN-AUDIT-FOLLOWUP-20261111-03:START -->
+ ## Уточнение 11 ноября: владелец попытки и внешний итог
+diff --git a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/README.md b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/README.md
+index 5efebd01541..1013078a163 100644
+--- a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/README.md
++++ b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/README.md
+@@ -1,7 +1,7 @@
+ # Перенос измеренных улучшений из экспериментов в основной код
+ 
+ <!-- CURRENT-EXECUTOR-20261112-BB1 -->
+-**12 ноября — [актуальный вход исполнителя](01-registry.md#executor-next) и [исправленный контекст после F03](audits/2026-11-12/executor-context-and-index-repair.md).** Сейчас назначен прогон восьми дополнительных классов, создающих приёмник результатов. Затем — захват каталога до подготовки и обучения, явное завершение попытки и остальные исправления F03/R01. После них — R02/B06 и R03/B14. Три замечания второй рецензии исправлены в `ce245ae2d3a`; весь F03 этим не закрыт. Старые NEXT Q02/Q03 ниже исторические. Уточнены охват 86/86, подсчёт случаев XML/TRX, внешний итог процесса и расходы полного набора проверок. Карточки получили конкретные примеры и правила применения навыков. Новый научный запуск здесь не назначен.
++**12 ноября — [актуальный вход исполнителя](01-registry.md#executor-next) и [исправленный контекст после F03](audits/2026-11-12/executor-context-and-index-repair.md).** Следующий ремонт — захват каталога до подготовки и обучения, явное завершение попытки и остальные исправления F03/R01; затем R02/B06 и R03/B14. Дополнительная выборка уже проверена в `6b52307dc26`: 51/51 и отдельные 3/3 настоящего контрольного вызывающего. Три замечания второй рецензии исправлены в `ce245ae2d3a`; весь F03 этими коммитами не закрыт. Старые NEXT Q02/Q03 ниже исторические. В карточках различены файл, класс и метод, охват результатов, внешний итог процесса и расходы полного набора проверок. Новый научный запуск здесь не назначен.
+ 
+ <!-- SNAPSHOT-AUDIT-2026-11-09-F37A:START -->
+ ## Уточнение аудита — 9 ноября 2026
+diff --git a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/executor-context-and-index-repair.md b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/executor-context-and-index-repair.md
+index 0d1580cd6ee..e7eb3abfbf3 100644
+--- a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/executor-context-and-index-repair.md
++++ b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/executor-context-and-index-repair.md
+@@ -1,8 +1,8 @@
+ # Исполнителю после аудитов 12 ноября: точная область ремонта и проверки
+ 
+-**Текущий следующий шаг F03/B05 — уже назначенный прогон восьми дополнительных factory callers. Затем ранний захват и явное завершение у вызывающих и остальные пункты R01; далее R02/B06 и R03/B14.** Три замечания второй рецензии закрыты опубликованным `ce245ae2d3a` класса ACCEPT; его подтверждающая рецензия остаётся отдельным фактом. Старые NEXT Q01/Q02/Q03 и прежнее требование снова писать поля не назначают повтор. Это уточнение [существующего плана R01–R11](post-admission/codex-repair-plan.md), а не ещё один список самостоятельных переносов.
++**Следующий ремонт F03/B05 — ранний захват и явное завершение у настоящих вызывающих и остальные пункты R01; далее R02/B06 и R03/B14.** Дополнительная выборка уже выполнена и опубликована в `6b52307dc26`: 51/51 и отдельные 3/3 контрольного класса. Родитель повторно разобрал оба XML и прочитал коды завершения. Три замечания второй рецензии закрыты `ce245ae2d3a`. Общий F03 остаётся открыт. Старые NEXT Q01/Q02/Q03 и прежнее требование снова проверять восемь имён не назначают повтор. Это уточнение [существующего плана R01–R11](post-admission/codex-repair-plan.md), а не новый список переносов.
+ 
+-Срез источников: core `bb1c647166aa738530275a8fbadb214a869aed27`; исходный аудит `7f8970b4`, поздний аудит `9dc7f71c775`. Пользовательские приложения сопоставлены с более поздними исходниками и сохранёнными результатами. Нынешняя задача — исправление документов. Новые сборки, научные опыты, обучение и продуктовые правки здесь не выполнялись.
++Исторический срез первоначальной документной правки: core `bb1c647166aa738530275a8fbadb214a869aed27`; исходный аудит `7f8970b4`, поздний аудит `9dc7f71c775`. Тогда новые сборки и тесты не выполнялись. После прямого требования пользователя повторная QA включает свежую сборку, discovery и адресные тесты; её фактические результаты и границы записываются отдельно в [свидетельствах](executor-context-evidence.md). Историческая документная фаза не запрещает назначенную QA и не выдаётся за неё.
+ 
+ **Позднее движение параллельной линии:** после вердикта второй рецензии «НУЖНА ПОЧИНКА» исполнитель исправил expected для `XIIGEN_EVIDENCE_SOURCE`, понизил неподтверждённую ссылку на DLL bb1 и уточнил11 полей вместо6. Это опубликовано в `ce245ae2d3a`; root прочитал commit и новую живую очередь, но не повторял его native-приёмку. Подтверждающая рецензия этого commit не считается завершённой по его названию. Восемь дополнительных callers уже назначены автором доски отдельным прогоном. Чужие тесты, результаты и протокол не выдаются за работу данной документной сессии.
+ 
+@@ -10,7 +10,7 @@
+ 
+ | Работа | Подтверждённая область | Следующее действие |
+ |---|---|---|
+-| F03, bb1→ce245 | Сохранённые E/F86/86 и мутации bb1 прочитаны этой сессией. Поздний ce245 публикует ремонт трёх замечаний и собственную приёмку; она не выдана за наш новый прогон | Не переписывать поля/expected. Выполнить уже назначенную проверку восьми дополнительных callers; подтверждающую рецензию ce245 учитывать по реальному результату. ОбщийF03 не закрыт |
++| F03, bb1→ce245→6b523 | E/F86/86 и мутации bb1 сохранены. Поздние 51/51 и3/3 attempt-0004 проверены по XML/Counters и exit0 | Дополнительный прогон выполнен. Продолжить только открытый R01; весь F03 и полный набор тестов не объявлять принятыми |
+ | R01/B05, остатки | Atomic claim и single-shot запись существуют | Owner до fixture/setup у настоящих callers; общий owner для stdout/stderr/TRX; два процесса; новый invocation при повторе; закрытие записи; обходные writers/ResolvePath; filesystem containment и mkdir access failure |
+ | R02/B06 | Внутренний отчёт может предшествовать позднему отказу | Внешний actual exit, required IDs и raw одного запуска. Сначала короткие технические child-контроли без обучения |
+ | R03/B14/P50 | Сохранённый положительный результат 2/4→4/4 остаётся историческим | При нарушении обязательного guard сделать непригодными verdict и реальный process exit; чистый replay отдельно от нового научного запуска |
+@@ -23,7 +23,7 @@
+ 
+ Сохранённые A/B/C содержат 27+36+13=76 результатов в 13 классах. Один из них — `ExperimentEvidenceSinkTests`; остальные 12 — ordinary классы. E/F добавляют 10 ownership cases: 86 в 14 классах. Это корректный узкий результат, но подпись «все вызывающие» чрезмерна.
+ 
+-В текущем source search найдены 25 C# файлов со ссылкой на sink: сам sink, два класса его проверок и ещё 22 файла. Среди последних два используют только `IsPublishedEvidenceDirectory`; восемь factory callers отсутствуют в E/F:
++В историческом source search на bb1 найдены 25 C# файлов со ссылкой на sink: сам sink, два файла его проверок и ещё 22 файла. Среди последних два используют только `IsPublishedEvidenceDirectory`; восемь файлов с factory отсутствовали в E/F. Этот перечень файлов не является перечнем классов:
+ 
+ - `Tests/ExperimentFixes/ProbeNeuralNetworkGradientTests.cs`;
+ - `Tests/ExperimentFixes/TranslationBatchJsonLearningTests.cs`;
+@@ -34,6 +34,8 @@
+ - `Tests/ExperimentFixes/TranslationSourcePolarityLearningTests.cs`;
+ - `Tests/ExperimentFixes/TranslationWordRoleConsistencyTests.cs`.
+ 
++**Исправление собственной ошибки охвата:** в файле `TranslationBatchTypeMismatchRollbackTests.cs` вызов factory на строке763 принадлежит `LlmFromScratch.Tests.TranslationBatchTypeMismatchRollbackControlTests`, объявленному на строке561. Одноимённый основной класс на строке368 этот вызов не покрывает. В attempt-0004 основной фильтр дал51 случая, а настоящий контрольный вызывающий получил отдельные3. Для следующих поручений нужны файл → вызывающий метод → полный класс → обнаруженные случаи; запрещено строить фильтр из basename файла или складывать числа файлов и классов.
++
+ Перед следующей **изменяющей API/жизненный цикл** правкой автор задания составляет карту вызывающих: файл/метод → factory или helper-only → время жизни → имена записей → побочные действия подготовки → выбранные FQN/data rows → основание включения/исключения. Затем исполнитель сверяет discovery и результат. Подтверждённые сохранёнными E/F и адресными мутациями свойства не перепроверяются только ради новой подписи. Это не меняет DRAFT-статус bb1 и не заменяет его независимую приёмку. Будущая правка требует обоснованного охвата. Слово «13» не закрепляется как вечное число вызывающих. Точные найденные адреса и границы поиска — [пакет проверки](executor-context-evidence.md).
+ 
+ ## Проверяемые правила и хорошие/плохие примеры
+@@ -41,7 +43,7 @@
+ | Проверка | Плохо | Правильно |
+ |---|---|---|
+ | CTX12-TRX: считать реальные случаи | `grep outcome` по всему XML даёт два падения, потому что считает и ResultSummary | Разобрать XML namespace; брать только `TestRun/Results/UnitTestResult`, сопоставить testId/executionId с definitions и required cases. Сверить Counters, включая not-executed/skipped/abort. Для мутации marker здесь ровно 10=9+1 |
+-| CTX12-SCOPE: не терять вызывающих | Общий WriteText стал single-shot; зелёные новые ownership tests объявлены достаточными | Снять caller manifest и проверить изменённый договор у реальных потребителей, shared fixture и повторного invocation. Отличать отказ/перенаправление опубликованного каталога от записи новой untracked попытки |
++| CTX12-SCOPE: не терять вызывающих | Общий WriteText стал single-shot; зелёные новые ownership tests объявлены достаточными; имя файла принято за имя всех его классов | Снять цепочку файл → метод вызова → полный класс → discovery cases, включая соседние классы того же файла. Проверить договор у реальных потребителей, shared fixture и повторного invocation. Отличать отказ/перенаправление опубликованного каталога от записи новой untracked попытки |
+ | CTX12-FINAL: проверять финальную сборку | Ранний прогон до двух дополнительных правок объявлен итоговым; совпадение DLL само по себе доказывает возврат мутации | После возврата мутации проверить конкретные source-файлы, успешную свежую сборку, identities DLL и именованные результаты той же сборки. Сохранить первый отказ. Документный коммит не меняет кодовую приёмку; если source/config/dependencies изменились — переснять затронутую приёмку |
+ | CTX12-MUTATION: проверять свойство | Любое падение или ошибка компиляции названы чувствительностью к мутации | Прежний lawful positive проходит; обратная мутация достигает исправляемого участка и ломает ожидаемый assertion. Не требовать, чтобы все охранные тесты покраснели |
+ | CTX12-ENV: независимый expected учитывает разрешённый вход | Продукт законно читает source из окружения, тест всегда требует относительный путь | Контролируемые positive для заданного override и отсутствующего/пустого/пробельного значения по договору fallback. Expected задаётся входом и договором, не копированием actual. Не менять пользовательское окружение; изолировать child environment или восстановить свой test scope с учётом параллельности |
+@@ -101,4 +103,4 @@ R01 должен согласовать существующий launcher и sin
+ 
+ Общие входы03/90/120/45/46 получают прямое обязательное включение. Адресные карточки100/107/11/48/109 и P48/P49/P50/P52/P58 получают свой контрпример и условие приёмки. Индексы переносов/экспериментов и planning README ведут сюда и к существующему R-плану; новые work IDs и новые научные результаты не создаются. Исторические тексты сохраняются с явным указанием их даты/приоритета.
+ 
+-Граница этой документной сессии: исходники и saved XML прочитаны адресно, independent worker `/root/nov12_attempt_contract_review` проверил ownership/callers. Полная личная перечитка огромных AGENTS/CLAUDE и всех обязательных skills не завершена; это невыполненное требование, а не «полный reload» по факту машинного чтения. Нового native PASS и полной проверки всех реализаций здесь нет.
++Историческая граница первоначальной документной сессии: исходники и saved XML были прочитаны адресно, independent worker `/root/nov12_attempt_contract_review` проверил ownership/callers. Полная личная перечитка AGENTS/CLAUDE и всех обязательных навыков тогда не была завершена; нового native PASS не было. Это признание сохранено как история ошибки. В повторной QA родитель лично завершил полное чтение обязательного стека; список и новые результаты приведены в [свидетельствах](executor-context-evidence.md). Ни чтение навыков, ни адресная QA не являются полной приёмкой всех реализаций.
+diff --git a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/executor-context-evidence.md b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/executor-context-evidence.md
+index 9930b9e7564..00f1f7a9a8b 100644
+--- a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/executor-context-evidence.md
++++ b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/executor-context-evidence.md
+@@ -1,6 +1,6 @@
+ # Свидетельства к исправлению контекста исполнителя, 12 ноября
+ 
+-Основание — два пользовательских приложения и текущий core `bb1c647166aa738530275a8fbadb214a869aed27`. [Исправленные инструкции](executor-context-and-index-repair.md) дополняют существующие R01–R11. Это адресная проверка документов, исходников и сохранённых результатов; не новый запуск тестов или обучения.
++Первоначальная документная проверка основана на двух пользовательских приложениях и core `bb1c647166aa738530275a8fbadb214a869aed27`. [Исправленные инструкции](executor-context-and-index-repair.md) дополняют существующие R01–R11. Разделы ниже до повторной QA описывают историческое чтение сохранённых результатов, а не новые запуски. Последующее прямое требование пользователя назначило полную перечитку и свежую QA; её результат учитывается отдельно.
+ 
+ ## Сохранённые TRX: прочитаны именно результаты случаев
+ 
+@@ -40,7 +40,7 @@ Worker снял source-reference inventory: 25 C# файлов = sink +2 helper-
+ |---|---|
+ | ProbeNeuralNetworkGradientTests | [616](../../../../../../Tests/ExperimentFixes/ProbeNeuralNetworkGradientTests.cs:616) |
+ | TranslationBatchJsonLearningTests | [643](../../../../../../Tests/ExperimentFixes/TranslationBatchJsonLearningTests.cs:643) |
+-| TranslationBatchTypeMismatchRollbackTests | [763](../../../../../../Tests/ExperimentFixes/TranslationBatchTypeMismatchRollbackTests.cs:763) |
++| TranslationBatchTypeMismatchRollbackControlTests — отдельный класс в файле TranslationBatchTypeMismatchRollbackTests.cs | [763](../../../../../../Tests/ExperimentFixes/TranslationBatchTypeMismatchRollbackTests.cs:763) |
+ | TranslationExactTopicMemoryTests | [664](../../../../../../Tests/ExperimentFixes/TranslationExactTopicMemoryTests.cs:664) |
+ | TranslationLateCorrectionAnnotationConsistencyTests | [602](../../../../../../Tests/ExperimentFixes/TranslationLateCorrectionAnnotationConsistencyTests.cs:602) |
+ | TranslationRequiredWholeTermLearningTests | [662](../../../../../../Tests/ExperimentFixes/TranslationRequiredWholeTermLearningTests.cs:662) |
+@@ -53,16 +53,44 @@ Worker снял source-reference inventory: 25 C# файлов = sink +2 helper-
+ 
+ Тот же worker полностью прочитал новый документ и новые блоки03/90/120/46/P48/P49/P50/P52/P58. Найдены и исправлены: смешение DRAFT с принятым пакетом; неуказанные единицы source-derived расходов main/class. Подтверждена сохранность разрешённой QA, различение actual terminal и внутреннего отчёта, границы Lazy/ACL. Это адресная рецензия, не полный новый аудит продукта.
+ 
+-Полное личное чтение огромных AGENTS/CLAUDE и всех обязательных skills не завершено ни родителем, ни worker. Родитель полностью прочитал local AGENTS, RTK, prompt-patch-authoring, test-failure-triage, systematic-debugging и human-communication-GLOSSARY; остальные большие инструкции прочитаны/обработаны частично. Ни машинное чтение, ни индексирование не названы полным reload. Это невыполненное требование зафиксировано отдельно от полезной документной дельты.
++**Историческое невыполнение до повторной QA:** полное личное чтение AGENTS/CLAUDE и всех обязательных навыков не было завершено ни родителем, ни прежним worker. Родитель тогда полностью прочитал local AGENTS, RTK, prompt-patch-authoring, test-failure-triage, systematic-debugging и human-communication-GLOSSARY; остальные большие инструкции — частично. Машинное чтение и индексирование не являются полным reload. Это прежняя ошибка, а не действующий статус повторной QA ниже.
+ 
+ Позднее изменение параллельной линии: после вердикта второй рецензии «НУЖНА ПОЧИНКА» исполнитель исправил expected source, уточнил 11 полей вместо 6 и снял неподтверждённое утверждение о DLL bb1. Это уже опубликовано в `ce245ae2d3a` класса ACCEPT. Родитель прочитал текст коммита, `ExperimentEvidenceSink.cs:785–786` (override через XIIGEN_EVIDENCE_SOURCE) и тест:683–702 (override/fallback). Значения окружения не читались. Поздние результаты attempt-0003 не пересчитаны этой документной сессией и не выдаются за её новый native PASS. В контекст добавлен CTX12-ENV. Текущая доска параллельного автора назначает проверку восьми дополнительных вызывающих, затем ранний захват и явное завершение попытки; индекс приведён к этой очереди. Само название ACCEPT не доказывает завершение подтверждающей рецензии и не закрывает весь F03.
+ 
+ Коммит `ce245ae2d3a` также включил 22 документа этой сессии через общий индекс Git. Его текст отдельно приписывает эти документы другому участнику и не объявляет их проверенными исполнителем F03. Последующие уточнения публикуются нашей отдельной документной правкой. Собственное временное верхнее примечание к общей доске убрано; все изменения параллельного автора сохранены. Его код, протокол, review-2 и текущая доска не включаются в нашу отдельную документную правку. `git add --all` не означает авторство всех подготовленных файлов.
+ 
+-Никакие новые C# сборки, тесты, модели, Save/Load или научные опыты не выполнялись. Проверки документов и Git-публикация фиксируются отдельно; старые научные raw не изменены.
++В первоначальной документной фазе новые C# сборки, тесты, модели, Save/Load и научные опыты не выполнялись. Эта граница не относится к позже назначенной повторной QA. Старые научные raw сохранены.
+ 
+ ## Проверка документной дельты перед публикацией
+ 
+ После согласования с `ce245ae2d3a` проверены 24 изменённых документа: 22 в core и 2 в planning. В их ссылках найдено 1517 различных локальных адресов; отсутствующих файлов, неверных проверяемых Markdown-якорей, конфликт-маркеров и ошибок декодирования не обнаружено. `git diff HEAD --check` для наших путей завершился с кодом 0 в обоих репозиториях.
+ 
+-Сравнение с bb1 подтвердило: все 124 уникальных якоря `work-*` сохранены в прежнем порядке; все 131 строки с Q-номерами не изменены. Текущий `executor-next` один. Это проверка сохранности реестров, а не повторная предметная приёмка каждой работы. Worker `/root/nov12_attempt_contract_review` дополнительно указал на старый первый шаг в README и в конце плана R01–R11. Оба места исправлены: сначала назначенная проверка восьми вызывающих, затем оставшийся ремонт R01. Уточнение Train=0 не распространяется на учебную подготовку этих классов.
++Сравнение с bb1 подтвердило: все 124 уникальных якоря `work-*` сохранены в прежнем порядке; все 131 строки с Q-номерами не изменены. Текущий `executor-next` один. Это проверка сохранности реестров, а не повторная предметная приёмка каждой работы. Worker `/root/nov12_attempt_contract_review` дополнительно указал на старый первый шаг в README и в конце плана R01–R11. В том срезе назначался прогон восьми вызывающих; после его публикации в6b523 текущая очередь исправлена на оставшийся R01. Уточнение Train=0 не распространяется на учебную подготовку этих классов.
++
++## Повторная проверка по прямому требованию пользователя
++
++Родитель `/root` лично завершил полное чтение local AGENTS, канонических `C:/Projects/llm_mvp_core/AGENTS.md` и `CLAUDE.md`, `C:/Users/lubao/.codex/RTK.md`, а также следующих файлов в `C:/Projects/llm_mvp_core/docs/skills/`. Это перечень фактически прочитанного текста в текущей повторной QA; усечённые выдачи дочитаны отдельными диапазонами. Он не подменяет сборку и не утверждает чтения всех иных файлов каталога.
++
++- Архитектура и план: `task-slice-golden-rule-SKILL.md`, `architect-behavior-classifier-SKILL.md`, `planning-session-startup-SKILL.md`, `plan-review-SKILL.md`.
++- Код и проверка: `generated-code-review-SKILL.md`, `code-examination-SKILL.md`, `code-execution-SKILL.md`, `integration-testing-SKILL.md`, `three-level-verification-SKILL.md`, `verification-before-completion-SKILL.md`.
++- QA и отладка: `qa-session-type-SKILL.md`, `test-integrity-SKILL.md`, `test-failure-triage-SKILL.md`, `systematic-debugging-SKILL.md`, `debug-session-SKILL.md`, `bug-to-tests-SKILL.md`.
++- Постановка опытов: `experiment-design-SKILL.md`, `improvement-measurement-SKILL.md`.
++- Поручение и коммуникация: `prompt-patch-authoring-SKILL.md`, `output-readability-gate-SKILL.md`, `human-readable-architecture-audit-SKILL.md`, `human-communication-GLOSSARY.md`, `conversation-intent-and-self-reflection-SKILL.md`.
++
++Операционный исполнитель `/root/fresh_native_qa` получает границы назначения от родителя; личную полную перечитку родителя себе не приписывает. Его собственное чтение QA-навыков и исходников отражается в отчёте попытки. Предыдущий вывод «чтение не завершено» был верен для предыдущей фазы и исправлен действием сейчас, а не переименованием прежнего частичного чтения.
++
++**Проверка позднего результата6b523:** родитель разобрал `attempt-0004/results/run-01-eight-unverified-callers.trx` и `run-02-supplementary-control-class.trx` непосредственно по XML. Получены51/51 и3/3; failed/skipped/aborted0, Counters совпадают с UnitTestResult. Все пять сохранённых exitcode сборки/discovery/прогонов равны0. Это повторное чтение опубликованного результата, не наш новый запуск.
++
++**Исправление собственной ошибки:** имя файла `TranslationBatchTypeMismatchRollbackTests.cs` было использовано как имя вызывающего класса. В исходнике на6b523 основной класс объявлен на368, контрольный — на561, factory на763 принадлежит контрольному. Сам коммит6b523 признаёт этот дефект первоначального фильтра и сохраняет отдельные3 проверки. Поэтому обновлены карта вызывающих, CTX12-SCOPE, договор03 и QA46; текущие индексы больше не назначают завершённые51+3.
++
++**Повторное чтение чисел опытов:**25 исторических JSON совпали по SHA256 с [закреплёнными входами](post-admission/codex-post-admission-inputs.json). Родитель заново посчитал строки arms.json:
++
++| Опыт | Что улучшилось | Что осталось прежним или ухудшилось | Граница вывода |
++|---|---|---|---|
++| P48, attempt-0003 | Три строки стали верными | Три стали неверными; общая точность12/16→12/16, всего изменились6 ответов | Равенство точности скрывает обмен ошибок; универсальный выигрыш не доказан |
++| P49, attempt-0003 | Полная панель:6/16→11/16, то есть37,5%→68,75% (+31,25 процентного пункта). ПроектB:6/8→7/8 (+12,5 пункта) | NEW_ONLY3/4→3/4, без прироста | Выигравший c-f3-p2: Input3/Gold0 уже присутствует в new TRAIN как Current3/Next0; это не новый независимый вход |
++| P50, attempt-0002 | Правильный порядок обычного потребителя:2/4 в arm_a_outcomes →4/4 в arm_b_outcomes (+50 процентных пунктов) | Циклов0 в обоих плечах | Положительный сохранённый результат остаётся; он не проверяет поведение исполняемого процесса при нарушении mandatory guard |
++| P52, attempt-0002 | Правильный адрес:1/4→3/4, то есть25%→75% (+50 процентных пунктов) | Полный ответ4/4→4/4, точность100% в обоих плечах | Адресный выигрыш полезен; прирост точности ответа не измерен |
++| P58, attempt-0002 | Пригодность фактически ошибочного контрпримера false→true междуA/B | Во всех трёх плечах единственная верная строкаe1, adapter exact-source; остальные0/7 | Локальное усвоение предъявленного e1 не является обобщением на остальные строки |
++
++Эти числа получены повторным разбором прежних данных, без нового научного запуска. Источники: `experiments-v2/RP01-MICRO/P4801/results/attempt-0003/arms.json`, соответствующий P4901/attempt-0003, P5001/attempt-0002, P5201/attempt-0002 и P5801/attempt-0002. Их SHA256 входят в указанный manifest. Source-derived расходы main/class не названы фактическим runtime-счётчиком. Новые измерения CPU, памяти и диска этой таблицей не заявляются.
+diff --git a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/post-admission/codex-repair-plan.md b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/post-admission/codex-repair-plan.md
+index df386d27b75..31bb443b1cf 100644
+--- a/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/post-admission/codex-repair-plan.md
++++ b/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/audits/2026-11-12/post-admission/codex-repair-plan.md
+@@ -1,11 +1,11 @@
+ # План исправлений после аудита переносов и принятия A07
+ 
+ <!-- CURRENT-EXECUTOR-20261112-BB1 -->
+-**Позднее уточнение 12 ноября — [вход исполнителя и конкретные поправки](../executor-context-and-index-repair.md).** В R01 сейчас назначена проверка восьми дополнительных классов, создающих приёмник результатов. Поля маркера и разделение отказов уже реализованы; три замечания второй рецензии исправлены в `ce245ae2d3a`. Общий F03 остаётся открыт. После назначенного прогона — ранний захват каталога и явное завершение у реальных вызывающих, общий владелец журналов и остальные пункты R01; затем R02 и R03. Описание f95 ниже историческое. Результат E/F: 86 случаев в 14 классах, среди которых 12 обычных вызывающих. Он не доказывает совместимость восьми дополнительных классов. Следующая общая правка API требует полного списка затронутых вызывающих и их проверок. Новая очередь работ не создаётся.
++**Позднее уточнение 12 ноября — [вход исполнителя и конкретные поправки](../executor-context-and-index-repair.md).** Дополнительная проверка R01 уже опубликована в `6b52307dc26`: 51/51 и отдельные 3/3 контрольного класса. Следующий ремонт — ранний захват каталога и явное завершение у реальных вызывающих, общий владелец журналов и остальные пункты R01; затем R02 и R03. Поля маркера и разделение отказов существуют; три замечания второй рецензии исправлены в `ce245ae2d3a`. Общий F03 остаётся открыт. Описание f95 ниже историческое. Прежние E/F86/86 и поздние 51+3 сохраняют собственные области проверки. Имя файла не равно имени вызывающего класса: точные FQN и методы обязательны в карте следующей API-правки. Новая очередь работ не создаётся.
+ 
+ Дата: 12 ноября 2026. Основной проверенный продукт: `f089a7d55d359ff103d0cdd9ddfb26eee346a16b`; поздняя отдельно проверенная ownership дельта: `f95a96b324ca59a97abf4a2a3e5c5efdc4e65f64`; planning: `60a43da35df6452299134e1827014d6dc06e97e0`. [Аудит и границы evidence](codex-audit.md).
+ 
+-**Сначала выполнить уже назначенную проверку восьми дополнительных вызывающих; затем довести захват каталога до реальных входов, завершения попытки и внешних писателей.** После этого получить внешний итог процесса и подчинить вывод P50 обязательным ограничениям. Принятое подключение фразового planner повторно выполнять не требуется. Расчёты и карточки уже уточнены этим аудитом. Ниже отдельно отмечено сделанное в F03; оставшиеся изменения C#/PowerShell и их native приёмка ещё предстоят.
++**Сначала довести захват каталога до реальных входов, завершения попытки и внешних писателей.** Назначенный ранее дополнительный прогон завершён, его не выполнять повторно по старому указателю. После R01 получить внешний итог процесса и подчинить вывод P50 обязательным ограничениям. Принятое подключение фразового planner повторно выполнять не требуется. Ниже отдельно отмечено сделанное в F03; оставшиеся изменения C#/PowerShell и их native приёмка ещё предстоят.
+ 
+ Названия новых полей, outcome и proposed tests ниже — проектируемый контракт, если прямо не названа существующая реализация. Они не выдаются за уже имеющиеся API. Числа будущей дозы — границы предложения, а не запись фактического исполнения.
+ 

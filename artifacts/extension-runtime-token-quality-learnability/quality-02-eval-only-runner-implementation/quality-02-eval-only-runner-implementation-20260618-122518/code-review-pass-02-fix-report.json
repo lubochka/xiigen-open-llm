@@ -1,0 +1,108 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner_code_review_pass_02_fix_report.v1",
+  "phase_id": "QUALITY-02-EVAL-ONLY-RUNNER-IMPLEMENTATION-NO-EVAL-EXECUTION",
+  "run_id": "quality-02-eval-only-runner-implementation-20260618-122518",
+  "generated_at_local": "2026-06-18T13:28:35+03:00",
+  "run_root": "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518",
+  "worker_role": "bounded FIX worker",
+  "requested_model": "gpt-5.5",
+  "requested_reasoning_effort": "xhigh",
+  "git_authority": "forbidden",
+  "commit_push_authorized": false,
+  "verdict": "PASS_FOR_PARENT_REVIEW_NO_COMMIT_PUSH",
+  "product_readiness_claimed": false,
+  "actual_approved_eval_executed": false,
+  "synthetic_fixture_only": true,
+  "evidence_scope": "local_private_eval_only",
+  "fixed_findings": [
+    {
+      "id": "CR2-01",
+      "title": "Semantically malformed JSONL can throw instead of returning OperationResult failure",
+      "status": "FIXED",
+      "behavior": "Null deserialized collection fields are validation failures before scoring and do not write reports.",
+      "covered_cases": [
+        "layer_inputs:null",
+        "row failure_codes:null",
+        "layer evidence_refs:null",
+        "layer failure_codes:null",
+        "layer_inputs element:null"
+      ],
+      "error_code": "EVAL_ONLY_INPUT_VALIDATION_FAILED"
+    },
+    {
+      "id": "CR2-02",
+      "title": "Raw private text can leak through failure_codes while raw_private_text_copied=false",
+      "status": "FIXED",
+      "behavior": "Row and layer failure_codes are privacy-marker validated before output artifacts are built.",
+      "covered_cases": [
+        "row failure_codes sentinel",
+        "layer failure_codes sentinel"
+      ],
+      "error_code": "EVAL_ONLY_INPUT_VALIDATION_FAILED",
+      "raw_private_text_copied": false,
+      "sentinel_copied_to_shared_artifacts": false
+    }
+  ],
+  "changed_files": [
+    "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+    "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-pass-02-after-fix.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-pass-02-after-fix.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/checks-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/checks-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-self-check.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-self-check.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-pass-02-fix-report.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-pass-02-fix-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/quality-02-eval-only-runner-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/quality-02-eval-only-runner-score-rows.jsonl",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/quality-02-eval-only-runner-report.md"
+  ],
+  "checks": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ExtensionEvalOnlyQualityRunner\"",
+      "status": "PASS",
+      "evidence": "Failed: 0, Passed: 13, Skipped: 0, Total: 13"
+    },
+    {
+      "command": "dotnet build 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+      "status": "PASS",
+      "evidence": "Build succeeded. 0 Warning(s), 0 Error(s)"
+    },
+    {
+      "command": "dotnet run Quality02EvalOnlyRunner synthetic fixture regeneration",
+      "status": "PASS",
+      "evidence": "Generated report JSON, score rows JSONL and Markdown under evidence folder using synthetic rows only."
+    },
+    {
+      "command": "JSON parse relevant evidence/state JSON",
+      "status": "PASS",
+      "evidence": "Strict JSON parse passed for 11 JSON files after final evidence edits."
+    },
+    {
+      "command": "JSONL parse generated rows",
+      "status": "PASS",
+      "evidence": "Strict JSON.parse per non-empty line passed for 2 JSONL files and 4 rows."
+    },
+    {
+      "command": "no forbidden product claims opened",
+      "status": "PASS",
+      "evidence": "Generated report keeps forbidden product/readiness claims false and actual_approved_eval_executed=false."
+    },
+    {
+      "command": "rg raw private sentinel in shared evidence folder",
+      "status": "PASS",
+      "evidence": "Literal raw private sentinel marker is absent from the shared evidence folder after redacting the historical review probe."
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS",
+      "evidence": "git diff --check exited 0 after final evidence edits."
+    }
+  ],
+  "broad_full_dotnet_test_run": false,
+  "broad_full_dotnet_test_reason": "The bounded work order allowed the runner-specific filter only.",
+  "git_operations_performed": [],
+  "next_action": "Parent review this fix packet, then parent-owned commit/push boundary if accepted."
+}

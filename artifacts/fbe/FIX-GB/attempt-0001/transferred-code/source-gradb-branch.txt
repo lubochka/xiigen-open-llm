@@ -1,0 +1,56 @@
+                    AccumulateGrad(a, new Tensor(gradA, a.Shape));
+                }
+
+                if (b.RequiresGrad)
+                {
+                    var gradB = new float[b.Shape.TotalElements];
+                    for (int batch = 0; batch < batchSize; batch++)
+                    {
+                        int bBatch = batch % bBatchSize;
+                        int aOffset = batch * aRows * aCols;
+                        int bOffset = bBatch * bRows * bCols;
+                        int resultOffset = batch * aRows * bCols;
+                        // FIX-GB transfer, plan 29-matmul-right-gradient-locality.md, from KGB.
+                        //
+                        // Порядок обхода: партия, строка, внутренний размер, столбец.
+                        // Раньше внешним был внутренний размер, а строка — самым
+                        // внутренним циклом, поэтому одно и то же число левой матрицы
+                        // перечитывалось из памяти для каждой клетки правого градиента.
+                        // Теперь строка и внутренний размер стоят снаружи, число левой
+                        // матрицы читается один раз на всю строку работы по столбцам, и
+                        // соседние клетки правого градиента и градиента сверху читаются
+                        // подряд.
+                        //
+                        // Числа обязаны остаться теми же бит в бит. Для одной клетки
+                        // правого градиента набор слагаемых не меняется, и порядок их
+                        // поступления тоже: и раньше, и теперь это партии по возрастанию,
+                        // а внутри партии строки по возрастанию. Меняется только
+                        // чередование работы с разными клетками, а не порядок сложения
+                        // внутри одной клетки. Поэтому формула накопления, смещения,
+                        // форма и привязка партии правой матрицы остались прежними.
+                        for (int row = 0; row < aRows; row++)
+                        for (int inner = 0; inner < aCols; inner++)
+                        {
+                            // Число левой матрицы для этой строки и этого внутреннего
+                            // размера читается один раз и переиспользуется на все столбцы.
+                            float aValue = a.Data[aOffset + row * aCols + inner];
+
+                            // Проход по столбцам: соседние клетки лежат в памяти рядом.
+                            for (int column = 0; column < bCols; column++)
+                            {
+                                // Накопление дословно то же, что было до переноса.
+                                gradB[bOffset + inner * bCols + column] +=
+                                    aValue
+                                    * result.Grad!.Data[resultOffset + row * bCols + column];
+                            }
+                        }
+                    }
+
+                    AccumulateGrad(b, new Tensor(gradB, b.Shape));
+                }
+            };
+        }
+
+        return result;
+    }
+

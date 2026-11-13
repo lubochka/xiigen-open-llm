@@ -1,0 +1,195 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner.code_acceptance_review_final.v1",
+  "review_id": "code-acceptance-review-final",
+  "generated_at_local": "2026-06-18T14:12:24.8024680+03:00",
+  "boundary": {
+    "role": "bounded CODE_ACCEPTANCE_REVIEW sub-agent",
+    "requested_model": "gpt-5.5",
+    "requested_reasoning_effort": "xhigh",
+    "review_only": true,
+    "artifact_writes_only": true,
+    "git_authority": "forbidden",
+    "git_mutations_performed": false,
+    "commit_push_authorized": false,
+    "product_readiness_claimed": false
+  },
+  "verdict": "FAIL",
+  "branch": "codex/chat-gpt-5.5",
+  "scope_reviewed": {
+    "current_changes": true,
+    "runner_contracts_tool_tests_docs_state_evidence": true,
+    "prior_review_fix_artifacts_reviewed": [
+      "code-review-pass-01",
+      "code-review-pass-01-fix-report",
+      "code-review-pass-02-after-fix",
+      "code-review-pass-02-fix-report",
+      "code-review-pass-03-after-fix2",
+      "code-review-pass-03-fix-report",
+      "code-review-pass-04-after-fix3"
+    ],
+    "accepted_contract_artifacts_reviewed": [
+      "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/future-runner-input-contract.json",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/scorer-contract.json",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/score-output-schema.json"
+    ]
+  },
+  "findings": [
+    {
+      "id": "FINAL-CR-01",
+      "severity": "HIGH",
+      "title": "Per-layer score range contract is not enforced by the runner before shared reports can be produced",
+      "status": "OPEN",
+      "evidence": [
+        {
+          "file": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/scorer-contract.json",
+          "lines": [
+            129,
+            146,
+            163,
+            180,
+            231,
+            237
+          ],
+          "summary": "The accepted scorer contract defines each layer score as integer 0 through 5 and requires adaptive-vs-baseline per-layer comparison."
+        },
+        {
+          "file": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+          "lines": [
+            1009,
+            1011,
+            1031
+          ],
+          "summary": "The plan requires per-layer score output plus baseline/adaptive score fields and per-layer adaptive >= baseline regression checks."
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "lines": [
+            235,
+            461,
+            468,
+            473,
+            483,
+            484,
+            485
+          ],
+          "summary": "Runnable validation does not reject out-of-range baseline/adaptive scores; only adaptive is mapped to the core scorer, and per-layer pass/fail can mark adaptive values above the pass threshold as PASS before emitting raw score values."
+        },
+        {
+          "file": "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+          "summary": "No focused runner tests cover baseline/adaptive values below 0 or above 5."
+        }
+      ],
+      "impact": "Invalid baseline/adaptive score values can enter shared JSON, JSONL, and Markdown evidence. Baseline out-of-range values are not surfaced by the core scorer, and adaptive values above 5 can receive a per-layer PASS label while row-level reasons may still report out-of-range. This violates the accepted score contract and blocks commit readiness.",
+      "required_fix": "Validate every layer baseline_score and adaptive_score as 0..5 before scoring/report construction; return EVAL_ONLY_INPUT_VALIDATION_FAILED with no report writes for invalid values; add focused tests for both lower and upper bound failures and valid 0/5 boundary values; regenerate evidence and rerun targeted checks."
+    }
+  ],
+  "validation": {
+    "targeted_tests": {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ExtensionEvalOnlyQualityRunner\"",
+      "status": "PASS",
+      "evidence": "Failed: 0, Passed: 15, Skipped: 0, Total: 15"
+    },
+    "tool_build": {
+      "command": "dotnet build 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+      "status": "PASS",
+      "evidence": "Build succeeded. 0 Warning(s), 0 Error(s)"
+    },
+    "json_parse": {
+      "status": "PASS",
+      "json_files_parsed": 14
+    },
+    "jsonl_parse": {
+      "status": "PASS",
+      "jsonl_files_parsed": 2,
+      "jsonl_rows_parsed": 4
+    },
+    "runner_report_claim_locks": {
+      "status": "PASS",
+      "true_claim_locks": []
+    },
+    "runner_report_scope_locks": {
+      "status": "PASS",
+      "synthetic_fixture_only": true,
+      "actual_approved_eval_executed": false,
+      "host_runtime_started": false,
+      "training_started": false,
+      "model_checkpoint_locator_mutated": false
+    },
+    "generated_runner_report_privacy_scan": {
+      "status": "PASS",
+      "scanned_files": [
+        "quality-02-eval-only-runner-report.json",
+        "quality-02-eval-only-runner-score-rows.jsonl",
+        "quality-02-eval-only-runner-report.md"
+      ],
+      "raw_private_probe_matches": 0
+    },
+    "git_diff_check": {
+      "command": "git diff --check",
+      "status": "PASS"
+    },
+    "git_status_porcelain_read_only": {
+      "command": "git status --porcelain=v1",
+      "status": "PASS_READ_ONLY",
+      "dirty_set_expected_for_slice": true,
+      "staged_files": []
+    }
+  },
+  "boundary_assessment": {
+    "project_standards_and_operation_result_behavior": "FAIL: OperationResult behavior is mostly covered, but invalid score contract input can still produce shared evidence instead of validation failure.",
+    "tests_coverage_vs_accepted_work_order": "FAIL: focused tests do not cover baseline/adaptive score range contract.",
+    "core_boundary_program_cs_thin": "PASS",
+    "host_adapter_logic_added": "PASS_NONE_ADDED",
+    "hidden_deterministic_shortcut_sweep": "PASS_HELPER_EVAL_ONLY_LABELS_ONLY",
+    "privacy_shared_json_jsonl_markdown": "PASS_FOR_GENERATED_RUNNER_REPORTS",
+    "dpo_training_eval_boundaries": "PASS_CLOSED",
+    "local_model_lifecycle_claims": "PASS_CLOSED",
+    "documentation_dashboard_impact": "PASS_WITH_NON_BLOCKING_STATE_WORDING_OBSERVATION",
+    "evidence_quality": "FAIL_DUE_SCORE_CONTRACT_GAP",
+    "commit_readiness": "FAIL_DO_NOT_COMMIT_PUSH_UNTIL_FIX_ACCEPTED"
+  },
+  "non_blocking_observations": [
+    {
+      "id": "OBS-01",
+      "summary": "Top-level execution state still says after code-review-pass-02 fix while the active evidence folder contains pass-03 fix and pass-04 PASS review. This is documentation drift, not the blocking reason, because phase/scope/next-action/claim locks remain closed."
+    }
+  ],
+  "exact_fix_work_order": {
+    "artifact_type": "bounded code fix plus regenerated evidence",
+    "git_authority": "forbidden",
+    "allowed_write_scope": [
+      "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+      "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/",
+      "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json only if needed to accurately record fix evidence"
+    ],
+    "required_changes": [
+      "Validate every ExtensionEvalOnlyQualityRunnerLayerInput.BaselineScore and AdaptiveScore is between 0 and 5 inclusive before scoring or report construction.",
+      "Return EVAL_ONLY_INPUT_VALIDATION_FAILED for invalid score values.",
+      "Write no report JSON, score JSONL, or Markdown for invalid score inputs.",
+      "Keep deterministic labels helper/eval-only only.",
+      "Keep all claim locks false and no product readiness claim."
+    ],
+    "required_tests": [
+      "baseline score below 0 fails validation with no generated reports",
+      "baseline score above 5 fails validation with no generated reports",
+      "adaptive score below 0 fails validation with no generated reports",
+      "adaptive score above 5 fails validation with no generated reports",
+      "valid 0 and 5 boundary values remain accepted when the rest of the row is valid"
+    ],
+    "required_verification": [
+      "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ExtensionEvalOnlyQualityRunner\"",
+      "dotnet build 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+      "JSON/JSONL parse of regenerated evidence and execution state if touched",
+      "raw-private probe scan of generated runner report JSON, score-row JSONL, and Markdown",
+      "product/readiness claim-lock scan",
+      "git diff --check",
+      "git status --porcelain read-only"
+    ],
+    "parent_commit_push_after_review": true
+  },
+  "written_artifacts": [
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-acceptance-review-final.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-acceptance-review-final.json"
+  ]
+}

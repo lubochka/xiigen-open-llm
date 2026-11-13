@@ -1,0 +1,49 @@
+{
+  "schema": "xiigen.quality_02.no_eval_execution_proof.v1",
+  "phase_id": "QUALITY-02-ARTIFACT-RUNNER-DRY-RUN-VALIDATION-NO-EVAL",
+  "run_id": "quality-02-artifact-runner-dry-run-validation-20260618-103305",
+  "generated_at_local": "2026-06-18T10:33:05+03:00",
+  "proof_scope": "Only file/artifact reads, JSON/JSONL parsing, generated dry-run reports, and git/static checks.",
+  "prohibited_invocations": {
+    "external_web_or_ai": false,
+    "host_runtime": false,
+    "eval_runner": false,
+    "model_eval": false,
+    "training_or_continue_training": false,
+    "dpo_training": false,
+    "checkpoint_or_target_or_locator_mutation": false,
+    "source_code_edit": false,
+    "dotnet_test": false,
+    "commit_or_push": false
+  },
+  "commands_and_checks_used": [
+    "git branch --show-current",
+    "git status --short",
+    "rg --files <QUALITY-01 folder>",
+    "rg --files <QUALITY-02 prep folder>",
+    "Get-Content -Raw <plan/state/input artifact JSON/JSONL>",
+    "Node artifact parser/generator over QUALITY-01 and QUALITY-02 JSON/JSONL only",
+    "JSON.parse / JSONL line parse for generated and input artifacts",
+    "UTF-8/no-BOM scan over generated files",
+    "forbidden truthy claim scan over generated JSON/JSONL and state entry",
+    "git diff --check",
+    "git status/source-scope check"
+  ],
+  "negative_evidence_ru": "В этой фазе не запускались dotnet test, eval runner, host runtime, model calls, training, checkpoint mutation, locator update, git stage/commit/push или внешняя AI/web enrichment.",
+  "input_refs": {
+    "plan": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "state": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "quality_01_folder": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007",
+    "quality_02_prep_folder": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502",
+    "eval_prompt_pack_json": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/eval-prompt-pack.json",
+    "eval_prompt_pack_jsonl": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/eval-prompt-pack.jsonl",
+    "future_runner_input_contract_json": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/future-runner-input-contract.json",
+    "quality_rubric_ru_json": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/quality-rubric-ru.json",
+    "positive_negative_examples_map_json": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/positive-negative-examples-map.json",
+    "score_output_schema_json": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/score-output-schema.json",
+    "score_output_schema_jsonl": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/score-output-schema.jsonl",
+    "scorer_contract_json": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/scorer-contract.json",
+    "quality02_preflight_validation_json": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/quality02-preflight-validation.json",
+    "previous_quality02_next_phase_selection_json": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/next-phase-selection.json"
+  }
+}

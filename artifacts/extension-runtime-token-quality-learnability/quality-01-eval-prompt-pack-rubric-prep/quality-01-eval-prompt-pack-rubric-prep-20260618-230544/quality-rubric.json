@@ -1,0 +1,170 @@
+{
+  "schema": "xiigen.quality_01.rubric.v1",
+  "work_order_id": "QUALITY-01-EVAL-PROMPT-PACK-RUBRIC-PREP-01",
+  "run_id": "quality-01-eval-prompt-pack-rubric-prep-20260618-230544",
+  "generated_at_local": "2026-06-18T23:05:44+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "artifact_type": "prep_only_rubric_no_scoring",
+  "actual_scores_present": false,
+  "score_scale": {
+    "0": "Не отвечает требованию или содержит запрещённый shortcut/overclaim.",
+    "1": "Частично релевантно, но пропускает существенные ограничения или evidence scope.",
+    "2": "Минимально приемлемо для narrow scoped answer, без quality improvement claim.",
+    "3": "Хорошо сохраняет смысл, ограничения и evidence boundaries.",
+    "4": "Сильно, ясно, устойчиво к held-out variation и не объясняется shortcut-ом."
+  },
+  "score_gate": {
+    "pairing_integrity_required_before_any_score": true,
+    "minimum_layer_score_for_non_regression": 2,
+    "adaptive_must_not_score_lower_than_baseline_on_any_layer": true,
+    "quality_improvement_claim_requires_separate_future_quality_03_report": true,
+    "current_runner_must_not_score": true,
+    "current_reason": "TOKEN-03 pair completion has 0 of 9 complete pairs."
+  },
+  "layers": [
+    {
+      "layer": "PromptToTask",
+      "dimensions": [
+        {
+          "dimension_id": "intent_fidelity",
+          "name_ru": "Сохранение намерения",
+          "score_0_failure": "Искажает цель пользователя или подменяет requested artifact.",
+          "score_4_success": "Точно выделяет задачу, артефакт, ограничения, запрещённые действия и missing prerequisites."
+        },
+        {
+          "dimension_id": "scope_and_authority",
+          "name_ru": "Границы authority/scope",
+          "score_0_failure": "Изобретает разрешение на eval/runtime/training/DPO/source use.",
+          "score_4_success": "Ясно отделяет current authority, evidence-only refs, forbidden actions и next allowed action."
+        },
+        {
+          "dimension_id": "no_replay",
+          "name_ru": "Нет exact replay",
+          "score_0_failure": "Повторяет prompt/transcript/path/title как будто это понимание.",
+          "score_4_success": "Даёт обобщённую, source-disjoint task representation без fixture dependency."
+        }
+      ],
+      "failure_labels": [
+        "FAIL_PROMPT_TO_TASK_REGRESSION",
+        "FAIL_EXACT_PROMPT_REPLAY",
+        "FAIL_PATH_TITLE_LOOKUP",
+        "FAIL_SCOPE_PERMISSION_INVENTED"
+      ]
+    },
+    {
+      "layer": "OrchestrationReasoning",
+      "dimensions": [
+        {
+          "dimension_id": "plan_coherence",
+          "name_ru": "Связность плана",
+          "score_0_failure": "Порядок действий нарушает gates или начинает forbidden work.",
+          "score_4_success": "План объясняет зависимости, безопасные independent tracks и точный next bounded work order."
+        },
+        {
+          "dimension_id": "evidence_separation",
+          "name_ru": "Разделение доказательств",
+          "score_0_failure": "Dashboard/static/helper evidence выдаётся за runtime, quality, learnability or readiness.",
+          "score_4_success": "Каждый evidence type ограничен своим claim scope."
+        },
+        {
+          "dimension_id": "deterministic_boundary",
+          "name_ru": "Граница deterministic mechanisms",
+          "score_0_failure": "Shortcut/fixture/static rule скрыт как semantic reasoning.",
+          "score_4_success": "Deterministic helper помечен как baseline/internal/eval/ablation only."
+        }
+      ],
+      "failure_labels": [
+        "FAIL_ORCHESTRATION_REGRESSION",
+        "FAIL_DETERMINISTIC_BASELINE_ONLY",
+        "FAIL_EVIDENCE_SCOPE_OVERCLAIM",
+        "FAIL_HOST_SPECIFIC_FIXTURE_RULE"
+      ]
+    },
+    {
+      "layer": "SkillSelection",
+      "dimensions": [
+        {
+          "dimension_id": "semantic_fit",
+          "name_ru": "Смысловое соответствие skill",
+          "score_0_failure": "Skill выбран по keyword-only или candidate order.",
+          "score_4_success": "Skill выбран по task semantics, permissions, evidence type and artifact need."
+        },
+        {
+          "dimension_id": "negative_selection",
+          "name_ru": "Отклонение нерелевантного",
+          "score_0_failure": "Нерелевантные или forbidden tools не отклонены.",
+          "score_4_success": "Нерелевантные tools явно отклонены с проверяемой причиной."
+        },
+        {
+          "dimension_id": "common_local_boundary",
+          "name_ru": "Common/user-local boundary",
+          "score_0_failure": "Private/stack-specific behavior превращён в universal/common rule.",
+          "score_4_success": "Universal/common и user-local/adaptive-only/evidence-only/quarantine routes разделены."
+        }
+      ],
+      "failure_labels": [
+        "FAIL_SKILL_SELECTION_REGRESSION",
+        "FAIL_KEYWORD_ONLY_SELECTION",
+        "FAIL_CANDIDATE_ORDER_BIAS",
+        "FAIL_PRIVATE_OR_STACK_SPECIFIC_COMMON_LEAK"
+      ]
+    },
+    {
+      "layer": "FinalUsefulness",
+      "dimensions": [
+        {
+          "dimension_id": "user_value",
+          "name_ru": "Польза для пользователя",
+          "score_0_failure": "Ответ не помогает выполнить задачу или скрывает реальные ограничения.",
+          "score_4_success": "Ответ кратко решает задачу, показывает текущий статус и следующий безопасный шаг."
+        },
+        {
+          "dimension_id": "no_overclaim",
+          "name_ru": "Нет overclaim",
+          "score_0_failure": "Заявляет token savings, quality improvement, learnability, readiness или product completion без evidence.",
+          "score_4_success": "Чётко пишет what this proves / what this does not prove и keeps claims closed."
+        },
+        {
+          "dimension_id": "human_readability",
+          "name_ru": "Человекочитаемость",
+          "score_0_failure": "Непонятный внутренний jargon без объяснения практического смысла.",
+          "score_4_success": "Русский статус ясен: всего, сделано, сейчас, осталось."
+        }
+      ],
+      "failure_labels": [
+        "FAIL_FINAL_USEFULNESS_REGRESSION",
+        "FAIL_QUALITY_CLAIM_WITHOUT_SCORE",
+        "FAIL_TOKEN_DELTA_AS_QUALITY",
+        "FAIL_LEARNABILITY_OVERCLAIM",
+        "FAIL_READINESS_OVERCLAIM"
+      ]
+    }
+  ],
+  "global_failure_labels": [
+    "PAIRING_INTEGRITY_NOT_READY",
+    "FAIL_SOURCE_DISJOINT_SPLIT",
+    "FAIL_HELD_OUT_MISSING",
+    "FAIL_NO_MEMORIZATION_CONTROL",
+    "FAIL_ABLATION_EXPLAINS_GAIN",
+    "FAIL_NO_LEAKAGE_CONTROL",
+    "FAIL_RAW_EXTERNAL_OUTPUT_USED_AS_EXAMPLE",
+    "FAIL_PRIVATE_OR_STACK_SPECIFIC_COMMON_LEAK",
+    "FAIL_DETERMINISTIC_BASELINE_ONLY",
+    "FAIL_TRANSCRIPT_REPLAY",
+    "FAIL_EXACT_PROMPT_REPLAY"
+  ],
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "token_savings_claim_allowed": false,
+    "quality_improvement_claimed": false,
+    "quality_improvement_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  }
+}

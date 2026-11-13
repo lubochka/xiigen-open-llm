@@ -1,0 +1,43 @@
+{
+    "work_order_id":  "QUALITY-03-PROOF-CONTRACT-RUNNER-SECOND-RATER-PACKET-CLI-FIX-09K",
+    "requested_artifact_type":  "code_fix_and_tests_only",
+    "current_luba_authority_quote":  "If the current runner CLI cannot accept second-rater packet path, produce exact code-fix work order. Do not hack/copy files unless runner contract allows it.",
+    "goal":  "Add an explicit runner CLI contract for binding an authorized second-rater packet directory to inter_rater_adjudication without copying or renaming packet files.",
+    "allowed_write_scope":  [
+                                "43.SmartSkillsDomain.Tools/Quality03ProofContractRunner/Program.cs",
+                                "43.SmartSkillsDomain/Quality03ProofContractRunnerContracts.cs",
+                                "43.SmartSkillsDomain/Quality03ProofContractRunner.cs",
+                                "Tests/ExtensionQuality03ProofContractRunnerTests.cs"
+                            ],
+    "forbidden":  [
+                      "git stage/commit/push/branch inside this bounded work order unless a separate commit-only work order grants it",
+                      "external AI/model calls",
+                      "training/DPO/checkpoint/model/locator mutation",
+                      "copying authorized packet files into proof-contract pack as a shortcut",
+                      "quality/semantic/readiness claims before 63/63 proof PASS"
+                  ],
+    "required_code_change":  [
+                                 "Add optional CLI argument --second-rater-packet \u003cdir\u003e to Program.cs usage and parsing.",
+                                 "Add optional SecondRaterPacketDirectory to Quality03ProofContractRunnerOptions.",
+                                 "When SecondRaterPacketDirectory is supplied, load per-row-authorized-second-rater-adjudication.jsonl from that directory for category inter_rater_adjudication instead of proof_contract_pack/row-specific-independent-second-rater-adjudication.jsonl.",
+                                 "Validate exactly 9 rows, row_id uniqueness, row_id match against proof contract input rows, pass/pass_or_risk/proof_status/blocking_ref_resolved/adjudication fields through the existing parser semantics, and preserve concrete_proof_ref/artifact_ref pointing to the authorized packet.",
+                                 "Record SecondRaterPacketDirectory and binding mode in the runner report/refusal report so deterministic shortcut use is visible.",
+                                 "Keep backward compatibility when --second-rater-packet is omitted."
+                             ],
+    "required_tests":  [
+                           "CLI usage/help includes --second-rater-packet.",
+                           "Runner with current 120659 evidence pack, 122536 proof pack, and 135510 authorized second-rater packet returns blocking_proof_refs_pass=9/63, runner_ready_rows=0, quality_pass_rows=0 unless other six categories are repaired separately.",
+                           "Runner without --second-rater-packet preserves current behavior against proof_contract_pack/row-specific-independent-second-rater-adjudication.jsonl.",
+                           "Runner rejects missing packet dir, missing per-row-authorized-second-rater-adjudication.jsonl, duplicate row_id, row-count not 9, and row-id mismatch.",
+                           "No runner-ready-eval-inputs.jsonl is emitted until full 63/63 proof PASS."
+                       ],
+    "required_verification":  [
+                                  "dotnet test Tests/LlmFromScratch.Tests.csproj --filter ExtensionQuality03ProofContractRunnerTests",
+                                  "manual local runner command with --second-rater-packet against the three exact packs from this work order",
+                                  "JSON/JSONL parse and row-count check for runner outputs",
+                                  "no-overclaim scan: no quality/semantic/product/readiness claims unless 63/63 PASS"
+                              ],
+    "commit_push_boundary_owner":  "parent_or_separate_commit_only_work_order_after_review",
+    "implementation_authorized_now":  false,
+    "parent_will_perform_commit_push_after_review":  true
+}

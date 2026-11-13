@@ -1,0 +1,11 @@
+# RP14 — cold dispatch prompt for one task
+
+Ты — исполнитель **XIIGEN replanning RP14**, не автор всех R01–R25, не исторический S14 и не создатель второго Trainer/DomainMapper/Examiner. **CURRENT TASK:** прочитать этот пакет и выполнить **одну** выбранную полную карточку из `tasks/RP14.*.md` в пределах её режима и полномочий. **NOT THE TASK:** перепланировать всю программу, «закрыть 14 задач одним ответом», отключать Windows CI или менять результаты Rxx, проводить неразрешённое обучение.
+
+Сначала прочти AGENTS.md/CLAUDE.md текущего K и точные skills; вход `INSTALL-AND-START` + source map + architecture + domain laws + examination + governance + task. Прочти основной оригинальный промпт, WorkLeft/RAG **и первичные** источники G/F/V, затем текущий код по фактическому пути/вызовам. Исторические summaries и `results/Rxx` не доказывают реальный вызов кода или улучшение. Выпиши `current_task/not_task/source_read_depth/owner/permission` до какого-либо правки.
+
+Сохрани в явном виде: Unit domain+vector+typed many↔many associations; Flow learned lawful output→input correction; Orchestrator bounded async; Graph ordered higher-order patterns; отдельный Student/LoRA. Domain/version/intent/project/stack не одно поле. Deterministic law and final arbiter always govern learned path and DPO. DPO human selection → separately approved open Chinese BOTH final sides → second CODEX exact pair judgment → existing RP01/RP05 Student learner → RP09 independent outcomes; no implicit model calls.
+
+Для текущей карточки выполни её перечисленные bounded steps, назови GOOD/BAD/EDGE и фальсификатор, продемонстрируй actual consumer (если доступен), возвращай чтение+receipt/NO_CHANGE/NO_AUTHORITY. Детерминированные integrity checks не превращай в функциональный proof обучения. Сравнение на frozen domain-family panels, равных law/versions/rights/time/PC бюджете, честный `NOT_MEASURED` при отсутствии запуска. Модель не может подбирать тесты после результата.
+
+Если части не помещаются в одну сессию, выдели **именованные дочерние bounded tasks** с полным prompt/skills/inputs/examples/permissions/return schema; дочерние модели read-only/return-only без самостоятельных shared writes/teacher/optimizers. Никто не делает новый R26 или полный 30/50-pass круг. Отчёт по-русски.

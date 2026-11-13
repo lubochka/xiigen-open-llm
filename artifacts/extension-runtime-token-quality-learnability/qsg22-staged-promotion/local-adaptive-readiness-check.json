@@ -1,0 +1,211 @@
+{
+  "schema": "xiigen.quality_semantic_gates_22.local_adaptive_readiness_check.v1",
+  "phase_id": "QUALITY-SEMANTIC-GATES-22",
+  "generated_at_utc": "2026-06-17T11:52:37.473Z",
+  "status": "PARTIAL_EVIDENCE_LINKED_FULL_READINESS_NOT_CLAIMED",
+  "artifacts_inspected": [
+    "artifacts/extension-runtime-token-quality-learnability/backup-export-import-share-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/backup-export-import-share-validation.json",
+    "artifacts/extension-runtime-token-quality-learnability/continue-training-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/fresh-load-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/held-out-ablation-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/rollback-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/adaptive-learnability-01/adaptive-learnability-01-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/user-local-adaptive-store-manifest.v1.json"
+  ],
+  "backup_export_import_share": {
+    "verdict": "PASS_WITH_LIMITATIONS",
+    "validation_verdict": "ACCEPTED_FOR_PARENT_REVIEW_WITH_LIMITATIONS",
+    "track_summaries": [
+      {
+        "machine_id": "PromptToTaskMachine",
+        "verdict": "PARTIAL_OVERLAY_PORTABILITY_ONLY",
+        "public_machine_boundary": false,
+        "partial_overlay_only": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "PromptToTask imported target is an adaptive overlay checkpoint only; no full PromptToTaskMachine checkpoint plus manifest is available in this slice."
+      },
+      {
+        "machine_id": "OrchestrationReasoningMachine",
+        "verdict": "PASS_PUBLIC_MACHINE_BOUNDARY_PORTABILITY",
+        "public_machine_boundary": true,
+        "partial_overlay_only": false,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "Public machine load portability plus deterministic test-only Plan probe. The Plan request is synthetic/pattern-derived from imported Required* signals and is not semantic/generalization quality evidence, host runtime, production runtime, promotion, common readiness, or locator update."
+      },
+      {
+        "machine_id": "SkillSelectionMachine",
+        "verdict": "PARTIAL_OVERLAY_PORTABILITY_ONLY",
+        "public_machine_boundary": false,
+        "partial_overlay_only": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "SkillSelection imported target is a correction adaptive overlay checkpoint only; no full SkillSelectionMachine checkpoint plus manifest is available in this slice."
+      }
+    ]
+  },
+  "continue_training": {
+    "verdict": "PASS_LOCAL_CONTINUE_TRAINING_WITH_LIMITATIONS",
+    "training_started": true,
+    "checkpoint_mutation_scope": "user-local only",
+    "common_model_mutated": false,
+    "track_summaries": [
+      {
+        "machine_id": "PromptToTaskMachine",
+        "status": "PASS_LOCAL_CONTINUE_TRAINING",
+        "loaded_existing_checkpoint": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "metric_improved": true,
+        "limitation": null
+      },
+      {
+        "machine_id": "OrchestrationReasoningMachine",
+        "status": "PASS_LOCAL_CONTINUE_TRAINING",
+        "loaded_existing_checkpoint": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "metric_improved": false,
+        "limitation": null
+      },
+      {
+        "machine_id": "SkillSelectionMachine",
+        "status": "PASS_LOCAL_CONTINUE_TRAINING_CORRECTION_ADAPTIVE_LEG",
+        "loaded_existing_checkpoint": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "metric_improved": true,
+        "limitation": "correction adaptive leg only"
+      }
+    ]
+  },
+  "fresh_load": {
+    "verdict": "PASS_WITH_LIMITATIONS",
+    "track_summaries": [
+      {
+        "machine_id": "PromptToTaskMachine",
+        "verdict": "PARTIAL_ADAPTIVE_LOADER_ONLY",
+        "public_machine_boundary": false,
+        "partial_overlay_only": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "Narrow public adaptive loader only. The staged target is an adaptive overlay checkpoint without a PromptToTaskMachine manifest, so this does not prove PromptToTaskMachine.LoadCheckpointAsync or Translate."
+      },
+      {
+        "machine_id": "OrchestrationReasoningMachine",
+        "verdict": "PASS_PUBLIC_MACHINE_BOUNDARY",
+        "public_machine_boundary": true,
+        "partial_overlay_only": false,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "Fresh-load proves loadability and public machine invocation only. It does not prove semantic quality, held-out/source-disjoint behavior, ablation, rollback, or promotion readiness."
+      },
+      {
+        "machine_id": "SkillSelectionMachine",
+        "verdict": "PARTIAL_ADAPTIVE_LOADER_ONLY",
+        "public_machine_boundary": false,
+        "partial_overlay_only": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "Narrow public correction-adaptive loader only. The staged target is not a full SkillSelectionMachine checkpoint/manifest, so this does not prove SkillSelectionMachine.LoadCheckpointAsync or DecideFromTrainedState."
+      }
+    ]
+  },
+  "held_out_ablation": {
+    "verdict": "PASS_WITH_LIMITATIONS",
+    "track_summaries": [
+      {
+        "machine_id": "PromptToTaskMachine",
+        "verdict": "PARTIAL_NOT_FULL_MACHINE_EVAL",
+        "public_machine_boundary": false,
+        "partial_overlay_only": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "PARTIAL/NOT_FULL_MACHINE_EVAL: staged target is an adaptive overlay checkpoint without a PromptToTaskMachine checkpoint plus manifest. Checks are overlay-level source-disjoint metadata and loader checks only."
+      },
+      {
+        "machine_id": "OrchestrationReasoningMachine",
+        "verdict": "PASS_NAMED_CONTROLS_NOT_LEAKAGE",
+        "public_machine_boundary": false,
+        "partial_overlay_only": false,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "Public machine boundary controls prove only the named held-out/ablation checks for this target. They do not prove universal semantic quality, rollback safety, promotion readiness, or host runtime readiness."
+      },
+      {
+        "machine_id": "SkillSelectionMachine",
+        "verdict": "PARTIAL_NOT_FULL_MACHINE_EVAL",
+        "public_machine_boundary": false,
+        "partial_overlay_only": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "PARTIAL/NOT_FULL_MACHINE_EVAL: staged target is a correction adaptive overlay checkpoint without a SkillSelectionMachine checkpoint plus manifest. Checks are overlay-level source-disjoint metadata and loader checks only."
+      }
+    ]
+  },
+  "rollback": {
+    "verdict": "PASS_WITH_LIMITATIONS",
+    "track_summaries": [
+      {
+        "machine_id": "PromptToTaskMachine",
+        "verdict": "PARTIAL_OVERLAY_ROLLBACK_ONLY",
+        "public_machine_boundary": false,
+        "partial_overlay_only": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "PARTIAL_OVERLAY_ROLLBACK_ONLY: PromptToTask target and rollback are adaptive overlay checkpoints without a full PromptToTaskMachine checkpoint plus manifest."
+      },
+      {
+        "machine_id": "OrchestrationReasoningMachine",
+        "verdict": "PASS_PUBLIC_MACHINE_BOUNDARY_ROLLBACK",
+        "public_machine_boundary": true,
+        "partial_overlay_only": false,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "Rollback manifest checkpointRef is `orchestration-reasoning-v1-checkpoint.json` while approval packet checkpoint alias is `checkpoint.json`; public boundary was exercised using a temp manifest-bound copy without rewriting the named rollback assets."
+      },
+      {
+        "machine_id": "SkillSelectionMachine",
+        "verdict": "PARTIAL_OVERLAY_ROLLBACK_ONLY",
+        "public_machine_boundary": false,
+        "partial_overlay_only": true,
+        "common_model_mutated": false,
+        "semantic_quality_claimed": false,
+        "limitation": "PARTIAL_OVERLAY_ROLLBACK_ONLY: SkillSelection target and rollback are correction adaptive overlay checkpoints without a full SkillSelectionMachine checkpoint plus manifest."
+      }
+    ]
+  },
+  "adaptive_learnability_test_local_report": {
+    "narrow_user_local_learnability_allowed": true,
+    "semantic_quality_claimed": false,
+    "token_savings_claim_allowed": false,
+    "common_model_readiness_claimed": false,
+    "target_promotion_done": false,
+    "locator_updated": false
+  },
+  "user_local_store_manifest": {
+    "verdict": "BOUNDARY_MANIFEST_READY_NO_TRAINING",
+    "training_executed": false,
+    "checkpoint_mutation_executed": false,
+    "common_model_mutation_executed": false,
+    "export_import_share_supported_by_plan": true
+  },
+  "readiness_claimed": false,
+  "missing_artifact_or_gate_before_full_readiness": [
+    {
+      "machine_id": "PromptToTaskMachine",
+      "missing_gate": "full PromptToTaskMachine checkpoint plus manifest fresh-load/runtime invocation, held-out/ablation and rollback; current evidence is adaptive overlay only"
+    },
+    {
+      "machine_id": "SkillSelectionMachine",
+      "missing_gate": "full SkillSelectionMachine checkpoint plus manifest fresh-load/runtime invocation, held-out/ablation and rollback; current evidence is correction adaptive overlay only"
+    },
+    {
+      "machine_id": "all",
+      "missing_gate": "explicit Luba approval plus production mutation work order before any real production locator/checkpoint update"
+    }
+  ],
+  "next_qsg_step": "QUALITY-SEMANTIC-GATES-23 must either close the PromptToTask/SkillSelection full-machine local adaptive gaps without production mutation, or collect explicit Luba approval for the exact QSG-22 dry-run production mutation before applying it."
+}

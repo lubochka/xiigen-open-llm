@@ -1,0 +1,100 @@
+{
+  "phase": 44,
+  "main_focus_goal": "Continue TranslationDomain EN_RU training toward runtimeProductAccuracy >= 0.85 by selecting promotable 100-row candidates under strict AND novelty gate.",
+  "branch": "codex/chat-gpt-5.5",
+  "current_internal_role_state": "EXECUTOR_INTERNAL",
+  "loaded_context": [
+    "AGENTS.md TranslationDomain mandatory context",
+    "docs/TRANSLATION-MINDSET-FAQ-v1.md",
+    "docs/skills/translation-domain-mindset-reset-SKILL.md",
+    "docs/skills/translation-domain-reality-check-SKILL.md",
+    "docs/plans/TRANSLATION-CORPUS-SOURCING-PLAN-v1.md section 13",
+    "docs/plans/TRANSLATION-MACHINE-CHECKPOINT-REPAIR-PLAN-v1.md",
+    "27.TranslationDomain/TatoebaPilotLoopRunner.cs",
+    "27.TranslationDomain/TranslationTrainedUnits.cs",
+    "27.TranslationDomain.Tools/Program.cs",
+    "Tests/TranslationDomainTests.cs"
+  ],
+  "baseline_live_translation": {
+    "source_language": "en",
+    "target_language": "ru",
+    "input": "good morning friend",
+    "output": "[EN_RU:BOOTSTRAP] good morning friend"
+  },
+  "direct_instruction_overrides": [
+    {
+      "older_document_value": "runtimeProductAccuracy >= 0.95",
+      "current_luba_instruction": "runtimeProductAccuracy >= 0.85",
+      "applied_as": "current-run target override"
+    }
+  ],
+  "allowed_verification": [
+    "targeted phase 44 tests",
+    "dotnet test Tests/LlmFromScratch.Tests.csproj --filter TranslationDomainTests",
+    "dotnet build 27.TranslationDomain/27.TranslationDomain.csproj",
+    "dotnet build 27.TranslationDomain.Tools/27.TranslationDomain.Tools.csproj",
+    "git diff --check",
+    "post-commit 29-cycle EN_RU probe from latest private checkpoint/source with checkpoint resume and no skip/replay"
+  ],
+  "forbidden_actions": [
+    "branch switch",
+    "replay resume",
+    "--skip-cycles resume",
+    "weakening promotion AND gate",
+    "resetting training from zero",
+    "touching unrelated dirty files"
+  ],
+  "promotion_gate": {
+    "plain_language": "A set enters training only if it is new enough AND not mostly seen.",
+    "formula": "Rows.Count == requested AND NewPatternRate > (1 - bestMaxAccuracy) AND SourceTokenSeenRate < bestMaxAccuracy",
+    "max_accuracy_initial": 0.78,
+    "cases": [
+      { "new_pattern": 0.30, "seen_tokens": 0.70, "passes": true },
+      { "new_pattern": 0.30, "seen_tokens": 0.80, "passes": false },
+      { "new_pattern": 0.20, "seen_tokens": 0.70, "passes": false },
+      { "new_pattern": 0.20, "seen_tokens": 0.80, "passes": false }
+    ]
+  },
+  "current_step": "pre_commit_verification_passed",
+  "produced_artifacts": [
+    "docs/plans/STATE-PHASE-44-20260530.json",
+    "27.TranslationDomain/TatoebaPilotLoopRunner.cs adaptive candidate scan",
+    "27.TranslationDomain.Tools/Program.cs visible scan report fields",
+    "Tests/TranslationDomainTests.cs adaptive scan and resume tests",
+    "docs/plans/TRANSLATION-MACHINE-CHECKPOINT-REPAIR-PLAN-v1.md phase 44 note",
+    "targeted phase 44 tests passed: 2/2",
+    "TranslationDomainTests passed: 88/88",
+    "dotnet build 27.TranslationDomain passed",
+    "dotnet build 27.TranslationDomain.Tools passed",
+    "git diff --check passed",
+    "internal review passed: strict AND predicate unchanged; adaptive scan advances cursor by cumulative scanned rows; novelty-skipped rows persist only to skipped history; selected candidate remains disjoint from accepted training/checkpoint exact memory filters",
+    "post-review git diff --check passed"
+  ],
+  "gate_status": "IN_PROGRESS_NEXT_STEP_KNOWN",
+  "actionable_gaps": [
+    "commit and push exactly once",
+    "run 29-cycle checkpoint-resume EN_RU probe and report all cycles"
+  ],
+  "next_action": "Stage active phase files only and commit once.",
+  "next_action_plan_source": "Luba phase 44 work order required behavior 1-5",
+  "commit_push_status": {
+    "commit_required": true,
+    "push_required": true,
+    "commit_hash": null,
+    "pushed": false
+  },
+  "continuation_mode": "EXECUTOR_CONTINUE",
+  "goal_reached": false,
+  "stop_allowed": false,
+  "execution_score": {
+    "current_score": 9,
+    "progress_step_count": 9,
+    "premature_stop_count": 0,
+    "severe_violation_count": 0,
+    "last_score_event": "+1 post-review git diff --check passed",
+    "score_if_continue": 10,
+    "score_if_stop_now": -91,
+    "score_if_severe_violation": -991,
+    "objective": "maximize score by progressing toward the active goal"
+  }
+}

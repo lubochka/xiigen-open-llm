@@ -1,0 +1,77 @@
+{
+  "schema": "xiigen.quality_02.preflight_validation.v1",
+  "phase_id": "QUALITY-02-SCORER-EVAL-ONLY-RUNNER-PREP-NO-EVAL-EXECUTION",
+  "run_id": "quality-02-scorer-eval-only-runner-prep-20260618-095502",
+  "generated_at_local": "2026-06-18T09:55:02+03:00",
+  "status": "PREFLIGHT_VALIDATION_PREPARED_STATIC_ONLY",
+  "validation_scope": "Static parse and consistency checks over QUALITY-01 pack/rubric/contract; no model calls, no host runtime, no eval execution.",
+  "quality_01_run_root": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007",
+  "checks": [
+    {
+      "check_id": "PV-01-EVAL-PACK-JSON-PARSE",
+      "target": "eval-prompt-pack.json",
+      "expected": "valid JSON with schema xiigen.quality_01.eval_prompt_pack.v1",
+      "result": "PASS"
+    },
+    {
+      "check_id": "PV-02-EVAL-PACK-ROUTE-COUNTS",
+      "target": "eval-prompt-pack.json route_counts",
+      "expected": "USER_ADAPTIVE_EVAL_ONLY 7/21; EVIDENCE_ONLY 5/33; COMMON_BLOCKED 12/54",
+      "result": "PASS"
+    },
+    {
+      "check_id": "PV-03-RUBRIC-LAYERS",
+      "target": "quality-rubric-ru.json",
+      "expected": "four layers: prompt_to_task, orchestration_reasoning, skill_selection, final_usefulness",
+      "result": "PASS"
+    },
+    {
+      "check_id": "PV-04-RUBRIC-SCORE-ANCHORS",
+      "target": "quality-rubric-ru.json",
+      "expected": "five anchors 0..4",
+      "result": "PASS"
+    },
+    {
+      "check_id": "PV-05-FUTURE-RUNNER-GATES",
+      "target": "future-runner-input-contract.json",
+      "expected": "runner_may_start_now=false and required gates G1..G8 present",
+      "result": "PASS"
+    },
+    {
+      "check_id": "PV-06-CLAIM-FIREWALL",
+      "target": "quality-claim-firewall.json",
+      "expected": "all claim locks false and eval/training/model/checkpoint/locator forbidden",
+      "result": "PASS"
+    },
+    {
+      "check_id": "PV-07-EVIDENCE-ONLY-EXCLUSION",
+      "target": "eval-prompt-pack.json and future-runner-input-contract.json",
+      "expected": "5 EVIDENCE_ONLY scenarios and 33 pair rows excluded from eval/training inputs",
+      "result": "PASS"
+    }
+  ],
+  "counts_validated": {
+    "scenario_total": 12,
+    "user_adaptive_eval_only_scenarios": 7,
+    "user_adaptive_eval_only_pair_rows": 21,
+    "evidence_only_scenarios": 5,
+    "evidence_only_pair_rows": 33,
+    "common_blocked_scenarios": 12,
+    "common_blocked_pair_rows": 54
+  },
+  "claims_validated_closed": {
+    "token_savings_claimed": false,
+    "quality_improvement_claimed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "strict_quality03_ready": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false
+  },
+  "preflight_result": "PASS_STATIC_ONLY_NO_EVAL"
+}

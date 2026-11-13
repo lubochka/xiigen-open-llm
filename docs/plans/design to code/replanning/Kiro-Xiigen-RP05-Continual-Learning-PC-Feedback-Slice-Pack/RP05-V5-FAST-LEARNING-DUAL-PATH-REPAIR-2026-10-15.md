@@ -1,0 +1,70 @@
+> **SOURCE V5.2 correction, current K 025c42c74b1d30ffa4660f9824a52cf8fcaf7c88:** [Read current first-root vs later B1, full-LoRA and feedback-cache source repairs](RP05-V5.2-SOURCE-DELTA-FAST-LEARNING-2026-10-15.md). The original K 97e4af3eadd3981320f698d104134a01984a2542 in this V5 document is an earlier snapshot. Generic indexed and prepared pathways remain distinct, but trusted ROOT_B0_FIRST_UPDATE is an additional initial-only admission, never proof accepted B1 continuation. Current per-task instructions are top V5.2 in all 14 task files; avoid treating this V5 narrative as evidence of actual training.
+
+# RP05 V5 — First continual lesson: two runtime routes, causal science, PC-first execution
+
+**2026-10-15 · ACTIVE RP05 execution repair · DOCUMENT ONLY.** This document revises executable instructions and does not assert code changes in llm_mvp_core, model calls, training, observed improvement, PC run or independent Astra review.
+
+## Direct verified findings and source limits
+
+Read K=**lubochka/llm_mvp_core@codex/dpo-implementation**, inspected SHA **97e4af3eadd3981320f698d104134a01984a2542**. Before *any* implementation, repin actual current K HEAD, whole changed files, interfaces, upstream caller and ordinary downstream consumer. This is **CODE_OBSERVED** method evidence, not proof every consumer fails.
+
+| Finding | Source method | Impact and owner |
+|---|---|---|
+| **F17: indexed-domain selection** | 14.ContinuousLearning/Pipeline/ContinuousLearningPipeline.cs, RunCycleAsync | Builds candidate domains from _indexer.Index(rootPath), refuses empty indexed domains, prepares DPO transaction for these domains and passes indexed domain examples plus matching DPO pairs to trainer. Novel feedback in absent indexed domain must be marked PATH_NOT_PROVEN until exact consumer proven; RP05.00B/01B/03A. |
+| **F18: distinct prepared CodeDocumentation path** | 26.TrainableRouter/Training/CodeDocumentationRepositoryOwnedDpoTrainingPublicationCoordinator.cs, ExecuteCapturedPreparedAsync / PreparedInputsMatchRequest | Requires prepared inputs, quality gate, DpoStepCount==1 and Reference.Classification==NEEDS_LESSON, plus matching request/dataset/quality/tokenizer identity. A generic FeedbackRouter event does not, by itself, meet this contract. RP05.00B/02B/03A. |
+| **F19: feedback two-write causal ambiguity** | 14.ContinuousLearning/Feedback/FeedbackRouter.cs, RouteEdited, PersistTrainingReadyPair | Admitted edited feedback creates governed pair store entry then adds positive TrainingExample to cache. RunCycleAsync trainer examples are derived from indexer. Cache's exact optimizer influence is NOT_PROVEN; trace separately and freeze index/cache in C0/T. RP05.00B/01A/03B. |
+| **F20: nearest score != calibrated lawful probability** | 21.AgentInfrastructure/Logical/KnnLogicalUnit.cs, ExecuteAsync | Search(query,k) returns many but prediction uses hits[0]; confidence is clamped best.score, low confidence adds warning. Cannot infer multi-hit law-aware decision, calibrated confidence or hard veto in this method. RP02 algorithm owner, RP05.04B causal evaluation. |
+
+These extend the existing 16 repair classes without re-running R01–R25. The original R07 incomplete-source findings remain open where not independently resolved. WorkLeft's RAG file names are navigational hints: master index → usage guide → relevant NDJSON source.file → actual primary G/F/V/K evidence, not proof that a mechanism operates.
+
+## V5.1 newly verified source and prompt findings F21–F24 (15 October 2026)
+
+These extend F17–F20; **F21 is a planning defect repaired by this GitHub update**, F22–F24 are source-observed risk/causality distinctions, NOT implemented code fixes or experiments.
+
+| ID and verified source | Observation / consequence | Exact action and owner |
+|---|---|---|
+| **F21: incomplete active task headers** — P@llm_plan3, 14 `tasks/RP05.*.md`, package manifest `v5_task_binding_count=14` before repair. | Only **7/14** cards started with V5; **03B, 04A, 04B, 04C, 05A, 05B, 06A** started with V4, despite README saying V5-direct for all. Weak executor could follow stale V3/V4 StepCount and scientific workflow. | **DOCUMENTARY FIX APPLIED** to these seven task files: V5.1 individualized prompt + source/skills/examples/falsifier/recovery/child tasks, older headings marked historical. Manifest must list both marker types; run readback. RP05.06A owns exact reviewed candidate closure. |
+| **F22: pair/cache partial write** — K `14.ContinuousLearning/Feedback/FeedbackRouter.cs` blob `a676058b`, `RouteEdited`: `PersistTrainingReadyPair(pair)` succeeds before `_cache.Add(example)`. | Failure of latter can return error after durable DPO pair exists; method shows no compensating rollback. Exact cross-store retry/idempotency is **not proven safe** by this method alone; do not equate failing feedback request with zero submitted pair. | RP05.00B/01A/02B trace pair ID + persisted cache + retry ledger and consumer; any actual atomicity/consent change needs ONE focused fail-between-writes and safe retry probe. Do not re-add/retrain same pair on UNKNOWN. |
+| **F23: rejected-only sentinel is not a positive teacher answer** — same `FeedbackRouter.cs` blob `a676058b`, `RouteRejected` uses `NoPreferredResponse` as chosen and labels it `DeterministicGenerator`; pair is subject to `PersistTrainingReadyPair` governance. | Even if stored, a sentinel is **not** a law-valid human-selected Chinese-authored chosen response. Whether governance rejects it or a downstream trainer uses it is not established by the router. It must not count as RP05.02A/B1 DPO authoring nor ground a meaningful preferred response. | RP05.01B/02A prove exact admissibility and actual per-side authorship; quarantined observation/negative memory for later Chinese BOTH-side material, no fake forced preference. |
+| **F24: adapter invocation without DPO rows** — K `14.ContinuousLearning/Pipeline/ContinuousLearningPipeline.cs` blob `24ea6a7a`, `RunCycleAsync` forms `domainDpoPairs` then invokes `TrainTransactionAsync` or `TrainAsync` for each indexed domain, without a visible nonempty-pair gate in this method. | A trained adapter artifact / change can arise on an indexed domain while **no fresh feedback DPO pair** was passed. Real update mechanism inside trainer must be inspected; an adapter hash/change does not independently establish a new feedback-driven DPO lesson. | RP05.00B/03A/03B bind batch/group IDs, selected trainer row count/objective/gradient receipt, indexer example identity and cold reader; report `ZERO_DPO_PAIR` rather than B1 if none admitted. |
+
+**Focused scientific discriminator:** For F22 freeze pair store/index/cache separate identities, reproduce fail-after-persist only in permitted isolated test state, then verify no duplicate replay; F23 rejected feedback should NOT become a counterfeit positive; F24 compare actual exact pair/group=0 against authorized fresh B1 and C0 with same indexed examples, so supervised/index changes are not miscredited to DPO. Do not execute code/training or infer a measured learning benefit from these documentary observations.
+
+## Actual critical path: the soonest lawful B1
+
+**F0 in parallel (not five sequential gates):** 00A reads only missing RP05-owned WorkLeft/RAG primary claims; 00B traces BOTH real routes and ordinary caller; 02B verifies accepted B0/state/journal and potential two-row atomic lesson; 03B freezes independent domain examination before candidate T; 04A freezes true whole-PC envelope.
+
+**F1** — 01A reuse lawful already-durable, consented user feedback (REUSE_NO_CHANGE if complete), else capture only one missing typed evidence field. 01B checks domain law/intent/language/version, rights, source-family novelty, recipient and indexed-domain or prepared-path feasibility.
+
+**F2** — 02A: CODEX GPT-6 Astra UltraCode in delegated HUMAN role selects lawful novel case. An authorized external OPEN Chinese model authors BOTH final exact chosen and rejected responses with same x/context and content hashes. A *different* CODEX Astra UltraCode judges exact immutable pair with meaningful law contrast. An independent outcome examiner and separate independent architecture reviewer are further distinct roles. Missing effect-specific grant ⇒ NOT_INVOKED, not simulated success.
+
+**F3** — 03A: accepted B0 and exactly one novel *logical lesson* with an exact transaction, supported live optimizer entry, typed reference/policy/LoRA/optimizer/RNG/tokenizer/index/graph state, rollback reserve, no replay after UNKNOWN effect. One lesson may have two atomic CriticUnit+ImproverUnit rows; rows != transactions != optimizer step count. Prepared CodeDocumentation entry specifically supports StepCount==1; generic configurable executor is not blanket permission for prepared multi-step. An absent B0 or unsupported B1 route blocks only this mutation, not RP02/03/04/06 exploration.
+
+**F4** — 03B blinded law-grounded P/C0/T from different source families, old-domain retention, full PC/time, then actual cold ordinary selected checkpoint digest/output and 06A candidate-bound independent code/architecture review if separately invoked. Do not promote T from weights SHA alone or tune holdout laws after seeing T. Quality regresses or inconclusive ⇒ retain accepted parent.
+
+In parallel, **04B/RP02** domain classification→semantic token/codebook→law-conditioned adaptive multi-neighbor kNN→LoRA projection on their actual recipients, **04C/RP03–04** typed many-to-many Unit and trainable Flow corrections, async Orchestrator and higher-order DynamicGraph, **05A/05B/RP06** DTC and IDE installed cold adoption. Cross-domain breadth is essential science, not a B1 prerequisite.
+
+## Hybrid design: what must really learn
+
+The original roles are *design requirements*, not four automatically existent trainable interfaces:
+- ILearningUnit: domain, input/output schema and vector codebook produce many→many **typed linked outputs**, a smallest learnable matrix with deterministic lawful guards.
+- ILearningFlow: trainable correction between Unit output/input associations, preserving typed edges and versioned mutable state.
+- ILearningOrchestrator: deeper bounded asynchronous input→output, legal dependencies/cancellation/early stop and all wasted branch cost.
+- ILearningDynamicGraph: higher-order learned pattern relationships, not static graph definitions.
+- Actual K ILearningMachine/Student DPO/LoRA owns one trainable state; LoRA weights themselves do NOT prove semantically well-formed vector tokens. Semantic tokenizer, learned projection, kNN policy and optimizer are different factors and may have different actual owners.
+
+For kNN compare same permitted source set and time budget under (i) top1, (ii) genuine multi-hit fixed k, (iii) law-weighted reranking/veto, (iv) adaptive k=f(domain law,density,margin,uncertainty,eligible pool,PC budget), (v) exact vs ANN recall, (vi) vector token/codebook and LoRA→semantic projection as separate ablations. Function is a testable hypothesis, not asserted universal optimal. Separate retrieval_eligible (privacy/license/tenant/split/version) from action_admissible (syntax, type and hard domain law). Negative neighbor may be *retrievable evidence* without being a permitted action. Score abstention, calibration, lawful output and domain-version stability, not raw nearest similarity.
+
+## Scientific exam and predeclared falsification
+
+For each **real recipient** before T, freeze experiment ID/owner, source-family disjoint train/dev/heldout hashes, domain-law version, baseline P, corrected-no-update C0 with exactly identical index/cache/software as treatment, T=C0+one new approved DPO logical group, blind independent examiner and consistent prompt/decoder settings. Measure per-family wins/ties/losses, critical law errors, routing oracle/predicted, abstentions, old family retention, uncertainty, cold selected ordinary output and end-to-end PC. P→C0 is engineering; C0→T is trainable effect. The R22 PILOT-P12 profile (12 C# independent families×2, up to 96 outputs with boundary extras) is **proposed**, not universally approved quota or observed 95%. Small exploratory pilots must be labeled as such.
+
+C# CodeDocumentation Student is first B1. EN↔RU agreement/negation and SQL NULL/UNKNOWN are independently assigned to their own actual RP02 learners; do not pool their scores as CodeDoc Student gain. Also preserve Angular, orchestration, Figma/Canva, DPO Builder, IDE functional expectations through their named owner, without making all seven domains a single training gate.
+
+Report full PC and elapsed time: Student+reference+trial, LoRA optimizer/activations/KV/cache, tokens+semantic vector index/graph, cold inference, concurrent RAM/VRAM peaks, disk for parent/trial/rollback/reindex, failed/discarded branches, CODEX case selector/judge, licensed Chinese both-side author, independent examiner and host. Do not assume old PC specs or count only tiny LoRA adapter file. Missing numbers => NOT_MEASURED, not “PC-compatible.”
+
+## New software tests: MINIMUM, not a proxy for learning
+
+**Read-only/source/plan/REUSE_NO_CHANGE = 0 new product tests.** If an actual altered deterministic consent/tenant/authorship/mask/type/atomic group/journal/rollback/step/permission/cancel boundary lacks protection, run the smallest existing focused probe or add one necessary focused negative/positive probe. Actual installed product/native release safety remains applicable where changed. No blanket test coverage percentage, all-Windows GitHub Actions, or old fixed run counts to establish stochastic quality. Blind real domain black-box exams are mandatory for claiming measured improvement.
+
+Separate evidence levels: (1) IMPLEMENTED real method and consumer; (2) STATE_CHANGED durable trainable checkpoint/journal; (3) LEARNING_MEASURED on independent lawful source families, old retention and time/PC; (4) COLD_ADOPTED on ordinary user. NONE inherits PASS from a prior level. A planning commit cannot claim CODEX independent review or Student execution.

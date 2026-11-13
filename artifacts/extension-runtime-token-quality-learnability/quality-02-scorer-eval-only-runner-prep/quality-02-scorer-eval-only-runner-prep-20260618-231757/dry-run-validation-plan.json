@@ -1,0 +1,107 @@
+{
+  "schema": "xiigen.quality_02.dry_run_validation_plan.v1",
+  "work_order_id": "QUALITY-02-SCORER-EVAL-ONLY-RUNNER-PREP-01",
+  "run_id": "quality-02-scorer-eval-only-runner-prep-20260618-231757",
+  "generated_at_local": "2026-06-18T23:17:57+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "plan_type": "future_dry_run_validation_no_scoring",
+  "dry_run_goal": "Validate schemas, refs, and safety boundaries before any future scoring run.",
+  "dry_run_must_not": [
+    "score baseline outputs",
+    "score adaptive outputs",
+    "create quality-scores-baseline.jsonl",
+    "create quality-scores-adaptive.jsonl",
+    "create quality-comparison PASS",
+    "call external AI/model",
+    "start runtime host",
+    "invoke llm_mvp_core generation",
+    "train or mutate DPO/checkpoints",
+    "claim quality improvement"
+  ],
+  "dry_run_validation_steps": [
+    {
+      "step_id": "DRY-RUN-01-PARSE",
+      "description": "Parse contract, checklist, QUALITY-01 rubric/prompt pack, input manifest if supplied, and state JSON.",
+      "pass_condition": "All JSON parses; no scoring output files are required."
+    },
+    {
+      "step_id": "DRY-RUN-02-BOUNDARY",
+      "description": "Verify hard forbidden actions remain false/not-run in the contract and checklist.",
+      "pass_condition": "external_ai_model_calls_allowed=false, runtime_host_execution_allowed=false, training_allowed=false, dpo_allowed=false, checkpoint_mutation_allowed=false."
+    },
+    {
+      "step_id": "DRY-RUN-03-PAIRING",
+      "description": "Check whether pairing_integrity_status is PASS for the supplied pair_id.",
+      "pass_condition": "If current complete pairs remain 0/9, dry-run returns PAIRING_INTEGRITY_NOT_READY and stops before scoring."
+    },
+    {
+      "step_id": "DRY-RUN-04-REDACTED-REFS",
+      "description": "Validate that baseline/adaptive output refs are pre-existing redacted refs only.",
+      "pass_condition": "No raw external output text or unredacted private corpus is embedded in the manifest."
+    },
+    {
+      "step_id": "DRY-RUN-05-RUBRIC",
+      "description": "Verify QUALITY-01 rubric has PromptToTask, OrchestrationReasoning, SkillSelection and FinalUsefulness layers.",
+      "pass_condition": "All four layers exist and score scale is 0..4."
+    },
+    {
+      "step_id": "DRY-RUN-06-SOURCE-SPLIT",
+      "description": "Validate source-disjoint and held-out refs exist when a future scoring manifest requests scoring.",
+      "pass_condition": "Missing refs produce FAIL_SOURCE_DISJOINT_SPLIT or FAIL_HELD_OUT_MISSING, not PASS."
+    },
+    {
+      "step_id": "DRY-RUN-07-CLAIM-LOCKS",
+      "description": "Scan contract, checklist, dry-run output and state entry claim locks.",
+      "pass_condition": "All token/quality/semantic/learnability/readiness claim flags are false."
+    }
+  ],
+  "expected_current_dry_run_result": {
+    "status": "PASS_DRY_RUN_SCHEMA_BOUNDARY_ONLY",
+    "pairing_result": "PAIRING_INTEGRITY_NOT_READY",
+    "scores_created": false,
+    "quality_claim_allowed": false,
+    "reason": "Current state records 0 of 9 complete pairs."
+  },
+  "allowed_future_dry_run_artifacts": [
+    "quality-dry-run-validation-report.json",
+    "quality-dry-run-validation-report-ru.md",
+    "checks-report.json"
+  ],
+  "forbidden_future_dry_run_artifacts": [
+    "quality-scores-baseline.jsonl",
+    "quality-scores-adaptive.jsonl",
+    "quality-comparison-report.json with PASS",
+    "training dataset",
+    "DPO candidate row",
+    "checkpoint file"
+  ],
+  "next_bounded_work_order": {
+    "id": "QUALITY-02-EVAL-ONLY-RUNNER-DRY-RUN-VALIDATION-01",
+    "requested_artifact_type": "dry-run validation report only",
+    "allowed_write_scope": [
+      "new timestamped folder under artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-dry-run-validation/",
+      "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+    ],
+    "actual_scoring_authorized_now": false,
+    "runtime_host_execution_authorized_now": false,
+    "external_ai_model_calls_authorized_now": false,
+    "training_dpo_checkpoint_authorized_now": false,
+    "expected_current_result": "PAIRING_INTEGRITY_NOT_READY"
+  },
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "token_savings_claim_allowed": false,
+    "quality_improvement_claimed": false,
+    "quality_improvement_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "full_host_readiness_claimed": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  }
+}

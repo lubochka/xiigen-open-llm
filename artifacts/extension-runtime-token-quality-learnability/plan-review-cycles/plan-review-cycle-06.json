@@ -1,0 +1,134 @@
+{
+  "schema": "xiigen.extension_runtime_token_quality_learnability.plan_review_cycle.v1",
+  "cycle_number": 6,
+  "cycle_set_id": "2026-06-17-current-plan-review-cycles",
+  "reviewer_or_subagent_id": "sub-agent-cycle-06-current-session-quality-semantic-claims",
+  "requested_model": "gpt-5.5",
+  "requested_effort": "xhigh",
+  "downgrade_warning_or_NONE": "NONE",
+  "current_luba_instruction": "Ты sub-agent для свежего plan review/fix cycle 6/10. Работай в C:\\Projects\\llm_mvp_core. Не спавни агентов. Не коммить/пушь. Не меняй ветку. Не редактируй runtime/source code. Cycle 6/10: review/fix plan по quality improvement / semantic quality claims.",
+  "focus": "quality improvement and semantic quality claims",
+  "previous_cycle_06_packet_status": "STALE_INFRASTRUCTURE_FAILED_NOT_COUNTED",
+  "sections_reviewed": [
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 0.1",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Sections 4.2.2 and 4.3",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 6 QUALITY rows",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 7 required artifacts",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 8 pass 6 and Section 8.7",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md Section 9 final acceptance and final readiness pass 6",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json active plan-review cycle gate"
+  ],
+  "findings_fixes": [
+    {
+      "id": "C06-Q1",
+      "severity": "PASS_WITH_PLAN_FIX",
+      "finding": "The plan had a human-readable quality rubric but needed a concrete machines/layers to inputs to scoring criteria to fail labels to artifacts matrix.",
+      "fix": "Added Section 4.3.1 quality improvement / semantic quality claim matrix."
+    },
+    {
+      "id": "C06-Q2",
+      "severity": "PASS_WITH_PAIRING_GATE",
+      "finding": "Baseline/adaptive quality outputs could be read as scoreable without first proving pairing integrity.",
+      "fix": "Quality scoring now runs only after Section 4.2.2 pairing integrity passes for the same pair_id."
+    },
+    {
+      "id": "C06-Q3",
+      "severity": "PASS_WITH_SOURCE_DISJOINT_HELD_OUT",
+      "finding": "Source-disjoint eval needed explicit held-out prompts and no shared source/path/title/prompt-hash/correction/nearest-neighbour source.",
+      "fix": "Added source-disjoint held-out split requirements and fail labels."
+    },
+    {
+      "id": "C06-Q4",
+      "severity": "PASS_WITH_REAL_REFERENCE_EXAMPLES",
+      "finding": "Positive and negative examples needed to come from real reviewed references where available.",
+      "fix": "Synthetic-only examples are now rubric scaffolding only and cannot close PASS."
+    },
+    {
+      "id": "C06-Q5",
+      "severity": "PASS_WITH_ABLATION_NO_LEAKAGE_NO_MEMORIZATION",
+      "finding": "Semantic quality claims needed explicit ablation/no-leakage/no-memorization controls.",
+      "fix": "Added common/no-trained-state baseline, exact prompt/path/title/source-id masking, nearest-neighbour, candidate-order shuffle and chosen/rejected shuffle controls."
+    },
+    {
+      "id": "C06-Q6",
+      "severity": "PASS_WITH_NO_OVERCLAIM",
+      "finding": "The plan needed to keep full semantic quality/common readiness/target promotion closed when any key layer only had narrow staged/baseline/deterministic improvement.",
+      "fix": "Added SEMANTIC_CLAIM_BLOCKED_NARROW_LAYER_EVIDENCE and final acceptance/final readiness wording."
+    }
+  ],
+  "quality_semantic_claim_gate": {
+    "human_readable_quality_rubric_required": true,
+    "layers_required": [
+      "PromptToTask",
+      "OrchestrationReasoning",
+      "SkillSelection",
+      "Final output usefulness"
+    ],
+    "machines_required": [
+      "PromptToTaskMachine",
+      "OrchestrationReasoningMachine",
+      "SkillSelectionMachine"
+    ],
+    "same_pair_baseline_adaptive_scoring_after_pairing_integrity_required": true,
+    "source_disjoint_eval_split_required": true,
+    "held_out_prompts_required": true,
+    "positive_negative_examples_from_real_references_where_available_required": true,
+    "reviewer_notes_required": true,
+    "regression_guard_required": true,
+    "ablation_controls_required": true,
+    "no_leakage_controls_required": true,
+    "no_memorization_controls_required": true,
+    "quality_non_regression_required_before_token_savings": true,
+    "full_semantic_quality_blocked_by_narrow_staged_baseline_deterministic_layer_evidence": true,
+    "common_readiness_blocked_by_narrow_staged_baseline_deterministic_layer_evidence": true,
+    "target_promotion_blocked_by_narrow_staged_baseline_deterministic_layer_evidence": true,
+    "locator_update_blocked_by_narrow_staged_baseline_deterministic_layer_evidence": true
+  },
+  "required_failure_labels_added": [
+    "FAIL_PROMPT_TO_TASK_REGRESSION",
+    "FAIL_ORCHESTRATION_REGRESSION",
+    "FAIL_SKILL_SELECTION_REGRESSION",
+    "FAIL_SOURCE_DISJOINT_SPLIT",
+    "FAIL_HELD_OUT_MISSING",
+    "FAIL_NO_MEMORIZATION_CONTROL",
+    "FAIL_ABLATION_EXPLAINS_GAIN",
+    "FAIL_DETERMINISTIC_BASELINE_ONLY",
+    "FAIL_NARROW_STAGED_ONLY",
+    "SEMANTIC_CLAIM_BLOCKED_NARROW_LAYER_EVIDENCE"
+  ],
+  "plan_changed": true,
+  "state_changed": true,
+  "artifact_changed": true,
+  "product_readiness_proven_now": false,
+  "runtime_execution_authorized_now": false,
+  "training_authorized_now": false,
+  "checkpoint_mutation_authorized_now": false,
+  "commit_push_authorized_now": false,
+  "cycle_counts_toward_10": true,
+  "cycles_completed_after_this_packet": 6,
+  "remaining_cycles_before_execution": 4,
+  "recheck_evidence": {
+    "status": "PASS",
+    "checks_run": [
+      {
+        "command": "ConvertFrom-Json docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+        "result": "PASS"
+      },
+      {
+        "command": "ConvertFrom-Json artifacts/extension-runtime-token-quality-learnability/plan-review-cycles/plan-review-cycle-06.json",
+        "result": "PASS"
+      },
+      {
+        "command": "git diff --check",
+        "result": "PASS"
+      },
+      {
+        "command": "rg markers for cycle 6 quality/semantic/source-disjoint/ablation/no-memorization/machine names",
+        "result": "PASS"
+      }
+    ],
+    "dotnet_test": "NOT_RUN_NOT_AUTHORIZED_FOR_PLAN_REVIEW_CYCLE_06"
+  },
+  "next_cycle_focus": "Cycle 7/10 remains required before execution; runtime/source code/training/host execution remains locked.",
+  "parent_review_disposition": "PENDING_PARENT_REVIEW"
+}

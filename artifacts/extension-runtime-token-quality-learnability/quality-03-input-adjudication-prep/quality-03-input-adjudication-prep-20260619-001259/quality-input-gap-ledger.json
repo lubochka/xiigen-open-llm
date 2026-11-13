@@ -1,0 +1,311 @@
+{
+  "schema": "xiigen.quality_03.quality_input_gap_ledger.v1",
+  "work_order_id": "QUALITY-03-INPUT-ADJUDICATION-PREP-01",
+  "run_id": "quality-03-input-adjudication-prep-20260619-001259",
+  "generated_at_local": "2026-06-19T00:12:59+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "artifact_type": "gap_ledger_no_repair_no_scoring",
+  "source_refs_read": {
+    "plan_quality_sections": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "state": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "quality_01_eval_prompt_pack": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/eval-prompt-pack.json",
+    "quality_01_rubric": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/quality-rubric.json",
+    "quality_01_held_out_and_ablation_requirements": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/held-out-and-ablation-requirements.json",
+    "quality_02_eval_only_runner_contract": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-231757/eval-only-runner-contract.json",
+    "quality_02_scorer_boundary_checklist": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-231757/scorer-boundary-checklist.json",
+    "quality_02_dry_run_validation_result": "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-dry-run-validation/quality-02-eval-only-runner-dry-run-validation-20260619-000435/dry-run-validation-result.json",
+    "token_03_pair_completion_matrix": "artifacts/extension-runtime-token-quality-learnability/token-03-pair-completion-capture-or-defer/token-03-pair-completion-capture-or-defer-20260618-225554/pair-completion-matrix.json",
+    "token_03_deferrals": "artifacts/extension-runtime-token-quality-learnability/token-03-pair-completion-capture-or-defer/token-03-pair-completion-capture-or-defer-20260618-225554/deferrals.json",
+    "token_03_trace_capture_summary": "artifacts/extension-runtime-token-quality-learnability/token-03-narrow-trace-capture-or-defer/token-03-narrow-trace-capture-or-defer-20260618-224207/trace-capture-summary.json",
+    "token_03_token_traces": "artifacts/extension-runtime-token-quality-learnability/token-03-narrow-trace-capture-or-defer/token-03-narrow-trace-capture-or-defer-20260618-224207/token-traces.jsonl"
+  },
+  "overall_status": "INPUT_GAPS_ACTIVE_PREP_ONLY_NO_SCORING",
+  "global_gaps": [
+    {
+      "gap_id": "TOKEN_PAIR_COMPLETION_ZERO_OF_NINE",
+      "status": "ACTIVE",
+      "severity": "blocks_actual_quality_scoring",
+      "evidence_ref": "artifacts/extension-runtime-token-quality-learnability/token-03-pair-completion-capture-or-defer/token-03-pair-completion-capture-or-defer-20260618-225554/pair-completion-matrix.json",
+      "detail_ru": "0/9 complete token pairs; runner обязан вернуть PAIRING_INTEGRITY_NOT_READY.",
+      "repair_need_ru": "Найти или получить same-pair baseline/adaptive redacted output refs с matching host/method/evidence/tokenizer/redaction metadata."
+    },
+    {
+      "gap_id": "REVIEWER_ADJUDICATION_REFS_NOT_CREATED_FOR_SCORE_ROWS",
+      "status": "ACTIVE",
+      "severity": "blocks_future_review_acceptance",
+      "evidence_ref": "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-231757/eval-only-runner-contract.json",
+      "detail_ru": "Reviewer note capture required, но actual score rows и reviewer notes не создавались.",
+      "repair_need_ru": "Создать row-specific reviewer/adjudication refs only after valid inputs exist; пока использовать schema only."
+    },
+    {
+      "gap_id": "HELD_OUT_SOURCE_DISJOINT_METADATA_REQUIREMENTS_ONLY",
+      "status": "ACTIVE",
+      "severity": "blocks_semantic_quality_claim",
+      "evidence_ref": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/held-out-and-ablation-requirements.json",
+      "detail_ru": "Есть требования к held-out/source-disjoint, но нет row-specific held_out_split_ref/source_disjoint_check_ref для 9 current pairs.",
+      "repair_need_ru": "Подготовить row-specific split metadata без raw private/external output text."
+    },
+    {
+      "gap_id": "ABLATION_NO_LEAKAGE_NO_MEMORIZATION_REFS_MISSING",
+      "status": "ACTIVE",
+      "severity": "blocks_semantic_quality_claim",
+      "evidence_ref": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/held-out-and-ablation-requirements.json",
+      "detail_ru": "Ablation/no-leakage/no-memorization controls описаны как future requirements, но не выполнены для current pair rows.",
+      "repair_need_ru": "После валидных inputs подготовить controls refs; до этого claims false."
+    }
+  ],
+  "pair_gaps": [
+    {
+      "gap_id": "PAIR_INPUT_GAP_TOKEN-PAIR-CLAUDE-PROMPT-TO-TASK-001",
+      "pair_id": "TOKEN-PAIR-CLAUDE-PROMPT-TO-TASK-001",
+      "scenario_id": "TOKEN-SCENARIO-PROMPT-TO-TASK-001",
+      "host": "Claude",
+      "method": "prompt-to-task",
+      "status": "PARTIAL_SINGLE_SIDE_ONLY",
+      "existing_redacted_output_refs_count": 1,
+      "missing_sides": [
+        "baseline_common_no_adaptive"
+      ],
+      "failure_labels": [
+        "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+        "QUALITY_PREREQ_NOT_PASSED",
+        "MISSING_TOKEN_ACCOUNTING_REPORT",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ],
+      "can_score_now": false,
+      "gap_ru": "Есть только одиночный redacted output ref или узкий evidence class; нет same-pair baseline/adaptive пары и нет quality non-regression.",
+      "repair_need_ru": "QUALITY-03 gap repair должен либо найти уже существующие exact redacted refs и metadata, либо оставить row deferred с причиной; scoring/runtime/model/training остаются forbidden без отдельного work order."
+    },
+    {
+      "gap_id": "PAIR_INPUT_GAP_TOKEN-PAIR-CLAUDE-ORCHESTRATION-PLAN-001",
+      "pair_id": "TOKEN-PAIR-CLAUDE-ORCHESTRATION-PLAN-001",
+      "scenario_id": "TOKEN-SCENARIO-ORCHESTRATION-PLAN-001",
+      "host": "Claude",
+      "method": "orchestration-plan",
+      "status": "MISSING_OR_DEFERRED",
+      "existing_redacted_output_refs_count": 0,
+      "missing_sides": [
+        "baseline_common_no_adaptive",
+        "adaptive_user_local_target"
+      ],
+      "failure_labels": [
+        "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+        "MISMATCH_ADAPTIVE_REF",
+        "MISSING_ADAPTIVE_USER_LOCAL_TARGET_REF",
+        "MISSING_HOST_PAIR",
+        "INVALID_PAIR_DIFFERENT_PROMPT_OR_METHOD",
+        "QUALITY_PREREQ_NOT_PASSED",
+        "MISSING_TOKEN_ACCOUNTING_REPORT",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ],
+      "can_score_now": false,
+      "gap_ru": "Нет redacted baseline/adaptive output refs для этой пары; строка остается missing/deferred.",
+      "repair_need_ru": "QUALITY-03 gap repair должен либо найти уже существующие exact redacted refs и metadata, либо оставить row deferred с причиной; scoring/runtime/model/training остаются forbidden без отдельного work order."
+    },
+    {
+      "gap_id": "PAIR_INPUT_GAP_TOKEN-PAIR-CLAUDE-SKILL-SELECTION-001",
+      "pair_id": "TOKEN-PAIR-CLAUDE-SKILL-SELECTION-001",
+      "scenario_id": "TOKEN-SCENARIO-SKILL-SELECTION-001",
+      "host": "Claude",
+      "method": "skill-selection",
+      "status": "MISSING_OR_DEFERRED",
+      "existing_redacted_output_refs_count": 0,
+      "missing_sides": [
+        "baseline_common_no_adaptive",
+        "adaptive_user_local_target"
+      ],
+      "failure_labels": [
+        "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+        "MISMATCH_ADAPTIVE_REF",
+        "MISSING_ADAPTIVE_USER_LOCAL_TARGET_REF",
+        "MISSING_HOST_PAIR",
+        "INVALID_PAIR_DIFFERENT_PROMPT_OR_METHOD",
+        "QUALITY_PREREQ_NOT_PASSED",
+        "MISSING_TOKEN_ACCOUNTING_REPORT",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ],
+      "can_score_now": false,
+      "gap_ru": "Нет redacted baseline/adaptive output refs для этой пары; строка остается missing/deferred.",
+      "repair_need_ru": "QUALITY-03 gap repair должен либо найти уже существующие exact redacted refs и metadata, либо оставить row deferred с причиной; scoring/runtime/model/training остаются forbidden без отдельного work order."
+    },
+    {
+      "gap_id": "PAIR_INPUT_GAP_TOKEN-PAIR-CURSOR-PROMPT-TO-TASK-001",
+      "pair_id": "TOKEN-PAIR-CURSOR-PROMPT-TO-TASK-001",
+      "scenario_id": "TOKEN-SCENARIO-PROMPT-TO-TASK-001",
+      "host": "Cursor",
+      "method": "prompt-to-task",
+      "status": "MISSING_OR_DEFERRED",
+      "existing_redacted_output_refs_count": 0,
+      "missing_sides": [
+        "baseline_common_no_adaptive",
+        "adaptive_user_local_target"
+      ],
+      "failure_labels": [
+        "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+        "MISMATCH_ADAPTIVE_REF",
+        "MISSING_ADAPTIVE_USER_LOCAL_TARGET_REF",
+        "CURSOR_SAFE_LAUNCH_CONTRACT_MISSING",
+        "MISSING_HOST_PAIR",
+        "QUALITY_PREREQ_NOT_PASSED",
+        "MISSING_TOKEN_ACCOUNTING_REPORT",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ],
+      "can_score_now": false,
+      "gap_ru": "Нет redacted baseline/adaptive output refs для этой пары; строка остается missing/deferred.",
+      "repair_need_ru": "QUALITY-03 gap repair должен либо найти уже существующие exact redacted refs и metadata, либо оставить row deferred с причиной; scoring/runtime/model/training остаются forbidden без отдельного work order."
+    },
+    {
+      "gap_id": "PAIR_INPUT_GAP_TOKEN-PAIR-CURSOR-ORCHESTRATION-PLAN-001",
+      "pair_id": "TOKEN-PAIR-CURSOR-ORCHESTRATION-PLAN-001",
+      "scenario_id": "TOKEN-SCENARIO-ORCHESTRATION-PLAN-001",
+      "host": "Cursor",
+      "method": "orchestration-plan",
+      "status": "MISSING_OR_DEFERRED",
+      "existing_redacted_output_refs_count": 0,
+      "missing_sides": [
+        "baseline_common_no_adaptive",
+        "adaptive_user_local_target"
+      ],
+      "failure_labels": [
+        "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+        "MISMATCH_ADAPTIVE_REF",
+        "MISSING_ADAPTIVE_USER_LOCAL_TARGET_REF",
+        "CURSOR_SAFE_LAUNCH_CONTRACT_MISSING",
+        "MISSING_HOST_PAIR",
+        "QUALITY_PREREQ_NOT_PASSED",
+        "MISSING_TOKEN_ACCOUNTING_REPORT",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ],
+      "can_score_now": false,
+      "gap_ru": "Нет redacted baseline/adaptive output refs для этой пары; строка остается missing/deferred.",
+      "repair_need_ru": "QUALITY-03 gap repair должен либо найти уже существующие exact redacted refs и metadata, либо оставить row deferred с причиной; scoring/runtime/model/training остаются forbidden без отдельного work order."
+    },
+    {
+      "gap_id": "PAIR_INPUT_GAP_TOKEN-PAIR-CURSOR-SKILL-SELECTION-001",
+      "pair_id": "TOKEN-PAIR-CURSOR-SKILL-SELECTION-001",
+      "scenario_id": "TOKEN-SCENARIO-SKILL-SELECTION-001",
+      "host": "Cursor",
+      "method": "skill-selection",
+      "status": "MISSING_OR_DEFERRED",
+      "existing_redacted_output_refs_count": 0,
+      "missing_sides": [
+        "baseline_common_no_adaptive",
+        "adaptive_user_local_target"
+      ],
+      "failure_labels": [
+        "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+        "MISMATCH_ADAPTIVE_REF",
+        "MISSING_ADAPTIVE_USER_LOCAL_TARGET_REF",
+        "CURSOR_SAFE_LAUNCH_CONTRACT_MISSING",
+        "MISSING_HOST_PAIR",
+        "QUALITY_PREREQ_NOT_PASSED",
+        "MISSING_TOKEN_ACCOUNTING_REPORT",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ],
+      "can_score_now": false,
+      "gap_ru": "Нет redacted baseline/adaptive output refs для этой пары; строка остается missing/deferred.",
+      "repair_need_ru": "QUALITY-03 gap repair должен либо найти уже существующие exact redacted refs и metadata, либо оставить row deferred с причиной; scoring/runtime/model/training остаются forbidden без отдельного work order."
+    },
+    {
+      "gap_id": "PAIR_INPUT_GAP_TOKEN-PAIR-CODEX-PROMPT-TO-TASK-001",
+      "pair_id": "TOKEN-PAIR-CODEX-PROMPT-TO-TASK-001",
+      "scenario_id": "TOKEN-SCENARIO-PROMPT-TO-TASK-001",
+      "host": "Codex",
+      "method": "prompt-to-task",
+      "status": "PARTIAL_SINGLE_SIDE_ONLY",
+      "existing_redacted_output_refs_count": 1,
+      "missing_sides": [
+        "adaptive_user_local_target"
+      ],
+      "failure_labels": [
+        "MISMATCH_ADAPTIVE_REF",
+        "MISSING_ADAPTIVE_USER_LOCAL_TARGET_REF",
+        "QUALITY_PREREQ_NOT_PASSED",
+        "MISSING_TOKEN_ACCOUNTING_REPORT",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ],
+      "can_score_now": false,
+      "gap_ru": "Есть только одиночный redacted output ref или узкий evidence class; нет same-pair baseline/adaptive пары и нет quality non-regression.",
+      "repair_need_ru": "QUALITY-03 gap repair должен либо найти уже существующие exact redacted refs и metadata, либо оставить row deferred с причиной; scoring/runtime/model/training остаются forbidden без отдельного work order."
+    },
+    {
+      "gap_id": "PAIR_INPUT_GAP_TOKEN-PAIR-CODEX-ORCHESTRATION-PLAN-001",
+      "pair_id": "TOKEN-PAIR-CODEX-ORCHESTRATION-PLAN-001",
+      "scenario_id": "TOKEN-SCENARIO-ORCHESTRATION-PLAN-001",
+      "host": "Codex",
+      "method": "orchestration-plan",
+      "status": "MISSING_OR_DEFERRED",
+      "existing_redacted_output_refs_count": 0,
+      "missing_sides": [
+        "baseline_common_no_adaptive",
+        "adaptive_user_local_target"
+      ],
+      "failure_labels": [
+        "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+        "MISMATCH_ADAPTIVE_REF",
+        "MISSING_ADAPTIVE_USER_LOCAL_TARGET_REF",
+        "MISSING_HOST_PAIR",
+        "INVALID_PAIR_DIFFERENT_PROMPT_OR_METHOD",
+        "QUALITY_PREREQ_NOT_PASSED",
+        "MISSING_TOKEN_ACCOUNTING_REPORT",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ],
+      "can_score_now": false,
+      "gap_ru": "Нет redacted baseline/adaptive output refs для этой пары; строка остается missing/deferred.",
+      "repair_need_ru": "QUALITY-03 gap repair должен либо найти уже существующие exact redacted refs и metadata, либо оставить row deferred с причиной; scoring/runtime/model/training остаются forbidden без отдельного work order."
+    },
+    {
+      "gap_id": "PAIR_INPUT_GAP_TOKEN-PAIR-CODEX-SKILL-SELECTION-001",
+      "pair_id": "TOKEN-PAIR-CODEX-SKILL-SELECTION-001",
+      "scenario_id": "TOKEN-SCENARIO-SKILL-SELECTION-001",
+      "host": "Codex",
+      "method": "skill-selection",
+      "status": "MISSING_OR_DEFERRED",
+      "existing_redacted_output_refs_count": 0,
+      "missing_sides": [
+        "baseline_common_no_adaptive",
+        "adaptive_user_local_target"
+      ],
+      "failure_labels": [
+        "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+        "MISMATCH_ADAPTIVE_REF",
+        "MISSING_ADAPTIVE_USER_LOCAL_TARGET_REF",
+        "MISSING_HOST_PAIR",
+        "INVALID_PAIR_DIFFERENT_PROMPT_OR_METHOD",
+        "QUALITY_PREREQ_NOT_PASSED",
+        "MISSING_TOKEN_ACCOUNTING_REPORT",
+        "PAIRING_INTEGRITY_NOT_READY"
+      ],
+      "can_score_now": false,
+      "gap_ru": "Нет redacted baseline/adaptive output refs для этой пары; строка остается missing/deferred.",
+      "repair_need_ru": "QUALITY-03 gap repair должен либо найти уже существующие exact redacted refs и metadata, либо оставить row deferred с причиной; scoring/runtime/model/training остаются forbidden без отдельного work order."
+    }
+  ],
+  "next_safe_work_order_decision": {
+    "selected": "QUALITY-03-ADJUDICATION-INPUT-GAP-REPAIR-01",
+    "reason_ru": "Required quality inputs are missing or partial for all 9 pairs. Следующий безопасный шаг должен repair/reconcile exact redacted input refs, reviewer/adjudication refs и source-disjoint metadata before any scoring. Это не global stop и не quality claim.",
+    "rejected_alternative": "LEARN-01-DPO-SOURCE-LIFECYCLE-PREP-01",
+    "rejected_reason_ru": "Independent learnability prep может продолжиться позже, но текущий QUALITY-03 path имеет прямой input gap, который нужно зафиксировать/repair first по правилу work order."
+  },
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "token_savings_claim_allowed": false,
+    "quality_improvement_claimed": false,
+    "quality_improvement_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "full_claude_chat_ui_claimed": false,
+    "full_cursor_chat_ui_claimed": false,
+    "full_codex_chat_ui_claimed": false,
+    "full_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false,
+    "actual_eval_can_be_next": false
+  }
+}

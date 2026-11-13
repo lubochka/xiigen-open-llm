@@ -1,0 +1,155 @@
+ПРОВЕРКА ИГНОРИРУЕМЫХ ПУТЕЙ В КАТАЛОГЕ ДОКАЗАТЕЛЬСТВ
+Заполнено 10.11.2026 по возврату проверяющего (находка 2 третьего круга:
+файл был нулевого размера и не отличал «проверено, ноль путей» от
+«не проверялось»).
+Рабочий корень C:\Projects\llm_mvp_core, ветка codex/dpo-implementation.
+Команд записи Git не выполнялось: только чтение.
+
+ЧТО ПРОВЕРЯЕТСЯ И ПОЧЕМУ ИМЕННО ТАК
+Требуется доказать, что ни один файл доказательств этой попытки не выпадает
+из-под учёта Git из-за правила игнорирования. По правилу проекта код возврата
+сам по себе вердиктом НЕ является: решает текст победившего правила. Поэтому
+проверка двухчастная.
+  Часть первая — фактическое дерево: перечисление реально существующих
+  неотслеживаемых игнорируемых путей. Это прямое доказательство.
+  Часть вторая — гипотетические пробы: разбор победившего правила для пути в
+  каждом подкаталоге. Это доказательство на будущее: оно показывает, что
+  новый файл в этих каталогах тоже не будет проигнорирован.
+Чтение победившего правила: код возврата 1 при пустом выводе означает, что
+подходящего правила игнорирования нет вовсе, то есть путь НЕ игнорируется;
+код возврата 0 с правилом, начинающимся с восклицательного знака, означает
+явное ПЕРЕ-включение, то есть тоже не игнорируется; код возврата 0 с
+правилом без восклицательного знака означает игнорирование и жёсткий отказ.
+
+ЧАСТЬ ПЕРВАЯ. ФАКТИЧЕСКОЕ ДЕРЕВО
+
+Команда дословно:
+  git ls-files --others --ignored --exclude-standard -- artifacts/fbe/FIX-IDX/attempt-0003
+Наблюдённый вывод: пусто (0 строк). Код возврата 0.
+
+Команда дословно:
+  git ls-files --others --ignored --exclude-standard -- artifacts/fbe
+Наблюдённый вывод: пусто (0 строк). Код возврата 0.
+
+Команда дословно:
+  git ls-files --others --ignored --exclude-standard -- qa-results
+Наблюдённый вывод: пусто (0 строк). Код возврата 0.
+
+Команда дословно:
+  git ls-files --others --ignored --exclude-standard -- Tests/ExperimentFixes
+Наблюдённый вывод: пусто (0 строк). Код возврата 0.
+
+Команда дословно:
+  git status --porcelain=v1 --ignored=matching -- artifacts/fbe/FIX-IDX/attempt-0003
+Наблюдённое число строк, начинающихся с двух восклицательных знаков: 0.
+Код возврата 0.
+
+Проверены и два посторонних источника правил игнорирования:
+  cat .git/info/exclude
+    Наблюдённый вывод после отбрасывания пустых строк и строк с решёткой:
+    пусто. Своих правил в этом файле нет.
+  git config --get core.excludesFile
+    Наблюдённый вывод: пусто, настройка не задана. Код возврата 1.
+Значит глобального файла исключений, который мог бы перебить правила
+хранилища, в этой настройке нет вовсе.
+
+ПЕРЕЧИСЛЕНИЕ ФАКТИЧЕСКОГО ДЕРЕВА ПОПЫТКИ (36 записей: 10 файлов в корне,
+8 подкаталогов, 18 файлов внутри подкаталогов)
+
+  Пометка попытки 0006 (исправление разбивки). Прежняя строка этого заголовка
+  была такой дословно: «ПЕРЕЧИСЛЕНИЕ ФАКТИЧЕСКОГО ДЕРЕВА ПОПЫТКИ (36 записей:
+  9 файлов в корне, 8 подкаталогов, 19 файлов внутри подкаталогов)». Итог 36 и
+  число подкаталогов 8 были верны, а разбивка файлов — нет: в корне 10 файлов,
+  а не 9, и внутри подкаталогов 18, а не 19. Пересчитано двумя независимыми
+  способами, оба дали 10 / 8 / 18 при сумме 36: во-первых, разбором самого
+  перечисления ниже (запись считается файлом корня, если после префикса
+  каталога попытки в ней нет косой черты); во-вторых, живым деревом теми же
+  командами find с -maxdepth 1 -type f, -maxdepth 1 -type d и -mindepth 2
+  -type f. В корне лежат десять файлов: TrainingIdentityIndexTransferTests
+  .after-fix.cs, counters.txt, exit-codes.txt, ignored-paths-check.txt,
+  independent-review-03.md, mutations.txt, product-hashes.txt,
+  product-slice.diff, qa-results-inventory.txt и test-file.diff — прежняя
+  разбивка не учла последний. Внутри восьми подкаталогов файлов 18:
+  review-03-run 3, s1-build 1, s2-class 2, s3-family 2, s4-mut1 3,
+  s5-restore1 2, s6-mut2 3, s7-restore2 2.
+
+Команда дословно:
+  find artifacts/fbe/FIX-IDX/attempt-0003 -mindepth 1 | sort
+
+artifacts/fbe/FIX-IDX/attempt-0003/TrainingIdentityIndexTransferTests.after-fix.cs
+artifacts/fbe/FIX-IDX/attempt-0003/counters.txt
+artifacts/fbe/FIX-IDX/attempt-0003/exit-codes.txt
+artifacts/fbe/FIX-IDX/attempt-0003/ignored-paths-check.txt
+artifacts/fbe/FIX-IDX/attempt-0003/independent-review-03.md
+artifacts/fbe/FIX-IDX/attempt-0003/mutations.txt
+artifacts/fbe/FIX-IDX/attempt-0003/product-hashes.txt
+artifacts/fbe/FIX-IDX/attempt-0003/product-slice.diff
+artifacts/fbe/FIX-IDX/attempt-0003/qa-results-inventory.txt
+artifacts/fbe/FIX-IDX/attempt-0003/review-03-run
+artifacts/fbe/FIX-IDX/attempt-0003/review-03-run/console.log
+artifacts/fbe/FIX-IDX/attempt-0003/review-03-run/exit-code.txt
+artifacts/fbe/FIX-IDX/attempt-0003/review-03-run/review-03-class.trx
+artifacts/fbe/FIX-IDX/attempt-0003/s1-build
+artifacts/fbe/FIX-IDX/attempt-0003/s1-build/s1-build.log
+artifacts/fbe/FIX-IDX/attempt-0003/s2-class
+artifacts/fbe/FIX-IDX/attempt-0003/s2-class/console.log
+artifacts/fbe/FIX-IDX/attempt-0003/s2-class/s2-class.trx
+artifacts/fbe/FIX-IDX/attempt-0003/s3-family
+artifacts/fbe/FIX-IDX/attempt-0003/s3-family/console.log
+artifacts/fbe/FIX-IDX/attempt-0003/s3-family/s3-family.trx
+artifacts/fbe/FIX-IDX/attempt-0003/s4-mut1
+artifacts/fbe/FIX-IDX/attempt-0003/s4-mut1/console.log
+artifacts/fbe/FIX-IDX/attempt-0003/s4-mut1/red-tests.txt
+artifacts/fbe/FIX-IDX/attempt-0003/s4-mut1/s4-mut1.trx
+artifacts/fbe/FIX-IDX/attempt-0003/s5-restore1
+artifacts/fbe/FIX-IDX/attempt-0003/s5-restore1/console.log
+artifacts/fbe/FIX-IDX/attempt-0003/s5-restore1/s5-restore1.trx
+artifacts/fbe/FIX-IDX/attempt-0003/s6-mut2
+artifacts/fbe/FIX-IDX/attempt-0003/s6-mut2/console.log
+artifacts/fbe/FIX-IDX/attempt-0003/s6-mut2/red-tests.txt
+artifacts/fbe/FIX-IDX/attempt-0003/s6-mut2/s6-mut2.trx
+artifacts/fbe/FIX-IDX/attempt-0003/s7-restore2
+artifacts/fbe/FIX-IDX/attempt-0003/s7-restore2/console.log
+artifacts/fbe/FIX-IDX/attempt-0003/s7-restore2/s7-restore2.trx
+artifacts/fbe/FIX-IDX/attempt-0003/test-file.diff
+
+Ни одна из этих 36 записей не попала в перечисление игнорируемых путей выше.
+
+ЧАСТЬ ВТОРАЯ. РАЗБОР ПОБЕДИВШЕГО ПРАВИЛА ПО ОБРАЗЦУ КАЖДОГО ПОДКАТАЛОГА
+
+Общая форма команды дословно:
+  git check-ignore -v --no-index -- "<путь>"
+
+Проверенный путь                                                   | вывод  | код | вердикт
+-------------------------------------------------------------------|--------|-----|--------
+.../attempt-0003/review-03-run/example-probe.txt                   | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+.../attempt-0003/s1-build/example-probe.txt                        | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+.../attempt-0003/s2-class/example-probe.txt                        | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+.../attempt-0003/s3-family/example-probe.txt                       | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+.../attempt-0003/s4-mut1/example-probe.txt                         | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+.../attempt-0003/s5-restore1/example-probe.txt                     | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+.../attempt-0003/s6-mut2/example-probe.txt                         | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+.../attempt-0003/s7-restore2/example-probe.txt                     | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+.../attempt-0003/ignored-paths-check.txt                           | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+.../attempt-0003/test-file.diff                                    | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+.../attempt-0003/example-probe.trx                                 | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+artifacts/fbe/FIX-BRIDGE/attempt-0005/example-probe.log            | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+Tests/ExperimentFixes/TrainingIdentityIndexTransferTests.cs        | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+qa-results/q01-output-policy-42c5...fd2a/example-probe.json        | пусто  | 1   | НЕ игнорируется, подходящего правила нет
+
+Проба с расширением результата проверки добавлена намеренно: в хранилище есть
+правило игнорирования для каталога результатов прогонов, и нужно было убедиться,
+что оно не достаёт до каталога доказательств. Не достаёт.
+
+ВЕРДИКТ
+Игнорируемых путей в каталоге доказательств: НОЛЬ. Доказано дважды и
+независимо: фактическое перечисление даёт ноль строк, а разбор победившего
+правила по образцу каждого из восьми подкаталогов и по четырём отдельным
+путям даёт «подходящего правила игнорирования нет вовсе» в каждом случае.
+Посторонние источники правил (файл исключений хранилища и глобальный файл
+исключений) пусты и не заданы, поэтому перебить вердикт им нечем.
+
+ГРАНИЦА ЭТОГО ДОКАЗАТЕЛЬСТВА
+Оно говорит только об учёте Git: что файлы доказательств видимы для Git и
+могут быть закоммичены. Оно НЕ говорит, что они уже закоммичены, и не
+подтверждает содержание самих доказательств.

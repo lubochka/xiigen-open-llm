@@ -1,0 +1,105 @@
+{
+  "schema": "xiigen.quality_controls_user_adaptive_eval_policy.eval_only_gates.v1",
+  "phase_id": "QUALITY-CONTROLS-USER-ADAPTIVE-EVAL-ONLY-POLICY-REVIEW",
+  "run_id": "quality-controls-user-adaptive-eval-policy-20260618-090220",
+  "current_phase_executes_eval": false,
+  "gates_required_before_later_user_local_eval_only_run": [
+    {
+      "gate_id": "G1_CURRENT_APPROVAL",
+      "required": true,
+      "must_include": [
+        "exact user-local eval-only approval quote",
+        "scenario ids and pair ids",
+        "approved user-local root",
+        "external AI/web allowed=false unless separately authorized",
+        "training/model/checkpoint/locator mutation allowed=false"
+      ]
+    },
+    {
+      "gate_id": "G2_PRIVACY_REDACTION",
+      "required": true,
+      "must_include": [
+        "raw_private_input_ref stored outside common repo training",
+        "redacted_shared_evidence_ref",
+        "privacy_class",
+        "redaction_status",
+        "no private text copied into common datasets"
+      ]
+    },
+    {
+      "gate_id": "G3_SOURCE_SEPARATION",
+      "required": true,
+      "must_include": [
+        "source_ref",
+        "doc_id",
+        "route=USER_ADAPTIVE_ONLY_EVAL_ONLY_LATER",
+        "common_training_allowed=false",
+        "source rows not mixed with common train/held-out rows"
+      ]
+    },
+    {
+      "gate_id": "G4_NO_COMMON_MUTATION_LOCK",
+      "required": true,
+      "must_include": [
+        "common sets unchanged",
+        "common checkpoints unchanged",
+        "common manifests unchanged",
+        "repo fixtures unchanged except redacted evidence artifacts"
+      ]
+    },
+    {
+      "gate_id": "G5_NO_TRAINING_MUTATION_LOCK",
+      "required": true,
+      "must_include": [
+        "training_started=false",
+        "continue_training_started=false",
+        "DPO training started=false",
+        "model/checkpoint/target/locator mutated=false"
+      ]
+    },
+    {
+      "gate_id": "G6_EVIDENCE_LABELS",
+      "required": true,
+      "must_include": [
+        "evidence_scope=local_private_eval_only",
+        "what_this_proves narrow block",
+        "what_this_does_not_prove block",
+        "no semantic quality, quality improvement, token savings, learnability, live-host readiness, common readiness, strict QUALITY-03, target promotion, or locator update"
+      ]
+    },
+    {
+      "gate_id": "G7_EVIDENCE_ONLY_EXCLUSION",
+      "required": true,
+      "must_include": [
+        "5 EVIDENCE_ONLY scenarios excluded from eval/training inputs",
+        "33 EVIDENCE_ONLY pair rows excluded from eval/training inputs",
+        "evidence-only rows may be referenced only as control/no-overclaim context"
+      ]
+    },
+    {
+      "gate_id": "G8_ROLLBACK_SAFETY_IF_TRAINING_LATER_AUTHORIZED",
+      "required": true,
+      "must_include": [
+        "training remains inactive in eval-only run",
+        "if a later separate training approval exists, require base checkpoint sha, target checkpoint sha, rollback checkpoint sha, backup/export/import refs, fresh-load refs, held-out/ablation refs, and locator mutation approval before any promotion",
+        "eval-only evidence cannot be reinterpreted as rollback or promotion proof"
+      ]
+    }
+  ],
+  "gate_verdict_for_current_phase": "POLICY_DEFINED_NO_EVAL_EXECUTED",
+  "later_eval_only_runner_policy_permitted": true,
+  "later_eval_only_runner_may_start_now": false,
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "quality_improvement_claimed": false,
+    "semantic_quality_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "common_training_allowed": false,
+    "training_ready_claimed": false,
+    "strict_quality03_ready": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false
+  }
+}

@@ -1,0 +1,1811 @@
+{
+  "schema_version": 1,
+  "checked_head": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+  "policy": "research/candidate-selection-policy.json",
+  "scope_ru": "Отбор восьми кандидатов как улучшений метода. Это не полный архитектурный или продуктовый аудит.",
+  "execution_ru": "Только чтение кода, первичных отчётов и арифметический разбор сохранённых JSON. Новых обучений, инференса, тестов, сборок или изменений репозитория не было.",
+  "skill_load_status": [
+    {
+      "name": "human-readable-architecture-audit-SKILL.md",
+      "status": "read_full",
+      "line_ranges": [
+        [
+          1,
+          442
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/human-readable-architecture-audit-SKILL.md",
+      "sha256": "1ed20703e5312fd0a253c81a38f3819db0ad630839cfdddd0bc93c0b25f56622"
+    },
+    {
+      "name": "human-communication-GLOSSARY.md",
+      "status": "read_full",
+      "line_ranges": [
+        [
+          1,
+          47
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/human-communication-GLOSSARY.md",
+      "sha256": "4e33a09e80032891589a238c22e873bcbb31c3082ddf34b99e9db5fcfc507c6f"
+    },
+    {
+      "name": "code-examination-SKILL.md",
+      "status": "read_full",
+      "line_ranges": [
+        [
+          1,
+          376
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/code-examination-SKILL.md",
+      "sha256": "d314e7af9d213c91f845fd4b5dcc523988c4d3f42c936edd13108eef7f8f94ae"
+    },
+    {
+      "name": "intent-to-plan-SKILL.md",
+      "status": "read_full",
+      "line_ranges": [
+        [
+          1,
+          225
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/intent-to-plan-SKILL.md",
+      "sha256": "6badf16a2c44775c262065caaf28027e764929d89d8e9946a1a44f07c9fdaa1f"
+    },
+    {
+      "name": "prompt-patch-authoring-SKILL.md",
+      "status": "read_full",
+      "line_ranges": [
+        [
+          1,
+          242
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/prompt-patch-authoring-SKILL.md",
+      "sha256": "1fde99b237856cff0a314eb3967827b06a95faa08b0cea36ca2eb5a3c01b631b"
+    },
+    {
+      "name": "plan-review-SKILL.md",
+      "status": "read_relevant_sections_not_full",
+      "line_ranges": [
+        [
+          1,
+          240
+        ],
+        [
+          2080,
+          2165
+        ]
+      ],
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/skills/plan-review-SKILL.md",
+      "sha256": "a1e50fa762a994796640c471d8419f51abaccb587c7e62e5896d826a399853a4"
+    }
+  ],
+  "skill_application_ru": "Различены тема, задача, механизм и получатель. Код читателя сопоставлен с учебным состоянием; ручные правила выделены; точные повторы отделены от обобщения. План внедрения продукта не писался. Plan-review прочитан в названных разделах; весь файл из 4274 строк не объявляется прочитанным.",
+  "selected": [
+    "T-TRAIN-CONTEXT-01",
+    "KNN-DOMAIN-PRINCIPLES-01"
+  ],
+  "selected_conditions": {
+    "T-TRAIN-CONTEXT-01": "Основной пример изменения представления учебного примера; узкий двухзначный book, небольшая измеренная абсолютная цена.",
+    "KNN-DOMAIN-PRINCIPLES-01": "Только как ручной предметный способ чтения обученной памяти; не улучшение обучения и не доказанное отсутствие ресурсной цены."
+  },
+  "reserve": [
+    "E18-DOMAIN-CLASSIFIER"
+  ],
+  "exclusion_HCL_ru": "HCL исключён: поправка адресации внутри локального словаря. Реальный прирост чисел не используется для сравнения методов обучения.",
+  "correction_of_previous_judgment_ru": "Механическое исключение TCTX из-за дополнительных 1024 B было неправильным. Нужно сопоставить абсолютную цену 1 KiB на четыре чтения с размером выигрыша; ненулевой расход сам по себе не означает существенного ухудшения.",
+  "cases": [
+    {
+      "id": "T-TRAIN-CONTEXT-01",
+      "rank": 1,
+      "selection": "recommended_main",
+      "mechanism_type": "training_example_representation",
+      "title_ru": "Сохранять контекст вместе с переводом, чтобы память различала значения одного слова",
+      "stage_ru": "Формирование записи урока до AddEntry; чтение уже существующим контекстным словарём.",
+      "old_ru": "Две правильные пары book→книга и book→бронировать записываются без левого и правого POS-контекста. Это корректно работающий словарь по слову с недостаточно подробным представлением; при равных расстояниях и приоритетах он возвращает первую запись.",
+      "new_ru": "В те же две записи сохраняются части речи слева и справа. Для книги — определитель слева и глагол справа; для бронировать — местоимение слева и существительное справа. Сам AddEntry, расстояние, порядок строк и читатель не меняются.",
+      "learned_state_ru": "Список из двух DictionaryEntry, добавленных реальными AddEntry. Значения перевода и контекст приходят из уроков. Нейронные веса, LoRA, DPO и k-соседское голосование не обучаются; поле k читателем не используется.",
+      "why_not_bug_ru": "Опыт сравнивает две полноты учебного представления. Он не исправляет неправильную адресацию или сломанный AddEntry: AddEntry в обеих версиях правильно сохраняет переданную запись. Фактический продуктовый писатель, якобы терявший POS, не установлен; такой баг здесь не заявляется.",
+      "baseline_validity_ru": "Читатель и код обучения одинаковы. Отсутствие POS — заявленное ограничение контрольного word-only представления, а не нарушение его контракта. На сбалансированных четырёх вопросах постоянный перевод одного book не может дать больше 2/4; при подсчёте трёх уникальных контекстов лучший постоянный ответ мог бы дать 2/3, тогда как фактический A даёт 1/3.",
+      "panel": {
+        "train_entries_per_arm": 2,
+        "exam_observations_per_stage": 4,
+        "unique_reader_inputs": 3,
+        "query_ids_duplicate": [
+          "Q1",
+          "Q3"
+        ],
+        "before_A": 0,
+        "before_B": 0,
+        "after_A": 2,
+        "after_B": 4,
+        "unique_after_A": 1,
+        "unique_after_B": 3,
+        "corrected": [
+          "Q2",
+          "Q4"
+        ],
+        "regressed": [],
+        "answers": {
+          "A": {
+            "Q1": "книга",
+            "Q2": "книга",
+            "Q3": "книга",
+            "Q4": "книга"
+          },
+          "B": {
+            "Q1": "книга",
+            "Q2": "бронировать",
+            "Q3": "книга",
+            "Q4": "бронировать"
+          }
+        },
+        "train_order_same": true,
+        "reader_same": true
+      },
+      "costs": {
+        "after_read_allocated_A": 3304,
+        "after_read_allocated_B": 4328,
+        "extra_bytes": 1024,
+        "extra_bytes_per_exam_observation": 256,
+        "read_allocation_change_pct": 30.99273607748184,
+        "add_entries_allocated_A": 96,
+        "add_entries_allocated_B": 96,
+        "supplied_pos_integers_A": 0,
+        "supplied_pos_integers_B": 4,
+        "lesson_serialized_json_bytes_A": 255,
+        "lesson_serialized_json_bytes_B": 259,
+        "after_read_ms_A": 11.0406,
+        "after_read_ms_B": 10.1022,
+        "before_read_identical_work_ms_A": 9.6647,
+        "before_read_identical_work_ms_B": 4.2081,
+        "managed_heap_after_A": 725144,
+        "managed_heap_after_B": 733112
+      },
+      "cost_judgment_ru": "Дополнительные 1024B на четыре чтения —1KiB на всю панель и 256B на ответ. Это небольшой абсолютный расход для показанного качества, а не автоматическое основание исключить опыт. Рост 31% относится к маленькому участку. +4B относится только к сериализованному JSON двух уроков: четыре int имеют 16B полезных числовых данных плюс накладные расходы массивов, размер состояния отдельно не измерен. Разницу кучи 7968B нельзя целиком приписать модели. По времени выигрыша/ухудшения не установлено: одинаковая работа до обучения разошлась на 5.46ms, больше последующей разницы 0.94ms.",
+      "generalization_ru": "Все три различных POS-входа содержат дополнительные теги относительно уроков; это узкое различение контекстных вариантов двух значений одного слова. Нет проверки новых слов, автоматического POS, полных фраз, грамматического рода, морфологии или субъектно-объектных ролей. Уникальных входов всего 3, повторов запуска нет.",
+      "current_transfer_ru": "В HEAD75107 механизм уже есть в 12.SemanticCompiler/Translation/ContextualDictionary.cs: AddEntry хранит поля, TranslateWithContext ими пользуется. Это подтверждение существующего механизма и лучшего состава урока, не найденный новый перенос кода/исправленный продуктовый писатель.",
+      "formula": {
+        "latex": "\\hat t=\\operatorname{translation}\\!\\left(\\arg\\min_e d(c_q,c_e)\\right)",
+        "plain_ru": "На этой панели верный сохранённый контекст даёт расстояние 0, чужой 3; две пустые записи контроля дают одинаковое расстояние 2. Сведения о соседях разрывают ничью.",
+        "origin": "ContextualDictionary.ContextDistance, not a book theorem"
+      },
+      "caveats": [
+        "Приобретение содержимого памяти не тождественно обучению LLM.",
+        "Нет независимого определения морфологии: POS задавались человеком.",
+        "Нет checkpoint/fresh-load проверки именно этого опыта; stateEvidence прямо ограничено аргументами и успешными AddEntry."
+      ],
+      "safe_headline_ru": "На двух уроках сохранение POS-контекста подняло ответы с 2/4 до 4/4 при дополнительных 256B выделений на чтение; это локальный пример представления обучаемой памяти.",
+      "sources": [
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/report.md",
+          "line_start": 1,
+          "line_end": 65,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/report.md",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/report.md#L1-L65",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/report.md",
+          "sha256": "be56ae4688a9a9c755b5c8537637dc02481607d35bbd272211d8b7e2185fac58",
+          "role": "primary report and explicit limits",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/Program.cs",
+          "line_start": 29,
+          "line_end": 91,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/Program.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/Program.cs#L29-L91",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/Program.cs",
+          "sha256": "51d371e00a67b17d1f53b17af4dc53e08bebe95f4018eaa43026985a1dee3683",
+          "role": "one-factor training inputs and actual reader",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/A/raw.json",
+          "line_start": 1,
+          "line_end": 189,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/A/raw.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/A/raw.json#L1-L189",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/A/raw.json",
+          "sha256": "af06dcfaeac6d776115d6143d303b4316c40bbf138200ecfc7208ec894abeee8",
+          "role": "raw A; answers, counts and costs",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/B/raw.json",
+          "line_start": 1,
+          "line_end": 197,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/B/raw.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/B/raw.json#L1-L197",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/results/B/raw.json",
+          "sha256": "6e26e1d1117c69c587f98bf6fbbda80630fd14a71334a2ab7b3e13fb0766c525",
+          "role": "raw B; answers, counts and costs",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "12.SemanticCompiler/Translation/ContextualDictionary.cs",
+          "line_start": 13,
+          "line_end": 27,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/uml-current/knn/current/12.SemanticCompiler/Translation/ContextualDictionary.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/12.SemanticCompiler/Translation/ContextualDictionary.cs#L13-L27",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/12.SemanticCompiler/Translation/ContextualDictionary.cs",
+          "sha256": "e21d9d7d7fc18d9356eb5916bddb6af2923908962d1b3e34ecfb8d8ab1f1cb73",
+          "role": "current learned-state fields and writer",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "12.SemanticCompiler/Translation/ContextualDictionary.cs",
+          "line_start": 67,
+          "line_end": 117,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/uml-current/knn/current/12.SemanticCompiler/Translation/ContextualDictionary.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/12.SemanticCompiler/Translation/ContextualDictionary.cs#L67-L117",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/12.SemanticCompiler/Translation/ContextualDictionary.cs",
+          "sha256": "e21d9d7d7fc18d9356eb5916bddb6af2923908962d1b3e34ecfb8d8ab1f1cb73",
+          "role": "current reader and exact distance",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "KNN-DOMAIN-PRINCIPLES-01",
+      "short_id": "KDP01",
+      "rank": 2,
+      "selection": "recommended_only_as_manual_readout_method",
+      "mechanism_type": "hand_designed_readout_prior_over_learned_memory",
+      "title_ru": "При ранжировании памяти учитывать время текущего предложения и уже выполненные этапы",
+      "stage_ru": "После получения кандидатов KNN и родных оценок; до выбора сохранённого ответа. Ни токенизация, ни матрица вероятностей, ни LoRA не меняются между A/B.",
+      "old_ru": "Штатный поиск использует тот же обученный индекс и память, объединяя близость вектора, BM25-подобное совпадение и фиксированную структурную метку с весами 0,45 / 0,35 / 0,20. Он выбирает максимальную оценку; отдельного признака времени текущего предложения нет.",
+      "new_ru": "К прежней оценке тех же кандидатов добавляется ограниченная оценка доменных признаков. RU/HE сравнивают время последнего предложения префикса, OR — последние завершённые этапы. Ответ берётся из памяти. Функции не генерируют окончание и не добавляют кандидатов.",
+      "learned_state_ru": "S0 содержит четыре урока, S1 — восемь. Штатный TransformerEmbeddingKnnLogicalUnit.Train строит embeddings, HNSW и таблицу примеров; веса LLM не обновляет. Стенд создаёт один кодировщик new LlmModel на профиль: один слой, скрытая размерность 16; загрузки предобученных весов или нейронного обучения перед этим не показано. BPE заранее обучается на восьми TRAIN-входах, включая будущие T+, но без EXAM. Функции времени и этапа и их веса заданы человеком. Частотная функция зависит от статистики TRAIN, однако ни одного ответа не улучшила.",
+      "why_not_bug_ru": "Baseline корректно реализует исходный общий retrieval и совпадает с native-модулем 40/40. Изменение вводит новый предметный признак/предпочтение чтения, а не чинит индекс, переданный не той таблице. Поэтому это улучшение метода ранжирования; называть его улучшением усвоения новых уроков нельзя.",
+      "baseline_validity_ru": "Сравнивать A-empty с B на одном S0 или одном S1, при общем списке candidates и native scores. Не смешивать с KDR always-C#; это иной искусственный baseline. Все функции и fixtures были заданы до запуска по первичному отчёту; независимая внешняя проверка не установлена.",
+      "panel": {
+        "profiles": [
+          {
+            "profile": "CS",
+            "S0": {
+              "control": 4,
+              "all_functions": 4,
+              "total": 8,
+              "corrected": [],
+              "regressed": []
+            },
+            "S1": {
+              "control": 6,
+              "all_functions": 6,
+              "total": 8,
+              "corrected": [],
+              "regressed": []
+            }
+          },
+          {
+            "profile": "EN",
+            "S0": {
+              "control": 8,
+              "all_functions": 8,
+              "total": 8,
+              "corrected": [],
+              "regressed": []
+            },
+            "S1": {
+              "control": 8,
+              "all_functions": 8,
+              "total": 8,
+              "corrected": [],
+              "regressed": []
+            }
+          },
+          {
+            "profile": "RU",
+            "S0": {
+              "control": 5,
+              "all_functions": 8,
+              "total": 8,
+              "corrected": [
+                "E02",
+                "E07",
+                "E08"
+              ],
+              "regressed": []
+            },
+            "S1": {
+              "control": 5,
+              "all_functions": 8,
+              "total": 8,
+              "corrected": [
+                "E02",
+                "E07",
+                "E08"
+              ],
+              "regressed": []
+            }
+          },
+          {
+            "profile": "HE",
+            "S0": {
+              "control": 6,
+              "all_functions": 8,
+              "total": 8,
+              "corrected": [
+                "E02",
+                "E08"
+              ],
+              "regressed": []
+            },
+            "S1": {
+              "control": 6,
+              "all_functions": 8,
+              "total": 8,
+              "corrected": [
+                "E02",
+                "E08"
+              ],
+              "regressed": []
+            }
+          },
+          {
+            "profile": "OR",
+            "S0": {
+              "control": 4,
+              "all_functions": 8,
+              "total": 8,
+              "corrected": [
+                "E02",
+                "E04",
+                "E05",
+                "E06"
+              ],
+              "regressed": []
+            },
+            "S1": {
+              "control": 5,
+              "all_functions": 8,
+              "total": 8,
+              "corrected": [
+                "E02",
+                "E05",
+                "E06"
+              ],
+              "regressed": []
+            }
+          }
+        ],
+        "rows_per_profile": 8,
+        "all_arm_results": [
+          {
+            "profile": "CS",
+            "state": "S0",
+            "arm": "A",
+            "correct": 4,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "CS",
+            "state": "S1",
+            "arm": "A",
+            "correct": 6,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "CS",
+            "state": "S0",
+            "arm": "B1",
+            "correct": 4,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "CS",
+            "state": "S1",
+            "arm": "B1",
+            "correct": 6,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "CS",
+            "state": "S0",
+            "arm": "B2",
+            "correct": 4,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "CS",
+            "state": "S1",
+            "arm": "B2",
+            "correct": 6,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "CS",
+            "state": "S0",
+            "arm": "B12",
+            "correct": 4,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "CS",
+            "state": "S1",
+            "arm": "B12",
+            "correct": 6,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "EN",
+            "state": "S0",
+            "arm": "A",
+            "correct": 8,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "EN",
+            "state": "S1",
+            "arm": "A",
+            "correct": 8,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "EN",
+            "state": "S0",
+            "arm": "B1",
+            "correct": 8,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "EN",
+            "state": "S1",
+            "arm": "B1",
+            "correct": 8,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "EN",
+            "state": "S0",
+            "arm": "B2",
+            "correct": 8,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "EN",
+            "state": "S1",
+            "arm": "B2",
+            "correct": 8,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "EN",
+            "state": "S0",
+            "arm": "B3",
+            "correct": 8,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "EN",
+            "state": "S1",
+            "arm": "B3",
+            "correct": 8,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "EN",
+            "state": "S0",
+            "arm": "B123",
+            "correct": 8,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "EN",
+            "state": "S1",
+            "arm": "B123",
+            "correct": 8,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "RU",
+            "state": "S0",
+            "arm": "A",
+            "correct": 5,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "RU",
+            "state": "S1",
+            "arm": "A",
+            "correct": 5,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "RU",
+            "state": "S0",
+            "arm": "B1",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E07",
+              "E08"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "RU",
+            "state": "S1",
+            "arm": "B1",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E07",
+              "E08"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "RU",
+            "state": "S0",
+            "arm": "B2",
+            "correct": 5,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "RU",
+            "state": "S1",
+            "arm": "B2",
+            "correct": 5,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "RU",
+            "state": "S0",
+            "arm": "B12",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E07",
+              "E08"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "RU",
+            "state": "S1",
+            "arm": "B12",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E07",
+              "E08"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "HE",
+            "state": "S0",
+            "arm": "A",
+            "correct": 6,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "HE",
+            "state": "S1",
+            "arm": "A",
+            "correct": 6,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "HE",
+            "state": "S0",
+            "arm": "B1",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E08"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "HE",
+            "state": "S1",
+            "arm": "B1",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E08"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "HE",
+            "state": "S0",
+            "arm": "B2",
+            "correct": 6,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "HE",
+            "state": "S1",
+            "arm": "B2",
+            "correct": 6,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "HE",
+            "state": "S0",
+            "arm": "B12",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E08"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "HE",
+            "state": "S1",
+            "arm": "B12",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E08"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "OR",
+            "state": "S0",
+            "arm": "A",
+            "correct": 4,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "OR",
+            "state": "S1",
+            "arm": "A",
+            "correct": 5,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "OR",
+            "state": "S0",
+            "arm": "B1",
+            "correct": 4,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "OR",
+            "state": "S1",
+            "arm": "B1",
+            "correct": 5,
+            "total": 8,
+            "corrected": [],
+            "regressed": []
+          },
+          {
+            "profile": "OR",
+            "state": "S0",
+            "arm": "B2",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E04",
+              "E05",
+              "E06"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "OR",
+            "state": "S1",
+            "arm": "B2",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E05",
+              "E06"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "OR",
+            "state": "S0",
+            "arm": "B12",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E04",
+              "E05",
+              "E06"
+            ],
+            "regressed": []
+          },
+          {
+            "profile": "OR",
+            "state": "S1",
+            "arm": "B12",
+            "correct": 8,
+            "total": 8,
+            "corrected": [
+              "E02",
+              "E05",
+              "E06"
+            ],
+            "regressed": []
+          }
+        ],
+        "total_S0_A": 27,
+        "total_S0_all_functions": 36,
+        "total_S1_A": 30,
+        "total_S1_all_functions": 38,
+        "native_copy_equivalence": "40/40",
+        "restore_equivalence": "40/40",
+        "interpretation": "S0 and S1 are different memory sizes; compare arms within each state. 336 raw arm/state/exam observations are not 336 independent test inputs."
+      },
+      "costs": {
+        "experiment": "KNN-DOMAIN-PRINCIPLES-01",
+        "attempt": "01",
+        "logicalAnswers": 496,
+        "distinctMemoryLessons": 40,
+        "wholeRunSeconds": 7.9481843,
+        "processPeakWorkingSetBytes": 73809920
+      },
+      "cost_judgment_ru": "Есть только суммарные 7.948s и 73,809,920B пика процесса для 496 логических ответов, построения/чтения состояний и всех 21 плеча. Раздельных A/B задержек, аллокаций, размера памяти и marginal cost функций нет. Кандидаты переиспользовались всеми плечами, поэтому общую скорость нельзя выдавать за стоимость обычного serving. Отсутствие новых смысловых ошибок установлено; отсутствие ресурсного ухудшения — нет.",
+      "generalization_ru": "Восемь коротких вопросов на профиль, окончания из четырёх известных ответов и близкие перефразировки уроков. RU: Вчера Олег → писал. Это не проверка согласования рода; HE вся форма 3-го лица мужского рода единственного числа указана в инструкции заранее. У HE штатный S0/S1 читатель воспроизводит 3/4 уроков, приобретение новой дозы не показано. CS/EN прироста нет. Весь эффект функций существует уже на S0, поэтому ускоренного обучения нет.",
+      "current_transfer_ru": "Код конструктора и функций существует как Kdp01Probe в experiments-v2/RP01-MICRO/KDP01. В проверенном текущем native-owner18.CapabilityTraining/LlmIngredientLogicalUnits.cs ScoreCandidates остаётся.45/.35/.20, без массива принципов. Перенос в общий продуктовый путь не подтверждён; наличие эксперимента не выдаётся за интеграцию.",
+      "formula": {
+        "latex": "s_1(q,e)=s_0(q,e)+\\frac{0.2}{m}\\sum_{j=1}^m f_j(q,e),\\quad f_j\\in[-1,1]",
+        "plain_ru": "Для проведённых плеч веса функций равны 1. Неприменимый признак даёт 0, остальные ограничены[-1,1]. Поэтому оценка кандидата меняется максимум на 0.2, а разрыв двух — максимум на 0.4. В RU-E02 родной перевес неверного ответа 0.0023065 исчезает: пишет 0.646003−0.2=0.446003; писал 0.643696+0.2=0.843696.",
+        "origin": "Exact experiment code; score is not probability",
+        "caveat": "General API multiplies by Descriptor.Weight and does not normalize their sum: the .2/.4 bound assumes the actual experimental weights all equal1. Correct hints may help; wrong/non-discriminative hints need not, as CS shows."
+      },
+      "caveats": [
+        "Два результата надо разделять: память обучается примерам; полезные новые функции являются ручными правилами чтения.",
+        "Prefix-frequency — единственная дополнительная функция с обучаемыми counts — не изменила ни одного ответа.",
+        "В таблице исходного отчёта список OR-исправлений относится кS1: наS0 дополнительно исправляетсяE04.",
+        "Без отдельной A/B стоимости нельзя писать «бесплатное улучшение» или «без ресурсных потерь»."
+      ],
+      "safe_headline_ru": "Ручные признаки времени и этапа улучшили выбор ответа из прежней памяти в RU, HE, OR; на той же панели не появилось новых ошибок. Это изменение чтения, не доказательство лучшего обучения.",
+      "sources": [
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDP01/results/attempt-01/report.md",
+          "line_start": 1,
+          "line_end": 237,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/report.md",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/report.md#L1-L237",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/report.md",
+          "sha256": "d1750d4d9c0918c69f9e5228ae70b328fcd6b34ed7c365a35ff359a2349d1321",
+          "role": "primary report with all profiles, qualifications and costs",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+          "line_start": 1,
+          "line_end": 14802,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json#L1-L14802",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+          "sha256": "17f5933bfb4ded8f2ad3a37f5890760381738d40fd24fe7e328435a16ff90737",
+          "role": "336 raw observations; parsed for all arm/state/profile gains and regressions",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+          "line_start": 6433,
+          "line_end": 6463,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json#L6433-L6463",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+          "sha256": "17f5933bfb4ded8f2ad3a37f5890760381738d40fd24fe7e328435a16ff90737",
+          "role": "raw native RU-E02",
+          "locator": "E02"
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+          "line_start": 7030,
+          "line_end": 7065,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json#L7030-L7065",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/results/attempt-01/raw.json",
+          "sha256": "17f5933bfb4ded8f2ad3a37f5890760381738d40fd24fe7e328435a16ff90737",
+          "role": "raw time-feature RU-E02",
+          "locator": "E02"
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDP01/DomainKnnLearningModel.cs",
+          "line_start": 80,
+          "line_end": 118,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/DomainKnnLearningModel.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/DomainKnnLearningModel.cs#L80-L118",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/DomainKnnLearningModel.cs",
+          "sha256": "393fbe912062d361006867db2576bd06facdf036ee1f306f1a327385d8b4bfe5",
+          "role": "constructor and equal per-function scale",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDP01/DomainKnnLearningModel.cs",
+          "line_start": 125,
+          "line_end": 214,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/DomainKnnLearningModel.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/DomainKnnLearningModel.cs#L125-L214",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/DomainKnnLearningModel.cs",
+          "sha256": "393fbe912062d361006867db2576bd06facdf036ee1f306f1a327385d8b4bfe5",
+          "role": "native fusion, clamp and final ranking",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+          "line_start": 280,
+          "line_end": 337,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/Principles.cs#L280-L337",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+          "sha256": "f1472cf2c052e013101627d0a2c990236f55afb3f6530f11d7633e3c5e7e65e3",
+          "role": "manual time-frame extraction",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+          "line_start": 441,
+          "line_end": 467,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/Principles.cs#L441-L467",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+          "sha256": "f1472cf2c052e013101627d0a2c990236f55afb3f6530f11d7633e3c5e7e65e3",
+          "role": "learned frequency scorer, zero result",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+          "line_start": 500,
+          "line_end": 565,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/Principles.cs#L500-L565",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDP01/Principles.cs",
+          "sha256": "f1472cf2c052e013101627d0a2c990236f55afb3f6530f11d7633e3c5e7e65e3",
+          "role": "manual stage/prerequisite comparison",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "experiments-v2/RP01-MICRO/KDP01/Program.cs",
+          "line_start": 61,
+          "line_end": 109,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/current/experiments-v2/RP01-MICRO/KDP01/Program.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/RP01-MICRO/KDP01/Program.cs#L61-L109",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/RP01-MICRO/KDP01/Program.cs",
+          "sha256": "95d461eeae2100e14bb3176974fb2a97bd89a18450889f95517c6d3b16179008",
+          "role": "model initialization, BPE exposure and actual memory training",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "experiments-v2/RP01-MICRO/KDP01/Program.cs",
+          "line_start": 437,
+          "line_end": 510,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/current/experiments-v2/RP01-MICRO/KDP01/Program.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/RP01-MICRO/KDP01/Program.cs#L437-L510",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/RP01-MICRO/KDP01/Program.cs",
+          "sha256": "95d461eeae2100e14bb3176974fb2a97bd89a18450889f95517c6d3b16179008",
+          "role": "arms and fixed language marker lists",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "experiments-v2/RP01-MICRO/KDP01/Program.cs",
+          "line_start": 555,
+          "line_end": 613,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/current/experiments-v2/RP01-MICRO/KDP01/Program.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/RP01-MICRO/KDP01/Program.cs#L555-L613",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/RP01-MICRO/KDP01/Program.cs",
+          "sha256": "95d461eeae2100e14bb3176974fb2a97bd89a18450889f95517c6d3b16179008",
+          "role": "RU/HE lessons, exam and fixed-gender instruction",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+          "line_start": 98,
+          "line_end": 168,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/uml-current/knn/current/18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/18.CapabilityTraining/LlmIngredientLogicalUnits.cs#L98-L168",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+          "sha256": "d01f456ac138d235f4de53ac666ac3664ffe694387f223ac30b85035cb2f74cb",
+          "role": "native Train changes index/examples, not neural weights",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+          "line_start": 184,
+          "line_end": 244,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/uml-current/knn/current/18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/18.CapabilityTraining/LlmIngredientLogicalUnits.cs#L184-L244",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+          "sha256": "d01f456ac138d235f4de53ac666ac3664ffe694387f223ac30b85035cb2f74cb",
+          "role": "current native readout without principle array",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "E18-DOMAIN-CLASSIFIER",
+      "rank": 3,
+      "selection": "historical_reserve_not_main",
+      "mechanism_type": "learned_label_memory_over_fixed_predicates",
+      "title_ru": "Комбинации признаков и память меток вместо первого найденного ключевого слова",
+      "old_ru": "Фиксированный keyword baseline сначала проверяет BUG_FIX, затем CODE_CHANGE, ORCHESTRATION, ARCHITECTURE; иначе CODE_QUESTION.",
+      "new_ru": "Семь групп слов превращаются в множество предикатов. Память хранит 160 размеченных профилей; пять ближайших по Жаккару голосуют за метку. Это комбинации заданных признаков и обученная память меток.",
+      "learned_state_ru": "Список пар (предикаты, метка). Train очищает список и заполняет его примерами. Метки заданы авторами 25 синтетических шаблонов, а не получены от baseline, несмотря на старый комментарий auto-labelled.",
+      "why_not_bug_ru": "Сравнение приоритета ключевых слов с памятью соседних размеченных примеров сопоставляет два допустимых метода. Отдельную прежнюю замену C#-normalizer, дававшего пустые признаки английским строкам, нельзя выдавать за достижение обучения. Положительный результат 33/40 → 38/40 относится уже к пригодному английскому extractor.",
+      "baseline_validity_ru": "Baseline соответствует своей простой эвристике, но сравнение слабое: новый метод получает комбинации признаков и размеченную память. Преимущество над более сильным классификатором на тех же признаках не установлено.",
+      "panel": {
+        "train": 160,
+        "validation": 40,
+        "templates": 25,
+        "correct_baseline": 33,
+        "correct_memory": 38,
+        "enhanced_by_class": {
+          "CODE_QUESTION": "5/7",
+          "BUG_FIX": "6/6",
+          "CODE_CHANGE": "8/8",
+          "ORCHESTRATION": "11/11",
+          "ARCHITECTURE": "8/8"
+        },
+        "gain_pp": 12.5,
+        "per_row_regressions": "not recorded; can range0..2 from aggregates",
+        "historical_later_different_path": {
+          "baseline": 0.825,
+          "enhanced": 0.85
+        }
+      },
+      "costs": {
+        "baseline_validation_ms": 0.0,
+        "enhanced_validation_ms": 14.9,
+        "arithmetic_ms_per_validation_row": 0.3725,
+        "training_time": null,
+        "allocations": null,
+        "model_size": null
+      },
+      "cost_judgment_ru": "14,9 мс на 40 классификаций — около 0,373 мс на строку простым делением. Это небольшой абсолютный бюджет. Ноль у baseline округлён; делить на него и заявлять бесконечное замедление нельзя. Аллокации, стоимость обучения и устойчивые временные измерения не опубликованы.",
+      "generalization_ru": "Шаблонные семейства не разделены между обучением и проверкой. Построчных запросов и ID в результате нет. Не установлены точное пересечение, качество на новых семействах или отсутствие отдельных регрессий. Из агрегатов следует только пять чистых дополнительных успехов; ухудшений могло быть от нуля до двух.",
+      "current_transfer_ru": "Нынешний experimental runner использует SemanticTeachingPromptCompiler и включает в признаки compiled.Domain. Compatibility-класс делегирует DomainClassifierUnit и иначе задаёт baseline. Старые 95% нельзя присвоить этому пути. Поздний сохранённый результат содержит 85%, но менялось несколько факторов.",
+      "reject_reason_ru": "Исторический резерв, не основной пример отсутствия существенных потерь: нет построчных результатов, семейства шаблонов не отделены, нынешняя реализация другая.",
+      "sources": [
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "35.ExperimentsV2/results/E18-DOMAIN-CLASSIFIER/results/run-2026-05-01-002.json",
+          "line_start": 1,
+          "line_end": 18,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/35.ExperimentsV2/results/E18-DOMAIN-CLASSIFIER/results/run-2026-05-01-002.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/results/E18-DOMAIN-CLASSIFIER/results/run-2026-05-01-002.json#L1-L18",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/results/E18-DOMAIN-CLASSIFIER/results/run-2026-05-01-002.json",
+          "sha256": "cb2f607c7379f52f5f81b992b3840603585248dfa3a01719f34f9904f01b996a",
+          "role": "positive historical aggregate",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "530c1e0581fa854574bd8608a7576a80236f2ebd",
+          "path": "35.ExperimentsV2/Experiments/E18DomainClassifier.cs",
+          "line_start": 15,
+          "line_end": 162,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/530c1e0581/35.ExperimentsV2/Experiments/E18DomainClassifier.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/530c1e0581fa854574bd8608a7576a80236f2ebd/35.ExperimentsV2/Experiments/E18DomainClassifier.cs#L15-L162",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/530c1e0581fa854574bd8608a7576a80236f2ebd/35.ExperimentsV2/Experiments/E18DomainClassifier.cs",
+          "sha256": "fa59b26b6ea5cd371a6041a42f50b7a6452c3565d8817bafd4c069fa2df78a92",
+          "role": "historical actual representation, training and labelled templates",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "530c1e0581fa854574bd8608a7576a80236f2ebd",
+          "path": "35.ExperimentsV2/Infrastructure/DomainClassifier.cs",
+          "line_start": 16,
+          "line_end": 67,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/530c1e0581/35.ExperimentsV2/Infrastructure/DomainClassifier.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/530c1e0581fa854574bd8608a7576a80236f2ebd/35.ExperimentsV2/Infrastructure/DomainClassifier.cs#L16-L67",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/530c1e0581fa854574bd8608a7576a80236f2ebd/35.ExperimentsV2/Infrastructure/DomainClassifier.cs",
+          "sha256": "7c8ed4cef49e42bffd9487f65384a2f6890ddff09b4e082010664a44337e0f42",
+          "role": "historical keyword baseline and learned-memory reader",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "35.ExperimentsV2/Experiments/E18DomainClassifier.cs",
+          "line_start": 75,
+          "line_end": 147,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/current/35.ExperimentsV2/Experiments/E18DomainClassifier.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/35.ExperimentsV2/Experiments/E18DomainClassifier.cs#L75-L147",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/35.ExperimentsV2/Experiments/E18DomainClassifier.cs",
+          "sha256": "94485c6b0da3ba2946ce9b41ff47588e00d9adeeb8980cedd9f47730ce2611a4",
+          "role": "current changed representation",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "35.ExperimentsV2/Compatibility/DomainClassifier.cs",
+          "line_start": 26,
+          "line_end": 83,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/current/35.ExperimentsV2/Compatibility/DomainClassifier.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/35.ExperimentsV2/Compatibility/DomainClassifier.cs#L26-L83",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/35.ExperimentsV2/Compatibility/DomainClassifier.cs",
+          "sha256": "854ca81a6427194fc544910ad008a624c9abf3b8e67423916c61ec3f087ae697",
+          "role": "current wrapper and changed baseline",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "35.ExperimentsV2/results/e01-e53-tier4-20260507-190227/E18-DOMAIN-CLASSIFIER/results/run-2026-05-07-002.json",
+          "line_start": 1,
+          "line_end": 18,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/current/35.ExperimentsV2/results/e01-e53-tier4-20260507-190227/E18-DOMAIN-CLASSIFIER/results/run-2026-05-07-002.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/35.ExperimentsV2/results/e01-e53-tier4-20260507-190227/E18-DOMAIN-CLASSIFIER/results/run-2026-05-07-002.json#L1-L18",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/35.ExperimentsV2/results/e01-e53-tier4-20260507-190227/E18-DOMAIN-CLASSIFIER/results/run-2026-05-07-002.json",
+          "sha256": "5cf4b3b0ac1bde4a7392e9138bd71cee0e542edec724f9d2f2b2dbf6630e295f",
+          "role": "later result85%, different code path",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "E25-PATTERN-CLASSIFIER",
+      "selection": "exclude_main",
+      "mechanism_type": "pos_bigram_memory_vs_restricted_rules",
+      "old_ru": "Небольшой набор правил по позиции первого глагола и существительного либо местоимения. Он не охватывает все восемь меток генератора.",
+      "new_ru": "Сохранить 128 POS-последовательностей с метками; сравнивать множества соседних POS-пар по Жаккару; три ближайших примера голосуют.",
+      "learned_state_ru": "Память POS-последовательностей и меток. Метрика и k фиксированы; веса LLM не обучаются.",
+      "why_not_bug_ru": "KNN-память — иной метод, а не ремонт адресации. Но слабость baseline и повторение учебных последовательностей объясняют основной результат. Обобщение этим не подтверждается.",
+      "panel": {
+        "train": 128,
+        "exam": 32,
+        "historical_baseline": 0.3438,
+        "historical_memory": 0.875,
+        "verified_later_same_generator_raw": {
+          "before": 11,
+          "after": 28,
+          "seen_rows": 26,
+          "seen_correct_before": 9,
+          "seen_correct_after": 26,
+          "unseen_rows": 6,
+          "unseen_correct_before": 2,
+          "unseen_correct_after": 2,
+          "regressions_zero_based": [
+            11,
+            21
+          ]
+        },
+        "stronger_baseline": {
+          "method": "exact lookup in the same saved memory; original saved rule answer on a missing key",
+          "correct": 28,
+          "total": 32,
+          "status": "calculated from saved records, no classifier/model run",
+          "train_conflicting_sequence_labels": 0
+        },
+        "historical_binary_attestation": "Original May JSON has no binary SHA;26/32 is directly confirmed for laterPQ fixture using same seed42/perPattern20 and matching counts, not claimed as recovered May execution bytes."
+      },
+      "costs": {
+        "historical_baseline_validation_ms": 0.4,
+        "historical_knn_validation_ms": 15.4,
+        "later_training_allocated_bytes": 2072,
+        "later_pre_cache_read_allocated_bytes": 3050752,
+        "later_cached_read_allocated_bytes": 1799040
+      },
+      "cost_judgment_ru": "Историческая дополнительная задержка 15 мс на 32 вопроса — около 0,469 мс на строку. Абсолютный бюджет может быть приемлем, но замер один и холодный. Поздний PQ снижает затраты чтения, сохраняя ответы; он не создаёт дополнительного выигрыша качества.",
+      "generalization_ru": "В более поздней сохранённой панели PQ 26 из 32 вопросов повторяют учебные последовательности. На шести новых точность 2/6 до и 2/6 после. Два новых входа исправлены, два ранее верных потеряны. Точный поиск по той же памяти с прежним ответом правил при отсутствии ключа также даёт 28/32 по сохранённым данным.",
+      "current_transfer_ru": "POS-bigram KNN существует в проекте 12, теперь с кэшем запроса. Одноимённый класс проекта 29 для fusion — другая фиксированная эвристика. 87,5% нельзя переносить на любой компонент с тем же названием.",
+      "reject_reason_ru": "Не основной: весь чистый прирост относится к знакомым последовательностям; есть два регресса на новых; более сильный корректный lookup-baseline даёт ту же точность.",
+      "sources": [
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "35.ExperimentsV2/results/E25-PATTERN-CLASSIFIER/results/run-2026-05-01-001.json",
+          "line_start": 1,
+          "line_end": 18,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/35.ExperimentsV2/results/E25-PATTERN-CLASSIFIER/results/run-2026-05-01-001.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/results/E25-PATTERN-CLASSIFIER/results/run-2026-05-01-001.json#L1-L18",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/results/E25-PATTERN-CLASSIFIER/results/run-2026-05-01-001.json",
+          "sha256": "965e7850e2dc61c54ec19383cd0c0e28240bed53b1a35df4a208d23acc8f973d",
+          "role": "May aggregate",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "35.ExperimentsV2/Experiments/E25PatternClassifier.cs",
+          "line_start": 20,
+          "line_end": 68,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/35.ExperimentsV2/Experiments/E25PatternClassifier.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/Experiments/E25PatternClassifier.cs#L20-L68",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/Experiments/E25PatternClassifier.cs",
+          "sha256": "6482a36b7f0ef384c3a4f5c7e9c50d2767dd14ace30a620180262140cfdba8fd",
+          "role": "split, baseline and trained classifier",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/PQ01/results/attempt-0001/A/arm.json",
+          "line_start": 1,
+          "line_end": 946,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/PQ01/results/attempt-0001/A/arm.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/PQ01/results/attempt-0001/A/arm.json#L1-L946",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/PQ01/results/attempt-0001/A/arm.json",
+          "sha256": "f82bc455c939e31af350cf2c49851c8b46a6cb91fcd9e97c892e63cf016b74d3",
+          "role": "saved memory and all before/after answers; exact overlap and lookup calculation",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/PQ01/results/attempt-0001/report.md",
+          "line_start": 58,
+          "line_end": 124,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/PQ01/results/attempt-0001/report.md",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/PQ01/results/attempt-0001/report.md#L58-L124",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/PQ01/results/attempt-0001/report.md",
+          "sha256": "798538dade3ead32cf7944f9c54ff6fa06f6a824db5dfdc0f1563cf9ae1bb02b",
+          "role": "same generator, repeated/novel strata and losses",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "12.SemanticCompiler/Translation/PatternClassifier.cs",
+          "line_start": 38,
+          "line_end": 129,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/uml-current/knn/current/12.SemanticCompiler/Translation/PatternClassifier.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/12.SemanticCompiler/Translation/PatternClassifier.cs#L38-L129",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/12.SemanticCompiler/Translation/PatternClassifier.cs",
+          "sha256": "0a37a0e20cf2eb78fdae41141796278903cb401fdfdbbee79163b4df2770ec42",
+          "role": "current memory, baseline, metric and templates",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "E40V2-TRUST-SCORER",
+      "selection": "exclude_main",
+      "mechanism_type": "feature_memory_plus_evaluation_split_change",
+      "old_ru": "Внутри V2 простой baseline: свой или официальный источник получает HIGH, остальные — MEDIUM.",
+      "new_ru": "Нормировать семь признаков, сохранить 79 векторов с метками; пять евклидовых соседей голосуют за LOW, MEDIUM или HIGH.",
+      "learned_state_ru": "Размеченные векторы источников. Веса расстояния и нейронная модель не обучаются.",
+      "why_not_bug_ru": "V2 против его собственного baseline сравнивает методы. Однако переход от E40-v1 к V2 меняет разбиение так, чтобы классы попали в обе части. История 0% → 100% не является чистым улучшением алгоритма обучения.",
+      "panel": {
+        "correct_baseline": 14,
+        "correct_memory": 21,
+        "validation": 21,
+        "train": 79,
+        "rows": 100,
+        "source_templates": 14,
+        "enhanced_by_level": {
+          "LOW": "4/4",
+          "MEDIUM": "8/8",
+          "HIGH": "9/9"
+        },
+        "v1": {
+          "validation": 20,
+          "all_validation_low": true,
+          "baseline": 0,
+          "enhanced": 0
+        }
+      },
+      "costs": {
+        "baseline_ms": 0,
+        "enhanced_ms": 2.9,
+        "enhanced_timing_scope": "training-vector construction plus21validationreads",
+        "allocations": null,
+        "persistent_state_size": null
+      },
+      "cost_judgment_ru": "2,9 мс на построение векторов и 21 чтение — небольшой наблюдённый абсолютный бюджет. Нет устойчивого тайминга, аллокаций и размера состояния. Главная причина исключения — постановка проверки, а не отношение к округлённому нулю baseline.",
+      "generalization_ru": "Сто строк выбираются с повторениями из 14 фиксированных шаблонов признаков. Целые семейства источников между обучением и проверкой не отделены; новые типы источников не проверены.",
+      "current_transfer_ru": "Нынешний TrustScorer проекта 16 использует фиксированную взвешенную сумму с порогами 0,70 и 0,30. В нём нет этой памяти, k=5 или Train. Результат экспериментального KNN не относится к такому scorer автоматически.",
+      "reject_reason_ru": "Не основной: 14/21 → 21/21 валидны внутри V2, но повторная выборка 14 шаблонов и неэквивалентный перенос делают пример слабее TCTX и KDP. Переход 0% → 100% показывать нельзя.",
+      "sources": [
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "35.ExperimentsV2/results/E40V2-TRUST-SCORER/results/run-2026-05-01-002.json",
+          "line_start": 1,
+          "line_end": 18,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/35.ExperimentsV2/results/E40V2-TRUST-SCORER/results/run-2026-05-01-002.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/results/E40V2-TRUST-SCORER/results/run-2026-05-01-002.json#L1-L18",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/results/E40V2-TRUST-SCORER/results/run-2026-05-01-002.json",
+          "sha256": "d7143f6a2f3c22c47f41150875fa404d7673c00431646b15fc225d21379d8bf5",
+          "role": "V2 aggregate",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "35.ExperimentsV2/Experiments/E40TrustScorerV2.cs",
+          "line_start": 31,
+          "line_end": 147,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/35.ExperimentsV2/Experiments/E40TrustScorerV2.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/Experiments/E40TrustScorerV2.cs#L31-L147",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/Experiments/E40TrustScorerV2.cs",
+          "sha256": "807a04c044e7f5d6f0a26d1131b1c1f9afaa401e6e00720a918c6fc2e87b0e62",
+          "role": "stratification, correct baseline, KNN and14templates",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "35.ExperimentsV2/results/E40-TRUST-SCORER/results/run-2026-05-01-002.json",
+          "line_start": 1,
+          "line_end": 18,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/current/35.ExperimentsV2/results/E40-TRUST-SCORER/results/run-2026-05-01-002.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/35.ExperimentsV2/results/E40-TRUST-SCORER/results/run-2026-05-01-002.json#L1-L18",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/35.ExperimentsV2/results/E40-TRUST-SCORER/results/run-2026-05-01-002.json",
+          "sha256": "af3d546c0cdb9685600f6879d5134eea964c51e0282789a44db9023b18498b5f",
+          "role": "different V1 validation panel",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "16.AutonomousLearning/TrustScorer/TrustScorer.cs",
+          "line_start": 26,
+          "line_end": 103,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/current/16.AutonomousLearning/TrustScorer/TrustScorer.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/16.AutonomousLearning/TrustScorer/TrustScorer.cs#L26-L103",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/16.AutonomousLearning/TrustScorer/TrustScorer.cs",
+          "sha256": "b811e17fdedee4624ddaf29bdbc0b8ad35286eec21093dce9debbd7f48b5dba0",
+          "role": "current fixed scorer",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "E22-DATASET-ROUTER",
+      "selection": "exclude_main",
+      "mechanism_type": "multilabel_knn_on_automatically_labelled_predicates",
+      "old_ru": "В положительном позднем опыте baseline возвращает три самых частых раздела из обучения. Старая шапка «все разделы» не соответствует этому сравнению.",
+      "new_ru": "Запомнить 360 наборов предикатов с шестью булевыми метками; три ближайших по Жаккару примера голосуют отдельно по каждому разделу.",
+      "learned_state_ru": "Пары «предикаты → набор разделов». Метки задаёт AutoLabel по текстовым условиям, а не независимый эксперт.",
+      "why_not_bug_ru": "Это иной метод маршрутизации. Положительный поздний результат не изолирует причину раннего неуспеха: менялись корпус и labels. Внутри него можно сравнить только top3freq с KNN.",
+      "panel": {
+        "examples": 450,
+        "train": 360,
+        "validation": 90,
+        "baseline_macro_f1": 0.4709,
+        "enhanced_macro_f1": 0.5646,
+        "enhanced_per_dataset": {
+          "Generic": 1.0,
+          "CSharp": 0.99,
+          "TypeScript": 0.0,
+          "BugFix": 0.82,
+          "Orchestration": 0.57,
+          "Tests": 0.0
+        },
+        "corrected_or_lost_rows": "not stored in reviewed receipt;supports/precision/recall not recoverable"
+      },
+      "costs": {
+        "baseline_validation_ms": 0.1,
+        "enhanced_validation_ms": 100.5,
+        "arithmetic_extra_ms_per_row": 1.1155555555555556,
+        "allocations": null
+      },
+      "cost_judgment_ru": "Дополнительные 100,4 мс на 90 строк — примерно 1,116 мс на строку. Нельзя автоматически отвергать опыт по отношению к округлённым 0,1 мс baseline. Но размер памяти и устойчивость времени не установлены.",
+      "generalization_ru": "Цель проверки — воспроизведение автоматической разметки, а не независимая оценка полезности разделов. Упорядоченный список 450 принятых файлов не восстановлен. Построчный баланс исправлений и потерь, precision, recall и support не сохранены в прочитанном результате.",
+      "current_transfer_ru": "PredicateDatasetRouter с памятью есть в проекте 22, runner его использует. Это не доказательство улучшения публичного маршрута или последующего нейронного обучения.",
+      "reject_reason_ru": "Не основной: небольшой прирост proxy-F1, неполные данные ошибок и потерь, невосстановленный корпус и отсутствие независимого эталона.",
+      "sources": [
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "35.ExperimentsV2/results/e01-e53-tier4-20260507-190227/E22-DATASET-ROUTER/results/run-2026-05-07-002.json",
+          "line_start": 1,
+          "line_end": 18,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/35.ExperimentsV2/results/e01-e53-tier4-20260507-190227/E22-DATASET-ROUTER/results/run-2026-05-07-002.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/results/e01-e53-tier4-20260507-190227/E22-DATASET-ROUTER/results/run-2026-05-07-002.json#L1-L18",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/results/e01-e53-tier4-20260507-190227/E22-DATASET-ROUTER/results/run-2026-05-07-002.json",
+          "sha256": "04aed32ea2e1225ca3c3ecad24e97486af05c53679709f6f35b2606835fa4cb6",
+          "role": "positive aggregate",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "35.ExperimentsV2/Experiments/E22DatasetRouter.cs",
+          "line_start": 27,
+          "line_end": 128,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/35.ExperimentsV2/Experiments/E22DatasetRouter.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/Experiments/E22DatasetRouter.cs#L27-L128",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/35.ExperimentsV2/Experiments/E22DatasetRouter.cs",
+          "sha256": "97fc249fb5b7827b140551c2171026aafd9e9f1d90352af0905c4beda58e6225",
+          "role": "actual top3 baseline and evaluation",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "22.AgentAlgorithms/Context/PredicateDatasetRouter.cs",
+          "line_start": 25,
+          "line_end": 93,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/22.AgentAlgorithms/Context/PredicateDatasetRouter.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/22.AgentAlgorithms/Context/PredicateDatasetRouter.cs#L25-L93",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/22.AgentAlgorithms/Context/PredicateDatasetRouter.cs",
+          "sha256": "382846785e0a0df53dba034a5a0727830ddd7a91dc3e5590150e8dbe32e8b93f",
+          "role": "learned memory, majority and auto-label source",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "E13B-EXPRESSION-PREFIX-COMPLETION",
+      "selection": "exclude_main",
+      "mechanism_type": "exact_learned_retrieval_and_abstention",
+      "old_ru": "Первый baseline всегда возвращает самое частое завершение Total.",
+      "new_ru": "Ранний опыт обучает KNN на 30 соответствиях «префикс → завершение» и проверяет те же 30. Поздний путь использует нормализованный точный lookup и отказ от неизвестного ключа.",
+      "learned_state_ru": "Таблица соответствий определяется уроками. Вычисление значения новой формулы не обучается.",
+      "why_not_bug_ru": "Это работающая предметная память, а не исправление адресации. Но проверка на тех же 30 строках не доказывает превосходство метода обобщения.",
+      "panel": {
+        "early_train": 30,
+        "early_evaluation_same_train": 30,
+        "early_baseline_pct": 6.7,
+        "early_retrieval_pct": 100,
+        "later_train": 20,
+        "later_unseen": 10,
+        "later_train_correct": 20,
+        "later_unseen_answers_correct": 0,
+        "later_unseen_correct_abstentions": 10,
+        "norm_variants": "3knownformatvariantsmatched;1unknownA+Bcorrectlyrejected"
+      },
+      "costs": {
+        "early_training_ms": 142.4,
+        "early_read_ms": null,
+        "later_costs": null
+      },
+      "cost_judgment_ru": "Парной оценки цены KNN и доменного lookup нет. Ранние 142,4 мс обучения не являются стоимостью позднего механизма.",
+      "generalization_ru": "В поздней таблице Correct=True для десяти новых формул означает правильный отказ. Правильных завершений новых формул — 0/10. Нормализация пробелов и регистра не равна выводу алгебраического правила.",
+      "current_transfer_ru": "В HEAD ExpressionCompletionCore проекта 23 содержит Train и lookup[Normalise(prefix)]=completion. При конфликте ключа последний урок заменяет предыдущий. Подтверждён экспериментальный потребитель, а не общая генерация RP01.",
+      "reject_reason_ru": "Не основной: 100% — извлечение учебных соответствий; новых решённых формул нет. Парного качества до и после перехода KNN → lookup не найдено.",
+      "sources": [
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/results/run-2026-05-07-001715.md",
+          "line_start": 1,
+          "line_end": 52,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/results/run-2026-05-07-001715.md",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/results/run-2026-05-07-001715.md#L1-L52",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/results/run-2026-05-07-001715.md",
+          "sha256": "7145e79112020ea154e3f62de86d82208bd79ab601362af8ed4ce63c42159c12",
+          "role": "early train retrieval report",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/results/heldout-2026-05-07-075333/e13b-heldout-validation.md",
+          "line_start": 1,
+          "line_end": 36,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/results/heldout-2026-05-07-075333/e13b-heldout-validation.md",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/results/heldout-2026-05-07-075333/e13b-heldout-validation.md#L1-L36",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/results/heldout-2026-05-07-075333/e13b-heldout-validation.md",
+          "sha256": "7646f9d8b7929919dad77883572773abf7c937b7ba92be338f0bb08922e6f3c8",
+          "role": "heldout refusals, not completions",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/runner/E13BExpressionPrefixCompletionRunner/Program.cs",
+          "line_start": 15,
+          "line_end": 96,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/current/experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/runner/E13BExpressionPrefixCompletionRunner/Program.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/runner/E13BExpressionPrefixCompletionRunner/Program.cs#L15-L96",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/runner/E13BExpressionPrefixCompletionRunner/Program.cs",
+          "sha256": "5ddc85a0ab9819fd03054a1937947e818d069845701c4a9578d4cd6642e1abcb",
+          "role": "same rows trained and evaluated",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "23.SemanticCompilerAdapter/ExpressionCompletionCore.cs",
+          "line_start": 43,
+          "line_end": 107,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/candidate-knn-src/current/23.SemanticCompilerAdapter/ExpressionCompletionCore.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/23.SemanticCompilerAdapter/ExpressionCompletionCore.cs#L43-L107",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/23.SemanticCompilerAdapter/ExpressionCompletionCore.cs",
+          "sha256": "49a0db2e468a321a3308bd387289d50252cd729b17c98039d2c4bf163a936340",
+          "role": "current exact learned lookup",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "KNN-DOMAIN-CONSTRUCTOR-ROUTE-01",
+      "short_id": "KDR01",
+      "selection": "exclude_main_but_keep_B_vs_C_support",
+      "mechanism_type": "learned_router_and_model_registry_plus_manual_readout",
+      "old_ru": "A-fixed всегда выбирает модель C#. Первичный отчёт прямо называет её контролем ошибки. Это намеренно неподходящая модель для остальных профилей, а не сильный корректный baseline маршрутизации.",
+      "new_ru": "Обученный маршрутизатор выбирает профиль, реестр разрешает состояние и функции. B-domain использует обычное чтение, C-domain-functions добавляет функции KDP. Новый урок записывается в выбранную память.",
+      "learned_state_ru": "24 урока маршрутизатора с профильными метками: 12 исходных и 12 дополнительных. Доменные состояния взяты из KDP. Отдельный урок break увеличивает C#-память с восьми до девяти записей; ответ throw меняется на break и сохраняется после загрузки. Веса LLM не обновляются.",
+      "why_not_bug_ru": "Связка маршрутизатора и памяти может быть архитектурным методом. Однако сравнение 10/46 → 24/46 специально устраняет выбор чужой C#-модели. Превосходство над корректной альтернативной маршрутизацией не показано. Чистый эффект функций — B → C.",
+      "panel": {
+        "route_panels": [
+          {
+            "state": "S0",
+            "arm": "A-fixed",
+            "total": 46,
+            "correct_answers": 6,
+            "correct_expected_refusals": 4,
+            "total_correct_outcomes": 10,
+            "constructed": 22,
+            "refusals": 24
+          },
+          {
+            "state": "S0",
+            "arm": "B-domain",
+            "total": 46,
+            "correct_answers": 16,
+            "correct_expected_refusals": 4,
+            "total_correct_outcomes": 20,
+            "constructed": 22,
+            "refusals": 24
+          },
+          {
+            "state": "S0",
+            "arm": "C-domain-functions",
+            "total": 46,
+            "correct_answers": 20,
+            "correct_expected_refusals": 4,
+            "total_correct_outcomes": 24,
+            "constructed": 22,
+            "refusals": 24
+          },
+          {
+            "state": "S1",
+            "arm": "A-fixed",
+            "total": 46,
+            "correct_answers": 6,
+            "correct_expected_refusals": 4,
+            "total_correct_outcomes": 10,
+            "constructed": 26,
+            "refusals": 20
+          },
+          {
+            "state": "S1",
+            "arm": "B-domain",
+            "total": 46,
+            "correct_answers": 20,
+            "correct_expected_refusals": 4,
+            "total_correct_outcomes": 24,
+            "constructed": 26,
+            "refusals": 20
+          },
+          {
+            "state": "S1",
+            "arm": "C-domain-functions",
+            "total": 46,
+            "correct_answers": 24,
+            "correct_expected_refusals": 4,
+            "total_correct_outcomes": 28,
+            "constructed": 26,
+            "refusals": 20
+          }
+        ],
+        "S1_B_correct_answers": 20,
+        "S1_C_correct_answers": 24,
+        "S1_B_correct_outcomes_with4refusals": 24,
+        "S1_C_correct_outcomes_with4refusals": 28,
+        "per_profile_S1": {
+          "CS": [
+            "8/8routed",
+            "6/8B",
+            "6/8C"
+          ],
+          "EN": [
+            "8/8routed",
+            "8/8B",
+            "8/8C"
+          ],
+          "RU": [
+            "0/8routed",
+            "0/8B",
+            "0/8C"
+          ],
+          "HE": [
+            "0/8routed",
+            "0/8B",
+            "0/8C"
+          ],
+          "OR": [
+            "8/8routed",
+            "5/8B",
+            "8/8C"
+          ]
+        },
+        "routing_thresholds": {
+          "minimum_score": 0.35,
+          "minimum_margin": 0.05
+        },
+        "new_lesson": {
+          "routed": "CS",
+          "CanSelect": true,
+          "Margin": 0.3512686178088187,
+          "taught": true,
+          "expected": "break",
+          "answerBefore": "throw",
+          "answerAfter": "break",
+          "answerAfterReload": "break",
+          "acquired": true,
+          "survivedReload": true,
+          "lessonsBefore": 8,
+          "lessonsAfter": 9,
+          "retention": [
+            {
+              "ExampleId": "S01",
+              "expected": "return",
+              "actual": "return",
+              "kept": true
+            },
+            {
+              "ExampleId": "S02",
+              "expected": "throw",
+              "actual": "throw",
+              "kept": true
+            },
+            {
+              "ExampleId": "S03",
+              "expected": "await",
+              "actual": "await",
+              "kept": true
+            },
+            {
+              "ExampleId": "S04",
+              "expected": "yield return",
+              "actual": "yield return",
+              "kept": true
+            }
+          ],
+          "untouched": [
+            {
+              "profile": "EN",
+              "ExampleId": "S01",
+              "answer": "works.",
+              "unchangedLessonCount": 8
+            },
+            {
+              "profile": "RU",
+              "ExampleId": "S01",
+              "answer": "пишет.",
+              "unchangedLessonCount": 8
+            },
+            {
+              "profile": "HE",
+              "ExampleId": "S01",
+              "answer": "כותב.",
+              "unchangedLessonCount": 8
+            },
+            {
+              "profile": "OR",
+              "ExampleId": "S01",
+              "answer": "design-interface",
+              "unchangedLessonCount": 8
+            }
+          ]
+        }
+      },
+      "costs": {
+        "experiment": "KNN-DOMAIN-CONSTRUCTOR-ROUTE-01",
+        "attempt": "01",
+        "logicalPredicts": 296,
+        "routerLessons": 24,
+        "domainLessonsAdded": 1,
+        "constructorCalls": 11,
+        "stateLoads": 7,
+        "wholeRunSeconds": 7.8533659,
+        "processPeakWorkingSetBytes": 78639104
+      },
+      "cost_judgment_ru": "7,853 с и пик 78 639 104 B относятся ко всему опыту. Это не парная стоимость выбора профиля или добавления функций. Расход пяти моделей и индексов отдельно не измерен.",
+      "generalization_ru": "Шестнадцать из сорока профильных запросов RU/HE не проходят маршрутизатор. Новый break воспроизводится только как один приобретённый урок, без проверки неизвестных аналогов. Правильные отказы считаются отдельно от ответов. Квалификация S0 считает TopProfile: часть верных меток имеет отрыв ниже 0,05, поэтому узнавание класса не означает допуск запроса к модели.",
+      "current_transfer_ru": "ProfileRouter и DomainModelFactory есть в эксперименте KDR01. Подключение к общему продуктовому пути не подтверждено; repair 455398 относится к другому FIX-KR.",
+      "reject_reason_ru": "Не отдельная основная карточка: baseline A намеренно ошибочный; чистый B → C повторяет KDP и добавляет полезную проверку полного пути, но RU и HE остаются на 0/8.",
+      "sources": [
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDR01/results/attempt-01/report.md",
+          "line_start": 1,
+          "line_end": 226,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/report.md",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/report.md#L1-L226",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/report.md",
+          "sha256": "4a1d2c2a7c7b16e81815f3ef543e2c5a79232e3baf244a134a9e2f64a366828c",
+          "role": "primary report and explicit A-fixed error control",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDR01/results/attempt-01/raw.json",
+          "line_start": 1,
+          "line_end": 7060,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/raw.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/raw.json#L1-L7060",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/raw.json",
+          "sha256": "0329ef0dfd1d41e92c58691e56f183eec303f8f3a144797cf7738c1868ff8ca1",
+          "role": "276raw route/arm/state records; answers vsrefusals calculated separately",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDR01/results/attempt-01/router-qualification.json",
+          "line_start": 1,
+          "line_end": 394,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/router-qualification.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/router-qualification.json#L1-L394",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/router-qualification.json",
+          "sha256": "0b8fa9c5a4e38d0726f3dfaaeea0be1517b70c39be51b766630c7c51c0162e33",
+          "role": "router labels and margins",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+          "path": "experiments-v2/RP01-MICRO/KDR01/results/attempt-01/cs-lesson.json",
+          "line_start": 1,
+          "line_end": 66,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/knn-primary/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/cs-lesson.json",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/cs-lesson.json#L1-L66",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/KDR01/results/attempt-01/cs-lesson.json",
+          "sha256": "a04a5738f3438b68170db8d050bf96911fa90db3def44ce2ba4beff1fcfff43b",
+          "role": "one new lesson andretention",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "experiments-v2/RP01-MICRO/KDR01/ProfileRouter.cs",
+          "line_start": 24,
+          "line_end": 118,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/uml-current/knn/current/experiments-v2/RP01-MICRO/KDR01/ProfileRouter.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/RP01-MICRO/KDR01/ProfileRouter.cs#L24-L118",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/RP01-MICRO/KDR01/ProfileRouter.cs",
+          "sha256": "cede9c3f291500a6fc839f0bc175c4cf074be182c6bc16e2f4c6d16c0bfa9e36",
+          "role": "current experimental router and rejectionthresholds",
+          "locator": null
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "75107af930a1d4c55d60fa8a4ef7c01643f13cb0",
+          "path": "experiments-v2/RP01-MICRO/KDR01/DomainModelFactory.cs",
+          "line_start": 93,
+          "line_end": 155,
+          "local_path": "/workspace/scratch/ae4dfe50ce67/research/uml-current/knn/current/experiments-v2/RP01-MICRO/KDR01/DomainModelFactory.cs",
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/RP01-MICRO/KDR01/DomainModelFactory.cs#L93-L155",
+          "raw_url": "https://raw.githubusercontent.com/lubochka/llm_mvp_core/75107af930a1d4c55d60fa8a4ef7c01643f13cb0/experiments-v2/RP01-MICRO/KDR01/DomainModelFactory.cs",
+          "sha256": "b8d3d297a2b9f1f857352ad6472801a0b5fb4cc40da773a45212e963435e88e1",
+          "role": "current experimental model/functionregistry",
+          "locator": null
+        }
+      ]
+    }
+  ],
+  "analysis_counts": {
+    "candidates_reviewed": 8,
+    "selected": 2,
+    "reserve": 1,
+    "main_excluded": 5
+  },
+  "verification": {
+    "jsons_parsed": true,
+    "all_sources_line_ranges_checked": true,
+    "models_or_tests_run": false,
+    "recomputed_from_saved_raw": [
+      "TCTXquality/cost",
+      "PQ26/32overlap,novelstratum,exactlookup+recordedrulefallback",
+      "KDPall42profile-state-armgroups",
+      "KDR6router-state-armgroupswithanswers/refusalsseparate"
+    ]
+  },
+  "broader_limits_ru": "Не восстановлены бинарники старых майских запусков и полные списки данных E18/E22. Нет проверки долгосрочного обобщения и ресурсных A/B для KDP/KDR. Наличие файла в HEAD не означает подключения ко всем потребителям. Эти границы сохранены в выводах."
+}

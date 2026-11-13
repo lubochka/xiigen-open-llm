@@ -1,0 +1,80 @@
+{
+  "machine": "SkillSelection",
+  "rows": [
+    {
+      "proofRequirement": "checkpoint + manifest load through public boundary",
+      "status": "PASS",
+      "evidence": "SkillSelection ImportAsync validated staged manifest refs and loaded checkpoint; LoadCheckpointAsync also fresh-loaded the checkpoint through the public machine boundary."
+    },
+    {
+      "proofRequirement": "backup/export/import/share artifact clean reload",
+      "status": "PASS",
+      "evidence": "SaveCheckpointAsync output was copied into a zip share package, extracted to a clean staged path, and imported through SkillSelectionMachine.ImportAsync."
+    },
+    {
+      "proofRequirement": "continue-training starts from existing/imported checkpoint",
+      "status": "PASS",
+      "evidence": "TrainMachineBatchAsync ran on the clean-imported machine; before pair count=1 and after checkpoint contains base+delta pair ids."
+    },
+    {
+      "proofRequirement": "fresh-load after continue-training works",
+      "status": "PASS",
+      "evidence": "SkillSelectionMachine.LoadCheckpointAsync loaded the continued checkpoint and both base/delta held-out decisions passed."
+    },
+    {
+      "proofRequirement": "held-out/ablation/no-leakage checks remain passing",
+      "status": "PASS",
+      "evidence": "EvaluateAsync accuracy=1.0 after lifecycle; context/provenance ablation lowered confidence; candidate-order leakage guard was invariant; raw prompt/held-out id scan had zero hits."
+    },
+    {
+      "proofRequirement": "rollback restores previous checkpoint/state",
+      "status": "PASS",
+      "evidence": "Rollback ImportAsync from backup manifest/checkpoint preserved base state and removed delta pair/decision."
+    },
+    {
+      "proofRequirement": "no common model/checkpoint/locator mutation outside staged artifacts",
+      "status": "PASS",
+      "evidence": "All SkillSelection writes were under the Phase 14 lifecycle-proof artifact directory; common hashes are checked at report level."
+    },
+    {
+      "proofRequirement": "Russian-first report states proven and not proven",
+      "status": "PASS",
+      "evidence": "phase14-lifecycle-proof.md is Russian-first and separates proof from non-claims."
+    }
+  ],
+  "evidence": [
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224757/skill-selection/01-initial-export/skill-selection-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224757/skill-selection/01-initial-export/skill-selection-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224757/skill-selection/02-backup-before-continue/skill-selection-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224757/skill-selection/02-backup-before-continue/skill-selection-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224757/skill-selection/03-share-package.zip",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224757/skill-selection/04-clean-share-import/skill-selection-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224757/skill-selection/04-clean-share-import/skill-selection-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224757/skill-selection/05-continued-export/skill-selection-continued-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224757/skill-selection/05-continued-export/skill-selection-continued-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224757/skill-selection/06-rollback-load/rollback-observation.json"
+  ],
+  "decisions": {
+    "base_after_import": [
+      "context-audit"
+    ],
+    "base_after_continue": [
+      "context-audit"
+    ],
+    "delta_after_continue": [
+      "phase-lifecycle-proof"
+    ],
+    "ablation_confidence": 0,
+    "base_confidence": 0.95,
+    "rollback_delta_selected": [
+      "context-audit"
+    ],
+    "heldout_accuracy": 1
+  },
+  "leakage_hits": [],
+  "candidate_order_leakage": {
+    "permutationSelectionInvariant": true,
+    "orderSensitivityDetected": false,
+    "permutationCount": 2
+  }
+}

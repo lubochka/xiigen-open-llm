@@ -1,0 +1,121 @@
+{
+  "sessionId": "matrix-algorithms-2026-04-30",
+  "sessionType": "GENERATION",
+  "goal": "Implement sub-project 33.MatrixAlgorithms covering three families: matrix decompositions (LU, QR, full SVD, truncated SVD, randomized SVD), sparse matrix formats (COO, CSR, CSC, multiply, solver), and low-rank neural network weight compression (spectral analysis, SVD compressor, integer 8-bit quantizer, combined compressor). All code follows Genie DNA nine rules, fabric-first pattern, every line documented in plain human language, full behavioral test coverage.",
+  "startedAt": "2026-04-30",
+  "lastUpdatedAt": "2026-04-30",
+  "status": "complete",
+  "completedAt": "2026-04-30",
+  "genieRules": {
+    "rule1_no_typed_model_classes": "matrix data stored as double[] flat arrays or immutable records; no classes with business logic inside",
+    "rule2_no_hardcoded_filters": "decomposition parameters come from method arguments, never inlined",
+    "rule3_operation_result_envelope": "every public method returns OperationResult<T>; no exceptions for business errors",
+    "rule4_base_service": "every service class extends BaseService (IMatrixStorage + IMatrixEventLogger injected)",
+    "rule5_scope_from_context": "no tenantId or sessionId parameters; scope comes from injected context",
+    "rule6_single_dispatcher": "MatrixAlgorithmsDispatcher is the single entry point routing all requests",
+    "rule7_idempotency": "write operations accept operationId and check IdempotencyStore before doing work",
+    "rule8_save_before_dispatch": "results saved to IMatrixStorage before StandardEvent is emitted",
+    "rule9_standard_event": "all emitted notifications use the StandardEvent record envelope"
+  },
+  "fabricFirst": true,
+  "documentationRule": "every line carries a plain-language comment explaining what it does and why; no abbreviations without full expansion on the same line",
+  "testRule": "behavioral assertions only; no third-party library parity; in-memory fabric implementations for all dependencies",
+  "steps": [
+    {
+      "id": 1,
+      "name": "Session state and plan files",
+      "status": "complete",
+      "filesCreated": [
+        "docs/plans/SESSION-STATE-MATRIX-ALGORITHMS-2026-04-30.json",
+        "docs/plans/MATRIX-ALGORITHMS-33-IMPLEMENTATION-PLAN.md"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Core types",
+      "status": "complete",
+      "filesPlanned": [
+        "33.MatrixAlgorithms/Core/Core.cs",
+        "33.MatrixAlgorithms/Core/DenseMatrix.cs",
+        "33.MatrixAlgorithms/Core/NumericalUtilities.cs",
+        "33.MatrixAlgorithms/Core/Types.cs"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Fabric interfaces",
+      "status": "complete",
+      "filesPlanned": [
+        "33.MatrixAlgorithms/Fabric/Interfaces.cs"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Family 1 — Matrix decompositions",
+      "status": "complete",
+      "filesPlanned": [
+        "33.MatrixAlgorithms/Families/01-Decomposition/LuDecompositionService.cs",
+        "33.MatrixAlgorithms/Families/01-Decomposition/LuLinearSolver.cs",
+        "33.MatrixAlgorithms/Families/01-Decomposition/HouseholderReflection.cs",
+        "33.MatrixAlgorithms/Families/01-Decomposition/QrDecompositionService.cs",
+        "33.MatrixAlgorithms/Families/01-Decomposition/QrLeastSquaresSolver.cs",
+        "33.MatrixAlgorithms/Families/01-Decomposition/SingularValueDecompositionService.cs",
+        "33.MatrixAlgorithms/Families/01-Decomposition/TruncatedSvdService.cs",
+        "33.MatrixAlgorithms/Families/01-Decomposition/RandomizedSvdService.cs"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Family 2 — Sparse matrices",
+      "status": "complete",
+      "filesPlanned": [
+        "33.MatrixAlgorithms/Families/02-Sparse/CooSparseMatrix.cs",
+        "33.MatrixAlgorithms/Families/02-Sparse/CsrSparseMatrix.cs",
+        "33.MatrixAlgorithms/Families/02-Sparse/CscSparseMatrix.cs",
+        "33.MatrixAlgorithms/Families/02-Sparse/SparseMatrixConverter.cs",
+        "33.MatrixAlgorithms/Families/02-Sparse/SparseMatrixMultiplier.cs",
+        "33.MatrixAlgorithms/Families/02-Sparse/SparseLinearSolver.cs"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Family 3 — Low-rank weight compression + Dispatcher",
+      "status": "complete",
+      "filesPlanned": [
+        "33.MatrixAlgorithms/Families/03-LowRankCompression/WeightMatrixAnalyzer.cs",
+        "33.MatrixAlgorithms/Families/03-LowRankCompression/SvdWeightCompressor.cs",
+        "33.MatrixAlgorithms/Families/03-LowRankCompression/Int8Quantizer.cs",
+        "33.MatrixAlgorithms/Families/03-LowRankCompression/QuantizationPlusLowRankCompressor.cs",
+        "33.MatrixAlgorithms/Dispatcher/MatrixAlgorithmsDispatcher.cs"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Tests",
+      "status": "complete",
+      "filesPlanned": [
+        "Tests/MatrixAlgorithmsTests.cs"
+      ],
+      "testTarget": 40,
+    "testActual": 43
+    },
+    {
+      "id": 8,
+      "name": "State file + solution registration + build verification",
+      "status": "complete",
+      "filesPlanned": [
+        "33.MatrixAlgorithms/state.json"
+      ],
+      "buildTarget": "dotnet build LlmFromScratch.sln — 0 errors, 0 warnings",
+      "testTarget": "dotnet test — all tests pass"
+    }
+  ],
+  "solutionContext": {
+    "totalTestsBefore": 450,
+    "expectedTestsAfter": 490,
+    "actualTestsAfter": 499,
+    "existingSubprojects": "00-32 all complete",
+    "dotnetVersion": "net9.0",
+    "externalDependencies": "none — pure C# from scratch"
+  }
+}

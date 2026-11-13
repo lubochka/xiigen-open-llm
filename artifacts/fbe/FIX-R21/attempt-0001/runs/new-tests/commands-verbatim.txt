@@ -1,0 +1,85 @@
+Команды шагов 6–12 записи приёмки (каталог runs/new-tests). Дописано 10.11.2026 при ремонте улик слайса.
+
+ЧЕСТНАЯ ОГОВОРКА О ДОСЛОВНОСТИ. Скрипт, выполнявший эти семь команд, в хранилище не сохранялся
+(в отличие от run-baseline.sh и run-mutation.sh), а исходный commands.txt этого каталога записал
+только коды возврата. Поэтому ДОСЛОВНЫЙ ТЕКСТ ЭТИХ КОМАНД НЕ ВОССТАНОВИМ. Ниже для каждой
+команды: (1) «по журналу известно» — факты из журнала вывода; (2) «восстановленная форма» —
+реконструкция по образцу сохранённых скриптов того же исполнителя, НЕ запись. Реконструкция
+может расходиться с фактом в деталях, не влияющих на результат (например `-c` против
+`--configuration`, переносы строк, кавычки); рабочий каталог, проект, конфигурация, фильтр,
+каталог результатов и имя файла результата подтверждены журналами.
+
+Рабочий каталог: /c/Projects/llm_mvp_core (журналы содержат абсолютные пути
+C:\Projects\llm_mvp_core\...). Начало шагов: started_utc=2026-11-10T04:45:40Z (= 06:45:40
+местного времени), из исходного commands.txt. $RUN ниже =
+/c/Projects/llm_mvp_core/artifacts/fbe/FIX-R21/attempt-0001/runs/new-tests (подтверждено
+строками «Results File:» журналов).
+
+--- Команда 1 (шаг 6 записи приёмки) — сборка тестового проекта с новым файлом проверок ---
+Дословный текст не восстановим; по журналу step1-build-tests.log известно: собирался проект
+Tests/LlmFromScratch.Tests.csproj (имя проекта в строках предупреждений), конфигурация Release
+(выход Tests\bin\Release\net9.0\LlmFromScratch.Tests.dll), транзитивно собран продукт
+12.SemanticCompiler\bin\Release\net9.0\SemanticCompiler.dll, «Build succeeded.», 0 Error(s),
+170 Warning(s), Time Elapsed 00:01:27.20; стандартный вывод и вывод ошибок записаны в один журнал.
+Восстановленная форма (реконструкция):
+dotnet build Tests/LlmFromScratch.Tests.csproj -c Release > "$RUN/step1-build-tests.log" 2>&1
+Код возврата: 0 (commands.txt: build_new_tests_exit=0).
+
+--- Команда 2 (шаг 7) — обнаружение новых проверок по именам ---
+Дословный текст не восстановим; по журналу step2-list-tests.log известно: прогон над
+Tests\bin\Release\net9.0\LlmFromScratch.Tests.dll в режиме перечисления («The following Tests
+are available:»); без сборки — в журнале нет ни одной строки сборки, значит стоял --no-build;
+в выводе ровно три имени класса MethodKnnTieReachedThroughFacadeTests; фильтр по записи
+приёмки (раздел 9): FullyQualifiedName~MethodKnnTieReachedThroughFacadeTests.
+Восстановленная форма (реконструкция):
+dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~MethodKnnTieReachedThroughFacadeTests" --list-tests > "$RUN/step2-list-tests.log" 2>&1
+Код возврата: 0 (commands.txt: list_tests_exit=0).
+
+--- Команда 3 (шаг 8) — первый (красный) прогон новых проверок ---
+Дословный текст не восстановим; по журналу step3-test-run.log известно: та же сборка, без
+строк сборки (--no-build), тот же фильтр (упали ровно три случая этого класса), результат
+раннера записан в файл
+Results File: C:\Projects\llm_mvp_core\artifacts\fbe\FIX-R21\attempt-0001\runs\new-tests\new-tests-green.trx
+(то есть --results-directory = этот каталог и LogFileName=new-tests-green.trx); строка итога:
+Failed!  - Failed:     3, Passed:     0, Skipped:     0, Total:     3, Duration: 323 ms - LlmFromScratch.Tests.dll (net9.0)
+Восстановленная форма (реконструкция):
+dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~MethodKnnTieReachedThroughFacadeTests" --results-directory "$RUN" --logger "trx;LogFileName=new-tests-green.trx" > "$RUN/step3-test-run.log" 2>&1
+Код возврата: 1 (commands.txt: new_tests_run_exit=1).
+
+--- Команда 4 (шаг 9) — сборка после первой правки входа (метод-носитель признака) ---
+Дословный текст не восстановим; по журналу step4-build-after-fixture-repair.log известно: тот
+же проект, Release, «Build succeeded.», 0 Error(s), 170 Warning(s), Time Elapsed 00:01:45.17.
+Восстановленная форма (реконструкция):
+dotnet build Tests/LlmFromScratch.Tests.csproj -c Release > "$RUN/step4-build-after-fixture-repair.log" 2>&1
+Код возврата: 0 (commands.txt: build_after_repair_exit=0).
+
+--- Команда 5 (шаг 10) — второй (красный) прогон ---
+Дословный текст не восстановим; по журналу step5-test-run-after-repair.log известно: без строк
+сборки (--no-build), тот же фильтр, результат раннера
+Results File: C:\Projects\llm_mvp_core\artifacts\fbe\FIX-R21\attempt-0001\runs\new-tests\new-tests-after-fixture-repair.trx
+строка итога:
+Failed!  - Failed:     3, Passed:     0, Skipped:     0, Total:     3, Duration: 358 ms - LlmFromScratch.Tests.dll (net9.0)
+Восстановленная форма (реконструкция):
+dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~MethodKnnTieReachedThroughFacadeTests" --results-directory "$RUN" --logger "trx;LogFileName=new-tests-after-fixture-repair.trx" > "$RUN/step5-test-run-after-repair.log" 2>&1
+Код возврата: 1 (commands.txt: new_tests_after_repair_exit=1).
+
+--- Команда 6 (шаг 11) — сборка после второй правки входа (слово sealed) ---
+Дословный текст не восстановим; по журналу step6-build-after-marker-repair.log известно: тот же
+проект, Release, «Build succeeded.», 0 Error(s), 170 Warning(s), Time Elapsed 00:01:39.72.
+Восстановленная форма (реконструкция):
+dotnet build Tests/LlmFromScratch.Tests.csproj -c Release > "$RUN/step6-build-after-marker-repair.log" 2>&1
+Код возврата: 0 (commands.txt: build_after_marker_repair_exit=0).
+
+--- Команда 7 (шаг 12) — зелёный прогон ---
+Дословный текст не восстановим; по журналу step7-test-run-green.log известно: без строк сборки
+(--no-build), тот же фильтр, предупреждение и результат раннера дословно:
+WARNING: Overwriting results file: C:\Projects\llm_mvp_core\artifacts\fbe\FIX-R21\attempt-0001\runs\new-tests\new-tests-green.trx
+Results File: C:\Projects\llm_mvp_core\artifacts\fbe\FIX-R21\attempt-0001\runs\new-tests\new-tests-green.trx
+строка итога:
+Passed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3, Duration: 404 ms - LlmFromScratch.Tests.dll (net9.0)
+То же имя файла результата, что и у команды 3 — в этом и состоит нарушение контракта
+«свежий каталог результатов на каждый прогон», записанное датированной поправкой от
+10.11.2026 в acceptance-record.md.
+Восстановленная форма (реконструкция):
+dotnet test Tests/LlmFromScratch.Tests.csproj -c Release --no-build --filter "FullyQualifiedName~MethodKnnTieReachedThroughFacadeTests" --results-directory "$RUN" --logger "trx;LogFileName=new-tests-green.trx" > "$RUN/step7-test-run-green.log" 2>&1
+Код возврата: 0 (commands.txt: new_tests_green_exit=0).

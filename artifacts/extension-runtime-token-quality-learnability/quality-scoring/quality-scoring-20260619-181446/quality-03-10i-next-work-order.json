@@ -1,0 +1,36 @@
+{
+  "schema": "xiigen.quality_03.10i.next_work_order.v1",
+  "work_order_id": "QUALITY-03-NON-INTER-RATER-FRESH-SOURCE-LICENSE-CONSENT-AND-ROW-BINDING-SUPPLY-10I",
+  "generated_at_local": "2026-06-19T18:14:46+03:00",
+  "parent_work_order_id": "QUALITY-03-NON-INTER-RATER-EXPLICIT-SOURCE-LICENSE-CONSENT-AND-ROW-APPROVAL-PACKET-10H",
+  "requested_artifact_type": "fresh_explicit_source_license_consent_or_local_license_metadata_and_row_001_binding_supply",
+  "goal": "Supply evidence that 10H could not derive: exact source/license/consent bindings for QUALITY-03 source_ref/doc_id/source_hash rows, plus source binding for QUALITY-03-REVIEW-ROW-001. Do not self-approve.",
+  "required_inputs": [
+    "Fresh current-owner/Luba approval quote explicitly naming source_ref/doc_id/source_hash and allowed route, or local license/provenance metadata file with source_license_ref/license_hash.",
+    "QUALITY-03-REVIEW-ROW-001 source_scenario_id/source_ref/doc_id/source_hash binding.",
+    "Decision per row: common_training_allowed=true only with permissive/approved universal material; otherwise explicit USER_ADAPTIVE_ONLY/EVIDENCE_ONLY/QUARANTINE route."
+  ],
+  "allowed_write_scope": [
+    "new timestamped artifact folder under artifacts/extension-runtime-token-quality-learnability/quality-scoring/quality-scoring-<timestamp>/",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+  ],
+  "forbidden": [
+    "git stage/commit/push/branch/checkout",
+    "external AI/web/model calls",
+    "training/DPO/checkpoint/model/locator mutation",
+    "raw external AI output as training target",
+    "self-approval or false PASS"
+  ],
+  "verify": [
+    "JSON/JSONL parse",
+    "assert all approved rows have source_license_ref/license_hash/consent/provenance",
+    "assert exactly 9 approved row assignments only after all gates pass",
+    "if proof bundle is created only after gates pass: run NonInterRaterProofProducer and Quality03ProofContractRunner"
+  ],
+  "parent_review_verification": [
+    "whitespace verification for changed artifacts outside the sub-agent work order",
+    "git diff --check may be run only by parent/reviewer when parent git authority applies"
+  ],
+  "git_authority": "forbidden",
+  "parent_will_perform_commit_push_after_review": true
+}

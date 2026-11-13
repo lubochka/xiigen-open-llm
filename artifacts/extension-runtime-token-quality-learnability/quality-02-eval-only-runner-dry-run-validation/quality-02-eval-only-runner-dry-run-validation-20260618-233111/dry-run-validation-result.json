@@ -1,0 +1,174 @@
+{
+  "schema": "xiigen.quality_02_eval_only_runner_dry_run_validation.result.v1",
+  "work_order_id": "QUALITY-02-EVAL-ONLY-RUNNER-DRY-RUN-VALIDATION-01",
+  "run_id": "quality-02-eval-only-runner-dry-run-validation-20260618-233111",
+  "generated_at_local": "2026-06-18T23:31:11+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "status": "FAIL_FIX_NEEDED",
+  "result_summary_ru": "Dry-run validation остановлен на schema-ish mismatch: QUALITY-01 rubric scale имеет anchors 0..4, а QUALITY-02 contract/dry-run ожидает 0..5 и score_0_to_5. Side-effect boundaries закрыты, claim locks false, score/comparison outputs этим dry-run не создавались.",
+  "run_root": "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-dry-run-validation/quality-02-eval-only-runner-dry-run-validation-20260618-233111",
+  "source_refs_read": [
+    "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/eval-prompt-pack.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/quality-rubric.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/held-out-and-ablation-requirements.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric-prep/quality-01-eval-prompt-pack-rubric-prep-20260618-230544/checks-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-231757/eval-only-runner-contract.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-231757/scorer-boundary-checklist.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-231757/dry-run-validation-plan.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-231757/checks-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet-checks.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/quality-02-eval-only-runner-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/claim-locks-report.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/checks-report.json",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+  ],
+  "checklist": [
+    {
+      "id": "required_quality_01_files_exist",
+      "status": "PASS",
+      "explanation_ru": "Свежие QUALITY-01 prep files найдены."
+    },
+    {
+      "id": "required_quality_02_runner_contract_files_exist",
+      "status": "PASS",
+      "explanation_ru": "Свежие QUALITY-02 runner contract/checklist/dry-run plan files найдены."
+    },
+    {
+      "id": "json_parse_existing_inputs",
+      "status": "PASS",
+      "explanation_ru": "Проверенные JSON artifacts и state парсятся."
+    },
+    {
+      "id": "quality_01_rubric_layers_present",
+      "status": "PASS",
+      "observed_layers": [
+        "PromptToTask",
+        "OrchestrationReasoning",
+        "SkillSelection",
+        "FinalUsefulness"
+      ],
+      "explanation_ru": "Все четыре требуемых слоя rubric присутствуют."
+    },
+    {
+      "id": "score_scale_alignment",
+      "status": "FAIL",
+      "expected": "QUALITY-01 and QUALITY-02 agree on one canonical score scale before scoring.",
+      "observed_quality_01_score_scale_keys": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "observed_quality_02_score_scale": "0..5",
+      "observed_quality_02_score_field": "score_0_to_5",
+      "explanation_ru": "QUALITY-01 rubric uses anchors 0..4, while QUALITY-02 future score contract expects 0..5 / score_0_to_5. Это блокирует PASS dry-run до artifact repair."
+    },
+    {
+      "id": "external_ai_model_boundary_forbidden",
+      "status": "PASS",
+      "observed_flags": {
+        "external_ai_model_calls_allowed": false,
+        "scorer_must_not_fetch_network_or_vendor_models": true,
+        "hard_forbidden_external_ai_or_model_call": true
+      },
+      "explanation_ru": "Contract/checklist явно запрещают external AI/model calls."
+    },
+    {
+      "id": "runtime_training_dpo_checkpoint_boundary_forbidden",
+      "status": "PASS",
+      "observed_flags": {
+        "runtime_host_execution_allowed": false,
+        "llm_mvp_core_generation_allowed": false,
+        "training_allowed": false,
+        "dpo_allowed": false,
+        "checkpoint_mutation_allowed": false
+      },
+      "explanation_ru": "Runtime/generation/training/DPO/checkpoint side effects закрыты."
+    },
+    {
+      "id": "pairing_integrity_non_scoring_stop",
+      "status": "PASS",
+      "observed": {
+        "rows_total": 9,
+        "complete_pairs_from_current_safe_evidence": 0,
+        "required_runner_result": "PAIRING_INTEGRITY_NOT_READY"
+      },
+      "explanation_ru": "Current 0/9 complete pairs должен останавливать future runner before scoring."
+    },
+    {
+      "id": "no_score_or_comparison_outputs_produced_by_this_dry_run",
+      "status": "PASS",
+      "forbidden_artifacts_created": [],
+      "allowed_artifacts_created": [
+        "report-ru.md",
+        "dry-run-validation-result.json",
+        "checks-report.json"
+      ],
+      "explanation_ru": "Этот dry-run не создал score rows или comparison report."
+    },
+    {
+      "id": "claim_locks_false",
+      "status": "PASS",
+      "explanation_ru": "Все scoped claim locks остаются false."
+    }
+  ],
+  "actual_eval_or_scoring_performed": false,
+  "runtime_host_execution_performed": false,
+  "external_ai_model_calls_performed": false,
+  "training_dpo_checkpoint_mutation_performed": false,
+  "source_code_or_test_edits_performed": false,
+  "plan_governance_skill_edits_performed": false,
+  "scores_created": false,
+  "comparison_outputs_created": false,
+  "quality_claim_allowed": false,
+  "fix_needed_findings": [
+    {
+      "id": "SCALE_CONTRACT_MISMATCH",
+      "severity": "P1",
+      "finding_ru": "QUALITY-01 rubric scale and QUALITY-02 contract score scale are inconsistent.",
+      "repair_needed_ru": "Choose canonical 0..5 or 0..4 scale and reissue aligned static artifacts before rerunning dry-run validation."
+    }
+  ],
+  "next_work_order": {
+    "id": "QUALITY-02-SCORE-SCALE-CONTRACT-ALIGNMENT-REPAIR-01",
+    "requested_artifact_type": "static artifact contract alignment repair only",
+    "implementation_authorized_now": true,
+    "actual_eval_authorized_now": false,
+    "actual_scoring_authorized_now": false,
+    "runtime_host_execution_authorized_now": false,
+    "external_ai_model_calls_authorized_now": false,
+    "training_dpo_checkpoint_authorized_now": false,
+    "exact_next_action_after_repair": "QUALITY-02-EVAL-ONLY-RUNNER-DRY-RUN-VALIDATION-01"
+  },
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "token_savings_claim_allowed": false,
+    "quality_improvement_claimed": false,
+    "quality_improvement_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "full_claude_chat_ui_claimed": false,
+    "full_cursor_chat_ui_claimed": false,
+    "full_codex_chat_ui_claimed": false,
+    "full_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  },
+  "total_done_current_remaining_board": {
+    "vsego": "Нужно подготовить безопасный eval-only runner path, который до scoring проверяет schema, refs, pair integrity, source-disjoint/held-out controls and claim locks.",
+    "sdelano": "Dry-run validation выполнен на artifact/schema/boundary уровне; side-effect boundaries и claim locks PASS; no score/comparison outputs produced.",
+    "seichas": "Dry-run FAIL_FIX_NEEDED из-за mismatch: QUALITY-01 rubric scale 0..4 vs QUALITY-02 contract 0..5 / score_0_to_5.",
+    "ostalos": "Выполнить score-scale contract alignment repair, затем rerun dry-run validation. Actual scoring остается forbidden до отдельного approval and PASS prerequisites."
+  },
+  "parent_will_perform_commit_push_after_review": true,
+  "git_authority": "forbidden_for_subagent"
+}

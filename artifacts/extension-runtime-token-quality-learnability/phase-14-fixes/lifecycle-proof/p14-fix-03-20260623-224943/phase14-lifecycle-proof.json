@@ -1,0 +1,309 @@
+{
+  "schema": "xiigen.phase14.full_machine_lifecycle_proof.v1",
+  "phase": "Phase 14",
+  "fix_id": "P14-FIX-03",
+  "fr": "FR-07",
+  "generated_at_utc": "2026-06-23T19:49:49.8880623+00:00",
+  "verdict": "PASS_FULL_MACHINE_LIFECYCLE_PROOF",
+  "summary_ru": "Проверка P14-FIX-03 создала staged lifecycle-доказательство для PromptToTask и SkillSelection. Обе машины прошли загрузку checkpoint+manifest через публичные machine/core границы, backup/export/import/share на чистом пути, continue-training от импортированного checkpoint, fresh-load после continue, held-out/ablation/no-leakage проверки после lifecycle, rollback к предыдущему состоянию и контроль отсутствия common checkpoint/locator mutation.",
+  "what_is_proven_ru": [
+    "PromptToTask и SkillSelection проверены как staged full-machine lifecycle proof внутри artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof.",
+    "Операции выполнялись на свежих staged checkpoint/manifest/export/share/rollback путях, а не на common model locator.",
+    "Continue-training проверялся после import clean share artifact; fresh-load после continue отдельно загружал сохраненный checkpoint/state.",
+    "Held-out, ablation/no-leakage проверки выполнялись после lifecycle operations."
+  ],
+  "what_is_not_proven_ru": [
+    "Это не Claude/Codex UI proof.",
+    "Это не final readiness claim и не host/dashboard/API readiness.",
+    "Это не semantic quality claim; staged proof использует минимальные deterministic rows для lifecycle integrity.",
+    "Это не promotion и не locator update common/final checkpoint paths."
+  ],
+  "commands": [
+    "powershell -NoProfile -ExecutionPolicy Bypass -File tools\\phase14-lifecycle-proof.ps1",
+    "dotnet run --project C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\lifecycle-proof\\p14-fix-03-20260623-224943\\probe\\Phase14LifecycleProof.csproj -- C:\\Projects\\llm_mvp_core C:\\Projects\\llm_mvp_core\\artifacts\\extension-runtime-token-quality-learnability\\phase-14-fixes\\lifecycle-proof\\p14-fix-03-20260623-224943"
+  ],
+  "machines": [
+    {
+      "machineName": "PromptToTask",
+      "verdict": "PASS",
+      "rows": [
+        {
+          "proofRequirement": "checkpoint + manifest load through public boundary",
+          "status": "PASS",
+          "evidence": "PromptToTaskMachine.LoadCheckpointAsync loaded staged checkpoint and manifest; manifest learnedPatternCount=1."
+        },
+        {
+          "proofRequirement": "backup/export/import/share artifact clean reload",
+          "status": "PASS",
+          "evidence": "SaveCheckpointAsync export was copied into a zip share package, extracted to a clean staged path, and imported through PromptToTaskMachine.ImportAsync."
+        },
+        {
+          "proofRequirement": "continue-training starts from existing/imported checkpoint",
+          "status": "PASS",
+          "evidence": "ContinueWithAcceptedPattern ran on the clean-imported machine and preserved base pattern while adding exactly one delta pattern."
+        },
+        {
+          "proofRequirement": "fresh-load after continue-training works",
+          "status": "PASS",
+          "evidence": "PromptToTaskMachine.LoadCheckpointAsync loaded the continued checkpoint+manifest and matched both base and delta held-out requests."
+        },
+        {
+          "proofRequirement": "held-out/ablation/no-leakage checks remain passing",
+          "status": "PASS",
+          "evidence": "Held-out base and delta requests passed after lifecycle; ablation without work_order did not match learned pattern; raw prompt/no-leakage scan had zero hits."
+        },
+        {
+          "proofRequirement": "rollback restores previous checkpoint/state",
+          "status": "PASS",
+          "evidence": "Rollback load from backup checkpoint+manifest preserved base state and removed the continue delta."
+        },
+        {
+          "proofRequirement": "no common model/checkpoint/locator mutation outside staged artifacts",
+          "status": "PASS",
+          "evidence": "All PromptToTask writes were under the Phase 14 lifecycle-proof artifact directory; common hashes are checked at report level."
+        },
+        {
+          "proofRequirement": "Russian-first report states proven and not proven",
+          "status": "PASS",
+          "evidence": "phase14-lifecycle-proof.md is Russian-first and separates proof from non-claims."
+        }
+      ],
+      "evidenceArtifacts": [
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/01-initial-export/prompt-to-task-checkpoint.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/01-initial-export/prompt-to-task-manifest.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/02-backup-before-continue/prompt-to-task-checkpoint.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/02-backup-before-continue/prompt-to-task-manifest.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/03-share-package.zip",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/04-clean-share-import/prompt-to-task-checkpoint.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/04-clean-share-import/prompt-to-task-manifest.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/05-continued-export/prompt-to-task-continued-checkpoint.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/05-continued-export/prompt-to-task-continued-manifest.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/06-rollback-load/rollback-observation.json"
+      ]
+    },
+    {
+      "machineName": "SkillSelection",
+      "verdict": "PASS",
+      "rows": [
+        {
+          "proofRequirement": "checkpoint + manifest load through public boundary",
+          "status": "PASS",
+          "evidence": "SkillSelection ImportAsync validated staged manifest refs and loaded checkpoint; LoadCheckpointAsync also fresh-loaded the checkpoint through the public machine boundary."
+        },
+        {
+          "proofRequirement": "backup/export/import/share artifact clean reload",
+          "status": "PASS",
+          "evidence": "SaveCheckpointAsync output was copied into a zip share package, extracted to a clean staged path, and imported through SkillSelectionMachine.ImportAsync."
+        },
+        {
+          "proofRequirement": "continue-training starts from existing/imported checkpoint",
+          "status": "PASS",
+          "evidence": "TrainMachineBatchAsync ran on the clean-imported machine; before pair count=1 and after checkpoint contains base+delta pair ids."
+        },
+        {
+          "proofRequirement": "fresh-load after continue-training works",
+          "status": "PASS",
+          "evidence": "SkillSelectionMachine.LoadCheckpointAsync loaded the continued checkpoint and both base/delta held-out decisions passed."
+        },
+        {
+          "proofRequirement": "held-out/ablation/no-leakage checks remain passing",
+          "status": "PASS",
+          "evidence": "EvaluateAsync accuracy=1.0 after lifecycle; context/provenance ablation lowered confidence; candidate-order leakage guard was invariant; raw prompt/held-out id scan had zero hits."
+        },
+        {
+          "proofRequirement": "rollback restores previous checkpoint/state",
+          "status": "PASS",
+          "evidence": "Rollback ImportAsync from backup manifest/checkpoint preserved base state and removed delta pair/decision."
+        },
+        {
+          "proofRequirement": "no common model/checkpoint/locator mutation outside staged artifacts",
+          "status": "PASS",
+          "evidence": "All SkillSelection writes were under the Phase 14 lifecycle-proof artifact directory; common hashes are checked at report level."
+        },
+        {
+          "proofRequirement": "Russian-first report states proven and not proven",
+          "status": "PASS",
+          "evidence": "phase14-lifecycle-proof.md is Russian-first and separates proof from non-claims."
+        }
+      ],
+      "evidenceArtifacts": [
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/01-initial-export/skill-selection-checkpoint.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/01-initial-export/skill-selection-manifest.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/02-backup-before-continue/skill-selection-checkpoint.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/02-backup-before-continue/skill-selection-manifest.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/03-share-package.zip",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/04-clean-share-import/skill-selection-checkpoint.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/04-clean-share-import/skill-selection-manifest.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/05-continued-export/skill-selection-continued-checkpoint.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/05-continued-export/skill-selection-continued-manifest.json",
+        "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/06-rollback-load/rollback-observation.json"
+      ]
+    }
+  ],
+  "required_rows": [
+    {
+      "proofRequirement": "checkpoint + manifest load through public boundary",
+      "status": "PASS",
+      "evidence": "PromptToTaskMachine.LoadCheckpointAsync loaded staged checkpoint and manifest; manifest learnedPatternCount=1."
+    },
+    {
+      "proofRequirement": "backup/export/import/share artifact clean reload",
+      "status": "PASS",
+      "evidence": "SaveCheckpointAsync export was copied into a zip share package, extracted to a clean staged path, and imported through PromptToTaskMachine.ImportAsync."
+    },
+    {
+      "proofRequirement": "continue-training starts from existing/imported checkpoint",
+      "status": "PASS",
+      "evidence": "ContinueWithAcceptedPattern ran on the clean-imported machine and preserved base pattern while adding exactly one delta pattern."
+    },
+    {
+      "proofRequirement": "fresh-load after continue-training works",
+      "status": "PASS",
+      "evidence": "PromptToTaskMachine.LoadCheckpointAsync loaded the continued checkpoint+manifest and matched both base and delta held-out requests."
+    },
+    {
+      "proofRequirement": "held-out/ablation/no-leakage checks remain passing",
+      "status": "PASS",
+      "evidence": "Held-out base and delta requests passed after lifecycle; ablation without work_order did not match learned pattern; raw prompt/no-leakage scan had zero hits."
+    },
+    {
+      "proofRequirement": "rollback restores previous checkpoint/state",
+      "status": "PASS",
+      "evidence": "Rollback load from backup checkpoint+manifest preserved base state and removed the continue delta."
+    },
+    {
+      "proofRequirement": "no common model/checkpoint/locator mutation outside staged artifacts",
+      "status": "PASS",
+      "evidence": "All PromptToTask writes were under the Phase 14 lifecycle-proof artifact directory; common hashes are checked at report level."
+    },
+    {
+      "proofRequirement": "Russian-first report states proven and not proven",
+      "status": "PASS",
+      "evidence": "phase14-lifecycle-proof.md is Russian-first and separates proof from non-claims."
+    },
+    {
+      "proofRequirement": "checkpoint + manifest load through public boundary",
+      "status": "PASS",
+      "evidence": "SkillSelection ImportAsync validated staged manifest refs and loaded checkpoint; LoadCheckpointAsync also fresh-loaded the checkpoint through the public machine boundary."
+    },
+    {
+      "proofRequirement": "backup/export/import/share artifact clean reload",
+      "status": "PASS",
+      "evidence": "SaveCheckpointAsync output was copied into a zip share package, extracted to a clean staged path, and imported through SkillSelectionMachine.ImportAsync."
+    },
+    {
+      "proofRequirement": "continue-training starts from existing/imported checkpoint",
+      "status": "PASS",
+      "evidence": "TrainMachineBatchAsync ran on the clean-imported machine; before pair count=1 and after checkpoint contains base+delta pair ids."
+    },
+    {
+      "proofRequirement": "fresh-load after continue-training works",
+      "status": "PASS",
+      "evidence": "SkillSelectionMachine.LoadCheckpointAsync loaded the continued checkpoint and both base/delta held-out decisions passed."
+    },
+    {
+      "proofRequirement": "held-out/ablation/no-leakage checks remain passing",
+      "status": "PASS",
+      "evidence": "EvaluateAsync accuracy=1.0 after lifecycle; context/provenance ablation lowered confidence; candidate-order leakage guard was invariant; raw prompt/held-out id scan had zero hits."
+    },
+    {
+      "proofRequirement": "rollback restores previous checkpoint/state",
+      "status": "PASS",
+      "evidence": "Rollback ImportAsync from backup manifest/checkpoint preserved base state and removed delta pair/decision."
+    },
+    {
+      "proofRequirement": "no common model/checkpoint/locator mutation outside staged artifacts",
+      "status": "PASS",
+      "evidence": "All SkillSelection writes were under the Phase 14 lifecycle-proof artifact directory; common hashes are checked at report level."
+    },
+    {
+      "proofRequirement": "Russian-first report states proven and not proven",
+      "status": "PASS",
+      "evidence": "phase14-lifecycle-proof.md is Russian-first and separates proof from non-claims."
+    }
+  ],
+  "common_checkpoint_locator_hashes_before": {
+    "models/prompt-to-task/prompt-to-task-v1/manifest.json": "ff1bd46e21725a578b2e080c3e6f725d31934d3582f99a0f8b19fb79d77637ab",
+    "models/prompt-to-task/prompt-to-task-v1/prompt-to-task-v1-checkpoint.json": "7ccaeaabc3724d92cefde4a435053bf178a1540d69566609aab25842ca47e7db",
+    "models/skill-selection/skill-selection-v1/manifest.json": "7a9e517f5d821a47030f7817c8d1abde83261785b378d5789e8f47b3a16eb0fe",
+    "models/skill-selection/skill-selection-v1/runner-report.json": "4caee990b4b8ce55571fdda6e450dc93aa38672e54587fb66bccb0b8e4d3ad07",
+    "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json": "737a5fad7c82851728a529dfc5890c22b4154cede7e639403a9e135d821e56ef"
+  },
+  "common_checkpoint_locator_hashes_after": {
+    "models/prompt-to-task/prompt-to-task-v1/manifest.json": "ff1bd46e21725a578b2e080c3e6f725d31934d3582f99a0f8b19fb79d77637ab",
+    "models/prompt-to-task/prompt-to-task-v1/prompt-to-task-v1-checkpoint.json": "7ccaeaabc3724d92cefde4a435053bf178a1540d69566609aab25842ca47e7db",
+    "models/skill-selection/skill-selection-v1/manifest.json": "7a9e517f5d821a47030f7817c8d1abde83261785b378d5789e8f47b3a16eb0fe",
+    "models/skill-selection/skill-selection-v1/runner-report.json": "4caee990b4b8ce55571fdda6e450dc93aa38672e54587fb66bccb0b8e4d3ad07",
+    "models/skill-selection/skill-selection-v1/skill-selection-v1-checkpoint.json": "737a5fad7c82851728a529dfc5890c22b4154cede7e639403a9e135d821e56ef"
+  },
+  "common_checkpoint_locator_mutation_detected": false,
+  "no_common_model_checkpoint_locator_mutation_outside_staged_artifacts": true,
+  "external_ai_used": false,
+  "web_used": false,
+  "git_commands_run": [],
+  "no_overclaim_statement": "Evidence supports only staged full-machine lifecycle proof for PromptToTask and SkillSelection rows 14.08/14.09 / FR-07. It does not prove final readiness, UI integration, host runtime readiness, dashboard readiness, semantic quality, promotion, or common locator update.",
+  "changed_files": [
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/phase14-lifecycle-command-log.txt",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/Phase14LifecycleProof.csproj",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/Program.cs",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/43.SmartSkillsDomain.dll",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/43.SmartSkillsDomain.pdb",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/Core.dll",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/Core.pdb",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/Phase14LifecycleProof.deps.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/Phase14LifecycleProof.dll",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/Phase14LifecycleProof.exe",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/Phase14LifecycleProof.pdb",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/Phase14LifecycleProof.runtimeconfig.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/SemanticCompiler29.dll",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/bin/Debug/net9.0/SemanticCompiler29.pdb",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/.NETCoreApp,Version=v9.0.AssemblyAttributes.cs",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14L.BDBBC9AD.Up2Date",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.AssemblyInfo.cs",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.AssemblyInfoInputs.cache",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.GeneratedMSBuildEditorConfig.editorconfig",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.GlobalUsings.g.cs",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.assets.cache",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.csproj.AssemblyReference.cache",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.csproj.CoreCompileInputs.cache",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.csproj.FileListAbsolute.txt",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.dll",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.genruntimeconfig.cache",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.pdb",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/Phase14LifecycleProof.sourcelink.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/apphost.exe",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/ref/Phase14LifecycleProof.dll",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Debug/net9.0/refint/Phase14LifecycleProof.dll",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Phase14LifecycleProof.csproj.nuget.dgspec.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Phase14LifecycleProof.csproj.nuget.g.props",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/Phase14LifecycleProof.csproj.nuget.g.targets",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/project.assets.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/probe/obj/project.nuget.cache",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/01-initial-export/prompt-to-task-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/01-initial-export/prompt-to-task-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/02-backup-before-continue/prompt-to-task-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/02-backup-before-continue/prompt-to-task-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/03-share-package-source/prompt-to-task-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/03-share-package-source/prompt-to-task-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/03-share-package.zip",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/04-clean-share-import/prompt-to-task-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/04-clean-share-import/prompt-to-task-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/05-continued-export/prompt-to-task-continued-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/05-continued-export/prompt-to-task-continued-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/06-rollback-load/rollback-observation.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/prompt-to-task-proof-details.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/01-initial-export/skill-selection-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/01-initial-export/skill-selection-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/02-backup-before-continue/skill-selection-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/02-backup-before-continue/skill-selection-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/03-share-package-source/skill-selection-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/03-share-package-source/skill-selection-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/03-share-package.zip",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/04-clean-share-import/skill-selection-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/04-clean-share-import/skill-selection-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/05-continued-export/skill-selection-continued-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/05-continued-export/skill-selection-continued-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/06-rollback-load/rollback-observation.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/skill-selection/skill-selection-proof-details.json"
+  ]
+}

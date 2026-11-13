@@ -1,0 +1,39 @@
+# Точные временные мутации продукта для мутационного оракула.
+# Файл: 27.TranslationDomain/TranslationMachine.cs
+# Эталонный отпечаток до и после каждого восстановления:
+#   1b69fb329936a45f3761dcc955a74a57ca4eafc4
+
+[МУТАЦИЯ 1 — к находке 1]
+Смысл: не пропускать строку с неизвестным опознанием единицы, а записывать её в журнал.
+Место: пропуск неизвестной единицы перед обучением (строки 544-545 эталона).
+БЫЛО:
+            if (!stagedTrainers.TryGetValue(example.UnitId, out var trainer))
+                continue;
+СТАЛО:
+            if (!stagedTrainers.TryGetValue(example.UnitId, out var trainer))
+            {
+                if (stagedIdentityKeys.Add((example.ExampleId, example.UnitId)))
+                    stagedIdentities.Add(new TranslationStructuredTrainingIdentityCheckpoint(
+                        example.ExampleId,
+                        example.SourceId,
+                        example.UnitId,
+                        batch.BatchId));
+                continue;
+            }
+Расчёт ДО прогона: падает ровно одна проверка —
+UnknownUnitRowIsSkippedAndNeverEntersTheIdentityJournal, на количестве записей журнала
+(ожидалось 1, станет 2). Остальные шесть проверок не затронуты: все их уроки идут
+настоящей единице, поэтому ветка мутации в них не исполняется.
+
+[МУТАЦИЯ 2 — к находке 2]
+Смысл: обходить страж дублей, когда в списке происхождений партии больше одного значения.
+Место: страж дублей учебных опознаний (строка 572 эталона).
+БЫЛО:
+            if (stagedIdentityKeys.Add((example.ExampleId, example.UnitId)))
+СТАЛО:
+            if (stagedIdentityKeys.Add((example.ExampleId, example.UnitId)) || batch.SourceIds.Count > 1)
+Расчёт ДО прогона: падает ровно одна проверка —
+EachJournalRecordCarriesItsOwnLessonOriginNotTheFirstBatchOrigin, на количестве записей
+журнала первой партии (ожидалось 2, станет 3, потому что повтор ключа будет дописан).
+Остальные шесть проверок не затронуты: в их партиях список происхождений содержит ровно
+одно значение, поэтому второе условие ложно.

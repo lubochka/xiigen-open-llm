@@ -1,0 +1,11 @@
+    public void TrainFileActionKnn(IReadOnlyList<string> csharpSources)
+    {
+        var examples = csharpSources
+            .Where(source => !string.IsNullOrWhiteSpace(source))
+            .Select(source => (Features: ActionLabelGenerator.FeatureVector(source), Label: ActionLabelGenerator.Label(csharpSources[0])))
+            .ToArray();
+
+        if (examples.Length >= 4)
+            _fileActionKnn.Train(examples);
+    }
+

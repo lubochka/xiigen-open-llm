@@ -1,0 +1,189 @@
+{
+  "schema_version": 5,
+  "quote_policy": "Only five new fragments, 11 words total; historical fragments replaced by Russian paraphrases.",
+  "records": [
+    {
+      "id": "NEXT-MATH-RETENTION",
+      "case_ids": [
+        "RETENTION-M1-01"
+      ],
+      "topic_ru": "Сохранить признаки прежнего урока при обучении тому же flow",
+      "quote": "canonical inner product",
+      "translation_ru": "каноническое внутреннее произведение",
+      "word_count": 3,
+      "quote_is_fragment": true,
+      "quote_line_start": 35,
+      "quote_line_end": 35,
+      "section": "Appendix B.1–B.2, notation summary",
+      "pdf_pages": [
+        797
+      ],
+      "printed_pages": [
+        761
+      ],
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0797-0800-appendix-b-notation-summary.md",
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0797-0800-appendix-b-notation-summary.md#L35",
+      "book_formula_latex": "\\langle x,y\\rangle=\\sum_{i=1}^d x_i y_i",
+      "project_formula_latex": [
+        "w'_t=\\max(w_t,v_t),\\qquad s(q,w)=\\sum_tq_tw_t=\\langle q,w\\rangle",
+        "s(q,w')-s(q,w)=\\sum_tq_t\\bigl(\\max(w_t,v_t)-w_t\\bigr)\\ge0",
+        "\\operatorname{supp}(w')=\\operatorname{supp}(w)\\cup\\operatorname{supp}(v)\\quad(w_t,v_t\\ge0)"
+      ],
+      "bridge_ru": "Читатель просто складывает веса тех признаков, которые есть в запросе. После max ни один старый неотрицательный вес не уменьшается. Поэтому сумма по прежним совпадениям не уменьшается, а новые совпадения могут её увеличить. Это алгебраическое свойство именно прочитанного reader, а не общее свойство любого KNN.",
+      "limits_ru": [
+        "Max-union может удерживать устаревшие или противоречащие новому уроку признаки; общего доказательства улучшения качества нет.",
+        "Другие поля GroundingWeights по-прежнему заменяются свежими значениями.",
+        "В текущем продукте на 7e051ca Train всё ещё заменяет словарь; max-union подтверждён в экспериментальном плече B."
+      ],
+      "formula_provenance": "Appendix B.1 напоминает формулу внутреннего произведения, Appendix B.2 — обозначение носителя. Обновление через max и неравенство сохранения InputScore выведены нами из исходника проекта. В книге нет теоремы об этом опыте или max-обучении."
+    },
+    {
+      "id": "NEXT-MATH-KDP",
+      "case_ids": [
+        "KNN-DOMAIN-PRINCIPLES-01"
+      ],
+      "topic_ru": "Ограниченная поправка к оценке сохранённых KNN-кандидатов",
+      "quote": "exterior margin",
+      "translation_ru": "внешний отступ",
+      "word_count": 2,
+      "quote_is_fragment": true,
+      "quote_line_start": 45,
+      "quote_line_end": 45,
+      "section": "Definition 6.59, equation 6.44",
+      "pdf_pages": [
+        221
+      ],
+      "printed_pages": [
+        185
+      ],
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0221-0224-ch06-margin-flatness-and-relative-emergence.md",
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0221-0224-ch06-margin-flatness-and-relative-emergence.md#L45",
+      "book_formula_latex": "\\Delta_i=\\min_{j\\in C_i}L_{ij}-\\max_{k\\notin C_i}L_{ik}",
+      "project_formula_latex": [
+        "s_1(e)=s_0(e)+\\delta_e,\\qquad\\delta_e=\\frac{0.2}{m}\\sum_{j=1}^m w_jz_j(e)\\quad(m>0)",
+        "|\\delta_e|\\le0.2\\bar w\\le0.2,\\qquad|\\delta_a-\\delta_b|\\le0.4\\bar w\\le0.4,\\qquad\\bar w=\\frac1m\\sum_jw_j",
+        "s_0(a)-s_0(b)>0.4\\quad\\Longrightarrow\\quad s_1(a)>s_1(b)"
+      ],
+      "bridge_ru": "Каждое слагаемое по модулю не больше веса правила. Сумма m таких слагаемых делится именно на m. Поэтому один кандидат может получить поправку не более ±0.2, а разрыв двух кандидатов может измениться не более чем на 0.4. Если исходный победитель опережает каждого соперника больше чем на 0.4, эти поправки не изменят победителя.",
+      "limits_ru": [
+        "Score не является вероятностью и может выходить за [0,1]; softmax здесь не выполняется.",
+        "Нормировка идёт по числу правил, не по сумме их весов.",
+        "Ограниченность поправки сама по себе не доказывает полезность правил или рост точности.",
+        "Это границы в обычной вещественной арифметике; не утверждение о безусловной побитовой эквивалентности двух разных вариантов суммирования."
+      ],
+      "formula_provenance": "Definition 6.59 задаёт отступ предпочтительного множества от остальных логитов. Для одного предпочтительного кандидата это разность его оценки и лучшей внешней оценки. Книга рассматривает attention logits; применение этого понятия к KNN и границы 0.2/0.4 — собственный элементарный вывод из текущего продуктового кода."
+    },
+    {
+      "id": "NEXT-MATH-RD",
+      "case_ids": [
+        "RD01"
+      ],
+      "topic_ru": "Суммировать последнюю ось по соседним элементам памяти",
+      "quote": "coordinate mean",
+      "translation_ru": "среднее по координатам",
+      "word_count": 2,
+      "quote_is_fragment": true,
+      "quote_line_start": 218,
+      "quote_line_end": 218,
+      "section": "Definition 1.23: coordinate mean within Layer normalisation",
+      "pdf_pages": [
+        56
+      ],
+      "printed_pages": [
+        20
+      ],
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0051-0063-ch01-geometry-normalisation-and-residuals.md",
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0051-0063-ch01-geometry-normalisation-and-residuals.md#L218",
+      "book_formula_latex": "\\mu(x)=\\frac1d\\sum_{j=1}^d x_j",
+      "project_formula_latex": [
+        "u_{rj}=x_{rj}^{\\,2},\\qquad q_r=\\frac1d\\sum_{j=0}^{d-1}u_{rj},\\qquad y_{rj}=\\frac{\\gamma_jx_{rj}}{\\sqrt{q_r+\\varepsilon}}",
+        "u_{rj}=u_{\\mathrm{flat}}[rd+j]\\quad(0\\le j<d)"
+      ],
+      "bridge_ru": "В строке последняя координата меняется быстрее всех. Поэтому общий перевод координат и адрес rd+j выбирают один и тот же элемент. Новый цикл складывает те же значения в том же возрастающем порядке j. Затем прежний Mean делит сумму на d. Изменяется вычисление адресов, а не среднее.",
+      "limits_ru": [
+        "Это сохранение функции вычисления и уменьшение работы с координатами; математическая формула не доказывает конкретный выигрыш времени или памяти.",
+        "Не изменяются формула RMSNorm, обучаемый γ или архитектура модели."
+      ],
+      "formula_provenance": "Definition 1.23 содержит точную формулу среднего по координатам. Само определение посвящено LayerNorm; его нельзя выдавать за определение RMSNorm. Формула RMSNorm и специализация последней оси взяты из исходников проекта, а равенство адресов — наш вывод."
+    },
+    {
+      "id": "NEXT-MATH-MB",
+      "case_ids": [
+        "MB01"
+      ],
+      "topic_ru": "Передать градиент среднего каждому элементу без массивов координат",
+      "quote": "chain rule",
+      "translation_ru": "цепное правило",
+      "word_count": 2,
+      "quote_is_fragment": true,
+      "quote_line_start": 93,
+      "quote_line_end": 93,
+      "section": "Proposition 9.4, Motor composition",
+      "pdf_pages": [
+        314
+      ],
+      "printed_pages": [
+        278
+      ],
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0312-0317-ch09-motor-taxonomy-and-related-work.md",
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0312-0317-ch09-motor-taxonomy-and-related-work.md#L93",
+      "book_formula_latex": "M_x=M_yJ_{y\\leftarrow h}J_{h\\leftarrow x}",
+      "project_formula_latex": [
+        "m_r=\\frac1d\\sum_{j=0}^{d-1}u_{rj},\\qquad g_r=\\frac{\\partial\\mathcal L}{\\partial m_r},\\qquad\\frac{\\partial\\mathcal L}{\\partial u_{rj}}=\\frac{g_r}{d}",
+        "r=\\left\\lfloor\\frac{i}{d}\\right\\rfloor,\\qquad \\mathrm{gradIn}[i]=\\mathrm{gradOut}[r]\\cdot\\frac1d"
+      ],
+      "bridge_ru": "В среднем каждый входной элемент имеет коэффициент 1/d. Цепное правило умножает входящий градиент g_r на этот коэффициент. Все d элементов одной строки получают одну долю g_r/d. При последовательном хранении эта строка определяется целочисленным делением i/d, без промежуточных массивов.",
+      "limits_ru": [
+        "Для полного градиента RMSNorm обратный проход продолжается через квадрат, обратный корень и умножения; прямой путь через числитель тоже остаётся.",
+        "Доказана идентичность локального вычисления при данных формах; численный ресурсный эффект берётся только из измерений опыта."
+      ],
+      "formula_provenance": "Книга даёт среднее в Definition 1.23 и правило переноса градиента через композицию в Proposition 9.4. Их применение к Mean даёт g/d; плоская адресация и устранение массивов — собственный вывод по коду. В книге нет отдельной теоремы об MB01."
+    },
+    {
+      "id": "NEXT-MATH-SEXP",
+      "case_ids": [
+        "SEXP01"
+      ],
+      "topic_ru": "Один раз вычислить экспоненту для знаменателя и числителя softmax",
+      "quote": "shift invariance",
+      "translation_ru": "инвариантность к сдвигу",
+      "word_count": 2,
+      "quote_is_fragment": true,
+      "quote_line_start": 363,
+      "quote_line_end": 363,
+      "section": "Section 2.1.4, after Definition 2.6",
+      "pdf_pages": [
+        74
+      ],
+      "printed_pages": [
+        38
+      ],
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0064-0075-ch02-single-head-and-scores.md",
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0064-0075-ch02-single-head-and-scores.md#L363",
+      "book_formula_latex": "\\operatorname{softmax}(x+c\\mathbf1)=\\operatorname{softmax}(x)",
+      "project_formula_latex": [
+        "a=\\max_jz_j,\\qquad e_j=\\exp(z_j-a),\\qquad p_j=\\frac{e_j}{\\sum_ke_k}",
+        "\\frac{\\partial(c\\mathcal L_{\\mathrm{CE}})}{\\partial z_j}=c\\bigl(p_j-\\mathbf1[j=y]\\bigr)",
+        "\\exp(z_j-a)\\text{ в знаменателе}=\\exp(z_j-a)\\text{ в числителе}"
+      ],
+      "bridge_ru": "Оба прежних вызова получают одни и те же аргументы. После сохранения e_j знаменатель и числитель используют ту же величину, что и раньше. Порядок суммы, деление, целевой индикатор и scale сохраняются. Поэтому повторное вычисление exp не нужно для получения того же градиента.",
+      "limits_ru": [
+        "p−t — градиент softmax, объединённого с cross-entropy; для произвольного градиента через один softmax применяется его Якобиан.",
+        "Сокращение числа Exp в этой функции не доказывает пропорционального ускорения всего шага; отдельный расчёт loss также может считать Exp.",
+        "Буфер создаёт дополнительную аллокацию: это обмен повторных вычислений на память.",
+        "На текущем HEAD 7e051ca продуктовый BackwardLoss всё ещё вызывает Exp дважды; буфер подтверждён в экспериментальном плече B."
+      ],
+      "formula_provenance": "Section 2.1.4 прямо задаёт инвариантность softmax к общему сдвигу строки, позволяющую вычесть max. Theorem 9.5 даёт градиент связки softmax–cross-entropy p−t. Повторное использование e_j и сокращение числа вызовов Exp — наш вывод из кода, не книжная теорема об ускорении."
+    }
+  ]
+}

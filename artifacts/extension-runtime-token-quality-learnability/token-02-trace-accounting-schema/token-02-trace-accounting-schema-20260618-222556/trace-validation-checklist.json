@@ -1,0 +1,222 @@
+{
+  "schema": "xiigen.token_02_trace_validation_checklist.v1",
+  "work_order_id": "TOKEN-02-TRACE-ACCOUNTING-SCHEMA-01",
+  "run_id": "token-02-trace-accounting-schema-20260618-222556",
+  "generated_at_local": "2026-06-18T22:25:56+03:00",
+  "branch": "codex/chat-gpt-5.5",
+  "checklist_role": "Future capture-packet validation rules. Static checklist only; no capture performed.",
+  "input_packet_required_files": [
+    "baseline-token-traces.jsonl",
+    "adaptive-token-traces.jsonl",
+    "token-pairing-integrity-report.json",
+    "token-accounting-report.json",
+    "token-raw-private-trace-ledger.json or private evidence pointer",
+    "token-redacted-trace-ledger.json",
+    "quality-comparison-report.* for same pair_id before token savings can be allowed"
+  ],
+  "validation_order": [
+    "Parse JSONL/JSON and schema versions.",
+    "Validate baseline common/no-adaptive row isolation.",
+    "Validate adaptive user-local/target refs and fresh-load locator refs.",
+    "Validate pair integrity: same host, prompt hash, method, evidence class, target locator mode except adaptive variable, tokenizer/accounting, redaction.",
+    "Validate token accounting report fields and repeated-run/variance policy.",
+    "Validate quality non-regression prerequisite for the same pair_id.",
+    "Keep token_savings_claim_allowed=false unless every prior gate is PASS."
+  ],
+  "validation_rules": [
+    {
+      "id": "VR-001",
+      "failure_label": "MISMATCH_HOST",
+      "check": "baseline.host.* equals adaptive.host.* for host_name, host_type, host_runtime_surface, host_runtime_version, adapter_version, host_entrypoint and live_scope",
+      "token_claim_allowed_on_fail": false
+    },
+    {
+      "id": "VR-002",
+      "failure_label": "MISMATCH_PROMPT",
+      "check": "scenario_id, pair_id, canonical_prompt_text_sha256, task_id, expected_answer_contract_ref, prompt_privacy_class and source_split_id match",
+      "token_claim_allowed_on_fail": false
+    },
+    {
+      "id": "VR-003",
+      "failure_label": "MISMATCH_METHOD",
+      "check": "method_id, debug_enabled, invocation_options_hash_sha256 and counted pipeline step match",
+      "token_claim_allowed_on_fail": false
+    },
+    {
+      "id": "VR-004",
+      "failure_label": "MISMATCH_EVIDENCE_CLASS",
+      "check": "evidence_classification and live_scope match; non-live helper/dashboard/API/handler evidence cannot be upgraded into live host savings",
+      "token_claim_allowed_on_fail": false
+    },
+    {
+      "id": "VR-005",
+      "failure_label": "MISMATCH_TOKENIZER_ACCOUNTING",
+      "check": "accounting_version, tokenizer_name, tokenizer_version, tokenizer_accounting_type, counted_spans_policy_id, normalization_policy_id, estimate_or_exact and counted span list match",
+      "token_claim_allowed_on_fail": false
+    },
+    {
+      "id": "VR-006",
+      "failure_label": "MISMATCH_REDACTION",
+      "check": "redaction_policy_id/version, private refs, redacted refs, content hashes and redaction_status are present and consistent",
+      "token_claim_allowed_on_fail": false
+    },
+    {
+      "id": "VR-007",
+      "failure_label": "MISMATCH_ADAPTIVE_REF",
+      "check": "adaptive row names exact adaptive_target_locator_ref, adaptive_model_manifest_ref, user_local_checkpoint_id or target_checkpoint_id, fresh_load_ref and shares target locator mode except adaptive variable",
+      "token_claim_allowed_on_fail": false
+    },
+    {
+      "id": "VR-008",
+      "failure_label": "QUALITY_PREREQ_NOT_PASSED",
+      "check": "quality_non_regression_status is PASS for the same pair_id and quality_comparison_ref is present; FAIL/INCONCLUSIVE/NOT_RUN blocks savings",
+      "token_claim_allowed_on_fail": false
+    },
+    {
+      "id": "VR-009",
+      "failure_label": "MISSING_TOKEN_ACCOUNTING_REPORT",
+      "check": "token-accounting-report.json contains pair refs, counted spans, totals, comparison method, thresholds and repeated-run variance policy",
+      "token_claim_allowed_on_fail": false
+    },
+    {
+      "id": "VR-010",
+      "failure_label": "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+      "check": "baseline row has model_mode=common_baseline, adaptive_enabled=false, user_local_checkpoint_id=null and no adaptive artifact reads",
+      "token_claim_allowed_on_fail": false
+    }
+  ],
+  "failure_label_catalog": [
+    {
+      "label": "MISMATCH_HOST",
+      "equivalent_plan_labels": [
+        "MISSING_HOST_PAIR"
+      ],
+      "use_when": "Baseline and adaptive rows do not have the same host_name, host_type, host_runtime_surface, host_runtime_version, adapter_version, host_entrypoint, or live scope.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISMATCH_PROMPT",
+      "equivalent_plan_labels": [
+        "INVALID_PAIR_DIFFERENT_PROMPT_OR_METHOD"
+      ],
+      "use_when": "scenario_id, pair_id, canonical_prompt_text_sha256, task_id, expected_answer_contract, privacy_class, or source_split_id differ.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISMATCH_METHOD",
+      "equivalent_plan_labels": [
+        "INVALID_PAIR_DIFFERENT_PROMPT_OR_METHOD"
+      ],
+      "use_when": "method, debug_enabled, invocation_options_hash_sha256, counted pipeline step, or scenario method differs.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISMATCH_EVIDENCE_CLASS",
+      "equivalent_plan_labels": [
+        "INVALID_PAIR_DIFFERENT_EVIDENCE_CLASS",
+        "DASHBOARD_API_HELPER_HANDLER_ONLY_TOKEN_TRACE"
+      ],
+      "use_when": "evidence_classification or live_scope differs, or helper/dashboard/API/handler evidence is used as live host token-savings evidence.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false; scoped evidence may remain diagnostics only"
+    },
+    {
+      "label": "MISMATCH_TOKENIZER_ACCOUNTING",
+      "equivalent_plan_labels": [
+        "INVALID_TOKENIZER_ACCOUNTING_PAIR"
+      ],
+      "use_when": "tokenizer_name, tokenizer_version, tokenizer_accounting_type, accounting_version, counted_spans_policy_id, estimate_or_exact, normalization_policy_id, or token_count fields differ in method or scope.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISMATCH_REDACTION",
+      "equivalent_plan_labels": [
+        "FAIL_REDACTION_POLICY_MISMATCH"
+      ],
+      "use_when": "redaction_policy_id, redaction_policy_version, raw/private refs, redacted refs, prompt/output hashes, or redaction_status are missing or inconsistent.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISMATCH_ADAPTIVE_REF",
+      "equivalent_plan_labels": [
+        "MISSING_ADAPTIVE_USER_LOCAL_TARGET_REF",
+        "MISSING_ADAPTIVE_MODEL",
+        "INVALID_TARGET_LOCATOR_PAIR"
+      ],
+      "use_when": "Adaptive row lacks exact user_local_checkpoint_id, target_checkpoint_id, adaptive_model_manifest_ref, adaptive_target_locator_ref, fresh_load_ref, or differs outside the explicit baseline/adaptive variable.",
+      "effect": "pairing_integrity_status=FAIL; token_savings_claim_allowed=false"
+    },
+    {
+      "label": "QUALITY_PREREQ_NOT_PASSED",
+      "equivalent_plan_labels": [
+        "QUALITY_NON_REGRESSION_NOT_PASSED",
+        "FAIL_QUALITY_REGRESSION"
+      ],
+      "use_when": "quality_comparison_ref for the same pair_id is missing, inconclusive, mixed-class, not PASS, or shows adaptive quality regression.",
+      "effect": "token_savings_claim_allowed=false even if adaptive token count is lower"
+    },
+    {
+      "label": "MISSING_TOKEN_ACCOUNTING_REPORT",
+      "equivalent_plan_labels": [
+        "MISSING_TOKEN_ACCOUNTING_REPORT"
+      ],
+      "use_when": "No token accounting report records counted spans, tokenizer/accounting version, pair id, baseline/adaptive refs, thresholds, repeated-run policy, and variance handling.",
+      "effect": "token_savings_claim_allowed=false"
+    },
+    {
+      "label": "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF",
+      "equivalent_plan_labels": [
+        "MISSING_BASELINE_COMMON_NO_ADAPTIVE_REF"
+      ],
+      "use_when": "Baseline row does not prove common/no-adaptive isolation or contains adaptive artifact reads.",
+      "effect": "token_savings_claim_allowed=false"
+    }
+  ],
+  "pass_conditions_for_future_capture_packet": {
+    "json_parse_pass": true,
+    "all_required_fields_present": true,
+    "failure_labels_empty": true,
+    "pairing_integrity_status": "PASS",
+    "quality_non_regression_status_for_token_claim": "PASS",
+    "raw_private_content_committed_to_repo": false,
+    "token_savings_claim_allowed_until_delta_gate": false,
+    "note": "A capture packet can pass as capture evidence while still keeping savings closed. Savings requires later token-delta report plus same-pair quality non-regression PASS."
+  },
+  "claim_locks_required_now": {
+    "token_savings_claimed": false,
+    "token_savings_claim_allowed": false,
+    "quality_improvement_claimed": false,
+    "quality_improvement_claim_allowed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "full_claude_chat_ui_claimed": false,
+    "full_cursor_chat_ui_claimed": false,
+    "full_codex_chat_ui_claimed": false,
+    "full_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false,
+    "product_readiness_claimed": false
+  },
+  "what_is_not_enough": [
+    "A token count decrease without same-pair quality non-regression PASS.",
+    "Dashboard/API/helper/handler/package-smoke trace used as live host savings evidence.",
+    "Historical baseline/adaptive traces not tied to current TOKEN-01 pair_id and evidence class.",
+    "Adaptive run without exact user-local checkpoint, target checkpoint, manifest and fresh-load refs.",
+    "Different tokenizer/accounting versions or heuristic/exact accounting mixed inside one pair.",
+    "Redacted summary without private evidence refs and committed redacted refs/hashes."
+  ],
+  "forbidden_actions_observed": {
+    "runtime_host_executed": false,
+    "external_ai_or_model_called": false,
+    "eval_executed": false,
+    "training_started": false,
+    "dpo_created": false,
+    "checkpoint_mutated": false,
+    "locator_mutated": false,
+    "git_add_commit_push_used": false
+  }
+}

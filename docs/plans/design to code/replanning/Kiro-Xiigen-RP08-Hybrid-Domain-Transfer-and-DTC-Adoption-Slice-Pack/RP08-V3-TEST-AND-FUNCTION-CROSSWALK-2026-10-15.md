@@ -1,0 +1,22 @@
+# RP08 V3 · Function-preserving minimum checks + learning exams
+**Documentary revision, not executed QA.** The objective is not to delete existing security tests or forbid testing algorithms. Deterministic invariants of metadata/version/permissions/state can be checked with **one smallest relevant existing check** (or minimal new check if truly uncovered); stochastic usefulness is examined by independent domain laws and causal bulk-to-bulk evidence. **Zero new product tests** when only tracing, designing, reviewing or preparing independent exams. No `dotnet test` ALL / GitHub Windows runs as a prerequisite for RP08 scientific learning. Native auth, tenant privacy and release checks remain with S08/RP06 when their actual release boundary is reached.
+
+| Card | Irreplaceable functional expectation | Code-owner boundary | New tests for documentary work | Only if changed deterministic code | Scientific / actual acceptance |
+|---|---|---|---|---|---|
+| 00A | whole-program source and no-loss source/RAG→primary navigation | P planning | 0 | n/a | source ledger shows traversed vs not, requirement owners |
+| 00B | ordinary real caller/selected-state reader (not readiness flag) | S08/RP06 host; K selected owner | 0 | existing contract check only for changed host ABI | actual cold user input→output or INTEGRATION_OPEN |
+| 01A | multi-axis domain/intent/version and UNKNOWN/MIXED | RP02 mapping | 0 | only rights/law abstention/refusal invariant | heldout per-domain confusion matrix, law errors |
+| 01B | law-preserving IR/vector/token coordinate; LoRA is separate | RP02 semantic; RP01 Student | 0 | incompatible-schema/cold restore refusal | D1/D4/D6 semantic near-miss and cold reindex |
+| 01C | law-eligible multiple neighbors actually influence consumer; dynamic k only if stateful | RP02 kNN | 0 | malformed predicate type, duplicate ID, banned law/rights or cache invalidation — reuse existing where present | top1 vs multi-hit vs rerank vs adaptive k; lawful recall, PC and cold N/U |
+| 02A | typed Unit many→many identity + Flow correction | RP03 | 0 | only outputRef/association lifetime or response schema | same Unit, frozen vs updated Flow and user outcome |
+| 02B | bounded async/unknown side effects + order-2/3 Graph learning | RP04 | 0 | only branch journal/cancellation/idempotence when changed | lawful feasible path selection, branch-cost, unseen motif |
+| 03A | real consent+case chooser+Chinese both sides+separate CODEX judge | RP01/RP05 DPO pipeline | 0 | exact pair/source/rights admission if changed | material chosen/rejected meaningfulness, ties quarantined |
+| 03B | response-only one unique optimizer update/allowed LoRA, compatible state cold read | RP01 training/RP05 state | 0 | one-pair/replay/restore integrity if changed | N/U heldout improvement and retained old domain |
+| 04A | truly independent family split and pre-registered rubric | RP08 science | 0 | sealed manifest ID validation only if harness code changed | independent domain law and path-cost oracle |
+| 04B | causal ablation/whole-PC and blind scoring | RP08 science; RP06 full-product results reused | 0 | changed harness scorer identity/family-seal only | paired domain gain, law violations, wall-time PC; not CI |
+| 05A | accepted selected state in real DTC/IDE host + permissioned feedback | RP06/S08 host; RP05 PC | 0 | existing consent/tenant/cold restore invariant if host code changed | cold ordinary user and B2 retention, total cost |
+| 06A | exact SHA bound skeptical review, truthful statuses, no overwritten Rxx | RP08 planning and independent reviewer | 0 | n/a | real CODEX Astra independent invocation or NOT_PERFORMED |
+
+**Action when a test fails:** inspect actual asserted deterministic invariant; do not weaken it or disable protection. A failing unrelated Windows workflow is a release/debt receipt, not justification to block scientific N/U. A failing domain experiment is not repaired by changing the expected answer after seeing U — inspect law, representation, retrieval, objective, or credit assignment; restore and rerun with *new predeclared* family separation if needed.
+
+**Every task must return one field per expectation:** `EXPECTATION_ID | original requirement/source | actual producer→consumer | state owner | current gap/reuse | minimal deterministic evidence RUN/NOT_RUN/NOT_APPLICABLE | independent domain-exam evidence/NOT_MEASURED | critical law result | PC cost | remaining owner`. No umbrella word COVERED for a plan-only card.

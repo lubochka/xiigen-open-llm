@@ -1,0 +1,26 @@
+                    AccumulateGrad(a, new Tensor(gradA, a.Shape));
+                }
+
+                if (b.RequiresGrad)
+                {
+                    var gradB = new float[b.Shape.TotalElements];
+                    for (int batch = 0; batch < batchSize; batch++)
+                    {
+                        int bBatch = batch % bBatchSize;
+                        int aOffset = batch * aRows * aCols;
+                        int bOffset = bBatch * bRows * bCols;
+                        int resultOffset = batch * aRows * bCols;
+                        for (int inner = 0; inner < aCols; inner++)
+                        for (int column = 0; column < bCols; column++)
+                        for (int row = 0; row < aRows; row++)
+                        {
+                            gradB[bOffset + column * bRows + inner] +=
+                                a.Data[aOffset + row * aCols + inner]
+                                * result.Grad!.Data[resultOffset + row * bCols + column];
+                        }
+                    }
+
+                    AccumulateGrad(b, new Tensor(gradB, b.Shape));
+                }
+            };
+        }

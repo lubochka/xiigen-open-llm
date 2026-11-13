@@ -1,0 +1,61 @@
+{
+  "schema": "xiigen.quality_03.checks_report.v1",
+  "phase_id": "QUALITY-03",
+  "run_id": "quality-03-20260618-051740",
+  "generated_at_local": "2026-06-18T05:17:40+03:00",
+  "status": "PASS",
+  "checks": [
+    {
+      "name": "JSON/JSONL parse",
+      "command": "ConvertFrom-Json over generated *.json, generated *.jsonl, and execution state",
+      "status": "PASS",
+      "evidence": "json_files=8 jsonl_files=1 before checks report; state_json_parse PASS"
+    },
+    {
+      "name": "54 pair rows loaded from TOKEN-03/TOKEN-04 and pair_ids match",
+      "command": "Load TOKEN-03 baseline JSONL, TOKEN-04 adaptive JSONL, QUALITY-03 rows JSONL; compare sorted pair_id values",
+      "status": "PASS",
+      "evidence": "baseline=54 adaptive=54 quality=54 pair_ids_match=true claim_allowed_false=true"
+    },
+    {
+      "name": "forbidden truthy claims grep",
+      "command": "rg exact forbidden truthy claim names in QUALITY-03 run and execution state",
+      "status": "PASS",
+      "evidence": "No forbidden truthy claim flags found"
+    },
+    {
+      "name": "git diff --check",
+      "command": "git diff --check",
+      "status": "PASS",
+      "evidence": "Exit code 0; no output"
+    },
+    {
+      "name": "no source-like hidden deterministic changes",
+      "command": "git status --short path classification",
+      "status": "PASS",
+      "evidence": "Only execution state, new QUALITY-03 artifacts, and pre-existing untracked qsg21 cursor-user-data are present; no source-like changed paths found"
+    },
+    {
+      "name": "UTF-8/no-BOM report checks",
+      "command": "Strict UTF-8 decode and BOM byte check over generated md/json/jsonl files",
+      "status": "PASS",
+      "evidence": "No UTF-8 BOM and strict UTF-8 decode passed"
+    },
+    {
+      "name": "self-review",
+      "command": "Read quality-03-self-review.json",
+      "status": "PASS",
+      "evidence": "No overclaim, handler-level scope, QSG28 staged/test-only limitation, OrchestrationReasoning fallback limitation, and next phase recorded"
+    }
+  ],
+  "final_counts": {
+    "pair_rows": 54,
+    "pair_integrity_passed": 54,
+    "quality_passed": 0,
+    "quality_regression_failed": 0,
+    "quality_inconclusive": 54,
+    "token_savings_claim_allowed": 0
+  },
+  "token_savings_claim_status": "CLOSED_GLOBALLY_AND_PER_ROW",
+  "next_suggested_phase": "Refresh QUALITY-01/QUALITY-02 for current TOKEN-03/TOKEN-04 rows, then rerun QUALITY-03 scoring; live host savings require same-scope live host pairs."
+}

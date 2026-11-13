@@ -1,0 +1,147 @@
+{
+  "schema": "xiigen.quality_controls_source_disjoint_ablation.controls_report.v1",
+  "phase_id": "QUALITY-CONTROLS-SOURCE-DISJOINT-ABLATION",
+  "run_id": "quality-controls-source-disjoint-ablation-20260618-070000",
+  "generated_at_local": "2026-06-18T07:00:00+03:00",
+  "generated_at_utc": "2026-06-18T04:00:00Z",
+  "source_commits": {
+    "token_03_baseline": "bddaad3a2",
+    "token_04_adaptive": "381513c95",
+    "quality_03_initial_gap": "2768ff997",
+    "quality_01_02_refresh": "93c86c293",
+    "quality_03_rerun_current_pair_scoring": "9f77e92f5"
+  },
+  "input_refs": {
+    "plan": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "state": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "scenario_pack": "artifacts/extension-runtime-token-quality-learnability/scenario-pack-token-quality-v1.jsonl",
+    "quality_03_rerun_rows": "artifacts/extension-runtime-token-quality-learnability/quality-03-rerun-current-pair-scoring/quality-03-rerun-20260618-061207/quality-03-rerun-quality-rows.jsonl",
+    "quality_03_rerun_report": "artifacts/extension-runtime-token-quality-learnability/quality-03-rerun-current-pair-scoring/quality-03-rerun-20260618-061207/quality-03-rerun-report.json",
+    "token_savings_gate_rerun": "artifacts/extension-runtime-token-quality-learnability/quality-03-rerun-current-pair-scoring/quality-03-rerun-20260618-061207/token-savings-gate-rerun.json",
+    "quality_01_02_source_disjoint_explanation": "artifacts/extension-runtime-token-quality-learnability/quality-01-02-current-pair-refresh/quality-01-02-20260618-053620/quality-01-source-disjoint-heldout-explanation.json",
+    "quality_02_controls": "artifacts/extension-runtime-token-quality-learnability/quality-01-02-current-pair-refresh/quality-01-02-20260618-053620/quality-02-ablation-no-leakage-no-memorization-controls.json",
+    "token_03_baseline_rows": "artifacts/extension-runtime-token-quality-learnability/token-03-baseline-traces/token-03-20260618-040021/baseline-token-traces.jsonl",
+    "token_04_adaptive_rows": "artifacts/extension-runtime-token-quality-learnability/token-04-adaptive-traces/token-04-20260618-044550/adaptive-token-traces.jsonl"
+  },
+  "counts": {
+    "scenario_count": 12,
+    "pair_row_count": 54,
+    "pair_integrity_passed_count": 54,
+    "limited_observed_non_regression_count": 54,
+    "strict_quality_non_regression_passed_count": 0,
+    "source_ref_proven_count": 0,
+    "doc_id_proven_count": 0,
+    "license_class_proven_count": 0,
+    "train_heldout_partition_proven_count": 0,
+    "blocked_pair_rows": 54
+  },
+  "controls": [
+    {
+      "control_id": "scenario_inventory",
+      "status": "PASS",
+      "proven_now": true,
+      "blocked_rows": 0,
+      "evidence": "12 scenario rows parsed from scenario-pack-token-quality-v1.jsonl."
+    },
+    {
+      "control_id": "pair_inventory",
+      "status": "PASS",
+      "proven_now": true,
+      "blocked_rows": 0,
+      "evidence": "54 pair rows parsed from QUALITY-03 rerun rows and matched to TOKEN-03/TOKEN-04 pair ids."
+    },
+    {
+      "control_id": "prompt_hash_consistency",
+      "status": "PASS_FOR_EVAL_IDENTITY_NOT_SOURCE_PROVENANCE",
+      "proven_now": true,
+      "blocked_rows": 0,
+      "evidence": "Each scenario has one observed prompt_hash across its QUALITY-03 pair rows."
+    },
+    {
+      "control_id": "source_basis_present",
+      "status": "PASS_LIMITED_TEXTUAL_BASIS_ONLY",
+      "proven_now": true,
+      "blocked_rows": 0,
+      "evidence": "All scenario rows include source_basis, but source_basis is not source_ref/doc_id/license proof."
+    },
+    {
+      "control_id": "source_ref_doc_id_license_partition",
+      "status": "BLOCKED_MISSING_REQUIRED_METADATA",
+      "proven_now": false,
+      "blocked_rows": 54,
+      "evidence": "source_ref/doc_id/license/source_disjoint_group/train_or_heldout are absent locally."
+    },
+    {
+      "control_id": "source_disjoint",
+      "status": "INCONCLUSIVE_BLOCKED_BY_MISSING_SOURCE_PARTITION",
+      "proven_now": false,
+      "blocked_rows": 54,
+      "evidence": "No training/DPO source groups versus held-out eval source groups are identified."
+    },
+    {
+      "control_id": "no_leakage",
+      "status": "INCONCLUSIVE_BLOCKED_BY_MISSING_SOURCE_AND_NEAREST_NEIGHBOUR_REPORT",
+      "proven_now": false,
+      "blocked_rows": 54,
+      "evidence": "No source overlap or nearest-neighbour report exists for this 54-row scope."
+    },
+    {
+      "control_id": "no_memorization",
+      "status": "INCONCLUSIVE_BLOCKED_BY_MISSING_HELD_OUT_SOURCE_DISJOINT_EVAL",
+      "proven_now": false,
+      "blocked_rows": 54,
+      "evidence": "No held-out source-disjoint adaptive eval or exact replay control exists for this 54-row scope."
+    },
+    {
+      "control_id": "ablation",
+      "status": "INCONCLUSIVE_BLOCKED_BY_MISSING_CURRENT_ABLATION_RERUN",
+      "proven_now": false,
+      "blocked_rows": 54,
+      "evidence": "No current target-disabled/asset-shuffled/common-only ablation rerun exists."
+    },
+    {
+      "control_id": "no_external_ai_training_model_mutation_flags",
+      "status": "PASS_STATIC_ROW_FLAGS",
+      "proven_now": true,
+      "blocked_rows": 0,
+      "evidence": "Rows/reports keep external_ai_used/training_started/model_or_checkpoint_or_locator_mutated false."
+    },
+    {
+      "control_id": "universal_vs_stack_specific_split",
+      "status": "PASS_EXPLICIT_CLASSIFICATION_EVAL_ONLY_NOT_SOURCE_AUTHORITY",
+      "proven_now": true,
+      "blocked_rows": 0,
+      "evidence": "Common controls are universal semantics; host names are matrix labels only."
+    }
+  ],
+  "proven_now": [
+    "12 scenario ids and 54 pair ids are accounted for locally.",
+    "Each current pair row has scenario_id, pair_id and prompt_hash.",
+    "The current pair set has 54/54 pair-integrity PASS from QUALITY-03 rerun.",
+    "Scenario rows include textual source_basis and universalization_rule.",
+    "No external AI task solving/eval/training and no model/checkpoint/locator mutation are recorded by current rows/reports.",
+    "Universal-vs-stack-specific classification is explicit and keeps common quality controls at semantic task/orchestration/skill level."
+  ],
+  "missing_or_blocked": [
+    "0/12 scenarios have locally proven source_ref.",
+    "0/12 scenarios have locally proven doc_id.",
+    "0/12 scenarios have locally proven license_class.",
+    "0/12 scenarios have locally proven source_disjoint_group/train_or_heldout partition.",
+    "54/54 pair rows remain blocked for strict source-disjoint/no-leakage/no-memorization/ablation controls.",
+    "No current nearest-neighbour/source-overlap report exists for this pair scope.",
+    "No current target-disabled/asset-shuffled/common-only ablation rerun exists for this pair scope."
+  ],
+  "blocked_rows_reason": "All 54 current pair rows lack required source_ref/doc_id/license/train-vs-held-out metadata and strict controls; therefore QUALITY-03 cannot be rerun as a strict PASS attempt yet.",
+  "quality_03_rerun_now_allowed_for_strict_controls": false,
+  "next_action": "Fill missing source metadata from approved references and produce source partition/no-leakage/no-memorization/ablation evidence before rerunning QUALITY-03.",
+  "token_savings_claimed": false,
+  "quality_improvement_claimed": false,
+  "semantic_quality_claimed": false,
+  "learnability_claimed": false,
+  "final_readiness_claimed": false,
+  "live_host_savings_claimed": false,
+  "production_locator_or_checkpoint_mutated": false,
+  "external_ai_used": false,
+  "training_started": false,
+  "model_or_checkpoint_or_locator_mutated": false
+}

@@ -1,0 +1,96 @@
+{
+    "schema":  "xiigen.quality_03.proof_contract_runners_manifest.v1",
+    "work_order_id":  "QUALITY-03-ROW-SPECIFIC-BLOCKING-PROOF-CONTRACT-RUNNERS-AND-SECOND-RATER-PRODUCE-08",
+    "sub_agent_id":  "bounded-sub-agent-quality-03-proof-contract-runners-and-second-rater-produce-08",
+    "run_id":  "quality-scoring-20260619-122536",
+    "generated_at_local":  "2026-06-19T12:25:36+03:00",
+    "previous_evidence_pack":  "artifacts/extension-runtime-token-quality-learnability/quality-scoring/quality-scoring-20260619-120659",
+    "status":  "PROOF_CONTRACT_REPORTS_PRODUCED_ALL_DEFERRED_RUNNER_NOT_RUN",
+    "counts":  {
+                   "total_quality_rows":  9,
+                   "proof_contract_areas_required":  7,
+                   "proof_contract_area_reports_produced":  7,
+                   "proof_contract_areas_proven":  0,
+                   "proof_contract_areas_deferred":  7,
+                   "blocking_proof_refs_total":  63,
+                   "blocking_proof_refs_pass":  0,
+                   "blocking_proof_refs_risk_or_deferred":  63,
+                   "runner_ready_rows":  0,
+                   "quality_pass_rows":  0,
+                   "runner_ready_eval_inputs_created":  false,
+                   "runner_scorer_run":  false
+               },
+    "proof_contract_areas":  {
+                                 "approved_held_out_source_corpus_manifest":  "DEFERRED_NOT_APPROVED_NOT_PASS",
+                                 "source_disjoint_pass_or_risk":  "RISK_ROWS_PRODUCED_0_PASS",
+                                 "nearest_neighbour_index_contract_and_pass_or_risk":  {
+                                                                                           "index_contract":  "DEFERRED_INDEX_NOT_BUILT_NOT_PASS",
+                                                                                           "pass_or_risk_rows":  "RISK_ROWS_PRODUCED_0_PASS"
+                                                                                       },
+                                 "deterministic_ablation_runner":  "DEFERRED_RUNNER_NOT_IMPLEMENTED_FOR_CURRENT_ROWS",
+                                 "no_leakage_pass_or_risk":  "RISK_ROWS_PRODUCED_0_PASS",
+                                 "no_memorization_pass_or_risk":  "RISK_ROWS_PRODUCED_0_PASS",
+                                 "independent_second_rater_adjudication":  "DEFERRED_TRUE_INDEPENDENT_RATER_ABSENT"
+                             },
+    "local_infrastructure_inspection":  [
+                                            "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs exists but consumes runner-ready eval-only rows; it does not produce the seven blocking proof refs.",
+                                            "43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner exists for eval-only runner input, not current proof-contract generation.",
+                                            "tools/token-quality-full-host-scorer.ps1 expects 108 TOKEN-04 rows and is not safe to run for 9 blocked QUALITY-03 rows.",
+                                            "Tests/Learn06HeldOutAblationRunnerTests.cs is LEARN-06-specific, writes outside this timestamped quality-scoring pack, and is not a direct current-row proof contract.",
+                                            "06.VectorSearch BruteForce/HNSW components exist, but no approved QUALITY-03 corpus/index manifest exists for a safe PASS."
+                                        ],
+    "runner_scorer_run":  false,
+    "reason_runner_scorer_not_run":  "63/63 blocking proof refs did not PASS; runner-ready-eval-inputs.jsonl intentionally absent.",
+    "runner_ready_eval_inputs_created":  false,
+    "runner_ready_eval_inputs_absence_required":  true,
+    "external_ai_model_called":  false,
+    "training_dpo_checkpoint_model_locator_mutation":  false,
+    "code_changes_performed":  false,
+    "claim_locks":  {
+                        "token_savings_claimed":  false,
+                        "token_savings_claim_allowed":  false,
+                        "quality_improvement_claimed":  false,
+                        "quality_improvement_claim_allowed":  false,
+                        "semantic_quality_claimed":  false,
+                        "semantic_readiness_claimed":  false,
+                        "learnability_claimed":  false,
+                        "live_host_readiness_claimed":  false,
+                        "full_host_readiness_claimed":  false,
+                        "common_readiness_claimed":  false,
+                        "training_ready_claimed":  false,
+                        "target_promotion_claimed":  false,
+                        "locator_update_claimed":  false,
+                        "final_readiness_claimed":  false,
+                        "product_readiness_claimed":  false
+                    },
+    "next_bounded_work_order":  {
+                                    "id":  "QUALITY-03-PROOF-CONTRACT-RUNNER-CODE-IMPLEMENTATION-09",
+                                    "requested_artifact_type":  "code_and_tests",
+                                    "implementation_authorized_now":  false,
+                                    "goal_ru":  "Создать локальный artifact-scoped proof contract runner для 9 QUALITY-03 rows: approved corpus/split ingestion, source-disjoint checks, nearest-neighbour index contract, deterministic ablation, no-leakage/no-memorization replay probes, pass/risk aggregation и runner-ready input emission only when all 63 refs PASS.",
+                                    "allowed_write_scope":  [
+                                                                "43.SmartSkillsDomain/Quality03ProofContractRunnerContracts.cs",
+                                                                "43.SmartSkillsDomain/Quality03ProofContractRunner.cs",
+                                                                "43.SmartSkillsDomain.Tools/Quality03ProofContractRunner/Quality03ProofContractRunner.csproj",
+                                                                "43.SmartSkillsDomain.Tools/Quality03ProofContractRunner/Program.cs",
+                                                                "Tests/ExtensionQuality03ProofContractRunnerTests.cs"
+                                                            ],
+                                    "allowed_artifact_outputs":  [
+                                                                     "caller-specified output directory only; default must be refused unless explicitly passed"
+                                                                 ],
+                                    "forbidden":  [
+                                                      "external AI/model calls",
+                                                      "training/DPO/checkpoint/model/locator mutation",
+                                                      "git stage/commit/push/branch",
+                                                      "quality/semantic/readiness/learnability claims",
+                                                      "writing outside caller-provided output directory and state only when explicitly requested"
+                                                  ],
+                                    "required_tests":  [
+                                                           "dotnet test Tests/LlmFromScratch.Tests.csproj --filter FullyQualifiedName~ExtensionQuality03ProofContractRunnerTests --no-restore",
+                                                           "tests must cover: missing approved corpus rejects PASS; approved split/source-disjoint happy path; nearest-neighbour index manifest required; deterministic ablation rejects shortcut-only result; no-leakage/no-memorization replay probes stay risk without approved raw/private refs; runner-ready-eval-inputs.jsonl absent until 63/63 PASS; no external/model/training mutation flags remain false; output path guard blocks writes outside allowed output root"
+                                                       ],
+                                    "second_rater_requirement":  "Не фейкать independent second-rater: либо отдельный Luba-approved human/independent local rater packet with reviewer_id_2 and adjudication notes, либо status stays DEFERRED. Deterministic self-checker is not independent rater.",
+                                    "parent_will_perform_commit_push_after_review":  true,
+                                    "git_authority":  "forbidden_for_subagent"
+                                }
+}

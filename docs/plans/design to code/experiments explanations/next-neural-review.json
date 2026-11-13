@@ -1,0 +1,1098 @@
+{
+  "schema_version": "next-neural-review-v1",
+  "review_date": "2026-10-27",
+  "current_head": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+  "historical_report_snapshot": "846144464a856cd3f118bcfc0165c8117b06c167",
+  "book_snapshot": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+  "scope_ru": "Три новых разъясняемых оптимизации вычислений внутри настоящего обучения. Ранее подробно разобранные кейсы не повторяются. Ни одна из трёх не заявляет прирост качества.",
+  "skills_applied": [
+    {
+      "name": "code-examination",
+      "file": "research/skills/code-examination-SKILL.md",
+      "previously_read": "1–376",
+      "application": "следование от caller к изменяемому вычислению и raw"
+    },
+    {
+      "name": "human-readable-architecture-audit",
+      "file": "research/skills/human-readable-architecture-audit-SKILL.md",
+      "previously_read": "1–180 и релевантные разделы предыдущих проходов",
+      "application": "этап, старый/новый путь, простой язык, ограничения"
+    },
+    {
+      "name": "plan-review",
+      "file": "research/skills/plan-review-SKILL.md",
+      "previously_read": "1–220,674–796,1580–1627,2632–2683",
+      "application": "отдельно исторический успех, внедрение и незакрытая квалификация"
+    },
+    {
+      "name": "human-communication",
+      "file": "research/skills/human-communication-GLOSSARY.md",
+      "previously_read": "1–47",
+      "application": "расшифровка NLL, allocations и ограничений без подмены причинности"
+    }
+  ],
+  "verification": {
+    "new_model_runs": 0,
+    "new_training_runs": 0,
+    "new_builds": 0,
+    "new_product_tests": 0,
+    "new_remote_writes": 0,
+    "artifact_work": "read_saved_JSON_compare_fields_read_code_only",
+    "binary_snapshot_files_redownloaded": false,
+    "current_code_directly_fetched": [
+      "00.TensorCore/Core/TensorOps.cs",
+      "04.TrainingLoop/Trainer.cs",
+      "03.TransformerModel/Layers/RmsNorm.cs"
+    ],
+    "old_current_code_text_equals_current_for": [
+      "00.TensorCore/Core/TensorOps.cs",
+      "04.TrainingLoop/Trainer.cs"
+    ],
+    "raw_equality_compared": [
+      "RD01 A/B code-sign.json",
+      "MB01 A/B code-sign.json",
+      "SEXP01 A/B arm-result.json"
+    ],
+    "warning_ru": "Сохранённые хэши и entries прочитаны и сравнены; бинарные веса и optimizer не загружались в новую модель. Статус квалификации переноса взят из прочитанного текущего документа67."
+  },
+  "cards": [
+    {
+      "id": "RD01",
+      "title_ru": "RMSNorm: складывать строку без временных координат",
+      "selection": "recommended_resource_example",
+      "stage_ru": "Прямой проход RMSNorm → Mean квадратов → SumAlongAxis по последней оси.",
+      "baseline_ru": "Общий корректный алгоритм находит каждый элемент через массив координат. На каждой строке он создаёт массив её координат и копию для каждого слагаемого.",
+      "change_ru": "У последней оси значения строки уже лежат подряд. Начало строки равно row × width; достаточно читать start + j, сохраняя порядок сложения.",
+      "baseline_correctness_ru": "В назначенной форме A вычисляет правильное среднее; B не меняет формулу и не восстанавливает потерянный градиент. Это специализация адресации для известной формы.",
+      "actual_learning_ru": "Штатный Transformer H64/L1/V256, q/v-LoRA rank4, четыре обучаемых массива, нативный SFT и AdamW. Общий S0: 400 ранее выполненных уроков; в опыте по 4 обновления T1,T2,T1,T2. Сохранённые хэши обучаемых параметров меняются внутри обоих плеч, а замороженных — нет.",
+      "historical_core_pin": "66947785d1318f7cbbc88118f3156cdc75001e16",
+      "historical_results_pin": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "budget": {
+        "shared_preparation_updates": 400,
+        "shared_preparation_wall_ms": 3504,
+        "updates_per_arm": 4,
+        "optimizer_step_before": 400,
+        "optimizer_step_after": 404,
+        "training_forward_per_arm": 4,
+        "backward_per_arm": 4,
+        "diagnostic_forward_per_arm": 8,
+        "dpo": 0,
+        "external_teacher": 0
+      },
+      "quality_rows": [
+        {
+          "id": "T1",
+          "split": "TRAIN",
+          "prompt": "C# result sign: 9-4 =",
+          "gold": "+",
+          "answer_before": "+",
+          "answer_after": "+",
+          "exact_before": true,
+          "exact_after": true,
+          "nll_before": 1.3478641664021307,
+          "nll_after": 1.3276255041653302,
+          "rank_before": 1,
+          "rank_after": 1,
+          "A_equals_B": true
+        },
+        {
+          "id": "T2",
+          "split": "TRAIN",
+          "prompt": "C# result sign: 4-9 =",
+          "gold": "-",
+          "answer_before": "+",
+          "answer_after": "+",
+          "exact_before": false,
+          "exact_after": false,
+          "nll_before": 2.4280250332440625,
+          "nll_after": 2.40304968078006,
+          "rank_before": 2,
+          "rank_after": 2,
+          "A_equals_B": true
+        },
+        {
+          "id": "E1",
+          "split": "EXAM",
+          "prompt": "C# result sign: 8-3 =",
+          "gold": "+",
+          "answer_before": "-",
+          "answer_after": "-",
+          "exact_before": false,
+          "exact_after": false,
+          "nll_before": 3.0501598550872044,
+          "nll_after": 3.0497207704061644,
+          "rank_before": 4,
+          "rank_after": 4,
+          "A_equals_B": true
+        },
+        {
+          "id": "E2",
+          "split": "EXAM",
+          "prompt": "C# result sign: 3-8 =",
+          "gold": "-",
+          "answer_before": "-",
+          "answer_after": "-",
+          "exact_before": true,
+          "exact_after": true,
+          "nll_before": 2.5475592001528264,
+          "nll_after": 2.5262719741704727,
+          "rank_before": 1,
+          "rank_after": 1,
+          "A_equals_B": true
+        }
+      ],
+      "quality_summary_ru": "В обоих плечах TRAIN 1/2→1/2, EXAM 1/2→1/2. NLL меняется одинаково; освоение общего закона знака не показано.",
+      "metrics": [
+        {
+          "name": "train_allocated_bytes",
+          "A": 13640016,
+          "B": 12984816,
+          "delta_B_minus_A": -655200,
+          "relative_change_percent": -4.803513426963722,
+          "unit": "bytes",
+          "evidence_kind": "measured",
+          "note_ru": ""
+        },
+        {
+          "name": "train_wall",
+          "A": 156.5045,
+          "B": 105.9158,
+          "delta_B_minus_A": -50.5887,
+          "relative_change_percent": -32.32411847582657,
+          "unit": "ms",
+          "evidence_kind": "measured",
+          "note_ru": "Один холодный A→B; устойчивое ускорение не установлено."
+        },
+        {
+          "name": "train_cpu",
+          "A": 140.625,
+          "B": 109.375,
+          "delta_B_minus_A": -31.25,
+          "relative_change_percent": -22.22222222222222,
+          "unit": "ms",
+          "evidence_kind": "measured",
+          "note_ru": ""
+        },
+        {
+          "name": "process_peak_working_set",
+          "A": 41893888,
+          "B": 42139648,
+          "delta_B_minus_A": 245760,
+          "relative_change_percent": 0.5866249511145875,
+          "unit": "bytes",
+          "evidence_kind": "measured",
+          "note_ru": "Пик всего процесса, не retained heap; +0,587%, один замер."
+        }
+      ],
+      "gc_A": [
+        2,
+        1,
+        0
+      ],
+      "gc_B": [
+        2,
+        1,
+        0
+      ],
+      "raw_equality": {
+        "training_losses": true,
+        "before": true,
+        "after": true,
+        "training_panel_before": true,
+        "training_panel_after": true,
+        "trainable_before_sha256": true,
+        "trainable_after_sha256": true,
+        "optimizer_after_sha256": true,
+        "frozen_before_sha256": true,
+        "frozen_after_sha256": true
+      },
+      "raw_parameter_write": true,
+      "parity_ru": "В raw совпали четыре потери, все 16 сохранённых 256-мерных векторов logits, хэши весов и полного optimizer; по отчёту равенство побитовое. Бинарные снимки заново не исполнялись.",
+      "allocation_accounting": {
+        "formula": "3 × 21 × (64 + 1) × 40 × 4",
+        "expected_saved_bytes": 655200,
+        "measured_saved_bytes": 655200,
+        "kind": "analytical_count_matches_measured_allocation"
+      },
+      "formula_latex": "m_r=\\frac1d\\sum_{j=0}^{d-1}x_{r,j}^2,\\quad y_{r,j}=\\gamma_j\\frac{x_{r,j}}{\\sqrt{m_r+\\varepsilon}};\\quad \\mathrm{address}(r,j)=r\\,d+j.",
+      "formula_explanation_ru": "Прежние квадраты читаются в прежнем порядке. Сумма и деление остаются теми же; убраны объекты, нужные только для поиска адреса.",
+      "book": {
+        "translation_ru": "среднее по координатам",
+        "source": "BOOK_MEAN",
+        "section": "Definition 1.23, только определение среднего",
+        "pdf_page": 56,
+        "bridge_ru": "Книга определяет μ(x)=Σx/d. Применение к квадратам и формула RMSNorm взяты из кода проекта. LayerNorm из книги не выдаётся за RMSNorm.",
+        "paraphrase_ru": "среднее по координатам"
+      },
+      "current_review": {
+        "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+        "status": "implemented_named_branch",
+        "sources": [
+          "CURRENT_RD",
+          "CURRENT_MEAN",
+          "CURRENT_RMS",
+          "CURRENT_QUALIFICATION"
+        ],
+        "text_ru": "В текущем SumAlongAxis есть специализированная ветвь последней оси с сохранённой размерностью 1. В прочитанном аудите остаётся открытым восстановление исторического H64/LoRA S0 и A/B полного состояния; наличие кода не означает, что этот перенос заново получил все исторические цифры."
+      },
+      "limits_ru": [
+        "Экономия allocations подтверждена на одной модели и четырёх обновлениях.",
+        "Пик процесса немного вырос; причинное постоянное ухудшение не установлено.",
+        "Не измерялись большие длины, DPO и устойчивый throughput.",
+        "Точность не выросла; настоящий градиентный переход и сохранение результата подтверждены."
+      ],
+      "sources": [
+        "RD01_REPORT",
+        "RD01_RAW_A",
+        "RD01_RAW_B",
+        "RD01_STATE_A",
+        "RD01_STATE_B",
+        "RD01_DIFF",
+        "CURRENT_RD",
+        "CURRENT_RMS",
+        "CURRENT_MEAN",
+        "BOOK_MEAN",
+        "CURRENT_QUALIFICATION"
+      ],
+      "uml_before": "flowchart TD\n    A[\"Строка квадратов признаков\"] --> B[\"Координаты строки\"]\n    B --> C[\"Копия координат для каждого j\"]\n    C --> D[\"Линейный адрес элемента\"]\n    D --> E[\"Сумма слева направо\"]\n    E --> F[\"Среднее и RMSNorm\"]",
+      "uml_after": "flowchart TD\n    A[\"Строка квадратов признаков\"] --> B[\"Начало: row × width\"]\n    B --> C[\"Читать start + j\"]\n    C --> D[\"Сумма в прежнем порядке\"]\n    D --> E[\"Прежнее среднее и RMSNorm\"]",
+      "uml_reason": "flowchart TD\n    A[\"Те же значения в том же порядке\"] --> B[\"То же среднее\"]\n    B --> C[\"Те же logits и обновления\"]\n    A --> D[\"Адрес без координатных объектов\"]\n    D --> E[\"Минус 655200 байт за 4 шага\"]"
+    },
+    {
+      "id": "MB01",
+      "title_ru": "Среднее: возвращать градиент сразу в нужную строку",
+      "selection": "recommended_resource_example_with_timing_caveat",
+      "stage_ru": "Обратный проход Mean внутри RMSNorm → BroadcastGradAlongAxis; это лишь часть backward RMSNorm.",
+      "baseline_ru": "Для каждого элемента градиента A раскладывает плоский номер на координаты, копирует массив, обнуляет последнюю координату и вновь получает плоский номер строки.",
+      "change_ru": "При последней сохранённой оси номер строки равен целой части flatIndex / width. B использует этот адрес напрямую и умножает тот же градиент строки на прежний scale=1/width.",
+      "baseline_correctness_ru": "A правильно распределяет градиент среднего. Изменение удаляет два временных массива координат на элемент, не исправляет ошибку дифференцирования.",
+      "actual_learning_ru": "Тот же квалифицированный S0 h64-rms-row после 400 уроков; по 4 нативных SFT-обновления q/v-LoRA с AdamW. В raw все четыре обучаемых массива реально изменились; замороженные остались прежними.",
+      "historical_core_pin": "43e2337d68dad0e4ab8d7fbb0cea38406b592b61",
+      "historical_results_pin": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "budget": {
+        "shared_preparation_updates_historical": 400,
+        "common_retraining_here": 0,
+        "updates_per_arm": 4,
+        "optimizer_step_before": 400,
+        "optimizer_step_after": 404,
+        "training_forward_per_arm": 4,
+        "backward_per_arm": 4,
+        "diagnostic_forward_per_arm": 8,
+        "dpo": 0,
+        "generate": 0,
+        "external_teacher": 0
+      },
+      "quality_rows": [
+        {
+          "id": "T1",
+          "split": "TRAIN",
+          "prompt": "C# result sign: 9-4 =",
+          "gold": "+",
+          "answer_before": "+",
+          "answer_after": "+",
+          "exact_before": true,
+          "exact_after": true,
+          "nll_before": 1.3478641664021307,
+          "nll_after": 1.3276255041653302,
+          "rank_before": 1,
+          "rank_after": 1,
+          "A_equals_B": true
+        },
+        {
+          "id": "T2",
+          "split": "TRAIN",
+          "prompt": "C# result sign: 4-9 =",
+          "gold": "-",
+          "answer_before": "+",
+          "answer_after": "+",
+          "exact_before": false,
+          "exact_after": false,
+          "nll_before": 2.4280250332440625,
+          "nll_after": 2.40304968078006,
+          "rank_before": 2,
+          "rank_after": 2,
+          "A_equals_B": true
+        },
+        {
+          "id": "E1",
+          "split": "EXAM",
+          "prompt": "C# result sign: 8-3 =",
+          "gold": "+",
+          "answer_before": "-",
+          "answer_after": "-",
+          "exact_before": false,
+          "exact_after": false,
+          "nll_before": 3.0501598550872044,
+          "nll_after": 3.0497207704061644,
+          "rank_before": 4,
+          "rank_after": 4,
+          "A_equals_B": true
+        },
+        {
+          "id": "E2",
+          "split": "EXAM",
+          "prompt": "C# result sign: 3-8 =",
+          "gold": "-",
+          "answer_before": "-",
+          "answer_after": "-",
+          "exact_before": true,
+          "exact_after": true,
+          "nll_before": 2.5475592001528264,
+          "nll_after": 2.5262719741704727,
+          "rank_before": 1,
+          "rank_after": 1,
+          "A_equals_B": true
+        }
+      ],
+      "quality_summary_ru": "В A и B ровно те же 2/4 ответа до и после; четыре потери 1.1465623, 1.2090048, 1.1422932, 1.2038769 совпали по битам.",
+      "metrics": [
+        {
+          "name": "train_allocated_bytes",
+          "A": 13642496,
+          "B": 12782336,
+          "delta_B_minus_A": -860160,
+          "relative_change_percent": -6.3050045973991855,
+          "unit": "bytes",
+          "evidence_kind": "measured",
+          "note_ru": ""
+        },
+        {
+          "name": "train_wall",
+          "A": 74.0209,
+          "B": 77.7742,
+          "delta_B_minus_A": 3.753299999999996,
+          "relative_change_percent": 5.070594926568031,
+          "unit": "ms",
+          "evidence_kind": "measured",
+          "note_ru": "+3,7533 ms / +5,0706%; одно наблюдение, устойчивое замедление не установлено."
+        },
+        {
+          "name": "train_cpu",
+          "A": 78.125,
+          "B": 78.125,
+          "delta_B_minus_A": 0.0,
+          "relative_change_percent": 0.0,
+          "unit": "ms",
+          "evidence_kind": "measured",
+          "note_ru": "Грубый счётчик: пять тиков по15,625ms."
+        },
+        {
+          "name": "process_peak_working_set",
+          "A": 48275456,
+          "B": 48779264,
+          "delta_B_minus_A": 503808,
+          "relative_change_percent": 1.0436110639742067,
+          "unit": "bytes",
+          "evidence_kind": "measured",
+          "note_ru": "+503808 B / +1,044%; один пик всего процесса."
+        }
+      ],
+      "gc_A": [
+        2,
+        0,
+        0
+      ],
+      "gc_B": [
+        2,
+        0,
+        0
+      ],
+      "raw_equality": {
+        "online_loss_bits": true,
+        "online_losses": true,
+        "before": true,
+        "after": true,
+        "final_state": true,
+        "restore": true,
+        "donor": true
+      },
+      "raw_parameter_write": true,
+      "parity_ru": "Непосредственно сравнены before/after с logits, online_loss_bits, всё final_state с optimizer moments, восстановление и донор: равны. Бинарные снимки заново не исполнялись.",
+      "allocation_accounting": {
+        "formula": "2 × 1 × 21 × 64 × 2 × 4 × 40",
+        "expected_saved_bytes": 860160,
+        "measured_saved_bytes": 860160,
+        "kind": "analytical_count_matches_measured_allocation"
+      },
+      "formula_latex": "m_r=\\frac1d\\sum_j u_{r,j},\\quad g_r=\\frac{\\partial L}{\\partial m_r},\\quad \\frac{\\partial L}{\\partial u_{r,j}}=\\frac{g_r}{d};\\quad r=\\lfloor i/d\\rfloor.",
+      "formula_explanation_ru": "Каждое слагаемое среднего имеет коэффициент 1/d, поэтому одинаковый входящий градиент g/d получают все элементы этой строки. В RMSNorm u=x²: это градиент по входу Mean, не весь градиент по исходному x. Затем работают Square и остальные ветви.",
+      "book": {
+        "translation_ru": "среднее по координатам",
+        "source": "BOOK_MEAN",
+        "supporting_source": "BOOK_CHAIN",
+        "section": "Definition 1.23; Proposition 9.4",
+        "pdf_pages": [
+          56,
+          314
+        ],
+        "bridge_ru": "Книжное среднее и цепное правило позволяют вывести g/d. Прямой адрес строки и экономия объектов — вывод из кода опыта, не теорема книги об эффективности.",
+        "paraphrase_ru": "среднее по координатам"
+      },
+      "current_review": {
+        "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+        "status": "implemented_named_branch",
+        "sources": [
+          "CURRENT_MB",
+          "CURRENT_MEAN",
+          "CURRENT_QUALIFICATION"
+        ],
+        "text_ru": "Специализация уже находится в текущем BroadcastGradAlongAxis. Частный вызов Mean строит результат с теми же предыдущими измерениями. В историческом diff это дополнительно проверялось PrecedingDimensionsEqual; текущий caller гарантирует это построением. По прочитанному аудиту назначенная restored H64 qualification остаётся открытой."
+      },
+      "limits_ru": [
+        "Измеренный wall +5,07% показывается рядом с выигрышем allocations; ускорения не заявлять.",
+        "Форма — последняя сохранённая ось. Это не оптимизация любого broadcasting.",
+        "RD01 и MB01 используют тот же исторический донор и панель; это разные локальные изменения, не независимые доказательства нового навыка.",
+        "Не складывать проценты RD и MB как уже измеренный совместный эффект."
+      ],
+      "sources": [
+        "MB01_REPORT",
+        "MB01_RAW_A",
+        "MB01_RAW_B",
+        "MB01_PARITY",
+        "MB01_DIFF",
+        "CURRENT_MB",
+        "CURRENT_MEAN",
+        "BOOK_MEAN",
+        "BOOK_CHAIN",
+        "CURRENT_QUALIFICATION"
+      ],
+      "uml_before": "flowchart TD\n    A[\"Входящий градиент среднего\"] --> B[\"Для каждого элемента i\"]\n    B --> C[\"Координаты и их копия\"]\n    C --> D[\"Обнулить последнюю координату\"]\n    D --> E[\"Найти строку и записать g / d\"]",
+      "uml_after": "flowchart TD\n    A[\"Входящий градиент среднего\"] --> B[\"Для каждого элемента i\"]\n    B --> C[\"Строка: целая часть i / d\"]\n    C --> D[\"Тот же g × scale\"]\n    D --> E[\"Градиент входа Mean\"]",
+      "uml_reason": "flowchart TD\n    A[\"Вклад каждого слагаемого: 1 / d\"] --> B[\"Вся строка получает g / d\"]\n    B --> C[\"Тот же численный backward Mean\"]\n    A --> D[\"Номер строки известен из i / d\"]\n    D --> E[\"Два массива на элемент не нужны\"]\n    E --> F[\"Минус 860160 байт за 4 шага\"]"
+    },
+    {
+      "id": "SEXP01",
+      "title_ru": "Softmax backward: вычислять экспоненту один раз",
+      "selection": "recommended_arithmetic_work_example",
+      "stage_ru": "Trainer.BackwardLoss после logits, при вычислении градиента softmax-cross-entropy. Вероятности внимания и архитектура LoRA не меняются.",
+      "baseline_ru": "A правильно считает exp(z−max) сначала для знаменателя, затем повторно для числителя каждого softmax. Это корректная, но повторная работа.",
+      "change_ru": "B сохраняет первое exp в один буфер длины словаря и повторно читает его. Суммирование, деление, метка, вес, backward, clipping и AdamW остаются прежними. Буфер создаётся один раз на вызов и используется для всех строк.",
+      "baseline_correctness_ru": "В A верная формула softmax-cross-entropy. Удаление повторного вычисления не является ремонтом неверного градиента.",
+      "actual_learning_ru": "Нативный Transformer с q/v-LoRA, штатный SFT и AdamW; принят один и тот же исторический родитель со step1000. По4 обновления дали одинаковые новые stateHash и полное состояние optimizer step1004. Учебный старт слабый: 3/40 токенов,0/2 ответов.",
+      "historical_core_pin": "fb9175cc752d41e1cb525e0609b7c96140940217",
+      "historical_results_pin": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "budget": {
+        "shared_preparation_updates_historical": 1000,
+        "common_retraining_here": 0,
+        "updates_per_arm": 4,
+        "optimizer_step_before": 1000,
+        "optimizer_step_after": 1004,
+        "training_forward_per_arm": 4,
+        "backward_per_arm": 4,
+        "scoring_forward_per_arm": 10,
+        "shifted_rows_per_update": 35,
+        "vocabulary": 256
+      },
+      "quality_rows": [
+        {
+          "metric": "train_response_correct_tokens",
+          "before": 3,
+          "after": 3,
+          "denominator": 40,
+          "A_equals_B": true
+        },
+        {
+          "metric": "exact_train_responses",
+          "before": 0,
+          "after": 0,
+          "denominator": 2,
+          "A_equals_B": true
+        },
+        {
+          "metric": "mean_response_nll",
+          "before": 4.766696420187372,
+          "after": 4.7656540998136006,
+          "A_equals_B": true
+        },
+        {
+          "metric": "mean_gold_rank",
+          "before": 51.825,
+          "after": 51.825,
+          "A_equals_B": true
+        }
+      ],
+      "quality_summary_ru": "Точность не выросла; параметры реально изменились, а соответствующие изменения и все сохранённые панели A/B совпали.",
+      "metrics": [
+        {
+          "name": "loss_backward_exp_calls",
+          "A": 71680,
+          "B": 35840,
+          "delta_B_minus_A": -35840,
+          "relative_change_percent": -50.0,
+          "unit": "calls",
+          "evidence_kind": "analytical_code_count",
+          "note_ru": "Это расчёт по циклам; не аппаратный счётчик."
+        },
+        {
+          "name": "loss_backward_plus_CE_exp_calls",
+          "A": 107520,
+          "B": 71680,
+          "delta_B_minus_A": -35840,
+          "relative_change_percent": -33.333333333333336,
+          "unit": "calls",
+          "evidence_kind": "analytical_code_count",
+          "note_ru": "−1/3 только в двух названных операциях, не во всём Transformer."
+        },
+        {
+          "name": "train_allocated_bytes",
+          "A": 6230688,
+          "B": 6238192,
+          "delta_B_minus_A": 7504,
+          "relative_change_percent": 0.12043613803162669,
+          "unit": "bytes",
+          "evidence_kind": "measured",
+          "note_ru": "+7504 B/+0,1204%; не вся разница отдельно приписана буферу."
+        },
+        {
+          "name": "train_wall",
+          "A": 39.6467,
+          "B": 27.2809,
+          "delta_B_minus_A": -12.365800000000004,
+          "relative_change_percent": -31.18998554734695,
+          "unit": "ms",
+          "evidence_kind": "measured",
+          "note_ru": "Одна короткая холодная A→B пара; устойчивое ускорение не доказано."
+        },
+        {
+          "name": "train_cpu",
+          "A": 46.875,
+          "B": 31.25,
+          "delta_B_minus_A": -15.625,
+          "relative_change_percent": -33.333333333333336,
+          "unit": "ms",
+          "evidence_kind": "measured",
+          "note_ru": "Грубое разрешение счётчика."
+        },
+        {
+          "name": "process_peak_working_set",
+          "A": 44437504,
+          "B": 44363776,
+          "delta_B_minus_A": -73728,
+          "relative_change_percent": -0.16591390911604756,
+          "unit": "bytes",
+          "evidence_kind": "measured",
+          "note_ru": "Пик всего процесса, один замер."
+        }
+      ],
+      "gc_A": [
+        0,
+        0,
+        0
+      ],
+      "gc_B": [
+        0,
+        0,
+        0
+      ],
+      "raw_equality": {
+        "start": true,
+        "stateHashBefore": true,
+        "stateHashAfter": true,
+        "optimizerStepBefore": true,
+        "optimizerStepAfter": true,
+        "onlineLossBits": true,
+        "panelBefore": true,
+        "panelAfter": true,
+        "optimizerBefore": true,
+        "optimizerAfter": true,
+        "budget": true
+      },
+      "raw_parameter_write": true,
+      "parity_ru": "В raw сравнивались биты online losses, панели, хэши состояния модели и сами сохранённые optimizer entries before/after: равны. Начальный stateHash отличается от конечного в обеих руках. Бинарные снимки заново не исполнялись.",
+      "allocation_accounting": {
+        "buffer_length": 256,
+        "buffer_count": 4,
+        "payload_bytes_per_buffer": 1024,
+        "estimated_buffer_bytes_including_header": 4192,
+        "measured_total_extra_bytes": 7504,
+        "attribution_ru": "4192 — расчёт полезной нагрузки с заголовками;7504 — измеренные все выделения. Это разные величины."
+      },
+      "formula_latex": "e_j=\\exp(z_j-m),\\quad m=\\max_k z_k,\\quad Z=\\sum_k e_k,\\quad p_j=e_j/Z,\\quad \\partial L/\\partial z_j=p_j-\\mathbf1[j=y].",
+      "formula_explanation_ru": "Числителю и знаменателю требуется ровно одно и то же e_j. Повторно читать сохранённое число достаточно; вероятность и обучающий сигнал остаются прежними. При учёте scale код использует (p_j−1[j=y])·scale.",
+      "book": {
+        "translation_ru": "компактный вектор ошибки",
+        "source": "BOOK_CE",
+        "supporting_source": "BOOK_SHIFT",
+        "section": "Theorem 9.5; Definition 2.6 и следующий абзац",
+        "pdf_pages": [
+          318,
+          74
+        ],
+        "bridge_ru": "Книга даёт softmax-CE градиент и инвариантность к сдвигу. Главы рассматривают MLM и attention; на next-token loss переносится само тождество. Reuse exp и размер экономии обоснованы кодом и наблюдением.",
+        "paraphrase_ru": "компактный вектор ошибки"
+      },
+      "current_review": {
+        "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+        "status": "not_transferred_to_current_Trainer",
+        "sources": [
+          "CURRENT_SEXP",
+          "SEXP01_CODE_B"
+        ],
+        "text_ru": "Текущий Trainer.BackwardLoss389–426 всё ещё вызывает MathF.Exp в обоих циклах. Буфер есть в экспериментальном B, а не в прочитанном основном Trainer."
+      },
+      "limits_ru": [
+        "Сокращение exp на треть не означает треть общего времени или всех exp модели.",
+        "Проценты времени — одно наблюдение с фиксированным порядком, не устойчивый throughput.",
+        "Увеличение allocations показано прямо; новая цена буфера мала, но не нулевая.",
+        "Старт после1000 исторических обновлений не освоил учебные строки; эксперимент доказывает эквивалентность и объём работы, не качество обучения."
+      ],
+      "sources": [
+        "SEXP01_REPORT",
+        "SEXP01_RESULT",
+        "SEXP01_RAW_A",
+        "SEXP01_RAW_B",
+        "SEXP01_CODE_B",
+        "SEXP01_DIFF",
+        "SEXP01_MANIFEST",
+        "CURRENT_SEXP",
+        "BOOK_CE",
+        "BOOK_SHIFT"
+      ],
+      "uml_before": "flowchart TD\n    A[\"Логиты после forward\"] --> B[\"exp для суммы Z\"]\n    A --> C[\"Повторный exp для числителя\"]\n    B --> D[\"Вероятность: числитель / Z\"]\n    C --> D\n    D --> E[\"Ошибка p минус метка\"]",
+      "uml_after": "flowchart TD\n    A[\"Логиты после forward\"] --> B[\"Один exp и запись в буфер\"]\n    B --> C[\"Сумма Z\"]\n    B --> D[\"Чтение числителя из буфера\"]\n    C --> E[\"Прежняя вероятность и ошибка\"]\n    D --> E",
+      "uml_reason": "flowchart TD\n    A[\"Нужно одно и то же значение exp\"] --> B[\"Повторное чтение сохраняет число\"]\n    B --> C[\"Те же p и градиенты\"]\n    C --> D[\"Те же веса и optimizer\"]\n    A --> E[\"Повторный вызов exp убран\"]\n    E --> F[\"Меньше арифметики; небольшой буфер\"]"
+    }
+  ],
+  "rejects": [
+    {
+      "id": "PD01",
+      "decision": "conditional_reserve_not_primary_no_cost_example",
+      "before_ru": "Обе стороны DPO исполняются на одинаковой выровненной длине с правым PAD.",
+      "change_ru": "Каждая сторона исполняется лишь до собственной длины; причинный префикс и активные цели сохраняются.",
+      "positive_ru": "616→556 позиций (−9,74%); allocations4455460456→4110381856 B(−7,75%); обе освоенные строки33/33 и69/69 сохраняются.",
+      "cost_ru": "Пик1348935680→1714892800 B(+27,13%); конечные веса не побитово равны, только в назначенном допуске. Wall36605→17934ms — одно холодное наблюдение, причинность−51% не установлена.",
+      "reason_ru": "Это небаговый метод устранения вычислений на хвосте, но наблюдаемый заметный рост пика надо обсуждать. Не объявлять его причинным постоянным ухудшением, и не прятать его.",
+      "verification": "report_read_this_pass; no_new_raw_equality_claim",
+      "sources": [
+        "PD01_REPORT"
+      ]
+    },
+    {
+      "id": "AT01",
+      "decision": "valid_reserve_lower_priority_for_variety",
+      "positive_ru": "−1182720 B(−8,67%), веса/optimizer/logits побитово те же по отчёту;29 568 массивов×40 B совпали с измерением.",
+      "cost_ru": "Wall119,39→123,65ms(+3,57%); CPU93,75→125ms(+33,3%, грубые тики). Один запуск не устанавливает постоянное замедление.",
+      "reason_ru": "Сильный пример адресации rank4 swap1↔2, но RD и MB уже дают два понятных примера той же семьи устранения координатных массивов. Не отвергнут как неуспешный.",
+      "verification": "report_and_previous_code_review; fresh_current_TensorOps_content_equals_previous",
+      "sources": [
+        "AT01_REPORT"
+      ]
+    },
+    {
+      "id": "AGC1",
+      "decision": "conditional_reserve_with_gc_tradeoff",
+      "positive_ru": "Убрана одна из двух копий первого градиента при сохранённой защитной копии конструктора. Allocations1847691280→1761735608 B(−4,652%); учебный46/46 ответ и конечные веса равны по отчёту.",
+      "cost_ru": "GC110/10/4→114/14/8; heap сразу после422111616→450573384 B(+28461768). После полной GC99599592→99601152 B(+1560).",
+      "reason_ru": "Алгоритм корректен, но время жизни памяти и GC требуют явной оговорки; для простой основной подборки есть чище подтверждённые оси RD/MB/SEXP.",
+      "verification": "report_read_this_pass; no_new_raw_equality_claim",
+      "sources": [
+        "AGC1_REPORT"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "RD01_REPORT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/RD01/a001/results/report.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/neural-sources/experiments-v2__RP01-MICRO__RD01__a001__results__report.md",
+      "line_start": 1,
+      "line_end": 60,
+      "line_count": 60,
+      "sha256": "411e9e22d45019fe8c88f324ad9e98c52b176ff91ad38ed62a883be99f6783de",
+      "role": "primary_experiment",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/RD01/a001/results/report.md#L1-L60"
+    },
+    {
+      "id": "MB01_REPORT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/MB01/a001/results/report.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/neural-sources/experiments-v2__RP01-MICRO__MB01__a001__results__report.md",
+      "line_start": 1,
+      "line_end": 146,
+      "line_count": 146,
+      "sha256": "78fa7cfed73d6c053892c3a082492feb574dc7f7248b7ceb70077d47373fde8e",
+      "role": "primary_experiment",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/MB01/a001/results/report.md#L1-L146"
+    },
+    {
+      "id": "SEXP01_REPORT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/SEXP01/results/attempt-0001/report.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/neural-sources/experiments-v2__RP01-MICRO__SEXP01__results__attempt-0001__report.md",
+      "line_start": 1,
+      "line_end": 167,
+      "line_count": 167,
+      "sha256": "69db744cf2301060896867b10e33cb5941dbc9fa2e58621c75931c62759633dd",
+      "role": "primary_experiment",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/SEXP01/results/attempt-0001/report.md#L1-L167"
+    },
+    {
+      "id": "PD01_REPORT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/PD01/results/attempt-0001/report.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/neural-sources/experiments-v2__RP01-MICRO__PD01__results__attempt-0001__report.md",
+      "line_start": 1,
+      "line_end": 82,
+      "line_count": 82,
+      "sha256": "1eeee5699d3e4d5e43a822c38316acebf720e45af151efd44e4d251a6648938a",
+      "role": "primary_experiment",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/PD01/results/attempt-0001/report.md#L1-L82"
+    },
+    {
+      "id": "AGC1_REPORT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/AGC1/results/report.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/neural-sources/experiments-v2__RP01-MICRO__AGC1__results__report.md",
+      "line_start": 1,
+      "line_end": 75,
+      "line_count": 75,
+      "sha256": "f655e2f7322ae5a6f352a676c8d7aeb7a8aa4f3593fb038f49b1e8ce903f45c2",
+      "role": "primary_experiment",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/AGC1/results/report.md#L1-L75"
+    },
+    {
+      "id": "AT01_REPORT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/AT01/a001/results/report.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/neural-sources/experiments-v2__RP01-MICRO__AT01__a001__results__report.md",
+      "line_start": 1,
+      "line_end": 218,
+      "line_count": 218,
+      "sha256": "d9527a5b08489cc4e8e32dede986c5ec1e54d19fcd2dd7165ea39c2995693ae3",
+      "role": "primary_experiment",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/AT01/a001/results/report.md#L1-L218"
+    },
+    {
+      "id": "RD01_RAW_A",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/RD01/a001/results/A/code-sign.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__RD01__a001__results__A__code-sign.json",
+      "line_start": 2227,
+      "line_end": 2249,
+      "line_count": 2256,
+      "sha256": "b391e24b2bdde4d1750a01ebf0241902cb21445f2b2fb5d5b661c0677be1caa4",
+      "role": "raw_metrics_and_state_readback",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/RD01/a001/results/A/code-sign.json#L2227-L2249"
+    },
+    {
+      "id": "RD01_STATE_A",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/RD01/a001/results/A/code-sign.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__RD01__a001__results__A__code-sign.json",
+      "line_start": 74,
+      "line_end": 82,
+      "line_count": 2256,
+      "sha256": "b391e24b2bdde4d1750a01ebf0241902cb21445f2b2fb5d5b661c0677be1caa4",
+      "role": "raw_state_hashes",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/RD01/a001/results/A/code-sign.json#L74-L82"
+    },
+    {
+      "id": "RD01_RAW_B",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/RD01/a001/results/B/code-sign.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__RD01__a001__results__B__code-sign.json",
+      "line_start": 2227,
+      "line_end": 2249,
+      "line_count": 2256,
+      "sha256": "a79ff12850c97cf446eeb5df7a0dc22708c8da27fbb23d4eb2b1bffa4b79780b",
+      "role": "raw_metrics_and_state_readback",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/RD01/a001/results/B/code-sign.json#L2227-L2249"
+    },
+    {
+      "id": "RD01_STATE_B",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/RD01/a001/results/B/code-sign.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__RD01__a001__results__B__code-sign.json",
+      "line_start": 74,
+      "line_end": 82,
+      "line_count": 2256,
+      "sha256": "a79ff12850c97cf446eeb5df7a0dc22708c8da27fbb23d4eb2b1bffa4b79780b",
+      "role": "raw_state_hashes",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/RD01/a001/results/B/code-sign.json#L74-L82"
+    },
+    {
+      "id": "RD01_DIFF",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/RD01/a001/results/one-factor.diff",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__RD01__a001__results__one-factor.diff",
+      "line_start": 1,
+      "line_end": 46,
+      "line_count": 46,
+      "sha256": "1a5a466de0ddc410985205834d33143426a2fdf90e2e2989262b2456463c32a5",
+      "role": "one_factor_diff",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/RD01/a001/results/one-factor.diff#L1-L46"
+    },
+    {
+      "id": "MB01_RAW_A",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/MB01/a001/results/A/code-sign.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__MB01__a001__results__A__code-sign.json",
+      "line_start": 408,
+      "line_end": 634,
+      "line_count": 648,
+      "sha256": "73157012f1fabed40b4455a91daca6892ef59bb7c22256ebabbdaea1de566739",
+      "role": "raw_metrics_and_state_readback",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/MB01/a001/results/A/code-sign.json#L408-L634"
+    },
+    {
+      "id": "MB01_RAW_B",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/MB01/a001/results/B/code-sign.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__MB01__a001__results__B__code-sign.json",
+      "line_start": 408,
+      "line_end": 634,
+      "line_count": 648,
+      "sha256": "11805470797e1b20ca569d6e3e2e7309fb903a220f4bc2d5c933af89bb9ee4f4",
+      "role": "raw_metrics_and_state_readback",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/MB01/a001/results/B/code-sign.json#L408-L634"
+    },
+    {
+      "id": "MB01_DIFF",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/MB01/a001/one-factor.diff",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__MB01__a001__one-factor.diff",
+      "line_start": 1,
+      "line_end": 51,
+      "line_count": 51,
+      "sha256": "dbe04f350204c290516d0379b882c2fb03557e622cfe38348afe38a65e0fc412",
+      "role": "one_factor_diff",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/MB01/a001/one-factor.diff#L1-L51"
+    },
+    {
+      "id": "MB01_PARITY",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/MB01/a001/results/result.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__MB01__a001__results__result.json",
+      "line_start": 74,
+      "line_end": 173,
+      "line_count": 174,
+      "sha256": "63f12173b770d9296bd6d6098cd395f85e60afa76070aa4a437a493c60248303",
+      "role": "saved_comparison",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/MB01/a001/results/result.json#L74-L173"
+    },
+    {
+      "id": "SEXP01_RESULT",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/SEXP01/results/attempt-0001/result.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/neural-sources/experiments-v2__RP01-MICRO__SEXP01__results__attempt-0001__result.json",
+      "line_start": 1,
+      "line_end": 103,
+      "line_count": 103,
+      "sha256": "bf31294df4f1e098a47932b82f6b0c6847a4a453d0e1d07126c7816fe3f5790a",
+      "role": "saved_comparison",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/SEXP01/results/attempt-0001/result.json#L1-L103"
+    },
+    {
+      "id": "SEXP01_RAW_A",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/SEXP01/results/attempt-0001/A/arm-result.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__SEXP01__results__attempt-0001__A__arm-result.json",
+      "line_start": 18,
+      "line_end": 1338,
+      "line_count": 1340,
+      "sha256": "6d1af68b885003401c875a853b2d80d538d81454cfabfa8dfa34edb1feca828b",
+      "role": "raw_state_moments_panels_cost_compared",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/SEXP01/results/attempt-0001/A/arm-result.json#L18-L1338"
+    },
+    {
+      "id": "SEXP01_RAW_B",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/SEXP01/results/attempt-0001/B/arm-result.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__SEXP01__results__attempt-0001__B__arm-result.json",
+      "line_start": 18,
+      "line_end": 1338,
+      "line_count": 1340,
+      "sha256": "fbbf9cdb5c6934779d650cd331771738478f366011212211dd452c9634d801ef",
+      "role": "raw_state_moments_panels_cost_compared",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/SEXP01/results/attempt-0001/B/arm-result.json#L18-L1338"
+    },
+    {
+      "id": "SEXP01_CODE_B",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/SEXP01/src/B/Trainer.cs",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/sexp-B-Trainer.cs",
+      "line_start": 389,
+      "line_end": 428,
+      "line_count": 451,
+      "sha256": "dba05e48da29245609526a827bfe935ab15920695117ea9cd0c1c914306e9367",
+      "role": "experimental_treatment_code",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/SEXP01/src/B/Trainer.cs#L389-L428"
+    },
+    {
+      "id": "SEXP01_DIFF",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/SEXP01/one-factor.diff",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__SEXP01__one-factor.diff",
+      "line_start": 1,
+      "line_end": 10,
+      "line_count": 10,
+      "sha256": "6de902ec438ef939491b2536cf39bebb2c7adeb39b6adaf2dfe50e55381f7908",
+      "role": "one_factor_diff",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/SEXP01/one-factor.diff#L1-L10"
+    },
+    {
+      "id": "SEXP01_MANIFEST",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "846144464a856cd3f118bcfc0165c8117b06c167",
+      "path": "experiments-v2/RP01-MICRO/SEXP01/source-manifest.json",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/experiments-v2__RP01-MICRO__SEXP01__source-manifest.json",
+      "line_start": 1,
+      "line_end": 6,
+      "line_count": 565,
+      "sha256": "a85ff79982b4b893de4b2df917ca7ddf97a8e3b04dceca9107ac3355086c7fba",
+      "role": "source_pin_manifest",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/846144464a856cd3f118bcfc0165c8117b06c167/experiments-v2/RP01-MICRO/SEXP01/source-manifest.json#L1-L6"
+    },
+    {
+      "id": "CURRENT_RD",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "00.TensorCore/Core/TensorOps.cs",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/current__00.TensorCore__Core__TensorOps.cs",
+      "line_start": 1176,
+      "line_end": 1236,
+      "line_count": 1914,
+      "sha256": "ef5369c979792b05af90ff934ef225b8bcffac81258750892ae519ad1df1dba4",
+      "role": "current_code",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/00.TensorCore/Core/TensorOps.cs#L1176-L1236"
+    },
+    {
+      "id": "CURRENT_MB",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "00.TensorCore/Core/TensorOps.cs",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/current__00.TensorCore__Core__TensorOps.cs",
+      "line_start": 1238,
+      "line_end": 1272,
+      "line_count": 1914,
+      "sha256": "ef5369c979792b05af90ff934ef225b8bcffac81258750892ae519ad1df1dba4",
+      "role": "current_code",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/00.TensorCore/Core/TensorOps.cs#L1238-L1272"
+    },
+    {
+      "id": "CURRENT_MEAN",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "00.TensorCore/Core/TensorOps.cs",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/current__00.TensorCore__Core__TensorOps.cs",
+      "line_start": 535,
+      "line_end": 581,
+      "line_count": 1914,
+      "sha256": "ef5369c979792b05af90ff934ef225b8bcffac81258750892ae519ad1df1dba4",
+      "role": "current_caller_and_scale",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/00.TensorCore/Core/TensorOps.cs#L535-L581"
+    },
+    {
+      "id": "CURRENT_RMS",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "03.TransformerModel/Layers/RmsNorm.cs",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/current__03.TransformerModel__Layers__RmsNorm.cs",
+      "line_start": 26,
+      "line_end": 40,
+      "line_count": 43,
+      "sha256": "5b32e6ee4d33d0d36f130d74f7ba8e3d4bfc385a2090afa92c4ae4378fc78fcb",
+      "role": "current_consumer",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/03.TransformerModel/Layers/RmsNorm.cs#L26-L40"
+    },
+    {
+      "id": "CURRENT_SEXP",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "04.TrainingLoop/Trainer.cs",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/current__04.TrainingLoop__Trainer.cs",
+      "line_start": 389,
+      "line_end": 426,
+      "line_count": 449,
+      "sha256": "2e6f1218281936bf5b3d3f284cea819c9aed0d2271d2960120400b8a7e0940dc",
+      "role": "current_code_without_treatment",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/04.TrainingLoop/Trainer.cs#L389-L426"
+    },
+    {
+      "id": "CURRENT_QUALIFICATION",
+      "repository": "lubochka/llm_mvp_core",
+      "commit": "7e051ca7246efde2864f2bee3a427157063d3cc6",
+      "path": "docs/plans/replanning-possible-diffs/fixes-based-on-experiments/67-transfer-repair-followup-audit-2026-10-27.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/next-neural-sources/current__transfer-repair-audit67.md",
+      "line_start": 13,
+      "line_end": 28,
+      "line_count": 133,
+      "sha256": "d85f9d3a5c3e50ecfcf62bf795feb84664b94c9e1d5ff71b4ba00df749859d49",
+      "role": "documented_open_transfer_qualification",
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/7e051ca7246efde2864f2bee3a427157063d3cc6/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/67-transfer-repair-followup-audit-2026-10-27.md#L13-L28"
+    },
+    {
+      "id": "BOOK_MEAN",
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0051-0063-ch01-geometry-normalisation-and-residuals.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/source-book/0051-0063-ch01-geometry-normalisation-and-residuals.md",
+      "line_start": 218,
+      "line_end": 223,
+      "line_count": 517,
+      "sha256": "f7cf35ab51b1758e9142b7540308a86b7da091f74976db121f9a621941f6faca",
+      "role": "book_formula_context",
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0051-0063-ch01-geometry-normalisation-and-residuals.md#L218-L223"
+    },
+    {
+      "id": "BOOK_CHAIN",
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0312-0317-ch09-motor-taxonomy-and-related-work.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/source-book/0312-0317-ch09-motor-taxonomy-and-related-work.md",
+      "line_start": 83,
+      "line_end": 95,
+      "line_count": 232,
+      "sha256": "d01cb18aeda6e0aa15e2af7747c3d4f12ab2985ff90594dc34a635f1739201e9",
+      "role": "book_formula_context",
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0312-0317-ch09-motor-taxonomy-and-related-work.md#L83-L95"
+    },
+    {
+      "id": "BOOK_CE",
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0318-0324-ch09-mlm-graph-feedforward-and-softmax.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/source-book/0318-0324-ch09-mlm-graph-feedforward-and-softmax.md",
+      "line_start": 21,
+      "line_end": 45,
+      "line_count": 477,
+      "sha256": "3222fea32517b1a337162a2817786e6711a2f1e4ab8ec34a67d5798f8e658770",
+      "role": "book_formula_context",
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0318-0324-ch09-mlm-graph-feedforward-and-softmax.md#L21-L45"
+    },
+    {
+      "id": "BOOK_SHIFT",
+      "repository": "lubochka/xiigen-planning",
+      "commit": "ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d",
+      "path": "llm mvp/math-theory/giansalvo-transformer-vol1/source/0064-0075-ch02-single-head-and-scores.md",
+      "local_path": "/workspace/scratch/ae4dfe50ce67/research/source-book/0064-0075-ch02-single-head-and-scores.md",
+      "line_start": 345,
+      "line_end": 363,
+      "line_count": 426,
+      "sha256": "99dee6906aa9731a013162e29e2ac9505c27aadc5cd816a3221407b9501636c6",
+      "role": "book_formula_context",
+      "url": "https://github.com/lubochka/xiigen-planning/blob/ea9afbc13f5e6e8463fc74c89cfab3d2e154d62d/llm%20mvp/math-theory/giansalvo-transformer-vol1/source/0064-0075-ch02-single-head-and-scores.md#L345-L363"
+    }
+  ]
+}

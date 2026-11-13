@@ -1,0 +1,93 @@
+{
+  "schema": "xiigen.quality_03.10f.work_order.v1",
+  "work_order_id": "QUALITY-03-NON-INTER-RATER-SOURCE-AUTHORING-APPROVAL-AND-PROOF-BUNDLE-10F",
+  "parent_work_order_id": "QUALITY-03-NON-INTER-RATER-SOURCE-DECISIONS-FILES-AND-ROW-ASSIGNMENTS-10E",
+  "generated_at_local": "2026-06-19T17:36:32+03:00",
+  "requested_artifact_type": "source_authoring_approval_files_then_proof_bundle_if_all_gates_pass",
+  "implementation_authorized_now": true,
+  "goal": "Author the missing approval files that 10E could not locally justify, then create proof bundle and run producer/runner only if every source/row decision is approved by evidence.",
+  "allowed_write_scope": [
+    "new timestamped artifact folder under artifacts/extension-runtime-token-quality-learnability/quality-scoring/quality-scoring-<timestamp>/",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+  ],
+  "forbidden": [
+    "git stage/commit/push/branch/checkout",
+    "external AI/web/model calls",
+    "training/DPO/checkpoint/model/locator mutation",
+    "raw external AI output as training target",
+    "false PASS",
+    "self-approving source material from mere file existence"
+  ],
+  "exact_files_decisions_to_author_next": [
+    {
+      "file": "source-license-provenance-partition.jsonl",
+      "required_content": "one row per candidate source with source_ref/path, provenance, license_ref/license_hash/consent, privacy class, universal-only extraction status, allowed_role, common/user-local/diagnostic/quarantine route, and reason",
+      "pass_gate": "No common-training row has UNKNOWN license or missing consent; all private/user-local material is user-local only or quarantine; stack-specific details excluded from universal route."
+    },
+    {
+      "file": "approved-train-source-corpus-manifest.json",
+      "required_content": "approved=true only when all included train corpus refs have accepted license/consent, source_hash, doc_id, universal-only extraction, no raw external AI output, and no stack/private leakage",
+      "pass_gate": "Every included source has license/consent evidence and common_training_allowed=true, or the manifest remains deferred."
+    },
+    {
+      "file": "approved-held-out-split-manifest.json",
+      "required_content": "train/held-out partition by source_ref/doc_id/source_hash/source_disjoint_group with zero overlap and row-level held-out assignment candidates",
+      "pass_gate": "No train/held-out overlap by source_ref, doc_id, source_hash, path, title, prompt hash, correction text, or nearest-neighbour source."
+    },
+    {
+      "file": "approved-raw-private-corpus-ref.json",
+      "required_content": "raw/private refs allowed only for replay diagnostics, with no-training flags, approved paths/hashes, consent status, redaction boundary, and vendor trace exclusions",
+      "pass_gate": "Raw external/vendor output is excluded from training target fields and can only be read by no-leakage/no-memorization replay probes."
+    },
+    {
+      "file": "vendor-trace-exclusion-ledger.jsonl",
+      "required_content": "explicit exclusion rows for token-04 raw-private/vendor/runtime traces and any local transcripts that contain raw external AI outputs or private session text",
+      "pass_gate": "Every raw external AI/vendor trace is diagnostic-only; no training/corpus manifest references it as chosen/rejected/common material."
+    },
+    {
+      "file": "quality-03-row-assignment-approval.jsonl",
+      "required_content": "exact 9 rows with row_id, pair_id, source_scenario_id, approved train corpus ref, approved held-out split ref, approved raw-private ref, approved_assignment, and category proof prerequisites",
+      "pass_gate": "All 9 rows have approved_assignment not NONE/DEFER and every referenced manifest exists, parses, is approved, and matches row_id/pair_id/source_scenario_id."
+    },
+    {
+      "file": "approved-held-out-source-corpus-manifest.json",
+      "required_content": "summary manifest tying train corpus, held-out split, raw-private ref, vendor exclusion, and 9 approved row assignments together",
+      "pass_gate": "approved=true and manifest_status=PASS only after the prior files pass; otherwise emit no-PASS and do not run producer/runner."
+    },
+    {
+      "file": "row-specific-nearest-neighbour-index-manifest.json",
+      "required_content": "built only after approved corpus exists; includes algorithm, threshold, top_k, corpus manifest ref, hash, and no-cross-bundle path validation",
+      "pass_gate": "index_built=true, corpus manifest approved, and all top-k checks are row-specific and source-disjoint-safe."
+    }
+  ],
+  "testing_required_before_proof_bundle": [
+    "JSON/JSONL parse for every authored file.",
+    "Assert accepted_license_packets > 0 only from accepted local evidence, not transcript text.",
+    "Assert common_training_allowed rows have license_ref and license_hash not UNKNOWN.",
+    "Assert train/held-out overlap count is 0 by source_ref/doc_id/source_hash/path/title/prompt/correction/nearest-neighbour source.",
+    "Assert raw-private refs are diagnostic-only and excluded from training manifests.",
+    "Assert exactly 9 row assignment approval rows and no approved_assignment is NONE/DEFER.",
+    "Assert universal-orchestration-only extraction excludes stack-specific/private details.",
+    "Run proof producer and proof runner only after the approved manifest and proof bundle exist.",
+    "Run git diff --check for new artifacts and state.",
+    "Run focused tests only if code changes."
+  ],
+  "proof_bundle_allowed_only_if": [
+    "approved train source corpus manifest exists and approved=true",
+    "approved held-out split manifest exists and source-disjoint overlap is zero",
+    "approved raw-private corpus ref exists with replay-only role",
+    "vendor trace exclusion ledger exists and excludes raw external AI output from training targets",
+    "all 9 row assignments are approved",
+    "row-specific NN/ablation/no-leakage/no-memorization artifacts are executed and pass with contained refs and valid hashes"
+  ],
+  "if_not_enough": "Emit updated no-PASS packet; keep counts unchanged; do not create proof bundle or run producer/runner.",
+  "verify": [
+    "JSON/JSONL parse",
+    "producer + proof runner only if valid proof bundle is created",
+    "git diff --check",
+    "whitespace check new artifacts"
+  ],
+  "no_operator_question_needed": true,
+  "git_authority": "forbidden",
+  "parent_will_perform_commit_push_after_review": true
+}

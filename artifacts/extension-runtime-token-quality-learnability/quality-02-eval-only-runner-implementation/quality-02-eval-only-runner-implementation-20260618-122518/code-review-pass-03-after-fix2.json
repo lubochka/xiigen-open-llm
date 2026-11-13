@@ -1,0 +1,207 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner_code_review_pass_03_after_fix2.v1",
+  "review_id": "code-review-pass-03-after-fix2",
+  "phase_id": "QUALITY-02-EVAL-ONLY-RUNNER-IMPLEMENTATION-NO-EVAL-EXECUTION",
+  "run_id": "quality-02-eval-only-runner-implementation-20260618-122518",
+  "generated_at_local": "2026-06-18T13:41:51.7867790+03:00",
+  "run_root": "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518",
+  "reviewer_role": "CODE_REVIEW_INTERNAL",
+  "requested_model": "gpt-5.5",
+  "requested_reasoning_effort": "xhigh",
+  "git_authority": "forbidden",
+  "commit_push_authorized": false,
+  "git_mutations_performed": [],
+  "verdict": "FAIL",
+  "product_readiness_claimed": false,
+  "actual_approved_eval_executed": false,
+  "synthetic_fixture_only": true,
+  "evidence_scope": "local_private_eval_only",
+  "findings": [
+    {
+      "id": "CR3-01",
+      "severity": "HIGH",
+      "title": "Raw private text can leak through excluded-row identifiers into shared report artifacts",
+      "locations": [
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 169
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 170
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 269
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 270
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 275
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 296
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 297
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 299
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 434
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 440
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 441
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 445
+        }
+      ],
+      "evidence": [
+        "ValidateRows calls ValidateRunnableRow only for USER_ADAPTIVE_EVAL_ONLY rows.",
+        "The copied-text/private-marker validators are inside ValidateRunnableRow.",
+        "BuildExcludedPair copies excluded-row ScenarioId, PairId, and non-empty EvidenceScope into pair_results.",
+        "pair_results are written to report JSON and Markdown."
+      ],
+      "probe": {
+        "case": "evidence-only-sentinel",
+        "input_route": "EVIDENCE_ONLY",
+        "sentinel_fields": [
+          "scenario_id",
+          "pair_id"
+        ],
+        "exit_code": 0,
+        "report_json_written": true,
+        "score_rows_jsonl_written": true,
+        "markdown_written": true,
+        "sentinel_found_in_shared_outputs": true,
+        "sentinel_locations": [
+          "quality-02-eval-only-runner-report.json",
+          "quality-02-eval-only-runner-report.md"
+        ]
+      },
+      "why_it_matters": "Excluded rows are shared evidence context. They are not scored, but they are still emitted. Review question 2 requires raw private sentinel text to be blocked/redacted before shared JSON, JSONL, Markdown, and evidence.",
+      "required_fix": [
+        "Validate all input-derived strings that can be emitted for every route before BuildReport, not only USER_ADAPTIVE_EVAL_ONLY.",
+        "At minimum, apply ValidateCopiedText to scenario_id, pair_id, and any non-empty emitted evidence_scope for all rows.",
+        "Apply the same rule to any future emitted excluded-row fields, or avoid copying unvalidated excluded-row input into shared reports.",
+        "Add targeted tests for EVIDENCE_ONLY and COMMON_BLOCKED rows with raw private markers in emitted identifiers/scope, asserting EVAL_ONLY_INPUT_VALIDATION_FAILED and no JSON, JSONL, or Markdown report files.",
+        "Add a negative CLI/shared-artifact scan for excluded-row sentinel text."
+      ]
+    }
+  ],
+  "review_question_results": {
+    "semantically_malformed_jsonl_layer_inputs_null_operation_result_no_writes": true,
+    "raw_private_sentinel_blocked_before_failure_codes_reviewer_notes_json_jsonl_markdown_shared_evidence": false,
+    "previous_accepted_fixes_preserved": true,
+    "targeted_tests_build_json_jsonl_git_diff_checks_pass": true,
+    "no_hidden_deterministic_shortcut_becomes_semantic_trainable_product_authority": true,
+    "core_boundary_and_thin_adapter_boundaries_respected": true,
+    "product_claims_remain_closed": true
+  },
+  "closed_pass_02_items": [
+    {
+      "id": "CR2-01",
+      "status": "PASS",
+      "evidence": "layer_inputs:null CLI probe returned EVAL_ONLY_INPUT_VALIDATION_FAILED, exit code 3, with no report JSON, score rows JSONL, or Markdown writes."
+    },
+    {
+      "id": "CR2-02-runnable-failure-codes",
+      "status": "PASS",
+      "evidence": "Row-level and layer-level failure_codes private sentinel probes returned EVAL_ONLY_INPUT_VALIDATION_FAILED, exit code 3, with no report JSON, score rows JSONL, or Markdown writes."
+    }
+  ],
+  "check_results": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ExtensionEvalOnlyQualityRunner\"",
+      "status": "PASS",
+      "evidence": "Failed: 0, Passed: 13, Skipped: 0, Total: 13"
+    },
+    {
+      "command": "dotnet build 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+      "status": "PASS",
+      "evidence": "Build succeeded. 0 Warning(s), 0 Error(s)"
+    },
+    {
+      "command": "JSON parse pass-02 review/fix evidence, current report/checks/self-check, and execution state",
+      "status": "PASS",
+      "evidence": "All selected JSON files parsed with ConvertFrom-Json."
+    },
+    {
+      "command": "JSONL parse synthetic input and generated score rows",
+      "status": "PASS",
+      "evidence": "Parsed 2 JSONL files and 4 total non-empty rows."
+    },
+    {
+      "command": "current evidence raw-private marker scan",
+      "status": "PASS",
+      "evidence": "No configured raw-marker values matched in the active evidence folder."
+    },
+    {
+      "command": "product-claim scan of current report/check evidence",
+      "status": "PASS",
+      "evidence": "No forbidden true readiness/product/runtime/training claim found."
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS",
+      "evidence": "Exited 0."
+    },
+    {
+      "command": "layer_inputs:null CLI probe",
+      "status": "PASS",
+      "evidence": "EVAL_ONLY_INPUT_VALIDATION_FAILED, exit code 3, no report JSON, no score rows JSONL, no Markdown."
+    },
+    {
+      "command": "row-level failure_codes sentinel CLI probe",
+      "status": "PASS",
+      "evidence": "EVAL_ONLY_INPUT_VALIDATION_FAILED, exit code 3, no report JSON, no score rows JSONL, no Markdown."
+    },
+    {
+      "command": "layer-level failure_codes sentinel CLI probe",
+      "status": "PASS",
+      "evidence": "EVAL_ONLY_INPUT_VALIDATION_FAILED, exit code 3, no report JSON, no score rows JSONL, no Markdown."
+    },
+    {
+      "command": "EVIDENCE_ONLY identifier sentinel CLI probe",
+      "status": "FAIL",
+      "evidence": "Exited 0, wrote report JSON/JSONL/Markdown, and copied the sentinel into report JSON and Markdown."
+    }
+  ],
+  "boundary_review": {
+    "project_standards": "FAIL",
+    "tests_gate_b": "FAIL",
+    "core_boundary": "PASS",
+    "thin_adapter_boundary": "PASS",
+    "hidden_deterministic_shortcut_sweep": "PASS",
+    "synthetic_fixture_boundary": "PASS",
+    "product_claims": "PASS"
+  },
+  "hidden_deterministic_shortcut_sweep": {
+    "hidden_deterministic_mechanism_found": false,
+    "allowed_helpers": [
+      "ExtensionQualityScoring.Score deterministic rubric scoring labelled eval-only/helper/internal-detail/baseline",
+      "Allowed host/method/privacy sets used as validation gates"
+    ],
+    "deterministic_helpers_not_runtime_trainable_authority": true
+  },
+  "changed_review_artifact_files": [
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-pass-03-after-fix2.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-pass-03-after-fix2.json"
+  ],
+  "next_action": "Run a bounded fix worker for CR3-01, then perform another independent re-review before any parent commit/push."
+}

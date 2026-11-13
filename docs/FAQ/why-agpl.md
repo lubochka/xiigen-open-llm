@@ -1,0 +1,7 @@
+# Note — Why AGPL / why copyleft
+
+**Trend.** As more AI tooling ships as a hosted service, project maintainers increasingly ask which open-source license actually keeps a released codebase open when others run it over a network.
+
+**Why this project chose AGPLv3.** LlmFromScratch is published under the GNU Affero General Public License v3.0 (`AGPL-3.0-only`). AGPL is a strong copyleft license: like GPLv3 it requires that anyone who distributes a modified version also make their source available, and it adds one thing GPL does not — it closes the "SaaS loophole." If someone runs a modified version of this code as a network service, the AGPL requires them to offer the corresponding source to the users of that service. Plain GPL only triggers on distribution of binaries, so a hosted-only fork could stay closed; AGPL does not allow that. This is a deliberate choice by the maintainer (Luba Karpenko, Genie Soft LTD) to keep the project and its derivatives open even when they are used behind a network boundary. The identifier is `AGPL-3.0-only` (strictly version 3, no "or-later"). See `LICENSE` and the section 7 attribution note; the same badge appears in the README.
+
+**Honesty boundary.** This note explains a licensing choice, not a product feature. It does not claim any trained capability; it only states why the repository uses copyleft. Whether copyleft is the right fit for a given downstream use is the reader's decision — the note describes the license, it does not give legal advice.

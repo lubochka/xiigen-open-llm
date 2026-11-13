@@ -1,0 +1,245 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner_code_review_pass.v1",
+  "review_id": "code-review-pass-01",
+  "phase_id": "QUALITY-02-EVAL-ONLY-RUNNER-IMPLEMENTATION-NO-EVAL-EXECUTION",
+  "run_root": "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518",
+  "reviewer_role": "CODE_REVIEW_INTERNAL",
+  "requested_model": "gpt-5.5",
+  "requested_reasoning_effort": "xhigh",
+  "runtime_model_or_unavailable": "unavailable",
+  "runtime_reasoning_effort_or_unavailable": "unavailable",
+  "mode_verified_from_work_order": true,
+  "git_authority": "forbidden",
+  "verdict": "FAIL",
+  "product_readiness_claimed": false,
+  "fix_subagent_required": true,
+  "review_scope": [
+    "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+    "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunnerContracts.cs",
+    "43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+    "43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Program.cs",
+    "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+    "docs/COMPONENT-INTERFACES.md",
+    "docs/SUBPROJECT-MAP.md",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/"
+  ],
+  "loaded_rules_and_guides": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/HOW-TO-USE-SKILLS.md",
+    "docs/skills/generated-code-review-SKILL.md",
+    "docs/skills/implementation-integrity-SKILL.md",
+    "docs/skills/trainable-architecture-decision-SKILL.md",
+    "docs/skills/test-integrity-SKILL.md",
+    "docs/skills/verification-before-completion-SKILL.md",
+    "docs/skills/output-readability-gate-SKILL.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation-packet/quality-02-eval-only-runner-implementation-packet-20260618-114340/implementation-packet.json"
+  ],
+  "findings": [
+    {
+      "id": "CR-01",
+      "severity": "HIGH",
+      "title": "Public contract names drift from the accepted implementation packet",
+      "locations": [
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunnerContracts.cs",
+          "line": 13
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunnerContracts.cs",
+          "line": 38
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunnerContracts.cs",
+          "line": 59
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunnerContracts.cs",
+          "line": 107
+        },
+        {
+          "file": "docs/COMPONENT-INTERFACES.md",
+          "line": 814
+        }
+      ],
+      "why_it_matters": "The accepted packet required runner-specific public records, but the implementation exposes generic public names such as InputRow, Report, Validation, and ClaimLocks in SmartSkillsDomain. This makes the structured API ambiguous and does not match the accepted work-order contract.",
+      "required_fix": "Rename public records to the packet-approved ExtensionEvalOnlyQualityRunner-prefixed names, update runner methods, tests, docs, and regenerated evidence."
+    },
+    {
+      "id": "CR-02",
+      "severity": "HIGH",
+      "title": "Required scorer-contract provenance fields are not enforced before scoring",
+      "locations": [
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 195
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 205
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 218
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunnerContracts.cs",
+          "line": 24
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunnerContracts.cs",
+          "line": 27
+        }
+      ],
+      "why_it_matters": "Rows can be scored without prompt_sha256, mode, or a first-class local_private_eval_only evidence scope. That weakens provenance, paired-mode, leakage/no-memorization, and evidence-scope gates.",
+      "required_fix": "Require prompt_sha256, mode, and explicit evidence scope for scored rows; enforce local_private_eval_only; add missing-field tests; emit the scope in JSON, JSONL, and Markdown reports."
+    },
+    {
+      "id": "CR-03",
+      "severity": "MEDIUM",
+      "title": "Invalid public inputs can still throw instead of returning OperationResult failures",
+      "locations": [
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 54
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 96
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 113
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 121
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 149
+        }
+      ],
+      "why_it_matters": "Public methods return OperationResult<T>, but null options, rows, or report arguments can dereference, and the read path does not catch unauthorized access. Invalid input should be reported as a failure result so the CLI can return stable errors.",
+      "required_fix": "Add null guards and unauthorized-read mapping, then add targeted tests for null inputs and unreadable input paths where practical."
+    },
+    {
+      "id": "CR-04",
+      "severity": "MEDIUM",
+      "title": "Synthetic fixture evidence is not first-class in the generated score report",
+      "locations": [
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunnerContracts.cs",
+          "line": 85
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 250
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 253
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 321
+        },
+        {
+          "file": "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/quality-02-eval-only-runner-report.json",
+          "line": 131
+        },
+        {
+          "file": "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/quality-02-eval-only-runner-report.json",
+          "line": 329
+        }
+      ],
+      "why_it_matters": "The surrounding implementation report says the run was synthetic and no approved private eval executed, but the runner-generated report itself sets no_eval_execution=false and eval_runner_executed=true without a synthetic_fixture_only or actual_approved_eval_executed=false machine field.",
+      "required_fix": "Add explicit SyntheticFixtureOnly, ActualApprovedEvalExecuted, and EvidenceScope fields, set them from options/input, update Markdown and JSON output, and test that synthetic reports cannot be mistaken for approved eval execution."
+    },
+    {
+      "id": "CR-05",
+      "severity": "MEDIUM",
+      "title": "Privacy coverage only proves one non-emitted field, not all copied fields",
+      "locations": [
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 309
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 311
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 313
+        },
+        {
+          "file": "43.SmartSkillsDomain/ExtensionEvalOnlyQualityRunner.cs",
+          "line": 390
+        },
+        {
+          "file": "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+          "line": 172
+        },
+        {
+          "file": "Tests/ExtensionEvalOnlyQualityRunnerTests.cs",
+          "line": 184
+        }
+      ],
+      "why_it_matters": "The test only puts the sentinel secret in RawPrivateInputRef, which is not emitted. Fields copied into output, including baseline/adaptive refs, evidence refs, and reviewer notes, are not covered by the privacy test.",
+      "required_fix": "Validate copied fields as redacted refs or approved non-private notes where possible, add sentinel tests for copied fields, and set RawPrivateTextCopied=false only when emitted artifacts prove the sentinel is absent."
+    }
+  ],
+  "check_results": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ExtensionEvalOnlyQualityRunner\"",
+      "status": "PASS",
+      "evidence": "Failed: 0, Passed: 8, Skipped: 0, Total: 8"
+    },
+    {
+      "command": "dotnet build 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+      "status": "PASS",
+      "evidence": "Build succeeded. 0 Warning(s), 0 Error(s)"
+    }
+  ],
+  "broad_tests_run": false,
+  "boundary_review": {
+    "project_standards": "FAIL",
+    "tests_gate_b": "FAIL",
+    "core_boundary": "PASS",
+    "thin_adapters": "PASS",
+    "hidden_deterministic_shortcut_sweep": "PASS",
+    "deterministic_helper_labels": "PASS",
+    "docs_qa_dashboard_impact": "PARTIAL",
+    "claim_locks": "PARTIAL",
+    "evidence_artifact_quality": "PARTIAL",
+    "source_privacy": "FAIL"
+  },
+  "hidden_deterministic_shortcut_sweep": {
+    "searched": [
+      "scorer final authority",
+      "router",
+      "lookup",
+      "counter",
+      "exact prompt replay",
+      "exact source replay",
+      "static fixture",
+      "prompt hash shortcut",
+      "first-row fallback",
+      "candidate-order shortcut",
+      "filename/path/source-id authority",
+      "static threshold presented as trained logic"
+    ],
+    "found_allowed_helpers": [
+      "ExtensionQualityScoring.Score deterministic rubric scoring labelled eval-only/helper/internal-detail/baseline",
+      "Allowed host/method/privacy status sets used as validation gates"
+    ],
+    "hidden_deterministic_mechanism_found": false
+  },
+  "changed_review_artifact_files": [
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-pass-01.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-review-pass-01.json"
+  ]
+}

@@ -1,0 +1,271 @@
+{
+  "schema": "xiigen.quality_02.scorer_contract.v1",
+  "phase_id": "QUALITY-02-SCORER-EVAL-ONLY-RUNNER-PREP-NO-EVAL-EXECUTION",
+  "run_id": "quality-02-scorer-eval-only-runner-prep-20260618-095502",
+  "generated_at_local": "2026-06-18T09:55:02+03:00",
+  "status": "SCORER_CONTRACT_PREPARED_NO_EVAL_NO_SCORES_NO_CLAIMS",
+  "purpose": "Define the future eval-only scorer contract without executing eval, model calls, host runtime, training, checkpoint mutation, target promotion, or locator update.",
+  "source_refs": {
+    "plan": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-PLAN-v1.md",
+    "state": "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json",
+    "quality_01_folder": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007",
+    "eval_prompt_pack": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/eval-prompt-pack.json",
+    "quality_rubric_ru": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/quality-rubric-ru.json",
+    "future_runner_input_contract": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/future-runner-input-contract.json",
+    "quality_claim_firewall": "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/quality-claim-firewall.json"
+  },
+  "scope_locks": {
+    "external_web_or_ai_used": false,
+    "host_runtime_started": false,
+    "eval_runner_executed": false,
+    "model_eval_executed": false,
+    "training_started": false,
+    "model_checkpoint_locator_mutated": false,
+    "source_code_edited": false,
+    "commit_push_authorized_for_subagent": false
+  },
+  "counts": {
+    "scenario_total": 12,
+    "user_adaptive_eval_only_scenarios": 7,
+    "user_adaptive_eval_only_pair_rows": 21,
+    "evidence_only_scenarios": 5,
+    "evidence_only_pair_rows": 33,
+    "common_blocked_scenarios": 12,
+    "common_blocked_pair_rows": 54
+  },
+  "route_policy": {
+    "runnable_later_only_route": "USER_ADAPTIVE_EVAL_ONLY",
+    "runnable_later_only_scenario_ids": [
+      "TQ-001-prompt-task-documentation",
+      "TQ-002-prompt-task-interrupt",
+      "TQ-003-prompt-task-redaction",
+      "TQ-006-orchestration-learning-lifecycle",
+      "TQ-007-skill-architecture-audit",
+      "TQ-008-skill-debug-runtime",
+      "TQ-009-skill-learning-safety"
+    ],
+    "evidence_only_non_runnable_scenario_ids": [
+      "TQ-004-orchestration-runtime-proof",
+      "TQ-005-orchestration-token-pairing",
+      "TQ-010-mixed-no-overclaim",
+      "TQ-011-mixed-shortcut-audit",
+      "TQ-012-mixed-final-readiness"
+    ],
+    "common_route_status": "COMMON_BLOCKED_FOR_ALL_12_SCENARIOS_AND_54_PAIR_ROWS",
+    "runner_may_start_now": false,
+    "score_may_be_written_now": false
+  },
+  "required_input_record_fields_for_future_runner": [
+    "scenario_id",
+    "pair_id",
+    "route",
+    "approval_ref",
+    "user_local_root_ref",
+    "raw_private_input_ref",
+    "redacted_shared_evidence_ref",
+    "source_ref",
+    "doc_id",
+    "prompt_sha256",
+    "host_name",
+    "method",
+    "mode",
+    "baseline_output_ref",
+    "adaptive_output_ref",
+    "privacy_redaction_status",
+    "no_common_mutation_attestation",
+    "no_training_mutation_attestation",
+    "no_model_checkpoint_locator_mutation_attestation"
+  ],
+  "required_pre_score_gates_for_future_runner": [
+    "G1_CURRENT_APPROVAL",
+    "G2_PRIVACY_REDACTION",
+    "G3_SOURCE_SEPARATION",
+    "G4_NO_COMMON_MUTATION_LOCK",
+    "G5_NO_TRAINING_MUTATION_LOCK",
+    "G6_EVIDENCE_LABELS",
+    "G7_EVIDENCE_ONLY_EXCLUSION",
+    "G8_ROLLBACK_SAFETY_IF_TRAINING_LATER_AUTHORIZED",
+    "PAIRING_INTEGRITY_FOR_SAME_PAIR_ID",
+    "BASELINE_AND_ADAPTIVE_OUTPUT_REFS_EXIST",
+    "REVIEWER_NOTE_PRESENT"
+  ],
+  "score_anchors": [
+    {
+      "score": 0,
+      "anchor": "catastrophic",
+      "meaning": "Breaks approval/source/privacy boundary, executes forbidden work, or makes a dangerous overclaim."
+    },
+    {
+      "score": 1,
+      "anchor": "wrong",
+      "meaning": "Main task is misunderstood; required layer is absent or replaced by dashboard/helper/static evidence."
+    },
+    {
+      "score": 2,
+      "anchor": "incomplete",
+      "meaning": "Partly correct but misses an important gate, route, evidence reference, or failure reason."
+    },
+    {
+      "score": 3,
+      "anchor": "usable_with_repair",
+      "meaning": "Mostly understandable but wording, reviewer note, route separation, or taxonomy is incomplete."
+    },
+    {
+      "score": 4,
+      "anchor": "pass",
+      "meaning": "Layer is correct, checkable, human-readable, evidence-backed, and has no regression or overclaim."
+    }
+  ],
+  "scored_layers": [
+    {
+      "layer_id": "prompt_to_task",
+      "machine_target": "PromptToTaskMachine",
+      "output_field": "per_layer_scores.prompt_to_task",
+      "score_type": "integer_0_to_4_future_only",
+      "pass_rule": "score >= 4 and no critical failure",
+      "required_reviewer_note": true,
+      "failure_labels": [
+        "FAIL_PROMPT_TO_TASK_REGRESSION",
+        "FAIL_APPROVAL_BOUNDARY",
+        "FAIL_SOURCE_DISJOINT_SPLIT",
+        "FAIL_SOURCE_LEAKAGE",
+        "FAIL_MEMORIZATION_EXACT_PROMPT",
+        "FAIL_NARROW_STAGED_ONLY",
+        "FAIL_OVERCLAIM"
+      ]
+    },
+    {
+      "layer_id": "orchestration_reasoning",
+      "machine_target": "OrchestrationReasoningMachine",
+      "output_field": "per_layer_scores.orchestration_reasoning",
+      "score_type": "integer_0_to_4_future_only",
+      "pass_rule": "score >= 4 and phase order preserved",
+      "required_reviewer_note": true,
+      "failure_labels": [
+        "FAIL_ORCHESTRATION_REGRESSION",
+        "FAIL_PHASE_ORDER",
+        "FAIL_RUNTIME_SUBSTITUTION",
+        "FAIL_HELD_OUT_MISSING",
+        "FAIL_ABLATION_EXPLAINS_GAIN",
+        "FAIL_NARROW_STAGED_ONLY",
+        "FAIL_OVERCLAIM"
+      ]
+    },
+    {
+      "layer_id": "skill_selection",
+      "machine_target": "SkillSelectionMachine",
+      "output_field": "per_layer_scores.skill_selection",
+      "score_type": "integer_0_to_4_future_only",
+      "pass_rule": "score >= 4 and no leakage signal",
+      "required_reviewer_note": true,
+      "failure_labels": [
+        "FAIL_SKILL_SELECTION_REGRESSION",
+        "FAIL_LEAKAGE_SIGNAL",
+        "FAIL_CANDIDATE_ORDER_SHORTCUT",
+        "FAIL_NO_MEMORIZATION_CONTROL",
+        "FAIL_DETERMINISTIC_BASELINE_ONLY",
+        "FAIL_NARROW_STAGED_ONLY",
+        "FAIL_SKILL_MISSING"
+      ]
+    },
+    {
+      "layer_id": "final_usefulness",
+      "machine_target": "FinalOutputUsefulness",
+      "output_field": "per_layer_scores.final_usefulness",
+      "score_type": "integer_0_to_4_future_only",
+      "pass_rule": "score >= 4 and no overclaim",
+      "required_reviewer_note": true,
+      "failure_labels": [
+        "FAIL_HUMAN_UNREADABLE",
+        "FAIL_OVERCLAIM",
+        "FAIL_QUALITY_REGRESSION",
+        "INCONCLUSIVE_REVIEW",
+        "SEMANTIC_CLAIM_BLOCKED_NARROW_LAYER_EVIDENCE"
+      ]
+    }
+  ],
+  "future_output_record_contract": {
+    "record_type": "quality_score_future_runner_output",
+    "score_status_allowed_now": [
+      "NOT_SCORED_DRY_RUN_ONLY",
+      "NON_RUNNABLE_EVIDENCE_ONLY",
+      "COMMON_BLOCKED"
+    ],
+    "score_status_allowed_later_after_approval": [
+      "SCORED",
+      "INCONCLUSIVE_REVIEW",
+      "BLOCKED_BY_GATE",
+      "NON_RUNNABLE_EVIDENCE_ONLY",
+      "COMMON_BLOCKED"
+    ],
+    "required_fields": [
+      "schema",
+      "record_type",
+      "phase_id",
+      "scenario_id",
+      "pair_id",
+      "route",
+      "runnable_now",
+      "runnable_later_after_approval",
+      "score_status",
+      "mode",
+      "host_name",
+      "method",
+      "prompt_sha256",
+      "baseline_output_ref",
+      "adaptive_output_ref",
+      "per_layer_scores",
+      "failure_codes",
+      "human_reviewer_note",
+      "inter_rater_status",
+      "quality_regression",
+      "semantic_quality_claim_allowed",
+      "claim_locks"
+    ],
+    "per_layer_score_shape": {
+      "pass_fail": "PASS|FAIL|INCONCLUSIVE|NOT_SCORED",
+      "failure_codes": "array<string>",
+      "reviewer_note": "string",
+      "evidence_refs": "array<string>",
+      "score_0_to_4": "integer|null"
+    },
+    "comparison_rule": "Adaptive must be >= baseline for every layer and add no new failure code; averaging cannot hide a failed layer.",
+    "review_rule": "Every scored row needs a human-readable reviewer note; high-risk rows need independent review/adjudication."
+  },
+  "failure_taxonomy_global": [
+    "FAIL_APPROVAL_BOUNDARY",
+    "FAIL_TARGET_ROLLBACK_BOUNDARY",
+    "FAIL_RUNTIME_SUBSTITUTION",
+    "FAIL_PHASE_ORDER",
+    "FAIL_LEAKAGE_SIGNAL",
+    "FAIL_SKILL_MISSING",
+    "FAIL_HUMAN_UNREADABLE",
+    "FAIL_OVERCLAIM",
+    "FAIL_QUALITY_REGRESSION",
+    "INCONCLUSIVE_REVIEW",
+    "FAIL_SOURCE_DISJOINT_SPLIT",
+    "FAIL_HELD_OUT_MISSING",
+    "FAIL_NO_MEMORIZATION_CONTROL",
+    "FAIL_ABLATION_EXPLAINS_GAIN",
+    "FAIL_DETERMINISTIC_BASELINE_ONLY",
+    "FAIL_NARROW_STAGED_ONLY",
+    "SEMANTIC_CLAIM_BLOCKED_NARROW_LAYER_EVIDENCE",
+    "INCONCLUSIVE_QUALITY_PAIRING",
+    "NON_RUNNABLE_EVIDENCE_ONLY",
+    "COMMON_BLOCKED_NO_PERMISSIVE_SOURCE"
+  ],
+  "claim_locks": {
+    "token_savings_claimed": false,
+    "quality_improvement_claimed": false,
+    "semantic_quality_claimed": false,
+    "semantic_readiness_claimed": false,
+    "learnability_claimed": false,
+    "live_host_readiness_claimed": false,
+    "common_readiness_claimed": false,
+    "strict_quality03_ready": false,
+    "training_ready_claimed": false,
+    "target_promotion_claimed": false,
+    "locator_update_claimed": false,
+    "final_readiness_claimed": false
+  }
+}

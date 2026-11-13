@@ -1,0 +1,84 @@
+{
+    "schema":  "xiigen.quality_03.second_rater_requirements_schema.v1",
+    "work_order_id":  "QUALITY-03-INDEPENDENT-SECOND-RATER-ADJUDICATION-PRODUCE-09H",
+    "run_id":  "quality-scoring-20260619-133507",
+    "generated_at_local":  "2026-06-19T13:35:07+03:00",
+    "decision":  "DEFERRED_REQUIREMENTS_SCHEMA_FOR_FUTURE_AUTHORIZED_PACKET",
+    "purpose":  "Defines the minimum fields required before any row can bind independent_second_rater_adjudication_pass_ref.",
+    "packet_requirements":  {
+                                "required_packet_level_fields":  [
+                                                                     "schema",
+                                                                     "packet_id",
+                                                                     "generated_at_local_or_utc",
+                                                                     "authorized_source_type",
+                                                                     "authorization_ref",
+                                                                     "reviewer_id_2",
+                                                                     "reviewer_independence_basis",
+                                                                     "reviewed_rows_count",
+                                                                     "row_results",
+                                                                     "external_ai_model_called",
+                                                                     "training_dpo_checkpoint_model_locator_mutation",
+                                                                     "claim_locks"
+                                                                 ],
+                                "allowed_authorized_source_type":  [
+                                                                       "human_reviewer",
+                                                                       "approved_independent_local_model_or_rater",
+                                                                       "explicitly_authorized_external_model"
+                                                                   ],
+                                "reviewer_id_2_rules":  [
+                                                            "must be non-empty",
+                                                            "must be distinct from reviewer_id_1",
+                                                            "must identify the human/local-rater/external-rater source",
+                                                            "must not equal this producing sub-agent id",
+                                                            "must not be deterministic proof-contract runner label"
+                                                        ],
+                                "required_row_fields":  [
+                                                            "row_id",
+                                                            "pair_id",
+                                                            "scenario_id",
+                                                            "host",
+                                                            "method",
+                                                            "evidence_class",
+                                                            "prompt_sha256",
+                                                            "reviewer_id_1",
+                                                            "reviewer_id_2",
+                                                            "reviewed_baseline_refs",
+                                                            "reviewed_adaptive_refs",
+                                                            "rubric_ref",
+                                                            "second_rater_scores_or_decision",
+                                                            "agreement_with_reviewer_1",
+                                                            "adjudication_notes",
+                                                            "adjudication_status",
+                                                            "independent_second_rater_available",
+                                                            "faked_independence",
+                                                            "pass",
+                                                            "blocking_ref_resolved",
+                                                            "claim_locks"
+                                                        ],
+                                "pass_rules":  [
+                                                   "independent_second_rater_available must be true",
+                                                   "faked_independence must be false",
+                                                   "reviewer_id_2 must be present and authorized",
+                                                   "adjudication_notes must explain agreement/disagreement and final row decision",
+                                                   "pass=true may only mean the second-rater proof ref is present; it does not by itself claim quality/readiness/semantic/learnability"
+                                               ],
+                                "required_refs":  [
+                                                      "source packet artifact path with #row_id anchors",
+                                                      "reviewed baseline/adaptive refs",
+                                                      "rubric/criteria ref",
+                                                      "authorization/approval ref",
+                                                      "reviewer manifest/model manifest when local model/rater is used"
+                                                  ]
+                            },
+    "explicit_non_authorized_sources":  [
+                                            "same sub-agent self-review",
+                                            "deterministic self-checker",
+                                            "proof-contract runner report",
+                                            "single-reviewer rows",
+                                            "dry-run scoring rows",
+                                            "rows with reviewer_id_2 null",
+                                            "external model output without current authorization"
+                                        ],
+    "current_work_order_external_ai_model_allowed":  false,
+    "current_work_order_training_dpo_checkpoint_model_locator_mutation_allowed":  false
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "xiigen.quality_03.non_inter_rater_source_decisions_10e.work_order.v1",
+  "work_order_id": "QUALITY-03-NON-INTER-RATER-SOURCE-DECISIONS-FILES-AND-ROW-ASSIGNMENTS-10E",
+  "parent_work_order_id": "QUALITY-03-NON-INTER-RATER-SOURCE-AUTHORITY-AND-PROOF-BUNDLE-10D",
+  "generated_at_local": "2026-06-19T17:16:30+03:00",
+  "requested_artifact_type": "source_decisions_files_and_row_assignments_or_no_pass_packet",
+  "implementation_authorized_now": true,
+  "goal": "Continue without asking Luba by resolving exact local source decisions/files for approved corpus, held-out split, raw-private replay refs, vendor trace exclusion, and row assignments; create proof bundle only if those files prove PASS.",
+  "allowed_write_scope": [
+    "new timestamped folder under artifacts/extension-runtime-token-quality-learnability/quality-scoring/quality-scoring-<timestamp>/",
+    "docs/plans/EXTENSION-RUNTIME-TOKEN-QUALITY-LEARNABILITY-EXECUTION-STATE.json"
+  ],
+  "forbidden": [
+    "git stage/commit/push/branch/checkout",
+    "external AI/web/model calls",
+    "training/DPO/checkpoint/model/locator mutation",
+    "raw external AI output as training target",
+    "false PASS"
+  ],
+  "required_inputs": [
+    "artifacts/extension-runtime-token-quality-learnability/quality-controls-source-license-provenance/quality-controls-source-license-provenance-20260618-075946/source-license-provenance-ledger.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-controls-source-license-provenance/quality-controls-source-license-provenance-20260618-075946/source-disjoint-train-heldout-split.json",
+    "artifacts/extension-runtime-token-quality-learnability/quality-controls-source-license-packet/quality-controls-source-license-packet-20260618-082436/current-row-routing-after-packet-search.json",
+    "C:/Users/lubao/Documents/xiigen/sonnet local - analyzes/xiigen-file-analysis-state.json",
+    "C:/Users/lubao/Documents/xiigen/extensions  - orchestration based on our data/",
+    "C:/Users/lubao/Documents/xiigen/llm mvp/",
+    "artifacts/extension-runtime-token-quality-learnability/token-04-adaptive-traces/token-04-20260618-044550/raw-private/",
+    "artifacts/extension-runtime-token-quality-learnability/quality-scoring/quality-scoring-20260619-164638/quality-03-10c-row-category-gap-map.jsonl"
+  ],
+  "exact_outputs_to_create_if_evidence_exists": [
+    "approved-train-source-corpus-manifest.json",
+    "approved-held-out-split-manifest.json",
+    "approved-raw-private-corpus-ref.json",
+    "source-license-provenance-partition.jsonl",
+    "vendor-trace-exclusion-ledger.jsonl",
+    "quality-03-row-assignment-approval.jsonl",
+    "approved-held-out-source-corpus-manifest.json",
+    "row-specific-nearest-neighbour-index-manifest.json only after approved corpus exists"
+  ],
+  "pass_gate": "Only create quality-03-non-inter-rater-proof-bundle.json after all 9 rows have approved_assignment not NONE/DEFER, approved train/held-out/raw-private refs, accepted source/license/provenance partition, vendor trace exclusion, and category-specific executed controls.",
+  "if_not_enough": "Emit updated no-PASS source decision packet and keep counts unchanged.",
+  "verify": [
+    "JSON/JSONL parse",
+    "producer + proof runner only if valid proof bundle is created",
+    "git diff --check",
+    "whitespace check for new artifacts"
+  ],
+  "no_operator_question_needed": true,
+  "git_authority": "forbidden",
+  "parent_will_perform_commit_push_after_review": true
+}

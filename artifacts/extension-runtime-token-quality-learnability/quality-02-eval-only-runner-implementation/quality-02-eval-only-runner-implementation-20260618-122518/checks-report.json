@@ -1,0 +1,64 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner_checks_report.v1",
+  "phase_id": "QUALITY-02-EVAL-ONLY-RUNNER-IMPLEMENTATION-NO-EVAL-EXECUTION",
+  "run_id": "quality-02-eval-only-runner-implementation-20260618-122518",
+  "updated_for": "code-acceptance-score-range-fix",
+  "checks": [
+    {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ExtensionEvalOnlyQualityRunner\"",
+      "status": "PASS",
+      "evidence": "Failed: 0, Passed: 20, Skipped: 0, Total: 20"
+    },
+    {
+      "command": "dotnet build 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+      "status": "PASS",
+      "evidence": "Build succeeded. 0 Warning(s), 0 Error(s)"
+    },
+    {
+      "command": "dotnet run --project 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj -- --input <synthetic-eval-only-input.jsonl> --output-dir <evidence-folder> --run-id quality-02-eval-only-runner-implementation-20260618-122518 --evidence-scope local_private_eval_only --synthetic-fixture-only true --actual-approved-eval-executed false",
+      "status": "PASS",
+      "evidence": "Generated report JSON, score rows JSONL and Markdown under evidence folder using synthetic rows only."
+    },
+    {
+      "command": "score-range validation tests",
+      "status": "PASS",
+      "evidence": "Targeted tests cover baseline_score below 0, baseline_score above 5, adaptive_score below 0, adaptive_score above 5, no generated reports on invalid values, and valid 0/5 boundaries."
+    },
+    {
+      "command": "excluded-route privacy coverage",
+      "status": "PASS",
+      "evidence": "Still covered by the targeted ExtensionEvalOnlyQualityRunner test suite."
+    },
+    {
+      "command": "JSON parse relevant evidence/state JSON",
+      "status": "PASS",
+      "evidence": "Strict JSON parse passed for evidence JSON files after the score-range fix report write."
+    },
+    {
+      "command": "JSONL parse generated rows",
+      "status": "PASS",
+      "evidence": "Strict JSON.parse per non-empty line passed for 2 files and 4 rows: synthetic input JSONL and generated score rows JSONL."
+    },
+    {
+      "command": "no forbidden product claims opened",
+      "status": "PASS",
+      "evidence": "Generated report and claim-lock artifacts keep forbidden product/readiness claims false and actual_approved_eval_executed=false."
+    },
+    {
+      "command": "rg configured raw-marker values in touched runner/fix-report outputs",
+      "status": "PASS",
+      "evidence": "Configured raw-marker values are absent from regenerated runner JSON, JSONL, Markdown, and score-range fix report files. A broad folder scan can match historical report text that names marker strings while describing zero matches."
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS",
+      "evidence": "git diff --check exited 0 after final evidence edits."
+    }
+  ],
+  "broad_full_dotnet_test_run": false,
+  "broad_full_dotnet_test_reason": "Not allowed or needed for this slice; targeted filter was the allowed verification.",
+  "product_readiness_claimed": false,
+  "actual_approved_eval_executed": false,
+  "synthetic_fixture_only": true,
+  "evidence_scope": "local_private_eval_only"
+}

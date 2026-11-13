@@ -1,0 +1,172 @@
+{
+  "schema": "xiigen.quality_02.eval_only_runner.code_acceptance_review_final_after_score_fix.v1",
+  "review_id": "code-acceptance-review-final-after-score-fix",
+  "generated_at_local": "2026-06-18T14:29:27.3069328+03:00",
+  "boundary": {
+    "role": "bounded CODE_ACCEPTANCE_REVIEW sub-agent",
+    "requested_model": "gpt-5.5",
+    "requested_reasoning_effort": "xhigh",
+    "review_only": true,
+    "artifact_writes_only": true,
+    "git_authority": "forbidden",
+    "git_mutations_performed": false,
+    "commit_push_authorized_for_subagent": false,
+    "product_readiness_claimed": false
+  },
+  "verdict": "PASS",
+  "parent_may_commit_push_current_code_slice": true,
+  "product_readiness_claimed": false,
+  "branch": "codex/chat-gpt-5.5",
+  "scope_reviewed": {
+    "runner_contracts_tool_tests_docs_state_evidence": true,
+    "prior_final_review": [
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-acceptance-review-final.md",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-acceptance-review-final.json"
+    ],
+    "score_range_fix_report": [
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-acceptance-fix-score-range-report.md",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-acceptance-fix-score-range-report.json"
+    ],
+    "accepted_contract_artifacts_reviewed": [
+      "artifacts/extension-runtime-token-quality-learnability/quality-01-eval-prompt-pack-rubric/quality-01-eval-prompt-pack-rubric-20260618-093007/future-runner-input-contract.json",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/scorer-contract.json",
+      "artifacts/extension-runtime-token-quality-learnability/quality-02-scorer-eval-only-runner-prep/quality-02-scorer-eval-only-runner-prep-20260618-095502/score-output-schema.json"
+    ]
+  },
+  "findings": [],
+  "acceptance_items": [
+    {
+      "id": "score_range_blocker_fixed",
+      "status": "PASS",
+      "evidence": [
+        "ValidateRows runs before BuildReport and WriteReportFiles.",
+        "ValidateRunnableRow validates every baseline_score and adaptive_score through ValidateLayerScoreRange.",
+        "Invalid values below 0 or above 5 return EVAL_ONLY_INPUT_VALIDATION_FAILED.",
+        "Tests assert invalid score values write no report JSON, score JSONL, or Markdown.",
+        "Valid 0 and 5 boundary values remain accepted."
+      ]
+    },
+    {
+      "id": "prior_pass_items_intact",
+      "status": "PASS",
+      "evidence": [
+        "Prefixed contracts remain in place.",
+        "prompt_sha256, mode, and evidence_scope are still required before scoring.",
+        "layer_inputs null remains rejected.",
+        "Runnable and excluded row privacy sentinel handling remains covered.",
+        "Synthetic evidence remains first-class with synthetic_fixture_only=true and actual_approved_eval_executed=false."
+      ]
+    },
+    {
+      "id": "project_standards_operation_result",
+      "status": "PASS",
+      "evidence": [
+        "Public runner methods return AgentInfrastructure.OperationResult<T>.",
+        "Input validation failure occurs before report construction/writes.",
+        "Structured System.Text.Json parsing and serialization are used."
+      ]
+    },
+    {
+      "id": "core_boundary_thin_adapter_labels",
+      "status": "PASS",
+      "evidence": [
+        "Core logic remains in 43.SmartSkillsDomain.",
+        "Quality02EvalOnlyRunner Program.cs remains a thin CLI adapter.",
+        "Deterministic scorer and privacy helper labels remain eval-only/helper/internal-detail only."
+      ]
+    },
+    {
+      "id": "product_readiness_claims_false",
+      "status": "PASS",
+      "evidence": [
+        "Generated runner report keeps actual_approved_eval_executed=false.",
+        "Generated runner report keeps host_runtime_started=false, training_started=false, and model_checkpoint_locator_mutated=false.",
+        "Claim-lock scan found zero true hits for forbidden product/readiness claim keys."
+      ]
+    },
+    {
+      "id": "commit_readiness",
+      "status": "PASS",
+      "evidence": [
+        "Dirty set is bounded to expected QUALITY-02 runner code/tool/tests/docs/state/evidence paths.",
+        "No forbidden path appeared in git status.",
+        "No files are staged by this review.",
+        "Parent may commit/push the current code slice after accepting this review packet."
+      ]
+    }
+  ],
+  "validation": {
+    "targeted_tests": {
+      "command": "dotnet test Tests/LlmFromScratch.Tests.csproj --filter \"FullyQualifiedName~ExtensionEvalOnlyQualityRunner\"",
+      "status": "PASS",
+      "evidence": "Failed: 0, Passed: 20, Skipped: 0, Total: 20"
+    },
+    "tool_build": {
+      "command": "dotnet build 43.SmartSkillsDomain.Tools/Quality02EvalOnlyRunner/Quality02EvalOnlyRunner.csproj",
+      "status": "PASS",
+      "evidence": "Build succeeded. 0 Warning(s), 0 Error(s)"
+    },
+    "json_parse": {
+      "status": "PASS",
+      "json_files_parsed": 17,
+      "includes_execution_state": true
+    },
+    "jsonl_parse": {
+      "status": "PASS",
+      "jsonl_files_parsed": 2,
+      "jsonl_rows_parsed": 4
+    },
+    "claim_lock_scan": {
+      "status": "PASS",
+      "claim_keys_scanned": 16,
+      "json_files_scanned": 16,
+      "true_hits": 0
+    },
+    "raw_private_sentinel_scan": {
+      "status": "PASS",
+      "files_scanned": 7,
+      "hits": 0,
+      "note": "Corrected scan excludes expected schema field name raw_private_text_copied; a broader first scan matched that safe field name only."
+    },
+    "git_diff_check": {
+      "command": "git diff --check",
+      "status": "PASS"
+    },
+    "git_status_porcelain_read_only": {
+      "command": "git status --porcelain=v1 -uall",
+      "status": "PASS_READ_ONLY",
+      "staged_files": [],
+      "dirty_set_expected_for_slice": true,
+      "forbidden_paths_detected": []
+    }
+  },
+  "runner_report_summary": {
+    "schema": "xiigen.quality_02.eval_only_runner.report.v1",
+    "evidence_scope": "local_private_eval_only",
+    "synthetic_fixture_only": true,
+    "actual_approved_eval_executed": false,
+    "total_input_rows": 3,
+    "scored_output_rows": 1,
+    "evidence_only_excluded_rows": 1,
+    "common_blocked_excluded_rows": 1,
+    "validation_error_count": 0,
+    "host_runtime_started": false,
+    "training_started": false,
+    "model_checkpoint_locator_mutated": false
+  },
+  "non_blocking_observations": [
+    {
+      "id": "OBS-01",
+      "summary": "Top-level execution state still contains older code-review-pass-02 wording while the active evidence folder now contains the score-range fix report and this final after-score-fix review. This is documentation drift, not a blocker for this verdict."
+    },
+    {
+      "id": "OBS-02",
+      "summary": "An intentionally broad raw-marker scan matched the safe schema field name raw_private_text_copied; the corrected sentinel-value scan found zero copied private marker values."
+    }
+  ],
+  "written_artifacts": [
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-acceptance-review-final-after-score-fix.md",
+    "artifacts/extension-runtime-token-quality-learnability/quality-02-eval-only-runner-implementation/quality-02-eval-only-runner-implementation-20260618-122518/code-acceptance-review-final-after-score-fix.json"
+  ],
+  "human_board": "PASS for the QUALITY-02 eval-only runner code slice only. No product quality, semantic readiness, learnability, token savings, live host readiness, common readiness, training readiness, target promotion, locator update, or final readiness is claimed."
+}

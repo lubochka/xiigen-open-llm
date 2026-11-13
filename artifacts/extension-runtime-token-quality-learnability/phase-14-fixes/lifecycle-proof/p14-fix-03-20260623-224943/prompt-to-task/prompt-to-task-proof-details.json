@@ -1,0 +1,65 @@
+{
+  "machine": "PromptToTask",
+  "rows": [
+    {
+      "proofRequirement": "checkpoint + manifest load through public boundary",
+      "status": "PASS",
+      "evidence": "PromptToTaskMachine.LoadCheckpointAsync loaded staged checkpoint and manifest; manifest learnedPatternCount=1."
+    },
+    {
+      "proofRequirement": "backup/export/import/share artifact clean reload",
+      "status": "PASS",
+      "evidence": "SaveCheckpointAsync export was copied into a zip share package, extracted to a clean staged path, and imported through PromptToTaskMachine.ImportAsync."
+    },
+    {
+      "proofRequirement": "continue-training starts from existing/imported checkpoint",
+      "status": "PASS",
+      "evidence": "ContinueWithAcceptedPattern ran on the clean-imported machine and preserved base pattern while adding exactly one delta pattern."
+    },
+    {
+      "proofRequirement": "fresh-load after continue-training works",
+      "status": "PASS",
+      "evidence": "PromptToTaskMachine.LoadCheckpointAsync loaded the continued checkpoint+manifest and matched both base and delta held-out requests."
+    },
+    {
+      "proofRequirement": "held-out/ablation/no-leakage checks remain passing",
+      "status": "PASS",
+      "evidence": "Held-out base and delta requests passed after lifecycle; ablation without work_order did not match learned pattern; raw prompt/no-leakage scan had zero hits."
+    },
+    {
+      "proofRequirement": "rollback restores previous checkpoint/state",
+      "status": "PASS",
+      "evidence": "Rollback load from backup checkpoint+manifest preserved base state and removed the continue delta."
+    },
+    {
+      "proofRequirement": "no common model/checkpoint/locator mutation outside staged artifacts",
+      "status": "PASS",
+      "evidence": "All PromptToTask writes were under the Phase 14 lifecycle-proof artifact directory; common hashes are checked at report level."
+    },
+    {
+      "proofRequirement": "Russian-first report states proven and not proven",
+      "status": "PASS",
+      "evidence": "phase14-lifecycle-proof.md is Russian-first and separates proof from non-claims."
+    }
+  ],
+  "evidence": [
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/01-initial-export/prompt-to-task-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/01-initial-export/prompt-to-task-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/02-backup-before-continue/prompt-to-task-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/02-backup-before-continue/prompt-to-task-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/03-share-package.zip",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/04-clean-share-import/prompt-to-task-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/04-clean-share-import/prompt-to-task-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/05-continued-export/prompt-to-task-continued-checkpoint.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/05-continued-export/prompt-to-task-continued-manifest.json",
+    "artifacts/extension-runtime-token-quality-learnability/phase-14-fixes/lifecycle-proof/p14-fix-03-20260623-224943/prompt-to-task/06-rollback-load/rollback-observation.json"
+  ],
+  "decisions": {
+    "base_after_import": "learned_state_semantic_task_produced",
+    "base_after_continue": "learned_state_semantic_task_produced",
+    "delta_after_continue": "learned_state_semantic_task_produced",
+    "ablation_status": "loaded_state_no_matching_learned_pattern",
+    "rollback_delta_task_type": "not_ready_no_semantic_task"
+  },
+  "leakage_hits": []
+}

@@ -1,0 +1,79 @@
+{
+  "schema": "xiigen.quality_01.current_pair_rubric.v1",
+  "phase_id": "QUALITY-01",
+  "run_id": "quality-01-02-20260618-053620",
+  "generated_at_local": "2026-06-18T02:45:11.546+03:00",
+  "scope": "Fresh rubric for current 54 TOKEN-03/TOKEN-04 handler-level pairs only.",
+  "source_token_03_run_ref": "artifacts/extension-runtime-token-quality-learnability/token-03-baseline-traces/token-03-20260618-040021",
+  "source_token_04_run_ref": "artifacts/extension-runtime-token-quality-learnability/token-04-adaptive-traces/token-04-20260618-044550",
+  "source_quality_03_run_ref": "artifacts/extension-runtime-token-quality-learnability/quality-03-same-pair-non-regression/quality-03-20260618-051740",
+  "layers": [
+    {
+      "layer_id": "prompt_to_task",
+      "human_name_ru": "PromptToTask: запрос -> bounded task",
+      "max_score": 5,
+      "passing_score_for_layer": 4,
+      "criteria_ru": [
+        "цель пользователя сохранена",
+        "deliverables и constraints не потеряны",
+        "границы доказательств и запреты сохранены",
+        "нет host/runtime/token/learning overclaim",
+        "ответ содержит сценарно-конкретные требования, а не только общий статус"
+      ]
+    },
+    {
+      "layer_id": "orchestration_reasoning",
+      "human_name_ru": "OrchestrationReasoning: задача -> план/гейты",
+      "max_score": 5,
+      "passing_score_for_layer": 4,
+      "criteria_ru": [
+        "план перечисляет этапы и gates",
+        "каждый gate связан с evidence",
+        "handler-level evidence не подменяет live host runtime",
+        "QSG28 staged/test-only и common fallback явно ограничивают выводы",
+        "нет утверждения readiness без всех closure rows"
+      ]
+    },
+    {
+      "layer_id": "skill_selection",
+      "human_name_ru": "SkillSelection: выбор навыков/контролей",
+      "max_score": 5,
+      "passing_score_for_layer": 4,
+      "criteria_ru": [
+        "selected skills не пустые",
+        "выбор объясним из задачи",
+        "нет candidate-order/hash/path/title shortcut",
+        "нужные runtime/token/quality/lifecycle/review skills не пропущены",
+        "confidence является supporting signal, не semantic proof"
+      ]
+    },
+    {
+      "layer_id": "final_output_usefulness",
+      "human_name_ru": "Итоговая полезность ответа",
+      "max_score": 5,
+      "passing_score_for_layer": 4,
+      "criteria_ru": [
+        "ответ читаемый и проверяемый",
+        "называет что доказано/не доказано/следующий track",
+        "не скрывает ошибки и warnings",
+        "не открывает semantic/full readiness claims",
+        "дает достаточно сценарно-конкретной информации для review"
+      ]
+    }
+  ],
+  "deterministic_scoring_limits": [
+    "Scorer is an evaluation helper, not trainable semantic authority.",
+    "Scores are limited by generic handler outputs and missing source-disjoint provenance.",
+    "Quality non-regression remains false/inconclusive until source-disjoint and no-leakage/no-memorization controls are proven."
+  ],
+  "token_savings_claimed": false,
+  "quality_improvement_claimed": false,
+  "semantic_quality_claimed": false,
+  "learnability_claimed": false,
+  "final_readiness_claimed": false,
+  "live_host_savings_claimed": false,
+  "production_locator_or_checkpoint_mutated": false,
+  "external_ai_used": false,
+  "training_started": false,
+  "model_or_checkpoint_or_locator_mutated": false
+}
