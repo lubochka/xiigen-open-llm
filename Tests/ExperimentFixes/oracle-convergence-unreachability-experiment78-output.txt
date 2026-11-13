@@ -1,0 +1,84 @@
+PANEL 1: bridge loop, flat loss 0.5 (the best possible case for stopping)
+budget interval obs execOld execNew fired firedAt shortened predA predB agreeA agreeB
+     1        1   1       1       1 False       0     False  True  True   True   True
+     2        1   2       2       2 False       0     False  True  True   True   True
+     3        1   3       3       3  True       3     False False  True   True   True
+     4        1   4       3       3  True       3      True False False   True   True
+    24       25   0      24      24 False       0     False  True  True   True   True
+    25       25   1      25      25 False       0     False  True  True   True   True
+    49       25   1      49      49 False       0     False  True  True   True   True
+    50       25   2      50      50 False       0     False  True  True   True   True
+    74       25   2      74      74 False       0     False  True  True   True   True
+    75       25   3      75      75  True      75     False False  True   True   True
+    76       25   3      75      75  True      75      True False False   True   True
+   100       25   4      75      75  True      75      True False False   True   True
+     6        7   0       6       6 False       0     False  True  True   True   True
+    13        7   1      13      13 False       0     False  True  True   True   True
+    14        7   2      14      14 False       0     False  True  True   True   True
+    20        7   2      20      20 False       0     False  True  True   True   True
+    21        7   3      21      21  True      21     False False  True   True   True
+    22        7   3      21      21  True      21      True False False   True   True
+PANEL 1 boundary A vs observable FIRED, mismatches: 0
+PANEL 1 boundary B vs observable SHORTENED, mismatches: 0
+PANEL 1 executed-step drift old-vs-new (must be 0): 0
+
+PANEL 2: first budget where the monitor fires, and first budget where the run is shortened
+interval firstBudgetFired threeIntervals firstBudgetShortened threeIntervalsPlusOne stepAtWhichItFires
+       1                3              3                    4                     4                  3
+       2                6              6                    7                     7                  6
+       7               21             21                   22                    22                 21
+      25               75             75                   76                    76                 75
+     331              993            993                  994                   994                993
+
+PANEL 3: interval == budget and interval == budget/2 (the experiment-78 shapes)
+budget interval shape                exec fired shortened signNew
+     1        1 interval==budget         1 False     False       1
+     2        2 interval==budget         2 False     False       1
+     2        1 interval==budget/2       2 False     False       1
+    10       10 interval==budget        10 False     False       1
+    10        5 interval==budget/2      10 False     False       1
+    25       25 interval==budget        25 False     False       1
+    50       50 interval==budget        50 False     False       1
+    50       25 interval==budget/2      50 False     False       1
+   100      100 interval==budget       100 False     False       1
+   100       50 interval==budget/2     100 False     False       1
+  1000     1000 interval==budget      1000 False     False       1
+  1000      500 interval==budget/2    1000 False     False       1
+PANEL 3 rows 12; runs shortened (must be 0): 0; rows left silent (must be 0): 0
+
+PANEL 4: the sign fires exactly on rows the check cannot shorten, and stays silent elsewhere
+rows checked 444; sign on a row the check does shorten 0; silence on a row it cannot shorten 0
+threshold 0 (intentional disable): signs = 0; executed = 1; fired = False
+very large interval: Test-Unreachable(int.MaxValue, int.MaxValue) = True
+
+PANEL 5: a declining loss series must behave identically with and without the sign
+budget    4 interval   1 execOld    4 execNew    4 identical  True fired False signNew 0
+budget    6 interval   1 execOld    6 execNew    6 identical  True fired False signNew 0
+budget   10 interval   1 execOld    7 execNew    7 identical  True fired  True signNew 0
+budget    4 interval   2 execOld    4 execNew    4 identical  True fired False signNew 1
+budget    6 interval   2 execOld    6 execNew    6 identical  True fired False signNew 1
+budget   10 interval   2 execOld   10 execNew   10 identical  True fired  True signNew 0
+
+PANEL 6: the SECOND live caller (trainer wrapper), NOT fixed by this work
+maxSteps interval threshold exec fired shortened signAtThisCaller
+      25       25      0.01    25 False     False                0
+      50       25      0.01    50 False     False                0
+      74       25      0.01    74 False     False                0
+      75       25      0.01    75  True     False                0
+      76       25      0.01    75  True      True                0
+     100       25      0.01    75  True      True                0
+    1000        1         0  1000 False     False                0
+
+PANEL 7: accounting field StepsTaken after three observations at interval 25
+third call returned True; StepsTaken = 75
+
+PANEL 8: row-level verdict, old product behaviour vs new product behaviour
+budget interval executedBefore executedAfter stepsChanged operatorToldBefore operatorToldAfter verdict
+    25       25             25            25        False                no              yes became-visible
+    50       25             50            50        False                no              yes became-visible
+    74       25             74            74        False                no              yes became-visible
+    75       25             75            75        False                no              yes became-visible
+    76       25             75            75        False                no               no unchanged-and-correct
+   100       25             75            75        False                no               no unchanged-and-correct
+  1000      331            993           993        False                no               no unchanged-and-correct
+     7     9991              7             7        False                no              yes became-visible

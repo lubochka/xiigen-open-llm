@@ -1,0 +1,73 @@
+ORACLE: the rule mark of a lesson is taken from the verified side (plan 105, address P52)
+Repaired mechanism: 27.TranslationDomain/TranslationStructuredBatchBuilder.cs:98
+
+PANEL A: old source (rejected side)
+  P52-TAGS-t1: true tense PAST, stored verified mark PRESENT -> WRONG; raw parser mark RU:TENSE:PAST
+  P52-TAGS-t2: true tense PRESENT, stored verified mark PAST -> WRONG; raw parser mark RU:TENSE:PAST
+  e1: tokenizer=trained-exact-correction branch=exact-source confidence=0.93 correct=True text='He checked the file'
+  e2: tokenizer=trained-exact-correction branch=exact-source confidence=0.93 correct=True text='He checks the file'
+  e3: tokenizer=raw-parser branch=exact-source confidence=0.93 correct=True text='He checked the file'
+  e4: tokenizer=raw-parser branch=exact-source confidence=0.93 correct=True text='He checks the file'
+
+PANEL B: new source (verified side)
+  P52-TAGS-t1: true tense PAST, stored verified mark PAST -> correct; raw parser mark RU:TENSE:PAST
+  P52-TAGS-t2: true tense PRESENT, stored verified mark PRESENT -> correct; raw parser mark RU:TENSE:PAST
+  e1: tokenizer=trained-exact-correction branch=exact-source confidence=0.93 correct=True text='He checked the file'
+  e2: tokenizer=trained-exact-correction branch=exact-source confidence=0.93 correct=True text='He checks the file'
+  e3: tokenizer=raw-parser branch=exact-source confidence=0.93 correct=True text='He checked the file'
+  e4: tokenizer=raw-parser branch=exact-source confidence=0.93 correct=True text='He checks the file'
+
+PANEL 1: correct verified marks per arm
+  [ok] arm A correct marks out of 2: 0
+  [ok] arm B correct marks out of 2: 2
+
+PANEL 2: transitions of the user-visible answer
+  [ok] rows that became correct: []
+  [ok] rows that stayed correct: ['e1', 'e2', 'e3', 'e4']
+  [ok] rows that went from correct to incorrect: []
+  Plainly: no row went from correct to incorrect, no row became correct;
+  all four rows answer from the exact translation memory in both arms, so the text of the
+  answer the user sees does not change at all. What changed is the mark saved with the lesson.
+
+PANEL 3: the raw parser's own tense mark is NOT repaired by this transfer
+  [ok] raw mark for the past row: 'RU:TENSE:PAST'
+  [ok] raw mark for the present row: 'RU:TENSE:PAST'
+  The parser reports the past tense for the present-tense sentence in BOTH arms. That is the
+  measured finding of the experiment and it stays visible: this transfer repairs the source
+  of the verified mark, not the parser's own guess.
+
+PANEL 4: a lesson without a verified annotation gets no mark, and the rejected side is not read
+  [ok] old source still put the rejected mark in: True
+  [ok] new source adds no rule mark at all: 'NONE'
+
+PANEL 5: the same verified marks survive a changed rejected side
+  [ok] verified annotation is unchanged by the rejected text: '<raw pattern and concepts, identical in both arms>|RU:TENSE:PAST|RULE:TENSE=PAST'
+  [ok] old source did change with the rejected text: True
+
+PANEL 6: refusals happen before the batch is emitted
+  [ok] both tenses at once: ('fail', 'VERIFIED_RULE_TAG_TENSE_CONFLICT')
+  [ok] empty mark: ('fail', 'VERIFIED_RULE_TAG_EMPTY')
+  [ok] blank mark: ('fail', 'VERIFIED_RULE_TAG_EMPTY')
+  [ok] unsupported tense value: ('fail', 'VERIFIED_RULE_TAG_UNSUPPORTED_TENSE')
+  [ok] bare family name: ('fail', 'VERIFIED_RULE_TAG_UNSUPPORTED_TENSE')
+
+PANEL 7: accepted shapes
+  [ok] three spellings of the past tense collapse to one mark: ('ok', ['TENSE=PAST'])
+  [ok] present tense alias: ('ok', ['TENSE=PRESENT'])
+  [ok] a verified mark of another family keeps its own text: ('ok', ['CASE=DATIVE'])
+  [ok] a word that only starts with the family name is not a tense statement: ('ok', ['TENSED=X'])
+  [ok] order of first appearance is kept: ('ok', ['TENSE=PAST', 'CASE=DATIVE'])
+  [ok] final marks for a past row with a case mark: ['RULE:TENSE=PAST', 'RULE:CASE=DATIVE']
+
+PANEL 8: the repointed existing fixture of the project test file
+  [ok] fixture accepts its verified marks: 'ok'
+  [ok] fixture marks: ['RULE:TENSE=PAST', 'RULE:CASE=DATIVE']
+  [ok] fixture does not carry the present-tense mark of its rejected side: False
+  [ok] the old source would have carried exactly that wrong mark: ['RULE:TENSE=PRESENT']
+
+checks=26 failures=0
+
+Boundary of this oracle: algorithm proven by oracle; C# compilation and the project test
+run are unverified, because the dotnet lane is closed by the session setting. The raw
+signature prefix is a label, not a measured value: this transfer does not touch the
+tokenizer file, so that prefix is identical in both arms.

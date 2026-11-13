@@ -1,0 +1,76 @@
+================================================================
+ORACLE: capability-training DPO convergence, two diseases
+================================================================
+live contract: budget 1..5; record defaults budget 1, interval 25, threshold 0.002
+
+PANEL 1 - BOUNDARY 1 (unreachability) over the WHOLE allowed space
+flat loss 0.5, working threshold 0.002, budget 1..5, interval 1..30
+
+rows probed by execution              : 150
+rows where the run was shortened      : 2
+predicate-vs-execution disagreements  : 0
+the complete list of shortening configurations:
+   budget 4, interval 1 -> executed 3 (saved 1)
+   budget 5, interval 1 -> executed 3 (saved 2)
+shortening configurations with interval >= 2: 0
+STRONGER-THAN-THE-BRIDGE CLAIM, measured here by execution:
+   the budget of this unit is capped at 5, therefore EVERY observation
+   interval of 2 or more leaves the convergence check dead for EVERY
+   allowed budget. Measured count of counterexamples: 0
+
+PANEL 2 - how the two live caller shapes behave
+
+   DpoTrainingExecution.cs:446 (no interval passed)
+      budget 5, interval 25 -> executed 5, questions 0, yes 0 -> DEAD (full budget always); sign UNREACHABLE
+   DesignConversionDpoTrainingHandoff.cs:405 (no interval)
+      budget 5, interval 25 -> executed 5, questions 0, yes 0 -> DEAD (full budget always); sign UNREACHABLE
+   DefaultLogicalCapabilityTrainer.cs:2298 (interval 1)
+      budget 5, interval 1 -> executed 3, questions 3, yes 1 -> ALIVE (saved 2); sign SILENT
+   record own defaults (budget 1, interval 25)
+      budget 1, interval 25 -> executed 1, questions 0, yes 0 -> DEAD (full budget always); sign UNREACHABLE
+
+PANEL 3 - BOUNDARY 2 (zero threshold) proven by execution
+
+rows probed at threshold 0                        : 150
+questions the OLD loop asked at threshold 0       : 27
+of those, questions answered yes                  : 0
+rows where OLD and NEW executed a different count : 0
+direct check of the dead comparison, 20 identical losses, interval 1:
+   identical-loss observations: 20; yes answers: 0
+   same check with a negative zero threshold : yes answers 0
+
+PANEL 4 - the two signs never speak together, and order is enforced
+
+   budget 1, interval 25, threshold 0.002 -> sign UNREACHABLE (expected UNREACHABLE); unreachable=True zero=False both=False OK
+   budget 5, interval 25, threshold 0.002 -> sign UNREACHABLE (expected UNREACHABLE); unreachable=True zero=False both=False OK
+   budget 3, interval 1, threshold 0.002 -> sign UNREACHABLE (expected UNREACHABLE); unreachable=True zero=False both=False OK
+   budget 4, interval 1, threshold 0.002 -> sign SILENT (expected SILENT); unreachable=False zero=False both=False OK
+   budget 5, interval 1, threshold 0.002 -> sign SILENT (expected SILENT); unreachable=False zero=False both=False OK
+   budget 1, interval 25, threshold 0 -> sign ZERO_THRESHOLD (expected ZERO_THRESHOLD); unreachable=False zero=True both=False OK
+   budget 5, interval 1, threshold 0 -> sign ZERO_THRESHOLD (expected ZERO_THRESHOLD); unreachable=False zero=True both=False OK
+   budget 5, interval 25, threshold 0 -> sign ZERO_THRESHOLD (expected ZERO_THRESHOLD); unreachable=False zero=True both=False OK
+sign mismatches / both-signs-at-once cases: 0
+
+PANEL 5 - which rows became correct, stayed incorrect, or regressed
+
+   working threshold, budget <= 3*interval (dead run)
+      before: executed 5, questions 0; after: executed 5, questions 0; sign UNREACHABLE
+      verdict: BECAME CORRECT: same steps, now speaks (UNREACHABLE)
+   working threshold, budget > 3*interval (live run)
+      before: executed 3, questions 3; after: executed 3, questions 3; sign SILENT
+      verdict: unchanged and correctly silent
+   zero threshold (stopping impossible)
+      before: executed 5, questions 5; after: executed 5, questions 0; sign ZERO_THRESHOLD
+      verdict: BECAME CORRECT: same steps, now speaks (ZERO_THRESHOLD)
+
+================================================================
+ORACLE RESULT: BOTH BOUNDARIES PROVEN BY EXECUTION
+   boundary 1 predicate-vs-execution disagreements : 0
+   boundary 1 shortening configurations found      : 2 (expected exactly 2)
+   boundary 1 interval>=2 counterexamples          : 0
+   boundary 2 yes-answers at zero threshold        : 0
+   boundary 2 neutrality breaks (old vs new loop)  : 0
+   sign independence / order mismatches            : 0
+WHAT THIS DOES NOT PROVE: no measured training experiment exists for
+this consumer. No claim of faster or better training is made here.
+================================================================

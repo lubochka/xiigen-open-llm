@@ -1,0 +1,134 @@
+====================================================================================================
+ORACLE: phrase composition planner, transfer P54 of plan 109 (experiment 54)
+algorithm identity: phrase-coverage-canonical-v1 ; planner admitted up to 8 source tokens
+====================================================================================================
+
+PANEL 1. Learned memory after product training is identical in both arms
+----------------------------------------------------------------------------------------------------
+  arm A phrase map       : [('close', 'закрой'), ('close user', 'закрой пользователя'), ('user session', 'сеанс пользователя')]
+  arm B phrase map       : [('close', 'закрой'), ('close user', 'закрой пользователя'), ('user session', 'сеанс пользователя')]
+  CHECK phrase map A equals B                                      OK
+  CHECK word map A equals B                                        OK
+  CHECK word map is empty (lessons carry no word mapping)          OK
+  CHECK exact memory A equals B                                    OK
+  CHECK associative memory A equals B                              OK
+  associative memory buckets: {'SVO': 6, 'SVO|NOUN': 1, 'SVO|NOUN|NOUN': 2}
+
+PANEL 2. Main panel through the whole product path, per row and per answering tier
+----------------------------------------------------------------------------------------------------
+  arm A r1  source='close user session'   tier=ordinary-source-knn    confidence=0.99 correct=False text='закрой пользователя'
+  arm A c1  source='close user'           tier=exact-source           confidence=0.99 correct=True  text='закрой пользователя'
+  arm A c2  source='user session'         tier=exact-source           confidence=0.99 correct=True  text='сеанс пользователя'
+  arm A c3  source='close'                tier=exact-source           confidence=0.99 correct=True  text='закрой'
+  arm B r1  source='close user session'   tier=phrase-map             confidence=0.99 correct=True  text='закрой сеанс пользователя'
+  arm B c1  source='close user'           tier=exact-source           confidence=0.99 correct=True  text='закрой пользователя'
+  arm B c2  source='user session'         tier=exact-source           confidence=0.99 correct=True  text='сеанс пользователя'
+  arm B c3  source='close'                tier=exact-source           confidence=0.99 correct=True  text='закрой'
+
+  arm A correct rows: 3 of 4 ; arm B correct rows: 4 of 4
+  CHECK arm A panel score                                          OK
+  CHECK arm B panel score                                          OK
+
+  Direct statement about every transition, as required:
+    rows that became correct   : ['r1']
+    rows that stayed correct   : ['c1', 'c2', 'c3']
+    rows that stayed incorrect : none
+    rows that went from correct to incorrect: NONE
+  CHECK no row went from correct to incorrect                      OK
+  CHECK exactly the examined row became correct                    OK
+
+PANEL 3. The defect of arm A, named exactly
+----------------------------------------------------------------------------------------------------
+  arm A answered row r1 from tier 'ordinary-source-knn' with reported confidence 0.99 and text 'закрой пользователя'
+  arm A phrase tier detail: {'used_planner': False, 'coverage': 0.6666666666666666, 'covered_tokens': 2, 'spans': 1, 'repeated_phrase_coverage': False}
+  arm B answered row r1 from tier 'phrase-map' with reported confidence 0.99 and text 'закрой сеанс пользователя'
+  arm B phrase tier detail: {'used_planner': True, 'coverage': 1.0, 'covered_tokens': 3, 'spans': 2, 'repeated_phrase_coverage': True}
+  CHECK arm A lost the required word 'session' in its answer       OK
+  CHECK arm A still reported a confident answer, not a refusal     OK
+  CHECK arm A phrase tier covered only 2 of 3 source words         OK
+  CHECK arm B phrase tier covered 3 of 3 source words              OK
+  CHECK arm B answer came from the phrase tier                     OK
+  CHECK arm B kept the required word 'session'                     OK
+
+PANEL 4. Edges: the agreed refusal and the agreed fallback must not move
+----------------------------------------------------------------------------------------------------
+  8 tokens  arm A tier=fallback     covered=2 text='[EN_RU:BOOTSTRAP] close user session now please again today safely'
+  8 tokens  arm B tier=fallback     covered=3 planner=True text='[EN_RU:BOOTSTRAP] close user session now please again today safely'
+  CHECK 8 tokens: answer text is byte-identical in both arms       OK
+  CHECK 8 tokens: both arms refuse the phrase tier and fall back   OK
+  9 tokens  arm A tier=fallback     covered=2 text='[EN_RU:BOOTSTRAP] close user session now please again today safely tomorrow'
+  9 tokens  arm B tier=fallback     covered=2 planner=False text='[EN_RU:BOOTSTRAP] close user session now please again today safely tomorrow'
+  CHECK 9 tokens: answer text is byte-identical in both arms       OK
+  CHECK 9 tokens: both arms refuse the phrase tier and fall back   OK
+  CHECK 8 tokens: planner was inside its admitted area             OK
+  CHECK 8 tokens: coverage improved from 2 to 3 covered words      OK
+  CHECK 9 tokens: planner stayed outside its admitted area         OK
+
+PANEL 5. Three pure planner checks, no training
+----------------------------------------------------------------------------------------------------
+  empty learned map        -> covered=0 spans=0 parts=[]
+  CHECK empty learned map covers nothing                           OK
+  dense map                -> covered=8 spans=2 keys=['a1 a2 a3 a4', 'a5 a6 a7 a8'] parts=['T1234', 'T5678']
+  CHECK dense map covers all 8 source words                        OK
+  CHECK dense map uses the fewest possible phrases                 OK
+  CHECK dense map chose the two long phrases                       OK
+  dense map reversed order -> covered=8 spans=2 parts=['T1234', 'T5678']
+  CHECK reversed learned order gives the same canonical answer     OK
+
+PANEL 6. Sensitivity on separate copies of the final learned state
+----------------------------------------------------------------------------------------------------
+  removed learned phrase 'close'        -> tier=ordinary-source-knn    text='закрой пользователя'
+  CHECK removing 'close' changes the answer of row r1              OK
+  replaced learned target 'user session'-> tier=phrase-map             text='закрой СЕАНСЗАМЕНА'
+  CHECK the answer depends on the changed learned value, not on an expected answer OK
+  cleared the whole phrase map          -> tier=ordinary-source-knn    text='закрой пользователя'
+  CHECK clearing the phrase map loses the phrase route             OK
+  CHECK the live accepted state was not damaged by the copies      OK
+
+PANEL 7. Mutation sensitivity: the new behaviour must be impossible on the old logic
+----------------------------------------------------------------------------------------------------
+  old assembler -> accepted=False covered=2 text=''
+  new assembler -> accepted=True covered=3 text='закрой сеанс пользователя'
+  CHECK old assembler refuses the row                              OK
+  CHECK new assembler accepts the row with the full translation    OK
+
+PANEL 8. Existing published rows that must not move
+----------------------------------------------------------------------------------------------------
+  phrase-wins-over-memory arm A -> planner=False text='красный дом пустой'
+  phrase-wins-over-memory arm B -> planner=True text='красный дом пустой'
+  CHECK published row keeps its exact expected answer              OK
+  CHECK published row answer is unchanged by the transfer          OK
+  CHECK published row does run through the planner                 OK
+  function-word-junk arm A -> planner=False text='Том быстро потушил огонь'
+  function-word-junk arm B -> planner=False text='Том быстро потушил огонь'
+  CHECK word mappings keep the planner out of this row             OK
+  CHECK mixed phrase and word row is unchanged                     OK
+  CHECK mixed row still contains the learned phrase targets        OK
+  CHECK mixed row still drops the rejected single-word translations OK
+  repeated-phrase arm A -> planner=False text='потушил потушил'
+  repeated-phrase arm B -> planner=False text='потушил потушил'
+  CHECK repeated-phrase row keeps its exact expected answer        OK
+  CHECK repeated-phrase row is unchanged by the transfer           OK
+  CHECK Russian to English stays outside the planner               OK
+
+PANEL 9. The memory cost of the chosen algorithm, as a number
+----------------------------------------------------------------------------------------------------
+  examined row r1, 3 source words        planner built  3 candidate records and  6 list copies; a full
+                                         enumeration of every finished variant would hold 5 of them
+  edge row, 8 source words               planner built  3 candidate records and  6 list copies; a full
+                                         enumeration of every finished variant would hold 5 of them
+  dense counterexample, 8 source words   planner built 14 candidate records and 28 list copies; a full
+                                         enumeration of every finished variant would hold 676 of them
+  The planner keeps at most one best walk per source position, so its records grow with the
+  number of source words, never with the number of combinations. This is an ALGORITHMIC
+  count, not a measurement of allocated .NET bytes: the build and test lane is denied in
+  this session, so the product byte cost of this transfer was NOT measured here. The
+  +14536 allocated bytes on four rows recorded in experiment 54 belong to the earlier
+  prototype that copied the direct search; this transfer deliberately does not copy it.
+
+====================================================================================================
+RESULT: every check passed.
+PROVEN BY THIS ORACLE: the algorithm of the whole product path for this transfer.
+NOT PROVEN HERE: that the C# compiles, and the platform tests - that lane is denied in
+this session, so no test run is claimed.
+====================================================================================================

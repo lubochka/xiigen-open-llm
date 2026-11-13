@@ -1,0 +1,41 @@
+================================================================
+MUTATION PANEL: one decision replaced at a time
+================================================================
+
+variant | predicate | both-signs | dead-silent | wrong-sign-on-zero | dead-questions | broken
+M0      |         0 |          0 |           0 |                  0 |              0 |      0
+M1      |         1 |          0 |           1 |                  0 |              0 |      2
+M2      |         0 |        148 |           0 |                  0 |              0 |    148
+M3      |         0 |          0 |           0 |                  0 |              0 |      0
+M4      |         0 |          0 |           0 |                150 |              0 |    150
+M5      |         0 |          0 |           0 |                  0 |             27 |      0
+M6      |         0 |        148 |           0 |                148 |              0 |    296
+
+shipped version broken rows                    : 0
+shipped version dead questions at zero         : 0
+mutations expected to be detected but were not : none
+mutations declared redundant that did fire     : none
+always-create mutation without a question shift: none
+
+READING OF THE TABLE, measured and not assumed:
+  M1 breaks the row where the budget equals three intervals exactly:
+     the run is not shortened there, so calling it reachable is wrong.
+     It also leaves that dead run with no sign at all.
+  M2 makes the two signs fire for the same setting, which is exactly
+     the dependency the work order forbids.
+  M3 on its own breaks NOTHING, and that is a measured fact, not an
+     excuse: the shipped unreachability predicate already refuses a
+     zero threshold in its own first clause, so the emitter order is
+     a SECOND independent guard rather than the only one. Requirement
+     "at a zero threshold only the zero sign speaks" therefore holds
+     twice over.
+  M6 proves that second guard is still load-bearing: remove the clause
+     and reverse the order together, and every dead-by-zero run with a
+     short budget is mislabelled as a short-budget run.
+  M4 restores the original disease: the zero threshold goes silent.
+  M5 restores the dead monitor calls that this repair removes. The
+     executed step counts stay identical, which is precisely why the
+     repair is observationally neutral; only the dead questions differ.
+
+MUTATION RESULT: SHIPPED VERSION BREAKS NOTHING AND EVERY DECLARED-DETECTABLE MUTATION IS DETECTED
+================================================================

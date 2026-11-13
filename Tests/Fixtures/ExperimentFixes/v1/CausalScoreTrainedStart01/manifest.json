@@ -1,0 +1,85 @@
+{
+  "comment_ru": "Паспорт приёмки обученного начального состояния для переноса «причинное внимание не вычисляет запрещённую половину матрицы». Сами обученные веса здесь НЕ дублируются: приёмка читает один уже существующий общий обученный старт по указанному ниже пути, а этот паспорт закрепляет его байты отпечатками, чтобы молчаливая подмена донора была видна.",
+  "fixture_id": "CausalScoreTrainedStart01",
+  "fixture_version": "v1",
+  "donor_relative_path": "experiments-v2/RP01-MICRO/_shared-learned-starts/h64-causal-scores/v1",
+  "donor_family": "h64-causal-scores",
+  "producer_card": "ATTN-CAUSAL-SCORES-01",
+  "core_pin": "26332500f76ea8345256c73ecfd44c0023b7e883",
+  "whole_file_sha256": {
+    "S0.weights.bin": "8721dd57b11fa61b11acf37c337611129891a1d3096ae0392a89455d6d58fdec",
+    "S0.optimizer.bin": "539d11e925bbff676d9e5969d8c7bfb4326ff93aa1b93f934e8ff9bbbafc15d0",
+    "S0.rng.json": "ad6d25a66445966b6814ba6345ddf63fb358033bdb2b364f703fb7fc7835c6d1",
+    "preparation.json": "a89b5b6be4d3dfcece06ea3c197c184de4b13b020e292975491d6b02ddb9f34e",
+    "bundle.json": "6f791f90e1aac9ca02e573689f69e71e7fd03298736d740daea488acc400edda",
+    "authority.json": "1ddc0b1566abb09493bec941531d42756b7d5c76599cc7fe1aafa89a5d708c55",
+    "generation.json": "0f187b086ecaf45d4fdb3e3e7b7f61432a7b37aa7259ce1663ec04da0dc6a980"
+  },
+  "file_bytes": {
+    "S0.weights.bin": 320620,
+    "S0.optimizer.bin": 7384,
+    "S0.rng.json": 765
+  },
+  "model_ru": {
+    "comment_ru": "Та же архитектура, что записал донор: словарь 256, окно 64, скрытая размерность 64, один слой, четыре головы запроса и две головы ключей, промежуточный слой 176.",
+    "VocabSize": 256,
+    "ContextLen": 64,
+    "HiddenDim": 64,
+    "NumLayers": 1,
+    "NumHeads": 4,
+    "NumKvHeads": 2,
+    "FfnHiddenDim": 176,
+    "RopeTheta": 10000,
+    "RmsNormEps": 1e-05
+  },
+  "lora_ru": {
+    "comment_ru": "Низкоранговые адаптеры донора: ранг 4, усиление 8, отсев 0, цели — проекции запроса и значения. Отсев ноль, поэтому случайный поток в чтении не расходуется.",
+    "Rank": 4,
+    "Alpha": 8,
+    "Dropout": 0,
+    "TargetModules": ["q_proj", "v_proj"]
+  },
+  "seeds_ru": {
+    "comment_ru": "Зёрна построения и адаптеров и область случайного потока — ровно те, что объявил донор.",
+    "construction_seed": 62001,
+    "lora_seed": 62002,
+    "stream_domain": "frozen-transpose-probe-v1"
+  },
+  "identity_literals_ru": {
+    "comment_ru": "Строки, от которых донор считал отпечатки топологии и настройки адаптеров. Приёмка проверяет, что отпечатки этих строк совпадают с теми, что записаны в паспорте донора и в снимке случайного состояния.",
+    "topology_literal": "CS01|V256|H64|L1|Q4|KV2|FF176|C64|R4|q_proj,v_proj",
+    "lora_literal": "CS01|alpha8|dropout0|seed62002|frozen-transpose-probe-v1",
+    "expected_topology_sha256": "8f58ee5df35f811e786804b8fef417d36461117404c24d8301af61548aa8e0ad",
+    "expected_lora_configuration_sha256": "728ef9438b5f80b6b04fe3ab835941a556e1b02410b755d0bbc389ada78a4602"
+  },
+  "restored_state_ru": {
+    "comment_ru": "Что обязано восстановиться: номер шага оптимизатора и номер шага случайного состояния равны четырёмстам, потому что донор выполнил четыреста настоящих обновлений.",
+    "optimizer_step": 400,
+    "random_state_step": 400,
+    "trainable_arrays": 4
+  },
+  "independent_gold_ru": {
+    "comment_ru": "Независимый эталон взят из показаний донора, а не из прогона приёмки. Решающее обстоятельство: донор снимал эти показания при ВЫКЛЮЧЕННОМ проверяемом факторе, то есть полным произведением (поле factorDisabledDuringPreparation равно истине в его паспорте источника). Текущий продукт всегда идёт узким треугольником, поэтому совпадение чисел и есть доказательство равенства двух путей на настоящем обученном состоянии.",
+    "gold_source_file": "preparation.json",
+    "gold_before_training_field": "w0_panel",
+    "gold_after_training_field": "s0_panel",
+    "factor_disabled_during_preparation": true,
+    "qualification_unit": "хотя бы одна закреплённая учебная строка целиком неверна до обучения и верна после",
+    "acquired_ids": ["T1"]
+  },
+  "panel_rows_ru": {
+    "comment_ru": "Четыре строки панели донора: две учебные и две экзаменационные. Подсказки и правильные ответы берутся из показаний донора, а не придумываются.",
+    "T1": { "split": "TRAIN", "prompt": "C# result sign: 9-4 =", "answer": "+" },
+    "T2": { "split": "TRAIN", "prompt": "C# result sign: 4-9 =", "answer": "-" },
+    "E1": { "split": "EXAM", "prompt": "C# result sign: 8-3 =", "answer": "+" },
+    "E2": { "split": "EXAM", "prompt": "C# result sign: 3-8 =", "answer": "-" }
+  },
+  "budget_ru": {
+    "comment_ru": "Расход этой приёмки: по одному диагностическому прямому проходу на каждую записанную донором строку панели, ни одного обратного прохода и ни одного обновления оптимизатора. Это восстановление и чтение, а не обучение. Донор записал панель по ДВУМ учебным строкам, поэтому проходов два; экзаменационных показаний в его панели нет, и эталон для них не выдумывается.",
+    "forward": 2,
+    "backward": 0,
+    "optimizer_updates": 0,
+    "generate": 0
+  },
+  "not_proven_ru": "Эта приёмка не измеряет выигрыш во времени и не доказывает процент на большой модели: короткий прогон донора такой гарантии не даёт. Она не запускает назначенные карточкой четыре учебных обновления и не закрывает ресурсную панель. Прямоугольный путь кеша прошлого остаётся на полном произведении и этой приёмкой не меняется."
+}

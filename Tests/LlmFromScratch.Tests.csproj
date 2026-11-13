@@ -1,0 +1,192 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <!-- Local installed-resource Facts require an explicit compile/discovery opt-in; product and portable consumers always compile. -->
+    <XiigenEnableConfiguredQwenNativeResourceTests Condition="'$(XiigenEnableConfiguredQwenNativeResourceTests)' == ''">false</XiigenEnableConfiguredQwenNativeResourceTests>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="**\bin\**\*.cs;**\obj\**\*.cs;**\NuGet\**\*.cs" />
+    <Compile Remove="CodeDocumentationConfiguredQwenNativeResourceTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(XiigenEnableConfiguredQwenNativeResourceTests)' == 'true'">
+    <!-- Explicit opt-in includes genuine resource Facts on every platform; missing assets or unsupported ABI fail at execution. -->
+    <Compile Include="CodeDocumentationConfiguredQwenNativeResourceTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\00.TensorCore\TensorCore.csproj" />
+    <ProjectReference Include="..\01.Tokenizer\Tokenizer.csproj" />
+    <ProjectReference Include="..\02.DatasetPipeline\DatasetPipeline.csproj" />
+    <ProjectReference Include="..\03.TransformerModel\TransformerModel.csproj" />
+    <ProjectReference Include="..\04.TrainingLoop\TrainingLoop.csproj" />
+    <ProjectReference Include="..\tools\ContinuousLearningBaseBootstrap\ContinuousLearningBaseBootstrap.csproj"
+                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\tools\ContinuousLearningTp1EvaluationRunner\ContinuousLearningTp1EvaluationRunner.csproj" />
+    <ProjectReference Include="..\tools\OrchestrationReasoningPhase05Runner\OrchestrationReasoningPhase05Runner.csproj"
+                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\tools\PretrainingRunner\PretrainingRunner.csproj" />
+    <ProjectReference Include="..\05.Embeddings\Embeddings.csproj" />
+    <ProjectReference Include="..\06.VectorSearch\VectorSearch.csproj" />
+    <ProjectReference Include="..\07.GraphEngine\GraphEngine.csproj" />
+    <ProjectReference Include="..\08.GraphRag\GraphRag.csproj" />
+    <ProjectReference Include="..\09.Inference\Inference.csproj" />
+    <ProjectReference Include="..\10.LoRA\LoRA.csproj" />
+    <ProjectReference Include="..\11.DPO\DPO.csproj" />
+    <ProjectReference Include="..\12.SearchEngine\SearchEngine.csproj" />
+    <ProjectReference Include="..\13.CodeOptimizer\CodeOptimizer.csproj" />
+    <ProjectReference Include="..\14.MachineLearning\MachineLearning.csproj" />
+    <ProjectReference Include="..\21.AgentInfrastructure\AgentInfrastructure.csproj" />
+    <ProjectReference Include="..\22.AgentAlgorithms\AgentAlgorithms.csproj" />
+    <ProjectReference Include="..\23.OssEquivalents\OssEquivalents.csproj" />
+    <ProjectReference Include="..\23.SemanticCompilerAdapter\SemanticCompilerAdapter.csproj" />
+    <ProjectReference Include="..\24.Compression\Compression.csproj" />
+    <ProjectReference Include="..\28.SemanticNlp\SemanticNlp.csproj" />
+    <ProjectReference Include="..\33.MatrixAlgorithms\MatrixAlgorithms.csproj" />
+    <ProjectReference Include="..\34.Experiments\Experiments.csproj" />
+    <ProjectReference Include="..\35.ExperimentsV2\ExperimentsV2.csproj" />
+    <ProjectReference Include="..\12.SemanticCompiler\SemanticCompiler.csproj" />
+    <ProjectReference Include="..\29.SemanticCompiler\SemanticCompiler.csproj" />
+    <ProjectReference Include="..\14.ContinuousLearning\ContinuousLearning.csproj" />
+    <ProjectReference Include="..\15.OrchestratorModel\OrchestratorModel.csproj" />
+    <ProjectReference Include="..\16.AutonomousLearning\AutonomousLearning.csproj" />
+    <ProjectReference Include="..\18.CapabilityTraining\CapabilityTraining.csproj" />
+    <ProjectReference Include="..\25.ModelServer\ModelServer.csproj" />
+    <ProjectReference Include="..\26.TrainableRouter\TrainableRouter.csproj" />
+    <ProjectReference Include="..\27.TranslationDomain\27.TranslationDomain.csproj" />
+    <ProjectReference Include="..\27.TranslationDomain.Tools\27.TranslationDomain.Tools.csproj" />
+    <ProjectReference Include="..\42.ProjectWikiDomain\42.ProjectWikiDomain.csproj" />
+    <ProjectReference Include="..\43.SmartSkillsDomain\43.SmartSkillsDomain.csproj" />
+    <ProjectReference Include="..\43.SmartSkillsDomain.Dashboard\43.SmartSkillsDomain.Dashboard.csproj"
+                      SetTargetFramework="TargetFramework=net9.0" />
+    <ProjectReference Include="..\44.DesignConversionDomain\44.DesignConversionDomain.csproj" />
+    <ProjectReference Include="..\50.ProductHost\ProductHost.csproj" />
+    <ProjectReference Include="..\experiments-v2\TEACHING-20-ROWS-CURRENT\runner\Teaching20RowsCurrentRunner\Teaching20RowsCurrentRunner.csproj" />
+    <ProjectReference Include="..\experiments-v2\CODE-DOC-BATCH-RUNNER\runner\CodeDocBatchRunner\CodeDocBatchRunner.csproj" />
+    <ProjectReference Include="..\LlmInspector.Core\LlmInspector.Core.csproj" />
+    <!-- Q01: отдельный reader строится вместе с тестами, без ручной env-предпосылки. -->
+    <ProjectReference Include="..\Tests.Tools\TranslationLostCandidateReader\TranslationLostCandidateReader.csproj"
+                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Tests.Tools\RegistryLockHolder\RegistryLockHolder.csproj"
+                      ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\tools\DynamicGraphCompositionLiveLocalServer\DynamicGraphCompositionLiveLocalServer.csproj"
+                      Aliases="productiondgc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\tools\DynamicGraphCompositionLiveLocalServer\DynamicGraphCompositionSessionRegistry.cs"
+             Link="LiveLocalServer\DynamicGraphCompositionSessionRegistry.cs" />
+    <Compile Include="..\tools\DynamicGraphCompositionLiveLocalServer\PromptToTaskUntrainedHonestyExecutionService.cs"
+             Link="LiveLocalServer\PromptToTaskUntrainedHonestyExecutionService.cs" />
+    <Compile Include="..\tools\ContinuousLearningBaseBootstrap\Program.cs"
+             Link="ContinuousLearningBaseBootstrap\Program.cs" />
+    <!-- Действующий построитель разделённых показаний опыта P02-PRIMARY-01. Тот же
+         файл компилируется в хост опыта; проверка обязана вызывать именно его,
+         а не повторять формулу в тесте. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P0201\src\PreferenceSeparationReport.cs"
+             Link="P0201\PreferenceSeparationReport.cs" />
+    <!-- Действующий построитель разделённой квалификации обучения опыта P05-PRIMARY-01.
+         Тот же файл компилируется в хост опыта; проверка обязана вызывать именно его,
+         а не повторять правило квалификации в тесте. Обращений к модели в нём нет. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P0501\src\P0501LearningQualificationReport.cs"
+             Link="P0501\P0501LearningQualificationReport.cs" />
+    <!-- Действующий построитель приёмной квитанции опыта P11-PRIMARY-01. Тот же файл
+         компилируется в хост опыта; проверка обязана вызывать именно его, а не повторять
+         правило приёмки в тесте. Обращений к модели в нём нет. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P1101\src\P1101DiagnosticReceipt.cs"
+             Link="P1101\P1101DiagnosticReceipt.cs" />
+    <!-- Узкий переходник опыта P11-PRIMARY-01 к назначенным закрытым членам продукта,
+         его назначенная абляция «объявленный необучаемый вид той же таблицы»,
+         независимый оракул сложения по строкам таблицы и дословный шов двух
+         продуктовых формул потерь. Те же файлы компилируются в хост опыта;
+         регрессионная проверка вызывает именно их, а не свою копию родного
+         обратного прохода слоя вложений. Продуктовый код ими не меняется. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P1101\src\NativeAccess.cs"
+             Link="P1101\NativeAccess.cs" />
+    <Compile Include="..\experiments-v2\RP01-MICRO\P1101\src\EmbeddingReachabilityAblation.cs"
+             Link="P1101\EmbeddingReachabilityAblation.cs" />
+    <Compile Include="..\experiments-v2\RP01-MICRO\P1101\src\ScatterAddOracle.cs"
+             Link="P1101\ScatterAddOracle.cs" />
+    <Compile Include="..\experiments-v2\RP01-MICRO\P1101\src\ProductLossSeam.cs"
+             Link="P1101\ProductLossSeam.cs" />
+    <!-- Действующий построитель производных чисел точности опыта P10-PRIMARY-01. Тот же
+         файл компилируется в хост опыта; проверка обязана вызывать именно его, а не
+         повторять правило сверки границ в тесте. Обращений к модели в нём нет. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P1001\src\P1001DerivativeAccuracySummary.cs"
+             Link="P1001\P1001DerivativeAccuracySummary.cs" />
+    <!-- Действующий финализатор итоговой пригодности и полная сверка панелей опыта
+         P115-PRIMARY-01 вместе с типом строки панели, который они сверяют. Те же файлы
+         компилируются в хост опыта; проверка обязана вызывать именно их, а не повторять
+         правило приёмки в тесте. Обращений к модели и обучению в них нет. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P11501\src\MandatoryControlFinalizer.cs"
+             Link="P11501\MandatoryControlFinalizer.cs" />
+    <Compile Include="..\experiments-v2\RP01-MICRO\P11501\src\Bm25StatisticsCopy.cs"
+             Link="P11501\Bm25StatisticsCopy.cs" />
+    <!-- Действующее завершение прогона опыта P117-PRIMARY-01: строгая приёмка расписки,
+         учёт назначенных стадий, полная стоимость и наблюдение дерева процессов. Тот же
+         файл компилируется в хост опыта и вызывается его программой; проверка обязана
+         звать именно его, а не повторять правило приёмки в тесте. Обращений к модели,
+         обучению, файловой системе и процессам в нём нет. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P11701\src\RunCompletionFinalizer.cs"
+             Link="P11701\RunCompletionFinalizer.cs" />
+    <!-- Два плеча второй попытки опыта P52-PRIMARY-01: скопирована ровно одна удалённая
+         из продукта часть — добыча пометки правила из текста отвергнутой стороны. Оба
+         плеча зовут настоящий продуктовый конструктор учебных партий, поэтому опыт
+         обязан вызывать именно этот файл, а не повторять правило в тесте. Обращений к
+         модели и к сети в нём нет; продуктовый код им не меняется. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P5201\src\RejectedAnnotationAddressArms.cs"
+             Link="P5201\RejectedAnnotationAddressArms.cs" />
+    <!-- Измерительная оснастка второй попытки опыта P58-PRIMARY-01: она собирает плечи
+         настоящим продуктовым сборщиком учебных партий и считает пригодность контрпримера
+         в корректирующем уроке. Копий продуктовой логики в ней нет вовсе, потому что
+         ничего из нужного в продукте не удалено. Опыт обязан вызывать именно этот файл,
+         а не повторять показатель в тесте; обращений к модели и к сети в нём нет. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P5801\src\CorrectiveLessonCounterExampleArms.cs"
+             Link="P5801\CorrectiveLessonCounterExampleArms.cs" />
+    <!-- Оснастка третьей попытки опыта P48-PRIMARY-01: замороженный набор, потолки панели
+         по фактическому входу модели, пересечение экзамена с обучением, независимый оракул
+         производной через центральную разность и счёт конечности обученного состояния.
+         Из продукта скопирован только прямой проход для вычисления потери — он нужен
+         оракулу, потому что продукт потерю при возмущённом весе не вычисляет, а оракул на
+         продуктовом обратном проходе проверял бы сам себя. Обучение идёт настоящим
+         продуктовым шагом; параметр веса в продукт не добавляется. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P4801\src\WeightingCeilingAndOracle.cs"
+             Link="P4801\WeightingCeilingAndOracle.cs" />
+    <!-- Оснастка третьей попытки опыта P49-PRIMARY-01 о тёплом старте пробной сети.
+         Первый файл — построчная копия продуктовой пробной сети, опубликованная второй
+         попыткой этого же опыта; она берётся как есть, ни на байт не меняется и включается
+         в режиме правильного порядка производных. Своей, третьей копии сети не делается:
+         расходящиеся копии только добавили бы сомнений в том, что считают плечи. Второй
+         файл — мой: замороженный набор, панель, потолки различимости по фактическому входу
+         модели, пересечение экзамена с обучением и ДВА договора вердикта рядом — новый, где
+         конечность чисел обоих плеч управляет пригодностью сравнения, и прежний, где она
+         только записывалась. Прежний договор воспроизведён заново, а не вызовом сводной
+         проверки второй попытки: иначе сравнение договоров проверяло бы само себя.
+         Продуктовый код этими файлами не меняется, опубликованные попытки тоже. -->
+    <Compile Include="..\experiments-v2\RP01-MICRO\P4901\attempt-0002\src\ProbeNeuralNetworkCopy.cs"
+             Link="P4901\ProbeNeuralNetworkCopy.cs" />
+    <Compile Include="..\experiments-v2\RP01-MICRO\P4901\src\FinitenessGovernedVerdict.cs"
+             Link="P4901\FinitenessGovernedVerdict.cs" />
+  </ItemGroup>
+
+</Project>

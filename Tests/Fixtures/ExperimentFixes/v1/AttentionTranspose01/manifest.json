@@ -1,0 +1,98 @@
+{
+  "comment_ru": "Паспорт адресной приёмки переноса «перестановка осей внимания выполняется напрямую». Обученные веса здесь НЕ дублируются: приёмка читает один уже существующий общий обученный старт по указанному ниже пути, а паспорт закрепляет его байты отпечатками, чтобы молчаливая подмена донора была видна до первого прохода модели. Паспорт закрепляет только ЛИЧНОСТЬ донора. Рецепт обучения — зёрна, устройство модели, настройка адаптеров, настройка обучателя, правильные ответы, номера шагов и имена обучаемых массивов — выписан руками в самой проверке и сюда намеренно не вынесен: иначе ручная правка этого файла молча сдвинула бы ожидаемое, и проверка перестала бы быть независимой от своего же паспорта.",
+  "fixture_id": "AttentionTranspose01",
+  "fixture_version": "v1",
+  "donor_relative_path": "experiments-v2/RP01-MICRO/_shared-learned-starts/h64-attn-transpose/v1",
+  "donor_family": "h64-attn-transpose",
+  "producer_card": "ATTN-TRANSPOSE-STRIDES-01",
+  "core_pin": "66947785d1318f7cbbc88118f3156cdc75001e16",
+  "transfer_card": "docs/plans/replanning-possible-diffs/fixes-based-on-experiments/45-attention-transpose-strides.md",
+
+  "whole_file_sha256": {
+    "S0.weights.bin": "8721dd57b11fa61b11acf37c337611129891a1d3096ae0392a89455d6d58fdec",
+    "S0.optimizer.bin": "539d11e925bbff676d9e5969d8c7bfb4326ff93aa1b93f934e8ff9bbbafc15d0",
+    "S0.rng.json": "1fbb9052b21b17a49d3b8fc159d3bc6c20dc64e47b6a2c9f50f61ffdef96e2b9",
+    "preparation.json": "41171ea484e0d02490c8b4c0f211cd5833f1b5522cb981c6353ca5203a1b6e44",
+    "generation.json": "be6a0c6bbfb8f61a42c3ee72cbb066d74a03c47c26cde9f78220a5623da0650b",
+    "authority.json": "986cdf543a2fee327499b5b916b367bea9b016fa09b146ed40eb651d07a03e90",
+    "bundle.json": "c0f6c7ad4a11f93a1bb8a26f7ccddf5ca6423e2904a905d6d5270653985d44da",
+    "tokenizer.json": "65fbb5934ce9a9e997250d6c625408acb841fb20cb271977d328c21fd87de68a",
+    "data.source.jsonl": "5fb81eabe5099672470a6bde4403809282481f4a1ec213846c3e63177e2fd514",
+    "data.material.json": "1e9f354275b7952134cbaadbc92ed164072d0b69a747295e38dd5d6d58dceb1a",
+    "source-manifest.json": "f78cb2ef1b002649af593952c2a043e59f7ee50f4adb9255bfcfc19085908a28",
+    "execution.claim": "0eade15985cfe9b3d6f05b7e98b6f57fddcb3aeaa1a48a566c29aad0cf879754",
+    "study.claim": "ce8b0630259cf15fb975a7c88c930a87a9c66090a3983637a054adb3d370e435"
+  },
+
+  "file_bytes": {
+    "S0.weights.bin": 320620,
+    "S0.optimizer.bin": 7384,
+    "S0.rng.json": 771,
+    "preparation.json": 31739
+  },
+
+  "donor_is_not_distinguished_by_weights_ru": {
+    "comment_ru": "Осторожность, без которой приёмка была бы слепой ровно там, где карточка предупреждает: «У соседних H64 семей могут совпадать веса, но это не позволяет подставить их RNG/authority». Проверено на живом дереве 13.11.2026: обученные веса И состояние оптимизатора назначенного донора ПОБАЙТОВО совпадают у ШЕСТИ семейств сразу. Все шесть выращены из одних зёрен на одних данных при нулевом отсеве, поэтому проверка, опирающаяся на веса или на состояние оптимизатора, прошла бы с любым из пяти чужих доноров и ничего бы не заметила. Отдельно: область случайного потока тоже НЕ уникальна — у h64-causal-scores и h64-silu она одна и та же, «frozen-transpose-probe-v1». Уникальны ровно три признака, перечисленные ниже, и приёмка обязана закрепить все три и доказать, что чужое семейство она ОТВЕРГАЕТ.",
+    "families_sharing_weights_and_optimizer_byte_for_byte": [
+      "h64-attn-transpose",
+      "h64-causal-scores",
+      "h64-rms-coordinate",
+      "h64-rms-row",
+      "h64-rope-table",
+      "h64-silu"
+    ],
+    "files_shared_byte_for_byte": ["S0.weights.bin", "S0.optimizer.bin"],
+    "stream_domain_is_not_unique_ru": "h64-causal-scores и h64-silu объявляют одну и ту же область случайного потока, поэтому поток сам по себе донора не опознаёт.",
+    "distinguishing_marks_ru": [
+      "отпечаток файла случайного состояния S0.rng.json",
+      "отпечаток опознавательной строки топологии",
+      "отпечаток опознавательной строки настройки адаптеров"
+    ],
+    "neighbour_families_that_must_be_refused": {
+      "comment_ru": "Пять чужих семейств с теми же весами и тем же состоянием оптимизатора. Приёмка берёт файл случайного состояния каждого и требует, чтобы продукт ОТКАЗАЛСЯ его восстанавливать под личностью назначенного донора. Записанные здесь значения нужны затем, чтобы отказ доказывался отличием признаков, а не удачей.",
+      "h64-causal-scores": {
+        "relative_path": "experiments-v2/RP01-MICRO/_shared-learned-starts/h64-causal-scores/v1",
+        "rng_file_sha256": "ad6d25a66445966b6814ba6345ddf63fb358033bdb2b364f703fb7fc7835c6d1",
+        "stream_domain": "frozen-transpose-probe-v1",
+        "topology_sha256": "8f58ee5df35f811e786804b8fef417d36461117404c24d8301af61548aa8e0ad",
+        "lora_configuration_sha256": "728ef9438b5f80b6b04fe3ab835941a556e1b02410b755d0bbc389ada78a4602"
+      },
+      "h64-rms-coordinate": {
+        "relative_path": "experiments-v2/RP01-MICRO/_shared-learned-starts/h64-rms-coordinate/v1",
+        "rng_file_sha256": "6215ff74662fb24ab856ffd149a243d4e5d07c5fa94fc16eb7ca1f7ec7793616",
+        "topology_sha256": "67ae4bbc81e1db3d99c0d3480bd3ee1aba6a4c33db9d809b6ef67796708b2674",
+        "lora_configuration_sha256": "901123df2486c06a87fd7585f481b481af96ca9d4ca755f14f513e2387a34a6e"
+      },
+      "h64-rms-row": {
+        "relative_path": "experiments-v2/RP01-MICRO/_shared-learned-starts/h64-rms-row/v1",
+        "rng_file_sha256": "f1a52f59651ee91b78219a6e897efcbc94f69e9a1b6259e2675a69c9cd5db9cc",
+        "stream_domain": "rms-row-reduce-probe-v1",
+        "topology_sha256": "96829954a8fec676965d4d845aafdee407dd75172e5093344a08f1028232f699",
+        "lora_configuration_sha256": "5fd70f9b39b0e936eba429f9e922a1d1ca22e0470f0a3e0aa2d610d56bfc4ad1"
+      },
+      "h64-rope-table": {
+        "relative_path": "experiments-v2/RP01-MICRO/_shared-learned-starts/h64-rope-table/v1",
+        "rng_file_sha256": "b0932af4c08bc12c5b7f666e5064555fbd02f130181ef25dee2918632c24ddd3",
+        "stream_domain": "rope-training-table-probe-v1",
+        "topology_sha256": "ff82e590364ae22cbde4ac1a3fa45896c71b571ce37f65e59f064038dc2e63b9",
+        "lora_configuration_sha256": "8d7a0e5f160780d82bb36a0aae8401d54d0891c205547cafa15db395f7d33c06"
+      },
+      "h64-silu": {
+        "relative_path": "experiments-v2/RP01-MICRO/_shared-learned-starts/h64-silu/v1",
+        "rng_file_sha256": "13237c7cb87e6d20ddb3df4115c76cb2fd516ea310c06e328e1d0a4e0c5eb781",
+        "stream_domain": "frozen-transpose-probe-v1",
+        "topology_sha256": "c8d4a2f9fc2a338c39618bd8f76146c799d99c5385b2e2629dce1bb2d19403e2",
+        "lora_configuration_sha256": "53ac9cf859c32cef6d478e08a9fc4f7ab4258700eb3208a77463f214ace02ee4"
+      }
+    }
+  },
+
+  "independent_records_used_ru": {
+    "comment_ru": "Какие записи донора приёмка берёт как независимый эталон и за что отвечает каждая. Ни одна из них не является проверяемым объектом и ни одна не создаётся продуктовым сериализатором в этом прогоне: байты обеих закреплены выше.",
+    "parameter_names_record": "authority.json, поле namedBindings — имена четырёх обучаемых массивов. Имён параметров в preparation.json НЕТ; наряд исполнителя называл preparation.json, и это было поправлено по факту 13.11.2026.",
+    "panel_and_step_record": "preparation.json — панель донора до его обучения (w0_panel) и в точке старта (s0_panel), а также номера шагов оптимизатора и случайного состояния.",
+    "branch_note": "preparation.json, поле branch: «original A semantics; attention transpose offsets disabled» — показания донора сняты при ВЫКЛЮЧЕННОМ проверяемом факторе, тогда как текущий продукт идёт узким путём всегда."
+  },
+
+  "not_proven_ru": "Эта приёмка не измеряет выигрыш во времени, не воспроизводит исторические −8,67% и не закрепляет никакие точные байты как ожидаемое: карточка это прямо запрещает. Она не доказывает, что ученик освоил правило знака — четыре обновления правилу не учат, и учебная доля остаётся одна из двух до и после. Она не является двухстадийным прогоном A/B и не заменяет его: одно плечо на текущем продукте."
+}
