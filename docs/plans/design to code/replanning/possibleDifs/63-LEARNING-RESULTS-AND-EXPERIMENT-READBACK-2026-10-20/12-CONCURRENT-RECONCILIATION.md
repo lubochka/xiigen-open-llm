@@ -1,0 +1,54 @@
+# Согласование параллельного обновления6bc4
+
+**Поздняя дельта core883496:** №01–04 уже завершены; текущий NEXT — **№05 N62-R2**. Сохранённый N62-R1 и его ограничения — в [13-LATEST-N62-R1-READBACK.md](13-LATEST-N62-R1-READBACK.md); новые TRAIN readouts, точные команды и действующие output назначения — в [14-CORE883-PROTOCOL-DELTA.md](14-CORE883-PROTOCOL-DELTA.md). Ни N62-R1, ни прежние три опыта повторно не запускать. Основной текст ниже сохраняет проверенный срез0b76; поздние уточнения имеют приоритет при будущей передаче.
+
+**Документная дельта перед публикацией.** Основной аудит закреплён на planning4b95 и core0b76. Перед записью проверка головы обнаружила новый [planning commit6bc4](https://github.com/lubochka/xiigen-planning/commit/6bc4b6fba8f14870f5dc4966cf5a344754962d66), прямого потомка4b95. Он добавил15 файлов соседнего пакета, включая13 Markdown, и navigation prefix к README. Наш пакет публикуется поверх6bc4; все чужие файлы и прежний текст README сохраняются. Core не изменился. [Receipt с путями и SHA](evidence/concurrent-update.json).
+
+Получены все13 новых Markdown; выполнен отдельный поиск пересечений ROPE/AST и адресное чтение новой карточки, промпта, реестра, P54 и конфликтов передачи. Это не повтор полного аудита, не новая серия запусков и не расширение старого claim734 на непрочитанные источники. Результаты прежних опытов не пересчитываются снова.
+
+## 1. NG01 сохранён как внешняя карточка, а не собственная новая находка
+
+[Карточка NG01](https://github.com/lubochka/xiigen-planning/blob/6bc4b6fba8f14870f5dc4966cf5a344754962d66/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/cards/NG01-null-guard-label.md) и [её промпт](https://github.com/lubochka/xiigen-planning/blob/6bc4b6fba8f14870f5dc4966cf5a344754962d66/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/prompts/NG01-executor.md) описывают узкий int-parameter фактор внутри ранее известного N48-01/IsPatternExpression. Пример `if (n is > 0)` над явно non-nullable `int n` не защищает другой nullable receiver `x`. B исключает только это ложное доказательство null-защиты при построении метки; законные nullable-int, type-pattern и null-literal controls сохранены.
+
+Реальная связь: [Label](https://github.com/lubochka/xiigen-planning/blob/6bc4b6fba8f14870f5dc4966cf5a344754962d66/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/cards/NG01-null-guard-label.md#L25-L47) → фактические учебные строки → [native Train и выученная память](https://github.com/lubochka/xiigen-planning/blob/6bc4b6fba8f14870f5dc4966cf5a344754962d66/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/cards/NG01-null-guard-label.md#L252-L310) → Predict. Это самостоятельный label factor; наши RoPE tables и StructuralKnn sibling cache меняют другие операции и других получателей. Успех меток должен быть измерен на строках, реально поступивших в Train; сам по себе он не доказывает успех конечного совета.
+
+| Поле | Сохранённое назначение |
+|---|---|
+| Статус | DESIGNED_NOT_RUN; host не создан, build и Train/Predict не выполнялись |
+| Ученик | FileActionKnnPredictor, k3,30 AST features; внешний LLM не участвует |
+| Source | core0b76; `12.SemanticCompiler/Prediction/FileActionKnn.cs` |
+| Host | `C:/xg/NG01`; project `C:/xg/NG01/Runner.csproj` |
+| Output | `C:/xg/NG01/r/attempt-0001`; уже вне protected, дополнительный перенос не нужен |
+| Команды | `pwsh -NoProfile -File C:/xg/NG01/Prepare.ps1`, затем `pwsh -NoProfile -File C:/xg/NG01/Run.ps1` |
+| Учебный бюджет | Два Train,24 учебные строки;16 logical queries, из них8 before закрывает guard и8 after вызывают native Predict |
+| Existing attempt | Сохранить, не удалять/перезаписывать; новый attempt не выбирать самовольно |
+
+[Пути/source](https://github.com/lubochka/xiigen-planning/blob/6bc4b6fba8f14870f5dc4966cf5a344754962d66/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/cards/NG01-null-guard-label.md#L49-L55) · [команды и бюджет](https://github.com/lubochka/xiigen-planning/blob/6bc4b6fba8f14870f5dc4966cf5a344754962d66/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/cards/NG01-null-guard-label.md#L393-L422). Это документная проверка согласованности, не проверка сборки нового host.
+
+## 2. Один согласованный порядок по постоянным ID
+
+В соседнем [реестре](https://github.com/lubochka/xiigen-planning/blob/6bc4b6fba8f14870f5dc4966cf5a344754962d66/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/08-execution-registry.md) NG01 получил локальный№32, а KN-router —№33. В защищённом исходном реестре№32 уже означает KN-router. У нас сохраняются исходные32 номера; NG01 добавляется как **S03**. Для порученной объединённой программы действует [04-REGISTRY.md](04-REGISTRY.md):
+
+**04–15 → 17–31 → S01 ROPE-TRAIN-TABLE-01 → S02 AST-SIB-CACHE-01 → S03 NG01 → исходный16 IDENTITY-M1-01 → исходный32 KN-ROUTER-LEARNED-KEY-01 → END.**
+
+Это35 строк всего, включая три завершённые. В исходном наборе по-прежнему30 direct learning/input/state вмешательств и2 readers; добавлены наши2 direct design и внешний1 direct design. Документы10/11 сохраняют собственные знаменатели32 исходных рецепта и29 незавершённых исходных output assignments.
+
+**Точный override передачи NG01:** приложить его полную неизменённую карточку и промпт, затем указать `effective_registry=04-REGISTRY.md пакета63; effective_position=S03; next_id=IDENTITY-M1-01`. Это заменяет только next и локальный номер из внешней вводной; source, данные, factor, команды, output и budget не меняются. После IDENTITY следующий KN-router, затем END. Если поручен только NG01, после него END. Прямое назначение пользователя имеет приоритет. Никакой выбор похожего ID или повторного допуска каждого последующего пункта уже порученной программы не нужен.
+
+Модель исполнителя остаётся default текущей сессии, отчёт — русский по исходной карточке. Любой измеренный полезный выигрыш — успех своей оси и домена, регрессии рядом. NEXT немедленно прекращает прошлую задачу без отчёта/hashes/Git/review/retry перед переходом; STOP прекращает всю работу, кроме необходимой остановки своего живого процесса. Старые результаты сохраняются. Документная фаза не запускает ни один ID.
+
+## 3. P54: снять ошибочную границу, сохранить реальные недостающие входы
+
+Сохранено [семь адресных дополнений P54](https://github.com/lubochka/xiigen-planning/blob/6bc4b6fba8f14870f5dc4966cf5a344754962d66/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/06-P54-learned-reader-addendum.md). Они меняют использование реально выученных phrase/word/exact/kNN maps. Путь writer→state→reader→учебная оценка предъявлен в [TranslationMachine.TrainStructuredBatchAsync](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/27.TranslationDomain/TranslationMachine.cs#L107-L126) и [ExecutorUnit.TrainOnExample/MeasureAccuracy](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/27.TranslationDomain/TranslationTrainedUnits.cs#L403-L481). Здесь MeasureAccuracy непосредственно вызывает executor Execute с обычным TranslationSemanticTokenizer: полный adapter/verifier route не пройден, а возврат AccuracyAfter сам по себе не доказывает обратное использование метрики в optimizer update. Поэтому OUT_OF_LEARNING_SCOPE только из-за нуля новых updates — ошибочная инструкция. Сравнение reader A/B на одном подтверждённом learned checkpoint допустимо.
+
+Семь факторов: сегментация выученных фраз; исходный индекс после фильтрации tokens; обязательное покрытие phrase composition; значимый boundary; полнота word-map ответа; выбор по разрешённому relation; ранний word return, скрывающий kNN. Каждый остаётся отдельным фактором. Для всех в addendum конкретно указаны недостающие checkpoint/queries/actual tokenization либо независимый mandatory/relation contract. Особенно P54.6 требует общей для A/B версии composer, а P54.3/.5/.6/.7 — разрешённого семантического входа; TEST gold его не заменяет.
+
+**Статус:** learning dependency подтверждена; точный runtime ещё не назначен — готовых закреплённых паспортов из этих семи здесь 0/7. Существующий [TranslationMemorySourceLaw.Compare](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/27.TranslationDomain/TranslationMemorySourceLaw.cs#L10-L40) ограничен английскими copular source clauses и не предоставляет общего actor/action/recipient или межъязыкового checker для P54.7. Семь пунктов не добавляются после END как автоматический запасной список. Их место — поздняя работа с зависимым reader после прямого обучения и после закрепления недостающих входов. Наличие полезной истории перевода не доказывает наличие нужного checkpoint для этих конкретных вмешательств.
+
+## 4. Сохранённые уточнения передачи и текущих выводов
+
+- [KH-COST и старые номера](https://github.com/lubochka/xiigen-planning/blob/6bc4b6fba8f14870f5dc4966cf5a344754962d66/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/05-card-protocol-and-conflicts.md): preamble должен называть **FileActionKnnPredictor.Train**. Ни MethodKnn, ни дополнительное обучение в этот cost experiment не добавляется. Эффективные переходы: KH-COST22→KH-EXT23, KH-EXT23→GRADB24, GRADB24→RMS25. Наш32-row semantic review уже описывает правильный native caller.
+- [Передача133 коротких P-промптов](https://github.com/lubochka/xiigen-planning/blob/6bc4b6fba8f14870f5dc4966cf5a344754962d66/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/09-prompt-handoff-audit.md): полные125 P-карточек содержат обязательные STOP/default вставки, но вырезанная короткая цитата теряет их. Прикладывать полную назначенную карточку вместе с обязательной оболочкой и текущим registry. Не создавать133 новых runtime заданий; старое «сам выбирает опыт» не действует поверх назначенной очереди.
+- Внешнее ограничение400-step diagnostic до report-level дополнено доступным [первичным probe-result.json](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/experiments-v2/RP01-MICRO/LEARN-SANITY-PROBE/probe-result.json), уже разобранным в нашем01. Это сохранённый raw с частичным успехом, по-прежнему отдельный от4-step cache A/B; полного checkpoint provenance ему не приписываем.
+
+Чужие исходные тексты не редактируются. Различия двух документных пакетов разрешены точными ссылками и эффективным registry; measured candidate не становится product patch, а новый design не становится успешным экспериментом.

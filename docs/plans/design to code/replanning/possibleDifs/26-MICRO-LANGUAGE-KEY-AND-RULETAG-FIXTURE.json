@@ -1,0 +1,258 @@
+{
+  "schema": "XIIGEN-MICRO26-TEST-ONLY-v1",
+  "status": "AUTHOR_PROPOSED_FIXTURE_NOT_INDEPENDENT_GOLD_NOT_LEGAL_DPO",
+  "readme": "Use only for isolated SemanticTokenizer/structured Unit diagnostics, not as final DPO chosen/rejected material. Validate multilingual meanings with independent judge first. Separate exact bilingual shared-source collision from source-disjoint generalization.",
+  "source_repo": "lubochka/llm_mvp_core",
+  "source_branch": "codex/dpo-implementation",
+  "mechanical": [
+    {
+      "id": "A-en",
+      "unitId": "semantic-tokenizer",
+      "rawText": "pan",
+      "sourceLang": "en",
+      "proposedDiagnosticSignature": "SVO|PAIR:EN-TEST",
+      "trainingOrderGroup": "LANG-PAN"
+    },
+    {
+      "id": "A-es",
+      "unitId": "semantic-tokenizer",
+      "rawText": "pan",
+      "sourceLang": "es",
+      "proposedDiagnosticSignature": "SVO|PAIR:ES-TEST",
+      "trainingOrderGroup": "LANG-PAN"
+    },
+    {
+      "id": "A2-en",
+      "unitId": "semantic-tokenizer",
+      "rawText": "pie",
+      "sourceLang": "en",
+      "proposedDiagnosticSignature": "SVO|PAIR:EN-PIE",
+      "trainingOrderGroup": "LANG-PIE"
+    },
+    {
+      "id": "A2-es",
+      "unitId": "semantic-tokenizer",
+      "rawText": "pie",
+      "sourceLang": "es",
+      "proposedDiagnosticSignature": "SVO|PAIR:ES-PIE",
+      "trainingOrderGroup": "LANG-PIE"
+    },
+    {
+      "id": "A3-en",
+      "unitId": "semantic-tokenizer",
+      "rawText": "once",
+      "sourceLang": "en",
+      "proposedDiagnosticSignature": "SVO|PAIR:EN-ONCE",
+      "trainingOrderGroup": "LANG-ONCE"
+    },
+    {
+      "id": "A3-es",
+      "unitId": "semantic-tokenizer",
+      "rawText": "once",
+      "sourceLang": "es",
+      "proposedDiagnosticSignature": "SVO|PAIR:ES-ONCE",
+      "trainingOrderGroup": "LANG-ONCE"
+    },
+    {
+      "id": "B-ru",
+      "unitId": "semantic-tokenizer",
+      "rawText": "она запустила поток",
+      "sourceLang": "ru",
+      "proposedDiagnosticSignatureSuffix": "|PAIR:RU-PROBE",
+      "precondition": "base.RuleTags.Count > 0"
+    }
+  ],
+  "qualityCandidates": [
+    {
+      "id": "Q01",
+      "panel": "homograph",
+      "group": "pan",
+      "sourceLanguage": "en",
+      "targetLanguage": "ru",
+      "inputText": "pan",
+      "humanCandidateMeaning": "cooking pan",
+      "law": "Preserve vessel/cooking semantics",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q02",
+      "panel": "homograph",
+      "group": "pan",
+      "sourceLanguage": "es",
+      "targetLanguage": "en",
+      "inputText": "pan",
+      "humanCandidateMeaning": "bread",
+      "law": "Preserve food/bread semantics",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q03",
+      "panel": "homograph",
+      "group": "pie",
+      "sourceLanguage": "en",
+      "targetLanguage": "ru",
+      "inputText": "pie",
+      "humanCandidateMeaning": "pastry/dessert",
+      "law": "Preserve pastry meaning",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q04",
+      "panel": "homograph",
+      "group": "pie",
+      "sourceLanguage": "es",
+      "targetLanguage": "en",
+      "inputText": "pie",
+      "humanCandidateMeaning": "foot",
+      "law": "Preserve body-part meaning",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q05",
+      "panel": "homograph",
+      "group": "once",
+      "sourceLanguage": "en",
+      "targetLanguage": "ru",
+      "inputText": "once",
+      "humanCandidateMeaning": "one time",
+      "law": "Preserve temporal adverb sense",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q06",
+      "panel": "homograph",
+      "group": "once",
+      "sourceLanguage": "es",
+      "targetLanguage": "en",
+      "inputText": "once",
+      "humanCandidateMeaning": "eleven",
+      "law": "Preserve numeral sense",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q07",
+      "panel": "ru-rule-tags",
+      "group": "thread-subject",
+      "sourceLanguage": "ru",
+      "targetLanguage": "en",
+      "inputText": "она запустила поток",
+      "humanCandidateMeaning": "she launched a thread in technical context",
+      "law": "Preserve feminine subject and launch relation",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q08",
+      "panel": "ru-rule-tags",
+      "group": "thread-subject",
+      "sourceLanguage": "ru",
+      "targetLanguage": "en",
+      "inputText": "он запустил поток",
+      "humanCandidateMeaning": "he launched a thread in technical context",
+      "law": "Preserve masculine subject and launch relation",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q09",
+      "panel": "ru-rule-tags",
+      "group": "thread-subject-heldout",
+      "sourceLanguage": "ru",
+      "targetLanguage": "en",
+      "inputText": "она запустила отдельный поток",
+      "humanCandidateMeaning": "she launched a separate thread",
+      "law": "Preserve subject gender, separateness, launch relation",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q10",
+      "panel": "ru-rule-tags",
+      "group": "thread-negation-heldout",
+      "sourceLanguage": "ru",
+      "targetLanguage": "en",
+      "inputText": "она не запустила поток",
+      "humanCandidateMeaning": "she did not launch the thread",
+      "law": "Do not invert negation",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q11",
+      "panel": "ru-rule-tags",
+      "group": "thread-context-heldout",
+      "sourceLanguage": "ru",
+      "targetLanguage": "en",
+      "inputText": "вчера она запустила поток",
+      "humanCandidateMeaning": "she launched the thread yesterday",
+      "law": "Preserve time and subject",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    },
+    {
+      "id": "Q12",
+      "panel": "negative-control",
+      "group": "unseen-topic",
+      "sourceLanguage": "ru",
+      "targetLanguage": "en",
+      "inputText": "какой сейчас цвет моря",
+      "humanCandidateMeaning": "what color is the sea now",
+      "law": "Unknown topic must not be treated as trained rule",
+      "goldStatus": "REQUIRES_INDEPENDENT_JUDGE"
+    }
+  ],
+  "arms": [
+    {
+      "id": "A",
+      "name": "no_learning",
+      "training": "none"
+    },
+    {
+      "id": "B",
+      "name": "existing_en_then_es",
+      "training": "canonical_language_pair_order_EN_ES",
+      "patch": "none"
+    },
+    {
+      "id": "C",
+      "name": "existing_es_then_en",
+      "training": "canonical_language_pair_order_ES_EN",
+      "patch": "none"
+    },
+    {
+      "id": "D",
+      "name": "source_lang_scoped_key",
+      "training": "same_as_B",
+      "patch": "Only scope _signatureCorrections by canonical sourceLang"
+    },
+    {
+      "id": "E",
+      "name": "preserve_ru_rule_tags",
+      "training": "same_as_B",
+      "patch": "Only preserve seq.RuleTags in corrected signature builders"
+    },
+    {
+      "id": "F",
+      "name": "shuffled_label_negative_control",
+      "training": "same_as_B",
+      "patch": "none",
+      "labels": "shuffled_DIAGNOSTIC_ONLY"
+    }
+  ],
+  "evaluation_contract": {
+    "preregister_gold_before_execution": true,
+    "measure": [
+      "exact_state_key",
+      "signature/prefix/structure",
+      "rule_tags",
+      "route",
+      "KNN_hit_level",
+      "verifier_issues",
+      "semantic-law-correct",
+      "false-accept",
+      "false-reject",
+      "abstain",
+      "latency_ms"
+    ],
+    "candidate_provenance": "synthetic diagnostic records only; any real DPO must be separately authorized",
+    "quality_claim_requires": "blind independent examiner and actual ordinary consumer output",
+    "baseline_and_treatment_same_cases": true,
+    "native_test_run": false,
+    "no_production_code_changed": true
+  }
+}

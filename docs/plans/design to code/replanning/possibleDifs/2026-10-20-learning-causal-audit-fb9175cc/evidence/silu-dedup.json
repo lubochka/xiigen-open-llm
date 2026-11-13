@@ -1,0 +1,55 @@
+{
+  "planning_pin": "fc0dd1b04d61a963906cdc1ab29dffd2ee9e520c",
+  "read_markdown": 929,
+  "patterns": [
+    "silu",
+    "swiglu",
+    "sigmoid.*(?:cache|reuse)",
+    "(?:cache|reuse).*sigmoid",
+    "к[еэ]ш.*(?:сигмоид|активац)",
+    "повторн.*(?:экспонент|silu)"
+  ],
+  "matches": [
+    {
+      "path": "33-NEW-AUTOGRAD-EMBEDDING-BIAS-AND-SUPERVISED-WARMUP-GAPS-2026-10-16.md",
+      "line": 28,
+      "text": "**Важно: область НЕ RP01:** [CausalSelfAttention.cs L56–71](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/03.TransformerModel/Layers/CausalSelfAttention.cs#L56-L71), [SwiGLUFeedForward.cs L24–36](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/03.TransformerModel/Layers/SwiGLUFeedForward.cs#L24-L36) и [LlmModel.cs L101–110](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/03.TransformerModel/LlmModel.cs#L101-L110) для основного Transformer используют `useBias:false`. Поэтому ошибку нельзя выдавать за объяснение failed RP01 q/v LoRA. Она релевантна тем **иным** trainable Units/classifiers/custom layers, которые создают `Linear` с bias=true; перед ремонтом требуется найти фактического потребителя."
+    },
+    {
+      "path": "2026-10-19-design-to-code-clean-learning-audit/03-MECHANISM-COVERAGE-AND-DPO-LORA.md",
+      "line": 90,
+      "text": "| 03.TransformerModel/Layers/SwiGLUFeedForward.cs | 5daa1c56bb54cac66bd95b8658df9cc0eb2ee56e |"
+    },
+    {
+      "path": "2026-10-20-training-state-and-experiment-audit/07-NEW-LEARNING-COST-MECHANISMS.md",
+      "line": 21,
+      "text": "4. Обычный Transformer forward вызывает Q/K/V/O projections ([attention, 138–170][attention]), три FFN Linears ([SwiGLU, 40–51][ffn]) и LM head ([LlmModel, 219–243][model]). Таким образом, затраты существуют и в неадаптированных замороженных проекциях, а не только внутри двух LoRA slots."
+    },
+    {
+      "path": "2026-10-20-training-state-and-experiment-audit/07-NEW-LEARNING-COST-MECHANISMS.md",
+      "line": 94,
+      "text": "[ffn]: https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/03.TransformerModel/Layers/SwiGLUFeedForward.cs#L40-L51"
+    },
+    {
+      "path": "50-LOCAL-WIKI-FEEDBACK-AND-BPE-BUDGET-2026-10-19/03-MECHANISM-COVERAGE-AND-KEPT-FIXES.md",
+      "line": 25,
+      "text": "Donor `RmsNorm.MultiplyBroadcast/MultiplyGamma` создаёт новые `Tensor` без связи backward с входом. Current использует `TensorOps.MultiplyBroadcast` с производными по обоим аргументам. В current также реализованы backward-функции SiLU, repeat-interleave для GQA, RoPE и causal mask. [Donor RMSNorm](https://github.com/lubochka/llm_mvp_core/blob/219d7ba89dc3ef43e03e17f1461ad96154d3dd7a/03.TransformerModel/Layers/RmsNorm.cs#L39-L65); [current RMSNorm](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/03.TransformerModel/Layers/RmsNorm.cs#L27-L40); [broadcast backward](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/00.TensorCore/Core/TensorOps.cs#L187-L213); [SiLU](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/00.TensorCore/Core/TensorOps.cs#L1129-L1162); [GQA/RoPE/mask](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/00.TensorCore/Core/TensorOps.cs#L1212-L1453)."
+    },
+    {
+      "path": "50-LOCAL-WIKI-FEEDBACK-AND-BPE-BUDGET-2026-10-19/00-LOCAL-WIKI-RECOVERY-FIRST.md",
+      "line": 39,
+      "text": "В текущем ядре подтверждены полезные исправления: LoRA действительно установлена в attention forward; DPO использует сохранённый граф и правильный знак производной log-probability; RMSNorm, SiLU, RoPE и GQA сохраняют нужные пути gradient. В старых прочитанных местах таких связей не было. Полный source-перечень — [03, сохранённые исправления](03-MECHANISM-COVERAGE-AND-KEPT-FIXES.md), независимая сверка — [review](evidence/independent-review.md)."
+    },
+    {
+      "path": "2026-10-20-learning-evidence-audit-dd150aa5/06-new-hypotheses-and-novelty.md",
+      "line": 33,
+      "text": "Адресный итог поиска: `BackwardLoss|exponentialSum` — четыре совпадения (caller/reachability/masking), сочетания повторного Exp/экспонент с reuse/cache/double/recompute — ноль, `expVals` — 36 совпадений с известным DPO R2 и его обсуждением. Дополнительно читались общие softmax/gradient материалы. Формальный поиск `03` рядом с softmax дал три контекстных совпадения, не отдельный SFT фактор. Гарантия содержательного прочтения всех 1248 документов не заявлена: это полный адресный поиск плюс чтение точных соседей и primary source."
+    },
+    {
+      "path": "2026-10-20-learning-evidence-audit-dd150aa5/cards/SFT-EXP-REUSE-01.md",
+      "line": 1,
+      "text": "# SFT-EXP-REUSE-01 — повторно использовать экспоненты в настоящем SFT backward"
+    }
+  ],
+  "conclusion": "No prior SiLU denominator reuse hypothesis/card found; existing SiLU mentions concern backward reachability or source manifests. Technical SFT-EXP-REUSE is a separate softmax-backward factor."
+}

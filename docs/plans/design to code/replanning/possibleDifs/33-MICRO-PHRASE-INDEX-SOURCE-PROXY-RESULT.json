@@ -1,0 +1,113 @@
+{
+  "study": "N33 filtered/original token index drift",
+  "status": "SOURCE_LOGIC_PROXY_ONLY__NOT_NATIVE_DOTNET__NOT_TRAINED_MODEL__NOT_SEMANTIC_QUALITY_RESULT",
+  "sourceCode": "27.TranslationDomain/TranslationTrainedUnits.cs L798-L859, L1008-L1023",
+  "setup": "Simulated admitted RU_EN PhraseMap and WordMap with no exact-source memory",
+  "rows": [
+    {
+      "caseId": "no_punctuation_control",
+      "source": "проверь файл",
+      "expectedWhenDashIsNonSemantic": "check file",
+      "baseline": {
+        "composedText": "check file",
+        "phraseAccepted": true,
+        "coverage": 1,
+        "originalIndexesOfFilteredTokens": [
+          0,
+          1
+        ]
+      },
+      "indexPreserved": {
+        "composedText": "check file",
+        "phraseAccepted": true,
+        "coverage": 1,
+        "originalIndexesOfFilteredTokens": [
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "caseId": "leading_symbol",
+      "source": "— проверь файл",
+      "expectedWhenDashIsNonSemantic": "check file",
+      "baseline": {
+        "composedText": "check check",
+        "phraseAccepted": true,
+        "coverage": 1,
+        "originalIndexesOfFilteredTokens": [
+          1,
+          2
+        ]
+      },
+      "indexPreserved": {
+        "composedText": "check file",
+        "phraseAccepted": true,
+        "coverage": 1,
+        "originalIndexesOfFilteredTokens": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "caseId": "interposed_symbol",
+      "source": "проверь — файл",
+      "expectedWhenDashIsNonSemantic": "check file",
+      "baseline": {
+        "composedText": "check",
+        "phraseAccepted": false,
+        "coverage": 0.5,
+        "originalIndexesOfFilteredTokens": [
+          0,
+          2
+        ]
+      },
+      "indexPreserved": {
+        "composedText": "check file",
+        "phraseAccepted": true,
+        "coverage": 1,
+        "originalIndexesOfFilteredTokens": [
+          0,
+          2
+        ]
+      }
+    },
+    {
+      "caseId": "trailing_symbol_control",
+      "source": "проверь файл —",
+      "expectedWhenDashIsNonSemantic": "check file",
+      "baseline": {
+        "composedText": "check file",
+        "phraseAccepted": true,
+        "coverage": 1,
+        "originalIndexesOfFilteredTokens": [
+          0,
+          1
+        ]
+      },
+      "indexPreserved": {
+        "composedText": "check file",
+        "phraseAccepted": true,
+        "coverage": 1,
+        "originalIndexesOfFilteredTokens": [
+          0,
+          1
+        ]
+      }
+    }
+  ],
+  "score": {
+    "baseline": {
+      "accepted": 3,
+      "correctAccepted": 2,
+      "wrongAccepted": 1
+    },
+    "indexPreserved": {
+      "accepted": 4,
+      "correctAccepted": 4,
+      "wrongAccepted": 0
+    }
+  },
+  "qualification": "The gold assumes the standalone em dash is punctuation. This proxy does not implement native tokenizer, verifier, admission, checkpoint or model."
+}

@@ -1,0 +1,676 @@
+{
+  "core_commit": "883496bca18113bf37e0afe683c75b05a0075048",
+  "protected_tree": "41587e4a86b38928e4f4d642a8f1a0f2d35bfcf1",
+  "markdown_files": 334,
+  "source_blob_sha_verified": 334,
+  "queries": [
+    {
+      "name": "sknn_exact_prep",
+      "pattern": "ChildNodes|IndexOf\\(|квадратич|sibling.{0,50}cache|cache.{0,50}sibling",
+      "hit_lines": 1,
+      "hit_files": 1,
+      "hits": [
+        {
+          "path": "83-check-catalog-and-prompts.md",
+          "line": 259,
+          "text": "- **Гипотеза/источник:** complete state и его приёмник могут отличаться от manifest/cache; [09, Н-03](09-domain-functions-and-sibling-branches.md), [19, СТ-01](19-unit-state-identity-and-partial-learning.md), [36, 2](36-helper27-state-replay-and-quality-review.md), [12, С-05](12-student-update-to-generation-path.md)."
+        }
+      ]
+    },
+    {
+      "name": "sknn_related",
+      "pattern": "SiblingCount|PositionInParent|NEW-POSITION|номер аргумента",
+      "hit_lines": 27,
+      "hit_files": 13,
+      "hits": [
+        {
+          "path": "83-check-catalog-and-prompts.md",
+          "line": 275,
+          "text": "- **GOOD:** «SiblingCount хранится, но distance его не читает». **BAD:** «Высокий tier проверил все перечисленные в описании признаки»."
+        },
+        {
+          "path": "74-helper-master-reconciliation-and-research-priorities.md",
+          "line": 18,
+          "text": "| AST SiblingCount | В73 поле действительно вычисляется, но не входит в расстояние. | Различающие реальные C# контексты и включённый обычный читатель прогноза; отсутствие эффекта на маленькой панели не доказывает глобальную бесполезность признака. |"
+        },
+        {
+          "path": "03-hybrid-units-and-domain-representation.md",
+          "line": 50,
+          "text": "Старый E09 использовал пять вещественных координат AST и HNSW, затем голосование: [E09ContextVectorKnn.cs](../../../34.Experiments/Experiments/E09ContextVectorKnn.cs):11–21,64–79. Новый structural kNN хранит другой набор признаков: тип узла, три родителя, позицию, siblings, глубину, scope, file ID и синтаксическую роль. Его [StructuralKnn.cs](../../../12.SemanticCompiler/Prediction/StructuralKnn.cs):12–35 задаёт специальное расстояние: несовпадение роли стоит 4, первого родителя — 3, типа узла — 2, второго родителя — 2, третьего — 1,5; позиция и глубины добавляют малые штрафы. Не все объявленные поля участвуют в расстоянии: например FileId и SiblingCount в этой формуле не используются."
+        },
+        {
+          "path": "73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 1,
+          "text": "# 73. Редкие классы и SiblingCount: два разных ограничения, без отмены успешного E40V2"
+        },
+        {
+          "path": "73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 3,
+          "text": "16 октября 2026. READ_ONLY_RESEARCH. Core793d7b7. Только чтение helper, исходников, локальных Git refs и15 сохранённых JSON E40/E44; новые вычисления моделей и эксперименты не выполнялись. Два [N35 helper](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/35-NEW-RARE-CLASS-VALIDATION-BLINDNESS-IN-STRATIFIED-SPLIT-2026-10-16.md>) / [SiblingCount](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md>) прочитаны полностью."
+        },
+        {
+          "path": "73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 37,
+          "text": "## 4. SiblingCount сохранён, но не используется в расстоянии E09"
+        },
+        {
+          "path": "73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 39,
+          "text": "[StructuralVector:13–35](C:/Projects/llm_mvp_core/12.SemanticCompiler/Prediction/StructuralKnn.cs:13) содержит SiblingCount и FileId, но DistanceTo не читает их. [Extractor:54–59](C:/Projects/llm_mvp_core/12.SemanticCompiler/Prediction/StructuralKnn.cs:54) считает **все дочерние SyntaxNodes родителя, включая рассматриваемый узел**, с насыщением255; это не число всех соседних punctuation tokens и не dependency-связь языка. Название поля не должно заменять реальную семантику извлечения."
+        },
+        {
+          "path": "73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 41,
+          "text": "[Predict:145–161](C:/Projects/llm_mvp_core/12.SemanticCompiler/Prediction/StructuralKnn.cs:145) выбирает по этому расстоянию, затем голосам и числовому tie-break. Если два вектора отличаются только SiblingCount, расстояние равно; при k1/равенстве порядок материала может решать выбор. Для реальных C# контекстов сначала надо найти такое различие при действительно одинаковых прочих признаках и разных корректных targets. Критерий helper «не нашлись в маленькой панели — FEATURE_NOT_DISCRIMINATIVE» следует ограничить **этой панелью**, а не объявлять поле бесполезным вообще."
+        },
+        {
+          "path": "73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 43,
+          "text": "Игнорирование FileId может быть полезной инвариантностью для переноса между файлами. Добавлять его штраф вместе с SiblingCount означало бы менять два разных свойства. Оба поля в старых refs `DesignToCode`/`language_translate` принадлежат одному blob `f5132ce4800082797ca7d0197373cbdbd82fdcae`; старый splitter там тоже один blob `259663c8c9575aa604a4b51e281e6e96ac73c8f8`. Эти inherited ограничения не объявлены новой регрессией RP01."
+        },
+        {
+          "path": "73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 45,
+          "text": "Реальный source consumer StructuralKnnPredictor — SemanticCompilerFacade; [38](38-e09-transfer-labels-and-opt-in-consumer.md) уже проследил обучение, opt-in UseStructuralKnn=false по умолчанию и отсутствие найденного обычного читателя PredictedNextTokens. Новый exact-name поиск подтверждает facade/E09 callers; он не добавляет доказательства включения функции в RP01. Трасса38 не выдана за новый аудит. Для EN→RU Roslyn SiblingCount не заменяет собственные признаки роли/отрицания."
+        },
+        {
+          "path": "73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 51,
+          "text": "Для SiblingCount отдельно сравнить текущую метрику и заранее заданный слабый sibling-term на одних C# train/query/targets, удерживая k, tie-break, FileId и order. Проверить перенос на новые source families и сохранение обычных случаев. Сначала нужна source-доказанная различающая панель и реально включённый consumer. Ни этих fixtures, ни runtime проверок здесь не создано."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/08-sources-and-study-log.md",
+          "line": 284,
+          "text": "- **C# (02):** прежние EXAM-переименования повторяли TRAIN-вектор, потому что extractor не читает имена/значения. Теперь два заранее выбранных узла, точные NumericLiteralExpression/ReturnStatement labels и четыре запроса с новыми глубинами блоков. Native Train получает две пары, k=1 в обоих плечах. PositionInParent сохранён: отсутствие дополнительной пользы роли допустимо. Predict отдаёт target ID; диагностические голоса не выданы за его output."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/06-findings-map.md",
+          "line": 107,
+          "text": "| P26/P27/P79/P82–85; E09, LT-N03 | [C](02-programming.md): два заранее выбранных AST-узла, точный next-kind gold, новые глубины в EXAM. Имена/литералы, которые extractor не читает, больше не названы переносом. Роль против сохранённого PositionInParent может не дать разницы |"
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/06-findings-map.md",
+          "line": 328,
+          "text": "| 53 NEW-POSITION; P26.4/P27 | [14 position](14-additions-orchestration-sparse-knn.md#position):2 выбранных AST урока,4 новых глубины/позиции,16 Predict; насыщается используемый Position, не неиспользуемый SiblingCount |"
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/02-programming.md",
+          "line": 102,
+          "text": "В SyntacticRoleMapper строки197–198 задают BinaryExpression Left=3, Right=4. Гипотеза: явная роль операнда помогает сохранить выученное различие при изменении глубины/области блока. A: обнулить только `SyntacticRole` в одинаковых TRAIN/query-векторах. B: сохранить фактически извлечённую роль. Остальные признаки, codec, **k=1**, порядок и две исходные пары одинаковы. Это будущая точка вмешательства на границе `StructuralVector → Train/Predict`, а не уже существующий переключатель facade. При двух примерах k=5 забрал бы оба и разрешал ничью по меньшему target ID; k=1 заранее одинаков для обоих плеч, не второй фактор. `PositionInParent` сохраняется и тоже различает стороны, поэтому отсутствие пользы дополнительной роли вполне возможно."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/02-programming.md",
+          "line": 219,
+          "text": "Редкая позиция AST≥256 из53 проверяется отдельно в [14 NEW-POSITION](14-additions-orchestration-sparse-knn.md#position), без добавления этого граничного случая к обычному двухурочному C."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/20-additions-n57-argument-and-verifier.md",
+          "line": 1,
+          "text": "# N57 — номер аргумента и усвоение русского маркера проверяющим"
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/20-additions-n57-argument-and-verifier.md",
+          "line": 125,
+          "text": "**Меняем один признак — номер аргумента в списке; учится таблица StructuralKnnPredictor; проверяем её собственный прогноз следующего AST-kind.** Тема — C# программирование. Это два обучаемых состояния памяти, не две нейронные модели. Реальные owner/методы: [StructuralKnn.cs:42–95](C:/Projects/llm_mvp_core/12.SemanticCompiler/Prediction/StructuralKnn.cs:42), Train:117–120, Predict:145–161. Существующий immediate PositionInParent для `a`/`b` равен0 внутри разных ArgumentSyntax; он не является порядком аргументов в ArgumentList. P26 и старый role-factor этого условия не проверяют."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/20-additions-n57-argument-and-verifier.md",
+          "line": 156,
+          "text": "Дополнительные блок/if меняют видимые Depth/Scope; это не только переименование. Внутри каждой пары проверяется новый номер аргумента, остальные признаки сохраняются. Реальное отличие vectors от TRAIN нужно показать, а не предположить по тексту. Exam не передаётся в Facade.Compile/Train."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/README.md",
+          "line": 61,
+          "text": "- [20 — два N57 учебных механизма](20-additions-n57-argument-and-verifier.md): номер аргумента в StructuralKnn и запись русского marker в QualityVerifier; оба плеча действительно обучаются."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/14-additions-orchestration-sparse-knn.md",
+          "line": 125,
+          "text": "**Меняем только представление позиции; учится StructuralKnnPredictor; проверяем его собственный следующий AST-kind.** NEW-POSITION уточняет P26.4: прежний SiblingCount не участвует в distance, а PositionInParent участвует. [StructuralKnn:16–85](C:/Projects/llm_mvp_core/12.SemanticCompiler/Prediction/StructuralKnn.cs:16): позиция хранится в byte и ограничивается255; расстояние учитывает её различие. [Train/Predict:117–166](C:/Projects/llm_mvp_core/12.SemanticCompiler/Prediction/StructuralKnn.cs:117) — тот же получатель, что в [C](02-programming.md)."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/14-additions-orchestration-sparse-knn.md",
+          "line": 127,
+          "text": "A — нынешняя позиция; B — только поле PositionInParent и его извлечение сохраняют полный ordinal. Остальные признаки, codec, порядок и k=1 одинаковы. Не добавлять SiblingCount. Один урок здесь — одна выбранная пара AST-узлов, а не каждый пустой statement."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/14-additions-orchestration-sparse-knn.md",
+          "line": 229,
+          "text": "| 53 NEW-AGE/NEW-SCORE/NEW-POSITION | age/score/position; разные владельцы и виды результата |"
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/22-source-join-and-learning-scope.md",
+          "line": 153,
+          "text": "| J8 sparse: NEW-AGE global clock/late parameter; NEW-POSITION cap; NEW-SCORE raw negatives | [14 AGE/SCORE](14-additions-orchestration-sparse-knn.md), [02](02-programming.md), [20 ARG](20-additions-n57-argument-and-verifier.md) | AGE2steps — минимальная математика, предметный sparse learner OPEN; RP01 all16 не sparse. POSITION —256-й direct child, не общий AST count/256уроков. N57 ArgumentOrdinal отдельный. SCORE8Filter/0Train OUT. Dense-zero-gradient контроль не обязательная стадия |"
+        },
+        {
+          "path": "experimets/cards/P26-structural-features.md",
+          "line": 161,
+          "text": "A — исходный StructuralVector.DistanceTo: Extract сохраняет SiblingCount, но метрика его игнорирует. B — добавить только 0.15*min(abs(siblingCountDifference),4). Query и два вектора одинаковы во всех остальных полях, siblings 1/3: A tie 0/0, B 0/0.3. k, labels, порядок вставки и все остальные features фиксированы; обратный порядок — контроль tie, одинаковые siblings — отрицательный контроль. Реальные Roslyn argument/initializer/tuple случаи допускаются только если это поле действительно различает gold next-kind при равных остальных полях. FileId не добавлять: его инвариантность может быть полезна. Saturation SiblingCount на 255 фиксируется: 255/256 детей могут слиться ещё до distance; это граница данного B, а не доказанный quality gain."
+        },
+        {
+          "path": "experimets/06-source-content-walk.md",
+          "line": 1125,
+          "text": "**S273 — [35-MASTER-RP01-HISTORICAL-LEARNING-CROSSWALK-NOVELTY-AND-EXPERIMENT-ORDER-2026-10-16.md L1–109](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/35-MASTER-RP01-HISTORICAL-LEARNING-CROSSWALK-NOVELTY-AND-EXPERIMENT-ORDER-2026-10-16.md:1>)**. L13–29: neural, learned memory, typed/routing gains различны; SiblingCount, singleton и три embedding cuts имеют отдельные falsifiers. L37–66 crosswalk и исторические ограниченные результаты; L74–94 будущая программа/метрики. Не найденный failed-matrix donor остаётся provenance dependency P03, а не выдуманным фактом. Метрики/категории не подчинены старым универсальным acceptance/author mandates. Связи: [P03.1](cards/P03-historical-score-lineage.md#s-1), [P11.3](cards/P11-autograd-reachability.md#s-3), [P11.9](cards/P11-autograd-reachability.md#s-9), [P11.10](cards/P11-autograd-reachability.md#s-10), [P11.11](cards/P11-autograd-reachability.md#s-11), [P26.4](cards/P26-structural-features.md#s-4), [P27.5](cards/P27-structural-codec.md#s-5), [P43.1](cards/P43-contextual-pos.md#s-1), [P48.1](cards/P48-weighting-curriculum.md#s-1), [P48.2](cards/P48-weighting-curriculum.md#s-2), [P77.1](cards/P77-rare-class-support.md#s-1), [P77.3](cards/P77-rare-class-support.md#s-3), [P117.1](cards/P117-translation-direction-memory.md#s-1)."
+        },
+        {
+          "path": "experimets/06-source-content-walk.md",
+          "line": 1134,
+          "text": "**S278 — [35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md L1–38](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md:1>)**. L13–22: SiblingCount сохранён/насыщен 255, но DistanceTo игнорирует; FileId invariance может быть полезна. L26–31: bounded penalty и реально различающие Roslyn gold нужны отдельно. Сигнал не относится к переводу без Roslyn. Source claim текущего owner, не новый native audit. Связи: [P26.4](cards/P26-structural-features.md#s-4)."
+        }
+      ]
+    },
+    {
+      "name": "bpe_exact_objective",
+      "pattern": "realized|фактическ.{0,30}слия|non.?overlap.{0,30}CountPairs|неперекрыв.{0,30}(сч[её]т|пар)",
+      "hit_lines": 1,
+      "hit_files": 1,
+      "hits": [
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 155,
+          "text": "Контрпример неправильной реализации: unweighted dedup удалит частотный вес, сортировка представителей сдвинет ties, non-overlap CountPairs изменит число пар в aaaa. Такой B сравнивает другой алгоритм и не признаётся этой оптимизацией."
+        }
+      ]
+    },
+    {
+      "name": "bpe_related",
+      "pattern": "CountPairs|MergeChunk|BPE-WEIGHTED-CHUNKS|BPE-NO-MATCH-COPY",
+      "hit_lines": 98,
+      "hit_files": 13,
+      "hits": [
+        {
+          "path": "2026-10-20-learning-signal-conflicts-evidence.md",
+          "line": 65,
+          "text": "BPE: [A/code-doc](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/code-doc.json), [B/code-doc](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/code-doc.json), [A/en-ru](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/en-ru.json), [B/en-ru](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/en-ru.json). Оба домена: vocab256→320,64 learned merges, roundtrip4/4 до/после; mean token count43→21.75 и48→21.75. Финальное обученное состояние A/B одинаково внутри домена. Allocations3 904 664→1 126 744 и2 892 824→893 656. Это положительные признаки обучения tokenizer и локальная экономия; downstream neural/kNN accuracy не измерены. Поздние слова об отсутствии временных измерений не согласуются с raw train_cost."
+        },
+        {
+          "path": "2026-10-20-learning-signal-conflicts-evidence.md",
+          "line": 67,
+          "text": "[required-changes.md](required-changes.md) уже содержит `Linear.Forward`/`NEURAL-FROZEN-TRANSPOSE-01` и `BpeTokenizer.MergeChunk`/`BPE-NO-MATCH-COPY-01`. Запрос «внести оба» не создаёт третьего кандидата LEARN-SANITY, не доказывает product readiness и не отменяет ограничения. Обычное завершение уточняет существующую запись без дубликата; немедленный stop/transition не задерживается оформлением. Новое исследование реестра — read-only, изменения родителя атрибутированы ему."
+        },
+        {
+          "path": "2026-10-20-learning-signal-conflicts-evidence.md",
+          "line": 140,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/execution.json` | 445 / 27 | полный JSON parse; адресная сверка states/counts/readouts/resources, без модели; JSON OK | `74eb7807e7b6839adccd5aeaf588d28729ca306a244f80a0a7cee4b2f82be038` |"
+        },
+        {
+          "path": "2026-10-20-learning-signal-conflicts-evidence.md",
+          "line": 141,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/comparison.json` | 5759 / 184 | полный JSON parse; адресная сверка states/counts/readouts/resources, без модели; JSON OK | `aee54b3454d2e67db90302a7944c09638b4633c06f34f17ca5402547d7609932` |"
+        },
+        {
+          "path": "2026-10-20-learning-signal-conflicts-evidence.md",
+          "line": 142,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/code-doc.json` | 7512 / 380 | полный JSON parse; адресная сверка states/counts/readouts/resources, без модели; JSON OK | `c7fc0ae2f5edb59f76fe94350648b10e35b66221160630c46a58bc6f1b43e369` |"
+        },
+        {
+          "path": "2026-10-20-learning-signal-conflicts-evidence.md",
+          "line": 143,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/code-doc.json` | 7520 / 380 | полный JSON parse; адресная сверка states/counts/readouts/resources, без модели; JSON OK | `0e249a4cdd88ccb4a1576efe3d60f65a6a10de4a71d5df3f70fc2145ee9b3980` |"
+        },
+        {
+          "path": "2026-10-20-learning-signal-conflicts-evidence.md",
+          "line": 144,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/en-ru.json` | 9271 / 400 | полный JSON parse; адресная сверка states/counts/readouts/resources, без модели; JSON OK | `f8aa943b3a792bea446308e27c803752d81230f2f1642cd7b78e7a74823281fc` |"
+        },
+        {
+          "path": "2026-10-20-learning-signal-conflicts-evidence.md",
+          "line": 145,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/en-ru.json` | 9277 / 400 | полный JSON parse; адресная сверка states/counts/readouts/resources, без модели; JSON OK | `8523105748d4d9f5bafe12afaff030c597efcaa45e6b4fadc54c371d2980a54a` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 43,
+          "text": "`C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/Program.cs:17–46` содержит 8 повторов пяти literal строк в одном corpus, byte bootstrap Train256, actual Train320 и readouts;85–104 — данные. Native writer/consumer source в том же каталоге `src/01.Tokenizer/BpeTokenizer.cs:78–118,562–611`: merge/vocab write внутри Train, learned merges читаются Encode/ApplyMerges. KNN consumer source-callsite — `C:/Projects/llm_mvp_core/21.AgentInfrastructure/Logical/KnnLogicalUnit.cs:132–153`; полный KNN в этом опыте не исполнялся."
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 51,
+          "text": "Alias proof ограничен actual copied callers: `BpeTokenizer.cs:78–104` Train заменяет outerchunks;562–581 CountPairs/MergeAll не меняют input;606–611 ApplyMerges переназначает ids;109–118 Encode AddRange в собственный result. `one-factor.diff:12–40` изменённый helper не мутирует ids. Shared input безопасен в этих путях по статическому чтению; для будущих чужих consumers такого общего доказательства нет. Это сняло лишний blanket alias-blocker без дополнительного runtime."
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 55,
+          "text": "Изменены [02](experimets/cards/NEURAL-FROZEN-TRANSPOSE-01.md), [03](experimets/cards/BPE-NO-MATCH-COPY-01.md) и их [NEURAL report](experimets/results/2026-10-20/NEURAL-FROZEN-TRANSPOSE-01/report.md) / [BPE report](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/report.md). Recipe сохранён с точными host/files/commands как происхождение выполненного запуска; current status completed, automatic rerun отсутствует. Обе card задают default session model/no override, minimal host exceptions, обязательную краткую запись в [required-changes](required-changes.md) при normal completion, no manual hashes/baseline rerun и приоритет немедленного stop/transition. Кандидаты реестра уже существуют; их синхронизирует parent."
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 137,
+          "text": "| `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/35.ExperimentsV2/Experiments/Rp01Micro/BPE-NO-MATCH-COPY-01/Runner.csproj` | полный текст/JSON; helper byte-identical | 1096 | `0d774054f3790489d3e2ee1c71b10a127b795350888372f2fc2cde107bcb25c9` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 138,
+          "text": "| `C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-training-state-and-experiment-audit/experiments/bpe-copy/scaffold/35.ExperimentsV2/Experiments/Rp01Micro/BPE-NO-MATCH-COPY-01/Runner.csproj` | bytes равны прочитанной host-копии | 1096 | `0d774054f3790489d3e2ee1c71b10a127b795350888372f2fc2cde107bcb25c9` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 139,
+          "text": "| `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/Program.cs` | полный текст/JSON; helper byte-identical | 5962 | `85466944ba80831a1c7b98109782edbdf6a369484a1edd583788ad7a03678f46` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 140,
+          "text": "| `C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-training-state-and-experiment-audit/experiments/bpe-copy/scaffold/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/Program.cs` | bytes равны прочитанной host-копии | 5962 | `85466944ba80831a1c7b98109782edbdf6a369484a1edd583788ad7a03678f46` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 141,
+          "text": "| `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/one-factor.diff` | полный текст/JSON; helper byte-identical | 1802 | `4199701d0eee2a0cd9496c8ac7155921ad96ce74e8de98312f5a7196cb66c7ad` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 142,
+          "text": "| `C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-training-state-and-experiment-audit/experiments/bpe-copy/scaffold/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/one-factor.diff` | bytes равны прочитанной host-копии | 1802 | `4199701d0eee2a0cd9496c8ac7155921ad96ce74e8de98312f5a7196cb66c7ad` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 143,
+          "text": "| `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/source-copy-manifest.json` | полный текст/JSON; helper byte-identical | 754 | `e873154d9c495efb4c5f106a58df094296a4515f0a5dacd8cbab068b989a6373` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 144,
+          "text": "| `C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-training-state-and-experiment-audit/experiments/bpe-copy/scaffold/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/source-copy-manifest.json` | bytes равны прочитанной host-копии | 754 | `e873154d9c495efb4c5f106a58df094296a4515f0a5dacd8cbab068b989a6373` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 147,
+          "text": "| `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/src/01.Tokenizer/BpeTokenizer.cs` | полные bytes; semantic:78–118,540–611 и one-factor.diff | 25944 | `b7570a5abcacba61a2cff89e91a229db21ff8ee3e074e215c1049be433e9a4c2` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 148,
+          "text": "| `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/src/01.Tokenizer/RegexSplitter.cs` | полные bytes/manifest identity; не полный semantic review | 796 | `c6f7001c2b18ac1d91a29ca4e3eda8a7850a0b80db3f6253958c8df5ffeb0f5b` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 149,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/cards/BPE-NO-MATCH-COPY-01.md` | полный документ; изменён, readback | 42686 | `94292b9b89a040ccea3872af4354d4684de2a2860e686afb3de1bb310ae22d44` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 150,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/comparison.json` | полный текст/JSON; report документно уточнён | 5759 | `aee54b3454d2e67db90302a7944c09638b4633c06f34f17ca5402547d7609932` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 151,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/execution.json` | полный текст/JSON; report документно уточнён | 445 | `74eb7807e7b6839adccd5aeaf588d28729ca306a244f80a0a7cee4b2f82be038` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 152,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/report.md` | полный текст/JSON; report документно уточнён | 12120 | `8292d18dfc8d32324125711ff387c3deac79a1bed83fb764de43d45f98b8a6dc` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 153,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/build.stdout` | полный текст/JSON; report документно уточнён | 422 | `5db74dff8b7802cf97964c1b4ef491828fcc397844816f6c047a2672dd9add77` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 154,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/build.stderr` | полный текст/JSON; report документно уточнён | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 155,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/code-doc.json` | полный JSON/лог; сохранённый runtime, не новый запуск | 7512 | `c7fc0ae2f5edb59f76fe94350648b10e35b66221160630c46a58bc6f1b43e369` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 156,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/code-doc.stdout` | полный JSON/лог; сохранённый runtime, не новый запуск | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 157,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/code-doc.stderr` | полный JSON/лог; сохранённый runtime, не новый запуск | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 158,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/en-ru.json` | полный JSON/лог; сохранённый runtime, не новый запуск | 9271 | `f8aa943b3a792bea446308e27c803752d81230f2f1642cd7b78e7a74823281fc` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 159,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/en-ru.stdout` | полный JSON/лог; сохранённый runtime, не новый запуск | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 160,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/en-ru.stderr` | полный JSON/лог; сохранённый runtime, не новый запуск | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 161,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/code-doc.json` | полный JSON/лог; сохранённый runtime, не новый запуск | 7520 | `0e249a4cdd88ccb4a1576efe3d60f65a6a10de4a71d5df3f70fc2145ee9b3980` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 162,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/code-doc.stdout` | полный JSON/лог; сохранённый runtime, не новый запуск | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 163,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/code-doc.stderr` | полный JSON/лог; сохранённый runtime, не новый запуск | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 164,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/en-ru.json` | полный JSON/лог; сохранённый runtime, не новый запуск | 9277 | `8523105748d4d9f5bafe12afaff030c597efcaa45e6b4fadc54c371d2980a54a` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 165,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/en-ru.stdout` | полный JSON/лог; сохранённый runtime, не новый запуск | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |"
+        },
+        {
+          "path": "2026-10-20-additional-conflicts-evidence.md",
+          "line": 166,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/en-ru.stderr` | полный JSON/лог; сохранённый runtime, не новый запуск | 0 | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |"
+        },
+        {
+          "path": "12-bpe-retrain-identity-and-consumer-causal-gap.md",
+          "line": 32,
+          "text": "**Минимальный выполненный counterexample — ТОЛЬКО proxy first-merge:** `[abab,cdcd]` и `[cdcd,abab]` при одинаковых парных частотах назначают token 256 соответственно byte pair `97,98` и `99,100`. Результат локального Node.js: `PASS_PROXY_ONLY`. Это математическая демонстрация зависимости раннего `CountPairs+MaxBy` от порядка, а не выполнение нативного C# или проверка извлечения ответов. Нативный `BpeTokenizer.Train(vocabSize:320)` может нивелировать или усилить разницу; смотреть фактический SHA и координаты. Нельзя подменять выводом о BPE ошибку ANN RNG, старый E07 AST mismatch или N20 candidate-set BM25 scaling."
+        },
+        {
+          "path": "required-changes.md",
+          "line": 72,
+          "text": "<a id=\"bpe-no-match-copy-01\"></a>"
+        },
+        {
+          "path": "required-changes.md",
+          "line": 73,
+          "text": "## BPE-NO-MATCH-COPY-01 — кандидат: не копировать кусок, в котором нечего склеивать"
+        },
+        {
+          "path": "required-changes.md",
+          "line": 77,
+          "text": "**Что исправить.** `01.Tokenizer/BpeTokenizer.cs`, метод `MergeChunk`: создавать список только при первом настоящем слиянии и возвращать входной список, когда подходящей пары нет, вместо безусловного `List<int>(ids.Count)` с копированием всего куска."
+        },
+        {
+          "path": "required-changes.md",
+          "line": 81,
+          "text": "**Плата и пределы.** Новый постоянный кэш не вводится; retained heap отдельно не измерялся. Время, CPU и пик памяти записаны в raw как наблюдения; причинный эффект не установлен при фиксированном порядке и одном процессе на плечо. Прочитанные текущие Train/MergeAll/CountPairs/ApplyMerges/Encode callers не мутируют возвращаемый входной список; это статическая проверка названных callers, не всех будущих consumers. Экономия полного обучения KNN не измерялась. Независимый runtime-повтор не выполнялся."
+        },
+        {
+          "path": "required-changes.md",
+          "line": 83,
+          "text": "Доказательства: [отчёт](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/report.md), [сравнение](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/comparison.json), сырые данные [A/code-doc](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/code-doc.json), [B/code-doc](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/code-doc.json), [A/en-ru](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/A/en-ru.json), [B/en-ru](experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/B/en-ru.json), [правка](C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/one-factor.diff)."
+        },
+        {
+          "path": "2026-10-20-card-reconciliation/README.md",
+          "line": 30,
+          "text": "| training-state-and-experiment-audit | 135 | [Frozen transpose](../experimets/cards/NEURAL-FROZEN-TRANSPOSE-01.md), [BPE no-match-copy](../experimets/cards/BPE-NO-MATCH-COPY-01.md), Wiki taxonomy/margin; отдельные SFT/DPO рецепты для mask/moments/padding/order |"
+        },
+        {
+          "path": "2026-10-20-card-reconciliation/README.md",
+          "line": 33,
+          "text": "| learning-audit-additions | 42 | Добавлены отдельные [DPO tokenizer snapshot](../experimets/cards/DPO-TOKENIZER-SNAPSHOT-01.md), [weighted BPE](../experimets/cards/BPE-WEIGHTED-CHUNKS-01.md), [Wiki feature keys](../experimets/cards/WIKI-FEATURE-KEYS-01.md), [Wiki features once](../experimets/cards/WIKI-FEATURES-ONCE-01.md). BPE-NO-MATCH-COPY-02 — указатель технического перехода к короткому пути01, не новый фактор |"
+        },
+        {
+          "path": "2026-10-20-learning-signal-conflicts.md",
+          "line": 11,
+          "text": "Завершённые №02/03 не переигрываются. В финальном чтении обнаружены также существующие N62-R1 A/B `arm-result.json` со статусом COMPLETED и по две step-completed записи. №04 не переигрывается и не получает новую TRAIN-панель задним числом. Очередь сохраняет 32 строки, следующий ещё не выполненный — №05 N62-R2. LEARN-SANITY не превращён в новый ID очереди, третий кандидат исправления или доказательство остальных профилей. В [реестре](required-changes.md) два обсуждённых во вложении кандидата — frozen transpose и MergeChunk; решение о продукте отдельно. Статус завершения R1 не является здесь отдельным выводом о его ресурсном успехе."
+        },
+        {
+          "path": "2026-10-20-additional-conflicts.md",
+          "line": 11,
+          "text": "В [№03](experimets/cards/BPE-NO-MATCH-COPY-01.md) есть положительное обучение самого токенизатора: 64 merges, словарь 256→320, среднее число токенов на экзамене 43→21,75 и 48→21,75, точный roundtrip 4/4. Это не измерение качества или полного времени KNN. Ресурсный выигрыш allocations −71,1%/−69,1% сохранён отдельно."
+        },
+        {
+          "path": "2026-10-20-additional-conflicts.md",
+          "line": 26,
+          "text": "| Успех BPE объявляет безопасность alias для всех будущих callers | Уточнена статическая проверка текущих Train/CountPairs/MergeAll/ApplyMerges/Encode callers; blanket гарантии будущим consumers нет |"
+        },
+        {
+          "path": "2026-10-20-primary-evidence.md",
+          "line": 14,
+          "text": "| [BPE-WEIGHTED-CHUNKS-01](experimets/cards/BPE-WEIGHTED-CHUNKS-01.md) | BW01 | Два native source, weighted repeated chunks, точный inline fixture и будущие commands |"
+        },
+        {
+          "path": "2026-10-20-primary-evidence.md",
+          "line": 32,
+          "text": "| Weighted BPE / code+ENRU text | [Train42–68](C:/Projects/llm_mvp_core/01.Tokenizer/BpeTokenizer.cs:42) создаёт список каждого повторения; [CountPairs526](C:/Projects/llm_mvp_core/01.Tokenizer/BpeTokenizer.cs:526) учитывает каждую позицию, MergeAll каждое вхождение. [KnnLogicalUnit132–158](C:/Projects/llm_mvp_core/21.AgentInfrastructure/Logical/KnnLogicalUnit.cs:132) обучает BPE до векторов KNN | Одна копия chunk + integer multiplicity сохраняет статистику, потенциально экономит CPU/allocations. До/после learned merges/vocab/canonical bytes/EncodeDecode и цена настоящего Train; tie insertion order сохранить. Полная KNN/DPO accuracy здесь не измеряется |"
+        },
+        {
+          "path": "2026-10-20-primary-evidence.md",
+          "line": 56,
+          "text": "- **BPE-NO-MATCH-COPY-02:** incoming workorder явно superseded коротким текущим01; это pre-Train retry/path remap, не второй фактор или новый результат. Active [BPE01](experimets/cards/BPE-NO-MATCH-COPY-01.md) сохраняет отказ прежней попытки до обучения. Никакой02 runtime не назначен."
+        },
+        {
+          "path": "experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/report.md",
+          "line": 1,
+          "text": "# BPE-NO-MATCH-COPY-01: при обучении словаря убраны копии куска, в котором нечего склеивать"
+        },
+        {
+          "path": "experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/report.md",
+          "line": 7,
+          "text": "Статус: завершён. Источники: [карточка-паспорт](../../../cards/BPE-NO-MATCH-COPY-01.md), сырые данные [A/code-doc](A/code-doc.json), [B/code-doc](B/code-doc.json), [A/en-ru](A/en-ru.json), [B/en-ru](B/en-ru.json), [сравнение](comparison.json), [коды выхода](execution.json), [журнал сборки](build.stdout)."
+        },
+        {
+          "path": "experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/report.md",
+          "line": 11,
+          "text": "Один фактор. Исходный метод — `MergeChunk` в `01.Tokenizer/BpeTokenizer.cs` (исторический ref `62bcc8f`, строки 540–565). Его вызывает `MergeAll` внутри `BpeTokenizer.Train` (строки 42–68) — это и есть writer, который учит таблицу слияний и словарь. Выученный словарь дальше читает `KnnLogicalUnit.Train` (`21.AgentInfrastructure/Logical/KnnLogicalUnit.cs`, строки 136–153): он создаёт токенизатор, учит его на текстах уроков и через него же строит векторы примеров."
+        },
+        {
+          "path": "experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/report.md",
+          "line": 13,
+          "text": "A — исходное тело: на каждый вызов создаётся `List<int>(ids.Count)` и весь кусок копируется, даже если склеивать нечего. B — только в экспериментальной копии: тем же левосторонним проходом ищется пара, список создаётся лишь при первом настоящем слиянии, предшествующий префикс копируется, дальше логика исходная; если пары нет, возвращается исходный список. Правка целиком в [one-factor.diff](C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/one-factor.diff). Порядок слияний, частоты пар, ранги, целевой словарь, UTF-8 и правило разрешения ничьих не менялись."
+        },
+        {
+          "path": "experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01/report.md",
+          "line": 65,
+          "text": "Кандидат переноса: `01.Tokenizer/BpeTokenizer.cs`, метод `MergeChunk` — создавать список только при первом настоящем слиянии и возвращать входной список, когда пары нет. Статическое чтение используемой копии [BpeTokenizer.cs:78](C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/src/01.Tokenizer/BpeTokenizer.cs:78), строк 78–118 и 562–611, подтверждает: Train заменяет chunks, CountPairs/MergeAll читают вход, ApplyMerges переназначает ids, Encode копирует в новый result. B helper не мутирует вход. Это достаточное source-основание для текущих callers, без нового alias-run. Новые внешние consumers и будущая смена ownership не проверены. Основной код этим опытом не изменён, решение о переносе — за Любой."
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 1,
+          "text": "# BPE-NO-MATCH-COPY-01 — лишние копии chunk в настоящем обучении BPE"
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 27,
+          "text": "[Execution](../results/2026-10-20/BPE-NO-MATCH-COPY-01/execution.json) подтверждает четыре exit 0; [A/code-doc](../results/2026-10-20/BPE-NO-MATCH-COPY-01/A/code-doc.json), [B/code-doc](../results/2026-10-20/BPE-NO-MATCH-COPY-01/B/code-doc.json), [A/en-ru](../results/2026-10-20/BPE-NO-MATCH-COPY-01/A/en-ru.json), [B/en-ru](../results/2026-10-20/BPE-NO-MATCH-COPY-01/B/en-ru.json) содержат8 Train calls: 4 bootstrap без merges и 4 непустых перехода. [Отчёт](../results/2026-10-20/BPE-NO-MATCH-COPY-01/report.md) уточнён по этим raw, без нового исполнения."
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 33,
+          "text": "Статическое основание alias-свойства ограничено использованной source-копией: [Train:78–104](<C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/src/01.Tokenizer/BpeTokenizer.cs:78>) заменяет outer chunks; [CountPairs/MergeAll:562–581](<C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/src/01.Tokenizer/BpeTokenizer.cs:562>) читает входные списки; [ApplyMerges:606–611](<C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/src/01.Tokenizer/BpeTokenizer.cs:606>) переназначает локальный ids; [Encode:109–118](<C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/src/01.Tokenizer/BpeTokenizer.cs:109>) делает AddRange в новый result. B helper не пишет во входной ids. Это source proof данных callers; будущие новые consumers/изменения ownership не проверены. Дополнительного alias-run не требуется."
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 41,
+          "text": "[`BpeTokenizer.Train`, 42–68](<C:/Projects/llm_mvp_core/01.Tokenizer/BpeTokenizer.cs:42> \"Исторический ref 62bcc8f2368840e22d2ea98ef16d9bd526ad9a39, L42-L68; локальный файл может отличаться\") учит merge table и vocabulary. [`MergeAll/MergeChunk`, 540–565](<C:/Projects/llm_mvp_core/01.Tokenizer/BpeTokenizer.cs:540> \"Исторический ref 62bcc8f2368840e22d2ea98ef16d9bd526ad9a39, L540-L565; локальный файл может отличаться\") вызываются внутри этого writer. [`Encode/ApplyMerges`, 73–83 и 568–574](<C:/Projects/llm_mvp_core/01.Tokenizer/BpeTokenizer.cs:568> \"Исторический ref 62bcc8f2368840e22d2ea98ef16d9bd526ad9a39, L568-L574; локальный файл может отличаться\") используют результат обучения. Это реальные state transitions словаря, не имитация Python и не попытка назвать unrelated validation обучением."
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 47,
+          "text": "A использует исходное тело `MergeChunk`, которое всегда создаёт `List<int>(ids.Count)` и копирует весь chunk. B ищет пары тем же левосторонним проходом, создаёт список лишь на первом фактическом merge, копирует предшествующий префикс и продолжает исходную логику. Если пары нет, B возвращает исходный список, который callers не меняют. Возврат общей ссылки не превращает её в новую изменяемую глобальную память: chunk остаётся локальным входом последующих чистых merge."
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 125,
+          "text": "Host внутри пакета: `35.ExperimentsV2/Experiments/Rp01Micro/BPE-NO-MATCH-COPY-01/Runner.csproj`; Program и две копии tokenizer — `experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01/`. Сохраняется исходная относительная структура. `run.py` сам проверяет готовые копии, собирает только этот host и запускает четыре процесса; `compare.py` читает JSON. Ручная повторная проверка хэшей, поиск SDK, просмотр истории Git, очистка bin/obj и вызов prepare.py не входят в рецепт."
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 127,
+          "text": "Результаты — `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01`; отчёт — `report.md` там же. Имеющиеся старые ошибки не удалять и не перезаписывать; их наличие не подставлять вместо фактических четырёх завершённых BPE raw. Историческая оговорка разрешала одну техническую попытку только после подтверждённого отказа **до первого Train**. Сейчас все 4 процесса уже обучались и завершились; оговорка закрыта, нового запуска нет. Исторический резерв при занятом только pre-Train неудачей стандартном каталоге был `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BPE01/results-shortpath`; в прежнем рецепте менялось только значение `$bpeResults`, общее для двух команд. Сейчас standard root содержит четыре завершённых raw; резерв не используется, третий output не создаётся."
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 135,
+          "text": "$bpeResults = 'C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-NO-MATCH-COPY-01'"
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 136,
+          "text": "$bpeArtifact = 'experiments-v2/RP01-MICRO/BPE-NO-MATCH-COPY-01'"
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 141,
+          "text": "    '35.ExperimentsV2/Experiments/Rp01Micro/BPE-NO-MATCH-COPY-01/Runner.csproj'"
+        },
+        {
+          "path": "experimets/cards/BPE-NO-MATCH-COPY-01.md",
+          "line": 177,
+          "text": "> **Промпт исполнителю:** Сохранённый BPE-NO-MATCH-COPY-01 уже выполнен. В текущей документной фазе читай его raw и уточняй только порученные документы; не вызывай нижние команды и не повторяй A/B. Следующий опыт — только по текущему поручению и единому индексу. При отдельном поручении иной фазы следуй её точной границе. Используй модель своей сессии по умолчанию, один worker, указанный готовый scaffold, точные данные и команды этой карточки. Не выбирай другой host и не меняй native learner вне единственного фактора. Сохрани фактические A0/A1/B0/B1, counts, resources и все выигрыши/ухудшения; любое полезное измеренное улучшение — успех по соответствующей оси/домену, accuracy не обязательна. После выполнения заполни report.md на русском по каркасу ниже из уже записанных raw. Никаких повторов ради отчёта. Подготовленный исходник не является доказательством успешной сборки. Основной код не изменяй: точный кандидат переноса уже указан в карточке, решение остаётся у Любы."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md",
+          "line": 70,
+          "text": "Остальные конкретизации первого пакета внесены в существующие [BPE](../cards/BPE-NO-MATCH-COPY-01.md), [frozen transpose](../cards/NEURAL-FROZEN-TRANSPOSE-01.md), [Wiki taxonomy](../cards/WIKI-TAXONOMY-01.md), [Wiki margin](../cards/WIKI-MARGIN-01.md), [Verifier](../cards/N60-e1-verifier-admission.md), [retention/identity](../cards/N61-mode1-retention-and-identity.md) и [reference reuse](../cards/N61-dpo-reference-reuse.md). Экспериментальные проекты назначены по коротким путям; сторонние worktree не требуются. Сборка и работа этих будущих hosts в этом документном проходе не проверялись."
+        },
+        {
+          "path": "experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md",
+          "line": 264,
+          "text": "| [BPE-NO-MATCH-COPY-01](../cards/BPE-NO-MATCH-COPY-01.md), документация C# / перевод EN→RU | Не создавать лишнюю копию при отсутствии merge-match внутри BPE Train | 4 содержательных Train + 4 byte-vocab initialization; 32 EXAM Encode/Decode | 4 процесса по паспорту; не заявляется цена полного KNN |"
+        },
+        {
+          "path": "experimets/cards/00-execution-index.md",
+          "line": 31,
+          "text": "| 03 | [BPE-NO-MATCH-COPY-01](BPE-NO-MATCH-COPY-01.md) | Код/документация; EN→RU | Настоящий Train tokenizer: убрать лишние копии; 4 непустых Train | Сохранённое завершённое A/B: allocations −71,1%/−69,1%, 64 merges, vocab 256→320, roundtrip 4/4; не повторять | 04 |"
+        },
+        {
+          "path": "experimets/cards/00-execution-index.md",
+          "line": 55,
+          "text": "| 27 | [BPE-WEIGHTED-CHUNKS-01](BPE-WEIGHTED-CHUNKS-01.md) | Код / документация; перевод | Реальный BPE Train с частотами одинаковых chunks; не путать с no-match-copy | Назначены BW01, два native source files и данные; host не создан | 28 |"
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 1,
+          "text": "# BPE-WEIGHTED-CHUNKS-01: учить одинаковые чанки один раз, сохранив их частоту"
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 13,
+          "text": "Это активная карточка, перенесённая из [входящего исследования](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-audit-additions/neural-bpe/BPE-WEIGHTED-CHUNKS-01.md>). Гипотеза уже существовала в этом источнике; новая находка текущего агента не заявляется. Текущая фаза — **READ_ONLY_RESEARCH и правка Markdown**. Host, код эксперимента и результаты сейчас не создавались; **DESIGNED_NOT_RUN / HOST_NOT_MATERIALIZED**, сборка и обучение не проверены."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 15,
+          "text": "По прямому указанию пользователя внешние ссылки заменены локальными корнями. Назначенный будущий host: `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BW01`; назначенный результат: `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-WEIGHTED-CHUNKS-01/attempt-0001`. Эти пути заменяют прежние короткие внешние корни источника; состав native файлов, фактор, Student и бюджет не меняются. Это документационный рецепт будущей реализации, не готовый исполняемый host."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 43,
+          "text": "| [CountPairs/MergeAll, 526–545](<C:/Projects/llm_mvp_core/01.Tokenizer/BpeTokenizer.cs:526>) | Счётчик увеличивается на 1 для каждой позиции каждого повторного списка; MergeChunk вызывается для каждого экземпляра. |"
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 44,
+          "text": "| [MergeChunk/ApplyMerges, 548–573](<C:/Projects/llm_mvp_core/01.Tokenizer/BpeTokenizer.cs:548>) | Неперекрывающийся merge слева направо; Encode применяет выученные правила в порядке вставки. |"
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 52,
+          "text": "**A:** исходный Train/CountPairs/MergeAll/MergeChunk."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 54,
+          "text": "**B:** один `WeightedChunk` на идентичную исходную строку regex-чанка; `StringComparer.Ordinal`; порядок — первое появление в исходном корпусе. Хранятся `TokenIds`, `Multiplicity`, `FirstOccurrenceOrdinal`. При CountPairs за каждую соседнюю позицию добавляется Multiplicity; при MergeAll неизменённый MergeChunk исполняется один раз на представителя."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 58,
+          "text": "**Не примешивать BPE-NO-MATCH-COPY-01.** В B этой карточки MergeChunk по-прежнему создаёт список даже при отсутствии совпадения. Изменение действует только в Train; Encode и canonical Save/Load остаются исходными."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 64,
+          "text": "Полные строки сохранены в [fixtures/bpe-weighted-chunks.json](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-audit-additions/neural-bpe/fixtures/bpe-weighted-chunks.json>). Данные буквально воспроизводят маленькую панель известного no-match опыта; **гипотеза здесь другая**. Пять TRAIN строк в каждом профиле повторяются восемь раз блоком T1…T5. Между всеми строками LF, заключительного LF нет. Файл JSON — UTF-8 без BOM. Семантическое содержимое corpus задаётся строками и recipe, не форматированием JSON."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 81,
+          "text": "| Объём работы | Число исходных/уникальных чанков, сумма Multiplicity, обработанные pair positions и вызовы MergeChunk в TRAIN. Эти counters объясняют работу, но сами по себе не объявляются полезным выигрышем. |"
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 103,
+          "text": "Это **конечный интерфейс ещё не реализованного host**, а не готовая команда сегодняшнего запуска. `run-pair` создаёт один append-only каталог `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-WEIGHTED-CHUNKS-01/attempt-0001`, один раз запускает каждый из четырёх arm/profile процессов и пишет сравнение уже полученных JSON. Build failure означает `PREPARATION_FAILED`, Train не начат. Существующий attempt не очищать и не повторять: без нового прямого поручения нет нового attempt. Отчёт сохраняется в `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-WEIGHTED-CHUNKS-01/attempt-0001/report.md`; raw и partial status рядом. Во время будущего опыта исходные карточки read-only; результаты пишутся только в назначенный result-root."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 121,
+          "text": "# BPE-WEIGHTED-CHUNKS-01: спецификация изолированной копии исходного C#"
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 123,
+          "text": "**DESIGNED_NOT_RUN.** Этот документ задаёт будущие файлы и поведение; ни один перечисленный C# host/runner пока не создан. Содержимое двух production source files не изменено. Рабочая стадия сейчас — только документирование. Карточка: [BPE-WEIGHTED-CHUNKS-01.md](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-audit-additions/neural-bpe/BPE-WEIGHTED-CHUNKS-01.md>)."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 138,
+          "text": "| `in/fixture.json` | Байт-в-байт копия `fixtures/bpe-weighted-chunks.json` из этого пакета. |"
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 140,
+          "text": "| `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-WEIGHTED-CHUNKS-01/attempt-0001` | Создаётся эксклюзивно при будущем запуске; `intent.json`, `status.json`, `A-code-doc.json`, `B-code-doc.json`, `A-en-ru.json`, `B-en-ru.json`, stderr/stdout, `comparison.json`, русский `report.md`, при успехе `candidate.md`. |"
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 148,
+          "text": "3. У B/CountPairs заменить вклад +1 на +Multiplicity при **каждой** соседней позиции representative token list. Порядок прохода представителей и позиций исходный. Хранить ту же int arithmetic и Dictionary<(int,int),int>; у этого fixture диапазон мал."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 149,
+          "text": "4. У B/MergeAll вызвать **неизменённый** исходный MergeChunk для каждого representative и заменить только его TokenIds; сохранить weight/order. Нельзя объединять разные строки после merge по одному hash."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 151,
+          "text": "6. TRAIN-only counters одинаково наблюдают total input chunks, distinct chunks, original occurrence sum, count of processed adjacent positions и MergeChunk calls. Счётчики не меняют частоты, порядок, решения, objective или target vocab и выключены до/после основной Train phase."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 155,
+          "text": "Контрпример неправильной реализации: unweighted dedup удалит частотный вес, сортировка представителей сдвинет ties, non-overlap CountPairs изменит число пар в aaaa. Такой B сравнивает другой алгоритм и не признаётся этой оптимизацией."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 166,
+          "text": "Реальный `run-pair` один раз создаёт `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-WEIGHTED-CHUNKS-01/attempt-0001` с FileMode.CreateNew intent, связывает source/factor/fixture/initial profile и четыре arm records. Затем последовательность строго A/code-doc → B/code-doc → A/en-ru → B/en-ru. Каждый обучающий child process запускается один раз; controller не вызывает Train. Отдельный B assembly обязателен; A не переключает treatment после получения данных."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 168,
+          "text": "Если `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-WEIGHTED-CHUNKS-01/attempt-0001` либо любой его arm record существует, код возвращает `ATTEMPT_EXISTS_NO_REPLAY`; не удаляет, не изменяет номер и не ищет старые каталоги. Неизвестный эффект прерванного Train сохраняется как `UNKNOWN`. Запрещено автоматическое повторение при timeout, перекомпиляции, исключении или частичном отчёте. Новый attempt — только в отдельном прямом поручении."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 186,
+          "text": "Использование короткого `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/BW01` устраняет намеренное повторение длинного Windows пути прежнего BPE-NO-MATCH-COPY-01. Это выбор места нового опыта; старый не переносится, не удаляется и не возобновляется."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 192,
+          "text": "Существующий локальный файл: [fixture](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-audit-additions/neural-bpe/fixtures/bpe-weighted-chunks.json>). SHA256 байтов: `f6cd5ff1fd0d549d3070cb0bc401f23844b835a2a9e3662a7fc065264caf1e67`. Исходный файл read-only; будущая копия должна совпасть с этими байтами. Никакая генерация данных не требуется."
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 196,
+          "text": "  \"experiment_id\": \"BPE-WEIGHTED-CHUNKS-01\","
+        },
+        {
+          "path": "experimets/cards/BPE-WEIGHTED-CHUNKS-01.md",
+          "line": 261,
+          "text": "В будущем controller `run-pair` result root задаётся одной неизменяемой абсолютной константой `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/BPE-WEIGHTED-CHUNKS-01/attempt-0001`, а не вычисляется как host/r/0001. CLI `--attempt 0001` только проверяет буквальную разрешённую попытку; другой номер отклоняется. Все arm paths, intent, raw/status/checkpoints и report находятся под этой константой. Build остаётся в host/bin и host/obj. Это согласование путей оболочки одинаково для A/B, не второй фактор обучения."
+        }
+      ]
+    }
+  ],
+  "scope": "Markdown full subtree only; no runtime; not an absolute novelty claim across all refs or non-Markdown data"
+}

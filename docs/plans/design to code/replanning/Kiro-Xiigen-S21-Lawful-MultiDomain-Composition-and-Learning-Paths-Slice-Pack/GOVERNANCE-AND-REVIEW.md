@@ -1,0 +1,13 @@
+# S21 authority, actor split, risk, independent validation
+
+**This GitHub action is authorized:** write S21 planning files to P/llm_plan3/replanning and read back their remote SHA. It does NOT authorize K product code/weights/datasets mutation, private data export, paid or Chinese external model call, optimizer, local PC run or production release merely by documenting them. Future execution should identify exact K branch, changed paths, model/data rights, capped resource profile and rollback; do not waste turns asking again for GitHub publication already approved.
+
+**Human-role firewall:** GPT-6 Astra UltraCode in CODEX makes human lesson selection (03C). External approved open Chinese Teacher writes BOTH final DPO answers for one immutable x/context (03D). A separate GPT-6 Astra UltraCode CODEX evaluation assesses same exact pair (03E). RP01 Student consumes only ACCEPT; blind answer examiner and independent Astra UltraCode code/architecture review are separate activities. Author self-check, another model guess or static example is not any of these real calls.
+
+**Source authority:** newest direct user request; verified D/original tasks + WorkLeft live overlays; F locked decisions; actual G/F/V primary; current K code; source-bound Rxx results. RAG index and historical "previous rounds thinking results" are guides/evidence only. If a source is large, scoped reads with exact spans are honest, but claims must not inflate to full coverage.
+
+**Protected product invariants:** D-01 OperationResult where native; D-02 interface-first; D-04 intent ≠ subject; D-05 per-project LoRA; D-06 70/30 replay; D-07 stack-first; D-08 source-family-aware stratification; D-10 BM25+kNN; D-15 arbiter authority. Keep side-effect approval, tenant/privacy, typed OutputRef, immutable pair, no-repeat transaction and cold rollback.
+
+**Review before claims:** validate 21 independent complete task prompts, task/manifest parity, exact sources and ownership. A small deterministic code check is valid for hashes/type boundaries, not learning proof. If future code changed, narrow local checks and independent code review bind to exact SHA. Reviewer must genuinely invoke CODEX Astra UltraCode on exact candidate; until then INDEPENDENT_REVIEW_NOT_PERFORMED. Windows Actions are not required to believe measured learning, nor a proxy for blind multi-domain examination.
+
+**Publication/golden rule:** Refresh P remote head before tree write; preserve unrelated changes; atomic commit on branch; reject stale-parent update, reconcile via fresh head; read back manifest+task count and SHA; no force-push. Other worker's Rxx directories are not ours. Report authored vs published vs implemented vs trained vs evaluated separately.

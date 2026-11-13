@@ -1,0 +1,38 @@
+# Короткие проверочные опыты по остальным гипотезам
+**XIIGEN possibleDifs · 16.10.2026 · проектное дополнение, не выполненные результаты**
+
+Общий критерий: отличие влияет на качество обучения только тогда, когда при **одинаковом обычном запросе, одинаковом исходном состоянии, тех же правилах и заранее фиксированной независимой оценке** изменение **одного** фактора меняет полезность ответа после обучения. Изменение внутренней переменной, веса, числа тестов, similarity score, CLI PASS или размера вектора — только механизм, **не** качество.
+
+Первый конкретный опыт с готовым небольшим набором и Codex-поручением: [EXP01 — пропущенная обучаемая память](11-EXP01-UNIT-MEMORY-IMPACT.md). В нём не нужен DPO300/DPO500, GPU, внешний teacher или Windows CI.
+
+## Матрица быстрых проверок: какой следующий опыт выбрать при отрицательном результате
+
+| Отличие | Контроль / изменённый один фактор | Небольшая проба | Какие реальные результаты сравнить | Что НЕ доказывает |
+| --- | --- | --- | --- | --- |
+| Обучаемые Units не подключены (DIF-08/25/31) | A обычная TranslationMachine без памяти / C та же с 4 Executor Unit examples | EXP01: 4 train /4 near /4 negative + exact and restore | Новые правильные near и false accepted | Не LoRA/нейронное обучение |
+| Случайная B0 без компетенции (DIF-01) | Один frozen B0, 8 pairs DPO-only / тот же B0 с коротким chosen-only SFT warmup, затем DPO с эквивалентным бюджетом | REC03: неиспользованные прежде 8 законных пар; одинаковые teacher tokens и independent holdout | Train next-token accuracy, free generation validity, смысл | Одна эпоха не опровергает компетенцию всей архитектуры |
+| DPO objective/mask/gradient (DIF-05/23) | Analytic derivative / numerical directional derivative на том же material, затем 8–16 train overfit | REC02: tiny model, frozen ref/dropout0 | Градиентная ошибка, изменение train chosen-vs-rejected, затем new family | Только математический тест ещё не качество |
+| TeachingVector теряет смысл (DIF-02/03/24) | Два разных semantic features с тем же числом activeSlots | Без model calls сравнить VectorSignal + actual optimizer multiplier; второй шаг только с новым feature-consuming mechanism | Теряет ли функция идентичность признака? Далее paired semantic accuracy | Два равных множителя уже доказывают потерю signal, но не величину потери качества |
+| Structural kNN / first-hit (DIF-07/13/14/15) | Сохранённый memory pool, fixed-k first-hit / law-eligible rerank всех кандидатов | 8 memory +8 near/neg; без Student | Consumer semantic accuracy, coverage, wrong accepted, latency | Просто k=10→top1 не adaptive kNN |
+| E09 исторический top1 (DIF-41) | File-local SyntaxKind labels / globally stable AST kind labels, одинаковая validation выборка | 2–3 C# файла, existing E09 runner | Per-case next-kind accuracy | Старый quoted +45% не paired из-за разных subsets |
+| E34 hybrid (DIF-35/41) | BM25 alone / BM25+semantic fusion на **той же valSecond**, alpha tuned на valFirst | Existing E34 data; без LLM | Paired hit@1, latency, source family | Не DPO/LoRA quality |
+| LoRA capacity (DIF-09/33) | q/v rank8 / один другой rank или targetModules, одинаковый B0/material/LR/steps | Только после успешного tiny gradient check, 8–16 pairs | Change in heldout law correctness and inference cost | Δweights/Δlogits без meaningful output |
+| Byte BPE для RU / tokenizer (DIF-10/22) | One tokenizer on C# vs RU text diagnostic; до замены веса НЕ менять | Decode roundtrip + avg tokens per word, 8 RU/EN cases | Время/fragmentation/lossless; только после compatible re-train можно оценить quality | Векторную нагрузку нельзя выдавать за потерю кириллицы, если byte roundtrip OK |
+| EOS/decoder (DIF-39) | Тот же checkpoint/prompt/settings, разные явно законные text-level stop policies | 4 открытых prompts без обучения, raw char/token trace | Semantic validity + stop reason, не одна длина | Исправление decoder stop не DPO learning |
+| Checkpoint metadata vs full (DIF-31/32) | На обученной EXP01 C ExportAsync/ImportAsync vs full SaveCheckpointAsync/LoadCheckpointAsync | One cold process, 4 near queries | State SHA/actual identical output vs lost learned memory | Научный C50/C100 full checkpoint уже reopens; нельзя объявлять его дефектом |
+| Replay из E43 (DIF-12/30) | Ненулевой old-domain skill: new-only vs lawful 30% old replay, одинаковый budget | Только после demonstrated baseline old skill | Correct old-domain retention и new-domain quality | Если old before =0/3, 0→0 ничего не говорит о забывании |
+| DPO material quality/teacher (DIF-04/18/19/20) | Factually verified source-dependent chosen/rejected vs controlled weak/ambiguous pair | 8 новых families, один independent judge без привязки к old frozen panel | Валидность semantic source law, tiny learning effect | 500 distinct JSON rows !=500 самостоятельных законов |
+| Unit/Flow/Orchestrator/Graph (DIF-26–29) | Зафиксированные Units + разная learned связь/branch; все другие факторы прежние | 2-input/2-output typed cases, одно изменение на эксперимент | Output associations, novel graph motif success, full branch cost | Наличие static topology/checksum не выученные higher-order relations |
+
+## Три дешёвых gate перед расходованием ещё 500 DPO пар
+**Первый:** один tiny gradient/mask check — доказывает, что сигнал математически направлен и реально попадает в LoRA. Если fails, дальнейшие 500 pairs бессмысленны. **Второй:** tiny 8–16 train overfit для текущего B0 — может ли существующий Student хотя бы воспроизвести конкретные выбранные стороны по смыслу? Если нет, сначала решить проблему base/optimizer/capacity. **Третий:** EXP01 Unit memory A/B/C/D без Student — даёт ли исторический альтернативный механизм вообще полезный пользовательский эффект? Только после первых трёх сравнивать frozen Student-only vs Student+Units в одном ordinary consumer.
+
+## Контроль скрытой подмены
+- Требование к каждому опыту: **реально изменившийся пользовательский ответ**, baseline and treatment на тех же source/gold, список memory/weight modifications, перезапуск из сохранённого state и запрет «поменять тест, чтобы прошёл».
+- Guard-only улучшение маркировать DETERM_QUALITY_GAIN; trained exact lookup — MEMORY_RECALL_GAIN; near-template — MEMORY_NEAR_TRANSFER; новое правило на невиданной семье — отдельно оценённый LEARNING_GENERALIZATION; RL/DPO neural semantics — только настоящий Student before/after.
+- После экспериментального отрицательного вывода не увеличивать автоматически размер корпуса. Если математический механизм правильный, но качество неизменно, искать границу actual consumer/memory/decoder.
+- Все старые научные RP01 результаты остаются frozen: C#0/3→0/3, ENRU0/4→0/4, checkpoint restored. Нельзя выдавать новый локальный memory gain за переписанный old baseline.
+- На заранее раскрытом маленьком корпусе нельзя заявлять независимую статистическую значимость. Для внешнего confirmatory вывода потребуется новый невиденный корпус, не имеющий общих исходных семейств с train/Dev, независимый судья и сохранённый rubric.
+- Назначение по действующему плану: математическая часть — RP01 REC02, cold start — REC03, memory/domain-law/kNN — REC04/RP02, transfer/feedback/replay — REC05. **Никаких дополнительных двадцати пяти запусков планирования и Windows Actions.**
+
+Применённые навыки по существующим docs/skills: experiment-design, improvement-measurement, code-examination, plan-review, prompt-patch-authoring, trainable-architecture-decision, human-readable-architecture-audit, learning-loop-closure. Документ подготовлен на основании описанных source paths; новых моделей/experiments в этой сессии не запускали.

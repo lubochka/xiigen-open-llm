@@ -1,0 +1,24 @@
+# S26 architecture — post-admission correction, not a fifth learner
+## Boundary
+`user evidence e(t0)` → first lawful domain/rights authority → admitted memory/feedback signal → MAYBE actually trained state + indexed representation + typed associations + route policy → selected full-state ordinary consumer output at t1 → new independent law/source evidence at t2 that contradicts, supersedes or withdraws `e` → **impact lineage + admissibility decision + least invasive safe correction** → ordinary C0 response and optional NEW permitted lesson.
+
+**Critical distinction:** `quarantine` is a deterministic gating decision for future retrieval; it is NOT gradient reversal. `rollback` is recovery to a demonstrably clean parent, not selective deletion of a learned fact from shared weights. `retraining` from scratch may be expensive and prohibited under no-repeat/rights conflict. When clean state/lineage can't be established use UNKNOWN_IMPACT/ERASURE_NOT_PROVEN + safe abstain, never assert perfect forgetting. Remote artifact/history deletion has independent permissions, legal retention and owners.
+
+## Four roles: separate actual state and authority
+1. **ILearningUnit**: input domain + law-aware vector and output type yields typed many→many (IQueryable-like according to verified concrete API) *associations*, preserving input/result IDs and multiple candidates even with reorder/partial output. Learned rank or association belongs to actual installed owner; deterministic schema, law and safe invalidation cannot be learned away.
+2. **ILearningFlow**: relationships/corrections between lawful Unit output and next Unit input. Preserve actual OutputRef producer→resolver→consumer and lifetime/version; invalidating one learned correction cannot silently join positional ZIP or delete independently lawful alternatives.
+3. **ILearningOrchestrator**: deep async candidate dependency/order, deadlines, cancellations, branch fan-out and cost. Learned policy ranks permitted alternatives; a source invalidation must revalidate in-flight and memoized branches before side effects and count all branch costs.
+4. **ILearningDynamicGraph**: higher-order lawful pattern combinations and versioned edges; may learn reusable relation patterns, not a hard-coded route. A graph score never outranks domain laws, rights, types, mandatory skills or final arbiter.
+
+Existing **ILearningMachine/Student+project LoRA** is the actual trainable recipient of admitted S04 E1 DPO, not four new trainers. **Semantic tokenizer/vector/projection** maps input law and neighbor geometry; LoRA adapts generator weight response; same vector dimensions do not establish semantic compatibility. Existing **adaptive kNN** must account for eligibility, score, query-dependent k/radius, index compatibility, actual multi-hit consumption and learned rerank; returned top-k array alone isn't evidence all k contributed.
+
+## Corrected evidence decision
+Input: `(event_hash, law_source_and_version, tenant/project, domain+intent, source_rights, before state, served outputs)`.
+Deterministic checks: verified authority and time, rights, typed admissibility, provenance certainty, no-repeat ledger, full PC resource/reserve, side-effect safety.
+Decision: `KEEP | QUARANTINE_ONLY | WITHDRAW_INDEX | REBIND | RESTORE_CLEAN_PARENT | REBUILD_TARGET_ONLY | NEW_LESSON_CANDIDATE | ABSTAIN | UNKNOWN_IMPACT`.
+Every learned component can recommend within lawful choices, never override veto. The **same source evidence may have several descendants**: a revoked SQL example in index, a typed association in Unit, a Flow correction, a Graph macro and Student LoRA; revoke a root and examine every actual downstream owner, not just JSON row.
+For conflicting user preferences (both lawful) choose project/user-scoped preference, clarification or hold; do not label one objectively unlawful to create an easy DPO pair. For actual law conflict independently source/edition-verify. For erased consent, **do not imply physical forgetting** without proven derivative/backups policy.
+
+## Minimal implementation sequence
+Trace actual K ordinary impact → freeze blind counterexamples → shadow quarantine→ compare P vs C0 same accepted weights, exact host and budget → use/reuse existing versioned eligibility boundary or one minimal owner-approved correction → only if *residual* trainable weakness choose a new case through CODEX/Astra UltraCode → separate approved Chinese open teacher authors both DPO sides → distinct CODEX exact judge → existing response-only optimizer Step once → independent blind T vs C0 → existing promotion and cold ordinary readback.
+No requirement to wait for entire R01–R25, S24/S25, DTC native release or all seven trained domains to test a read-only C0 hypothesis. If no real correction needed, `REUSE_NO_CHANGE` and stop. Failure of recovery invalidates deployment claim but not source-scoped research. No new blanket Windows CI.

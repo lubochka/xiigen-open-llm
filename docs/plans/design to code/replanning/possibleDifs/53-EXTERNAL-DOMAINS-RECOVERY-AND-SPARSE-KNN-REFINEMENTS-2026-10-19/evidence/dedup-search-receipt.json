@@ -1,0 +1,1089 @@
+{
+  "primary_planning_sha": "a90350f33955f9c4b15707a4619eeeba5d42e863",
+  "core_sha": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+  "delta_planning_sha": "0715844069a0c9b0242958c663464f552614ad84",
+  "markdown_body_versions_indexed": 669,
+  "body_counts": {
+    "prior-planning": 389,
+    "prior-core": 272,
+    "prior-planning-delta": 8
+  },
+  "meaning": "full-text pattern retrieval; absence does not certify all prior semantic claims or unseen future work",
+  "queries": {
+    "sparse_global_adam_age": {
+      "pattern": "(?i)sparse|per.?parameter|parameter.?age|bias.?correction|bias.?age|возраст.{0,60}(парам|момент)|момент.{0,70}(отсут|неполн|подмнож)",
+      "matches": [
+        {
+          "path": "audit20261019/prior-planning/00-MASTER-SYNTHESIS-AND-CONFLICTS.md",
+          "line": 67,
+          "text": "Исторические E09/E14 содержат и положительные, и отрицательные Tier: E09 Tier1 `FAILED` при малом положительном эффекте, Tier2 `PASSED` с unmatched baseline; E14 **Tier2** (поле raw JSON) **1.00 на 4 val cases**, **Tier3** **.8676 против majority .8824**. Исторический перенос конкретного matrix learner в KNN **не доказан** текущим чтением, требует commit lineage, а не объявляется опровергнутым. E12 matrix SIMD/sparse результаты относятся к производительности, не semantic learning."
+        },
+        {
+          "path": "audit20261019/prior-planning/02-DPO-DATA-OBJECTIVE-GRADIENT.md",
+          "line": 38,
+          "text": "Гипотезы: малый LR/одна эпоха/мало полезных семейств/короткий context/случайная B0 дали слишком слабый capability gradient. Обратная опасность — увеличить LR/эпохи ради train margin и получить забывание. Не рекомендовать hyperparameter sweep до baseline & data controls."
+        },
+        {
+          "path": "audit20261019/prior-planning/11-MICRO-EXPERIMENT-COLD-START-VS-DPO.md",
+          "line": 40,
+          "text": "- **HELD-OUT (report-only):** 8–12 новых запросов минимум из 4 иных семейств. Содержание закрыть до freeze рук A2/B2; этот набор **не** используется для выбора tokenizer, hyperparameters, warmup steps и prompt."
+        },
+        {
+          "path": "audit20261019/prior-planning/12-MATRIX-KNN-TRANSFER-PROVENANCE-AND-EVALUATION.md",
+          "line": 13,
+          "text": "| M12-T1: `E12 MATRIX-OPT` | [E12 JSON](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/35.ExperimentsV2/results/E12-MATRIX-OPT/results/run-2026-05-01-001.json): overall benchmark 480.6→275.6ms (42.64% faster), но sparse ngram 8.5→21.8ms и SIMD64² 68→115.6ms **замедлялись**, SIMD512×64 404→138.3ms ускорился | Это **вычислительная скорость**, не качество семантики. `FAILED` отдельного sparse/SIMD режима не означает невозможность KNN; и нет найденного доказанного ребра E12→конкретный KNN port |"
+        },
+        {
+          "path": "audit20261019/prior-planning/12-MATRIX-KNN-TRANSFER-PROVENANCE-AND-EVALUATION.md",
+          "line": 32,
+          "text": "| Matrix computation | [E12MatrixOpt](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/35.ExperimentsV2/Experiments/E12MatrixOpt.cs#L7-L53) bench SIMD/sparse/MatVec | kNN index строится на feature-vectors, чья семантика и scoring живут в других классах | Нет доказательства, что E12 matrix speedpath переехал в KNN; различие матем. ускорения и semantic policy принципиально |"
+        },
+        {
+          "path": "audit20261019/prior-planning/12-MATRIX-TO-KNN-EXPERIMENT-MISREADS.md",
+          "line": 28,
+          "text": "| [E12 MatrixOpt](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/35.ExperimentsV2/results/E12-MATRIX-OPT/results/run-2026-05-01-001.json) | aggregate 480.6→275.6ms, но sparse N-gram 8.5→21.8ms медленнее и SIMD64 68.0→115.6ms медленнее; только SIMD512 404.1→138.3ms лучше | **Aggregate PASS маскирует два ухудшения.** [E12:23–53](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/35.ExperimentsV2/Experiments/E12MatrixOpt.cs#L17-L53) проверяет «любой из трёх speedup≥2», а не semantic learning/KNN. Не связывать E12 механически с «матрицей Unit». |"
+        },
+        {
+          "path": "audit20261019/prior-planning/2026-10-18-preparetogpl-recovery/README.md",
+          "line": 23,
+          "text": "**Почему это стоит перед общей настройкой hyperparameters:** в этих опытах есть конкретный кандидат утраты — сохранённый state, используемая функция, recipient или lineage. Даже правильный DPO не компенсирует загрузку другого состояния или отсутствие нужной обученной функции в ответе. Результат восстановления старого поведения при нуле updates считается успехом совместимости; новый learning gain требует отдельного обучения и предметного сравнения."
+        },
+        {
+          "path": "audit20261019/prior-planning/26-NEW-ADAMW-SCALE-CANCELLATION-2026-10-16.md",
+          "line": 9,
+          "text": "[AdamW.Step L72–106](https://github.com/lubochka/llm_mvp_core/blob/b0afc08dc0df110b10ed5ed38b518906665c16f8/04.TrainingLoop/Optimizers/AdamW.cs#L72-L106) реализует m, v, bias correction и update: w -= lr*mHat/(sqrt(vHat)+eps), отдельно decoupled weight decay."
+        },
+        {
+          "path": "audit20261019/prior-planning/33-NOVEL-DPO-VECTOR-INGRESS-NONFINITE-ADMISSION-2026-10-16.md",
+          "line": 12,
+          "text": "**Причинная граница:** [RP01 `LlmIngredientLogicalUnits.cs` передаёт `Weight=1f`](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/18.CapabilityTraining/LlmIngredientLogicalUnits.cs#L1736-L1760); source доказал дефект общего интерфейса для будущих curriculum/negative weighting, **но не обнаружил ни одной нечисловой пары в опубликованном C#500/ENRU500**. В профиле RP01 это низкий P2; при входе model-produced sparse/projection vector в новом домене может стать P1."
+        },
+        {
+          "path": "audit20261019/prior-planning/37-NEW-E17-INCOMMENSURATE-PERPLEXITY-AND-STRUCTURAL-PREDICATES-2026-10-16.md",
+          "line": 30,
+          "text": "- **H37-B3 (sparse fallback):** на малом domain input Level3 молча использует Level2, и «структурное обучение» фактически не происходило. Решение: записывать per-example `representation_version`, `fallback_reason`, `recognized_predicate_count` и `consumer_used` до экзамена."
+        },
+        {
+          "path": "audit20261019/prior-planning/38-CODEX-MICRO-EXPERIMENTS-BY-DOMAIN-2026-10-16.md",
+          "line": 44,
+          "text": "| A, sparse | 0 | 1 | L |"
+        },
+        {
+          "path": "audit20261019/prior-planning/38-CODEX-NEW-CAUSAL-GAPS-GENERIC-KNN-DPO-LOSS-REPLAY-FUSION-2026-10-16.md",
+          "line": 39,
+          "text": "**Быстрый фальсификатор N38-DPO-LOSS (C#, EN→RU + SQL):** frozen exact pair, same model/seed/settings; L0 один read-only инструментальный objective/margin до optimizer и два teaching-vectors из 0 vs 60 активных slots, ожидать `lossDense/lossSparse≈2` и одинаковые нормализованные значения. L1 на двух *отдельных идентичных* разрешённых коротких учебных копиях (не reuse immutable publication IDs): current monitor по reported loss vs monitor по отдельно нормированному pair loss, одни DPO пары, same wall/steps, сравнивать фактический stopping step, optimizer state и **слепой** domain result. Контроль: ровно одинаковая плотность → одинаковый stopping step; полный native gradient может зависеть от вектора, поэтому конечный training delta нельзя приписать только метрике без факторизации. Никогда не патчить early-stop на основании одного source-proxy."
+        },
+        {
+          "path": "audit20261019/prior-planning/43-PREPARETOGPL-RESTORATION-AND-NEURAL-DIFFS-2026-10-18/02-NEURAL-SCORES-AND-STATE.md",
+          "line": 95,
+          "text": "Если old first moment и new gradient направлены противоположно, знак update может определяться m50. Пример *только математической возможности*: m50=1, gENRU=−1 ⇒ m51=0.8; zero-first-moment arm ⇒ m51=−0.1. Это не извлечённые из RP01 реальные числа. Ненулевой второй момент и bias-correction не меняют знак."
+        },
+        {
+          "path": "audit20261019/prior-planning/43-PREPARETOGPL-RESTORATION-AND-NEURAL-DIFFS-2026-10-18/06-EVIDENCE-AND-NOVELTY.md",
+          "line": 95,
+          "text": "[DLT-K1](https://github.com/lubochka/xiigen-planning/blob/412d3364cc94b5aa1cdf516f829960da152826cb/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/PREPARETOGPL-DPO-LORA-TOKENS-2026-10-18.md#6-полезные-уточнения-известных-тем--не-увеличивают-число-новых-находок) уже описывает перенос C50 moments в ENRU, возможный конфликт первого момента с новым градиентом, cosine/sign diagnostics и сравнение carried state с новым optimizer при одном reference C50. **Эта общая гипотеза и её диагностика больше не заявляются здесь новыми.** N-NEURAL-02/R06 — отдельное уточнение: обнуляется только m50, а v50, step50 и остальные условия сохраняются. Это позволяет отделить направление первого момента от preconditioning и bias-correction, которые также меняются при создании нового optimizer. Новизна ограничена этим различающим вмешательством; актуальные slots и causal quality gain ещё не получены."
+        },
+        {
+          "path": "audit20261019/prior-planning/43-PREPARETOGPL-RESTORATION-AND-NEURAL-DIFFS-2026-10-18/07-INDEPENDENT-REVIEW.md",
+          "line": 116,
+          "text": "Независимый проверяющий отдельно сопоставил этот третий delta и подтвердил сужение: DLT-K1 уже содержит general moment interference, cosine и долю конфликтующих координат. Наша отдельная переменная — только m50→0 при прежних v50/step50; это уточнение известной гипотезы, без увеличения числа самостоятельно найденных причин деградации. Новый optimizer из DLT-K1 меняет также второй момент и позицию bias correction."
+        },
+        {
+          "path": "audit20261019/prior-planning/PREPARETOGPL-DPO-LORA-TOKENS-2026-10-18.md",
+          "line": 154,
+          "text": "- Для DLT-1 проверить полный внешний caller seed scope и фактический момент расходования RNG; отсутствие внутреннего scope в прочитанных трёх слоях не доказывает отсутствие scope в любом host."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/04-source-claim-ledger.md",
+          "line": 1204,
+          "text": "### C098. E12 ускорил aggregate MatVec benchmark, но sparse и SIMD64 режимы замедлились; это numerical performance, не semantic KNN transfer."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P110-numeric-matrix-cost.md",
+          "line": 23,
+          "text": "**A:** dense MatVec. **B:** sparse representation, хранящая только ТОЧНО ненулевые weights (threshold0), одинаковые числа/dtype. Conversion cost и storage учитываются отдельно; sparse density0/10/50/100% — заранее материал, не подгонка. При желании approximation threshold1e−6 — отдельное сравнение с threshold0 и отдельным quality/error budget, не та же функция. Контроль полностью dense; edge empty row возвращает 0. Не смешивать SIMD и sparsity в одном причинном контрасте."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P110-numeric-matrix-cost.md",
+          "line": 34,
+          "text": "- [12-MATRIX-TO-KNN-EXPERIMENT-MISREADS.md:28](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/12-MATRIX-TO-KNN-EXPERIMENT-MISREADS.md:28>) — Aggregate PASS скрывает замедление sparse/SIMD64."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P119-learning-dynamics.md",
+          "line": 23,
+          "text": "**A:** beta.1. **B:** beta.2 при одинаковом LR1e−5 и прочих settings. Это один hyperparameter objective, одновременно меняющий margin scale/gradient magnitude по определению; не приписывать результат только одному из этих следствий. Reference frozen одинаков. Контроль policy==reference: signed update всё ещё может быть ненулевым; edge large margin/saturation. Никакого post-hoc выбора лучшей beta по TEST; DEV выбор отдельно фиксируется."
+        },
+        {
+          "path": "audit20261019/prior-planning-delta/00-MASTER-SYNTHESIS-AND-CONFLICTS.md",
+          "line": 78,
+          "text": "Исторические E09/E14 содержат и положительные, и отрицательные Tier: E09 Tier1 `FAILED` при малом положительном эффекте, Tier2 `PASSED` с unmatched baseline; E14 **Tier2** (поле raw JSON) **1.00 на 4 val cases**, **Tier3** **.8676 против majority .8824**. Исторический перенос конкретного matrix learner в KNN **не доказан** текущим чтением, требует commit lineage, а не объявляется опровергнутым. E12 matrix SIMD/sparse результаты относятся к производительности, не semantic learning."
+        }
+      ],
+      "matched_lines": 21,
+      "matched_files": 19
+    },
+    "signed_skill_score_mass": {
+      "pattern": "(?i)KnnSkillFilter|signed.{0,30}(score|cosine)|отрицательн.{0,50}(cosine|score|сумм)|сумм.{0,50}(cosine|score)|confidence.{0,50}sum",
+      "matches": [
+        {
+          "path": "audit20261019/prior-planning/22-INDEPENDENT-KNN-STATE-IDENTITY-AND-CONFIDENCE-2026-10-16.md",
+          "line": 20,
+          "text": "Это другая, самостоятельная реализация, не generic KNN. [`TransformerEmbeddingKnnLogicalUnit.ExecuteAsync` 166–210](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/18.CapabilityTraining/LlmIngredientLogicalUnits.cs#L166-L210) возвращает победителя и задаёт `confidence = Round(Clamp(0.50 + fusedScore*0.49, 0, 0.99),2)`; `Warnings=[]`. [`ScoreCandidates` 215–244](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/18.CapabilityTraining/LlmIngredientLogicalUnits.cs#L215-L244) получает `fused` как сумму неотрицательных terms: normalized cosine после `(sim+1)/2`, нормализованного BM25 и совпадения паттерна. Значит для непустого candidate set `fused≥0`, следовательно итоговая confidence **не меньше `0.50` (после округления)**, даже если ни один сосед не отвечает предметному закону запроса."
+        },
+        {
+          "path": "audit20261019/prior-planning/22-INDEPENDENT-KNN-STATE-IDENTITY-AND-CONFIDENCE-2026-10-16.md",
+          "line": 30,
+          "text": "3. Затем N22-A fingerprint/adoption и N22-B confidence **только в реально вызывающем этот Unit consumer**. Сначала trace, потом изменение алгоритма."
+        },
+        {
+          "path": "audit20261019/prior-planning/26-INDEPENDENT-SYNTHESIS-NOVEL-GAPS-AND-REPAIR-PRIORITY-2026-10-16.md",
+          "line": 49,
+          "text": "Измерить training-set overfit первым, затем blinded new-family free answers / semantic correctness, changed logprobs vs decoded token, confidence, coverage, false-accepted hard laws и consumer trace. Каждое arm требует **отдельного one-factor контраста** (B vs A, C vs B и D в отдельном frozen-student test) — это не одновременное изменение всех причин. Нельзя считать это выполненным при публикации плана."
+        },
+        {
+          "path": "audit20261019/prior-planning/30-MICRO-NATIVE-CAUSAL-PILOTS-AND-CODEX-EXECUTOR-WORK-ORDER-2026-10-16.md",
+          "line": 56,
+          "text": "**Memory seed:** одной отдельной synthetic typed lesson обучить позитивный source \\`we can ship the package\\` и target \\`мы можем отправить посылку\\`. **Тест без обучения отрицательного ответа** предъявляет \\`we can't ship the package\\` и 8–12 variations на **других семействах**. B может **правильно воздержаться**, но не обязан магически сгенерировать отрицательный перевод: score=calibrated non-contradiction/abstain, not raw output exact match. Во второй отдельной фазе добавить разрешённую негативную lesson \\`не можем\\` и проверить её learned use. Не смешивать эти фазы в одном verdict."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-RP01-CROSS-BRANCH-EVIDENCE-AND-CAUSAL-QUALITY-TRIAGE-2026-10-16.md",
+          "line": 46,
+          "text": "| A20 **P1 NEW-C/H** | Partial word-map drops negation; empty verifier returns `Score=1`; adapter confidence boosted to `.99`, consumer marks `TRANSLATED` | [N35 new chained source proof](35-NEW-NEGATION-OMISSION-WORDMAP-TO-099-CONFIDENCE-2026-10-16.md), [2×2 micro](35-MICRO-NEGATION-WORDMAP-CONFIDENCE-FACTORIAL-2026-10-16.md) | learn 2 content word maps, no negation; 12 blind paired cases; negator-preserve × no-rule-confidence factorial |"
+        },
+        {
+          "path": "audit20261019/prior-planning/48-LANGUAGE-TRANSLATE-AUDIT-2026-10-19/01-MECHANISMS-AND-EVIDENCE.md",
+          "line": 251,
+          "text": "[prevconfidence]: https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/docs/plans/replanning-possible-diffs/72-negation-confidence-and-e46-feedback-consumers.md"
+        },
+        {
+          "path": "audit20261019/prior-planning/48-LANGUAGE-TRANSLATE-AUDIT-2026-10-19/03-SMALL-DOMAIN-EXPERIMENTS.md",
+          "line": 216,
+          "text": "[prevconfidence]: https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/docs/plans/replanning-possible-diffs/72-negation-confidence-and-e46-feedback-consumers.md"
+        },
+        {
+          "path": "audit20261019/prior-planning/49-LOCAL-WIKI-DONOR-DELTA-2026-10-19/03-FAST-DOMAIN-EXPERIMENTS.md",
+          "line": 58,
+          "text": "`id, date, commit sha, branch, domain, profile, recipient, exact prompt/pairIds, pair authorship/admission, initialization checkpoint sha, tokenizer hash, negative controls, metric formula, train/eval file-family split, baseline, treatment, trained-state hashes, metric before/after, wall/CPU/RAM, confidence interval or case-by-case table, ordinary consumer path, restart hash, PASS/FAIL/UNKNOWN, falsifier, follow-up`."
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/00-LOCAL-WIKI-RECOVERY-FIRST.md",
+          "line": 51,
+          "text": "| NK-03, skill eligibility | Реально установлен KnnSkillFilter с общим индексом | Global topK→intersection против eligible scope→topK на одинаковых scores | Default ContextWindowManager использует PassThrough; общий принцип уже prior P104.1 |"
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/03-NEW-KNN-CONSUMER-GAPS.md",
+          "line": 9,
+          "text": "**Все три механизма уже присутствуют в local_wiki_planning.** Содержательные тела AstRelevanceRanker, KnnSkillFilter, SemanticRanker и ContextWindowManager совпадают с current после удаления пяти строк copyright. [Полные blob SHA и сравнение](evidence/knn-semantic-parity.json), [source manifest](evidence/knn-source-manifest.json). Поэтому они не доказывают регрессию, внесённую RP01. Возможное ухудшение возникает при изменении условий использования: повторные обновления вместо одноразового построения; другой вид структурных запросов; общий индекс вместо индекса того же списка навыков. Наличие такого изменения в RP01 ещё предстоит установить."
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/03-NEW-KNN-CONSUMER-GAPS.md",
+          "line": 20,
+          "text": "| При реальном KnnSkillFilter | Сохранить исходный набор навыков и ограничить поиск этим набором до topK | Проверяет потерю условий, при которых работал skill retrieval | NK-03; отдельный компонент от SkillRetriever.Retrieve |"
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/03-NEW-KNN-CONSUMER-GAPS.md",
+          "line": 69,
+          "text": "KnnSkillFilter получает skillCandidates, однако SearchAsync принимает только taskDescription и topK. ID допустимых навыков в provider не передаются. Сначала считаются confidence и topK общего ответа поиска, затем берётся пересечение с входным списком. Если совпадений нет, возвращается успешный пустой список. [Контракт provider][interface], [весь фильтр C L19–42][filter]."
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/03-NEW-KNN-CONSUMER-GAPS.md",
+          "line": 73,
+          "text": "ContextWindowManager действительно отделяет SkillDocument, вызывает этот фильтр, присоединяет его результат к code chunks и дальше ранжирует. Пустой успешный фильтр не восстанавливает навыки. Однако default manager использует PassThroughSkillFilter; если KnnSkillFilter не установлен, этот риск отсутствует. Найдена explicit инъекция в тесте, product composition owner не установлен. [C L22–53][manager], [инъекция и слабый assert ≤2, Tests L1090–1110][test-filter]."
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/03-NEW-KNN-CONSUMER-GAPS.md",
+          "line": 81,
+          "text": "**Новизна.** E38 SkillRetriever.Retrieve и отсутствующий ScoreForKnn consumer уже разобраны; [P32.1–4][prior-p32] проверяет подключение score, настоящую category, обязательные skills и соответствие метрики. KnnSkillFilter — другой класс, использующий ISemanticSearchProvider. Здесь проблема не в недостатке KNN-голосования или пороге .40, а в порядке eligible scope и topK; все scores и category остаются неизменными. Общий принцип eligibility до topK уже дан в [P104.1][prior-p104] и прежнем P64. Новизна NK-03 — именно другой concrete owner KnnSkillFilter и успешный пустой результат после confident foreign hits, а не новый универсальный принцип scope→topK. В полном pinned prior имён KnnSkillFilter, SemanticRanker и ContextWindowManager нет."
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/03-NEW-KNN-CONSUMER-GAPS.md",
+          "line": 103,
+          "text": "[filter]: https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/22.AgentAlgorithms/Context/KnnSkillFilter.cs#L19-L42"
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/05-SMALL-DOMAIN-EXPERIMENTS.md",
+          "line": 128,
+          "text": "**Skills/orchestration.** NK-03: 8 задач, 12 eligible skills и 12 вне области, fixed scores/index. Сравнить `global topK → intersection` с `scope → topK`: 16 отборов, 0 обучения. Включить unknown, одинаковый content разных ScopeId и retention обязательных навыков. Измерить переданные ordinary consumer тексты, затем его выполнение задачи при одинаковом context budget. Default PassThrough не является failing KnnSkillFilter. Отдельный lexical Router можно проверить по прежнему профилю O: 2 различных урока, 4 новых запроса, native `Train`/`RouteForEvaluation`, затем ordinary `Route`/Flow и cold snapshot. Это PRIOR, другое состояние и другая метрика; DPO score его не заменяет. [KNN-досье](03-NEW-KNN-CONSUMER-GAPS.md), [прежний профиль 49][prior49]."
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/06-COVERAGE-AND-NOVELTY.md",
+          "line": 40,
+          "text": "| KNN: доступные соседи и использование результатов | Нужная память вне top-k; тип/домен фильтруется после поиска; first-hit подменяет голосование | P64/P104.1/P107 и ранние KNN-работы; новый concrete KnnSkillFilter связывает scope mismatch с пустым списком skills | Фиксированная память; одинаковый k; eligibility до top-k против пересечения после global top-k |"
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/06-COVERAGE-AND-NOVELTY.md",
+          "line": 58,
+          "text": "- **Новый конкретный шов в известном классе проблем:** evidence-условие AnswerComposer, eligibility KnnSkillFilter, статистика AstRelevanceRanker, AST query/index роли."
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/07-REVIEW-AND-METHOD.md",
+          "line": 12,
+          "text": "| NK-03 можно было прочитать как открытие scope-before-topK | Общий принцип уже есть в P104.1 и прежнем15.03 | В03/06/README новизна ограничена конкретным KnnSkillFilter, confident foreign hits и успешным пустым результатом |"
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/README.md",
+          "line": 21,
+          "text": "| **NK-03** | KnnSkillFilter после уверенного global topK может вернуть успешный пустой список допустимых skills | Унаследовано; default manager использует другой фильтр | Новый concrete consumer известного принципа scope-before-topK из P104.1; источник и proxy подтверждены |"
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/evidence/independent-final-review.md",
+          "line": 38,
+          "text": "| **NK-03** | Уверенный global topK может после пересечения с eligible skills дать успешный пустой результат. Общий принцип scope-before-topK уже принадлежит P104.1 и прежним материалам; добавление здесь — конкретный KnnSkillFilter и его consumer. Default ContextWindowManager использует PassThrough, поэтому условие фактического подключения failing filter обязательно. [KNN-досье](../03-NEW-KNN-CONSUMER-GAPS.md). |"
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/evidence/independent-final-review.md",
+          "line": 48,
+          "text": "Новые N50 относятся к тождественным/потенциально обратным сторонам другого external_domains generator и к POS classifier, enum mapping, distance и `Train(newBatch)`. Они не являются тем же source/owner/state, что AnswerComposer SQL, AstRelevanceRanker или KnnSkillFilter. N51 уточняет сохранность старых кодовых тел и E26 `BuildDefault` без Train; пакет сохраняет соответствующие ограничения и не называет предзагруженный lookup новым выученным состоянием. [Точный crosswalk](../06-COVERAGE-AND-NOVELTY.md)."
+        },
+        {
+          "path": "audit20261019/prior-core/00-README.md",
+          "line": 15,
+          "text": "**Последнее поступление рассмотрено: [67 — все 32 пути до7591dc0b1b](67-helper-7591dc0b-intake.md).** Для30 новых файлов прочитано содержание, для2 изменённых — полная дельта. Основные уточнения собраны в [74](74-helper-master-reconciliation-and-research-priorities.md): сохранены успешные E22/E40/replay, отделены настоящие потребители от предполагаемых. [70](70-embedding-pool-and-dpo-stop-consumers.md) — embedding/DPO stop, [71](71-graphrag-prefix-fallback-and-seed-boundaries.md) — GraphRAG, [72](72-negation-confidence-and-e46-feedback-consumers.md) — отрицание и confidence, [73](73-rare-class-evidence-and-structural-feature-scope.md) — E40 и AST. Пакеты66/70/72 от `/root/rp01_code_trace_astra` получены и прочитаны. Исследование продолжается: один Astra worker ищет потребителя обратной связи перевода в75; родитель — фактические receipts generated-capability. Точный перенос matrix→kNN всё ещё не установлен. Новых запусков нет; нижние записи — история исследования."
+        },
+        {
+          "path": "audit20261019/prior-core/00-README.md",
+          "line": 59,
+          "text": "Следующий первичный участок [10](10-historical-function-transfer-and-learning.md) нашёл ещё два конкретных разрыва. В E40V2 учебная память семи признаков дала сохранённые 21/21 validation, но первый production TrustScorer заменил её фиксированной суммой. В E38 план требовал ScoreForKnn при выборе кандидатов; функция создана, однако найденный orchestration path пишет только metadata после выбора flow. E35, напротив, имеет реального перенесённого consumer, ограниченного flag/route evidence. Эти результаты относятся к доверию источникам, выбору скилов и порядку веток; их влияние на RP01 generation ещё не доказано."
+        },
+        {
+          "path": "audit20261019/prior-core/20-domain-routing-positive-mechanism.md",
+          "line": 126,
+          "text": "- Исправление «никогда не Train» действительно вошло в текущую ветку (`5fa9a2f…`). Повторять его как новый ремонт не нужно. Остаются другие контрасты: labels/кратность примеров, restore, OOD-confidence, отдельные consumers/сегменты и версия/язык признаков."
+        },
+        {
+          "path": "audit20261019/prior-core/64-design-conversion-finite-admission-callers.md",
+          "line": 34,
+          "text": "[BuildVectorBatch:6407](C:/Projects/llm_mvp_core/44.DesignConversionDomain/DesignConversionDpoPolicyCheckpointBridge.cs:6407) и [evaluated builder:6592](C:/Projects/llm_mvp_core/44.DesignConversionDomain/DesignConversionDpoPolicyCheckpointBridge.cs:6592) формируют vector через double-clamp в [−2,2] до float-cast, а Weight — через clamp score в [.01,1]. Пустой vector заменяется [1f]. Поэтому очень большие **конечные** double не переполняются при таком cast. Для конечных отрицательных/нулевых score локальная формула даёт .01; это не обещание допуска таких примеров через generator или остальные доменные gates."
+        },
+        {
+          "path": "audit20261019/prior-core/67-helper-7591dc0b-intake.md",
+          "line": 26,
+          "text": "| 16 | A | [35-MICRO-NEGATION-WORDMAP-CONFIDENCE-FACTORIAL-2026-10-16.md](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/35-MICRO-NEGATION-WORDMAP-CONFIDENCE-FACTORIAL-2026-10-16.md>) | 59 | Прочитан полностью; предметный итог и границы source/consumer — [72](72-negation-confidence-and-e46-feedback-consumers.md). Предложения экспериментов не исполнялись. |"
+        },
+        {
+          "path": "audit20261019/prior-core/67-helper-7591dc0b-intake.md",
+          "line": 32,
+          "text": "| 22 | A | [35-NEW-NEGATION-OMISSION-WORDMAP-TO-099-CONFIDENCE-2026-10-16.md](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/35-NEW-NEGATION-OMISSION-WORDMAP-TO-099-CONFIDENCE-2026-10-16.md>) | 57 | Прочитан полностью; предметный итог и границы source/consumer — [72](72-negation-confidence-and-e46-feedback-consumers.md). Предложения экспериментов не исполнялись. |"
+        },
+        {
+          "path": "audit20261019/prior-core/67-helper-7591dc0b-intake.md",
+          "line": 40,
+          "text": "| 30 | A | [36-NEW-E46-SYNTHETIC-FAIL-MISREAD-AND-POST-VERIFIER-NOVELTY-SIGNAL-ERASURE-2026-10-16.md](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/36-NEW-E46-SYNTHETIC-FAIL-MISREAD-AND-POST-VERIFIER-NOVELTY-SIGNAL-ERASURE-2026-10-16.md>) | 51 | Прочитан полностью; предметный итог и границы source/consumer — [72](72-negation-confidence-and-e46-feedback-consumers.md). Предложения экспериментов не исполнялись. |"
+        },
+        {
+          "path": "audit20261019/prior-core/75-translation-feedback-learning-consumer.md",
+          "line": 7,
+          "text": "Основа — [72](C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/72-negation-confidence-and-e46-feedback-consumers.md:27), [23](C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/23-language-context-and-learned-rule-scope.md:35), [26](C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/26-routing-profiles-and-generated-flow-boundary.md:25), [53](C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/53-translation-composition-and-direction-consumers.md:17). При обнаружении Tatoeba адресно перечитаны [12](C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/12-new-tatoeba-quality-scoring-lexicon-and-cache-seams-2026-10-16.md:5) и [22](C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/22-tatoeba-primary-review-and-domain-scope.md:5): дефект scorer и ограничение текущего caller там уже зафиксированы. Новая дельта 75 — точное время решений, содержимое создаваемой пары, потеря полей конкретным consumer, граница report/изменённого состояния и найденный исторический CLI."
+        },
+        {
+          "path": "audit20261019/prior-core/80-research-resume-verified-and-pending.md",
+          "line": 67,
+          "text": "| Перевод и отрицание | При определённой неполной памяти `never` пропускается, пустой verifier повышает уверенность с 0.50 до 0.99, Flow принимает перевод. | Частота ошибки на реальных checkpoint. RP01 neural adapter использует другой маршрут. [72](72-negation-confidence-and-e46-feedback-consumers.md). |"
+        },
+        {
+          "path": "audit20261019/prior-core/83-check-catalog-and-prompts.md",
+          "line": 557,
+          "text": "- **Основание:** [37, 7](37-new-helper-findings-data-history-and-language.md), [53, 2](53-translation-composition-and-direction-consumers.md), [72, 1](72-negation-confidence-and-e46-feedback-consumers.md)."
+        },
+        {
+          "path": "audit20261019/prior-core/83-check-catalog-and-prompts.md",
+          "line": 567,
+          "text": "- **Основание:** [13, 4–5](13-domain-context-and-dpo-subunits.md), [23, 3](23-language-context-and-learned-rule-scope.md), [36, 4](36-helper27-state-replay-and-quality-review.md), [72, 1–2/4](72-negation-confidence-and-e46-feedback-consumers.md)."
+        },
+        {
+          "path": "audit20261019/prior-core/87-new-checks-38-39.md",
+          "line": 14,
+          "text": "- **Промпт:** «После разрешения C/P81 посчитай signed scores на одних q0/q1/y0/y1, без update и генерации; покажи оба знака, G и framing-only control»."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/04-source-claim-ledger.md",
+          "line": 1580,
+          "text": "| <a id=\"p55-2\"></a>[P55.2](cards/P55-translation-laws.md#s-2) — I/you и actor roles | Дополнительный подслучай прежнего каталога O; H не назван его прямым основанием: [72-negation-confidence-and-e46-feedback-consumers.md:1](<C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/72-negation-confidence-and-e46-feedback-consumers.md:1>) |"
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/2026-10-19-small-learning-probes/08-sources-and-study-log.md",
+          "line": 97,
+          "text": "Открыто перед **будущим разрешённым запуском**: какой совместимый реальный base/parent доступен; где bounded2/4 caller; как обученные metric weights читаются ordinary decoder; поддерживает ли snapshot нужную label-миграцию; достижим ли raw confidence case; где current learner/consumer для calibration. Эти вопросы не разрешаются сменой получателя или готовыми gold maps."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P55-translation-laws.md",
+          "line": 48,
+          "text": "- [../72-negation-confidence-and-e46-feedback-consumers.md:1](<C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/72-negation-confidence-and-e46-feedback-consumers.md:1>) — Ранее исследованный конкретный consumer и граница результата."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/results/2026-10-18/P125-enru-memory-01/report.md",
+          "line": 67,
+          "text": "| Полная стоимость запусков | Первый launcher7197.9212 ms, успешный4422.2889 ms, сумма11.6202101 s с build/preflight/scorer. Подготовка, чтение, модельные токены/деньги, RAM сборки и целая машина NOT_MEASURED |"
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/results/2026-10-18/P25-enru-cold-01/independent-review/review.md",
+          "line": 23,
+          "text": "Все 24 авторских и 24 reviewer outputs сопоставлены с прежними P125 B_after. Сравнивались все продуктовые поля, включая text, route, confidence, verdict, metrics, warnings, evidence и summary. Исключены arm/phase, latency и новый `summaryId`, причём его новое значение проверено по RunId. Новый `allocatedBytes`, отсутствующий у P125, рассматривается как стоимость, не ответ. Расхождений **0**. [Полные собственные проверки](independent-validation.json)."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/results/2026-10-18/P25-enru-cold-01/preregistration.md",
+          "line": 9,
+          "text": "Условия успеха заранее: все24 source/id/bucket должны совпасть; native actual text, success/error/code, verdict, selectedFlow, adapterId, metrics (включая confidence), warnings, evidenceIds, selectedTrainingIds, Summary должны совпасть с retained B_after. Исключения output equality: arm/phase отражают иной опыт; elapsedMs измеряется заново; Summary.summaryId меняется только из-за нового RunId. Других исключений нет. Каждое поле сравнивается, числовой tolerance0. Изменение порядка JSON object keys не является изменением значения; порядок arrays сохраняется."
+        },
+        {
+          "path": "audit20261019/prior-planning-delta/52-ORCHESTRATOR-NEW-GAPS-AND-EVIDENCE-2026-10-19.md",
+          "line": 56,
+          "text": "| Семантическая векторизация, KNN, AST, POS, порядок, морфология | E09/E25/E26/E27 и memory functions известны; \\`TranslationTrainedUnits.cs\\` в сравниваемых ветках эквивалентен по исполняемому тексту | query→feature identity, domain-specific k, confidence/negative scope, ordinary consumer, checkpoint | AST — программирование, POS/order — перевод |"
+        }
+      ],
+      "matched_lines": 41,
+      "matched_files": 29
+    },
+    "used_structural_position_saturation": {
+      "pattern": "(?i)PositionInParent|SiblingCount|255\\s*[/,–−-]\\s*256|saturat.{0,70}(position|depth)|(?:насыщ|кламп).{0,90}(позици|глубин)",
+      "matches": [
+        {
+          "path": "audit20261019/prior-planning/2026-10-18-preparetogpl-recovery/03-historical-knn-and-domain-experiments.md",
+          "line": 83,
+          "text": "В [нынешнем StructuralKnn][structural] есть тип узла, несколько родителей, глубина, положение и scope. В distance входят разные веса, в частности syntactic role=4, parent1=3, node type=2, parent2=2, parent3=1.5, position=0.3. Наличие поля в record ещё не означает участие в distance: например, FileId/SiblingCount не являются отдельными слагаемыми этой формулы."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-MASTER-RP01-HISTORICAL-LEARNING-CROSSWALK-NOVELTY-AND-EXPERIMENT-ORDER-2026-10-16.md",
+          "line": 25,
+          "text": "| **N35-A** | [E09 StructuralKnn](35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md): **SiblingCount** сохраняется в structural vector, но не участвует в DistanceTo; FileId также игнорируется, однако file-invariance может быть полезна | C#/DesignToCode AST KNN, **P1 conditional**; не RP01 neural | Та же память/k и 8–16 C# unseen source contexts, DistanceTo original vs only sibling penalty; оценка gold next-kind и регрессий |"
+        },
+        {
+          "path": "audit20261019/prior-planning/35-MASTER-RP01-HISTORICAL-LEARNING-CROSSWALK-NOVELTY-AND-EXPERIMENT-ORDER-2026-10-16.md",
+          "line": 29,
+          "text": "[EXECUTED JS SHADOW receipt — только арифметика формул, не .NET](35-MICRO-SOURCE-SHADOW-RECEIPT-2026-10-16.json): для N35-A при изменении только SiblingCount distance=0→0 (original) и 0/0.3 (тестовый penalty); для N35-B rare singleton val=0; для N35-C finite-difference 0.128/-0.096. Это **не подтверждение улучшения обучения** и не заменяет нативный эксперимент."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 1,
+          "text": "# N35-A — E09 Structural KNN: сохранённый SiblingCount не способен влиять на выбор соседа"
+        },
+        {
+          "path": "audit20261019/prior-planning/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 13,
+          "text": "1. [StructuralKnn.cs L12–35](https://github.com/lubochka/llm_mvp_core/blob/216a1f3d6af3f40ceef081dc168b07e4ce3934f9/12.SemanticCompiler/Prediction/StructuralKnn.cs#L12-L35): StructuralVector содержит AstNodeType, три Parent*Type, PositionInParent, **SiblingCount**, DepthInMethod, ScopeDepth, **FileId**, SyntacticRole. DistanceTo использует только роль, parent kinds, node kind, позицию, scope/method depth. Ни SiblingCount, ни FileId в формуле нет."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 14,
+          "text": "2. [StructuralKnn.cs L41–95](https://github.com/lubochka/llm_mvp_core/blob/216a1f3d6af3f40ceef081dc168b07e4ce3934f9/12.SemanticCompiler/Prediction/StructuralKnn.cs#L41-L95): Extract действительно считает node.Parent.ChildNodes().Count и помещает значение в SiblingCount (с насыщением на 255). Это не отсутствующий входной признак."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 15,
+          "text": "3. [StructuralKnn.cs L105–181](https://github.com/lubochka/llm_mvp_core/blob/216a1f3d6af3f40ceef081dc168b07e4ce3934f9/12.SemanticCompiler/Prediction/StructuralKnn.cs#L105-L181): Predictor.Train сохраняет полные векторы, Predict сортирует только по DistanceTo, берёт top-k и голосует за следующий токен; следовательно SiblingCount не может разрешить неоднозначность."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 20,
+          "text": "**Строгий механический контрпример (расчёт по формуле, НЕ запуск C#):** пусть vector A и vector B совпадают во всех полях, кроме SiblingCount=1/3; query совпадает с A и имеет SiblingCount=1. DistanceTo(query,A)=DistanceTo(query,B)=0. При k=1 и сохранении обоих кандидатов в разном порядке прогноз определяется порядком вставки, а не различием числа детей. Если correct label для этих двух контекстов различен, существующая метрика принципиально не способна это разучить. Это условный контрпример; реальные Roslyn пары могут иметь и другие различающиеся признаки."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 22,
+          "text": "**FileId отдельно:** он также исключён из DistanceTo, но это может быть **осознанно полезной** инвариантностью при переносе правил между файлами. Не добавлять штраф по FileId без независимого, file-disjoint подтверждения; иначе исправление одной оси разрушит перенос. SiblingCount и FileId — разные hypotheses."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 26,
+          "text": "- **L0 contract test, 2 минуты кода без обучения:** создать два StructuralVector, равных во всём кроме SiblingCount=1 и 3. Убедиться в двух нулевых расстояниях. В тестовом, не production scorer вычислить дополнительный term w * min(abs(siblingCountDifference), cap); проверить ожидаемый порядок для двух запросов. w предварительно зафиксировать, например 0.15, cap=4. Это только проверка механизма."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 27,
+          "text": "- **L1 честная учебная панель:** CODEX/Astra 6 UltraCode выбирает 8–16 настоящих C# синтаксических ситуаций (например, первые/последние элементы argument list, initializer и tuple), где одинаковые базовые поля и **различающийся SiblingCount** действительно требуют различных next SyntaxKind. Сохранить ParseTree, SyntaxKind и family IDs; проверить, что такие пары вообще существуют. Если нет — verdict FEATURE_NOT_DISCRIMINATIVE, остановиться."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 28,
+          "text": "- **A:** исходный DistanceTo. **B:** только добавление указанного слабого штрафа за SiblingCount. Те же frozen train-векторы, next-kind labels, k, tie-break, insertion order, train/heldout split и runtime; не менять AST extraction, label codec, LoRA, BPE или количество данных."
+        },
+        {
+          "path": "audit20261019/prior-planning/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 30,
+          "text": "- **Критерий принятия:** B улучшает отложенные примеры, в которых SiblingCount действительно разделяет gold, без потери иных C# семейств. Если изменилось расстояние, но не gold correctness — MECHANISM_ONLY, не новый успешный алгоритм. После cold load проверить повторение результата, только если predictor включён в сохранённый runtime."
+        },
+        {
+          "path": "audit20261019/prior-planning/38-NEW-E13-LAMBDA-FAMILY-AND-COMPOSITE-LABEL-2026-10-16.md",
+          "line": 39,
+          "text": "- [N35 E09 sibling](35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md): другой AST predictor и пропущенный SiblingCount."
+        },
+        {
+          "path": "audit20261019/prior-planning/48-LANGUAGE-TRANSLATE-AUDIT-2026-10-19/03-SMALL-DOMAIN-EXPERIMENTS.md",
+          "line": 81,
+          "text": "**L0, функция:** baseline next-kind predictor и actual StructuralKnnPredictor получают тот же TRAIN/EXAM. Зафиксировать реально используемые DistanceTo признаки. SiblingCount и FileId хранятся в StructuralVector, но этим расстоянием не читаются; не добавлять их в метрику внутри consumer A/B. Название BpeId не превращает local kind IDs в byte-BPE."
+        },
+        {
+          "path": "audit20261019/prior-planning/48-LANGUAGE-TRANSLATE-AUDIT-2026-10-19/04-SOURCES-COVERAGE-AND-REVIEW.md",
+          "line": 105,
+          "text": "| Сохранённые structural fields ошибочно можно прочесть как used features | SiblingCount/FileId явно отделены от полей DistanceTo |"
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/03-NEW-KNN-CONSUMER-GAPS.md",
+          "line": 63,
+          "text": "**Новизна.** E09→production codec/tie, потеря SiblingCount и конструктора DepthInMethod уже описаны. NK-02 относится к другому AstRelevanceRanker: запрос требует не тот уровень AST, который индексируется. Это уточнение адаптера реального структурного поиска, а не повтор общей гипотезы «нужен AST». Непосредственный product composition caller пока не найден."
+        },
+        {
+          "path": "audit20261019/prior-planning/README.md",
+          "line": 253,
+          "text": "- [N35-A C# AST KNN: unused SiblingCount](35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md); [N35-B редкий класс без validation](35-NEW-RARE-CLASS-VALIDATION-BLINDNESS-IN-STRATIFIED-SPLIT-2026-10-16.md); [N35-C stop-gradient Pool/Normalize/EmbedBatch](35-NEW-EMBEDDING-POOL-NORMALIZE-TRAINABILITY-CUT-2026-10-16.md)."
+        },
+        {
+          "path": "audit20261019/prior-core/03-hybrid-units-and-domain-representation.md",
+          "line": 50,
+          "text": "Старый E09 использовал пять вещественных координат AST и HNSW, затем голосование: [E09ContextVectorKnn.cs](../../../34.Experiments/Experiments/E09ContextVectorKnn.cs):11–21,64–79. Новый structural kNN хранит другой набор признаков: тип узла, три родителя, позицию, siblings, глубину, scope, file ID и синтаксическую роль. Его [StructuralKnn.cs](../../../12.SemanticCompiler/Prediction/StructuralKnn.cs):12–35 задаёт специальное расстояние: несовпадение роли стоит 4, первого родителя — 3, типа узла — 2, второго родителя — 2, третьего — 1,5; позиция и глубины добавляют малые штрафы. Не все объявленные поля участвуют в расстоянии: например FileId и SiblingCount в этой формуле не используются."
+        },
+        {
+          "path": "audit20261019/prior-core/73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 1,
+          "text": "# 73. Редкие классы и SiblingCount: два разных ограничения, без отмены успешного E40V2"
+        },
+        {
+          "path": "audit20261019/prior-core/73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 3,
+          "text": "16 октября 2026. READ_ONLY_RESEARCH. Core793d7b7. Только чтение helper, исходников, локальных Git refs и15 сохранённых JSON E40/E44; новые вычисления моделей и эксперименты не выполнялись. Два [N35 helper](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/35-NEW-RARE-CLASS-VALIDATION-BLINDNESS-IN-STRATIFIED-SPLIT-2026-10-16.md>) / [SiblingCount](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md>) прочитаны полностью."
+        },
+        {
+          "path": "audit20261019/prior-core/73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 37,
+          "text": "## 4. SiblingCount сохранён, но не используется в расстоянии E09"
+        },
+        {
+          "path": "audit20261019/prior-core/73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 39,
+          "text": "[StructuralVector:13–35](C:/Projects/llm_mvp_core/12.SemanticCompiler/Prediction/StructuralKnn.cs:13) содержит SiblingCount и FileId, но DistanceTo не читает их. [Extractor:54–59](C:/Projects/llm_mvp_core/12.SemanticCompiler/Prediction/StructuralKnn.cs:54) считает **все дочерние SyntaxNodes родителя, включая рассматриваемый узел**, с насыщением255; это не число всех соседних punctuation tokens и не dependency-связь языка. Название поля не должно заменять реальную семантику извлечения."
+        },
+        {
+          "path": "audit20261019/prior-core/73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 41,
+          "text": "[Predict:145–161](C:/Projects/llm_mvp_core/12.SemanticCompiler/Prediction/StructuralKnn.cs:145) выбирает по этому расстоянию, затем голосам и числовому tie-break. Если два вектора отличаются только SiblingCount, расстояние равно; при k1/равенстве порядок материала может решать выбор. Для реальных C# контекстов сначала надо найти такое различие при действительно одинаковых прочих признаках и разных корректных targets. Критерий helper «не нашлись в маленькой панели — FEATURE_NOT_DISCRIMINATIVE» следует ограничить **этой панелью**, а не объявлять поле бесполезным вообще."
+        },
+        {
+          "path": "audit20261019/prior-core/73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 43,
+          "text": "Игнорирование FileId может быть полезной инвариантностью для переноса между файлами. Добавлять его штраф вместе с SiblingCount означало бы менять два разных свойства. Оба поля в старых refs `DesignToCode`/`language_translate` принадлежат одному blob `f5132ce4800082797ca7d0197373cbdbd82fdcae`; старый splitter там тоже один blob `259663c8c9575aa604a4b51e281e6e96ac73c8f8`. Эти inherited ограничения не объявлены новой регрессией RP01."
+        },
+        {
+          "path": "audit20261019/prior-core/73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 45,
+          "text": "Реальный source consumer StructuralKnnPredictor — SemanticCompilerFacade; [38](38-e09-transfer-labels-and-opt-in-consumer.md) уже проследил обучение, opt-in UseStructuralKnn=false по умолчанию и отсутствие найденного обычного читателя PredictedNextTokens. Новый exact-name поиск подтверждает facade/E09 callers; он не добавляет доказательства включения функции в RP01. Трасса38 не выдана за новый аудит. Для EN→RU Roslyn SiblingCount не заменяет собственные признаки роли/отрицания."
+        },
+        {
+          "path": "audit20261019/prior-core/73-rare-class-evidence-and-structural-feature-scope.md",
+          "line": 51,
+          "text": "Для SiblingCount отдельно сравнить текущую метрику и заранее заданный слабый sibling-term на одних C# train/query/targets, удерживая k, tie-break, FileId и order. Проверить перенос на новые source families и сохранение обычных случаев. Сначала нужна source-доказанная различающая панель и реально включённый consumer. Ни этих fixtures, ни runtime проверок здесь не создано."
+        },
+        {
+          "path": "audit20261019/prior-core/74-helper-master-reconciliation-and-research-priorities.md",
+          "line": 18,
+          "text": "| AST SiblingCount | В73 поле действительно вычисляется, но не входит в расстояние. | Различающие реальные C# контексты и включённый обычный читатель прогноза; отсутствие эффекта на маленькой панели не доказывает глобальную бесполезность признака. |"
+        },
+        {
+          "path": "audit20261019/prior-core/83-check-catalog-and-prompts.md",
+          "line": 273,
+          "text": "- **GOOD:** «SiblingCount хранится, но distance его не читает». **BAD:** «Высокий tier проверил все перечисленные в описании признаки»."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/06-source-content-walk.md",
+          "line": 1125,
+          "text": "**S273 — [35-MASTER-RP01-HISTORICAL-LEARNING-CROSSWALK-NOVELTY-AND-EXPERIMENT-ORDER-2026-10-16.md L1–109](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/35-MASTER-RP01-HISTORICAL-LEARNING-CROSSWALK-NOVELTY-AND-EXPERIMENT-ORDER-2026-10-16.md:1>)**. L13–29: neural, learned memory, typed/routing gains различны; SiblingCount, singleton и три embedding cuts имеют отдельные falsifiers. L37–66 crosswalk и исторические ограниченные результаты; L74–94 будущая программа/метрики. Не найденный failed-matrix donor остаётся provenance dependency P03, а не выдуманным фактом. Метрики/категории не подчинены старым универсальным acceptance/author mandates. Связи: [P03.1](cards/P03-historical-score-lineage.md#s-1), [P11.3](cards/P11-autograd-reachability.md#s-3), [P11.9](cards/P11-autograd-reachability.md#s-9), [P11.10](cards/P11-autograd-reachability.md#s-10), [P11.11](cards/P11-autograd-reachability.md#s-11), [P26.4](cards/P26-structural-features.md#s-4), [P27.5](cards/P27-structural-codec.md#s-5), [P43.1](cards/P43-contextual-pos.md#s-1), [P48.1](cards/P48-weighting-curriculum.md#s-1), [P48.2](cards/P48-weighting-curriculum.md#s-2), [P77.1](cards/P77-rare-class-support.md#s-1), [P77.3](cards/P77-rare-class-support.md#s-3), [P117.1](cards/P117-translation-direction-memory.md#s-1)."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/06-source-content-walk.md",
+          "line": 1134,
+          "text": "**S278 — [35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md L1–38](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md:1>)**. L13–22: SiblingCount сохранён/насыщен 255, но DistanceTo игнорирует; FileId invariance может быть полезна. L26–31: bounded penalty и реально различающие Roslyn gold нужны отдельно. Сигнал не относится к переводу без Roslyn. Source claim текущего owner, не новый native audit. Связи: [P26.4](cards/P26-structural-features.md#s-4)."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P26-structural-features.md",
+          "line": 33,
+          "text": "A — исходный StructuralVector.DistanceTo: Extract сохраняет SiblingCount, но метрика его игнорирует. B — добавить только 0.15*min(abs(siblingCountDifference),4). Query и два вектора одинаковы во всех остальных полях, siblings 1/3: A tie 0/0, B 0/0.3. k, labels, порядок вставки и все остальные features фиксированы; обратный порядок — контроль tie, одинаковые siblings — отрицательный контроль. Реальные Roslyn argument/initializer/tuple случаи допускаются только если это поле действительно различает gold next-kind при равных остальных полях. FileId не добавлять: его инвариантность может быть полезна. Saturation SiblingCount на 255 фиксируется: 255/256 детей могут слиться ещё до distance; это граница данного B, а не доказанный quality gain."
+        }
+      ],
+      "matched_lines": 32,
+      "matched_files": 14
+    },
+    "related_guard_predicate": {
+      "pattern": "(?i)IsPatternExpression|any.{0,20}pattern|любого.{0,35}pattern|нужный объект",
+      "matches": [
+        {
+          "path": "audit20261019/prior-planning/48-LANGUAGE-TRANSLATE-AUDIT-2026-10-19/02-NEW-HYPOTHESES.md",
+          "line": 26,
+          "text": "- Есть ли **любой** IfStatementSyntax, чьё условие содержит NullLiteralExpression или IsPatternExpression."
+        },
+        {
+          "path": "audit20261019/prior-core/65-e22-positive-late-run-and-label-transfer.md",
+          "line": 45,
+          "text": "Это разбор условий по source, **не исполненные примеры**. Старый AST-эвристический oracle тоже не объявляется идеальным: наличие любого `IsPatternExpression` в условии не обязательно защищает нужный объект. Проверять следует корректность конкретного предметного случая, а не только совпадение со старой эвристикой."
+        }
+      ],
+      "matched_lines": 2,
+      "matched_files": 2
+    },
+    "related_dropout_padding_rng": {
+      "pattern": "(?i)dropout|padded.{0,60}(rng|seed|random)|padding.{0,60}(rng|seed|random)|rng.{0,60}padding|prng.{0,60}padding",
+      "matches": [
+        {
+          "path": "audit20261019/prior-planning/00-LANGUAGE-TRANSLATE-RECOVERY-FIRST-2026-10-19.md",
+          "line": 58,
+          "text": "Первичный EN→RU500 report подтверждает 500 пар, 50 новых updates, 16 изменившихся LoRA tensors и 39 неизменных base tensors; полезные свободные ответы остались **0/4 → 0/4**. Исходный B0 был случайным и необученным. Конфигурация — vocab 629, hidden 512, четыре слоя, context 2048, LoRA rank 8 / alpha 16 / dropout 0 / q_proj,v_proj. Это самостоятельный нейронный опыт с другим получателем и другой задачей относительно E25/E26/E09/E43. [Scientific result][rpresult], [config][rpconfig]."
+        },
+        {
+          "path": "audit20261019/prior-planning/01-PRIORITIZED-DIFFERENCES.md",
+          "line": 28,
+          "text": "| DIF-23 | P1 | H | Gradient correctness не подтверждена численной производной | signs выглядят корректными; no new derivative check | tiny directional finite-difference, dropout0 |"
+        },
+        {
+          "path": "audit20261019/prior-planning/01-PRIORITIZED-DIFFERENCES.md",
+          "line": 38,
+          "text": "| DIF-33 | P1 | H | LoRA dropout/RNG/frozen target modes | configured dropout=0, RNG saved | gradient norms, update topology, save-load logits bit check |"
+        },
+        {
+          "path": "audit20261019/prior-planning/03-DPO-PAIR-AND-GRADIENT.md",
+          "line": 15,
+          "text": "**Непроверенные потенциальные seam:** finite-difference of analytic gradient для tiny fixed seed; shape/mask `i+1` сдвиг и zero-length отказ; conditioning одинакового prompt на обеих сторонах; prompt/response concat vs independently tokenized boundary; optimizer actual A/B gradient norm и clipping; reduction sum vs mean и unequal response lengths; rewards до/после; stable training dropout0. Различающий критерий — можно ли сначала переобучить 8–32 *train* предпочтения, затем появляется ли хоть какое-то changed prediction на неповторяющихся фразах. Не запускать ещё 500 без tiny signal."
+        },
+        {
+          "path": "audit20261019/prior-planning/03-LORA-TOKENIZATION-VECTOR-SPACE.md",
+          "line": 5,
+          "text": "[Манифест](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/config/code-documentation/generation-v1.json#L7-L48) задаёт 629 vocab, 2048 context, 4 слоя, hidden512, 8 heads, rank8 alpha16 dropout0, только q_proj/v_proj. [RP01 current review](https://github.com/lubochka/xiigen-planning/blob/llm_plan3/llm%20mvp/design%20to%20code%20session/replanning/RP01-LEARNING-MECHANISM-REVIEW-2026-10-16.md#L15-L29) прямо описывает B0 как randomly initialized untrained. Это **наиболее вероятное архитектурное объяснение**: DPO учит относительным предпочтениям с имеющимся распределением; без пригодной генеративной основы и языкового словаря такая маломощная адаптация может менять pair log-likelihood, не производя полезный текст. Но отсутствие прироста на короткой панели не доказывает невозможность всех tiny-model recipes."
+        },
+        {
+          "path": "audit20261019/prior-planning/03-LORA-TOKENIZATION-VECTOR-SPACE.md",
+          "line": 9,
+          "text": "[LoRA definition и forward](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/10.LoRA/LoraLinear.cs#L15-L60) и [Forward code](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/10.LoRA/LoraLinear.cs#L107-L125) реализуют ожидаемую формулу: output = Base(x) + alpha/r × (dropout(x)Aᵀ)Bᵀ; B изначально нулевая; A инициализируется Kaiming. По внешнему чтению **нельзя утверждать, что формула LoRA сломана**. Ограничение: при q_proj/v_proj only, rank8, обучаемые параметры воздействуют на attention, но не напрямую на token embedding, output lm-head, MLP/FFN."
+        },
+        {
+          "path": "audit20261019/prior-planning/04-BASE-LORA-CHECKPOINT.md",
+          "line": 3,
+          "text": "Текущий baseline задаёт 629 BPE tokens, hidden=512, 4 Transformer слоя, contextLen=2048, 8 heads, 2 kv heads; `baseInitializationSeed` фиксирован, исходный B0 случайно инициализирован и не был pretrained. LoRA: rank8, alpha16, dropout0, `q_proj,v_proj` у всех 4 слоёв. [generation-v1.json](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/config/code-documentation/generation-v1.json#L7-L49); [RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md](https://github.com/lubochka/xiigen-planning/blob/bfcc610bbaf3cffa54b921b2f435dc616955e2cb/llm%20mvp/design%20to%20code%20session/replanning/Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md#L21-L35). Это **не** доказанная программная ошибка, но экспериментально обучать семантическому C# и ENRU с DPO-only на таком B0 особенно трудно; DPO предпочтений не является автоматически полноценным language pretraining."
+        },
+        {
+          "path": "audit20261019/prior-planning/04-BASE-LORA-CHECKPOINT.md",
+          "line": 5,
+          "text": "`LoraLinear.Forward`: `base(x)+(alpha/r)*((dropout(x) Aᵀ) Bᵀ)`, seed-A Kaiming, B zero. Логика математически соответствует LoRA. [LoraLinear.cs](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/10.LoRA/LoraLinear.cs#L44-L59); [LoraLinear.cs](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/10.LoRA/LoraLinear.cs#L115-L125). Измеренный checkpoint: **16/16 allowed LoRA tensors изменились; 0/39 base changed**, 53,248 adapter elements и 11,920,896 frozen base elements в ENRU. Значит нет доказательства «адаптер не присоединён» или «AdamW вообще ничего не меняет»: [scientific-result.json](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/.kiro/xiigen-slices/work/results/RP01-enru-continuation-20261016/runtime-20261016-01/analysis-20261016-01/scientific-result.json#L11-L21)."
+        },
+        {
+          "path": "audit20261019/prior-planning/10-INFERENCE-STOP-TOKENS-AND-UNIT-TRANSFER.md",
+          "line": 34,
+          "text": "[RP01 recovery](https://github.com/lubochka/xiigen-planning/blob/llm_plan3/llm%20mvp/design%20to%20code%20session/replanning/Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md#L18-L32) фиксирует **random B0**. [model config](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/config/code-documentation/generation-v1.json#L7-L16): hidden512×4layers, vocab629, context2048; [lora settings](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/config/code-documentation/generation-v1.json#L34-L48): rank8, alpha16, dropout0, targets q_proj/v_proj. [LoraLinear](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/10.LoRA/LoraLinear.cs#L39-L60) стартует A Kaiming, B нули и вычисляет residual adapter."
+        },
+        {
+          "path": "audit20261019/prior-planning/11-FAST-EXPERIMENTS-BY-DIF.md",
+          "line": 24,
+          "text": "**Быстрый gate до любого bulk:** проверить актуальность exact-v2 ResponseMask, frozen reference и только разрешённых q/v LoRA keys. На маленькой новой dev-only разрешённой паре — analytical vs finite-difference directional gradient по одному LoRA parameter, тот же loss и dropout=0. Если ошибка знака/маски — STOP и targeted fix. Если успешно, не более 8 новых уникальных train pairs с коротким train-only overfit и 8 других heldout; acceptance только по actual semantic output, а не margin. Не повторять старые DPO pairs. Rank/target module эксперимент — только после доказанного bottleneck."
+        },
+        {
+          "path": "audit20261019/prior-planning/11-MICRO-EXPERIMENT-COLD-START-VS-DPO.md",
+          "line": 12,
+          "text": "- [generation-v1.json](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/config/code-documentation/generation-v1.json#L7-L49): vocab629, hidden512, 4 layers, rank8, alpha16, dropout0, q/v. **Не** менять эти параметры в данном опыте."
+        },
+        {
+          "path": "audit20261019/prior-planning/11-OTHER-CAUSAL-MICROPROBES.md",
+          "line": 14,
+          "text": "| DPO objective/mask/gradient (DIF-05/23) | Analytic derivative / numerical directional derivative на том же material, затем 8–16 train overfit | REC02: tiny model, frozen ref/dropout0 | Градиентная ошибка, изменение train chosen-vs-rejected, затем new family | Только математический тест ещё не качество |"
+        },
+        {
+          "path": "audit20261019/prior-planning/12-DIF-01-44-CHEAP-CAUSAL-PROBES.md",
+          "line": 48,
+          "text": "| DIF-33 | Dropout0 one seed: live weights/logits vs fresh restore | Изменился forbidden base / несовпадение logits? Только тогда repair | R0/RP01 |"
+        },
+        {
+          "path": "audit20261019/prior-planning/12-MINIPROBES-DIF01-DIF44.md",
+          "line": 44,
+          "text": "| DIF-23 | N: tiny directional finite-difference | Analytic vs numeric DPO gradient agrees at fixed dropout0 before training | REC02; stop if mismatch |"
+        },
+        {
+          "path": "audit20261019/prior-planning/12-MINIPROBES-DIF01-DIF44.md",
+          "line": 54,
+          "text": "| DIF-33 | R→N: LoRA layer/topology/RNG | Gradient norm and A/B delta with frozen base, before/after cold logits parity; tiny training only if needed | REC02; control rank alpha dropout |"
+        },
+        {
+          "path": "audit20261019/prior-planning/12-RP01-MINI01-COLD-START-CAUSAL-EXPERIMENT.md",
+          "line": 16,
+          "text": "Параметры всех состояний: **один и тот же tokenizer629**, prompt framing, B0 model config (hidden512, layers4), LoRA rank8/alpha16/dropout0, q_proj/v_proj, decoding `temperature=0, `topK=0, `topP=1, одинаковый maxNewTokens и произвольный не меняющий данных seed, закреплённый до запуска. Внутри A и C нельзя менять beta, LR, optimizer algorithm, clipping, порядок DPO batches, corpus или иную гиперпараметризацию. SFT использует **действующий** `TrainingLoop.Trainer.TrainSupervisedNextTokenStep`, а не новый нейронный trainer. **Важная граница:** этот API учит все next-token targets последовательности (включая prompt), а не response-only; это надо явно указать и отдельно измерять response-region utility. Для DPO использовать existing **exact-v2 response-only** путь, а не legacy `Compact`/mean full-sequence."
+        },
+        {
+          "path": "audit20261019/prior-planning/16-TRANSLATION-DPO-BRIDGE-TOKEN-ERASURE-2026-10-16.md",
+          "line": 44,
+          "text": "**Диагностический пример, не подтверждение наличия таких строк в реальном корпусе:** `chosen=\"берег\"`, `rejected=\"берег [WRONG: wrong topic]\"`. Raw строки отличаются, после `StripReservedDiagnosticsForModel` обе model-visible стороны равны `берег`. При тождественных input IDs/masks и детерминированном dropout=0 их DPO preference signal равен нулю; возможны лишь вычислительные флуктуации. Дообучать модель ещё 500 раз на таких парах бесполезно."
+        },
+        {
+          "path": "audit20261019/prior-planning/16-TRANSLATION-DPO-MODEL-VISIBLE-PAIR-COLLAPSE.md",
+          "line": 26,
+          "text": "Следовательно, при равных prefix/context одиночные response `accept` и `invalid` дают равные model-visible token IDs, несмотря на разные исходные строки и fingerprints. **Проверенный факт:** хеш-функция теряет различие. **Условная модельная импликация:** при одинаковом полном input и выключенном dropout чистый DPO-контраст выбранной/отвергнутой стороны равен нулю; при ненулевом stochastic noise поведение не становится осмысленным preference signal. Наличие именно этих слов в реальном dataset **не установлено**."
+        },
+        {
+          "path": "audit20261019/prior-planning/2026-10-18-preparetogpl-recovery/02-neural-and-lora.md",
+          "line": 20,
+          "text": "| Матрицы адаптера | Kaiming A, нулевая B, формула base(x)+scaling·dropout(x)·Aᵀ·Bᵀ. [G3][gpl-linear] | Та же низкоранговая формула; rank/alpha были и в GPL config, нынешний код добавил их публичные свойства, per-slot seeds и явный режим training. [C3][core-linear] | Нет основания говорить, что саму факторизацию AB заменили иным обучающим алгоритмом. |"
+        },
+        {
+          "path": "audit20261019/prior-planning/2026-10-18-preparetogpl-recovery/02-neural-and-lora.md",
+          "line": 21,
+          "text": "| Dropout | LoraLinear.Forward всегда вызывает dropout(training:true). [G3][gpl-linear] | Forward(x) по умолчанию evaluation; training mode передаётся явно. [C3][core-linear] | Исправление различия обучения/вывода. В RP01 dropout=0, поэтому это не объяснение его отрицательных результатов. |"
+        },
+        {
+          "path": "audit20261019/prior-planning/2026-10-18-preparetogpl-recovery/02-neural-and-lora.md",
+          "line": 23,
+          "text": "| Повторный policy forward | GPL считает score одним forward и заново строит forward в BackwardLogProbs. [G6][gpl-step] | Current удерживает logits того policy forward, которым рассчитан score. [C6][core-graph] | При stochastic training предотвращает рассогласование score и backward между разными dropout masks. Не отдельная причина RP01 при dropout=0. |"
+        },
+        {
+          "path": "audit20261019/prior-planning/2026-10-18-preparetogpl-recovery/02-neural-and-lora.md",
+          "line": 30,
+          "text": "В RP01 конкретная конфигурация — vocabulary629, hidden512, 4 блока, 8 Q-heads/2 KV-heads, FFN1408; rank8, alpha16, dropout0, q/v. Это [явный config][core-config], а не автоматически конфигурация всех успешных GPL-прогонов. Для q на слой A=[8,512], B=[512,8]; для v A=[8,512], B=[128,8]. Четыре слоя дают 16 A/B tensors и 53 248 trainable elements; речь о 4 слоях с адаптерами, не о 16 слоях."
+        },
+        {
+          "path": "audit20261019/prior-planning/2026-10-19-language-restore/04-neural-dpo-comparison.md",
+          "line": 67,
+          "text": "| Параметры Student | Исторические продукты могли использовать другую конфигурацию и другой получатель | Текущий generation-v1: H512, 4 layers, vocab629, context2048, q/v rank8 alpha16, dropout0, greedy | Это описание конфигурационного файла, не доказательство того, что любой сохранённый checkpoint соответствует ему или что он хорошо обучен |"
+        },
+        {
+          "path": "audit20261019/prior-planning/2026-10-19-language-restore/04a-lora-factor-experiment.md",
+          "line": 25,
+          "text": "| В config q/v, rank8, alpha16, dropout0; H512, четыре слоя | [generation-v1, 7–48](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/config/code-documentation/generation-v1.json#L7-L48) | Для такого профиля s=alpha/rank=2, восемь adapters/16 A/B tensors. Конкретный эксперимент обязан проверить фактическую топологию loaded model |"
+        },
+        {
+          "path": "audit20261019/prior-planning/2026-10-19-language-restore/06-source-and-novelty-ledger.md",
+          "line": 177,
+          "text": "Все девять текстов получены по pinned refs. Exact same-forward/gauge/A-scale поиск дал0 совпадений. Адресно по смыслу прочитаны D-Learn, карта находок и релевантные R06/R21/R24: два обычных DPO-урока, selective m50 reset, alpha/dropout controls и TeachingVector active-count — другие вмешательства. Они не дают точного предшественника A₀→2A₀ при B₀=0, одинаковых alpha и fresh optimizer. Это узкая root-проверка дельты, не новый независимый review всего защищённого корпуса и не запуск чужих опытов."
+        },
+        {
+          "path": "audit20261019/prior-planning/21-MICRO-PHRASE-CLAUSE-SURVIVAL-EXPERIMENT-2026-10-16.md",
+          "line": 4,
+          "text": "**Одна новая гипотеза:** [N21-01 — clause dropout](21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md#n21-01--удаление-критических-токенов-при-композиции-из-выученных-фраз).  "
+        },
+        {
+          "path": "audit20261019/prior-planning/23-INDEPENDENT-AUDIT-SHAPE-DECODER-AND-LEARNING-2026-10-16.md",
+          "line": 39,
+          "text": "| q/v-only LoRA, optimizer/beta, frozen reference, weight floor, dropout | [03-LoRA](03-LORA-TOKENIZATION-VECTOR-SPACE.md), [16-DPO](16-NEW-CAUSAL-GAPS-KNN-TIER-DPO-ZERO-WEIGHT-KV-2026-10-16.md) |"
+        },
+        {
+          "path": "audit20261019/prior-planning/23-INDEPENDENT-AUDIT-SHAPE-DECODER-AND-LEARNING-2026-10-16.md",
+          "line": 46,
+          "text": "| false-positive learned accuracy, training acceptance without actual Unit mutation | [21-scaffold](21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md), [17-dispatch](17-STRUCTURED-UNIT-TRAINING-SILENT-DISPATCH.md) |"
+        },
+        {
+          "path": "audit20261019/prior-planning/23-INDEPENDENT-LANGUAGE-ROUTING-POS-AND-CROSS-CLAUSE-GAPS-2026-10-16.md",
+          "line": 51,
+          "text": "- **Соседние находки без дублирования:** `14-KNN-IDENTITY-PREDICATE-SCOPE-REBUILD-GAPS.md` (ID/metadata/domain), `16-INDEPENDENT-TRANSLATION-UNIT-AND-KNN-LEARNING-GAPS-2026-10-16.md` (topic, negation-similarity, verifier bypass), `21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md` (whitespace, clause omission) и `21-NEW-GAPS-SYMBOL-BLIND-LESSON-ADMISSION-AND-DIRECTION-MISROUTING-2026-10-16.md` (symbol-blind admission) описывают иные линии доказательств. Неполнота отрицательного поиска по всем сторонним отчётам сохраняется."
+        },
+        {
+          "path": "audit20261019/prior-planning/27-DELTA-CROSSWALK-SKILL-ROUTES-AND-NATIVE-WORK-ORDER-2026-10-16.md",
+          "line": 38,
+          "text": "| LoRA targets, rank, dropout и save/load | [03 LoRA](03-LORA-TOKENIZATION-VECTOR-SPACE.md), [RP01 pack](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/README.md) | Изменяет ли LoRA реальный next-token ranking, а не только hash? |"
+        },
+        {
+          "path": "audit20261019/prior-planning/27-RP01-FULL-CAUSAL-CROSSWALK-POSITIVE-HISTORY-2026-10-16.md",
+          "line": 26,
+          "text": "| **Phrase/morph/POS** | Выученное matching может разрушать `never`/необученный clause; язык `ru` vs `RU`, POS, морфологический channel неидентичны | SRC/H | 8-law paired sentence preservation, forced ordinary adapter | [21 phrase](21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md), [23 language](23-INDEPENDENT-LANGUAGE-ROUTING-POS-AND-CROSS-CLAUSE-GAPS-2026-10-16.md) |"
+        },
+        {
+          "path": "audit20261019/prior-planning/28-DELTA-MASTER-AUDIT-ALL-AXES-HISTORY-AND-NOVEL-CAUSAL-GATES-2026-10-16.md",
+          "line": 27,
+          "text": "| 06 **LoRA rank/topology** | q/v-only rank8 alpha16 и target coverage могут быть недостаточны; это capacity hypothesis, не доказанный баг реализации | [LoRA](04-BASE-LORA-CHECKPOINT.md), [01 matrix](01-PRIORITIZED-DIFFERENCES.md) | same budget rank/target isolate; zero-dropout native |"
+        },
+        {
+          "path": "audit20261019/prior-planning/28-DELTA-MASTER-AUDIT-ALL-AXES-HISTORY-AND-NOVEL-CAUSAL-GATES-2026-10-16.md",
+          "line": 28,
+          "text": "| 07 **Optimizer/RNG/masks** | optimizer scale cancellation, stochastic dropout (в RP01 dropout=0), restore moments, possible mismatch reference | [AdamW audit](26-NEW-ADAMW-SCALE-CANCELLATION-2026-10-16.md), [DPO code](03-DPO-PAIR-AND-GRADIENT.md) | finite difference, optimizer-state readback |"
+        },
+        {
+          "path": "audit20261019/prior-planning/30-MASTER-QUALITY-LOSS-COVERAGE-AND-SOURCE-LINEAGE-2026-10-16.md",
+          "line": 35,
+          "text": "| **06 P1** | LoRA q/v-only, rank8, alpha16, base frozen, target capacity/adapter routing (C/H) | [03 LoRA/vector](03-LORA-TOKENIZATION-VECTOR-SPACE.md) | Rank/target one-factor after B0 train-overfit; current RP01 dropout0, **не обвинять default dropout0.05** |"
+        },
+        {
+          "path": "audit20261019/prior-planning/30-MASTER-QUALITY-LOSS-COVERAGE-AND-SOURCE-LINEAGE-2026-10-16.md",
+          "line": 49,
+          "text": "| **20 P1** | Phrase composer выбрасывает неизвестные критические слова, а confidence bypass verifier (C/H) | [21 phrase dropout](21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md) | \\`never/must/may\\` source truth retention; **translation clauses** |"
+        },
+        {
+          "path": "audit20261019/prior-planning/32-MICRO-ONE-FACTOR-LEARNING-CONTRAST-AND-E09-2026-10-16.md",
+          "line": 36,
+          "text": "- **Treatment B:** тот же P и X, первый шаг `(P, X, Y1)`, второй шаг `(P, X, Y2)`, где Y2 — **иной реально ошибочный закон/причина**. Парное сравнение имеет одинаковые 2 обновления, beta, LR, LoRA rank/dropout, seed, optimizer state, context, maxNewTokens и BPE. Учесть длины Y1/Y2, измерять токены/градиенты; если длина сильно разнится, подобрать контролируемые по длине альтернативы **до** раскрытия eval."
+        },
+        {
+          "path": "audit20261019/prior-planning/33-MASTER-RP01-QUALITY-DIVERGENCE-AND-NOVELTY-2026-10-16.md",
+          "line": 42,
+          "text": "| A05 P1 | LoRA q/v rank8 alpha16, не доказан достаточный capacity/target coverage; dropout conditional | [03 LoRA](03-LORA-TOKENIZATION-VECTOR-SPACE.md), [04 checkpoint](04-BASE-LORA-CHECKPOINT.md) | Frozen base, adapter gradients, target-module A/B; RP01 dropout=0 |"
+        },
+        {
+          "path": "audit20261019/prior-planning/33-NEW-UTF8-DECODER-CUTOFF-2026-10-16.md",
+          "line": 18,
+          "text": "4. [RP01 config](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/config/code-documentation/generation-v1.json#L26-L48): normal greedy temp 0, maxNewTokens=256, LoRA dropout=0. Никакой stochastic sampler здесь автоматически не виноват."
+        },
+        {
+          "path": "audit20261019/prior-planning/33-RP01-INDEPENDENT-DELTA-AND-RECIPIENT-MAP-2026-10-16.md",
+          "line": 26,
+          "text": "| **Silent deterministic substitution** | Bootstrap, phrase greedy, lookups, law verifier and fallback are not inherently wrong. Need to prove when learned memory did or didn't affect final user answer; some heuristic paths drop source meaning. | [phrase dropout](21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md), [productive route vs bypass](18-PRODUCTHOST-GENERATION-RETRIEVAL-BYPASS.md), [N30 novel source](30-INDEPENDENT-NOVEL-COMPOSITION-CONTRACTION-AND-OPERATOR-GAPS-2026-10-16.md) | Clause-negation ENRU, code operators, SQL NULL, workflow arrow; negative controls and confidence/abstention |"
+        },
+        {
+          "path": "audit20261019/prior-planning/37-RP01-EVIDENCE-CROSSWALK-NEW-HYPOTHESES-AND-CAUSAL-PRIORITIES-2026-10-16.md",
+          "line": 25,
+          "text": "| **P0 Gradient/LoRA** | Проверить actual DPO signs / scale / reference, q/v-only coverage, grad clip/AdamW and warmup, rank/alpha/dropout; LoRA обновлена, но не доказана сила для нового языка | [DPO gradient](03-DPO-PAIR-AND-GRADIENT.md), [LoRA/tokenizer](03-LORA-TOKENIZATION-VECTOR-SPACE.md), [native recipient](33-NEW-AUTOGRAD-EMBEDDING-BIAS-AND-SUPERVISED-WARMUP-GAPS-2026-10-16.md) | Tiny analytic-vs-finite difference; 8-pair same-train overfit; selected logits and cold-restored decode |"
+        },
+        {
+          "path": "audit20261019/prior-planning/37-RP01-MASTER-CROSSWALK-POSITIVE-HISTORY-NOVELTY-AND-FAST-DECISIONS-2026-10-16.md",
+          "line": 21,
+          "text": "| 04 | DPO same-prompt / mask / wrong sign-beta-reference / sum-vs-mean, gradient-parameter reachability | P0 neural | 8–32 overfit + finite difference for one LoRA scalar, dropout0; [DPO](03-DPO-PAIR-AND-GRADIENT.md) |"
+        },
+        {
+          "path": "audit20261019/prior-planning/38-MASTER-RP01-LEARNING-QUALITY-EVIDENCE-ROUTES-HISTORICAL-POSITIVES-AND-PRIORITY-2026-10-16.md",
+          "line": 44,
+          "text": "| Translational negation/role | phrase/word map can silently skip `not/never`, returns fluent but semantically wrong answer | [N21](21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md) | P0 for translation Unit | 2 mapped spans + unseen negation, end-to-end |"
+        },
+        {
+          "path": "audit20261019/prior-planning/38-MASTER-RP01-SUCCESSFUL-HISTORY-NEW-DELTA-DOMAIN-EVIDENCE-2026-10-16.md",
+          "line": 55,
+          "text": "| R11 | Wrong UnitId silently skipped, pretend accuracy, missing owner from ordinary Flow | [N17](17-STRUCTURED-UNIT-TRAINING-SILENT-DISPATCH.md), [N21](21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md) | Structured Unit, one-law receipt |"
+        },
+        {
+          "path": "audit20261019/prior-planning/38-MASTER-RP01-SUCCESSFUL-HISTORY-NEW-DELTA-DOMAIN-EVIDENCE-2026-10-16.md",
+          "line": 60,
+          "text": "| R16 | Learned phrase/word map drops unseen modifiers/negation and preempts better KNN | [N21 phrase](21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md), [N35 negation confidence](35-NEW-NEGATION-OMISSION-WORDMAP-TO-099-CONFIDENCE-2026-10-16.md) | Translation/code critical not/no/never and operators |"
+        },
+        {
+          "path": "audit20261019/prior-planning/38-MICRO-MULTIDOMAIN-LEARNING-DPO-KNN-AND-UNIT-EXPERIMENTS-2026-10-16.md",
+          "line": 58,
+          "text": "**Receipt:** source example ID → pair admission → UnitId → measured memory changes → cold checkpoint identity → exact/phrase/KNN ranked neighbors → verifier decision → final end-user answer. Проверить специфическую известную ошибку [N21 missing words](21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md), [N23 verifier](23-VERIFIER-ACCUMULATED-RULE-CONFLICT-AND-DIRECTION-SCOPE-2026-10-16.md); это **старые**, не новые N38 findings. PASS только при улучшенном correctness на unseen source и отсутствии повышения wrongAccepted."
+        },
+        {
+          "path": "audit20261019/prior-planning/39-RP01-CROSSWALK-NOVELTY-PRIORITIES-AND-MICRO-EXPERIMENTS-2026-10-16.md",
+          "line": 32,
+          "text": "| **Градиент / LoRA / optimizer** | C+H, P0 | wrong sign/gradient reachability, q/v-only rank8, dropout, nonfinite admission | single 8-pair overfit + FD of 1 LoRA element; log pre/post logits | [DPO gradient source](https://github.com/lubochka/llm_mvp_core/blob/d1862939bfe24c3bbeb12a49af917c7ca569a10f/11.DPO/DpoTrainer.cs#L650-L747), [N33 autograd](33-NEW-AUTOGRAD-EMBEDDING-BIAS-AND-SUPERVISED-WARMUP-GAPS-2026-10-16.md) |"
+        },
+        {
+          "path": "audit20261019/prior-planning/41-ADDITIONAL-INDEPENDENT-GAPS-PREPARETOGPL-RECOVERY-INDEX-2026-10-18.md",
+          "line": 12,
+          "text": "| **P1-NEURAL-N1** | [41-LORA-BRANCH-PARITY](41-LORA-BRANCH-PARITY-AND-REAL-NEURAL-QUALITY-BOUNDARY-2026-10-18.md) · true neural LoRA | Old Apply возвращает внешние adapters (unchanged model forward), нынешний Apply использует модельный projection slot; old dropout всегда training:true, нынешний различает train/eval | Была ли фактическая legacy manual-wiring? Совпадают ли real logits/grad/forward under matched config? Улучшится ли free-answer после SFT warmup? | **Нейронная next-token**, затем EN→RU/C#; tiny forward и masked-gradient sanity отдельно от памяти |"
+        },
+        {
+          "path": "audit20261019/prior-planning/41-ADDITIONAL-INDEPENDENT-GAPS-PREPARETOGPL-RECOVERY-INDEX-2026-10-18.md",
+          "line": 30,
+          "text": "**Run 4: LoRA LEVEL0 tiny forward**. Frozen tiny policy/base/reference, zero-B equivalence, then controlled nonzero adapter and selected logits/grad; training:false vs true dropout. Only after success, tiny SFT warm-vs-DPO study on real free output, not 500 pairs."
+        },
+        {
+          "path": "audit20261019/prior-planning/41-LORA-BRANCH-PARITY-AND-REAL-NEURAL-QUALITY-BOUNDARY-2026-10-18.md",
+          "line": 9,
+          "text": "| Владелец адаптера | [LoraLinear.cs L15–60](https://github.com/lubochka/llm_mvp_core/blob/PrepareToGPL/10.LoRA/LoraLinear.cs#L15-L60) — Module над Linear, RegisterModule base/dropout и RegisterParameter A/B, base frozen | [LoraLinear.cs L13–56](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/10.LoRA/LoraLinear.cs#L13-L56) — Module + IAttentionProjectionAdapter, адаптерный slot и собственные параметры |"
+        },
+        {
+          "path": "audit20261019/prior-planning/41-LORA-BRANCH-PARITY-AND-REAL-NEURAL-QUALITY-BOUNDARY-2026-10-18.md",
+          "line": 11,
+          "text": "| Dropout train/eval | [old L45–61](https://github.com/lubochka/llm_mvp_core/blob/PrepareToGPL/10.LoRA/LoraLinear.cs#L45-L61) — Forward вызывает dropout(training: true) без переключателя | [current L106–123](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/10.LoRA/LoraLinear.cs#L106-L123) — Forward(x) выбирает training:false, явная версия Forward(x, training) |"
+        },
+        {
+          "path": "audit20261019/prior-planning/41-LORA-BRANCH-PARITY-AND-REAL-NEURAL-QUALITY-BOUNDARY-2026-10-18.md",
+          "line": 22,
+          "text": "**LEVEL 0 / источник истины:** 2×2 matrix old vs current implementation и attached vs detached adapter, один небольшой compatible forward без обучения. B=0 init должен давать одинаковые logits base+adapter; после заданного ненулевого B или одной tiny legal optimizer step сравнить logits у **реально вызываемого LlmModel.Forward**, lora_a/lora_b checksum, target slots, forward invocation. При old external-only caller вызов неизменной базовой модели — ожидаемый риск, а не заранее измеренный исход. Для dropout >0 отдельно train/eval seeded repeated forward; при dropout=0 отрицательный контроль идентичного вывода. Нельзя мешать разные RNG и vocab."
+        },
+        {
+          "path": "audit20261019/prior-planning/41-LORA-BRANCH-PARITY-AND-REAL-NEURAL-QUALITY-BOUNDARY-2026-10-18.md",
+          "line": 30,
+          "text": "[RP01 recovery](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md) уже предлагает cold-start vs SFT и gradient checks; **не выдавать их за впервые найденные гипотезы**. Здесь новое конкретное cross-branch source отличие — **external-only vs typed model-attached adapters** и legacy forced training dropout. Проводить такой опыт только для neural owner и реального task; для E09 AST kNN, E26 contextual dictionary, E43 replay и P125 memory training LoRA не является получателем улучшения."
+        },
+        {
+          "path": "audit20261019/prior-planning/43-PREPARETOGPL-RESTORATION-AND-NEURAL-DIFFS-2026-10-18/02-NEURAL-SCORES-AND-STATE.md",
+          "line": 105,
+          "text": "**Старт:** две независимые копии одного полного C50; тот же tokenizer, exact-v2 IDs/masks, q/v rank8 alpha16 dropout0, same seeds/RNG, learningRate1e−5, beta.1, β1=.9, β2=.95, decay.01, eps1e−8. Reference в обоих случаях независимая копия C50. Одни 8 новых ENRU train pairs, до 8 одинаковых updates, отдельные 8–12 DEV семей и C# retention cases. Возможный минимальный TRAIN contrast: “Mira must open the gate” / “Mira must not open the gate”; перевод обязан сохранить обязанность/запрет. В новом DEV — другие действия и сущности, не только замена ID."
+        },
+        {
+          "path": "audit20261019/prior-planning/43-PREPARETOGPL-RESTORATION-AND-NEURAL-DIFFS-2026-10-18/02-NEURAL-SCORES-AND-STATE.md",
+          "line": 123,
+          "text": "[FullCheckpointLoraTopology L15–29][topology] содержит Rank/TargetModules — schema tensors. [WriteKeyedCheckpoint L1449–1473][writer] пишет version/kind/base model fingerprint/key/shape/float payload. [ComputeConfigFingerprint L1900–1916][fingerprint] включает девять ModelConfig полей, не LoRA Alpha/Dropout. [LoadCheckpoint L1140–1160][loader] сравнивает этот fingerprint и keyed records, затем копирует floats в уже сконструированные live slots."
+        },
+        {
+          "path": "audit20261019/prior-planning/43-PREPARETOGPL-RESTORATION-AND-NEURAL-DIFFS-2026-10-18/02-NEURAL-SCORES-AND-STATE.md",
+          "line": 127,
+          "text": "Существенное **контрдоказательство к обвинению RP01**: [RepositoryOwnedFullLoraCheckpointDescriptor L34–48][descriptor-check] проверяет полный topology hash, включая Alpha/Dropout/seeds, и копирует canonical config; [L102–111][descriptor-create] создаёт adapters из сохранённого descriptor. [Simulation L140–171][sim-restore] дополнительно связывает RNG/optimizer с этим identity. В фактическом RP01 alpha16 и immutable descriptor; произвольный alpha32 до него не дошёл. Общий метод намеренно может полагаться на своего владельца; недостаток standalone metadata нельзя автоматически называть production bug."
+        },
+        {
+          "path": "audit20261019/prior-planning/43-PREPARETOGPL-RESTORATION-AND-NEURAL-DIFFS-2026-10-18/04-SMALL-EXPERIMENTS.md",
+          "line": 88,
+          "text": "**Старт:**2 независимые полные C50 копии; policy/reference одинаковы в обоих плечах, reference frozen; q/v rank8 alpha16 dropout0,4 model blocks; те же base/tokenizer/seeds/RNG/material/order/LR1e−5/DPO beta.1, AdamW β1=.9 β2=.95 decay.01 eps1e−8. **A:**m50/v50/step50. **B:**только m50=0, настоящиеv50/step50 прежние. New reference C50 в обоих плечах одинаков."
+        },
+        {
+          "path": "audit20261019/prior-planning/47-LANGUAGE-TRANSLATE-INTERNALS-AND-NEW-HYPOTHESES-2026-10-19/02-NEURAL-AND-UNIT-INTERNALS.md",
+          "line": 16,
+          "text": "| LoRA | rank=8, alpha=16, dropout=0; targets `q_proj`, `v_proj` | Масштаб добавки alpha/r=2; output head, embeddings, FFN и остальные base weights заморожены в RP01 |"
+        },
+        {
+          "path": "audit20261019/prior-planning/47-LANGUAGE-TRANSLATE-INTERNALS-AND-NEW-HYPOTHESES-2026-10-19/02-NEURAL-AND-UNIT-INTERNALS.md",
+          "line": 20,
+          "text": "**Какие веса могут измениться.** Для одного блока q-LoRA содержит A[8,512] и B[512,8], v-LoRA — A[8,512] и B[128,8]. Это 13 312 обучаемых чисел на блок, **53 248 чисел и 16 A/B-тензоров** на четыре блока. Число вычислено из конфигурации и форм `LoraLinear`, а не измерено новым запуском. Формула forward при row-vector соглашении кода: `base(x) + 2 × ((dropout(x) Aᵀ) Bᵀ)`. A инициализируется Kaiming, B — нулями; dropout выключен данной конфигурацией. [LoraLinear, строки 92–125](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/10.LoRA/LoraLinear.cs#L92-L125)."
+        },
+        {
+          "path": "audit20261019/prior-planning/47-LANGUAGE-TRANSLATE-INTERNALS-AND-NEW-HYPOTHESES-2026-10-19/05-ADDITIONAL-MECHANISM-HYPOTHESES.md",
+          "line": 84,
+          "text": "**Получатель:** настоящий `Trainer.TrainSupervisedNextTokenStep` в supervised/incremental path. **Состояние:** одно исходное сохранённое model/adapter состояние, один tokenizer, одинаковые trainable parameter keys, свежие одинаковые optimizer moments/step, одинаковое начальное RNG/dropout state, последовательность 9 уроков и weights. **Домены:** C# документация либо перевод для данного нейронного recipient; не использовать accuracy дискретной translation memory как метрику scheduler нейронной модели."
+        },
+        {
+          "path": "audit20261019/prior-planning/47-LANGUAGE-TRANSLATE-INTERNALS-AND-NEW-HYPOTHESES-2026-10-19/05-ADDITIONAL-MECHANISM-HYPOTHESES.md",
+          "line": 87,
+          "text": "2. Для native механической проверки создать две одинаковые копии одного сохранённого состояния с Warmup=0 и TotalSteps=4. Плечо A — текущий scheduler; B — только clamp progress в [0,1]. До первого update восстановить одинаковое RNG/dropout state; стохастические потоки не выбирать независимо. Передать каждой ровно 9 одинаковых supervised последовательностей в одинаковом порядке; модели, optimizer и Trainer между этими вызовами не пересоздавать."
+        },
+        {
+          "path": "audit20261019/prior-planning/47-LANGUAGE-TRANSLATE-INTERNALS-AND-NEW-HYPOTHESES-2026-10-19/REVIEW.md",
+          "line": 23,
+          "text": "5. **Scheduler:** до A/B фиксируется одинаковое RNG/dropout state. Повторный рост начинается при pre-call step > TotalSteps; DPO-only path исключён, смешанный DPO+supervised workflow рассматривается по стадиям."
+        },
+        {
+          "path": "audit20261019/prior-planning/48-LANGUAGE-TRANSLATE-AUDIT-2026-10-19/01-MECHANISMS-AND-EVIDENCE.md",
+          "line": 121,
+          "text": "| LoRA формула | Низкоранговая добавка к base projection | y=base(x)+(alpha/r)·(dropout(x)Aᵀ)Bᵀ; B нулевая при свежем создании адаптера, смысл targetModules и rank проверять по actual forward |"
+        },
+        {
+          "path": "audit20261019/prior-planning/48-LANGUAGE-TRANSLATE-AUDIT-2026-10-19/01-MECHANISMS-AND-EVIDENCE.md",
+          "line": 127,
+          "text": "Сохранённые RP01 данные подтверждают: EN→RU500, 50 новых updates, global step 100, 16 LoRA tensors / 53 248 elements изменились; 39 base tensors / 11 920 896 elements сохранились. Free correctness 0/4 до и после, chosen-preferred 12/20 до и после. Это причина отдельно проверять качество и исходную компетенцию, а не отрицать факт updates. Dropout=0 задан config и required simulation preflight; гипотеза о случайной маске LoRA именно этого опыта не активна. [Result][rpresult], [config][rpconfig], [simulation][simulation]."
+        },
+        {
+          "path": "audit20261019/prior-planning/48-LANGUAGE-TRANSLATE-AUDIT-2026-10-19/02-NEW-HYPOTHESES.md",
+          "line": 194,
+          "text": "| Random dropout испортил RP01 | LoRA в принципе имеет dropout | Именно RP01 config и preflight требуют dropout=0 |"
+        },
+        {
+          "path": "audit20261019/prior-planning/50-LOCAL-WIKI-FEEDBACK-AND-BPE-BUDGET-2026-10-19/03-MECHANISM-COVERAGE-AND-KEPT-FIXES.md",
+          "line": 13,
+          "text": "В donor `LoraApplicator.Apply` замораживает базовые параметры и возвращает список адаптеров. Сам метод не меняет базовый forward и не регистрирует адаптеры в attention-проекциях. В current адаптеры устанавливаются в слоты модели, A/B получают `RequiresGrad`; `CausalSelfAttention` выбирает их в Q/K/V/O-проекциях. Формула `LoraLinear` включает `base(x) + (alpha/rank) * dropout(x) Aᵀ Bᵀ`. [Donor Apply](https://github.com/lubochka/llm_mvp_core/blob/219d7ba89dc3ef43e03e17f1461ad96154d3dd7a/10.LoRA/LoraApplicator.cs#L6-L39); [current установка](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/10.LoRA/LoraApplicator.cs#L475-L490); [attention consumer](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/03.TransformerModel/Layers/CausalSelfAttention.cs#L146-L179); [выбор установленной проекции](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/03.TransformerModel/Layers/CausalSelfAttention.cs#L271-L280); [LoRA forward](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/10.LoRA/LoraLinear.cs#L108-L125)."
+        },
+        {
+          "path": "audit20261019/prior-planning/50-LOCAL-WIKI-FEEDBACK-AND-BPE-BUDGET-2026-10-19/03-MECHANISM-COVERAGE-AND-KEPT-FIXES.md",
+          "line": 21,
+          "text": "**Что сохранить:** текущий знак и связь с исходным forward. Малый контроль численной производной по разрешённому LoRA-параметру, с dropout=0 и фактической response-mask, нужен только при затрагивании этого пути; он уже относится к прежней P10. Отрицательный результат RP01 не доказывает, что старый знак следует вернуть."
+        },
+        {
+          "path": "audit20261019/prior-planning/50-LOCAL-WIKI-FEEDBACK-AND-BPE-BUDGET-2026-10-19/04-SMALL-EXPERIMENTS-AND-CODEX-WORK-ORDER.md",
+          "line": 73,
+          "text": "| LoRA действительно обучает нужный путь | На текущем исправленном ядре выбрать один поддержанный параметр A/B, dropout0, проверить численную производную и один update; затем разрешённый adapter on/off | Две противоположные содержательные задачи одного recipient | Градиент соответствует loss, меняется нужный параметр и независимый ответ. Старое ядро не возвращать |"
+        },
+        {
+          "path": "audit20261019/prior-planning/50-LOCAL-WIKI-FEEDBACK-AND-BPE-BUDGET-2026-10-19/evidence/prior-card-index.md",
+          "line": 7,
+          "text": "| [P01](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/docs/plans/replanning-possible-diffs/experimets/cards/P01-trainable-recipient.md) | P01. Где разрешено учиться: q/v-LoRA или иной получатель параметров | P01.1 — Область trainable parameters; P01.2 — LoRA rank; P01.3 — LoRA alpha; P01.4 — LoRA dropout |"
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/01-LEARNING-INTERNALS-BEFORE-AFTER.md",
+          "line": 19,
+          "text": "| Фактический получатель градиента | Runner не вызывает `LoraApplicator`. `DpoTrainer` передаёт policy.Parameters в AdamW, который пропускает null gradients. Final `RmsNorm` возвращает detached tensors: через обычный model forward градиент доходит до `lm_head.weight`, а до ранних слоёв не доходит. Сохранённые старые binary-delta отчёты об изменении head — отдельные прежние свидетельства. | Rank 8, alpha 16, scaling 2, dropout 0; q-LoRA A`[8,512]`, B`[512,8]`; v-LoRA A`[8,512]`, B`[128,8]` в каждом блоке. Итого **53248 обучаемых float, 16 A/B-тензоров**. `DpoProjectLoraRecipient` проверяет реальные attached objects; base и reference должны быть заморожены. |"
+        },
+        {
+          "path": "audit20261019/prior-planning/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/01-LEARNING-INTERNALS-BEFORE-AFTER.md",
+          "line": 20,
+          "text": "| Policy/reference | Два `new LlmModel`. При fresh start reference копируется из policy. При continuation policy и исходный reference читаются из двух заданных путей; продолжение без reference отклоняется. Начальный общий initializer использует process-wide `Random(42)`, а не независимый seed на каждый конструктор. | C# загружает сохранённый B0, reference — отдельная B0 copy; EN→RU загружает полную C50 в policy и отдельную frozen C50 reference. Config задаёт base/root seed 20261014 и отдельные dropout stream domains. Callback загружает checkpoint; это не fresh random construction при каждом batch. |"
+        },
+        {
+          "path": "audit20261019/prior-planning/PREPARETOGPL-DPO-LORA-TOKENS-2026-10-18.md",
+          "line": 33,
+          "text": "| Маленький generic capability config | vocab512, context64, dim32, 4 слоя; rank2/alpha4/q,v/dropout0 | Те же величины | Само это сочетание гиперпараметров — не новая регрессия относительно PrepareToGPL |"
+        },
+        {
+          "path": "audit20261019/prior-planning/PREPARETOGPL-DPO-LORA-TOKENS-2026-10-18.md",
+          "line": 136,
+          "text": "2. Один native forward/backward без optimizer: записать по каждому q/v A/B `Grad is null`, norm, maxabs; fixed dropout0. Для q ожидается нулевой gradient; для v.B подобрать заранее невыраженную в zero input допустимую пару и проверить ненулевой контроль. Finite difference q-coordinate должен дать ноль."
+        },
+        {
+          "path": "audit20261019/prior-planning/PREPARETOGPL-EXPERIMENTS-2026-10-18.md",
+          "line": 147,
+          "text": "4 допустимые пары; один native forward/backward без optimizer, dropout0. Для q и v отдельно A/B grad-null, norm, maxabs. Для q ожидается 0 из-за единственного доступного key у позиции0; v.B даёт положительный контроль на невырожденной паре. При LoRA B=0 нулевой A-gradient в первом шаге нормален; weight decay может изменить A без содержательного gradient."
+        },
+        {
+          "path": "audit20261019/prior-core/07-study-log-2026-10-16.md",
+          "line": 172,
+          "text": "Получен source-пакет `/root/rp01_diff_investigation_astra` [12](12-student-update-to-generation-path.md). Worker прочитал конкретные full/cache/LoRA/material/restore methods и сохранённые first-decision JSON. Родитель прочитал пакет. Простого bypass adapters и потери первого target в актуальном exact RP01 не найдено; LoRA dropout здесь запрещён настройками runner. Сохранённая distribution меняется, но argmax одной первой позиции остаётся прежним. Нельзя превращать ноль decode calls в доказательство всего cached continuation. Описан будущий matched full/cache replay, не запущен."
+        },
+        {
+          "path": "audit20261019/prior-core/12-student-update-to-generation-path.md",
+          "line": 11,
+          "text": "[CausalSelfAttention.cs](../../../03.TransformerModel/Layers/CausalSelfAttention.cs):140–168 вызывает `ForwardProjection` для q/k/v/o в полном пути; :194–246 делает то же в cached. Общий dispatch :251–259 вызывает установленный adapter, если он есть. [LoraLinear.cs](../../../10.LoRA/LoraLinear.cs):112–125 в обоих случаях вычисляет `base(x) + Scaling * (dropout(x) @ Aᵀ) @ Bᵀ`; `Scaling=Alpha/Rank` задан в `10.LoRA/LoraConfig.cs:17`. Отдельного cached scaling в прочитанном коде нет."
+        },
+        {
+          "path": "audit20261019/prior-core/12-student-update-to-generation-path.md",
+          "line": 15,
+          "text": "Полный policy forward в DPO использует `training:true` (`DpoTrainer.cs:1014–1029`), reference/scoring — false; cache использует false. Однако RP01 runner в :110–111 **отклоняет `LoraConfig.Dropout != 0`**. Поэтому общая гипотеза «обучение и generation различаются из-за LoRA dropout» не объясняет этот принятый путь. Нельзя переносить этот вывод на другие runners с ненулевым dropout."
+        },
+        {
+          "path": "audit20261019/prior-core/14-data-quality-and-evaluation-alignment.md",
+          "line": 51,
+          "text": "Это вывод из формулы и источников, **не измеренный здесь нулевой gradient**. Точные условия: одинаковый prompt, одинаковые prefix IDs, causal full forward, один policy, нулевой dropout и summed objective. Последний runner требует dropout=0. [BpeTokenizer.cs](../../../01.Tokenizer/BpeTokenizer.cs):73–81 кодирует отдельные regex chunks; [RegexSplitter.cs](../../../01.Tokenizer/RegexSplitter.cs):16–21 отделяет слова и числа. Такой source-контракт поддерживает предположение об одинаковых IDs полных начальных слов; **raw общий текст сам по себе ещё не доказательство идентичной сегментации**. Exact material отдельно кодирует каждый response, что позволяет впоследствии проверить это точно. Новую токенизацию и сравнение token-prefix здесь не запускали. Градиенты от различающихся хвостов всё ещё могут **косвенно** менять общий prefix через общие параметры. Нельзя говорить «никакого обучения началу невозможно»."
+        },
+        {
+          "path": "audit20261019/prior-core/16-translation-lesson-admission-and-meaning-loss.md",
+          "line": 9,
+          "text": "Входные helper-материалы: [structured gaps](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/21-INDEPENDENT-STRUCTURED-LEARNING-GAPS-2026-10-16.md>), [clause/whitespace/scaffold](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md>), [admission/direction](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/21-NEW-GAPS-SYMBOL-BLIND-LESSON-ADMISSION-AND-DIRECTION-MISROUTING-2026-10-16.md>). Первичные участки ниже прочитаны непосредственно."
+        },
+        {
+          "path": "audit20261019/prior-core/41-current-dpo-gradient-chain-source-review.md",
+          "line": 15,
+          "text": "[Конфигурация, строки 7–41](C:/Projects/llm_mvp_core/config/code-documentation/generation-v1.json:7): vocabulary 629, context 2048, hidden 512, 4 слоя, 8 Q-heads / 2 KV-heads, FFN 1408, RMS epsilon `1e-5`; LoRA rank 8, alpha 16, dropout 0, targets `q_proj`, `v_proj`. SHA256 прочитанных байтов конфигурации — `e1f960b8c7d883f84c9b4e55d24c7284794cee2fecfd71beac5835d199746f40`, совпадает с константой [CLI, строка 15](C:/Projects/llm_mvp_core/tools/Rp01SimulationDpo/Program.cs:15)."
+        },
+        {
+          "path": "audit20261019/prior-core/41-current-dpo-gradient-chain-source-review.md",
+          "line": 17,
+          "text": "[Simulation caller, строки 108–131](C:/Projects/llm_mvp_core/14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs:108) требует независимые policy/reference, запрещает ненулевой dropout, замораживает reference, материализует exact-пары и захватывает действительно установленные LoRA recipients. Затем создаёт `DpoTrainer.CreateForProjectLora` и вызывает `StepVector` на выбранном minibatch: [строки 160–186](C:/Projects/llm_mvp_core/14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs:160). Проверка recipient допускает gradients только у разрешённых A/B, запрещает alias с reference и проверяет замороженную базу: [DpoTrainer, строки 198–261](C:/Projects/llm_mvp_core/11.DPO/DpoTrainer.cs:198)."
+        },
+        {
+          "path": "audit20261019/prior-core/41-current-dpo-gradient-chain-source-review.md",
+          "line": 103,
+          "text": "[Transpose, строки 707–783](C:/Projects/llm_mvp_core/00.TensorCore/Core/TensorOps.cs:707) меняет две оси, а backward транспонирует upstream обратно теми же осями. Для A/B это двумерный случай. Новые A-transpose/B-transpose узлы создаются в каждом forward, общими остаются только листья A/B. [Dropout, строки 54–57](C:/Projects/llm_mvp_core/00.TensorCore/Layers/Dropout.cs:54) при p=0 возвращает вход; случайный dropout не вводит различий chosen/rejected в данном RP01 path."
+        },
+        {
+          "path": "audit20261019/prior-core/41-current-dpo-gradient-chain-source-review.md",
+          "line": 124,
+          "text": "1. Зафиксировать текущий source/config, независимую frozen reference, dropout 0, exact material и две короткие допущенные пары с разной длиной response и padding. Сохранить actual RP01 topology/q-v recipients; не менять корпус и не оценивать обучение языка по этим двум парам. Задать веса/vector signals заранее и использовать ровно objective `L` выше."
+        },
+        {
+          "path": "audit20261019/prior-core/47-current-attention-backprop-and-position-contract.md",
+          "line": 5,
+          "text": "**Открытый результат:** в прочитанном attention-пути текущего RP01 конкретной ошибки производной или позиции не обнаружено. Для `headDim=64`, `8` query-heads, `2` KV-heads, dropout `0` и конечных входных значений локальные формулы согласованы. Это проверка исходников, а не численное подтверждение всей композиции или объяснение качества свободного ответа. Остаётся проверка actual q/v-адаптеров: композиционная производная полного forward и совпадение его значений с cached prefill/decode на одной фиксированной истории токенов."
+        },
+        {
+          "path": "audit20261019/prior-core/47-current-attention-backprop-and-position-contract.md",
+          "line": 15,
+          "text": "В [generation-v1.json:7](C:/Projects/llm_mvp_core/config/code-documentation/generation-v1.json:7) заданы `H=512`, `L=4`, `Qheads=8`, `KVheads=2`, `context=2048`, `theta=10000`; [строки 34–41](C:/Projects/llm_mvp_core/config/code-documentation/generation-v1.json:34) задают rank `8`, alpha `16`, dropout `0`, q/v targets. Следовательно `D=64`, каждая KV-head используется четырьмя query-heads. Это конкретная область вывода, а не любой допустимый объект ModelConfig."
+        },
+        {
+          "path": "audit20261019/prior-core/47-current-attention-backprop-and-position-contract.md",
+          "line": 52,
+          "text": "Cache может влиять на свободное продолжение через сохранение истории и absolute positions, но не обновляет learned weights. Совпадение значений полного и cached forward математически ожидаемо при dropout 0 и одних параметрах. Побитовое совпадение всех режимов здесь не доказано: длины матриц и порядок float-редукций могут различаться. У почти равных лидирующих logits даже малая допустимая численная разница требует отдельно учитывать запас до второго кандидата."
+        },
+        {
+          "path": "audit20261019/prior-core/47-current-attention-backprop-and-position-contract.md",
+          "line": 71,
+          "text": "| [LoraTests:929–961](C:/Projects/llm_mvp_core/Tests/LoraTests.cs:929) | Ordinary training/inference forward равны при dropout 0 и ненулевых q/k/v/o adapters. Здесь cached forward не вызывается; эта проверка не закрывает предыдущую границу. |"
+        },
+        {
+          "path": "audit20261019/prior-core/83-check-catalog-and-prompts.md",
+          "line": 19,
+          "text": "- **A/B:** один B0, tokenizer, пары, reference, порядок и бюджет; менять только разрешённую область параметров. Rank, alpha и dropout — отдельные последующие подслучаи при фиксированном recipient, не одновременные изменения. Вход: 8 пар одного закона; контроль — нулевой update; edge — закон, уже решаемый B0."
+        },
+        {
+          "path": "audit20261019/prior-core/83-check-catalog-and-prompts.md",
+          "line": 109,
+          "text": "- **A/B:** analytic gradient против central finite difference одного разрешённого scalar, dropout0, reference frozen, один и тот же loss. Раздельно chosen/rejected, accumulation двух пар, query/KV-head sharing. Negative — parameter вне computational path; edge — near-zero gradient."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/01-full-source-registry.md",
+          "line": 93,
+          "text": "| <a id=\"s085\"></a>S085 [21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md>) | md / 19669 | afd8f7c92ce0ac6c8d22cf876d04b05d03e321352dda6136f318f6f353bfc733 | Тезисы, ограничения, протокол или навигация; [содержательный разбор, строки и предел](06-source-content-walk.md#s085) | [P54](cards/P54-phrase-composition.md), [P56](cards/P56-verifier-context.md), [P51](cards/P51-translation-context.md), [P58](cards/P58-feedback-learning.md), [P125](cards/P125-executor-memory-learning.md) |"
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/02-finding-domain-matrix.md",
+          "line": 29,
+          "text": "| [P01.4 — LoRA dropout](cards/P01-trainable-recipient.md#s-4) | N → U? | [D01](cards/P01-trainable-recipient.md#d01), [D03](cards/P01-trainable-recipient.md#d03), [D04](cards/P01-trainable-recipient.md#d04), [D05](cards/P01-trainable-recipient.md#d05), [D09](cards/P01-trainable-recipient.md#d09), [D10](cards/P01-trainable-recipient.md#d10), [D11a](cards/P01-trainable-recipient.md#d11a), [D11b](cards/P01-trainable-recipient.md#d11b), [D12a](cards/P01-trainable-recipient.md#d12a), [D12b](cards/P01-trainable-recipient.md#d12b), [D13](cards/P01-trainable-recipient.md#d13) | [Источник/предел](04-source-claim-ledger.md#p01-4); точный owner и профильные условия — в рецепте |"
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/04-source-claim-ledger.md",
+          "line": 1335,
+          "text": "| <a id=\"p01-4\"></a>[P01.4](cards/P01-trainable-recipient.md#s-4) — LoRA dropout | [S003](06-source-content-walk.md#s003), [S007](06-source-content-walk.md#s007) |"
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/06-source-content-walk.md",
+          "line": 93,
+          "text": "| [L38–38](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/01-PRIORITIZED-DIFFERENCES.md:38>) — тезис | LoRA dropout/RNG/frozen target modes; configured dropout=0, RNG saved | [P01.4](cards/P01-trainable-recipient.md#s-4), [P25.2](cards/P25-cold-restore.md#s-2) — Сохраняется source hypothesis/status; не новая code verification. |"
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/06-source-content-walk.md",
+          "line": 648,
+          "text": "**S085 — [21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md L1–80](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md:1>)**. L17–36 phrase 2spans/coverage.50 и word>=2/ratio.50 могут пропустить never/not до verifier. L38–44 ASCII space split расходится с exact-key whitespace. L46–60 legacy+.01 без Unit mutation исторически унаследован. the service never opens the port — conditional composition, не observed output. Full all-or-nothing/копирование unknown не вытекает автоматически. Flat scaffold, structured memory и neural learning раздельны. Связи: [P54.3](cards/P54-phrase-composition.md#s-3), [P54.5](cards/P54-phrase-composition.md#s-5), [P56.4](cards/P56-verifier-context.md#s-4), [P51.9](cards/P51-translation-context.md#s-9), [P58.3](cards/P58-feedback-learning.md#s-3), [P125.1](cards/P125-executor-memory-learning.md#s-1)."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/2026-10-19-small-learning-probes/06-findings-map.md",
+          "line": 11,
+          "text": "| <a id=\"p01\"></a>[P01 — Где разрешено учиться: q/v-LoRA или иной получатель параметров](../cards/P01-trainable-recipient.md)<br>P01.1: Область trainable parameters; P01.2: LoRA rank; P01.3: LoRA alpha; P01.4: LoRA dropout | [Один параметр нейронного обучения](07-conditional-probes.md#neural) | Выбрать rank ИЛИ alpha ИЛИ dropout ИЛИ modules; одинаковый checkpoint; tinyD caller отсутствует. |"
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/2026-10-19-small-learning-probes/06-findings-map.md",
+          "line": 153,
+          "text": "| 41 N41-N1 old LoRA/dropout/sign/RmsNorm/exact schema | [D](04-documentation-neural.md), [07, neural/math](07-conditional-probes.md#math): один фактор, не пакет исправлений |"
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/2026-10-19-small-learning-probes/06-findings-map.md",
+          "line": 160,
+          "text": "| 43 N-NEURAL-01; alpha0/decay; N-NEURAL-03 Alpha/Dropout metadata | [D](04-documentation-neural.md), [07, state](07-conditional-probes.md#state): chosen/rejected и собственный ответ отдельно; hash не качество |"
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/2026-10-19-small-learning-probes/07-conditional-probes.md",
+          "line": 10,
+          "text": "Профиль D или альтернативный EN→RU из10 L. Один из P01/P02/P04–07/P10–12/P78/P81/P89/P101/P105/P119, **не вся группа сразу**: rank; alpha; dropout; область обучаемых проекций; LR; beta; нормировка response score; допустимый warm start; stop rule. Точные взаимно исключающие значения соответствующего подслучая сохранены в исходной P.n по06; параметры, не являющиеся фактором, не меняются."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/2026-10-19-small-learning-probes/08-sources-and-study-log.md",
+          "line": 151,
+          "text": "`QualityExperimentExecuted=false`. Эти числа объясняют раздельный score-report в D/R06, но не доказывают momentum-причину, рост качества или переносимость на новую панель. Сами старые20/25 случаев не становятся независимым новым экзаменом. R06 уточняет известный DLT-K1: m-only вместо полного reset. Alpha/Dropout bare-checkpoint и Alpha0 оставлены условными границами; descriptor и alpha16 нынешнего RP01 не позволяют объявить их найденной причиной."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/2026-10-19-small-learning-probes/10-additions-language-restore-49.md",
+          "line": 17,
+          "text": "Оба плеча начинают с одинаковых ответов; меняется только масштаб одного обучаемого фактора; затем следуют одинаковые два урока и новые вопросы. Называем плечи **контроль/изменение**, а матрицы — **фактор A / фактор B**. Учится та же нейронная policy: native DPO → факторы LoRA → повторное открытие обученного кандидата → его `Generate`. Единственное вмешательство: **A₀ против 2A₀ при B₀=0**. Это два начальных состояния с одинаковым набором свежих адаптеров на одном frozen base. Масштабируем фактор A **во всех целевых q/v-LoRA выбранного профиля**; у каждого фактор B нулевой. Точный список имён этих адаптеров фиксируется по конфигурации до первого baseline, выбор удачного слоя после результата запрещён. Rank/alpha/dropout/LR, seed, tokenizer, DPO reference и нулевые optimizer moments/step одинаковы. Reference один и тот же, frozen. Перед обновлением проверяются равенство logits на фиксированных входах и одинаковые исходные ответы. Разные hashes фактора A закономерны. Масштабировать обученный C50 или обнулять его B запрещено условиями опыта."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P01-trainable-recipient.md",
+          "line": 23,
+          "text": "A rank4/alpha8, B rank8/alpha16: alpha/r=2 в обоих; dropout0, одни q/v targets и frozen base. Из нового разрешённого B0 создать zero-output adapters: B-матрицы нулевые, первые 4 rows A одинаковы, дополнительные 4 rows по заранее заданному seed. Это согласование начальной функции, а не побитовое равенство тензоров разных shapes; optimizer moments нулевые. Сравнить одинаковые tokens/updates, отдельно полную цену и trainable bytes. Не преобразовывать уже обученный rank8 checkpoint в rank4 и не считать это тем же стартом."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P01-trainable-recipient.md",
+          "line": 28,
+          "text": "A alpha8, B alpha16 при rank8 и dropout0; frozen base, A/B tensor bytes, moments, pairs и seed одни. Начинать с B=0, чтобы начальная функция совпадала; после update измерить масштаб gradient, parameter delta и собственный ответ. Это contrast масштаба, не rank capacity."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P01-trainable-recipient.md",
+          "line": 31,
+          "text": "### P01.4 — LoRA dropout"
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P01-trainable-recipient.md",
+          "line": 33,
+          "text": "A dropout0, B dropout0.1 при rank8/alpha16, одних начальных tensor bytes и фиксированном потоке seed. Только training stochastic mask различается; inference eval/dropout-off одинаков. Сохранить RNG state и фактические modes; zero-update/eval контроль не должен расходиться."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P01-trainable-recipient.md",
+          "line": 37,
+          "text": "- [03-LORA-TOKENIZATION-VECTOR-SPACE.md:5](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/03-LORA-TOKENIZATION-VECTOR-SPACE.md:5>) — Фактические rank8/alpha16/dropout0 и q/v-only; архитектурная гипотеза."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P10-composed-gradient.md",
+          "line": 18,
+          "text": "Для одного allowed scalar сравнить analytic gradient точного DPO loss с central finite difference, отдельно chosen и rejected. Dropout0, frozen reference, epsilon сетка из 03; знак и abs/relative error, near-zero отдельно."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P51-translation-context.md",
+          "line": 76,
+          "text": "- [21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md:38](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md:38>) — Пробел против TAB/LF/NBSP в semantic tokenizer."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/cards/P54-phrase-composition.md",
+          "line": 55,
+          "text": "- [21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md:30](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/21-INDEPENDENT-CLAUSE-DROPOUT-WHITESPACE-AND-LEGACY-SCAFFOLD-2026-10-16.md:30>) — Word-map omission отдельно от phrase composition."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/results/2026-10-18/dpo-mask-live8-01/preregistration.md",
+          "line": 9,
+          "text": "Обе полные policy/reference независимо загружены из исходного C50 dpo_policy_step_000050.bin с SHA256 6f4d0284ea823ba99932b0f28576855c14205703115b48c983c7a9f03749179b. Никакие SFT-trained веса предыдущих опытов не используются. Родные generation-v1.json/tokenizer.json, модель 4 блока, hidden 512, прежняя LoRA rank 8 q/v alpha 16 dropout 0. Base и reference frozen; разрешены только 16 LoRA tensors. В каждом плече свежий native DpoTrainer/AdamW, 8 накопительных Step по одной паре, beta=.1, learningRate=1e-5, native AdamW defaults, weightDecay=.01. Optimizer state/ненулевые moments показывают действие градиента отдельно от decay. Начальные веса, RNG, данные и настройки одинаковы; trainer state не переносится между плечами. Единственная правка после BEFORE — коэффициент BackwardLogProbs."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/results/2026-10-18/embedding-sft8-01/preregistration.md",
+          "line": 9,
+          "text": "Native ReadVerified + PrepareStart загружают прежнюю допустимую конфигурацию/родной tokenizer; native LoadCheckpoint импортирует C50 полностью. Для этого сравнения все 55 tensors trainable в режиме SFT. Это отдельный full-model SFT, не прежний frozen-base DPO. Свежий AdamW: beta1 .9, beta2 .95, eps 1e-8, weightDecay 0; fixed LR 1e-5, warmup 0, total steps 8, grad clip 1, lesson weight 1. Сохранённая LoRA topology и dropout 0 неизменны. Исходные keyed weights, flags и capture RNG должны совпасть A/B; fresh optimizer step 0 в обоих плечах. Генерация после обучения переводит параметры в inference-only, без updates."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/results/2026-10-18/embedding-sft8-01/report.md",
+          "line": 28,
+          "text": "Причинная проверка: обе стороны стартовали с одинаковых weights/RNG/config/tokenizer и token IDs; LoRA dropout=0. Fresh AdamW имеет weightDecay=0, поэтому движение embedding не объясняется weight decay. Уже первый after update изменил 18944 координаты, создал state для embedding и сохранил тот же первый loss 7.7864347. Отдельный native backward после 8 updates без optimizer подтвердил ненулевой градиент embedding; это диагностический проход, не девятый урок. До он отсутствовал. Frozen, repeated-ID, unused-row finite-difference guard проверен отдельно. [Проверки одинаковости](validation.json), [градиент после](after/native-gradient-probe.json), [component guard](after/component-guard.json)."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/results/2026-10-18/linear-bias-sft8-01/preregistration.md",
+          "line": 7,
+          "text": "Контроль BEFORE — уже исполненный embedding-sft8-01/after: 8 SFT updates, 24 ответа, 0/24 правильных. Его неизменённые текстовые receipts копируются сюда в before; исходный binary checkpoint остаётся там. Нового обучения BEFORE нет. AFTER — новый процесс из исходного C50, не из trained.bin: те же native harness bytes, 4 блока, 55 обучаемых tensors, tokenizer, RNG, dropout=0, optimizer, 8 уроков и 24 задания. Полные параметры и provenance закреплены прежним preregistration и copied initial-state/training-material; SHA256 копий фиксируются до запуска. Gold/scorer используются только после сохранения ответов. При расхождении исходного состояния harness прекращает работу до первого шага. Критерий: correctAfter >= correctBefore; равенство 0/24 означает NO_OBSERVED_GAIN."
+        },
+        {
+          "path": "audit20261019/prior-core/experimets/results/2026-10-18/linear-bias-sft8-01/report.md",
+          "line": 7,
+          "text": "До — уже выполненный [after предыдущего опыта](../embedding-sft8-01/report.md), с исправленным Embedding. Его runtime, данные, RNG и начальное состояние сверены; текстовые receipts скопированы без изменения. Нового обучения контроля не было. После — один новый процесс: исходный сохранённый C50, тот же родной tokenizer, 4 блока, 55 обучаемых tensors, 8 native SFT updates и 24 самостоятельных ответа. Использованы неизменённые binary/source harness и Trainer.TrainSupervisedNextTokenStep; параметры/seed/dropout=0/weightDecay=0 и материал прежние. Все 8 потерь и итоговые веса совпали: true/true. [Проверки](validation.json)."
+        }
+      ],
+      "matched_lines": 112,
+      "matched_files": 74
+    }
+  }
+}

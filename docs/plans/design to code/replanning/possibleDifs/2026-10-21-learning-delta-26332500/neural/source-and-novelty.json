@@ -1,0 +1,73 @@
+{
+  "core_commit": "26332500f76ea8345256c73ecfd44c0023b7e883",
+  "planning_commit": "14308ff181c5a93d837d92b85b2f35c41b863565",
+  "claim": "bounded lexical novelty scan; each hit still requires semantic comparison",
+  "roots": {
+    "possibleDifs": {
+      "markdown_files": 976,
+      "patterns": {
+        "triangular": {
+          "expression": "triang|треугол",
+          "matches": [
+            {
+              "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+              "line": 107,
+              "text": "4. **Causal attention закрывает будущие padding keys.** Для query i<L модель видит только key≤i; padding после L−1 недоступен. Mask использует −Infinity и backward исключает верхний треугольник (S18–S19)."
+            }
+          ]
+        },
+        "skip_causal": {
+          "expression": "causal.{0,80}(skip|spars|redund|dot)|(?:skip|spars).{0,80}causal",
+          "matches": []
+        },
+        "upper_triangle": {
+          "expression": "upper.{0,40}triang|верхн.{0,40}треуг",
+          "matches": [
+            {
+              "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+              "line": 107,
+              "text": "4. **Causal attention закрывает будущие padding keys.** Для query i<L модель видит только key≤i; padding после L−1 недоступен. Mask использует −Infinity и backward исключает верхний треугольник (S18–S19)."
+            }
+          ]
+        },
+        "proposed_id": {
+          "expression": "ATTN-CAUSAL-SCORES",
+          "matches": []
+        }
+      }
+    },
+    "canonical": {
+      "markdown_files": 406,
+      "patterns": {
+        "triangular": {
+          "expression": "triang|треугол",
+          "matches": [
+            {
+              "path": "12-student-update-to-generation-path.md",
+              "line": 71,
+              "text": "**Позиции и маска.** Full attention использует RoPE от offset 0; cache — `positionOffset` из уже накопленной длины (`CausalSelfAttention.cs:148,219–225`). [RotaryEmbedding.cs](../../../03.TransformerModel/Layers/RotaryEmbedding.cs):22–83 реализует обе формы одной формулой с `positionOffset+index`. Full и cached scores масштабируются на `1/sqrt(headDim)` (:270–277,302–308). [TensorOps.cs](../../../00.TensorCore/Core/TensorOps.cs):1367–1374 направляет ordinary causal mask в `ApplyCausalMaskWithPast(...,0)`; :1396–1400 проверяет `keyLength=past+queryLength`, :1413–1419 маскирует колонки правее `pastKeyLength+row`. Простого сброса абсолютной пози"
+            }
+          ]
+        },
+        "skip_causal": {
+          "expression": "causal.{0,80}(skip|spars|redund|dot)|(?:skip|spars).{0,80}causal",
+          "matches": [
+            {
+              "path": "experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md",
+              "line": 63,
+              "text": "| [method-memory-card.md](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/method-memory-card.md>) | T1→sparse T2: admission до Clear сохраняет выученные пары | [KH-EXT-01](../cards/KH-EXT-01.md) |"
+            }
+          ]
+        },
+        "upper_triangle": {
+          "expression": "upper.{0,40}triang|верхн.{0,40}треуг",
+          "matches": []
+        },
+        "proposed_id": {
+          "expression": "ATTN-CAUSAL-SCORES",
+          "matches": []
+        }
+      }
+    }
+  }
+}

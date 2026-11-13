@@ -1,0 +1,87 @@
+# Два адресных уточнения N60 после de4 — без новых запусков
+
+**Статус:** спецификации и фиксированные входы, `NOT_RUN`. Основа — core `de4ef0f14172dada4daf142a4c66ba19e96bb6d4`; protected не меняется. E1/E2 уже присутствуют в [активном 23](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/docs/plans/replanning-possible-diffs/experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md#L184-L226). Здесь выбирается конкретный state-контракт E2 и отдельно локализуется возможное расширение E1 до ordinary результата. Это не две заново обнаруженные элементарные проблемы.
+
+Для каждого будущего опыта и промпта запрошены исполнитель и независимый reviewer `gpt-6-astra`, reasoning `ultra`, последовательно. Это роли исполнителя, не обучаемая модель: получатель в обеих карточках — native Translation Units. Имена задают requested configuration, а не утверждение о runtime attestation уже выполненного запуска.
+
+Порядок программы не расширяется: первым остаётся выбранный direct learning вопрос. E2 можно подготовить без повторения прежнего 8/24 ingress опыта. Расширение E1 ниже не обязательно для текущего маленького RU→EN Verify опыта, который уже корректно ограничивает собственный вывод.
+
+## 1. N60-E2: обучаемый шаблон покрытия source-фразы
+
+### Предмет и единственный фактор
+
+EN→RU, короткие технические команды; получатель — `ExecutorUnit` и его память. Точный вопрос: помогает ли запись **наблюдавшейся при Train формы source-span composition** не принимать неподдержанную композицию как выученный перевод? У нейронных слоёв/optimizer здесь значение N/A, neural updates = 0. Это не исправление RP01 LoRA.
+
+В A остаётся current `_phraseMap` и текущий составитель. В B тот же Train дополнительно записывает ограниченный source-span frame, а тот же составитель читает его перед возвратом phrase-map candidate. Запись и чтение — один контракт нового представления. Не меняются source/target, порядок уроков, phrase mappings, tokenizer, word-map, exact-map, kNN, SourceLaw, Verifier, confidence и thresholds.
+
+**Это не обучение семантике отрицания или вопроса.** Форма `[один source token][два source tokens]` с пустыми промежутками наблюдается в двух положительных TRAIN. Неизвестные слова перед знакомыми spans дают другую неподдержанную форму. Reader может отказаться от phrase-композиции; обычные последующие пути остаются прежними. Возможен нулевой результат, если другой reader всё равно выдаст тот же неверный ответ.
+
+### Готовые данные и точный native ingress
+
+`N60-E2-PROPOSED-TRAIN.jsonl`, SHA256 `f4c5e1243777950dfcc6be4f30cc321fe68deb950390c3c7f8868b21017c2f01`, содержит ровно два source-урока:
+
+| ID | Source → target | Одинаковые phrase mappings в A/B |
+|---|---|---|
+| t01 | `delete the file` → `удали файл` | `delete → удали`; `the file → файл` |
+| t02 | `save the cache` → `сохрани кэш` | `save → сохрани`; `the cache → кэш` |
+
+JSONL использует существующие corpus поля. Original [ReadTranslationCorpusRowsAsync:4442–4472](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain.Tools/Program.cs#L4442-L4472) читает `phrase_mappings`; [BuildTranslationContinueExample:4682–4699](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain.Tools/Program.cs#L4682-L4699) кладёт их в `ExecutorOutput`, выдаёт только `executor-en_ru` rows, `HeldOut=false`. Reader ожидает gzip: при подготовке сжать ровно эти UTF-8 bytes; hash plain и gzip записать отдельно. Не использовать похожий, но иной `BuildGeneralBatch`, который создал бы ещё Semantic/Verifier уроки.
+
+Существующий [native ingress harness:38–66](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/translation-memory-ingress-01/harness/Program.cs#L38-L66) показывает настоящий путь private corpus reader/builder → `TranslationMachine.TrainStructuredBatchAsync` → `GetOrchestratorAsync().RunAsync`. Это исходник примера способа вызова, не готовая команда нового опыта: его исторические guards `8`/`24` и before/after binaries надо ограниченно адаптировать в **новом** host вне protected под `2`/`4`, исходный harness не менять. Не запускать старый ingress для получения нового результата.
+
+`N60-E2-PROPOSED-EXAM.json`, SHA256 `9a5729080cb79ad3f770bc889dde790eb439dba68f5b653548cd6dc4cf5b62ad`, содержит общие четыре задания:
+
+| Source | Заранее заданный смысл | Как считать отказ |
+|---|---|---|
+| `delete the cache` | удалить кэш | Отдельный отказ, не правильный перевод |
+| `save the file` | сохранить файл | То же |
+| `do not delete the cache` | запрет удаления кэша | Можно измерить снижение wrong accepted; отказ не равен переводу запрета |
+| `did you save the file?` | вопрос, был ли файл сохранён | Отказ и правильный вопрос считаются отдельно |
+
+Файл EXAM не передаётся learner. Правильность определяется сохранением смысла; приведённые русские ответы не исчерпывают законные парафразы. Корпус не содержит новых уроков отрицания/вопроса или exact EXAM gold. Панель мала: две рекомбинации и две неподдержанные формы, без заявления об общем понимании языка.
+
+### Конкретный original fix: writer → state → reader
+
+1. **Writer.** В [ExecutorUnit.TrainOnExample:403–455](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationTrainedUnits.cs#L403-L455), после чтения `ExecutorInput`/chosen и записи существующих mappings, вычислить frame **из source именно этого урока и его собственных PhraseMappings**. Использовать текущие NormalizeMapKey/MatchesAt и longest-first последовательность; не менять алгоритм сегментации одновременно. Для этих данных spans однозначны. Не выводить frame из EXAM или общей карты соседнего урока.
+2. **State.** Добавить versioned `SourceSpanFrames` с полями `version=1`, `spanTokenLengths`, `gapTokens` (prefix, промежутки и suffix), `supportExampleIds`. Точные source-lexemes остаются в существующих mappings; шаблон обобщает только длины и порядок spans. После двух уроков ожидается один ключ `lengths=[1,2], gaps=[[],[],[]]`, supported by t01/t02. Это ожидаемое содержимое, не измеренный checkpoint. Provenance хранится для проверки, а не для выбора gold.
+3. **Reader.** В [TryComposeFromPhraseMappings:798–857](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationTrainedUnits.cs#L798-L857) сохранить найденные spans и промежутки. Перед возвратом `true` B читает `SourceSpanFrames` и требует совпадения frame. При отсутствии поддержки возвращает `false` и продолжает исходный `Execute`; не подставляет перевод и не меняет остальные fallback. Логировать фактически прочитанный frame и provenance ID либо `NO_LEARNED_FRAME`. В реализации нет ветки по строкам `do not`, `did you`, ID e03/e04 или их gold.
+4. **Checkpoint.** Для доказуемой записи состояния расширить [ExecutorUnitCheckpoint:97–107](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationCheckpointContracts.cs#L97-L107) и [Export/ImportCheckpoint:484–535](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationTrainedUnits.cs#L484-L535) явным полем версии/frames. Старый checkpoint без поля означает `support unavailable`; не объявлять, что Train уже построил frames, и не восстанавливать их из EXAM. Нельзя добавлять serialized-only metadata, которое ordinary reader не использует.
+
+Обычная цепь потребления уже существует: [TrainStructuredBatchAsync:107–121](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationMachine.cs#L107-L121) → Executor state → [Execute:264–293](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationTrainedUnits.cs#L264-L293) → [TrainedTranslationAdapter:124–139](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationDirectionAdapters.cs#L124-L139) → ordinary Flow. Exact source, word-map и kNN могут перехватить запрос — это наблюдаемый результат, а не повод отключить их ради успеха B.
+
+### Сравнение и предел новизны
+
+Два fresh `TranslationMachine` с одинаковыми существующими пустыми maps. A0/B0 — общая четырёхзадачная панель; затем один двухстрочный native batch на плечо; A1/B1 — та же панель. Бюджет: **2 TrainStructuredBatchAsync, внутри 4 Executor.TrainOnExample; 16 ordinary RunAsync**. Вложенные Execute/Verify и fallback считаются по actual trace, а не предполагаются отдельными внешними уроками. Четыре canonical state snapshots, без случайных timestamps в state comparison.
+
+Метрики: correct/all, correct/answered, coverage, wrong accepted по двум operator cases, gained/lost по ID, фактические accepted lessons, время подготовки/Train/ответа, CPU/RAM, checkpoint/support bytes. Raw trace включает candidate, adapter, actual Verify.Pass/Issues и конечный ответ; наличие final confidence0.99 не доказывает verifier override. Native batch `AccuracyAfter` без heldout может означать Unit coverage — его нельзя использовать вместо четырёхзадачной предметной оценки.
+
+**Любое измеренное улучшение полезного показателя — успех по этому показателю и EN→RU домену; рост accuracy не обязателен. Все другие значения и ухудшения рядом.** Если форма не записана или не читается, заявленный representation-фактор не достигнут. Если запись/чтение достигнуты, но ответы одинаковы, это честный нулевой результат по ответам; стоимость может измениться.
+
+P54.3 уже описывает fixed mandatory coverage на frozen maps. На этих четырёх входах learned frame может дать тот же наблюдаемый результат, что простой full-coverage guard; этот малый опыт **не доказывает уникальное преимущество нового representation над P54**. Его узкий предмет — actual TRAIN-derived support и использование этого state. Нет обязательного третьего comparator или большого нового набора. Если цель исполнителя лишь исправить известный reader при proven trained state, policy уже разрешает соответствующий P54; не нужно добавлять эти уроки ради формального допуска.
+
+Exported inference state и продолжение обучения различаются. Минимальный опыт использует собственное in-memory state после Train и сохраняет его для evidence. Если в выбранном опыте используется cold consumer, сначала должны сохраняться/восстанавливаться все frame/version/provenance поля; равенство ответов после import докажет только сохранность inference, не верность следующего Train. Отдельное continuation сравнение сюда не добавляется.
+
+**Промпт исполнителю E2:** «Применяй текущую execution policy и навыки architect, phase-planning, plan-review, code-examination, experiment-data-integrity, improvement-measurement, prompt engineering и human communication. Заполни конкретный bounded native host над указанным существующим loader/builder/Train/Run, исходный snapshot и output manifest. В пределах порученной программы выполни ровно 2×2 training rows и 4×4 обычных ответа с одним SourceSpanFrames writer/reader фактором. Данные и SHA заданы в этой карточке. Не меняй confidence, SourceLaw, Verifier или mappings, не используй EXAM gold в learner, не запускай старый8/24 или Windows suite. Любое измеренное улучшение полезного показателя — успех этой оси и EN→RU, accuracy gain не обязателен; все другие изменения и потери показывай рядом. Если writer/read path не достигнут, не заменяй его JS моделью или static guard. Назови exact original fix и сохрани raw trace. Текущий документный аудит не содержит исполнения; это инструкция к реализации выбранного опыта, а не утверждение готовности новой CLI.»
+
+## 2. E1: конкретный ordinary retention маршрут — только если выбран именно этот вопрос
+
+Текущий de4 E1 уже проверяет настоящее обучение RU→EN Verifier с собственными Verify. Его не нужно заменять большей программой. Следующий вариант конкретизирует только ранее открытую ordinary Flow связь; **он не заявляется необходимым предварительным опытом**.
+
+Ordinary EN request использует tokenizer с `en`, но **writer `ExtractSourceMarker(string)` жёстко вызывает fresh tokenizer с `ru` даже для английского source**. Это видно из [ClassifyPos:260–292](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationSemanticTokenizer.cs#L260-L292) и [ExtractSourceMarker:1265–1299](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationTrainedUnits.cs#L1265-L1299). Для конкретного первого слова `quietly` остаётся проверяемый путь через fallback NOUN/UNKNOWN и выбор первого unknown non-code token; `ly` также проходит helper manner check. Поэтому этот fixture имеет source-confirmed общий marker, но не доказывает правильную обработку всех EN markers. Язык writer здесь не исправляется одновременно с admission. Это вывод из source, native trace ещё не получен.
+
+`N60-E1-PROPOSED-INPUTS.json`, SHA256 `edf52221c9c9c956bd6c67afa6cf9d7e4405244c5d35d5eb4f0123ba39477d4c`, фиксирует:
+
+- Восемь одинаковых warmup Executor уроков в A/B: `quietly`/`slowly` × open/close × window/gate с русскими `тихо`/`медленно`. Они создают настоящую exact memory. В warmup передаются только Executor rows; это существующая per-unit форма Train, показанная native ingress harness, а не вручную заполненная таблица. Verifier в исходном состоянии пуст. Снимки A0/B0 снимаются после этого одинакового warmup.
+- t01: `quietly close the door` → `бесшумно закрой дверь`, rejected carrier `[WRONG: gender]`. [BuildRejectedCandidate:269–288](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationStructuredBatchBuilder.cs#L269-L288) вернёт chosen, а producer создаст false Verifier lesson с required term `бесшумно`.
+- t02: `slowly open the door` → `медленно открой дверь`, explicit rejected `быстро открой дверь [WRONG: manner]`. Это настоящий различающий negative; Verifier учится в обоих плечах.
+- Общая EXAM из восьми строк: шесть старых source запросов для retention и два новых box запроса для отдельно отмеченного transfer. Известные source намеренно повторяются: их нельзя выдавать за новые независимые языковые задачи.
+
+A допускает оба Verifier урока. B меняет **только** блок создания verifier row [BuildGeneralBatch:128–141](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationStructuredBatchBuilder.cs#L128-L141): если rejectedCandidate и chosen совпадают как готовые тексты, не выдаёт этот false-negative record, пишет `NO_DISTINCT_NEGATIVE`. Пять остальных строк соответствуют A побайтно. Не исправлять одновременно equality Executor DPO record или general synonyms policy: это другой фактор.
+
+В A предполагается learned marker `quietly → бесшумно`; B не записывает его. Собственные старые exact-source ответы Executor содержат `тихо` и выходят через `-exact-source`, а не phrase-map; значит bypass phrase-map не должен маскировать Verifier. Фактический [Verify:1061–1068](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/27.TranslationDomain/TranslationTrainedUnits.cs#L1061-L1068) и ordinary adapter проверяются read-only trace. Итоговый fallback может вернуть правильный ответ даже после veto — поэтому сохранение learned route и конечная точность считаются отдельно. Ни кандидат, ни output не подставляются вручную.
+
+Бюджет выбранного расширения: **4 TrainStructuredBatchAsync** (два общих warmup + два новых batch), **27 внутренних Unit calls** (16 warmup Executor + A6/B5), внутри последних **3 Verifier Train calls**; **32 ordinary RunAsync** для 8×4 состояния. Десять source-уроков на плечо, не 27 разных уроков. Стоимость warmup раскрывается отдельно от двух новых уроков. State evidence сравнивает common Executor/tokenizer и различающий Verifier, включая его marker terms; failed reader trace не заменяется direct Verify с искусственным candidate.
+
+**Любое измеренное улучшение полезного показателя — успех по показателю и этому домену, рост accuracy не обязателен; все ухудшения рядом.** Возможные полезные метрики — удержание прежнего learned ответа, false rejection, принятые ошибочные уроки, bytes/time; omission false accepts и coverage обязательно показываются вместе с ними. Это дополнительный точный causal design, без новых runtime результатов.
+
+**Промпт исполнителю E1 ordinary-варианта:** «Выбирай этот расширенный контракт только если поручен вопрос ordinary retention, не добавляй его скрыто к малому RU_EN Verify. Применяй те же перечисленные навыки. Используй ровно JSON inputs/бюджет карточки, actual builder→TrainStructuredBatchAsync→Executor exact candidate→Verifier→ordinary Flow. Меняется только admission false Verifier record. Сохрани A0/A1/B0/B1, learned marker trace, old retention отдельно от unseen transfer, все raw outputs и gained/lost. Любое измеренное полезное улучшение — успех своей метрики/домена без обязательного роста accuracy; другие показатели и ухудшения рядом. Native не запускался в документном аудите; не выдавай source prediction за result. Если marker или ordinary reader не достигнут, объясни конкретный путь, не создавай макет таблицы. Не изменяй protected, не делай unrelated тестов и не назначай новую общую approval-блокировку.»

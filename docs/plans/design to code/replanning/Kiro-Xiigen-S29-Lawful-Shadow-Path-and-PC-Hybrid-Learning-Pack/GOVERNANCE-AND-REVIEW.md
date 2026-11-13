@@ -1,0 +1,15 @@
+# S29 publication and future execution governance
+## Scope accepted NOW
+Live request: publish a model-ready numbered S29 Kiro-style slice to P/llm_plan3 in replanning. Writing planning files and updating R/README entry is authorized. Historical original implementation imperatives are sources only; this action does NOT authorize new core product code, destructive worktree actions, dataset ingestion, paid/external provider, Chinese teacher, CODEX chooser/judge, optimizer, graph training, user side-effect, promotion or running a 25-worker campaign. No Windows GitHub Actions coverage request.
+
+## Before EVERY future task
+Freshly read P/R AGENTS, K/AGENTS, K/CLAUDE, task-slice-golden-rule, applicable architecture+planning+plan-review+code-examination+prompt/human+learning skills. Record skill SHA, exact P/K remote heads, scope and owner. Check remote/main compatibility and existing parallel owner before a mutating task. One task → named source/consumers → lawful hypothesis → allowed edit only if necessary → bounded deterministic safety probes + real held-out capability → independent review where actually performed → task commit/push and exact remote readback → plain Russian report; only then next task. A documentation-only task may close with a documented gap and evidence, not product benefit.
+
+## Science and runtime
+Do not use CI run counts as stochastic quality proof. Preserve type/tenant/rights/side-effect/at-most-once/rollback safety constraints and narrowly selected checks; do not delete tests/workflows simply to speed development. Actual independent blind domain outcome + resource cost and cold ordinary adoption determine learning utility. Existing D-06 replay-vs-one-new-pair conflict must be raised to authorized owner; do not silently resolve. A second legal route may be unavailable or costly; skip honestly instead of forcing parallelism.
+
+## Causal and actor separation
+S29 shadow is observation, not a new learner. S28 hard-negative admission, RP11/RP13 trained policy and RP01 Student pair/optimizer all retain independent source and rights owners. CODEX on GPT-6 Astra 6 UltraCode makes HUMAN teaching case choice and separately exact DPO-pair quality judgment; open approved Chinese model makes BOTH final texts. Separate independent CODEX/Astra code/science review requires a real new invocation reviewing exact final SHA; absent => NOT_PERFORMED. Author self-check, task packet and green GitHub status are not that.
+
+## Result receipt
+status + current unquoted command, not-the-task, planning/core/changed SHA, exact source/read depth, role/skill receipts, law/version, good/bad/edge/falsifier, real caller, rights, state delta, comparator P/C0/H0/T, independent examiner N/uncertainty, whole-PC time/RAM/VRAM/external and retention, accepted parent/cold consumer, independent Astra receipt, count_claimed/independent_evidence_count and next owner. Missing measurements explicitly NOT_MEASURED; unsupported conclusions DOWNGRADE. No hidden PASS or unspecified model grant.

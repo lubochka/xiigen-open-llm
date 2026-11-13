@@ -1,0 +1,93 @@
+{
+  "schema": "xiigen.file-static-receiver.fixture.v1",
+  "experimentId": "FILE-STATIC-RECEIVER-01",
+  "topic": "C# file action prediction",
+  "model": "native FileActionKnnPredictor(k=3)",
+  "commonTrain": [
+    {
+      "id": "C-M1",
+      "family": "plain",
+      "gold": "ADD_METHOD",
+      "source": "class C1 { static int F1() { return 1; } }"
+    },
+    {
+      "id": "C-M2",
+      "family": "plain",
+      "gold": "ADD_METHOD",
+      "source": "class C2 { static int F2() { return 2; } }"
+    },
+    {
+      "id": "C-M3",
+      "family": "plain",
+      "gold": "ADD_METHOD",
+      "source": "class C3 { static int F3() { return 3; } }"
+    },
+    {
+      "id": "C-N1",
+      "family": "instance",
+      "gold": "ADD_NULL_CHECK",
+      "source": "class Box1 { public int V; } class Reader1 { static int F1(Box1 b) { return b.V; } }"
+    },
+    {
+      "id": "C-N2",
+      "family": "instance",
+      "gold": "ADD_NULL_CHECK",
+      "source": "class Box2 { public int V; } class Reader2 { static int F2(Box2 b) { return b.V; } }"
+    },
+    {
+      "id": "C-N3",
+      "family": "instance",
+      "gold": "ADD_NULL_CHECK",
+      "source": "class Box3 { public int V; } class Reader3 { static int F3(Box3 b) { return b.V; } }"
+    }
+  ],
+  "newTrain": [
+    {
+      "id": "S1",
+      "family": "static",
+      "gold": "ADD_METHOD",
+      "source": "class StaticBox1 { public static int V; } class StaticReader1 { static int F1() { return StaticBox1.V; } }"
+    },
+    {
+      "id": "S2",
+      "family": "static",
+      "gold": "ADD_METHOD",
+      "source": "class StaticBox2 { public static int V; } class StaticReader2 { static int F2() { return StaticBox2.V; } }"
+    },
+    {
+      "id": "S3",
+      "family": "static",
+      "gold": "ADD_METHOD",
+      "source": "class StaticBox3 { public static int V; } class StaticReader3 { static int F3() { return StaticBox3.V; } }"
+    }
+  ],
+  "readoutOrder": [
+    "C-M1",
+    "C-M2",
+    "C-M3",
+    "C-N1",
+    "C-N2",
+    "C-N3",
+    "S1",
+    "S2",
+    "S3",
+    "Q-CS",
+    "Q-CI"
+  ],
+  "untrainedCollisionProbes": [
+    {
+      "id": "Q-CS",
+      "family": "collision-static",
+      "gold": "ADD_METHOD",
+      "source": "class SameBox { public static int V; } class SameReader { static int F(SameBox b) { return SameBox.V; } }"
+    },
+    {
+      "id": "Q-CI",
+      "family": "collision-instance",
+      "gold": "ADD_NULL_CHECK",
+      "source": "class SameBox { public int V; } class SameReader { static int F(SameBox b) { return b.V; } }"
+    }
+  ],
+  "constantBaseline": "ADD_METHOD",
+  "interpretation": "The 9 TRAIN-family readouts measure fitted memory, not independent structural generalization. The 2 collision probes are never trained. Gold ADD_METHOD is the residual current taxonomy label after ruling out receiver-null-check, not a claim about the optimal edit."
+}

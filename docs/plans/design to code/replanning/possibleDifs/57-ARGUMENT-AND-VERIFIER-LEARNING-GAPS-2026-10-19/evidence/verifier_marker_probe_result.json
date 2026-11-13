@@ -1,0 +1,330 @@
+{
+  "status": "SOURCE_EQUIVALENT_MECHANISM_ONLY",
+  "native_csharp_executed": false,
+  "quality_gain_native": "NOT_RUN",
+  "independent_codex_astra_6_ultracode_exam": "NOT_RUN",
+  "external_open_chinese_model_generation": "NOT_RUN",
+  "commit": "eb05219c27663835ce927c7bf97cf1274c07cddb",
+  "git_blobs_verified": {
+    "TranslationSemanticTokenizer.cs": "ee6d81c7933fa33a9c57a2111990019ec55e5dab",
+    "TranslationTrainedUnits.cs": "1742abfc9fb617dfc66e4d618e0c169da01a6ccc",
+    "TranslationStructuredBatchBuilder.cs": "7ceed82476edae9173acc44e2298885c561ca4d5",
+    "TranslationUnitContracts.cs": "0f88d0d9cc3a62d2b2f8b0b9321142a4a4c1b0d8",
+    "TranslationMachine.cs": "fd0e736de3739236b4dde2d6b9d000f5ebae8416",
+    "TranslationBatch029Runner.cs": "bd96e036b00f00a031ffb1ee9766994950523569"
+  },
+  "scope": "Restricted valid-Cyrillic fixtures; no complete tokenizer or checkpoint simulation",
+  "training_fixtures_illustrative": [
+    {
+      "family": "door_open",
+      "source": "Он тихо открыл дверь",
+      "chosen": "He quietly opened the door",
+      "rejected": "He opened the door",
+      "required": "quietly",
+      "verifier_chosen": {
+        "Pass": false,
+        "Issues": [
+          "expected 'quietly' for translated quality marker"
+        ],
+        "CorrectionHint": "He quietly opened the door"
+      },
+      "verifier_rejected": {
+        "Pass": true,
+        "Issues": []
+      }
+    },
+    {
+      "family": "bag_pack",
+      "source": "Она быстро собрала сумку",
+      "chosen": "She quickly packed the bag",
+      "rejected": "She packed the bag",
+      "required": "quickly",
+      "verifier_chosen": {
+        "Pass": false,
+        "Issues": [
+          "expected 'quickly' for translated quality marker"
+        ],
+        "CorrectionHint": "She quickly packed the bag"
+      },
+      "verifier_rejected": {
+        "Pass": true,
+        "Issues": []
+      }
+    }
+  ],
+  "trace": [
+    {
+      "source": "Он тихо открыл дверь",
+      "pos": [
+        [
+          "Он",
+          "PRON"
+        ],
+        [
+          "тихо",
+          "NOUN"
+        ],
+        [
+          "открыл",
+          "VERB"
+        ],
+        [
+          "дверь",
+          "NOUN"
+        ]
+      ],
+      "rule_tags_nonempty": true,
+      "builder_marker": "тихо",
+      "old_marker": null,
+      "fixed_marker": "тихо",
+      "concept_issue_parser": false,
+      "signature_fallback_allowed": false
+    },
+    {
+      "source": "Она быстро собрала сумку",
+      "pos": [
+        [
+          "Она",
+          "PRON"
+        ],
+        [
+          "быстро",
+          "NOUN"
+        ],
+        [
+          "собрала",
+          "VERB"
+        ],
+        [
+          "сумку",
+          "NOUN"
+        ]
+      ],
+      "rule_tags_nonempty": true,
+      "builder_marker": "быстро",
+      "old_marker": null,
+      "fixed_marker": "быстро",
+      "concept_issue_parser": false,
+      "signature_fallback_allowed": false
+    }
+  ],
+  "factorial": [
+    {
+      "train_suffix_fix": false,
+      "eval_suffix_fix": false,
+      "learned_marker_count": 0,
+      "rules": {},
+      "accuracy": 0.5,
+      "false_accepts": 2,
+      "false_rejects": 0,
+      "judgments": [
+        {
+          "family": "letter_read",
+          "source": "Он тихо прочитал письмо",
+          "candidate": "He quietly read the letter",
+          "gold_pass": true,
+          "selected_marker": null,
+          "pass": true
+        },
+        {
+          "family": "letter_read",
+          "source": "Он тихо прочитал письмо",
+          "candidate": "He read the letter",
+          "gold_pass": false,
+          "selected_marker": null,
+          "pass": true
+        },
+        {
+          "family": "note_write",
+          "source": "Она быстро написала записку",
+          "candidate": "She quickly wrote the note",
+          "gold_pass": true,
+          "selected_marker": null,
+          "pass": true
+        },
+        {
+          "family": "note_write",
+          "source": "Она быстро написала записку",
+          "candidate": "She wrote the note",
+          "gold_pass": false,
+          "selected_marker": null,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "train_suffix_fix": false,
+      "eval_suffix_fix": true,
+      "learned_marker_count": 0,
+      "rules": {},
+      "accuracy": 0.5,
+      "false_accepts": 2,
+      "false_rejects": 0,
+      "judgments": [
+        {
+          "family": "letter_read",
+          "source": "Он тихо прочитал письмо",
+          "candidate": "He quietly read the letter",
+          "gold_pass": true,
+          "selected_marker": "тихо",
+          "pass": true
+        },
+        {
+          "family": "letter_read",
+          "source": "Он тихо прочитал письмо",
+          "candidate": "He read the letter",
+          "gold_pass": false,
+          "selected_marker": "тихо",
+          "pass": true
+        },
+        {
+          "family": "note_write",
+          "source": "Она быстро написала записку",
+          "candidate": "She quickly wrote the note",
+          "gold_pass": true,
+          "selected_marker": "быстро",
+          "pass": true
+        },
+        {
+          "family": "note_write",
+          "source": "Она быстро написала записку",
+          "candidate": "She wrote the note",
+          "gold_pass": false,
+          "selected_marker": "быстро",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "train_suffix_fix": true,
+      "eval_suffix_fix": false,
+      "learned_marker_count": 2,
+      "rules": {
+        "тихо": [
+          "quietly"
+        ],
+        "быстро": [
+          "quickly"
+        ]
+      },
+      "accuracy": 0.5,
+      "false_accepts": 2,
+      "false_rejects": 0,
+      "judgments": [
+        {
+          "family": "letter_read",
+          "source": "Он тихо прочитал письмо",
+          "candidate": "He quietly read the letter",
+          "gold_pass": true,
+          "selected_marker": null,
+          "pass": true
+        },
+        {
+          "family": "letter_read",
+          "source": "Он тихо прочитал письмо",
+          "candidate": "He read the letter",
+          "gold_pass": false,
+          "selected_marker": null,
+          "pass": true
+        },
+        {
+          "family": "note_write",
+          "source": "Она быстро написала записку",
+          "candidate": "She quickly wrote the note",
+          "gold_pass": true,
+          "selected_marker": null,
+          "pass": true
+        },
+        {
+          "family": "note_write",
+          "source": "Она быстро написала записку",
+          "candidate": "She wrote the note",
+          "gold_pass": false,
+          "selected_marker": null,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "train_suffix_fix": true,
+      "eval_suffix_fix": true,
+      "learned_marker_count": 2,
+      "rules": {
+        "тихо": [
+          "quietly"
+        ],
+        "быстро": [
+          "quickly"
+        ]
+      },
+      "accuracy": 1.0,
+      "false_accepts": 0,
+      "false_rejects": 0,
+      "judgments": [
+        {
+          "family": "letter_read",
+          "source": "Он тихо прочитал письмо",
+          "candidate": "He quietly read the letter",
+          "gold_pass": true,
+          "selected_marker": "тихо",
+          "pass": true
+        },
+        {
+          "family": "letter_read",
+          "source": "Он тихо прочитал письмо",
+          "candidate": "He read the letter",
+          "gold_pass": false,
+          "selected_marker": "тихо",
+          "pass": false
+        },
+        {
+          "family": "note_write",
+          "source": "Она быстро написала записку",
+          "candidate": "She quickly wrote the note",
+          "gold_pass": true,
+          "selected_marker": "быстро",
+          "pass": true
+        },
+        {
+          "family": "note_write",
+          "source": "Она быстро написала записку",
+          "candidate": "She wrote the note",
+          "gold_pass": false,
+          "selected_marker": "быстро",
+          "pass": false
+        }
+      ]
+    }
+  ],
+  "controls": {
+    "known_adv_dolgo": "passes old and fixed marker selection",
+    "okno": "Actual tokenizer suffix-no classifies ADV; do not use as contrast fixture"
+  },
+  "planned_native_budget_not_executed": {
+    "main": {
+      "states": [
+        "A0",
+        "A1",
+        "B0",
+        "B1"
+      ],
+      "verify_calls": 16,
+      "train_on_example_calls": 4,
+      "unique_lessons": 2
+    },
+    "optional_ingress_lookup_decomposition": {
+      "additional_verify_calls": 8,
+      "additional_train_on_example_calls": 0
+    },
+    "optional_cold_restore": {
+      "additional_export_calls": 2,
+      "additional_import_calls": 2,
+      "additional_verify_calls": 8,
+      "additional_train_on_example_calls": 0
+    },
+    "all_three_if_separately_chosen": {
+      "verify_calls": 32,
+      "train_on_example_calls": 4
+    }
+  }
+}

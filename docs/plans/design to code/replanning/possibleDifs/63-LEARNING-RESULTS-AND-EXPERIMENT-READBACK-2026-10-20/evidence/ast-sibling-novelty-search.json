@@ -1,0 +1,66 @@
+{
+  "scope": {
+    "planning_markdown": 734,
+    "protected_markdown": 330,
+    "planning_pin": "4b950599a04388941f56b41e634233ebb7dc17c2",
+    "core_pin": "0b76ab950d82534f5904005dda096545505ae307"
+  },
+  "terms": [
+    "ChildNodes\\(\\)\\.ToList",
+    "siblings\\.IndexOf",
+    "SiblingFeatureCache",
+    "sibling.?cache",
+    "(?:AST|structural|структур).{0,90}(?:allocations|allocation|кеш|кэш|квадратич)",
+    "(?:allocations|allocation|кеш|кэш|квадратич).{0,90}(?:AST|structural|структур)",
+    "TrainStructuralKnn.{0,120}(?:cache|alloc|кеш|кэш)",
+    "TrainFromSource.{0,120}(?:cache|alloc|кеш|кэш)"
+  ],
+  "matches": [
+    {
+      "path": "planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-audit-additions/03-sources-and-scope.md",
+      "line": 32,
+      "text": "Все четыре новые карточки содержат адресные сравнения с ближайшими прежними темами. BPE-WEIGHTED-CHUNKS отличается от no-match copy; DPO-TOKENIZER-SNAPSHOT отличается от кэша reference scores; WIKI-FEATURES-ONCE не повторяет повторное использование AST в StructuralKnn; типизированные ключи не повторяют WIKI-TAXONOMY или margin."
+    },
+    {
+      "path": "planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-causal-delta-audit/README.md",
+      "line": 57,
+      "text": "В MultiplyBroadcast каждый выходной элемент вызывает FlatToIndices, который выделяет отдельный массив координат. RmsNorm вызывает MultiplyBroadcast дважды; эта работа выполняется внутри настоящего Trainer → Forward → Backward → AdamW. Возможная экономия allocations и времени обучения проверяется заменой только способа вычисления broadcast-индекса на арифметику strides. Умножения, обратный проход, накопление gradients и сам mappedBIndices сохраняются."
+    },
+    {
+      "path": "planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-causal-delta-audit/axis-coverage.md",
+      "line": 17,
+      "text": "| Координатные allocations RMS | Trainer → RmsNorm → два MultiplyBroadcast → FlatToIndices на элемент → backward/update | **NEW: RMS-COORD-ALLOC-01.** Один возможный fix: арифметика broadcast index вместо отдельного int[] на элемент, с сохранением math/backward. Пока NOT_RUN. [Полная карточка](RMS-COORD-ALLOC-01-CARD.md) | Точного опыта в protected нет; добавление подготовлено здесь |"
+    },
+    {
+      "path": "planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-causal-delta-audit/latest-source-delta.md",
+      "line": 53,
+      "text": "RMS-COORD-ALLOC-01 повторно проверен по прежним 678 planning Markdown, 301 protected Markdown, новым 18 planning Markdown, двум N63 и добавленному тексту всех 156 core changes. Точный механизм per-element FlatToIndices allocation в настоящем RMS learning path не найден; имеющиеся MultiplyBroadcast упоминания описывают правильный autograd. [Ledger](RMS-COORD-ALLOC-01-NOVELTY-SEARCH.json)."
+    },
+    {
+      "path": "planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/07-late-revision-audit.md",
+      "line": 7,
+      "text": "Все 152 поздних файла скачаны отдельно от исходного снимка. По ним выполнены адресный diff, повторная структурная проверка карточек и поиск новых allocation-механизмов. Подробно перечитаны новая политика, README/методика, нейронный раздел, изменённая карта покрытия и расширенная карточка 23. Старый подробный crosswalk сохранён с явным указанием ревизии; он не выдан за 179 заново прочитанных поздних recipes. [Реестр изменённых файлов](inventory/late-delta.json)."
+    },
+    {
+      "path": "planning/llm mvp/design to code session/replanning/possibleDifs/56-03-FAST-DOMAIN-AB-EXPERIMENTS-AND-EXECUTOR-REVIEW-2026-10-19.md",
+      "line": 15,
+      "text": "**Получатель:** конкретный \\`TranslationMachine.TrainStructuredBatchAsync → ExecutorUnit.TrainOnExample → TrainedTranslationAdapter → TranslationRoutingFlow\\`. **A:** стандартный accepted lesson без дополнительных \\`PhraseMappings\\`; **B:** идентичный lesson + только разрешённые исходным schema \\`PhraseMappings\\` (WordMappings, topology, datasets, flow остаются теми же). 2 admitted contrast урока: \\`validate the file → проверь файл\\`, \\`delete the cache → удали кэш\\`; точные structured JSON брать из принятого native P125 fixture, не выдумывать поля. **4 EXAM:** \\`validate the cache\\`, \\`delete the file\\`, \\`do not delete the file\\`, \\`validate a file\\`; первые два — композиция, третий — **negation safety**, четвёртый — near/article. Source-disjoint coverage ≠ новая грамматическая family; не делать обещаний об идеальном результате."
+    },
+    {
+      "path": "planning/llm mvp/design to code session/replanning/possibleDifs/57-ARGUMENT-AND-VERIFIER-LEARNING-GAPS-2026-10-19/01-structural-argument-gap.md",
+      "line": 35,
+      "text": "var siblings = node.Parent.ChildNodes().ToList();"
+    },
+    {
+      "path": "planning/llm mvp/design to code session/replanning/possibleDifs/57-ARGUMENT-AND-VERIFIER-LEARNING-GAPS-2026-10-19/01-structural-argument-gap.md",
+      "line": 36,
+      "text": "var index = siblings.IndexOf(node);"
+    },
+    {
+      "path": "planning/llm mvp/design to code session/replanning/possibleDifs/62-LEARNING-METRICS-AND-REFERENCE-COST-AUDIT-2026-10-20/NEURAL-LEARNING-AUDIT-2026-10-20.md",
+      "line": 54,
+      "text": "- Произвольные кэши kNN, AST или переводческих словарей сюда не относятся."
+    }
+  ],
+  "novelty_conclusion": "No prior sibling enumeration/cache cost treatment within actual StructuralKnn Train path found; code references exist for ordinal/feature semantics. Broad matching lines require interpretation; this is targeted text dedup, not exhaustive proof of conceptual novelty."
+}

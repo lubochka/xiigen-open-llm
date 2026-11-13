@@ -1,0 +1,24 @@
+> **LIVE ALL-32 SLICE TASK BINDING — S31 (2026-10-14):** [current executable 32-slice repair / causality](../32-SLICE-LIVE-EXECUTION-REPAIR-2026-10-14.md) + [minimum-check policy](../LEARNING-FIRST-MINIMAL-VERIFICATION-POLICY-2026-10-14.md) bind ALL original tasks in this pack and preserve full prompts/skills/examples. Unique owner CONTINUE/STOP/ABSTAIN against incomplete lawful evidence before expensive steps, no fabricated certainty. Measure: Selective risk, unnecessary PC spend, accuracy when stopping. Changed deterministic safety only: minimum evidence law / privacy / deterministic budget limit. Priority P2; result NOT_MEASURED; neither Windows coverage nor another DPO/Graph engine is a prerequisite.
+
+# XIIGEN S31 — Lawful Active Evidence Budget & PC Early Exit
+**13 October 2026 · numbered S31 Kiro-style code slice planning package · DOCUMENTARY ONLY. Product K code/weights/data unchanged; actual models, exams, local-PC learning and independent Astra review NOT_PERFORMED.**
+
+## Human outcome
+In an ordinary XIIGEN task, a small **lawful read-only partial evidence probe** can precede an expensive route. If evidence is sufficient, the existing ILearningOrchestrator and D-15 deterministic arbiter may choose STOP; if required law, rights, types, multi-output association or dependencies remain unknown they must CONTINUE or ABSTAIN. We want accurate domain-law results at lower **whole-PC** cost, not a higher line-coverage percentage.
+
+### Exactly one conditional S31 seam
+Proof that partial lawful domain evidence and all-branch cost reach the **existing** Orchestrator/arbiter's CONTINUE/STOP/ABSTAIN decision BEFORE expensive alternatives, at a real ordinary user consumer. If the current K code already does this: REUSE_NO_CHANGE with method/caller/readback evidence. If missing: one smallest approved adapter only; never a second scheduler, new trainer, Graph, tokenizer, vector database or evaluator.
+
+### Distinct from earlier work
+**S28** scores actual already executed lawful alternative-path hard negatives. **S29** conditionally runs a non-publishing actual shadow alternative for comparison; it spends that second execution's cost. **S31** asks whether a safe cheap preliminary probe can avoid or defer that costly alternative entirely. It must not reproduce shadow execution or hard-negative training. RP04 owns Orchestrator/DynamicGraph; RP13/RP11 owns learned route choice/credit; RP09 scientific evaluation; RP01 Student DPO; RP02 domain mapping/semantic tokens/adaptive multi-neighbor kNN; RP03 Unit typed many→many/Flow correction; RP16 path compaction; RP18 projection/LoRA; RP05/S23 feedback/restart; RP10 adoption; RP07 Builder. R01–R25 research remains separate 10+5+5+5, not global prerequisites.
+
+### Fast path, genuine parallel lanes
+00A (primary source inventory), 00B (ordinary caller/cost), 00C (seven domain-law passports), 00D (resource/state grants) and 04A (sealed independent exam) are independently read-only. As soon as one real lawful cheap probe and ordinary consumer exist, **01D → 02A → 03A** obtains a P full-vs-C0 static no-gradient baseline without Teacher, Student DPO, full Rxx completion or Windows GitHub CI. 01A–01C, 02C/02D proceed independently by their original owners. 02B only if an actual missing bridge and K write grant. Optional T1 existing RP13 learned policy (03B), optional RP01 Student DPO (03C) and later new bulks (03D) NEVER gate P/C0.
+
+### Genuine measurements
+Seven real-world law families: EN↔RU translation, C# documentation, Angular documentation, SQL documentation, Orchestration, Figma/Canva→HTML/CSS, DPO Builder. Compare law accuracy and violations, domain mapping, typed associations, real multi-neighbor consumption, feasible best path/regret, whole-PC time/RAM/VRAM/IO **including speculative/cancelled/losing branches**, unknown/OOD and retained quality from distinct new bulks. Static C0 savings are ENGINEERING_GAIN, not learned ability; T1 improvement is LEARNED_GAIN only after real named state update+independent frozen evaluation+cold ordinary use. 95% in historical WorkLeft is a product aspiration, NOT measured here.
+
+### Navigation
+[One-task start](START-PROMPT.md) · [22-task execution board](EXECUTION-BOARD.md) · [Architecture](ARCHITECTURE-AND-PROBE-CONTRACT.md) · [Domain laws](DOMAIN-LAWS-AND-EVALUATION.md) · [Causal scientific PC study](CAUSAL-EXAMINATION-AND-PC.md) · [Source/RAG/skills/owners](SOURCES-SKILLS-OWNERSHIP.md) · [DPO roles](DPO-AND-LEARNING-HANDOFF.md) · [Requirements](REQUIREMENT-TO-TASK-MATRIX.md) · [Governance](GOVERNANCE-AND-REVIEW.md) · [Handoff](HANDOFF.md) · [Manifest](PACKAGE-MANIFEST.json) · [All tasks](tasks/).
+
+**Source-traced ≠ real consumer called ≠ sufficient lawful evidence ≠ mutable state changed ≠ independently improved ≠ whole-PC measured ≠ cold user adopted ≠ separate Astra reviewed.** Negative evidence, safe no-op, NO_SAFE_PROBE and honest NOT_MEASURED are valid results.

@@ -1,0 +1,456 @@
+{
+  "core_commit": "883496bca18113bf37e0afe683c75b05a0075048",
+  "planning_commit": "6bc4b6fba8f14870f5dc4966cf5a344754962d66",
+  "corpus": [
+    {
+      "root": "audit/planning/llm mvp/design to code session/replanning/possibleDifs",
+      "markdown_count": 747,
+      "manifest_sha256": "f78204e99976aff75196bac82f215b908fb186d63c5511a7b83bf0fa08d59045"
+    },
+    {
+      "root": "audit/core/docs/plans/replanning-possible-diffs",
+      "markdown_count": 172,
+      "manifest_sha256": "bb3c6c079281113c09016bec2ed12323da3d24341ef40045b1161492a617c888"
+    }
+  ],
+  "queries": {
+    "exact_new_id": "SKNN[-_ ]SIBLING[-_ ]PREP",
+    "native_owner": "StructuralVectorExtractor|TrainStructuralKnn",
+    "siblings_preparation": "ChildNodes|siblings\\.IndexOf",
+    "sibling_cache": "(?:sibling|childnodes|сосед).{0,100}(?:cache|cach|кэш|кеш)|(?:cache|cach|кэш|кеш).{0,100}(?:sibling|childnodes|сосед)",
+    "quadratic_preparation": "(?:quadratic|квадратич|O\\(d.{0,2}2\\)|O\\(d²\\)).{0,130}(?:prepar|AST|sibling|подгот|узл)|(?:AST|sibling|подгот|узл).{0,130}(?:quadratic|квадратич|O\\(d.{0,2}2\\)|O\\(d²\\))",
+    "related_cost": "KH-COST-01|дв[ае].{0,20}(?:AST|ParseText)|double.{0,20}pars"
+  },
+  "results": {
+    "exact_new_id": {
+      "matched_lines": 0,
+      "matched_files": 0,
+      "hits": []
+    },
+    "native_owner": {
+      "matched_lines": 23,
+      "matched_files": 19,
+      "hits": [
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/01-EXPERIMENT-BASELINE-RECONCILIATION.md",
+          "line": 28,
+          "excerpt": "Baseline оценивает val.Count−1 переходов. KNN берёт только val.Take(500), оценивает максимум 499 переходов. Поэтому **+45.33% нельзя пока интерпретировать как чистый treatment effect** без повторного единого panel и одинакового target set. Также [BuildTokenVectors](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/35.ExperimentsV2/Experiments/E09StructuralKnn.cs#L102-L124) создаёт Roslyn SyntaxKind и StructuralVectorExtractor, а не готовые semantic embeddings языка."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/09-HISTORICAL-EXPERIMENT-VALIDITY-AND-FUSION-DRIFT.md",
+          "line": 26,
+          "excerpt": "[E09StructuralKnn.Run:30–79](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/35.ExperimentsV2/Experiments/E09StructuralKnn.cs#L30-L79) baseline bigram считает accuracy на **всём val**, KNN — на `val.Take(500)`. [JSON E09](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/35.ExperimentsV2/results/E09-STRUCTURAL-KNN/results/run-2026-05-01-001.json) показывает 0.2413→0.3507, но эти числа имеют разные denominator и possibly difficulty distributions. **При этом структура E09 не BPE-text kNN:** [BuildTokenVectors:102–123](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/35.Experiment"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/12-MATRIX-KNN-TRANSFER-PROVENANCE-AND-EVALUATION.md",
+          "line": 19,
+          "excerpt": "**Код:** [E09StructuralKnn.cs:30–79](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/35.ExperimentsV2/Experiments/E09StructuralKnn.cs#L30-L79) считает baseline по *всей* validation-последовательности, enhanced по `val.Take(500)`. Цифры .2413 и .3507 имеют разный denominator/difficulty mix. [E09:102–123](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/35.ExperimentsV2/Experiments/E09StructuralKnn.cs#L102-L123) использует Roslyn AST `SyntaxKind` и `StructuralVectorExtractor`, создавая `kindMap` в пределах файла. В отдельных файлах одинаковый SyntaxKind может получать "
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-19-external-domains-lexical-state-audit/00-EXTERNAL-DOMAINS-RESTORATION-FIRST.md",
+          "line": 47,
+          "excerpt": "Для C# данные проходят в AST, затем в признаки, затем в обученную память соседей. Вызовы `TrainMethodKnn`, `TrainFileActionKnn`, `TrainStructuralKnn` принимают исходный текст; `Compile` при распознанном C# и включённом E10 предварительно меняет этот текст. Сейчас это конкретная проверяемая точка различия между учебным и рабочим входом: [Facade, строки 122–159](https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/12.SemanticCompiler/SemanticCompilerFacade.cs#L122-L159), [учебные методы, строки 178–225](https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/12.SemanticCompiler/Se"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-19-external-domains-lexical-state-audit/02-NEW-CSHARP-INPUT-AND-CALL-LOSS.md",
+          "line": 23,
+          "excerpt": "TrainFileActionKnn(raw sources) строит признаки до E10. Compile(raw query) по умолчанию включает E10, затем вызывает предсказатели на изменённой строке. Аналогично TrainMethodKnn и TrainStructuralKnn читают raw sources. E09 и E14 требуют явного включения; UseStructuralKnn=false и UseFileActionKnn=false — дефолты обеих веток. Наличие сохранённого predictor само по себе ещё не показывает, что он участвовал в успешном ответе. [Current train path](https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/12.SemanticCompiler/SemanticCompilerFacade.cs#L178-L225), [current inference path](https://github.com/lubochka/llm_"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-19-language-restore/01-language-translate-restoration.md",
+          "line": 68,
+          "excerpt": "**Нынешний вызов.** [SemanticCompilerFacade.TrainStructuralKnn, строки 206–225](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/12.SemanticCompiler/SemanticCompilerFacade.cs#L206-L225) обучает отдельную память. [Options, строки 14–18](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/12.SemanticCompiler/SemanticCompilerOptions.cs#L14-L18) задаёт UseStructuralKnn=false по умолчанию. [PredictStructuralNextTokens, строки 299–311](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/12.SemanticCompiler/SemanticCompilerFacade.cs#L299-L311)"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-history.md",
+          "line": 45,
+          "excerpt": "В current product [StructuralKnn][structural] по-прежнему присутствуют syntactic role, три AST ancestor types, position, scope/depth. Учебный caller [TrainStructuralKnn][facade] строит within-file pairs, а consumer работает при UseStructuralKnn и достаточной памяти. Для текста на естественном языке нужны свои POS/порядок/роль/отрицание; копирование Roslyn признаков в перевод не следует из C# успеха."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-causal-delta-audit/historical_knn.md",
+          "line": 35,
+          "excerpt": "| Получение структуры | `posMap[i]`, где i — номер BPE token, а posMap построен по sampled char positions | `StructuralVectorExtractor.Extract(node, fileId)` непосредственно из текущего AST node |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/02-experiment-coverage-audit.md",
+          "line": 181,
+          "excerpt": "| [R20][R20] N57-ARG | TRAIN_INPUT+UPDATE; COND, хорошо локализован | StructuralVectorExtractor 42 добавляет ArgumentOrdinal of ArgumentList, default−1; distance 0. 3. a/b внутри ArgumentSyntax имеют immediate position 0, so existing Position не решает. 2 selected success or row/2 Train/16 Predict; actual successors/codec verify before freeze. |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/26-NEW-E09-GIT-PRODUCTION-TARGET-AND-TIE-DRIFT-2026-10-16.md",
+          "line": 7,
+          "excerpt": "Commit [27ae03266ae2f7300d63e915795c0ff62369fa67](https://github.com/lubochka/llm_mvp_core/commit/27ae03266ae2f7300d63e915795c0ff62369fa67) называется “E09 E10 phase 2: move structural KNN to production”. Он добавляет [12.SemanticCompiler/Prediction/StructuralKnn.cs](https://github.com/lubochka/llm_mvp_core/blob/27ae03266ae2f7300d63e915795c0ff62369fa67/12.SemanticCompiler/Prediction/StructuralKnn.cs) (+225 lines) и удаляет два файла: [35.ExperimentsV2/Core/StructuralKnnPredictor.cs](https://github.com/lubochka/llm_mvp_core/blob/f8a41b76b26b7de4c53aecb845661d37837d686c/35.ExperimentsV2/Core/StructuralKnnPredictor.cs) (−50) и [35.ExperimentsV2/"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/26-NEW-E09-GIT-PRODUCTION-TARGET-AND-TIE-DRIFT-2026-10-16.md",
+          "line": 27,
+          "excerpt": "Оригинальные и перенесённые StructuralVectorExtractor/StructuralVector содержат AST node type, три parent kinds, позицию, sibling count, method/scope depth, FileId и syntactic role. Веса distance, включая большой role-weight=4.0, сохранены; обучаемое состояние остаётся таблицей (AST vector, next label) с KNN. Неверно говорить, что весь E09 KNN заменён статической эвристикой или исчез при переносе. Но два контракта label identity/tie поменялись, что требует проверки."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/38-NEW-E09-WITHIN-FILE-HOLDOUT-LEAKAGE-2026-10-16.md",
+          "line": 31,
+          "excerpt": "**L1, paired eval on same case IDs:** сначала заморозить reference index file-disjoint validation набор из 8–16 C# файлов иных source families и внутрифайловые (не cross-file) node transitions. При том же label semantic mapping, k, StructuralVectorExtractor, memory budget и одинаковой actual test panel:"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/43-PREPARETOGPL-RESTORATION-AND-NEURAL-DIFFS-2026-10-18/03-HISTORICAL-LINEAGE.md",
+          "line": 30,
+          "excerpt": "Исторический перенос подтверждён [commit27ae032](https://github.com/lubochka/llm_mvp_core/blob/27ae03266ae2f7300d63e915795c0ff62369fa67/12.SemanticCompiler/Prediction/StructuralKnn.cs) и [предыдущим source-аудитом переноса](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/docs/plans/replanning-possible-diffs/38-e09-transfer-labels-and-opt-in-consumer.md). В текущем коде есть настоящие `TrainStructuralKnn`, память и predictor. Но [UseStructuralKnn default=false](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/12.SemanticCompiler/SemanticCompilerOptions.cs#L9-L28); [pr"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/43-PREPARETOGPL-RESTORATION-AND-NEURAL-DIFFS-2026-10-18/03-HISTORICAL-LINEAGE.md",
+          "line": 32,
+          "excerpt": "[`TrainStructuralKnn`](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/12.SemanticCompiler/SemanticCompilerFacade.cs#L206-L226) собирает пары; [`Compile`](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/12.SemanticCompiler/SemanticCompilerFacade.cs#L150-L172) возвращает прогноз в `CompilationResult.PredictedNextTokens`. **В этом аудите положительное доказательство влияния данного поля на обычный RP01 ответ не установлено.** Предыдущий ограниченный поиск нашёл train/enable calls в тестах; он не исключает внешнего host/reflection. Поэтому R03 сначала доказывает actual"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/47-LANGUAGE-TRANSLATE-INTERNALS-AND-NEW-HYPOTHESES-2026-10-19/01-LANGUAGE-TRANSLATE-RESTORATION-FIRST.md",
+          "line": 35,
+          "excerpt": "**Текущий получатель сохранён.** [Facade TrainStructuralKnn, 206–225][e09-train-current] наполняет настоящую память; [PredictStructuralNextTokens, 298–310][e09-predict-current] вызывается только при включённом флаге и ≥10 парах. [Compile, 155–172][facade-consumer] помещает результат в CompilationResult. Предыдущий [core38](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/docs/plans/replanning-possible-diffs/38-e09-transfer-labels-and-opt-in-consumer.md) установил лишь test callers, а не обычный пользовательский consumer этих предсказаний; эта новая подзадача не заявляет полный новый search всех callers."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/50-EXTERNAL-DOMAINS-CAUSAL-EXPERIMENTS-2026-10-19.md",
+          "line": 66,
+          "excerpt": "**Точный donor:** [E09 исходный receipt](https://github.com/lubochka/llm_mvp_core/blob/external_domains/35.ExperimentsV2/results/E09-STRUCTURAL-KNN/results/run-2026-05-01-001.json) + [E09 code](https://github.com/lubochka/llm_mvp_core/blob/external_domains/35.ExperimentsV2/Experiments/E09StructuralKnn.cs); найти его реальный `StructuralVectorExtractor` и текущий production `StructuralKnn` consumer."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/53-EXTERNAL-DOMAINS-RECOVERY-AND-SPARSE-KNN-REFINEMENTS-2026-10-19/01-NEW-HYPOTHESES.md",
+          "line": 173,
+          "excerpt": "SemanticCompilerFacade.TrainStructuralKnn извлекает pairs из C# источников и обучает память при числе пар ≥10. PredictStructuralNextTokens вызывает этот predictor только для CSharp при `UseStructuralKnn=true` и TrainingSize≥10. [Обучение current L206–225][facade-train]; [вызов current L298–310][facade-predict]. Значение UseStructuralKnn по умолчанию false. [Options L14–15][options]."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/53-EXTERNAL-DOMAINS-RECOVERY-AND-SPARSE-KNN-REFINEMENTS-2026-10-19/01-NEW-HYPOTHESES.md",
+          "line": 205,
+          "excerpt": "3. Обучить через обычный Train на проверенных native pairs, затем при применимости повторить через TrainStructuralKnn с ≥10 фактическими парами и явной опцией. Сохранять каждый nearest neighbor, distance-компоненты и selected label. Сначала подтвердить граничный контрпример, затем отрицательный контроль ниже256."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/53-EXTERNAL-DOMAINS-RECOVERY-AND-SPARSE-KNN-REFINEMENTS-2026-10-19/02-SMALL-DOMAIN-EXPERIMENTS.md",
+          "line": 53,
+          "excerpt": "A хранит byte position с cap255; B расширяет только `PositionInParent` и снимает только его cap. Не добавлять отсутствующий SiblingCount в distance, не менять k, роли, scope, порядок вставки или tie-policy. Контроль ниже256 должен совпасть. Повторить разные порядки training rows: одинаковые закодированные запросы A всё равно должны давать одинаковый ответ. Затем проверить настоящий `TrainStructuralKnn` с необходимым числом пар и явной опцией; его output ещё нужно проследить до ordinary consumer. [Facade](https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/12.SemanticCompiler/SemanticCompilerFacade.cs#L206-L2"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/57-ARGUMENT-AND-VERIFIER-LEARNING-GAPS-2026-10-19/01-structural-argument-gap.md",
+          "line": 7,
+          "excerpt": "У двух аргументов обычного вызова `Pair(a, b)` имеются разные позиции в списке аргументов. Но StructuralVectorExtractor вычисляет положение выражения только среди детей его **непосредственного** родителя. Родителем выражения `a` является собственный `ArgumentSyntax`, родителем выражения `b` — другой `ArgumentSyntax`. В обычном позиционном аргументе каждый такой родитель содержит одно выражение. Поэтому ожидается `PositionInParent=0` у обоих, а `SiblingCount=1`."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/57-ARGUMENT-AND-VERIFIER-LEARNING-GAPS-2026-10-19/01-structural-argument-gap.md",
+          "line": 50,
+          "excerpt": "Реальный API более высокого слоя сохранён: [SemanticCompilerFacade.TrainStructuralKnn, строки206–225][facadetrain] строит пары из C# исходников и обучает predictor при ≥10 парах. [Compile, строки155–172][facadecompile] помещает прогноз в `PredictedNextTokens`; [PredictStructuralNextTokens, строки299–310][facadepredict] требует одновременно CSharp, `UseStructuralKnn=true` и ≥10 обучающих пар. По умолчанию флаг выключен. [Options][options]."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/58-HUMAN-APPROVAL-EXPERIMENT-PASSPORTS-2026-10-19.md",
+          "line": 56,
+          "excerpt": "**Предмет:** структура программ C#, задача **предсказать следующий Roslyn AST-kind**. **Точный получатель:** `StructuralVectorExtractor → StructuralKnnPredictor.Train/Predict` из [N57 source review](57-ARGUMENT-AND-VERIFIER-LEARNING-GAPS-2026-10-19/01-structural-argument-gap.md), потенциально через `SemanticCompilerFacade` лишь при включённом `UseStructuralKnn=true`. **Нейронная модель:** **N/A**, обучаемая память kNN, не LoRA. **Donor sibling:** `language_translate` original branch source blob фактически тот же алгоритм (по N57), НЕ свидетельство, что fix уже присутствовал в gold."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/62-LEARNING-METRICS-AND-REFERENCE-COST-AUDIT-2026-10-20/HISTORICAL-KNN-AND-PARENT-RAG.md",
+          "line": 43,
+          "excerpt": "- Commit [27ae03266ae2f7300d63e915795c0ff62369fa67](https://github.com/lubochka/llm_mvp_core/commit/27ae03266ae2f7300d63e915795c0ff62369fa67) добавляет `12.SemanticCompiler/Prediction/StructuralKnn.cs` и удаляет экспериментальные StructuralKnnPredictor/StructuralVectorExtractor. Это прямая улика переноса **экспериментального kNN в production**."
+        }
+      ]
+    },
+    "siblings_preparation": {
+      "matched_lines": 5,
+      "matched_files": 3,
+      "hits": [
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md",
+          "line": 14,
+          "excerpt": "2. [StructuralKnn.cs L41–95](https://github.com/lubochka/llm_mvp_core/blob/216a1f3d6af3f40ceef081dc168b07e4ce3934f9/12.SemanticCompiler/Prediction/StructuralKnn.cs#L41-L95): Extract действительно считает node.Parent.ChildNodes().Count и помещает значение в SiblingCount (с насыщением на 255). Это не отсутствующий входной признак."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/53-EXTERNAL-DOMAINS-RECOVERY-AND-SPARSE-KNN-REFINEMENTS-2026-10-19/01-NEW-HYPOTHESES.md",
+          "line": 155,
+          "excerpt": "StructuralVector хранит PositionInParent в `byte`. Extract вычисляет нулевой индекс узла среди `node.Parent.ChildNodes()` и записывает `min(index, 255)`. DistanceTo добавляет 0.3, только если закодированные PositionInParent различны. [Поля и distance, current L15–35][struct-fields]; [Extract, L52–59][struct-extract]."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/57-ARGUMENT-AND-VERIFIER-LEARNING-GAPS-2026-10-19/01-structural-argument-gap.md",
+          "line": 35,
+          "excerpt": "var siblings = node.Parent.ChildNodes().ToList();"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/57-ARGUMENT-AND-VERIFIER-LEARNING-GAPS-2026-10-19/01-structural-argument-gap.md",
+          "line": 36,
+          "excerpt": "var index = siblings.IndexOf(node);"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/57-ARGUMENT-AND-VERIFIER-LEARNING-GAPS-2026-10-19/01-structural-argument-gap.md",
+          "line": 91,
+          "excerpt": "Разобрать именно native Roslyn. Выбрать два `IdentifierNameSyntax`, являющихся `ArgumentSyntax.Expression` внутри вызова Pair. Для каждого записать Span, RawKind, три родителя, `ChildNodes` непосредственного родителя, old vector, actual ordinal аргумента и **реального следующего** узла в том же массиве `DescendantNodes`."
+        }
+      ]
+    },
+    "sibling_cache": {
+      "matched_lines": 5,
+      "matched_files": 5,
+      "hits": [
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/evidence/sql-source-ledger.md",
+          "line": 3,
+          "excerpt": "19 октября 2026. Точные blobs проверены формулой Git SHA-1 по исходным UTF-8 bytes с BOM/CRLF, где они присутствуют. Копии соседних кешей имели дополнительный последний LF; он удалялся только при совпадении с известным pinned blob. У новых receipts исходные bytes сохранены через JSON wrapper без нормализации line endings. Итог `units_probes.py`:34 проверенных входа,0native training и0генераций. Дополнительный record C4 проверен этим ledger builder. Наличие исходников или receipts не доказывает запуск бинарника именно из branch HEAD."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/62-LEARNING-METRICS-AND-REFERENCE-COST-AUDIT-2026-10-20/EVIDENCE-AND-REVIEW.md",
+          "line": 48,
+          "excerpt": "Reference-score cache проверен поиском по 555 planning и 170 protected Markdown. Exact matches —0; proximity matches —14 строк planning и4 строки protected. Близкие совпадения разобраны: KV cache generation, BM25, checkpoint caches и соседство разных тем. [Журнал поиска, все совпадения и SHA256](NOVELTY-EVIDENCE-2026-10-20.json). Это **отсутствие совпадений в исходном corpus**, не претензия на мировой приоритет DPO caching. До нашей публикации concurrent LC-REF-CACHE уже описал тот же механизм; E-REF-CACHE теперь отмечена как независимая проверка общей семьи, не дополнительное новое открытие. Отсутствие слова не доказывает отсутствие идеи: се"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/62-LEARNING-METRICS-AND-REFERENCE-COST-AUDIT-2026-10-20/README.md",
+          "line": 7,
+          "excerpt": "**Финальная актуализация:** прочитана core-дельта до `bcf880f232d090e3cfcb459c108d3945ce6dbc15` и параллельные planning-публикации до `c38a2a84516c698056b6912d2933b22cd69281d4` (последние R1/R2 прочитаны адресно). Все125 карточек последней дельты побайтно объяснены. Будущие A/B выполняются на точной копии настоящего механизма в `35.ExperimentsV2/Experiments/Rp01Micro/<ID>/` с отдельным host; production перенос — отдельное решение после измерений. Совпавший reference cache не заявляется отдельным новым открытием. [Последняя сверка и авторство соседних находок](05-CONCURRENT-PUBLICATION-AND-EXPERIMENT-COPIES.md)."
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/06-source-content-walk.md",
+          "line": 813,
+          "excerpt": "**S142 — [26-NEW-E30-PREDICATE-CACHE-STATE-ALIAS-AND-MISREAD-2026-10-16.md L1–58](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/26-NEW-E30-PREDICATE-CACHE-STATE-ALIAS-AND-MISREAD-2026-10-16.md:1>)**. L16–23 full-file22D теряет Current, cache hit скрывает bigram; L29 first-wins; L31 v2 другой task; L33 порядок/condition также исчезают; L37 sibling bodies same — supplied claim. Current one-hot и equality-filter не одно numerical вмешательство; exact donor/caller остаётся unknown. Proxy6→12 не generalization. Связи: [P47.1](cards/P47-file-vector-context.md#s-1), [P47.2](cards/P47-file-vector-context.md#s"
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/cards/N61-dpo-reference-reuse.md",
+          "line": 129,
+          "excerpt": "Назначенный host: `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/N61-REF-CACHE/Runner.csproj`, соседний `Program.cs`, `study.json`, `train.jsonl`. Копии изменяемых механизмов: `C:/Projects/llm_mvp_core/35.ExperimentsV2/Experiments/Rp01Micro/N61RefCache/`. Результат: `C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/N61-REF-CACHE-01/`, стороны A/B раздельно. Старые эксперименты, markers, checkpoint и bin/obj сохраняются."
+        }
+      ]
+    },
+    "quadratic_preparation": {
+      "matched_lines": 0,
+      "matched_files": 0,
+      "hits": []
+    },
+    "related_cost": {
+      "matched_lines": 46,
+      "matched_files": 24,
+      "hits": [
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-18-preparetogpl-recovery/02-neural-and-lora.md",
+          "line": 24,
+          "excerpt": "| RMSNorm | Два ручных broadcast возвращают новые Tensor без backward-связи. Final norm стоит непосредственно перед lm_head. [G7][gpl-rms], [G8][gpl-model] | TensorOps.MultiplyBroadcast сохраняет связи через normalization и gamma. [C7][core-rms] | Полезное исправление autograd. Оно не доказывает правильность всей составной производной, но опровергает предложение возвратить старый detach. |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-audit-additions/wiki/01-findings.md",
+          "line": 87,
+          "excerpt": "Core `ab583032… → 65d03a73a76810a0425a41c33d3c7eeaf4cdbc48` меняет 156 файлов только в `docs/`; native source pin двух новых факторов остаётся действительным. Поздний planning `a868f46ee3695728406173f8cd945e278ddb0def` добавил пакет `2026-10-20-learning-candidates-and-causal-gaps`; дополнительно проверены его 17 Markdown на эти feature/epoch механизмы. [KH-COST-01](https://github.com/lubochka/xiigen-planning/blob/a868f46ee3695728406173f8cd945e278ddb0def/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md) переиспользует один Roslyn AST между `FeatureVector` и `Label` в"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/01-axes-and-neighbor-evidence.md",
+          "line": 22,
+          "excerpt": "| Стоимость подготовки урока | Дважды построенный AST перед одним Train увеличивает подготовительную работу | **Новая KH-COST**: два ParseText подтверждены; выигрыша ещё не измеряли | Общие cost-темы не закрывают exact mechanism. [Карточка](knn-cost-card.md) |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/03-execution-contract-and-gaps.md",
+          "line": 49,
+          "excerpt": "| KH-COST-01 shared AST preparation | **Нет exact двух-ParseText→same Train recipe**; general cost темы не заменяют этот механизм | [Полная карточка](knn-cost-card.md), exact source copies/host/fixtures/commands/metrics | В protected не добавлено, потому что менять его запрещено; execution ещё не было |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/03-execution-contract-and-gaps.md",
+          "line": 63,
+          "excerpt": "| KH-COST-01 | `FileActionKnnPredictor.Train`; программирование на C# | `experiments-v2/RP01-MICRO/KH-COST-01/KhCost01Runner.csproj`; copies под `35.ExperimentsV2/Experiments/Rp01Micro/KhCost01` | 4 TRAIN +4 EXAM на arm; итого2 native Train,8 TRAIN presentations,16 logical queries (8 empty-memory guards +8 native Predict). Полные Program/csproj/prepare/run в карточке; сегодня NOT_RUN |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/05-final-publication-delta.md",
+          "line": 81,
+          "excerpt": "**Итог: новые документы не дублируют KH-COST-01 или точный sequential сценарий KH-EXT-01.** KH-COST сохраняет ограниченную новизну по известному корпусу с этим поздним дополнением. KH-EXT по-прежнему является уточнением известного LT-N02, а не совершенно новой фундаментальной гипотезой."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/05-final-publication-delta.md",
+          "line": 96,
+          "excerpt": "| CORRECTION-COLLISION-01 | При точном domain/prompt/rejected=response совпадении исправленный feedback остаётся в cache, но последующий SFT берёт stale indexed target. Сохраняется DPO→SFT, меняется происхождение target; объявлено refinement ND-DPO-SFT/P87. [L3–11,17–24][collision] | **Другой механизм.** Он не строит два AST для FileAction и не очищает MethodKnn pairs. Общая связь с обучением не делает владельцев или причинные факторы одинаковыми |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/README.md",
+          "line": 42,
+          "excerpt": "| **KH-COST-01** | Один учебный C# файл дважды разбирается в Roslyn AST: отдельно для features и label. Проверяется один общий immutable root перед тем же native `Train` | **Новая узкая гипотеза стоимости обучения**. Source confirmed, эффект `NOT_RUN`. [Полная карточка](knn-cost-card.md) |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md",
+          "line": 1,
+          "excerpt": "# KH-COST-01 — одно синтаксическое дерево для двух частей учебного примера"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md",
+          "line": 19,
+          "excerpt": "- `experiments-v2/RP01-MICRO/KH-COST-01/KhCost01Runner.csproj`, `Program.cs`, `Prepare.ps1`, `Run.ps1`, `provenance.json`, `card.md`, `results/A.json`, `results/B.json`, `results/report.md`, собственные bin/obj."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md",
+          "line": 103,
+          "excerpt": "Сохранить эту карточку также как `experiments-v2/RP01-MICRO/KH-COST-01/card.md`; это копия документа, не изменение старых карточек. Сохранить приведённые ниже Program/csproj/Run до исполнения. `Prepare.ps1` создаёт только названные копии. Проверка source не запускает Roslyn, Train или Predict."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md",
+          "line": 145,
+          "excerpt": "`experiments-v2/RP01-MICRO/KH-COST-01/KhCost01Runner.csproj`:"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md",
+          "line": 243,
+          "excerpt": "    experiment=\"KH-COST-01\", arm, runtime=Environment.Version.ToString(),"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md",
+          "line": 263,
+          "excerpt": "$khHost=\"$khRoot/experiments-v2/RP01-MICRO/KH-COST-01\""
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md",
+          "line": 267,
+          "excerpt": "if ($LASTEXITCODE -ne 0) { throw 'KH-COST-01 build failed; fix only this host without changing factor/data/scoring, then rebuild before any Train' }"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md",
+          "line": 270,
+          "excerpt": "if ($LASTEXITCODE -ne 0) { throw 'KH-COST-01 A failed; preserve outputs' }"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md",
+          "line": 272,
+          "excerpt": "if ($LASTEXITCODE -ne 0) { throw 'KH-COST-01 B failed; preserve outputs' }"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-cost-card.md",
+          "line": 287,
+          "excerpt": "> Выполни только выбранный KH-COST-01 по этому сохранённому документу. Цель — измерить стоимость реальной подготовки+Train FileAction memory при одном parse вместо двух; полезный выигрыш времени/CPU/allocations считается успехом этой метрики в C#, рост accuracy не обязателен. Сохрани все остальные изменения метрик и шум однократного timing. Положительный N-KU-01 не повторяй и не редактируй. Копии, overload преобразования, host, fixtures, run commands, counts и конфликтные ситуации полностью заданы выше. Не меняй исходный продукт,35.csproj, protected папку, тесты, CI или настройки агента. Допустимы подготовка и локальная починка собственного h"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-history.md",
+          "line": 77,
+          "excerpt": "**ID `KH-COST-01`: два Roslyn parse на один FileAction учебный source. Статус SOURCE_CONFIRMED / HYPOTHESIS / NOT_RUN.**"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-history.md",
+          "line": 97,
+          "excerpt": "| Два ParseText на одну реально обучаемую строку FileAction | Адресного опыта с этим фактором не найдено в662+296 MD | KH-COST-01 как новая небольшая карточка вне защищённой папки; NOT_RUN |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-novelty-ledger.md",
+          "line": 8,
+          "excerpt": "2. Reuse/cost: duplicate/double/twice/shared/reuse/cache рядом с parse/SyntaxNode/AST и русские повторный/двойной/дважды/общий разбор/парс/дерево. Дополнительно выполнен file-level AND точного file-action owner с reuse/duplicate/double parse, чтобы не потерять описание на разных строках."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/knn-novelty-ledger.md",
+          "line": 15,
+          "excerpt": "| KH-COST-01, два AST parse в actual FileAction training row | N48 false-label scope; LT-N01 collection features; N-KU label fix; LF-03 double Tensor copy относится к другому owner | **Новая узкая гипотеза в проверенном corpus**, source-confirmed / effect NOT_RUN. Настоящий recipient: FileActionKnnPredictor.Train; новый cost опыт описан отдельной карточкой |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-causal-delta-audit/axis-coverage.md",
+          "line": 17,
+          "excerpt": "| Координатные allocations RMS | Trainer → RmsNorm → два MultiplyBroadcast → FlatToIndices на элемент → backward/update | **NEW: RMS-COORD-ALLOC-01.** Один возможный fix: арифметика broadcast index вместо отдельного int[] на элемент, с сохранением math/backward. Пока NOT_RUN. [Полная карточка](RMS-COORD-ALLOC-01-CARD.md) | Точного опыта в protected нет; добавление подготовлено здесь |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-causal-delta-audit/axis-coverage.md",
+          "line": 25,
+          "excerpt": "| Стоимость подготовки KNN | ParseText для features + отдельный ParseText для label непосредственно перед Train | KH-COST-01 уже опубликован другим агентом. Возможная экономия общего immutable AST root, NOT_RUN. Не новая гипотеза этого пакета | [Имеющаяся карточка][knn-cost] |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-causal-delta-audit/historical_knn.md",
+          "line": 139,
+          "excerpt": "- `KH-COST-01` (два ParseText при подготовке одной FileAction training row) теперь уже опубликован другим агентом как узкая новая гипотеза. В нашем сводном аудите его следует учитывать как существующий адресный кандидат, не объявлять своей новой находкой. `KH-EXT-01` (sparse replacement очищает ранее выученные MethodKnn pairs) там прямо обозначен уточнением известного LT-N02; actual repeated RP01 caller не доказан."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-causal-delta-audit/latest-source-delta.md",
+          "line": 43,
+          "excerpt": "- **KH-COST-01** — два ParseText перед одним KNN Train; это уже опубликованная чужая cost-гипотеза."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/03-knn-units-and-domains.md",
+          "line": 79,
+          "excerpt": "| KH-COST-01 | Повторный parse в FeatureVector/Label → FileActionKnnPredictor.Train | Реальная подготовка обучения; ресурсный эффект допустим. Ошибочный learner в обязательной вступительной строке — ниже. |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/03-knn-units-and-domains.md",
+          "line": 84,
+          "excerpt": "### Конкретный конфликт KH-COST-01"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/03-knn-units-and-domains.md",
+          "line": 86,
+          "excerpt": "В [KH-COST-01:7](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/docs/plans/replanning-possible-diffs/experimets/cards/KH-COST-01.md#L7) обязательный блок требует ответов после `MethodKnn.Train`. Однако [сам рецепт:34–40](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/docs/plans/replanning-possible-diffs/experimets/cards/KH-COST-01.md#L34-L40), literal данные и source-copy относятся к `FileActionKnnPredictor`. Это разные памяти, labels и readers."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/03-knn-units-and-domains.md",
+          "line": 90,
+          "excerpt": "Дополнительно внутри [KH-COST:9](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/docs/plans/replanning-possible-diffs/experimets/cards/KH-COST-01.md#L9) сохранился номер 23 → 24, а внутри [KH-EXT:11](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/docs/plans/replanning-possible-diffs/experimets/cards/KH-EXT-01.md#L11) — 24 → 25. Закреплённый единый индекс назначает KH-COST 22 → 23, KH-EXT 23 → 24. Для исполнения читать номера из реестра, а не из этих устаревших строк; ID опыта не меняется."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/05-card-protocol-and-conflicts.md",
+          "line": 14,
+          "excerpt": "| KH-COST-01 | [строка 7 и тело карточки](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/docs/plans/replanning-possible-diffs/experimets/cards/KH-COST-01.md): MethodKnn в обязательном preamble, FileActionKnn в host/data/метриках | Во вводной учебный сигнал читать как **FileActionKnnPredictor.Train**, actual labels→30features→native index; MethodKnn не добавлять. Внутреннее №23→24 заменить при исполнении на **№22→23 KH-EXT-01** | Исправить только формулировку; исходные 2Train/16queries сохранить |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/08-execution-registry.md",
+          "line": 30,
+          "excerpt": "| 22 | [KH-COST-01](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/docs/plans/replanning-possible-diffs/experimets/cards/KH-COST-01.md) | C# | Один AST вместо двух перед тем же настоящим FileActionKnn.Train; 2 Train /16 queries | Точные копии,4 урока и команды; сборка не проверялась | 23 |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/08-execution-registry.md",
+          "line": 45,
+          "excerpt": "Внутренние старые номера в карточках читать по этому реестру: **KH-COST-01 —22→23 KH-EXT-01; KH-EXT-01 —23→24 GRADB-LOCALITY-01; GRADB-LOCALITY-01 —24→25 RMS-COORD-ALLOC-01**. Старое «конец очереди» в GRADB не действует."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/08-execution-registry.md",
+          "line": 47,
+          "excerpt": "При KH-COST-01 заменить ошибочную вводную `MethodKnn.Train` на **FileActionKnnPredictor.Train**, не добавлять второй learner. Для всех ID действует текущий успех по любому полезному показателю, default executor model, работа только в экспериментальной копии, русский report и запрет продолжать прошлую задачу после NEXT/STOP. Для №01–03 использовать существующие отчёты и [CANDIDATES](CANDIDATES.md), не запускать заново из-за обновления текста."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-results-and-new-gaps/README.md",
+          "line": 9,
+          "excerpt": "3. **В защищённых карточках остались содержательные противоречия.** P54.1–P54.7 ошибочно исключают reader обученных maps, хотя он участвует и в оценке внутри `TrainStructuredBatchAsync`. KH-COST-01 в обязательной вводной называет `MethodKnn.Train`, а фактически проверяет `FileActionKnnPredictor.Train`. Здесь добавлены адресные исправления; защищённые тексты не переписаны. См. [протокол](05-card-protocol-and-conflicts.md), [P54](06-P54-learned-reader-addendum.md)."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/02-experiment-coverage-audit.md",
+          "line": 169,
+          "excerpt": "| [R02][R02] SQL ON vs WHERE | TRAIN_UPDATE; OPEN_RECIPIENT/FIX_BUDGET | SqlRoleTagger/deterministic evaluator не native learner. Два LEFT JOIN contrasts и 4 independent result gold уже есть; выбрать acquisition или both-train repair явно: текущие 71–73 смешивают 2 update/8 answers с общим 4/16. SQL consumer named before run. |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/54-DESIGNTOCODE-CLEAN-CAUSAL-MICROEXPERIMENTS-2026-10-19.md",
+          "line": 25,
+          "excerpt": "- **Enhanced B:** безопасный server-owned training sidecar отдельно маркирует семантическую категорию **именно chosen correction** и rejected correction по approved visual QA; модель HTML/CSS по-прежнему видит только source и нужные outputs. Два типа defect (contrast, overflow)."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/62-LEARNING-METRICS-AND-REFERENCE-COST-AUDIT-2026-10-20/02-card-audit-125.md",
+          "line": 81,
+          "excerpt": "| [P61](https://github.com/lubochka/llm_mvp_core/blob/bf9b543e149ef197da85a767821d98c9b67916d2/docs/plans/replanning-possible-diffs/experimets/cards/P61-unknown-tail.md#L46) — UNKNOWN-хвост и true/false не входят в ключ | direct / 1 | [07-conditional-probes.md#translation](https://github.com/lubochka/llm_mvp_core/blob/bf9b543e149ef197da85a767821d98c9b67916d2/docs/plans/replanning-possible-diffs/experimets/2026-10-19-small-learning-probes/07-conditional-probes.md#translation) | UNKNOWN/true/false должны различаться в training/query signatures; два semantic contrast lessons, four heldout cases. Typed features не доказывают их извлечение из язык"
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/2026-10-20-card-reconciliation/README.md",
+          "line": 32,
+          "excerpt": "| learning-candidates-and-causal-gaps | 30 | [KH-COST](../experimets/cards/KH-COST-01.md), [KH-EXT](../experimets/cards/KH-EXT-01.md), [GRADB](../experimets/cards/GRADB-LOCALITY-01.md); положительные старые P11/P86 не запускаются заново; N-KU остаётся [кандидатом переноса](../required-changes.md) |"
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/cards/00-execution-index.md",
+          "line": 50,
+          "excerpt": "| 22 | [KH-COST-01](KH-COST-01.md) | C# | Один AST вместо двух перед тем же настоящим FileActionKnn.Train; 2 Train /16 queries | Точные копии,4 урока и команды; сборка не проверялась | 23 |"
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/cards/KH-COST-01.md",
+          "line": 1,
+          "excerpt": "# KH-COST-01 — одно дерево C# при подготовке учебной строки"
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/cards/KH-COST-01.md",
+          "line": 81,
+          "excerpt": "| Выход | `docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/KH-COST-01/` |"
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/cards/KH-COST-01.md",
+          "line": 141,
+          "excerpt": "$khOut='C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/KH-COST-01'"
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/cards/KH-COST-01.md",
+          "line": 171,
+          "excerpt": "> **Промпт исполнителю.** Выполни только назначенный индексом KH-COST-01 по этому телу. Создай заданные KHC-копии и standalone host; A два parse, B общий AST, остальной механизм неизменен. Один Train на четыре исходных строки и восемь запросов до/после на плечо, без дополнительных запусков. Покажи реальные rows/ответы и стоимость подготовки+Train, успех любой полезной оси без accuracy-gate, все ухудшения. Модель текущей сессии по умолчанию. Сохрани ошибки/partial; production/CI не трогай. Отчёт короткий русский, ручные hashes не нужны. При прямой остановке/переходе прекрати прежние действия немедленно."
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/cards/P124-p3-fixed-discriminator-contract.md",
+          "line": 183,
+          "excerpt": "**Вход/gold:** C# structure: тот же declared base-type contract и две AST class declarations; gold по точному base type binding, не строковому contains."
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/cards/P55-translation-laws.md",
+          "line": 169,
+          "excerpt": "A — BuildBatch не читает GrammaticalRole. B — добавить только этот уже разрешённый TRAIN field в versioned typed mapping и сохранять его через serialization/restore; lookup и morphology в этой стадии прежние. Две пила с NOUN/PAST_VERB и одинаковым concept дают разные payload roles; одинаковая role — контроль, missing role сохраняется unknown. Это сохранность представления, не полезность lookup. Отдельно подключать role-key .2 или morphology gate .3, не одновременно; actual FrequencyQuote caller условен."
+        }
+      ]
+    }
+  },
+  "bounded_novelty_decision": "BOUNDED_NEW mechanism: per-call sibling-list preparation reuse inside full native StructuralKnn training. Existing P26/N35/N53/N57 change features/metrics; KH-COST changes FileAction double AST parse. No exact factor+owner+training-boundary recipe found in this Markdown corpus. Not global uniqueness. No native runs."
+}

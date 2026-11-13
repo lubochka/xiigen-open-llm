@@ -1,0 +1,95 @@
+{
+  "core_commit": "66947785d1318f7cbbc88118f3156cdc75001e16",
+  "planning_commit": "53cbcabd3926cda714bab428d294eb666301e9e4",
+  "status": "source_novelty_search_not_runtime",
+  "corpora": [
+    {
+      "name": "planning_possibleDifs",
+      "files": 799,
+      "searches": [
+        {
+          "name": "exact_symbol",
+          "pattern": "SumAlongAxis",
+          "matches": []
+        },
+        {
+          "name": "exact_id",
+          "pattern": "RMS-ROW|RMS.*ROW.*REDUC|RMS.*REDUC.*ROW",
+          "matches": []
+        },
+        {
+          "name": "cost_proximity",
+          "pattern": "Mean.{0,100}(alloc|координ|массив)|reduc.{0,100}(RmsNorm|RMS|coordinate)|(RmsNorm|RMS).{0,100}reduc",
+          "matches": [
+            {
+              "file": "2026-10-20-learning-candidates-and-causal-gaps/new-gradb-locality-card.md",
+              "line": 37,
+              "text": "| Protected [N-ADJOINT-01][adjoint] | Прямо ограничивает фактор `gradA`; говорит «не forward и не gradB». Там scalar/SIMD numerical reduction, здесь скалярный порядок обхода gradB при сохранении coordinate reduction order |"
+            },
+            {
+              "file": "37-RP01-MASTER-CROSSWALK-POSITIVE-HISTORY-NOVELTY-AND-FAST-DECISIONS-2026-10-16.md",
+              "line": 25,
+              "text": "| 08 | DPO vector feature meaning reduced to active slots; feature-to-gradient coordinate alignment lost | P1 StepVector only | signed feature swap, finite/gradient check, compare output; [N33 vector ingress](33-NOVEL-DPO-VECTOR-INGRESS-NONFINITE-ADMISSION-2026-10-16.md) |"
+            },
+            {
+              "file": "51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/04-TENSOR-CONDITIONAL-GAPS.md",
+              "line": 50,
+              "text": "| N-SHAPE-01 | P11 detached Embedding/bias/MeanPooling, core41 review RmsNorm `keepDims:true` | Конкретный reduced-rank backward `Mean(...false)` + source guard + минимальный пример | Новый API-факт в просмотренном корпусе; inherited; active RP01 caller не найден |"
+            },
+            {
+              "file": "51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/07-REVIEW-AND-METHOD.md",
+              "line": 26,
+              "text": "Авторский tensor proxy и независимый NumPy/finite-difference эталон дали один математически правильный MatMul результат [10,20,300,400], dA=[10,10,100,100], dB=[3,7]. Нынешняя modulo формула даёт [10,200,30,400], dA=[10,100,10,100], dB=[4,6]. Для Mean [2,3]→[2] после удаления оси выявлено несовпадение числа backward координат с rank. При этом проверены работающие формы actual RP01 и сохранён статус conditional P2. [Независимые числа](evidence/independent-numeric-source-checks.json), [подробный механизм](04-TENSOR-CONDITIONAL-GAPS.md)."
+            },
+            {
+              "file": "51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/README.md",
+              "line": 22,
+              "text": "| **N-SHAPE-01** | Mean с keepDims=false удаляет ось в forward, но backward передаёт старое число координат | Унаследованный API-дефект; обычный RP01 keepDims=true | Код, rank guard, математический пример и независимый finite difference; **P2, не активная RP01 regression** |"
+            },
+            {
+              "file": "54-DESIGNTOCODE-CLEAN-SOURCE-PARITY-AND-NEW-GAPS-2026-10-19.md",
+              "line": 13,
+              "text": "| **N54-03 NEW conditional 16-prefix alias** | [current optimizer prompt](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionDpoDatasetBuilder.cs#L1231-L1260) → [local weight extraction](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L2989-L2995) | Из полного `InternalVectorPayload` в prompt берут только `Take(16)`. Локальный Machine считает `internal_vector:mean` и `:dimension` уже **по этому усечённому вектору**. Разные 17-я/18-я координаты дают одинаковые два локальных признака | Ущерб только если relevant coordinates находятся за 16 и не сохранены другой source feature; не объявлять все модели «необучаемыми» |"
+            },
+            {
+              "file": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/04-RP01-RESULTS-AND-MECHANISM-MAP.md",
+              "line": 52,
+              "text": "| Objective и teaching vector | Sum/mean, fractional response masks, zero pair weight, плотность вместо значения координат | [P05](https://github.com/lubochka/llm_mvp_core/blob/f50b710a5eaa6a8f0468b07d5b2510342a1de7ba/docs/plans/replanning-possible-diffs/experimets/cards/P05-response-length-objective.md), [P06](https://github.com/lubochka/llm_mvp_core/blob/f50b710a5eaa6a8f0468b07d5b2510342a1de7ba/docs/plans/replanning-possible-diffs/experimets/cards/P06-teaching-vector-adamw.md), [P86](https://github.com/lubochka/llm_mvp_core/blob/f50b710a5eaa6a8f0468b07d5b2510342a1de7ba/docs/plans/replanning-possible-diffs/experimets/cards/P86-fractional-response-mask.md), [P87](https://github.com/lubochka/llm_mvp_core/blob/f50b710a5eaa6a8f0468b07d5b2510342a1de7ba/docs/plans/replanning-possible-diffs/experimets/cards/P87-mixed-objectives.md), [P114](https://github.com/lubochka/llm_mvp_core/blob/f50b710a5eaa6a8f0468b07d5b2510342a1de7ba/docs/plans/replanning-possible-diffs/experimets/cards/P114-zero-weight-pair.md) | KNOWN. Числовая проверка является контролем настоящих updates, а не их заменой. |"
+            }
+          ]
+        },
+        {
+          "name": "last_axis_optimization",
+          "pattern": "(последн.{0,15}ос|last.axis).{0,100}(сумм|sum|reduc).{0,100}(alloc|fast|оптим|прям|stride|contigu)",
+          "matches": []
+        }
+      ]
+    },
+    {
+      "name": "protected_cards",
+      "files": 155,
+      "searches": [
+        {
+          "name": "exact_symbol",
+          "pattern": "SumAlongAxis",
+          "matches": []
+        },
+        {
+          "name": "exact_id",
+          "pattern": "RMS-ROW|RMS.*ROW.*REDUC|RMS.*REDUC.*ROW",
+          "matches": []
+        },
+        {
+          "name": "cost_proximity",
+          "pattern": "Mean.{0,100}(alloc|координ|массив)|reduc.{0,100}(RmsNorm|RMS|coordinate)|(RmsNorm|RMS).{0,100}reduc",
+          "matches": []
+        },
+        {
+          "name": "last_axis_optimization",
+          "pattern": "(последн.{0,15}ос|last.axis).{0,100}(сумм|sum|reduc).{0,100}(alloc|fast|оптим|прям|stride|contigu)",
+          "matches": []
+        }
+      ]
+    }
+  ]
+}

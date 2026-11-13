@@ -1,0 +1,23 @@
+# Два дополнительных учебных механизма ProjectWiki
+
+Подготовлены изолированные source-copy microhosts и точные инструкции. Статус обоих `NOT_BUILT / NOT_RUN`: .NET SDK отсутствует. Реальный эффект не измерен; core и защищённые experiments не менялись.
+
+1. [WIKI-TAXONOMY-01](../experiments/wiki-taxonomy/README.md): current enum17/learnedLabels15; новые `SystemBoundaryMapperTraining`/`CrossStackBusinessFlowGraphTraining` попадают через fallback в `NotProjectWiki` при update. Новый выходной контракт реализован только в экспериментальной копии с сохранением15 старых индексов.4TRAIN/6EXAM,144предъявления,24reader calls. Native useful metric Selected+route+target.
+2. [WIKI-MARGIN-01](../experiments/wiki-margin/README.md): correct-argmax skip сохраняет zero-state для первого класса, а current native reader отвергает state. Candidate обучается до expected−bestOther≥0.10; competing index исключает expected.2TRAIN/4EXAM,72предъявления,16reader calls. Обязательные два OOD контроля: возможны регрессии положительного bias.
+
+## Короткие pinned доказательства для основного отчёта
+
+| Claim | Quote / ссылка |
+|---|---|
+| Текущий output контракт шире learner | [enum L473–492](https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/42.ProjectWikiDomain/ProjectWikiDomainModels.cs#L473-L492) содержит17; [Labels L25–42](https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/42.ProjectWikiDomain/ProjectWikiRequestRoutingTrainableModel.cs#L25-L42) содержит15 |
+| Непредставимая метка учит другой класс | `return index < 0 ? Labels.Length - 1 : index;` — [L295–299](https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/42.ProjectWikiDomain/ProjectWikiRequestRoutingTrainableModel.cs#L295-L299); writer `weights[expected] += LearningRate * value;` — [L65–79](https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/42.ProjectWikiDomain/ProjectWikiRequestRoutingTrainableModel.cs#L65-L79) |
+| Текущие targets реально существуют | [static router L61–65](https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/42.ProjectWikiDomain/ProjectWikiRequestRouterUnit.cs#L61-L65) → [orchestrator L218–223](https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/42.ProjectWikiDomain/ProjectWikiTrainingOrchestrator.cs#L218-L223); но штатный orchestrator использует static router L205, learned adoption не доказан |
+| Old donor согласован15/15 | [enum L381–398](https://github.com/lubochka/llm_mvp_core/blob/219d7ba89dc3ef43e03e17f1461ad96154d3dd7a/42.ProjectWikiDomain/ProjectWikiDomainModels.cs#L381-L398), [Labels L10–27](https://github.com/lubochka/llm_mvp_core/blob/219d7ba89dc3ef43e03e17f1461ad96154d3dd7a/42.ProjectWikiDomain/ProjectWikiRequestRoutingTrainableModel.cs#L10-L27) |
+| Skip и zero tie | `if (predicted == expected) continue;` — [L65–69](https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/42.ProjectWikiDomain/ProjectWikiRequestRoutingTrainableModel.cs#L65-L69); `var best = 0;`, строгое `>` — [L301–310](https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/42.ProjectWikiDomain/ProjectWikiRequestRoutingTrainableModel.cs#L301-L310) |
+| Реальный учебный consumer | [TrainingRunner L43–53](https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/42.ProjectWikiDomain/ProjectWikiRequestRoutingTrainingRunner.cs#L43-L53) вызывает `Train(trainingRows)` и `RouteForEvaluation`; gateпроверка reader [L162–184](https://github.com/lubochka/llm_mvp_core/blob/62bcc8f2368840e22d2ea98ef16d9bd526ad9a39/42.ProjectWikiDomain/ProjectWikiRequestRoutingTrainableModel.cs#L162-L184) |
+
+## История и пределы вывода
+
+Donor local_wiki_planning@`219d7ba89dc3ef43e03e17f1461ad96154d3dd7a` обучал classical token/bigram route classifier. Его отсутствие trained-state gate позволяло default-selected first label; это не основание считать нулевой state реальным успехом обучения. Здесь не переинтерпретированы сохранённые успешные memory/kNN или .NET_DOMAIN_RUN_043 metrics и не заявлено их опровержение. Donor используется для точного сравнения15/15 и train/reader контракта. Новые два механизма найдены при current audit, не называются причинами всех неудач RP01.
+
+Оба новых вмешательства независимо проверены на novelty относительно matching cards в planning577 Markdown@`fb9aadf69e0669d36b820d61f76fe3ecc8697a7d` и protected286 Markdown@current. Known KN-ROUTER canonicalization относится к другому routing learner. Новизна ограничена этим просмотренным inventory, не всей историей GitHub.

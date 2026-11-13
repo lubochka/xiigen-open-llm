@@ -1,0 +1,54 @@
+{
+  "experiment_id": "N16-01-SYNTHETIC-VECTOR-COUNTEREXAMPLE",
+  "date": "2026-10-16",
+  "core_source_sha": "83590a462b2f8aedc9d3ab4cb775193eb9c25ce5",
+  "source_method": "21.AgentInfrastructure/Logical/KnnLogicalUnit.cs:265-300",
+  "script": "16-KNN-TIER-BALANCE-PROBE.mjs",
+  "script_github_blob_sha": "dc4c4719e8e9b538d03b8b3a3bf20eef9c9c8eb8",
+  "script_sha256": "9750aed446cd605faff1f098fe2e4520481b8201ed2a870a8f3263826976e19f",
+  "execution": "node v22.16.0 --check PASS; node script PASS, exact GitHub blob bytes verified locally",
+  "status": "ARITHMETIC_PROXY_RUN_PASS__NATIVE_DOTNET_NOT_RUN__STUDENT_LEARNING_NOT_MEASURED__CODEX_ASTRA_REVIEW_NOT_PERFORMED",
+  "training_examples": 8,
+  "heldout_numeric_cases": 16,
+  "arms": {
+    "A_current_global_L2": {
+      "correct": 8,
+      "total": 16
+    },
+    "B_independent_tier_L2": {
+      "correct": 16,
+      "total": 16
+    },
+    "C_B_corrupted_train_output_labels": {
+      "correct": 0,
+      "total": 16
+    }
+  },
+  "first_case": {
+    "id": "h0-SAFE-0",
+    "expected": "SAFE",
+    "A": {
+      "predicted": "UNSAFE",
+      "winning_neighbor": "t0-unsafe",
+      "cosine": 0.9996875976257422
+    },
+    "B": {
+      "predicted": "SAFE",
+      "winning_neighbor": "t0-safe",
+      "cosine": 0.9993761694389222
+    },
+    "C": {
+      "predicted": "UNSAFE",
+      "winning_neighbor": "t0-safe",
+      "cosine": 0.9993761694389222
+    }
+  },
+  "assumptions": [
+    "Proxy uses frozen BPE-like integer token IDs; does not execute BpeTokenizer",
+    "Exact cosine no HNSW ANN randomness; 64D token modulo32 / predicate stableHash modulo32",
+    "Train examples and labels identical in A and B; normalization is the sole varying factor",
+    "Heldout numeric IDs shifted by 32 to preserve hashed buckets: NOT source-disjoint independent semantic examples",
+    "Result demonstrates a constructed ranking failure, not causality of published RP01 Student free-generation failure",
+    "Native .NET KNN training/generalization and ordinary consumer invocation remain NOT_RUN"
+  ]
+}

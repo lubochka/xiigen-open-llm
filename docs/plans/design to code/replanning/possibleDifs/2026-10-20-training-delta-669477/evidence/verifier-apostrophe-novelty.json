@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-20",
+  "planning_sha": "53cbcabd3926cda714bab428d294eb666301e9e4",
+  "core_sha": "66947785d1318f7cbbc88118f3156cdc75001e16",
+  "candidate": "VT-APOSTROPHE-01",
+  "patterns": [
+    "apostroph",
+    "апостроф",
+    "brother.s",
+    "TryParseRequiredTerm",
+    "issue.Split",
+    "single.quote",
+    "кавыч"
+  ],
+  "roots": [
+    {
+      "root": "snapshots/planning/llm mvp/design to code session/replanning/possibleDifs",
+      "markdown_count": 799,
+      "matches": [
+        {
+          "path": "2026-10-19-design-to-code-clean-learning-audit/02-NEW-TRANSLATION-REPRESENTATION-GAPS.md",
+          "line": 93,
+          "text": "Контроли: предложения без конечного знака; EN→RU; истинная замена «она→он» должна продолжать менять род. Объединять все формы в один key для получения invariance нельзя. Фальсификатор: нормализация не исправляет native tags; ни один ordinary запрос не читает изменённые keys; либо растёт ложное принятие/теряются реальные различия. Семантически важную пунктуацию, например кавычки или вопросительную модальность, нельзя объявлять универсально несущественной."
+        },
+        {
+          "path": "2026-10-20-learning-signal-and-cost-audit/01-new-findings-and-small-experiments.md",
+          "line": 129,
+          "text": "4. В [TrainOnExample][verifier-writer] issue имеет форму `expected 'quickly' for translated quality marker`. Его хвост не содержит ни одного имени [SemanticConcept][concepts], поэтому TryParseIssue не открывает альтернативную запись concept/signature. В ветви TryParseRequiredTerm значение qualityMarkerIssue=true также исключает запись по signature. При пустом marker не меняется и `_requiredTermsBySourceMarker`."
+        },
+        {
+          "path": "2026-10-20-learning-signal-and-cost-audit/reviews/independent-source-review.md",
+          "line": 39,
+          "text": "5. `TryParseRequiredTerm` успешен. Однако `qualityMarkerIssue=true` пропускает запись `_requiredTermsBySignature` ([1120–1132][verifier-train])."
+        },
+        {
+          "path": "26-MICRO-LEARNED-VERIFIER-POLARITY-EXPERIMENT-2026-10-16.md",
+          "line": 27,
+          "text": "2. Небольшой `.NET 9` console harness с `ProjectReference` на `27.TranslationDomain.csproj`; один экземпляр Unit на arm. Загрузить **4** обучающих rule examples через настоящий public `TrainOnExample`. Проверить, что исходный Unit действительно знает каждое term: заведомо пустой кандидат обязан давать `Pass=false`. При невыполнении — `PRECONDITION_FAILED`, нельзя проводить сравнение качества. Если выбранный `TryParseRequiredTerm`/signature route не сохраняет термин, не редактировать fixture под labels; устранить только ошибку создания train-law в harness, либо прекратить."
+        },
+        {
+          "path": "30-INDEPENDENT-NOVEL-COMPOSITION-CONTRACTION-AND-OPERATOR-GAPS-2026-10-16.md",
+          "line": 7,
+          "text": "Уже проверенные другими агентами темы не выдаются здесь за новые: N16 — FIFO, top-k, language leakage; N20 — nonlocal candidate/reranker normalization; N21 — **пропуск непокрытых слов при сборке phrase-map**, whitespace и pseudo-accuracy; N23/N27 — Verifier rule conflicts и bias; N27 — удаление буквального \\`not/no\\`; N28 — Unicode и символы в admission; N29 — pseudoalignment первого слова и rejected annotation в адресе памяти. Отличие новых N30: **оба конкурирующих перекрывающихся фрагмента полностью покрывают исходную строку**, **апостроф внутри сокращения меняет полярность и теряется без наличия токена \"not\"**, а **нормализация склеивает слова через оператор, создавая фразу, которой в source не было**."
+        },
+        {
+          "path": "30-INDEPENDENT-NOVEL-COMPOSITION-CONTRACTION-AND-OPERATOR-GAPS-2026-10-16.md",
+          "line": 27,
+          "text": "1. [\\`TranslationKnnStore.SourceTokenRegex\\` L192 и \\`LowInformationSourceWords\\` L194–201](https://github.com/lubochka/llm_mvp_core/blob/79082340f01b744cdf08185616f2bd818dbd06b8/27.TranslationDomain/TranslationUnitContracts.cs#L190-L201): токены через \\`[\\p{L}\\p{N}_$]+\\`, отбрасываются односимвольные и низкоинформативные, в т.ч. \\`not/no\\`. **Никакого специального разбора apostrophe contraction нет.**"
+        },
+        {
+          "path": "49-LOCAL-WIKI-GOLDEN-RECOVERY-2026-10-19/02-NEW-DIFFS-AND-DOMAIN-SCOPE.md",
+          "line": 55,
+          "text": "**Новая гипотеза:** нужен *polarity-aware scope detection*, различающий наличия двух подсистем от их отрицаний, включая `without frontend`, `server only`, `no API`, «только бекенд»; но без агрессивного отбрасывания реальных client-server сценариев. **Домен:** запросы по архитектуре/коду, не универсальное правило перевода. **Малый опыт:** 4 настоящих full-stack prompts + 4 \"без frontend\" prompts + 4 double-negation/quoted code prompts; сравнить gold/current/C (потерянный route, но проверка negation context). Blind specificity/recall, правильная обработка кавычек. **Falsifier:** оригинальный `ContainsAny` уже где-то учитывает отрицание или конкретный native gold `DetectIntent` в таком вопросе не выбирает ClientServer — тогда исправить гипотезу; до исполнения только `SOURCE_PREDICTION`. [Negative control N01](05-CROSS-STACK-FIXTURE.json)."
+        },
+        {
+          "path": "50-LOCAL-WIKI-FEEDBACK-AND-BPE-BUDGET-2026-10-19/evidence/prior-card-index.md",
+          "line": 69,
+          "text": "| [P63](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/docs/plans/replanning-possible-diffs/experimets/cards/P63-source-containment.md) | P63. Одностороннее containment и чужие оговорки | P63.1 — Одностороннее containment теряет ограничение source; P63.2 — Stopword not скрывает полярность вне узкого SourceLaw; P63.3 — Отрицательное contraction до удаления апострофа; P63.4 — Дополнительное обязательство source отдельно от lexical score |"
+        },
+        {
+          "path": "53-EXTERNAL-DOMAINS-LEARNING-SEMANTICS-AUDIT-2026-10-19/evidence/review/prompt_to_task_independent_review.md",
+          "line": 35,
+          "text": "**Сфера authority.** Alias применяется к AuthorityTexts, а не безусловно ко всякому архивному тексту RawPrompt: [BuildQuery/ExtractPromptSignals, 327–365][authority-query]; [ExtractAuthorityText, 368–410][authority]. Evidence-only blocks могут быть удалены. Для эксперимента запрос должен быть обычным текущим неподкавыченным instruction либо корректным `current_unquoted_user_instruction`. Это не пример prompt injection и не доказательство, что процитированный старый план становится authority."
+        },
+        {
+          "path": "57-ARGUMENT-AND-VERIFIER-LEARNING-GAPS-2026-10-19/06-source-and-review-record.md",
+          "line": 45,
+          "text": "Проверки не требуют изменения core и записывают результаты рядом с собой либо по `--output`. Для скриптов, читающих core, нужен локальный checkout на указанном commit с настоящими исходными blobs. Иная версия отвергается по Git SHA. Если путь содержит пробелы, заключите его в кавычки."
+        }
+      ]
+    },
+    {
+      "root": "snapshots/core/docs/plans/replanning-possible-diffs/experimets/cards",
+      "markdown_count": 155,
+      "matches": [
+        {
+          "path": "P63-source-containment.md",
+          "line": 152,
+          "text": "### P63.3 — Отрицательное contraction до удаления апострофа"
+        },
+        {
+          "path": "P63-source-containment.md",
+          "line": 165,
+          "text": "- [30-INDEPENDENT-NOVEL-COMPOSITION-CONTRACTION-AND-OPERATOR-GAPS-2026-10-16.md:27](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/30-INDEPENDENT-NOVEL-COMPOSITION-CONTRACTION-AND-OPERATOR-GAPS-2026-10-16.md:27>) — Отрицательное contraction до удаления апострофа."
+        }
+      ]
+    }
+  ],
+  "assessment": "No existing target-term apostrophe delimiter loss at TryParseRequiredTerm found in these documents. Existing source-contraction P63/N30, concept-role parser N28/P56 and unreachable marker N57/LF04 are related but distinct; this design uses disjoint explicit ADV markers. Not a claim about unknown unpublished work."
+}

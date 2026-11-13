@@ -1,0 +1,1803 @@
+{
+  "audit_pin": "bf9b543e149ef197da85a767821d98c9b67916d2",
+  "later_revision": "f5dd532045716495a2c7668573250e5d7cc46810",
+  "later_revision_audited_by": "root separately",
+  "rows": [
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "D / R04:19–89",
+      "classification_verdict": "TRAIN_UPDATE; FIX_DESIGN/OPEN_HOST",
+      "required_correction_and_measurement": "CodeDocumentationSimulationDpoExperiment.CreateForProjectLora→StepVector→candidate materializer→CodeDocumentationStudentGeneration. Ввести отдельный scoped bounded dispatch для двух rows с переиспользованием того же trainer и guards; нынешний контракт ValidOptions 1/500 сохранить; не выдавать его за готовую CLI. Выбрать один фактор; 4 updates/16 own answers; baseline bytes и m/v/step/RNG восстановить реально.",
+      "protected_source_ids": [
+        "R04"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] neural rank / alpha / dropout / target modules",
+      "classification_verdict": "TRAIN_UPDATE; COND, отдельные A/B",
+      "required_correction_and_measurement": "LoraLinear/config и actual project parameter bindings; менять ровно одну величину, обе стороны совместимы с выбранным B0. Rank/target-set может требовать fresh совместимый checkpoint — нельзя загрузить старую форму с молчаливой переинициализацией. 2 T/4 E, 4 updates; trainable set / ΔBA отдельно.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] LR / beta / batch",
+      "classification_verdict": "TRAIN_UPDATE; COND, отдельные A/B",
+      "required_correction_and_measurement": "DpoTrainer/AdamW. Фиксировать raw pairs и вид budget: один двухпарный batch ≠ два single-pair updates. LR/beta меняются отдельно. Каждая метрика cost по actual optimizer/model calls.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] response-score sum/mean / mask",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "DpoTrainer response log-prob. Для length contrast нужны различающиеся target lengths; два симметричных D ответа не выявляют length bias. Одна objective/normalization переменная, одинаковый independent EXAM scorer.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] warm-start / SFT warm-up",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "Настоящий SFT owner перед DPO, одинаковый reference contract. B-only2 SFT+both2 DPO =6 total updates, не 4. Дообученная начальная функция намеренно отличается; A0/B0 отдельно, стоимость SFT не скрывать.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] stop window / plateau",
+      "classification_verdict": "TRAIN_UPDATE; FIX_BUDGET",
+      "required_correction_and_measurement": "Actual learner loop; окно 5 нельзя проверять двумя шагами. До 5 updates/arm либо другой заранее выбранный window, но не менять window и loss scale вместе. Reaching target/actual compute, включая censored budget.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] derivative finite difference",
+      "classification_verdict": "DIAG внутри TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "Native DpoTrainer/TensorOps, не Python proxy. Аналитические/finite difference calls отдельные counters; quality claim только в named actual lesson update. Не делать обязательную цепочку kernel PASS→whole learner PASS.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "P86 / R07:27–31",
+      "classification_verdict": "FIXED/N/A exact binary",
+      "required_correction_and_measurement": "Current DpoTrainer weighted loss/backward уже uses mask sum и target Scale. Не писать новый ремонт текущего fractional mask; legacy regression возможен отдельно. RP01 binary mask этот старый контраст не достигает.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] decoder/cache/UTF8/EOS/sampler",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY, доменная применимость",
+      "required_correction_and_measurement": "StudentGeneration/Sampler/Tokenizer над тем же trained checkpoint. Full-vs-cached 4 prefixes/8 forward или 4 output cases/8 decodes; source-trained artifact нужен. Stochastic tie/residual N/A при greedy temperature 0. EOS last merge требует совместимого token contract, не переназначения последнего ID.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] BPE continuation freeze/refit",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "KnnLogicalUnit.Train:103→BPE fit:139→vector/index:153→Execute:202. Frozen-vs-rebuild corpus coordinates согласованы для old/new index и query; 2 Train/16 Execute. Old vectors с new IDs invalid.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "N39 / R07 tokenizer identity",
+      "classification_verdict": "TRAIN_INPUT; COND / защищённый RP01",
+      "required_correction_and_measurement": "Два словаря одинаковой size не равны. Generic loader должен проверять tokenizer/codec identity до native update. RP01 caller уже сверяет SHA, поэтому его не объявлять незащищённым. Admission-only8 attempts не independent learning gain.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] encoder drift rebuild",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; OPEN_CALLER",
+      "required_correction_and_measurement": "IndexE0/queryE1 против согласованного rebuild E1. Нужен actual embedding producer и reader; 1 rebuild/8 retrieval. Не подменять всей сменой модели/корпуса.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] pre train stride / EOF / shard tail",
+      "classification_verdict": "TRAIN_INPUT; COND, факторы раздельно",
+      "required_correction_and_measurement": "DatasetBuilder/DataLoader→native SFT. 2 docs/4 windows как материал; следующий настоящий 2 SFT/arm позволяет 4 updates/16 answers. Stride 1 не автоматически ошибка, short shard уже bounded exception. EOS byte1 не выделенный BPE EOS.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] uint16 high-vocab",
+      "classification_verdict": "N/A current vocab 629",
+      "required_correction_and_measurement": "DatasetBuilder serialization >65535 — conditional другое семейство; в 629-token RP01 четыре высоких IDs искусственны. Не запускать до найденного применимого dataset consumer.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R07][R07] R06 reset m50 only",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "SimulationEnRuContinuation.TryRestoreContinuationState:574. В B reset только m, сохранить v/step/LoRA/reference/RNG. Реальный C50 и bounded ENRU2 T caller отсутствуют; 4 updates/16 generation, одна операция reset, не fresh-init whole adapter.",
+      "protected_source_ids": [
+        "R07",
+        "R06"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R09][R09] N1 cosine LR beyond horizon",
+      "classification_verdict": "TRAIN_UPDATE; OPEN_HOST",
+      "required_correction_and_measurement": "Cosine Warmup Scheduler.GetLr:28→Trainer:128→AdamW. Clamp progress только; actual supervised 3 presentations/arm (T1, T2, T1), 6 updates, 16 answers. Не приписывать DPO, где другой caller.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R09][R09] N2 current/replay TeachingVector",
+      "classification_verdict": "TRAIN_INPUT; COND/NO_CONTRAST possible",
+      "required_correction_and_measurement": "LogicalCapabilityTrainingPreferenceProjector.ProjectCurrent:108 vs Replay:254; Dpo VectorSignal читает active count, не смысл координат. Если count равен, данный factor не достигает DPO scale; не обещать semantic gain. Unified recipe version, actual recipient/ordinary reader OPEN.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R09][R09] N3 AdamW overflow",
+      "classification_verdict": "DIAG→TRAIN_UPDATE; OPEN_NATIVE_TRIGGER",
+      "required_correction_and_measurement": "AdamW:96 g*g overflow. Искусственный scalar 1e20 — numeric condition, не доказанный gradient реального lesson. Для update contrast нужна достигнутая finite/overflow trace от named learner и одна moment protection, не одновременно reset старого v.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R10][R10] L fresh A scale",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "LoraLinear:92 A Kaiming, B0; A0 vs2 A0 при одинаковом seed/base/rank/alpha/LR/reference/zero moments. 4 Step, 16 own answers, 16 pair/32 side scores; ΔBA после каждого. Не применить к C50 как «restore».",
+      "protected_source_ids": [
+        "R10"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R10][R10] W raw Wiki triple",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; OPEN_TINY",
+      "required_correction_and_measurement": "ToDpoMetricPair CodeTrace/RequestRouting удаляет содержание в пользу defect type; B сохраняет raw prompt/chosen/rejected. ProjectWikiDpoMetricRunner guard 50+50 требует lawful 2/4 mode. 4 StepMany и 16 preference scores валидны локально; ordinary decoder/reader пока отсутствует — natural-answer axis NOT_MEASURED.",
+      "protected_source_ids": [
+        "R10"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R10][R10] P continuation vs fresh Wiki policy",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "RequestRoutingPipeline default fresh vs actual parent loading Runner:488. Одинаковый reference/fresh optimizer/RNG; projection already lossless в обеих ветвях. 4 StepMany/16 pair scores; не смешивать с W. Default-fresh не означает все callers fresh.",
+      "protected_source_ids": [
+        "R10"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R11][R11] PAIR-1 exact tie admission",
+      "classification_verdict": "TRAIN_INPUT; COND / текущий guard",
+      "required_correction_and_measurement": "Existing Inspect:57–75 уже rejects ties/duplicates. 2 singleton Inspect attempts диагностируют admission, не learning. Semantic tie отдельно от string equality. Нельзя обходить gate ради 2 уроков.",
+      "protected_source_ids": [
+        "R11"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R11][R11] PAIR-2 reversed label repair",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Независимый arithmetic gold D; перепутать/исправить chosen/rejected только второго урока. 4 StepVector, 16 generation, 16 pair/32 side. Reject-length heuristic не gold; tiny host нужен.",
+      "protected_source_ids": [
+        "R11"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R11][R11] overlap metadata / leakage / schema",
+      "classification_verdict": "DIAG/INPUT; только применимая связь",
+      "required_correction_and_measurement": "Token Jac card 8 calculations не semantic truth; TRAIN-vs-EXAM8 comparisons не обучение; historical schema 2 loads без обхода admission. Привязать к admitted pair transformation, иначе документационная проверка и без исполнения.",
+      "protected_source_ids": [
+        "R11"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R11][R11] Angular / Mongo / Elastic",
+      "classification_verdict": "TRAIN_UPDATE; OPEN_CONSUMER, 3 отдельных профиля",
+      "required_correction_and_measurement": "Точные 2/4 fixtures уже даны: boolean disabled, strict gt/lt, keyword term. Только реальный BPE Student D с сохранённым полным input и compatible B0. Acquisition 2 updates или PAIR repair 4 — выбрать один. Database/browser oracle не learner.",
+      "protected_source_ids": [
+        "R11"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R12][R12] AC-SQL01 read/write targets",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "AnswerComposer DpoGenerator.BuildSignalChosen:177 добавить лишь conditional read/write markers; prompt/source уже same. Native Wiki metric либо отдельно BPE D, не смесь. 2 T/4 E, 4 updates/16 pair scores, 16 generation только при actual reader. Dynamic SQL unknown не оценивать через изменяемый generator.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R12][R12] AC-SQL curriculum",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND, отдельный опыт",
+      "required_correction_and_measurement": "Одна учебная slot result-shape→table-effects, same candidate pool, two lessons/arm, unchanged representation. 4 updates; не одновременно AC-SQL01 markers.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R12][R12] AC-EV02 evidence/version",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "AnswerComposer pipeline:106 question-only→same question с Request/Evidence prefix. T7/T9, EXAM20–23; train/query factor одинаков, independent targets. A0/B0 различны; 4 updates/16 pair и при reader 16 answers. Проверить actual contextLen/4 prefix: богатый prompt может отсечь сами SQL facts.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R12][R12] N-SHAPE-01 Mean",
+      "classification_verdict": "DIAG→TRAIN_UPDATE; N/A для проверенного RmsNorm",
+      "required_correction_and_measurement": "TensorOps.Mean:544/BroadcastGradAlongAxis:1049; removed-axis mapping. RmsNorm uses keep Dims=true, не failing shape. 8 native fw/bw — не разрешённый standalone learning run; нужен настоящий removed-axis update consumer.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R12][R12] N-SHAPE-02 MatMul",
+      "classification_verdict": "DIAG→TRAIN_UPDATE; OPEN_NATIVE_SHAPE",
+      "required_correction_and_measurement": "TensorOps:609/656 coordinate broadcast против modulo. Failing [2, 2, 1, 1]×[2, 1, 1, 1]; current RP01 expandsK/V согласованно/uses2 D. Не заявлять current attention defect без достигнутой shape.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R14][R14] NEW-AGE",
+      "classification_verdict": "TRAIN_UPDATE только при actual late parameter; OPEN",
+      "required_correction_and_measurement": "AdamW global step vs parameter age when Grad=null. Numeric 4 Steps не предметный опыт. Требуется actual late carrier; zero-but-present grad≠null. Не утверждать sparse RP01, где continuation требует 16 moments.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R15][R15] AUT-WEIGHT-01",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; OPEN_CALLER",
+      "required_correction_and_measurement": "DatasetWeighter cap→AutonomousTrainer minimum 5. 5 distinct supervised source lessons, no DPO, same replay off, 2 TrainPrepared/10 nested Execute/16 answers; actual optimizer count from owner. Data with all weights 1 даёт N/A.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R15][R15] AUT-REPLAY-02",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Replay commit before candidate-evaluation vs after. Candidate rejection не делает данные плохими. Saved legal life cycle needed; second cycle 5 new+2 replay/arm=14 Execute; prep first cycle budget отдельно. Synthetic 8 life cycle fixtures не learning результат.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R16][R16] N-ADJOINT-01",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "TensorOps gradA MatVec reduction только; current/scalar сравнить с FP64 как reference, не объявлять old scalar истиной. D2 T/4 E, 4 updates/16 answers. Synthetic 12 contractions самостоятельным запуском не назначать.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R21][R21] H58-02 sign",
+      "classification_verdict": "TRAIN_UPDATE; COND, historical negative control",
+      "required_correction_and_measurement": "DpoTrainer:1116 local (oh−sm) vs opposite при same current upstream/loss/mask. 4 actual updates/16 answers/32 score sides. Не называть возврат старого знака repair и не переносить целиком donor trainer.",
+      "protected_source_ids": [
+        "R21"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R21][R21] H58-03 dropout / parameter enumeration",
+      "classification_verdict": "N/A dropout 0; observation actual update",
+      "required_correction_and_measurement": "training:true/false не различает current dropout 0. Enumeration actual updated tensors не отдельный training factor. Другой nonzero profile needs own card; не включать искусственный dropout ради эффекта.",
+      "protected_source_ids": [
+        "R21"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R23][R23] MASK",
+      "classification_verdict": "TRAIN_UPDATE; COND, конкретный P0 factor",
+      "required_correction_and_measurement": "Trainer:102–147 mask prompt+LF targets only, denominator T−1 unchanged; boundary по joint BPE target i+1 bytes. 4 SFT updates, own C# evaluator 16 answers; source spans/host/SFT candidate readback OPEN. Training loss objectives разные, common responseNLL для сравнения.",
+      "protected_source_ids": [
+        "R23"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R23][R23] STATE",
+      "classification_verdict": "TRAIN_UPDATE; COND, конкретный P0 factor",
+      "required_correction_and_measurement": "IncrementalTrainingSession:403 fresh AdamW между уроками vs carry только m/v/step через portable bindings. fixed positive LR, same weights/RNG/full sequence mask; 4 SFT updates/16 answers. Не reset весь model/state.",
+      "protected_source_ids": [
+        "R23"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R23][R23] PAD",
+      "classification_verdict": "TRAIN_UPDATE; COND, cost-only допустим",
+      "required_correction_and_measurement": "DpoExactPairMaterial:171 +DpoTrainer:866/1007: validated IDs+mask side-prefix по declared length, не ID0. 4 updates, 16 internal forwards/8 policy backward; 0 Generate. Full update cost includes prefix copy; process peak isolation. Неизмеренная accuracy NOT_MEASURED; asymmetric al lengths подтвердить до freeze.",
+      "protected_source_ids": [
+        "R23"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "3. Полный crosswalk малой серии: нейронное обучение, tokenizer и численные операторы",
+      "recipe": "[R23][R23] ORDER",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "IncrementalTrainer mixed path vs отдельный lawful exact research host: DPO(two-pair batch)→2 SFT или 2 SFT→same DPO. 2 DPO+4 SFT=6 updates total. ReferenceR0/stage optimizers создать до начала и не recapture после SFT. Нельзя назвать research A буквальным production legacy baseline.",
+      "protected_source_ids": [
+        "R23"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R02][R02] C role ablation",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND / ABLATION",
+      "required_correction_and_measurement": "StructuralKnn role distance:27, Train 117, Predict 145. A masks role train/query, B current preserves; k1 both, 2 rows/2 Train/16 Predict. A искусственно ухудшенный baseline: успех B не доказательство отсутствующей в существующей role-функции. PositionInParent может уже разделять два случая. Facade≥10 и ordinary code-generation reader отдельно OPEN.",
+      "protected_source_ids": [
+        "R02"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R02][R02] SQL ON vs WHERE",
+      "classification_verdict": "TRAIN_UPDATE; OPEN_RECIPIENT/FIX_BUDGET",
+      "required_correction_and_measurement": "SqlRoleTagger/deterministic evaluator не native learner. Два LEFT JOIN contrasts и 4 independent result gold уже есть; выбрать acquisition или both-train repair явно: текущие 71–73 смешивают 2 update/8 answers с общим 4/16. SQL consumer named before run.",
+      "protected_source_ids": [
+        "R02"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R02][R02] RX1 comments/strings",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "RegexPreprocessor15–38 strips comments before strings; Facade query 130–159, FileAction training raw194–202. Preserve literals then comments one factor; 4 native TRAIN guard, 4 EXAM URL/comment. Same learned table reader зависим; ordinary output limited PredictedFileAction.",
+      "protected_source_ids": [
+        "R02"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R02][R02] RX2 interpolation/content",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "Тот же preprocessor, отдельно interpolation/string-body preservation. Не менять comment order одновременно. 4 training sources нужны native≥4; frozen A/B8 query по learned state, source feature trace.",
+      "protected_source_ids": [
+        "R02"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R02][R02] OBS1 conditional member call",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "MethodFrequencyTable.Extract/Train 16–93: учесть Conditional Access receiver cache?.Add. 2 source lessons→lazy native Train→RankCompletions; 4 Compile/2 Train/16 Ranks. Не Compile EXAM: это добавляет наблюдения.",
+      "protected_source_ids": [
+        "R02"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R02][R02] OBS-case",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Comparer OrdinalIgnoreCase→Ordinal, Read twice/read once, k/ranking unchanged. Min data 3 observations distinguishes case; native 2 Train/16 Ranks; extra spelling cases not new semantic families.",
+      "protected_source_ids": [
+        "R02"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R02][R02] OBS-receiver",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Full receiver db.Users vs db.Log вместо leftmost db; same 2 lessons/4 queries; отдельный factor от case. Объяснить receiver ownership and rank metric, не semanticC# correctness.",
+      "protected_source_ids": [
+        "R02"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R09][R09] C1 collection channel",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "FileActionKnn.FeatureVector 30 SyntaxKind→+single collection flag. List<int>/Task<int>two TRAIN, 4 new type texts; 2 Train/16 Predict, k1. Actual representations EXAM may equal TRAIN; local acquisition, не generalization. Facade≥4 не reached.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R09][R09] C2 null-check teacher",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "ActionLabelGenerator.Label 32 sees uncalled Guard/lambda any where. B correct only training labels from independent invocation/receiver gold; same features, k=1, 2 Train/16 Predict. Не label EXAM candidate function вместо Predict; distant control unknown features show.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R09][R09] C3 a method class boundary",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "MethodKnn PackedMethod lacks class identity; Train adjacent whole file→filter class boundary only. Two files/two native Train/16 Predict; actual class metadata field нужен. Class ordinal ID не substitute semantic boundary.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R09][R09] C3 b exam remembered grammar",
+      "classification_verdict": "TRAIN_INPUT; FIX_DESIGN diagnostic",
+      "required_correction_and_measurement": "SemanticCompilerFacade.Compile→RememberCompiledSource affects grammar/frequency, not StructuralKnn. Frozen source vs4 EXAM rebuilds shows leakage; 5 grammar Train/8 selected predictions. Нельзя считать допуск EXAM positive learning repair. Будущий fix freeze EXAM ingestion into training corpus.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R14][R14] NEW-POSITION",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "StructuralVector.PositionInParent byte cap255→full ordinal extractor; 2 rows, positions 255/256, 4 nested block queries, 2 Train/16 Predict. Other features unchanged; max scope/depthcaps отдельно. Это long methods only.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R16][R16] N-K3 Loop target",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "MethodKnn.CanonicalType 172 add While/Do при declared Loop contract. Native MethodExtractor+predictork1, 2 files4 methods=>2 adjacency rows; 2 Train/16 Predict. Empty baseline Mixed, не null. 8 CanonicalType alone DIAG.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R20][R20] N57-ARG",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND, хорошо локализован",
+      "required_correction_and_measurement": "StructuralVectorExtractor 42 добавляет ArgumentOrdinal of ArgumentList, default−1; distance 0. 3. a/b внутри ArgumentSyntax имеют immediate position 0, so existing Position не решает. 2 selected success or row/2 Train/16 Predict; actual successors/codec verify before freeze.",
+      "protected_source_ids": [
+        "R20"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R22][R22] L04 generic AST",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; OPEN generic / alias ARG",
+      "required_correction_and_measurement": "Для native Structural вариант уже 20; не создавать новый опыт. Generic KnnLogicalUnit→AST encoder/schema/Execute binding пока OPEN. SQL/translationN/A безсвоего parser.",
+      "protected_source_ids": [
+        "R22"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "4. C# структура и обучаемая память",
+      "recipe": "[R23][R23] N-KU-01 DoStatement",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; FIX_DESIGN EA-01",
+      "required_correction_and_measurement": "ActionLabelGenerator.Label 41–55 +only DoStatement; Facade Train≥4, k3. Текущая 4 row панель constant majority. Ремонт 6 rows с двумя представителями каждого label в обоих arm, 2 Train/16 queries; данные согласовать до запуска. ForEachVariable отдельный factor.",
+      "protected_source_ids": [
+        "R23"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R03][R03] G55 historical restore",
+      "classification_verdict": "ARCHIVE, не повторять автоматически",
+      "required_correction_and_measurement": "Old PrepareToGPL asset (4 направления) и P125 (6 направлений/24 entries/8 identities) разные checkpoints. Нет доказанного 4→6 migration. P25 readback конкретного P125 не доказательство старого loader. Отмена G55 сохраняется.",
+      "protected_source_ids": [
+        "R03"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R03][R03] T word sense / POS",
+      "classification_verdict": "LEARNED_OUTPUT над supervised memory; COND",
+      "required_correction_and_measurement": "ContextualDictionary.AddEntry 27→TranslateWithContext 68: A query POS empty, B supplied POS. Одинаковые 2 lessons/4 AddEntry total; 16 word choices, не полные переводы. Нельзя называть factor улучшением записи памяти. _k не голосует: rank→first translation.",
+      "protected_source_ids": [
+        "R03"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R03][R03] T-compose",
+      "classification_verdict": "TRAIN_UPDATE; ACQ",
+      "required_correction_and_measurement": "TranslationMachine.TrainStructuredBatchAsync→Executor.TrainOnExample→exact/phrase/KNN→ordinary Flow. Два размеченных lessons, explicit phrase maps; A без update, B2 rows. Это acquisition; не algorithm repair. Для repair ingress A/B получают одинаковые два урока, отличается только доставка TRAIN mappings, 4 Executor updates/16 Flow.",
+      "protected_source_ids": [
+        "R03"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R09][R09] T1 missing context",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "ContextualDictionary.ContextDistance 99: missing query context distance 0→UNKNOWN/penalty при том же learned state. 4 queries, 8 selections достаточно frozen read; если оба обучаются, 4 AddEntry/16 observations, но factor всё равно reader. Полезна false-accept/coverage tradeoff.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R09][R09] T1 order/multiplicity",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; OPEN_PROFILE",
+      "required_correction_and_measurement": "Any-overlap теряет порядок. Сначала реальные POS/SVO–SOV lessons через PatternClassifier; arbitrary A/B labels distance-only не semantic gold. Один order-sensitive distance, одинаковый corpus, own labels; не одновременно Stem5 repair.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R09][R09] T2 direction",
+      "classification_verdict": "LEARNED_OUTPUT; COND",
+      "required_correction_and_measurement": "ResolveDirection 133→ordinary Executor. Явный correct source language при одном checkpoint, 4 inputs/8 routing paths; лишь достигнутые actual translation calls count. RU/EN/HE/mixed отдельно, не принимать alphabet guess как gold.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R09][R09] Q1 ProductMatch",
+      "classification_verdict": "LEARNED_OUTPUT measurement; COND/late",
+      "required_correction_and_measurement": "ProductHeldOutRunner:170–179 exact field не равен semantic ProductMatch. 4 frozen own outputs role/polarity controls; 8 scorer calls. Рубрика независима; без feedback не заявлять changed acquisition. Обязательным блокером D scorer не делать.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R09][R09] Q2 emoji / denominator",
+      "classification_verdict": "LEARNED_OUTPUT measurement; COND/late",
+      "required_correction_and_measurement": "HasAnyEmoji 581 uses UTF16 char; unit of support/codepoint фиксировать. 4 cases, 8 evaluations; zero denominator = N/A, не perfect 1. 0. Расширение verifier действительно должно участвовать в данном learned output.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R09][R09] S1 overwritten asset",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; COND, никаких публикаций в этом аудите",
+      "required_correction_and_measurement": "TranslationModelAssetStore.Export 103 writes before LoadRegistry 222. Нужны реальные distinct V0/V1 bytes; overwrite V 0 vs newV1 destination, 2 exports/3 loads/up to12 answers. Сравнить конкретные resolve/strict-registry paths; не утверждать все readers отвергают. Ремонт — versioned atomic staging before registry reference, если call chain подтверждён.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R09][R09] S2 morphology family denominator",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; OPEN_CALLER",
+      "required_correction_and_measurement": "Family index/ranker normalized denominator; источник реальной learned dictionary→index→reader нужен. 2 index builds/8 queries, одна normalization variable. RU/HE/EN не объединять общей accuracy.",
+      "protected_source_ids": [
+        "R09"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R11][R11] POS-1",
+      "classification_verdict": "TRAIN_UPDATE; ACQ",
+      "required_correction_and_measurement": "PatternClassifier.Train 39→Predict 46, k1, two explicit POS examples. 1 Train/8 real Predict при доказанном baseline reuse; otherwise 16. Empty fallback rules и learned label сравниваются как acquisition. Current TranslationSemanticTokenizer не доказан reader E25.",
+      "protected_source_ids": [
+        "R11"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R11][R11] POS-0 enum transfer",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; OPEN_MIGRATOR",
+      "required_correction_and_measurement": "PatternClassifier 8 labels vs Unit7; explicit semantic map, unsupported сохранять unsupported. 8 conversions alone DIAG. Нужен actual saved class state import/consumer, иначе не запускать. Нельзя ordinal cast→SVO_INF masquerade как перенос модели.",
+      "protected_source_ids": [
+        "R11"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R11][R11] POS-2 singleton bigrams",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; FIX_DESIGN",
+      "required_correction_and_measurement": "SequenceDistance 78 union=0 masks distinct singleton. Вместо 8 isolated distances выбрать реальные singleton TRAIN/query к PatternClassifier; изменить только fallback equal→0/different→1, 2 Train/16 Predict. Пока в документе эти различающие learner examples не заданы.",
+      "protected_source_ids": [
+        "R11"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R11][R11] POS-2 multiplicity",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; FIX_DESIGN",
+      "required_correction_and_measurement": "Отдельный set→multi set Jac card; actual repeated POS sequences нужны и в памяти, и query. 8 symmetric distance calls не learning effect. Не смешивать singleton fallback и multiplicity.",
+      "protected_source_ids": [
+        "R11"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R11][R11] POS-3 retention",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "PatternClassifier.Train clears table. 2 old+2 new labels, A second batch new-only, B whole corpus 4; 4 Train/10 row presentations/16 Predict. Это unequal corpus work by treatment, стоимость честно; real caller full-corpus делает риск N/A.",
+      "protected_source_ids": [
+        "R11"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R11][R11] E26 BuildDefault",
+      "classification_verdict": "LEARNED_OUTPUT preset control / ARCHIVE",
+      "required_correction_and_measurement": "Four T choices on staticBuildDefault не acquisition. Доказательность исторического 40→100 зависит от первоначального dictionary state и правильной принадлежности reported metric. Не именовать новый AddEntry experiment reproduction без тех же данных.",
+      "protected_source_ids": [
+        "R11"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R13][R13] LW-BPE-02 documentation",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "DefaultLogicalCapabilityTrainer.BuildTokenizer 4054 filler512 → repeated same service number, same bytes/lines; fresh tiny embedding model only. Two documentation lessons, 4 queries. 2 BPE Train, 4 Unit Train, 6 Embed for build, 16 Execute. Baseline после первого урока, не empty.",
+      "protected_source_ids": [
+        "R13"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R13][R13] LW-BPE-02 orchestration",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Тот же tokenizer factor; before/after approval two lesson outputs. Нативный Unit выбирает stored output; не свободный планировщик. Prefix 64 visibility измерить до трактовки; lexical fallback не отключать.",
+      "protected_source_ids": [
+        "R13"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R13][R13] LW-BPE-02 RU→EN",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Тот же fresh-family setup; разрешается/запрещается открывать файл. Имена/объект фиксированы, чтобы не требовать генерации неизвестных имен от stored-output Unit. Не переносить tokenizer в старый checkpoint.",
+      "protected_source_ids": [
+        "R13"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R13][R13] LW-BPE-02 numeric code",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "if status 503 Retry else Stop. Числовой контраст отдельный domain профиль; feature token count win полезен даже без answer gain. Full-text fallback может компенсировать BPE prefix loss: это честный no-effect.",
+      "protected_source_ids": [
+        "R13"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R16][R16] N-K1 subject vs object pronoun",
+      "classification_verdict": "LEARNED_OUTPUT; OPEN_PARSER/RECLASSIFY",
+      "required_correction_and_measurement": "PatternReorderer 50 removes all PRON→remove only source subject span. Native TaggedWord role/span carrier отсутствует; два одноимённых owners не путать. 4 typed cases/8 Reorder — component boundary; реальный learned pattern→span source→Reorder needed для результата обучения.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R16][R16] N-K2 subject phrase",
+      "classification_verdict": "LEARNED_OUTPUT; OPEN_PARSER/RECLASSIFY",
+      "required_correction_and_measurement": "PatternReorderer 33 moves one head→whole subject span, fixed learned pattern. 4 cases/8 Reorder; независимый parser span без gold нужен. Нельзя add E25 training декоративно; но доказанный learned E25 consumer разрешает узкий downstream repair.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R16][R16] RU-KU01 surface before stem",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "SemanticTokenizer.ClassifyPos 283→ResolveConcept 295; lookup cleaned surface first then same lemma fallback. Frozen approved targets/word/phrase maps, two TRAIN, 4 EXAM; 2 batch/4 Executor updates/16 ordinary translations. Baseline service mappings нужны; actual early path и KNN не смешивать.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R16][R16] RU-KU02 tense",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; OPEN_NATIVE_EXTRACTOR",
+      "required_correction_and_measurement": "BuildRuleTags 167 tags PAST for any VERB. Proposed oracle nonpast annotation полезна лишь upper-bound; настоящего source tense extractor нет. Если найден lawful extractor, same 2 batch/4 Executor/16 Flow; ручной correct tense не Student.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R16][R16] RU-KU03 gender punctuation",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Gender helper 497 raw Word→same CleanWord (не stem). Два lessons, две semantic forms×period variants; 4 Executor updates/16 Flow. Exact normalization может обходить KNN: измерить route и не списывать отсутствие KNN effect на «неучащуюся модель».",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R16][R16] N55-P1 policy identity",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "Frozen learned store, historical selector vs current narrow SourceLaw code version; 2 loads/8 ordinary answers. Checkpoint hash недостаточен — execution policy SHA отдельный. Разный результат не автоматически потеря weights.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R16][R16] N55-P2 early paths law",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/OPEN_SEAM",
+      "required_correction_and_measurement": "Executor 264 early exact/phrase/word before KNN guard; same narrow source-law before any candidate acceptance. 8 ordinary calls, no new lessons; source provenance нужен. UNKNOWN нельзя вывести из target как выдуманный source.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R16][R16] N55-P3 public FindNearest/Cascade",
+      "classification_verdict": "LEARNED_OUTPUT; OPEN_PRODUCTION_CALLER",
+      "required_correction_and_measurement": "Same frozen store4 queries×2 APIs; 8 retrieves. Public API existence не доказательство продукта. Если direct FindNearest не вызывается ordinary reader, не приписывать ему RP01 regression.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R17][R17] EVAL-DIR",
+      "classification_verdict": "LEARNED_OUTPUT measurement; COND",
+      "required_correction_and_measurement": "TranslationMachine.Evaluate 148→helper 686 hardcodes RU_EN. Typed per-item source/target caller исправить; 2 Evaluate/8 nested Flow+4 direct controls=12 translations. _hasStructuredTraining must real loaded. Native ordinal vs semantic rubric отдельно.",
+      "protected_source_ids": [
+        "R17"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R17][R17] METRIC-STATE",
+      "classification_verdict": "Measurement / OPEN_FEEDBACK, late",
+      "required_correction_and_measurement": "Evaluate 178 overwrites scalar→Export 288→next Train.AccuracyBefore 104. Исправление named panel storage полезно достоверности; сама запись scalar пока не влияет на learned state. 8 exports/6 eval(16 translated) не training gain; optional 2 batch/12 Unit trace лишь доказывает отчётный Before, не новый curriculum.",
+      "protected_source_ids": [
+        "R17"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R17][R17] POLICY-SPACE",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "TranslationMemorySourceLaw normalize only internal NBSP/NNBSP before existing regex; preserve quote scope. 4 cases/8 Compare plus optional 8 ordinary Flow. Early route may bypass law; не очищать карты для trigger. Wrong accepted/coverage tradeoff, не universal Unicode parser.",
+      "protected_source_ids": [
+        "R17"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R18][R18] C1 word-map shadow",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "Executor.Execute 264–330: word-before-KNN→lawful KNN-before-word fallback. One real learned checkpoint, 4 fixed queries/8 Flow; exact/phrase early paths trace. Same memory, factor only channel precedence.",
+      "protected_source_ids": [
+        "R18"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R18][R18] C2 unanimity",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/OPEN_SNAPSHOT",
+      "required_correction_and_measurement": "TrySelectKnnCandidate 333: first eligible→unanimity of exact Target strings else abstain. Real saved top-k snapshots of4 cases needed, not fabricated scores. 8 Flow; coverage losses shown. String agreement не semantic agreement.",
+      "protected_source_ids": [
+        "R18"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R18][R18] C3 threshold. 90",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/OPEN_ADAPTER",
+      "required_correction_and_measurement": "Unchanged candidate/chooser/verifier; threshold. 90 as experimental policy not calibrated probability. 4 actual candidate/scores needed; 8 answers. Diagnostic fixed candidates не generated learner outputs; no contrast if all scores≥. 90.",
+      "protected_source_ids": [
+        "R18"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R18][R18] M1 CPU",
+      "classification_verdict": "Measurement of TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "TranslationMachine.TickCount64 labelled CpuMs→simultaneous Process.TotalProcessorTime delta +Stopwatch on one true2 row batch. 1 batch/2 Unit/0 Flow основного опыта. Это исправление measurement, не speedup; no mandatory Generate.",
+      "protected_source_ids": [
+        "R18"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R18][R18] M2 RAM",
+      "classification_verdict": "Measurement of TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "GC.GetTotalMemory(false) end heap vs process lifetime PeakWorkingSet64 в dedicatedprocess; sampled batch peak отдельно interval/over head. 1 batch/2 Unit/0 Flow. Не суммировать managed/RSS и не называть life time peak batch peak.",
+      "protected_source_ids": [
+        "R18"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R18][R18] M3 publication",
+      "classification_verdict": "LEARNED_OUTPUT; OPEN_PUBLISHER/RECLASSIFY, last",
+      "required_correction_and_measurement": "Returned PromotedUnitIds означают touched Units, не active server checkpoint. Real lawful publisher/ack/active pointer/ordinary consumer нужны. One learned state, 16 Flow delivery contrast возможен; никакой publication по текущему поручению.",
+      "protected_source_ids": [
+        "R18"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R20][R20] N57-VER",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND, хороший узкий factor",
+      "required_correction_and_measurement": "QualityVerifier.LooksLikeMannerMarker 1289 add normal Cyrillic о; same function writer 1120/reader 1265. Builder real2 verifier rows, 4 TrainOnExample/16 Verify, 0 Generate. Train/query тихо/быстро действительно не ADV по current suffix list; source-derived subject/verb tags вызывают fallback. Это static reachability, ещё не native run.",
+      "protected_source_ids": [
+        "R20"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R21][R21] G1/E1 aggregate direction score",
+      "classification_verdict": "Measurement / OPEN_FEEDBACK, late",
+      "required_correction_and_measurement": "ProductHeldOutRunner389 retains Direction cases, aggregate hides minority. Нет actual learning-decision caller, потому offline rescore не active learning repair. Если named curriculum caller найден, перейти TRAIN_INPUT; просто 19/20 против 0/1 не новая тренировка.",
+      "protected_source_ids": [
+        "R21"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R21][R21] K1 containment",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "SourceTokenSimilarity 962 overlap/query size→Jac card same threshold. Query open the door vs stored open the door and delete the file. 8 ordinary calls with legal learned state; не меняться одновременно polarity law. Не называть уже известное N27/N37 новым generic finding.",
+      "protected_source_ids": [
+        "R21"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R21][R21] K2 imperative polarity",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "Same SourceLaw selection chain, source do-not-open vs open. One imperative polarity veto при same tokenizer/state; 4 own queries/8 answers. Вообще translating imperative не гарантия этого закрытого фактора.",
+      "protected_source_ids": [
+        "R21"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R21][R21] G2 state handoff",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND/OPEN_RESUME_HOST",
+      "required_correction_and_measurement": "Export/Import metadata vs full Save/Load between true T1 and T2. 4 batch/12 nested Unit, 24 Flow includingpostT1 trace. Two legitimate receiver paths needed; broken load=BLOCKED_LOADER, не 0/4. Не подменять изменением builder/maps.",
+      "protected_source_ids": [
+        "R21"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R21][R21] H58-01 order sensitivity",
+      "classification_verdict": "TRAIN_UPDATE; COND/OPEN_TOPIC_GOLD",
+      "required_correction_and_measurement": "Same normalized source the bank, finance/river, reverse 2 lesson order; 4 Executor Train/16 Execute. TopicDomain must be actual allowed input; otherwise semantic gold open, только key/value sensitivity. Fix domain key — другой A/B.",
+      "protected_source_ids": [
+        "R21"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R22][R22] K3 predicate complements",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "Current SourceLaw safe/unsafe, enabled/disabled regex both recognized but different predicate→Unknown. Narrow complement-map factor, actual learned neighbor→Executor consumer confirmed source. Separate false accept/coverage; binary not safe=unsafe contract explicit.",
+      "protected_source_ids": [
+        "R22"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R22][R22] L01 negation curriculum",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "From same actual S, A2 positive instructions B2 negative instructions, fixed source pool/theme/EXAM. Explicit TRAIN phrase maps allowed; 2 executor-only batch/4 Train/16 Flow. Other maps in S proven, EXAM exact absent. Zero effect valid; не forced delta.",
+      "protected_source_ids": [
+        "R22"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R22][R22] L02 feedback accepted",
+      "classification_verdict": "TRAIN_INPUT; OPEN_LEARNING_LINK",
+      "required_correction_and_measurement": "FeedbackRouter.RouteAccepted123 machine accepted≠user FeedbackSignal.Accepted. Нужен explicit feedback→same learner writer. Нельзя fabricated user feedback; not close by routing flags.",
+      "protected_source_ids": [
+        "R22"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R22][R22] E59-L1 pseudoalignment",
+      "classification_verdict": "TRAIN_INPUT; FIX_CARD",
+      "required_correction_and_measurement": "First token pseudoalignment→WordMappings→Executor existsasfamilyP52; exact2 lessons/rejected/4 EXAM/start maps still missing. Превратить конкретную проекцию в pairedTRAINfix, не новый generic ID.",
+      "protected_source_ids": [
+        "R22"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R23][R23] H60-A threshold source",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND/OPEN_REAL_HISTORY",
+      "required_correction_and_measurement": "Tatoeba Pilot Loop 403 uses historical max, threshold 796 affects selection 888 and admission. B latest legitimate DEV same scorer. 4 candidate pool, planned 2 accepted/arm→2 TrainRows/2 batch/12 Unit, 4 candidate replies+16 EXAM Flow. Scores/history/accepted IDs/stop reachability actual, не synthetic. 90/. 50.",
+      "protected_source_ids": [
+        "R23"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "5. Перевод, POS, корпус и метрики результата обучения",
+      "recipe": "[R23][R23] H60-B feedback timing",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; OPEN_TIMING_CONTRACT",
+      "required_correction_and_measurement": "Fix when legal DEV feedback available before selection, historical max constant. Moving late if only misses earlier selection; exact DEV texts/caller/budget absent. No calls until causal divergence predicted; sealed EXAM never curriculum.",
+      "protected_source_ids": [
+        "R23"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R05][R05] O predicate route",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND / ablation",
+      "required_correction_and_measurement": "PredicateDatasetRouter.Train 25→Predict 31, current failure bit vs removed bit. 2 typed lessons/2 Train/16 Predict, k1 both; output multi-domain mask. NLP text extractor/production caller не доказан. B=current full feature, не отсутствующая repair функция.",
+      "protected_source_ids": [
+        "R05"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R05][R05] O-retention",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "Train clears. 2 old C#/2 new TS, after oldfit same 2 slots: A[new1, new2], B[old1, new2]. 4 Train/8 row presentations/16 Predict; retention only baseline correct old. New acquisition loss reports alongside.",
+      "protected_source_ids": [
+        "R05"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] HNSW capacity/pruning",
+      "classification_verdict": "TRAIN_UPDATE/LEARNED_OUTPUT; COND",
+      "required_correction_and_measurement": "HnswIndex Add/Search named path. 2 records cannot reachn>M; choose minimal n=M+1, sameM/state/RNG, one pruning factor. Small operation Count not false learning gain.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] mutable vectors/output alias",
+      "classification_verdict": "TRAIN_UPDATE integrity; COND",
+      "required_correction_and_measurement": "KnnLogicalUnit/HNSW write ownership; accepted lesson then one external mutation, same queries. Fix defensive ownership at writer; no new lesson after mutation. Learning-state preservation allowed by user point 4, not new acquisition.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] retrieval pool / IDF / first-hit / alias",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "Same learned corpus reader; each factor separate. Pool/IDF needs irrelevant third record in both arms; dedup2 real records vs alias entries. topK/aggregation law cannot all change at once.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] cache/BM25 repeated corpus",
+      "classification_verdict": "TRAIN_UPDATE cost or LEARNED_OUTPUT; COND",
+      "required_correction_and_measurement": "Actual same corpus re used within Train or ordinary learned reader; 8 retrieval calls, no extra Train mandatory. cache in validation separate from cache on/off. Hypothetical unused cache — UNRELATED.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] confidence calibration",
+      "classification_verdict": "TRAIN_INPUT+UPDATE if learned calibration; OPEN",
+      "required_correction_and_measurement": "2 DEV labels/4 EXAM, actual coefficient/updater/loader required. Fixedscoreclampnequal probability; learnedalphaE34 historical 13/18 vs7/9 unmatched.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] E43 file boundary",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Native bigram builder, filesAB/CD, excludeB→C at document boundary. 2 Build/8 Predict on A, C, B, D with closed-world abstention contract. 0 neural updates, actual count memory learns.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] E44 weighting/E45 curriculum",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Targets formed before token/order shuffle, weight only or order only. Native historical learner math preserved; duplicate bigram counts, not DPO. Actual token exposures cost.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] E48 warm start / backward",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "Native probe train with imported warm state, 2 Train Steps/arm/16 Predict. old weights vs inplace derivative factor separate from donor selection. Last negative experiment status does not erase early sample efficiency.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] E49/E50 graph closure",
+      "classification_verdict": "UNRELATED/OPEN_NATIVE_LEARNER",
+      "required_correction_and_measurement": "DeterministicDAG/refinement without learned state update, 0 new learning. Four graph motifs do not establish native higher-order learner. Не запускать под учебным заказом.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] learned edge / Flow composition",
+      "classification_verdict": "TRAIN_UPDATE; OPEN_OWNER",
+      "required_correction_and_measurement": "P95/P97 proposed edge table не existing runtime. Actual writer→persisted edge→consumer required before 2 Retry/Stop learning fixture. Async/cancellation only outside priority unless real training connection.",
+      "protected_source_ids": [
+        "R07"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R07][R07] RAG packing / R04 D-context",
+      "classification_verdict": "OPEN_TRAIN_INPUT/LEARNED_OUTPUT",
+      "required_correction_and_measurement": "HybridRetriever.BuildContext 87 break→continue tail packing; prove evidence reader during update/learned answer required. 4 contexts/8 BuildContext alone DIAG, private entry missing; full output cap includes new lines.",
+      "protected_source_ids": [
+        "R07",
+        "R04"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R09][R09]/R10 E34 learned mixture",
+      "classification_verdict": "TRAIN_UPDATE; OPEN_LOADER",
+      "required_correction_and_measurement": "Исторические формулы коэффициента и текущий fixed formula different. 2 DEV/4 EXAM допустимы после названного native calibrator/load/consumer. Не переносить коэффициент между формулами.",
+      "protected_source_ids": [
+        "R09",
+        "R10"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R10][R10] O lexical router",
+      "classification_verdict": "TRAIN_UPDATE; ACQ",
+      "required_correction_and_measurement": "ProjectWikiRequestRoutingTrainableModel actual Train 18 epochs, 2 lessons→36 presentations, not36 updates. Aempty/Btrained, 8 RouteForEvaluation with reuse. Ordinary Route/Flow different gates; template label ≠ ordinary plan.",
+      "protected_source_ids": [
+        "R10"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R10][R10] Q static query planner",
+      "classification_verdict": "UNRELATED/OPEN_TRAINING_READER",
+      "required_correction_and_measurement": "ProjectWiki QueryPlanning static ClientServerBusinessFlow extraction; no learner shown. 4 texts/8 plans only static repair. If used native TRAIN projection show that call; not neural update.",
+      "protected_source_ids": [
+        "R10"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R10][R10] S snapshot column order",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "TrainableRouter.FromSnapshot 86 positional weights→name-based label binding. 2 loads/8 RouteForEvaluation on real trained snapshot; supported permutation versus unsupported versions explicit. No fake weights.",
+      "protected_source_ids": [
+        "R10"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R10][R10] F confidence floor",
+      "classification_verdict": "LEARNED_OUTPUT; COND/RECLASSIFY",
+      "required_correction_and_measurement": "CalibratedConfidence 325 floor. 85 after earlier zero/margin gate. Reachable case required; 4 queries/8 Route, only clamp. Calibration truth not proved by threshold.",
+      "protected_source_ids": [
+        "R10"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R10][R10] I PairId project identity",
+      "classification_verdict": "UNRELATED/OPEN_INPUT_CALLER",
+      "required_correction_and_measurement": "QueryPlanningRunner 190 project from PairId, source version alias. 4 inputs/8 plans fixed static owner; inherited donor behavior, not regression by default. Real training consumer needed.",
+      "protected_source_ids": [
+        "R10"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R12][R12] NK-01 reindex df",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; COND",
+      "required_correction_and_measurement": "AstRelevanceRanker.Index 39 overwritesTF but increments df; subtract old ID contribution only. 2 docs eacharmthenreinsertNtwice→8 Index/16 Search. Caller with repeated writes OPEN; singlebuildcontractN/A.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R12][R12] NK-02 relation key",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; OPEN_NATIVE_QUERY",
+      "required_correction_and_measurement": "Query role Null 7 conflicts extractor operand 3/4, return 10.Consistent operator/operand/if relation for index/query. 4 Index/8 Retrieve; direct feature input seam absent. 0-score topK nepositive match/abstention.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R12][R12] NK-02 query parse gate",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; COND",
+      "required_correction_and_measurement": "Parse 200 принимает ошибочный Roslyn query as source; validate diagnostics/input kind only. 4 inputs/8 mode extractions; not same experiment as relation key. Link consumer or remain DIAG.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R12][R12] NK-03 eligible-before-topK",
+      "classification_verdict": "LEARNED_OUTPUT/TRAIN_INPUT; RECLASSIFY/OPEN_CONSUMER",
+      "required_correction_and_measurement": "KnnSkillFilter 28 topK before candidate intersection→scope before topK; actual search contract lacks Candidate IDs. 8 Filter/8 nested Search, fixed scores fixture gives only component truth. ContextWindowManager defaults PassThrough, must have actual Knn Filter caller.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R12][R12] UD HeadTokenId",
+      "classification_verdict": "TRAIN_INPUT; OPEN_READER",
+      "required_correction_and_measurement": "Native annotation 4 subject/object/negation projections only without consumer. Need head link train/query reader before learner quality; manual dependency oracle not learned parser.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R12][R12] AgentPipeline content IDs",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; OPEN_GATEWAY",
+      "required_correction_and_measurement": "Context record IDs vs actual payload for real gateway. 2 context records 4 questions/8 gateway calls; desktop mock not proof actual learner reader.",
+      "protected_source_ids": [
+        "R12"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R13][R13] LW-FB-01 accepted boundary",
+      "classification_verdict": "TRAIN_INPUT; OPEN_SELECTOR_TO_TRAIN",
+      "required_correction_and_measurement": "WikiTraceAggregator weak entries vs ignore pre-accepted only; FlowAdapter: plan_only/training_started=false. 8 selector calls alone UNRELATED. Actual next native Train with same candidate pool required; не восстанавливать целиком donor weights/window/tie at once.",
+      "protected_source_ids": [
+        "R13"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R13][R13] duplicate candidate lead",
+      "classification_verdict": "OPEN_OWNER; superseded PT-01 for one case",
+      "required_correction_and_measurement": "Generic frozen pool duplicate 8 decisions not learning. конкретный writer PromptToTask в R15 covers accepted pattern case; other hypothetical router unproven. Multiplicity-as-votes contract is not idempotent by definition.",
+      "protected_source_ids": [
+        "R13"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] NEW-SCORE negative probability mass",
+      "classification_verdict": "OPEN_LEARNED_CONTEXT_READER",
+      "required_correction_and_measurement": "KnnSkillFilter first/sum can>1/negative. Negative finite guard fallback only, 4 score tables/8 Filter. This is declared mass contract not calibration. HNSW→filter ordinary path unproven; not priority before actual learning.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] Mode2 orchestration acquisition",
+      "classification_verdict": "TRAIN_UPDATE; ACQ/COND",
+      "required_correction_and_measurement": "OrchestrationPlanMachine.Train 168→Knn.Add→TrainedRouteComposerUnit 38 style_source. 2 lessons/1 batch/2 Add/8 GeneratePlan at reuse. Обученный выбор M/I useful; no PlanText consumption means semantic plan quality not shown.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] Mode2 PlanText delivery",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "Same learned Mode 2 chosen PlanText consumed in composer, 8 answers/no Train. Preserve intent/gates; require content obligations backup→migrate, not selected ID only.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] Mode1 / Mode3",
+      "classification_verdict": "OPEN_PROFILE / LEARNED_OUTPUT",
+      "required_correction_and_measurement": "Mode1 learned grounding+FlowRef can render chosen; Mode2 data cannot serve its contract. Mode3 style KNN selected ID не доказывает содержание плана. Separate data/consumer; not three automatic experiments.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] OR restore named v1",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; RECLASSIFY/OPEN_MIGRATION",
+      "required_correction_and_measurement": "OrchestrationReasoningMachine 971 schema 1 rejects→API:1405 empty. Named 15 patterns vs generic 4 different bundles. Old load/current load/lawful v2 migration 3 loads, up to 12 reasoning answers; actual provenance required, no schema flip.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] OR cache/root",
+      "classification_verdict": "LEARNED_OUTPUT; COND/late",
+      "required_correction_and_measurement": "Actual API common load before user cache 1483/1515. 4 states common/cache/both/neither and 4 Q1, actual state ID. Index not read by literal path; no inference about lost training from index.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] OR readiness aggregate",
+      "classification_verdict": "Measurement/OPEN_FEEDBACK",
+      "required_correction_and_measurement": "Three component statuses plus AND, 4 tuples.Overall false ≠ all components lost. Report-only without training decision not active run.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] generated IsLearned",
+      "classification_verdict": "LEARNED_OUTPUT; OPEN_RESOLVER",
+      "required_correction_and_measurement": "Registry.ResolveLatestLearnedEntry 292 flag false/true: 4 matching contracts. Signed registration requires!IsLearned: flipping flag not lawful product repair. Actual learned-only caller required.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] default trainer authority",
+      "classification_verdict": "TRAIN_INPUT admission; OPEN_AUTHORITY",
+      "required_correction_and_measurement": "LogicalOrchestratorAssistant.CreateDefault 132→trainer 490. B legitimate authority only; no fabricated permit/admission bypass. 4 вспомогательные решения; actual approved tiny training needed for claim.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] cold signed corpus",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; OPEN_CORPUS",
+      "required_correction_and_measurement": "BuildKnnTrainingCorpus 3467→TeachingRegistryPersistence 1628. Live/cold same signed corpus, 2 native Train/16 stored outputs when real 2 row admission exists. Legal old row addition separate factor.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] legacy teaching manifest",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; OPEN_ARTIFACT",
+      "required_correction_and_measurement": "TeachingRegistrySnapshot 91 attestations, old/current/migration/hash negative 4 loads. Real authority/proof migration unknown. не 43 Reasoning and not Translation asset.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] DTC first 10 probe",
+      "classification_verdict": "Measurement/OPEN_FEEDBACK",
+      "required_correction_and_measurement": "BuildPreparedLocalContinueTrainingProbeBatch 2588 first 10, real ProjectFinalOptimizerInputs 1810 all rows. 11 records balance 2 Units round robin 8 selection calls would only fix probe visibility. Не заявлять, что данные потеряны в actual training.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] DTC count/weight predicate",
+      "classification_verdict": "Measurement/OPEN_FEEDBACK",
+      "required_correction_and_measurement": "ContinueProbe 248 Count increase mistaken for ΔWeight; 4 frozen pairs/8 predicates. Correcting report not quality HTML; admitted training already exists separately.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R14][R14] DTC legacy probe API",
+      "classification_verdict": "TRAIN_INPUT; N/A current pipeline",
+      "required_correction_and_measurement": "CurrentTrainingPipeline 2234 already admitted Verify. старый внешний caller не найден; not current broken pipeline. Do not run continuation как read-only preflight.",
+      "protected_source_ids": [
+        "R14"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] GDC-CAT",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND/OPEN_TYPED_CHANNEL",
+      "required_correction_and_measurement": "TrainingPipeline 2709 html/css drops TRAIN category→Machine.TrainAdmittedBatch→ApplyDelta 383→BuildPreferences 4248→Improver 161. Pass only trusted training categories into writer; same 2 lessons/2 batch/4 rows/16 Improver. No assessor score into neural target.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] GDC-MULTI",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "Improver.BuildLocalImprovementPlan 298 top1 if positive vs all compatible positive rules. RealGDC-CAT checkpoint, 4 cases/8 Execute, 0 Train. Contrast+overflow compatibility only; not global all rules recommendation.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] GDC-SCORE local",
+      "classification_verdict": "TRAIN_INPUT; FIX_DESIGN",
+      "required_correction_and_measurement": "BuildLearnedWeightDeltas 2937 visual_score margin only some features; 8 frozen projections not actual updates. To assess learning use existing admitted local writer on 2 lessons, fix trusted score channel only; 16 Improver. Category/source/internal vector effects not all antisymmetric.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] GDC-SCORE neural",
+      "classification_verdict": "TRAIN_UPDATE; OPEN_TRAINER_READER",
+      "required_correction_and_measurement": "Same 2 HTML/CSS pairs/4 E needs actual small policy/reference and HTML/CSS reader. C# decoder D не становится автоматически DTC reader; 4 updates/16 answers conditional.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] KU-01 orchestration segments",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/OPEN_AUTHORITY",
+      "required_correction_and_measurement": "MultiSubPhaseRouter125 groups target but 738 requires DocumentId same. Validate each source ID then compare semantic decision preserving both contents/provenance. 8 router outputs; same confidence contract, different targets not merged. Real learned authority needed.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] KU-02 eligibility-before-floor",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "DeterministicRegistryEdgeCandidateProvider 153 получает глобальный relative floor до фильтра по edge IDs. Filter eligible before floor while raw BM25 full registry unchanged. 4 score snapshot/8 Propose; actual trigger and downstream learner needed.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] PT-01 duplicate accepted pattern",
+      "classification_verdict": "TRAIN_UPDATE; COND",
+      "required_correction_and_measurement": "PromptToTaskMachine.ContinueWithAcceptedPattern 263→nearest/Decide→Translate. Same complete accepted lesson under new ID; dedup semantic identity preserving provenance. 4 writer/16 Translate; constraints/evidence/confidence included; conflicting lessons not merged.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] PT-02 delegate alias",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/COND",
+      "required_correction_and_measurement": "PromptToTaskTaskPatternUnit 462 substring gate→missing_gates. Remove only generic gate alias; 4 queries/8 Decide, same learned patterns. Exact bad negation not fixed. Real patterns from writer needed, not hand made weights.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] LK-TYPE",
+      "classification_verdict": "LEARNED_OUTPUT/TRAIN_INPUT; COND",
+      "required_correction_and_measurement": "KnnLogicalUnit metadata predicate_ids List/string[] normalization. 1 Train: 2 records/8 Execute; same predicate bytes and text. Раннее отклонение JSON следует явно отразить; no claim that KNN lost the feature if it was never reached.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] LK-ID",
+      "classification_verdict": "TRAIN_UPDATE integrity; FIX_POLICY",
+      "required_correction_and_measurement": "Train map[id] overwrite but index adds duplicate. 2 Train/8 Execute with same vectors and changed second ID demonstrates collision; future fix: reject before mutation or consistent replace index+map. Choose one identity contract; state provenance important.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] LK-HASH",
+      "classification_verdict": "TRAIN_INPUT; COND",
+      "required_correction_and_measurement": "StableHash 313 abs(Int32.MinValue)→versioned unsigned remainder; codec writer/query/index consistent rebuild. 8 hash/vectorization alone DIAG; actual TRAIN failure/admission needs link. ZSJBINM case equivalence only, not semantic lesson.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] DTC DOM relation",
+      "classification_verdict": "TRAIN_INPUT; OPEN_ALLOWED_CARRIER",
+      "required_correction_and_measurement": "Sanitizer должен сохранять только публичные relations без private IDs, 4 source contracts/8 projections. Need permitted source encoder→native writer→Improver; manual relations not learned extractor.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] DTC late vector coords",
+      "classification_verdict": "TRAIN_INPUT; OPEN_MEANING",
+      "required_correction_and_measurement": "Take16→agreed 18 dim, 8 materializations only diagnostic. Coordinates 17/18 must actual source features read by trainer, not random numerical fixture. Same output contract needed.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] DTC public/admitted caller",
+      "classification_verdict": "TRAIN_INPUT; COND/N/A current",
+      "required_correction_and_measurement": "Four validation contracts no automatic training. GDC-CAT actual permit separate. Don'tmanufactureauthorityorcountacceptanceaslearning.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] Translation M1 archive manifest",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; OPEN_RECEIPT",
+      "required_correction_and_measurement": "AssetStore 128 publish validator not direct loader. 4 validation attempts with actual evidence, none published. Legacy without TrainingDataEvidence cannot filled with fake proof.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] Translation M2 checkpoint/corpus",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT integrity; OPEN_OUTER_CALLER",
+      "required_correction_and_measurement": "Export 40 receiptassociationC→X, 4 combinations×2 validators. Need real trainer receipts; unknown outer caller may already enforce binding. Not confirmed false learning without that trace.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R15][R15] Translation M3 hash scopes",
+      "classification_verdict": "DIAG provenance",
+      "required_correction_and_measurement": "gzip/raw/canonical/permuted rows 4 hash scopes named. Different hash domains not corruption. No independent training run.",
+      "protected_source_ids": [
+        "R15"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R16][R16] U-DTC-1 b critic/evaluator features",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/OPEN_SHARED_ENCODER",
+      "required_correction_and_measurement": "Machine.BuildCriticRuntimeFeatures 4339 lacksinternal_vector mean/dimension. Real trained checkpoint 4 Evaluator+4 Critic; feature fit not visual quality. Fix shared source-only encoder, not gold/teacher features in runtime.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R16][R16] U-DTC-2 fallback",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/FIX_SCOPE",
+      "required_correction_and_measurement": "Improver 312 fallback all available resurrectsrejectedspacing. 8 HTML/CSS outputs include 2 mobile, desktop, no defect. Statecurrentlynogeographicscope; global ban would harm desktop. Needed scoped lesson state is new actual learning design, not mask loss.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R16][R16] U-DTC-3 roundtrip",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Accumulator 4026 save rounded mean then reconstruct sum. Same 2 native category lessons warm/cold, 4 admitted row calls/16 Improver. Artificial Weight 1 Count5 numeric example≠real checkpoint. Repair exact sum serialization separate A/B, both reload.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R16][R16] CLEAN-CP01 retired key",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; RECLASSIFY/OPEN_BYTES",
+      "required_correction_and_measurement": "StageLearnedWeights 2767 rejects whole due retiredsource_manifestkey. Versioned migration valid sub set with history/parent hash, 4 loads; actual old bytes missing. No fake weights/no old quality inheritance.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R16][R16] CLEAN-CTX01 frozen",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/OPEN_ENCODER",
+      "required_correction_and_measurement": "Train srcenc vs runtime identity prefix, actual 64 context→21 visible bytes conditional. Source-only shared conditioning, 2 layout meaning×2 legal identities, 8 scorer/16 side calls. Same checkpoint, no invalid signed receipt changes.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R16][R16] CLEAN-CTX01 learning",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; COND",
+      "required_correction_and_measurement": "Same conditioning contract train/query, 2 row/column HTML lessons, 4 E/4 updates/16 decisions. A0/B0 different; side/text/reference fixed. Actual bounded DTC admitted host OPEN.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R16][R16] DC-01 missing category",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; FIX_CARD",
+      "required_correction_and_measurement": "ReadCorrectionRuleIds 3049 missing→Normalize generic. Skip null/empty before Normalize only, actual GDC-CAT two TRAIN writer/16 Improver. Eight projection calls alone only mechanics; delivery categories held same both arms.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R16][R16] DC-01 alias import",
+      "classification_verdict": "TRAIN_INPUT/LEARNED_OUTPUT; OPEN_MIGRATION",
+      "required_correction_and_measurement": "generic-hyphen/underscore/both keys; 4 normalize+4 load. Can not merge sums/counts without observation identity. Preserve unknown key rejection unless versioned lawful migration.",
+      "protected_source_ids": [
+        "R16"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R18][R18] O1 content targets",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; OPEN_RECIPIENT",
+      "required_correction_and_measurement": "LogicalCapabilityTrainingPreferenceProjector 102/356 template→subject matter chosen/rejected only; 2 lessons 4 action queries. Actual logical-capability DPO and handoff reader needed; 4 updates/16 outputs conditional. Label template can'tbegradedasrealaction.",
+      "protected_source_ids": [
+        "R18"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R18][R18] O2 float format",
+      "classification_verdict": "N/A current producer",
+      "required_correction_and_measurement": "Projector 0.###vsR fractional probe unreachable: SemanticTeachingPromptCompiler/TrainingVectorBuilder emits integer counts. New fractional producer required; 0 allowed calls for this current path.",
+      "protected_source_ids": [
+        "R18"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R18][R18] O3 replay multiplicity",
+      "classification_verdict": "TRAIN_INPUT+UPDATE; OPEN_REPLAY_GROUP",
+      "required_correction_and_measurement": "ProjectAuthorizedReplay 165.Distinct(Prompt)→preserve text event count, auth bindings same. 3 events=2 unique lessons, not3 laws; actual native group/apply budget unknown. More tokens cost part of factor, not hidden.",
+      "protected_source_ids": [
+        "R18"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R22][R22] L03 scheduler",
+      "classification_verdict": "UNRELATED/OPEN_TRAINING_CALLER",
+      "required_correction_and_measurement": "DrainIfIdle44; sample Inspect or/E52 scheduling proof without Train. Empty queue completion does not show learning, necurrentRP01 cause.",
+      "protected_source_ids": [
+        "R22"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R22][R22] H59-O1 ANY/ALL task types",
+      "classification_verdict": "LEARNED_OUTPUT; RECLASSIFY/OPEN_CONTRACT",
+      "required_correction_and_measurement": "ScenarioUnit.BuildNearestGuide559 any task type vs all required. Actual learned pattern reader needed, default singleton no contrast. Choose OR/AND task contract before gold.",
+      "protected_source_ids": [
+        "R22"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R22][R22] H59-O2 supplied learned_pattern",
+      "classification_verdict": "TRAIN_INPUT; OPEN_REAL_WRITER",
+      "required_correction_and_measurement": "OrchestrationReasoningTrainer.BuildPattern232 optional provided pattern bypasses derived chosen. Materialize/admission forbidsclaimtraining_started; actual memory commit→consumer needed.",
+      "protected_source_ids": [
+        "R22"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R22][R22] H59-M1 mixed structure Mode",
+      "classification_verdict": "LEARNED_OUTPUT measurement; COND/late",
+      "required_correction_and_measurement": "ScenarioUnit.EvaluateHeldOutRows416 one Ref switches entire panel mode. Fixed per-item rubric/own output instead global mode; only actual trained state evaluation. Not standalone learning improvement.",
+      "protected_source_ids": [
+        "R22"
+      ],
+      "run_status": "NOT_RUN"
+    },
+    {
+      "section": "6. Оркестрация, общие Units, retrieval и Design-to-Code",
+      "recipe": "[R22][R22] H59-M2 nearest union score",
+      "classification_verdict": "LEARNED_OUTPUT measurement; COND/late",
+      "required_correction_and_measurement": "Same evaluator union NearestGuides≠selected Plan. Grade actual selected plan and raw outputs, not oracle union; report metric validity only unless it feeds actual curriculum.",
+      "protected_source_ids": [
+        "R22"
+      ],
+      "run_status": "NOT_RUN"
+    }
+  ],
+  "latest_targeted_revision": "62bcc8f2368840e22d2ea98ef16d9bd526ad9a39",
+  "current_policy_override": "NOT_RUN is absence of execution; prepare available inputs autonomously; learned-output may use zero new updates. See 02 and 07 for overrides. 62bcc: exact experimental copy/host first; historical product-dispatch edits are not prerequisites. Current4-row N-KU native Train=2, Facade.Compile=0.",
+  "counts_are_not_experiment_runs": true
+}

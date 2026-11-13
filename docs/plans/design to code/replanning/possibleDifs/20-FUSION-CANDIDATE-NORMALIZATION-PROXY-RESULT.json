@@ -1,0 +1,96 @@
+{
+  "status": "PROXY_EXECUTED_NOT_PRODUCTION_LEARNING",
+  "engine": "node-mjs",
+  "scenario": "same A/B vectors and BM25 proxies; append one candidate C only",
+  "before": [
+    {
+      "id": "B",
+      "score": 0.5975,
+      "expectedCorrect": true
+    },
+    {
+      "id": "A",
+      "score": 0.4525,
+      "expectedCorrect": false
+    }
+  ],
+  "afterHighLexicalDistractor": [
+    {
+      "id": "A",
+      "score": 0.3895,
+      "expectedCorrect": false
+    },
+    {
+      "id": "C",
+      "score": 0.35,
+      "expectedCorrect": false
+    },
+    {
+      "id": "B",
+      "score": 0.2825,
+      "expectedCorrect": true
+    }
+  ],
+  "afterLowLexicalDistractor": [
+    {
+      "id": "B",
+      "score": 0.5975,
+      "expectedCorrect": true
+    },
+    {
+      "id": "A",
+      "score": 0.4525,
+      "expectedCorrect": false
+    },
+    {
+      "id": "C",
+      "score": 0.035,
+      "expectedCorrect": false
+    }
+  ],
+  "afterHighWithFrozenLexicalScale": [
+    {
+      "id": "B",
+      "score": 0.5975,
+      "expectedCorrect": true
+    },
+    {
+      "id": "A",
+      "score": 0.4525,
+      "expectedCorrect": false
+    },
+    {
+      "id": "C",
+      "score": 0.35,
+      "expectedCorrect": false
+    }
+  ],
+  "conclusion": "Source-conformant fusion can flip B to A solely on candidate-local maxLexical.",
+  "limitations": [
+    "raw BM25 and ANN hits are illustrative frozen inputs, not obtained from live C# Unit",
+    "corpus-wide BM25 IDF and averageLength are NOT recalculated in this proxy",
+    "proxy does NOT measure genuine held-out learning quality or optimizer updates"
+  ],
+  "complexityShape": [
+    {
+      "memoryExamples": 8,
+      "queryTermsPresentInEveryCandidate": 6,
+      "estimatedTokenizeCalls": 456
+    },
+    {
+      "memoryExamples": 16,
+      "queryTermsPresentInEveryCandidate": 6,
+      "estimatedTokenizeCalls": 1808
+    },
+    {
+      "memoryExamples": 32,
+      "queryTermsPresentInEveryCandidate": 6,
+      "estimatedTokenizeCalls": 7200
+    },
+    {
+      "memoryExamples": 64,
+      "queryTermsPresentInEveryCandidate": 6,
+      "estimatedTokenizeCalls": 28736
+    }
+  ]
+}

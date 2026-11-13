@@ -1,0 +1,21 @@
+# Независимая source review KNN finding — 19.10.2026
+
+**Рецензент:** отдельный агент DPO/units, не автор KNN finding. Это внутренняя независимая source review, **не** исполненный экзамен CODEX astra 6 ultracode. Прочитаны целиком `audit/agent_knn/findings.md`, `StructuralKnn.cs`, соответствующие части Facade/E09. Native Roslyn/KNN не запускались.
+
+**Вердикт:** существенного опровержения source-механизма или дизайна основного опыта не найдено. Один новый узкий seam обоснован; два небольших уточнения сделают границы опыта точнее.
+
+| Вопрос | Оценка |
+|---|---|
+| Один фактор? | Да. Новый ordinal extractor + одно distance-слагаемое — согласованные producer/consumer одной новой координаты. Role6, direct position, depth/scope, codec, k и tie одинаковы A/B. Re-extraction с новым schema необходима; она не добавляет самостоятельный фактор. |
+| Это реальная next-kind задача? | Да. [TrainFromSource:132–141](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/12.SemanticCompiler/Prediction/StructuralKnn.cs#L132-L141) именно связывает node с непосредственным successor в `DescendantNodes`. Нельзя заменять этот target удобной left/right меткой. Протокол это соблюдает и требует native labels и разницу после modulo200 codec. Ожидаемые Argument/ReturnStatement пока правильно обозначены как прогноз. |
+| Выборка и бюджет? | Основные **2 Train calls × 2 rows; 16 Predict** до/после A/B посчитаны верно. Это два уникальных урока, не четыре. Четыре EXAM образуют две новые структурные семьи; два аргумента одного фрагмента принадлежат одной семье. Пустой predictor output0 не считается усвоением — правильно. |
+| Не завышена ли причинность? | Нет. Finding сохраняет исторический positive receipt, признаёт inherited source parity и ограничивает вывод component next-kind. [Facade:299–310](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/12.SemanticCompiler/SemanticCompilerFacade.cs#L299-L310) доказывает optional reader в поле результата, а не влияние на RP01 finished answer. Прогноз4/4 не назван native результатом. |
+
+## Два точных уточнения
+
+1. **k=1 надо сохранить как строгий предел доказательства.** При двух rows и default k=5 метод [Predict:150–161](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/12.SemanticCompiler/Prediction/StructuralKnn.cs#L150-L161) возьмёт обе строки, по одному голосу каждого label, и выберет меньший label независимо от нового distance. Это не просто «k=5 пока не проверяли»: **на двух уроках ordinal сам по себе не может дать контраст при k=5**. Нынешний k=1 A/B законен для проверки различимости представления, но не демонстрирует улучшение неизменного default predictor. В продуктовой проверке потребуется собственный заранее определённый native corpus, ≥10 реальных pairs для Facade и реальный k; это отдельный вопрос, а не дополнительный обязательный этап малого опыта.
+2. **T0 проверить также на четырёх EXAM до обучения, без дополнительных Predict calls.** В каждой паре фактические старые distance-поля должны совпасть друг с другом; recorded native successor IDs должны различаться. Scope/depth могут отличаться от TRAIN, но одинаково для двух аргументов одного EXAM. Такая проверка закрывает возможность, что новый block/if внёс неожиданный codec/role seam. Если условия не выполнены — NO_CONTRAST, а не изменение gold после результата. Native extraction/label recording уже предусмотрены; надо лишь явно распространить gate с TRAIN на EXAM.
+
+Контроли reverse-order, неаргументных inputs, rebuild и продуктовый этап после основного бюджета полезны как **отдельно выбранные** продолжения. Сейчас их общий бюджет не определён. Не делать их обязательными для результата16 Predict; если выбирается конкретное продолжение, сначала назвать собственное число вызовов. Например, reversal уже обученных двух arms требует **ещё2 Train calls и8 Predict** на прежних четырёх EXAM; отдельный rebuild двух arms — столько же и не называется native checkpoint import. Это предложения бюджета, не выполненные действия.
+
+**Публикаций и изменений KNN/core нет.** Рекомендация root: принять finding с указанными границами; source-equivalent арифметику оставить подтверждением способности одной координаты разделить условные векторы, не измерением обучения.

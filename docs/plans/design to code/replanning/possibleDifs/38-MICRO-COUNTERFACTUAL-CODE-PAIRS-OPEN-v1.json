@@ -1,0 +1,85 @@
+{
+  "schema": "xiigen.possibleDifs.open-counterfactual-pairs.v1",
+  "experiment_id": "RP01-MICRO-CF-COND-01",
+  "created_on": "2026-10-16",
+  "domain": "CSharp12DotNet8",
+  "panel": "OPEN_DIAGNOSTIC_NOT_SEALED_NOT_SOURCE_DISJOINT",
+  "for_training": false,
+  "semantic_stdout_review": "PENDING_NATIVE_OR_INDEPENDENT_CHECK",
+  "positive_response_authorship": "DIAGNOSTIC_FIXTURE_NOT_TEACHER",
+  "notes": "Scores and native model results intentionally absent. Grounded expected stdout needs independent C# execution/verification before evaluation. Do not use cases as DPO rows.",
+  "cases": [
+    {
+      "id": "CF-C01",
+      "family": "arithmetic-precedence",
+      "code0": "System.Console.Write(2+3*4);",
+      "code1": "System.Console.Write((2+3)*4);",
+      "stdout0": "14",
+      "stdout1": "20",
+      "answer0": "It writes 14 because multiplication is evaluated before addition.",
+      "answer1": "It writes 20 because parentheses make addition happen before multiplication.",
+      "prompt0": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nSystem.Console.Write(2+3*4);",
+      "prompt1": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nSystem.Console.Write((2+3)*4);"
+    },
+    {
+      "id": "CF-C02",
+      "family": "prefix-postfix-side-effect",
+      "code0": "int x=4; int y=x++; System.Console.Write(y);",
+      "code1": "int x=4; int y=++x; System.Console.Write(y);",
+      "stdout0": "4",
+      "stdout1": "5",
+      "answer0": "It writes 4 because postfix increment returns the old value.",
+      "answer1": "It writes 5 because prefix increment returns the updated value.",
+      "prompt0": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nint x=4; int y=x++; System.Console.Write(y);",
+      "prompt1": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nint x=4; int y=++x; System.Console.Write(y);"
+    },
+    {
+      "id": "CF-C03",
+      "family": "short-circuit-conditional",
+      "code0": "bool b=false; int x=1; bool r=b&&(++x>0); System.Console.Write(x);",
+      "code1": "bool b=false; int x=1; bool r=b||(++x>0); System.Console.Write(x);",
+      "stdout0": "1",
+      "stdout1": "2",
+      "answer0": "It writes 1 because short-circuit AND skips the right operand when false.",
+      "answer1": "It writes 2 because short-circuit OR evaluates the right operand when false.",
+      "prompt0": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nbool b=false; int x=1; bool r=b&&(++x>0); System.Console.Write(x);",
+      "prompt1": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nbool b=false; int x=1; bool r=b||(++x>0); System.Console.Write(x);"
+    },
+    {
+      "id": "CF-C04",
+      "family": "numeric-vs-string-addition",
+      "code0": "System.Console.Write(2+3+\"4\");",
+      "code1": "System.Console.Write(\"2\"+3+4);",
+      "stdout0": "54",
+      "stdout1": "234",
+      "answer0": "It writes 54 because numeric addition occurs before string concatenation.",
+      "answer1": "It writes 234 because string concatenation proceeds left to right.",
+      "prompt0": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nSystem.Console.Write(2+3+\"4\");",
+      "prompt1": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nSystem.Console.Write(\"2\"+3+4);"
+    },
+    {
+      "id": "CF-C05",
+      "family": "division-vs-remainder",
+      "code0": "System.Console.Write(-9/4);",
+      "code1": "System.Console.Write(-9%4);",
+      "stdout0": "-2",
+      "stdout1": "-1",
+      "answer0": "It writes -2 because integer division truncates toward zero.",
+      "answer1": "It writes -1 because the remainder keeps the sign of the dividend.",
+      "prompt0": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nSystem.Console.Write(-9/4);",
+      "prompt1": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nSystem.Console.Write(-9%4);"
+    },
+    {
+      "id": "CF-C06",
+      "family": "array-reference-vs-int-value",
+      "code0": "int[] a={1,5}; int[] b=a; b[0]=9; System.Console.Write(a[0]);",
+      "code1": "int a=1; int b=a; b=9; System.Console.Write(a);",
+      "stdout0": "9",
+      "stdout1": "1",
+      "answer0": "It writes 9 because both array variables reference the same mutable array.",
+      "answer1": "It writes 1 because assigning an integer copies the value.",
+      "prompt0": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nint[] a={1,5}; int[] b=a; b[0]=9; System.Console.Write(a[0]);",
+      "prompt1": "C# 12 / .NET 8. Explain this code's observable behavior in one sentence.\nint a=1; int b=a; b=9; System.Console.Write(a);"
+    }
+  ]
+}

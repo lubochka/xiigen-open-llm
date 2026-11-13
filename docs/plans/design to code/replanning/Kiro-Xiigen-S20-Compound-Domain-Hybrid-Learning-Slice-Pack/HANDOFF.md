@@ -1,0 +1,9 @@
+# S20 — authoring handoff (13 October 2026)
+
+**Documentary planning only.** This new S20 is NOT research R20 and does NOT assert S18/S19 readiness. None of the 18 task prompts or 36 child steps were executed by authoring the package. No K code/Student/index/LoRA/dataset/weights changed, no CODEX/Chinese Teacher model invocation, no lawful domain heldout science or independent CODEX Astra review performed. All actual learning/PC/product gains are NOT_MEASURED.
+
+Inspected current P S17/RP01–RP15/source strategy, scoped current WorkLeft, RAG→G/F original and scoped K Unit/Graph/Machine/Knn/domain class/vector/DPO code, plus substantive skill portions. **Not fully source-read:** entire 481k previous-rounds thinking, entire WorkLeft/RAG corpus, actual V ordinary host. These tasks explicitly fill scoped gaps before any claim. A source index is not code or learner status.
+
+**Next executable allocation:** S20.00B frozen independently sourced compound law cases and S20.00C real consumer/source state, in parallel S20.00A source/owner descent; then S20.03A only after a valid joined port+law envelope, observe P→C0 in normal request; only proven residual Student error permits separately granted 04A/04B; holdout+PC+cold host+review remain separately observable. On absent capability, REUSE_NO_CHANGE/INTEGRATION_OPEN, don't manufacture another engine.
+
+Ask of one C#+SQL ordinary request: Did we identify BOTH laws and rights? What typed results were joined? Did >1 neighbor influence answer? Was Graph order lawful and better than same-cost deterministic? Did separate CODEX choose lesson and judge Chinese BOTH final sides, if training occurred? Did Student actually mutate and T beat C0 on unseen families? Did any older subject regress? Did cold DTC/IDE use accepted state? Every unobserved answer is OPEN/NOT_MEASURED.

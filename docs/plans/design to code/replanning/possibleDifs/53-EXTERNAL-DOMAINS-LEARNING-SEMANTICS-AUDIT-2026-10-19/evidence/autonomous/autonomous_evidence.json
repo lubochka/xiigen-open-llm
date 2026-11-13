@@ -1,0 +1,307 @@
+{
+  "schema": "evidence-backed-hypotheses/v1",
+  "date": "2026-10-19",
+  "authors_role": "code-review research subagent; not an external teacher or judge execution",
+  "current_commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+  "donor_commit": "3036a01acec938f0b83fa4ffbda26202cc35d639",
+  "findings": [
+    {
+      "priority": "P2_CONDITIONAL",
+      "source_status": "SOURCE_CONFIRMED_CONTROL_FLOW",
+      "native_execution": "NOT_RUN_DOTNET_UNAVAILABLE",
+      "model_training": "NOT_RUN",
+      "quality_gain": "NOT_MEASURED",
+      "rp01_direct_cause": "NOT_APPLICABLE_TO_DIRECT_SIMULATION_RUNNER",
+      "composition_scope": "AutonomousLearningPipeline has no non-test composition root per current lines45-47. Public/injected/test composition only demonstrated.",
+      "source_equivalent_probe": "autonomous_source_probe_result.json",
+      "id": "AUT-WEIGHT-01",
+      "title_ru": "Однодоменный batch вырождает class weighting и обрезает provider weights выше1",
+      "mechanism": "Same-domain guard implies numClasses=1 and rareCount=N, so maxWeight=1 and every output Weight=min(inputWeight,1).",
+      "parameter_recipient": "IncrementalTrainer supervised step -> LoRA parameters (conditional actual composition)",
+      "sources": [
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "path": "16.AutonomousLearning/Pipeline/AutonomousLearningPipeline.cs",
+          "line_start": 112,
+          "line_end": 153,
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/16.AutonomousLearning/Pipeline/AutonomousLearningPipeline.cs#L112-L153"
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "path": "16.AutonomousLearning/Preprocessing/DatasetWeighter.cs",
+          "line_start": 26,
+          "line_end": 64,
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/16.AutonomousLearning/Preprocessing/DatasetWeighter.cs#L26-L64"
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "path": "16.AutonomousLearning/Training/AutonomousTrainer.cs",
+          "line_start": 82,
+          "line_end": 110,
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/16.AutonomousLearning/Training/AutonomousTrainer.cs#L82-L110"
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "path": "14.ContinuousLearning/Training/IncrementalTrainer.cs",
+          "line_start": 645,
+          "line_end": 662,
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/14.ContinuousLearning/Training/IncrementalTrainer.cs#L645-L662"
+        }
+      ],
+      "donor": {
+        "status": "INHERITED_HELPER_SAME_AFTER_FIVE_LICENSE_LINES; CURRENT_SINGLE_DOMAIN_GUARD_MAKES_DEGENERACY_MANDATORY",
+        "sources": [
+          {
+            "repository": "lubochka/llm_mvp_core",
+            "commit": "3036a01acec938f0b83fa4ffbda26202cc35d639",
+            "path": "16.AutonomousLearning/Preprocessing/DatasetWeighter.cs",
+            "line_start": 21,
+            "line_end": 59,
+            "url": "https://github.com/lubochka/llm_mvp_core/blob/3036a01acec938f0b83fa4ffbda26202cc35d639/16.AutonomousLearning/Preprocessing/DatasetWeighter.cs#L21-L59"
+          },
+          {
+            "repository": "lubochka/llm_mvp_core",
+            "commit": "3036a01acec938f0b83fa4ffbda26202cc35d639",
+            "path": "16.AutonomousLearning/Pipeline/AutonomousLearningPipeline.cs",
+            "line_start": 97,
+            "line_end": 115,
+            "url": "https://github.com/lubochka/llm_mvp_core/blob/3036a01acec938f0b83fa4ffbda26202cc35d639/16.AutonomousLearning/Pipeline/AutonomousLearningPipeline.cs#L97-L115"
+          }
+        ]
+      },
+      "counterevidence": [
+        {
+          "claim": "Built-in preprocessor always assigns Weight=1; no loss for that current provider material.",
+          "source": {
+            "repository": "lubochka/llm_mvp_core",
+            "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+            "path": "16.AutonomousLearning/Preprocessing/DatasetPreprocessor.cs",
+            "line_start": 78,
+            "line_end": 87,
+            "url": "https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/16.AutonomousLearning/Preprocessing/DatasetPreprocessor.cs#L78-L87"
+          }
+        },
+        {
+          "claim": "Normalized weights <=1 retain relative priority; semantics may intentionally require normalized input."
+        },
+        {
+          "claim": "Adaptive per-example optimizer can partly cancel weight scaling; field inequality alone does not establish changed behavior."
+        }
+      ],
+      "observed_probe": {
+        "weights_before": [
+          1,
+          1,
+          1,
+          1,
+          4
+        ],
+        "weights_after": [
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "normalized_control_before": [
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          1
+        ],
+        "normalized_control_after": [
+          0.25,
+          0.25,
+          0.25,
+          0.25,
+          1
+        ]
+      },
+      "experiment": {
+        "id": "EXP-AUT-WEIGHT-01",
+        "stage0": "Actual native RunAsync test composition with instrumented provider/trainer; capture weights before PrepareBatch and actual supervised executor.",
+        "arm_a": "Current single-domain weighting",
+        "arm_b": "Only preserve incoming valid weights in single-domain case",
+        "domains": [
+          "C# documentation: common result vs exceptional behavior",
+          "Translation: affirmation vs negation (separate run)"
+        ],
+        "budget": "8 independently verified lessons /8 supervised updates per arm, 8 source-disjoint exam cases, same state/model/tokenizer/optimizer/RNG and no replay in both arms.",
+        "controls": [
+          "uniform weight1",
+          "normalized weights<=1",
+          "different-Domain rejected"
+        ],
+        "candidate_signal": "At least1 newly correct rare exam case of4, no loss on4 common cases, actual update trace differs; pilot only.",
+        "reject_if": [
+          "actual provider only emits weights<=1",
+          "intended contract is normalized weights",
+          "consumer absent",
+          "same parameter/output trajectory",
+          "no measured gain at fixed budget"
+        ]
+      },
+      "novelty": "No exact owner/formula match in661-MD corpus; distinct from E44V2 target/split/update-count confounds. Global unpublished-draft novelty not claimed."
+    },
+    {
+      "priority": "P2_CONDITIONAL",
+      "source_status": "SOURCE_CONFIRMED_CONTROL_FLOW",
+      "native_execution": "NOT_RUN_DOTNET_UNAVAILABLE",
+      "model_training": "NOT_RUN",
+      "quality_gain": "NOT_MEASURED",
+      "rp01_direct_cause": "NOT_APPLICABLE_TO_DIRECT_SIMULATION_RUNNER",
+      "composition_scope": "AutonomousLearningPipeline has no non-test composition root per current lines45-47. Public/injected/test composition only demonstrated.",
+      "source_equivalent_probe": "autonomous_source_probe_result.json",
+      "id": "AUT-REPLAY-02",
+      "title_ru": "Replay принимает уроки кандидата до последующей оценки и отказа в promotion",
+      "mechanism": "Successful TrainPreparedAsync commits NewExamples to ReplayBuffer before Pipeline evaluates candidate; ACCURACY_NOT_IMPROVED does not undo the buffer. Next same-domain cycle samples the cohort.",
+      "parameter_recipient": "ReplayBuffer membership -> next MixedExamples -> IncrementalTrainer supervised LoRA (conditional live shared buffer)",
+      "sources": [
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "path": "16.AutonomousLearning/Training/AutonomousTrainer.cs",
+          "line_start": 155,
+          "line_end": 199,
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/16.AutonomousLearning/Training/AutonomousTrainer.cs#L155-L199"
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "path": "16.AutonomousLearning/Pipeline/AutonomousLearningPipeline.cs",
+          "line_start": 230,
+          "line_end": 315,
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/16.AutonomousLearning/Pipeline/AutonomousLearningPipeline.cs#L230-L315"
+        },
+        {
+          "repository": "lubochka/llm_mvp_core",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "path": "16.AutonomousLearning/Training/ReplayBuffer.cs",
+          "line_start": 20,
+          "line_end": 68,
+          "url": "https://github.com/lubochka/llm_mvp_core/blob/44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76/16.AutonomousLearning/Training/ReplayBuffer.cs#L20-L68"
+        }
+      ],
+      "donor": {
+        "status": "INHERITED_EVENT_ORDER; NOT_A_LOST_SUCCESSFUL_DONOR_FIX",
+        "sources": [
+          {
+            "repository": "lubochka/llm_mvp_core",
+            "commit": "3036a01acec938f0b83fa4ffbda26202cc35d639",
+            "path": "16.AutonomousLearning/Training/AutonomousTrainer.cs",
+            "line_start": 59,
+            "line_end": 73,
+            "url": "https://github.com/lubochka/llm_mvp_core/blob/3036a01acec938f0b83fa4ffbda26202cc35d639/16.AutonomousLearning/Training/AutonomousTrainer.cs#L59-L73"
+          },
+          {
+            "repository": "lubochka/llm_mvp_core",
+            "commit": "3036a01acec938f0b83fa4ffbda26202cc35d639",
+            "path": "16.AutonomousLearning/Pipeline/AutonomousLearningPipeline.cs",
+            "line_start": 120,
+            "line_end": 142,
+            "url": "https://github.com/lubochka/llm_mvp_core/blob/3036a01acec938f0b83fa4ffbda26202cc35d639/16.AutonomousLearning/Pipeline/AutonomousLearningPipeline.cs#L120-L142"
+          }
+        ]
+      },
+      "counterevidence": [
+        {
+          "claim": "Rejected candidate does not imply bad lessons; replay may help good undertrained lessons."
+        },
+        {
+          "claim": "Failed technical training returns before Add; mismatched domain is excluded."
+        },
+        {
+          "claim": "Buffer must remain live and shared into later cycle."
+        },
+        {
+          "claim": "No source establishes policy that replay may contain only promoted-candidate lessons; this is a hypothesis of semantic policy, not proven violation."
+        }
+      ],
+      "observed_probe": {
+        "cycle1_new_count": 5,
+        "native_training_result": "simulated successful artifact/provenance",
+        "candidate_evaluation": "simulated rejected",
+        "buffer_count_after_decision": 5,
+        "promoted": false,
+        "cycle2_new_count": 5,
+        "cycle2_replay_count": 2,
+        "replay_candidate_cohort": "cycle1 rejected candidate",
+        "dotnet_rng_exact_selected_ids": "NOT_SIMULATED"
+      },
+      "experiment": {
+        "id": "EXP-AUT-REPLAY-02",
+        "stage0": "Actual native two-cycle test composition, valid artifact/provenance fixtures, baseline.8/candidate.6, receipt->buffer->next mixed SourceIds.",
+        "arm_a": "Current replay append after training before candidate evaluation",
+        "arm_b": "Hold cohort pending, append only under preregistered admission rule after evaluation",
+        "matched_budget": "Start with5 trusted old records and maxCapacity5 in both arms; after first rejected5, A hasnew5/B hasold5; second cycle gives5 same new+2 replay=7 supervised updates per arm. Same RNG/capacity/state/order. This is supported small-capacity diagnostic, not default4096 claim.",
+        "domains": [
+          "C# operation laws and exceptions",
+          "Translation negation/roles (separate run)"
+        ],
+        "semantic_controls": [
+          "independently erroneous/contradictory rejected cohort",
+          "independently correct but initially unhelpful rejected cohort"
+        ],
+        "exam": "8 source-disjoint cases:4 old law+4 new law, actual answers and cold restore",
+        "candidate_signal": "B fixes>=1/4 old-law case without losing any new-law case in bad-cohort panel; report good-cohort result even if B regresses. Pilot only.",
+        "reject_if": [
+          "no live next-cycle consumer",
+          "all lessons independently valid and A not worse",
+          "no rejected candidates",
+          "same parameter/answer trajectory at matched budget"
+        ],
+        "history_control": "Both arms retain the full cohort and its semantic/adaptor decisions in the research journal; capacity5 is positive replay only."
+      },
+      "novelty": "Distinct from E43 file boundaries, top3/newest capability replay and general replay absence; exact pre-evaluation commit not found in661-MD corpus.",
+      "preservation_requirement": "Keep all failed/rejected examples in evidence/history with provenance and positive/negative/warning role; change only eligibility as future positive supervised replay targets. Never delete failed memory solely because adapter was rejected."
+    }
+  ],
+  "dedup": {
+    "corpus_files": 661,
+    "planning_md": 389,
+    "protected_core_md": 272,
+    "search_receipt": "novelty_search.json",
+    "excluded_peer_drafts": [
+      "DPO->CE conflict",
+      "ProjectIndexer filename-only context"
+    ],
+    "exclusion_source": "planning package51/04-TENSOR-CONDITIONAL-GAPS.md:L55"
+  },
+  "skills_applied": [
+    "docs/skills/generated-code-review-SKILL.md",
+    "docs/skills/training-data-gap-audit-SKILL.md"
+  ],
+  "scope_rules": [
+    "All external repositories read-only for this subagent",
+    "No edits to protected core docs",
+    "No implementation or native learning performed",
+    "Donor success restoration precedes these conditional candidates"
+  ],
+  "artifacts": [
+    {
+      "path": "dpo_autonomous_findings.md",
+      "sha256": "3a0e20ed015186a7e8a7fa9f09cfe234f8b3b69d473cc11d4f9deaef74ff4bae"
+    },
+    {
+      "path": "autonomous_source_probe.py",
+      "sha256": "f1cb21b372b6539cf6a460ef92c571148904685d2b2062545b6d1e47b96d9dc4"
+    },
+    {
+      "path": "autonomous_source_probe_result.json",
+      "sha256": "ad129f4ba14fbd68caf16d4a54b8cbcebdf1e6911cb5ea0b8606c9d6eed0136a"
+    },
+    {
+      "path": "source_manifest.json",
+      "sha256": "8e1c38890e4f86087c20b811fa4880507e831af6e799270db7fa2f146ba622ea"
+    },
+    {
+      "path": "novelty_search.json",
+      "sha256": "42f32e7133a0db3d289d6979fe8f3d5144c4c15e3e3efb6a45dfeb5b58ddf716"
+    }
+  ]
+}

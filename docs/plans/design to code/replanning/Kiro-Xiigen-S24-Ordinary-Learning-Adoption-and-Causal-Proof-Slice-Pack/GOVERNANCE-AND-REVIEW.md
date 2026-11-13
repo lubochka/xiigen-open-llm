@@ -1,0 +1,12 @@
+# S24 source and effect governance
+
+Planning publication is authorized to P=xiigen-planning@llm_plan3. This alone is not authorization to invoke cloud teachers/judges, reuse copyrighted/private sources for DPO, mutate a Student/Graph checkpoint, write IDE user files, spend a PC training budget, publish a native extension, force-push or remove worktrees. Each such action needs its own effect-specific authorization, rights and source/model/provider receipts.
+
+## Nonduplication and ownership
+RP01/R18 Student trainer; RP02 mapper/semantic token vectors and adaptive multi-neighbor; RP03 typed Unit/Flow; RP04 async Orchestrator/DynamicGraph; RP05 user feedback; RP06 Figma/Canva/platform/IDE client delivery; RP09 independent learning lab; RP10 promotion; RP18 LoRA/projection; S23 PC durable recovery. Unique S24 seam: verify or repair **one** already accepted learning state identity through an actual ordinary product consumer and causal outcome. Read whole affected class and upstream/downstream before code. REUSE_NO_CHANGE is proper when already implemented; unverified deployment stays INTEGRATION_OPEN. Only one writer per current code/branch, non-force compare-and-swap git publication with remote readback. Leave results/Rxx and sibling RP tasks untouched.
+
+## Protected source laws
+F/DECISIONS-LOCKED D-01 result contract; D-02 fabric; D-04 intent distinct from subject; D-05 project LoRA not same as domain vectorizer; D-07 raw stack first; D-08 stratification plus family heldout; D-09 dynamic weights; D-10 BM25+kNN; D-11 internal TensorCore; D-13 law/subject before tier; D-14 internal-first/idle/legal provider approvals; D-15 deterministic arbiter over learned. Old D-06 70/30 replay vs current once-per-pair Step is unresolved owner policy conflict, never silently changed.
+
+## Truth and accept/reject
+DOC_VALID != SOURCE_TRACED != MECHANISM_CONSUMED != TRAINABLE_STATE_CHANGED != SCIENTIFIC_GAIN_EXAMINED != COLD_ORDINARY_PRODUCT_ADOPTED != INDEPENDENT_REVIEWED. Whole PC/time/cost and family-disjoint legality outrank a high tests count or optimizer loss. Narrow deterministic safety/recovery/native transport checks may be necessary, but not used to declare learned ability. Exact SHA of separately invoked Astra reviewer is required for independent PASS; own self-check is not independent. Give human-language report with status PLANNED, SOURCE_TRACED, REUSE_NO_CHANGE, INTEGRATION_OPEN, NOT_MEASURED, INCONCLUSIVE, REGRESS, IMPROVE or NEEDS_FIX only on real evidence.

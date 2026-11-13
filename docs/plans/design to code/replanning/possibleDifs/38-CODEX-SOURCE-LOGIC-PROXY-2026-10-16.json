@@ -1,0 +1,97 @@
+{
+  "schema": "xiigen.possibleDifs.source-logic-proxy.v1",
+  "created_utc_date": "2026-10-16",
+  "source_code_commit": "aa284ba21790c5d7601328997cd6174c85cee878",
+  "source_repo": "lubochka/llm_mvp_core",
+  "status": {
+    "source_code_review": "DONE",
+    "executed_pure_js_proxy": "DONE",
+    "native_dotnet": "NOT_RUN",
+    "model_dpo_training": "NOT_RUN",
+    "gold_heldout": "NOT_RUN",
+    "independent_codex_astra6_ultracode": "NOT_RUN"
+  },
+  "units": {
+    "N38_01_generic_KnnLogicalUnit": {
+      "code_paths": [
+        "21.AgentInfrastructure/Logical/KnnLogicalUnit.cs#L110-L266",
+        "06.VectorSearch/HnswIndex.cs#L36-L104"
+      ],
+      "two_row_input": [
+        {
+          "example_id": "same-id",
+          "vector_label": "v_A",
+          "output": "A"
+        },
+        {
+          "example_id": "same-id",
+          "vector_label": "v_B",
+          "output": "B"
+        }
+      ],
+      "derived_index_vector_nodes": 2,
+      "derived_dictionary_unique_keys": 1,
+      "derived_dictionary_output_for_id": "B",
+      "interpretation": "Logical overwrite of mapping if first vector hit points to shared id; actual HNSW search result and consumer quality unmeasured",
+      "counterfactual_unique_ids": {
+        "index_vector_nodes": 2,
+        "dictionary_unique_keys": 2
+      },
+      "causal_claim_status": "CONDITIONAL_SOURCE_ONLY"
+    },
+    "N38_02_vector_signal_loss": {
+      "code_paths": [
+        "11.DPO/DpoTrainer.cs#L832-L943",
+        "11.DPO/DpoTrainer.cs#L1159-L1167",
+        "11.DPO/DpoConvergenceMonitor.cs#L7-L39",
+        "18.CapabilityTraining/LlmIngredientLogicalUnits.cs#L1351-L1391"
+      ],
+      "hypothetical_frozen_unweighted_exact_dpo_loss": 0.6931471805599453,
+      "normalized_pair_weight": 1,
+      "cases": [
+        {
+          "active_slots": 0,
+          "vector_signal": 1,
+          "derived_published_loss": 0.6931471805599453
+        },
+        {
+          "active_slots": 60,
+          "vector_signal": 2,
+          "derived_published_loss": 1.3862943611198906
+        }
+      ],
+      "reward_and_accuracy_weighting": "vectorWeight only, not scaledWeight",
+      "early_stop_actual_invocation": "lastMetrics.Loss passed to monitor.ShouldStop; no native stopping steps measured",
+      "rp01_fixed_step_experiment_applicability": "NOT_DIRECT_ROOT_CAUSE"
+    },
+    "N38_03_replay_fusion": {
+      "code_paths": [
+        "18.CapabilityTraining/ReplayFusionRanker.cs#L12-L91",
+        "18.CapabilityTraining/DefaultLogicalCapabilityTrainer.cs#L1866-L1884"
+      ],
+      "source_expression": "vector=ComputePredicateOverlap;pattern=vector;score=0.45*vector+0.35*BM25like+0.20*pattern",
+      "simplified_expression": "0.65*ComputePredicateOverlap+0.35*BM25like",
+      "independent_ast_or_ann_signal": false,
+      "current_ranker_returns_input_as_is_if_count_le_topK": true,
+      "selected_replay_topK": 3,
+      "causal_claim_status": "ALGORITHMIC_SOURCE_CONFIRMED_USER_QUALITY_NOT_RUN"
+    },
+    "N38_04_generic_KnnLogicalUnit_hash_edge": {
+      "code_path": "21.AgentInfrastructure/Logical/KnnLogicalUnit.cs#L294-L309",
+      "normalized_uppercase_predicate": "UNSLAWTU",
+      "hash_polynomial_seed": 23,
+      "hash_multiplier": 31,
+      "hash_storage_bits": 32,
+      "signed_int32_hash": -2147483648,
+      "dotnet_math_abs_int32_min_result": "OverflowException",
+      "rare_constructed_case_not_observed_corpus": true,
+      "causality_to_rp01": "NONE_SHOWN"
+    }
+  },
+  "negative_controls": "No native executions, unchanged model weights, no user-visible generated output quality, no evidence actual train corpus has duplicate ExampleId or contrived predicate",
+  "next_steps": [
+    "Run L0 .NET pure mechanism probes N38_01 and N38_02",
+    "Trace actual generic KNN consumer before quality claims",
+    "Obtain independent CODEX/Astra 6 UltraCode quality rubric and open Chinese model DPO pair author receipts only where new DPO is required"
+  ]
+}

@@ -1,0 +1,111 @@
+# DC-01…03 — как learned preferences могут теряться в DesignConversion
+
+## Вывод и область утверждения
+
+Найдены три конкретных механизма в подготовке признаков и выборе локальных исправлений. Для них выполнена воспроизводимая **source-equivalent Python-проба**, затем два независимых чтения исходника. Ни один результат ниже не является выполненным C# обучением, новым визуальным измерением или доказанной причиной падения RP01.
+
+**Новизна после свежей сверки:** DC-01 — конкретное уточнение phantom/canonical generic в уже известной области нормализации/whitelist; DC-02/03 — независимые уточнения параллельного пакета54, не новые механизмы. Общая цепь «старый ключ → новый whitelist → отказ всего checkpoint» теперь также известна по CLEAN-CP01; в DC-01b дополнительно установлены конкретный producer generic alias и риск дубликатов при его миграции. Основные selection/normalization методы есть и на успешном `DesignToCode-clean`, но в **DC-01b** подтверждено current изменение допуска этого имени. Файл `44.DesignConversionDomain/DesignConversionTrainedUnits.cs` целиком имеет одинаковый Git blob `3ef9f245d70df2c6dee673f7b9af5a15b3584701` в clean `e346b88a3cc1fcce48aefa626bfc7b00509eefd6` и current `358af351e22a92a3f7938d1f9221d5aeb7ddb053`. Перечисленные ниже методы извлечения categories совпадают по тексту; **IsAllowedLearnedWeightFeatureKey не совпадает** и рассмотрен отдельно в DC-01b. Унаследованные ветви могут срабатывать на другом составе уроков/defects или другом consumer. Полный causal вывод о качестве требует опыта; для DC-01b доказана source-level несовместимость определённого feature key.
+
+| Участок | Clean | Current |
+|---|---|---|
+| Подготовка category deltas | [Machine:2822–2885](https://github.com/lubochka/llm_mvp_core/blob/e346b88a3cc1fcce48aefa626bfc7b00509eefd6/44.DesignConversionDomain/DesignConversionMachine.cs#L2822-L2885) | [Machine:3008–3071](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L3008-L3071) |
+| Вызов нормализации отсутствующего поля | [2901–2907](https://github.com/lubochka/llm_mvp_core/blob/e346b88a3cc1fcce48aefa626bfc7b00509eefd6/44.DesignConversionDomain/DesignConversionMachine.cs#L2901-L2907) | [3087–3093](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L3087-L3093) |
+| Канонизация, ranking и CSS rules | [TrainedUnits:283–407](https://github.com/lubochka/llm_mvp_core/blob/e346b88a3cc1fcce48aefa626bfc7b00509eefd6/44.DesignConversionDomain/DesignConversionTrainedUnits.cs#L283-L407) | [TrainedUnits:283–407](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionTrainedUnits.cs#L283-L407) |
+| Runtime features → preferences | [Machine:4373–4422](https://github.com/lubochka/llm_mvp_core/blob/e346b88a3cc1fcce48aefa626bfc7b00509eefd6/44.DesignConversionDomain/DesignConversionMachine.cs#L4373-L4422) | [Machine:4353–4402](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L4353-L4402) |
+| Местный held-out feature-fit | [Machine:3193–3218](https://github.com/lubochka/llm_mvp_core/blob/e346b88a3cc1fcce48aefa626bfc7b00509eefd6/44.DesignConversionDomain/DesignConversionMachine.cs#L3193-L3218) | [Machine:3378–3403](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L3378-L3403) |
+
+## Где это находится в настоящем выполнении
+
+Обучающий вход current проходит через [TrainingPipeline:1037–1043](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionTrainingPipeline.cs#L1037-L1043) → `TrainAdmittedBatchAsync` → [TrainBatchCoreAsync:191–255](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L191-L255) → [BuildLearnedWeightDeltas:2895–3006](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L2895-L3006) → accumulator. Публичный `TrainBatchAsync` не принимает произвольные fixtures без серверной authority. Проба не обходит admission и не вызывает этот метод.
+
+В режиме без `_gradientBridge` подготовленные feature deltas коммитятся напрямую. Численные примеры состояния ниже относятся к этому режиму. При bridge трансформация сигналов и итоговые веса требуют отдельной проверки. Аккумулятор хранит **среднее contribution**, а не неограниченную сумму: повторные +1 дают Weight=1 и повышают ObservationCount [Machine:4026–4054](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L4026-L4054).
+
+Обычный consumer: [CreateRuntimeRoutingFlow:1498–1525](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L1498-L1525) → [LearnedWeightImproverUnit:4232–4254](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L4232-L4254) → признаки **доступных** дефектов → preferences → local improvement plan → [изменение candidate HTML/CSS:162–181](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionTrainedUnits.cs#L162-L181).
+
+Этот consumer содержит фиксированные CSS-шаблоны и прямо маркирует результат `RUNTIME_SCAFFOLD_NOT_LEARNED_IMPROVER` и `DETERMINISTIC_LOGIC_CLAIMED_AS_LEARNING_FALSE` [TrainedUnits:250–273](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionTrainedUnits.cs#L250-L273). Здесь исследуется применение learned feature state в этом scaffold. Не обнаружен тайный нейронный CSS-генератор и не доказан новый дефект LoRA objective.
+
+## DC-01. Отсутствие поля превращается в положительный урок; canonical ID неустойчив
+
+### DC-01a: отсутствие категории не равно generic-категории
+
+`ReadCorrectionRuleIds` безусловно читает пять scalar-полей: `correction_category`, `selected_correction_category`, `correction_rule`, `selected_correction_rule`, `defect_category`. `ReadString` возвращает пустую строку для отсутствующего значения; `AddCorrectionRuleIfPresent` передаёт её в нормализатор, а тот возвращает `generic-visual-defect`. Затем chosen categories получают +1, а rejected categories предварительно исключают категории chosen.
+
+Для механического примера chosen `{correction_category: spacing}` и rejected `{correction_category: overflow}` фактические deltas:
+
+| Признак | Current | Диагностический skip-absent |
+|---|---:|---:|
+| correction_category:spacing | +1 | +1 |
+| correction_category:overflow | −1 | −1 |
+| correction_category:generic-visual-defect | **+1** | отсутствует |
+
+Общий generic исчезает из rejected через `Except(chosenRules)` и остаётся положительным в chosen. `SortedSet` схлопывает повторения: это **один +1, не пять**. Контроль со всеми пятью распознаваемыми непустыми scalar-полями phantom не создаёт. Поэтому нельзя обобщать вывод на любой JSON без условия отсутствующего/пустого поля. Первичные строки — в таблице выше; [ReadString:3488–3491](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L3488-L3491).
+
+### DC-01b: простой skip-empty неполон
+
+Явный `NormalizeCorrectionRuleId("generic-visual-defect")` даёт `generic_visual_defect`, поскольку [санитайзер:419–429](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionTrainedUnits.cs#L419-L429) заменяет дефисы подчёркиваниями. Но [whitelist:2844–2854](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L2844-L2854) допускает только имя с дефисами; [AddDelta:3094–3115](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L3094-L3115) отбрасывает другое имя.
+
+Следовательно, `N(N("")) != N("")`: нормализация не идемпотентна для собственной generic-категории. Пропущенные поля маскируют потерю canonical значения. После одного skip-empty phantom исчезнет, но может исчезнуть и единственный допущенный generic weight. В пробе сохранены оба контроля: все поля явно generic и частично заполненный payload. Лечение проверяется как 2×2 `skip_absent × preserve_canonical`. Preservation покрывает точную canonical строку; регистр, пробелы и полная nested schema этим пилотом не закрыты.
+
+**Здесь обнаружено реальное clean→current отличие.** [Clean IsAllowedLearnedWeightFeatureKey:2665–2672](https://github.com/lubochka/llm_mvp_core/blob/e346b88a3cc1fcce48aefa626bfc7b00509eefd6/44.DesignConversionDomain/DesignConversionMachine.cs#L2665-L2672) использует denylist и допускает `correction_category:generic_visual_defect`. Current использует узкий whitelist и не допускает этот ключ. Одинаковые explicit-generic поля поэтому дают underscore delta в clean и не дают его в current. Проба теперь проверяет точный blob baseline Machine и обе admission-формулы. Known spacing допускается обеими; запрещённый `review_priority` отвергается обеими. Возврат широкого старого denylist из этого не следует.
+
+### DC-01b-R: неправильное имя может блокировать весь старый checkpoint
+
+**Attribution после публикации `33bf0f44`:** [CLEAN-CP01, §1](../54-DESIGNTOCODE-CLEAN-RECOVERY-2026-10-19/02-NEW-CHECKPOINT-AND-CONTEXT-GAPS.md) уже проследил `StageLearnedWeights → CHECKPOINT_LEARNED_WEIGHTS_INVALID → whole checkpoint refusal` для старых `source_manifest:hash_diversity` / `pair_family:*`. Это downstream-последствие здесь **KNOWN_LATE_CORROBORATED**. Наш узкий вклад — producer `generic-visual-defect → generic_visual_defect`, наличие двух alias одного семантического признака и дополнительный collision при канонизации. Он не переобъявляет весь механизм отказа новым.
+
+Current [StageLearnedWeights:2779–2786](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L2779-L2786) проверяет каждый вес через [IsValidLearnedWeight:2830–2854](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L2830-L2854). Хотя бы один запрещённый key даёт `CHECKPOINT_LEARNED_WEIGHTS_INVALID`. Ошибка проходит через [BuildLearnedWeightImport:2752–2764](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L2752-L2764) и [ImportCheckpointCore:731–738](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L731-L738) **до изменения состояния**. Дисковый [LoadCheckpointAsyncCore:1783–1825](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L1783-L1825) также возвращает этот отказ наружу.
+
+Это **отказ всего импорта, не тихое удаление одной строки**. Вывод условен: предыдущие schema/shape/policy/payload checks должны пройти, `LearnedWeightsPresent=true`, остальные поля корректны. Source подтверждает такую ветвь; реальный archived checkpoint с этим key и native load здесь не предъявлены. Clean ordinary generic rule тоже использовал hyphen, поэтому сохранение underscore в старом state само по себе не доказывает его прежнюю визуальную полезность. Возможный ущерб current — отказ принять и прочие полезные веса из такого checkpoint.
+
+Наивная migration `underscore→hyphen` тоже неполна: sparse clean payload может сохранить одновременно phantom hyphen и explicit underscore. После переименования получатся дубликаты; тот же current importer их отвергает. Объединение не должно удваивать observations одного урока или терять provenance. Нужны доказуемые правила разрешения такого совпадения, а не ослабление whitelist или молчаливое обнуление state.
+
+**Первый малый restore опыт DC-01b-R:** без новых уроков прочитать otherwise-valid clean export в current; отдельно 5 случаев — known category, underscore-only generic, hyphen-only generic, оба alias, запрещённый unrelated key. Вариант migration меняет только canonical identity и обработку доказанных дублей; сохраняет остальные state/identity/payload checks. Проверить exact error, отсутствие частичной mutation на отказе, сохранность известных weights и обычный consumer после load. Нормальная valid запись должна остаться нормальной; настоящий запрещённый key не должен начать проходить. Отсутствие нужного legacy artifact означает, что проверена только искусственная contract fixture. Это новый узкий restore contrast в [первой главе](00-DESIGNTOCODE-CLEAN-RESTORATION-FIRST.md), не доказанный ремонт всех моделей.
+
+### Почему это способно портить оценку, но не доказывает плохой CSS
+
+При валидном `unit_id=design_conversion_runtime_scaffold_improver`, `source_kind=figma`, отсутствии category/vector и состоянии двух весов по 1 (source_kind и phantom generic) локальная формула даёт:
+
+`feature_fit = clamp01(0.5 + 0.5 × tanh(sum(contributions)/2))`.
+
+Для суммы 1 без phantom получается **0.731059**; для суммы 2 — **0.880797**, по разные стороны местного порога **0.8**. Источники: [константы:101–104](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L101-L104), [held-out features:3408–3438](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L3408-L3438), [adjustment:4403–4410](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionMachine.cs#L4403-L4410). Оба значения воспроизведены скриптом. Полный `{}` без unit_id не подходит: такой пример не оценивается. Один generic без source_kind порог не пересекает.
+
+Это **feature-fit локального evaluator**, а не G3, visual score или качество страницы. Runtime строит correction candidates из фактических defects. Generic доступен лишь если нет распознанных категорий; при единственном generic и fallback, и положительное preference выбирают тот же `min-height:44px`. Следовательно, доказано загрязнение состояния/локальной оценки, а непосредственный CSS-эффект должен быть отдельно установлен.
+
+**Малый опыт DC-01-A:** 8–12 payload вариантов, затем 4–6 новых допущенных уроков в research state: absent / null / empty / known category / explicit canonical / metadata. Однофакторные 2×2 contrasts, те же source identities и JSON остального содержимого. Проверить raw categories, allowed deltas, Weight/ObservationCount, held-out fit, export/import; render запускать только для cases, где tracing показывает изменившееся selected rule. Контроли — полностью заполненные известные категории и отсутствие дефектов. Фальсификатор visual-причинности: состояние меняется, но обычный выбор/страница не меняются. Это не отменяет ошибку provenance признака, но не позволяет обещать прирост визуального качества.
+
+## DC-02. Известный fallback: отрицательное предпочтение не действует при all-negative fallback
+
+[BuildLocalImprovementPlan:313–344](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionTrainedUnits.cs#L313-L344) ранжирует только `Preference.Weight > 0`. Если таких совпадений нет, выбирает **все availableRules**.
+
+Контрпример: доступен spacing, valid preference spacing=−1, ObservationCount=1. Ranked пуст; selected снова `[spacing]`, как до обучения. Диагностическая политика, сохраняющая отрицательное наблюдение для этого же контекста, дала бы пустой selection. No-state и положительный контроль в пробе не менялись.
+
+Доказано отсутствие veto-эффекта у данного negative state. DPO задаёт относительное предпочтение; отрицательный глобальный вес не означает запрет spacing для всех страниц. Поэтому нельзя чинить это безусловным глобальным black list. Отдельно может быть проблема недостаточной контекстной адресации самого state; это не решается локальным `Weight < 0`.
+
+**Малый опыт DC-02-A:** 6 карточек/форм одной предметной семьи, где независимо установлено, что фиксированное spacing-исправление ухудшает результат, плюс 4 controls с полезным spacing или неизвестным rule. Сначала получить/проверить контекстно применимое отрицательное наблюдение обычным admitted путём; затем при тех же QA, candidate, weights и renderer поменять только fallback. Измерить selected rules, исправленные/новые defects, качество render на двух ширинах и итог обычного Flow. При отсутствии selected-rule change гипотеза не активировалась; при изменении списка без visual gain причинный эффект на качество не установлен. Рост ошибок на полезном-spacing control запрещает универсальный перенос.
+
+## DC-03. Известный top-1: положительное обучение сокращает несколько совместных исправлений до одного
+
+Без совпавших положительных preferences выбираются все доступные rules. При появлении хотя бы одного положительного совпадения [SelectedRules становится `[ranked[0].Rule]`:347–352](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionTrainedUnits.cs#L347-L352).
+
+Проба использует два заранее объявленных совместно необходимых дефекта: contrast и spacing. Без state выбираются оба. При valid preferences contrast=0.6, spacing=0.5 и равных ObservationCount выбирается только contrast. Значения — вход формульной пробы допустимого состояния, не результат выполненного DPO run. [RoutingFlow:144–181](https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/44.DesignConversionDomain/DesignConversionRoutingFlow.cs#L144-L181) делает один improver call и возвращает candidate; внешняя петля может повторить исправление, поэтому оценивать надо также её реальный бюджет и число шагов.
+
+Это условный конфликт cardinality результата. Существование top-1 само по себе не дефект: возможны взаимоисключающие alternatives. При задании «исправить оба независимых дефекта» оно становится проверяемым ограничением.
+
+**Малый опыт DC-03-A:** 6 новых layouts с двумя подтверждённо совместимыми corrections, 3 single-defect controls, 3 случая конфликтующих alternatives. Один checkpoint/QA/candidate, фиксированный порядок и веса. A — current top-1; B — разрешить совместное исполнение только заранее проверенных независимых категорий. Метрики: оба дефекта устранены за один проход; остаток после одинакового полного бюджета; дополнительные defects; время и число render. Single-defect output должен сохраниться; конфликтующие alternatives нельзя исполнять вместе автоматически. Если реальная внешняя петля всегда компенсирует top-1 при той же стоимости или B создаёт новые дефекты, польза такого расширения не подтверждена.
+
+## Что уже выполнено и как повторить
+
+- [scripts/design_correction_probe.py](scripts/design_correction_probe.py) — исходная формульная проба, проверяет Git blobs двух current файлов и, при указанном baseline-root, clean Machine.
+- [evidence/design-correction-probe.json](evidence/design-correction-probe.json) — полный результат, границы native/training/quality и все контроли.
+- [evidence/design-correction-independent-repeat.json](evidence/design-correction-independent-repeat.json) — независимый повтор первоначальных current-only axes; после уточнения clean/current отдельно проверена новая граница в [cross-branch receipt](evidence/design-correction-cross-branch-independent.json).
+
+```sh
+python scripts/design_correction_probe.py --source-root /absolute/path/to/current-core --baseline-source-root /absolute/path/to/clean-core --out /tmp/design-correction-probe.json
+```
+
+Команда рассчитана на два checkout: pinned current и clean SHA. Проба — сокращённое воспроизведение формул для указанных ASCII fixtures и valid preferences с одинаковыми counts. Она не реализует весь C# parser, duplicate preference/tie-break space, bridge, permission/admission, training lifecycle или renderer. **NATIVE_NOT_RUN; TRAINING_NOT_RUN; VISUAL_QUALITY_GAIN_NOT_ESTABLISHED.**
+
+## Учёт параллельных находок
+
+После исходных 507 Markdown дочитаны новые planning-документы. [Параллельный source audit54](https://github.com/lubochka/xiigen-planning/blob/82c37d186ef8a95616d68b995207d5c1803f5bcb/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/54-DESIGNTOCODE-CLEAN-SOURCE-PARITY-AND-NEW-GAPS-2026-10-19.md) уже описывает top-1 против all-rules; [GDC-A2](https://github.com/lubochka/xiigen-planning/blob/82c37d186ef8a95616d68b995207d5c1803f5bcb/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/54-DESIGNTOCODE-CLEAN-CAUSAL-MICROEXPERIMENTS-2026-10-19.md) включает нулевые/отрицательные weights. Поэтому **DC-02 = KNOWN_LATE_REFINED, DC-03 = KNOWN_LATE_REVALIDATED**. Здесь добавлены воспроизводимые контрпримеры и уточнённая граница обычного качества, без присвоения новизны.
+
+В parallel N54-00B отсутствие категории трактовалось как пустой набор. DC-01a корректирует это конкретное предположение: текущая нормализация создаёт phantom generic. Сам permissive→strict whitelist уже отмечен в [peer review54](https://github.com/lubochka/xiigen-planning/blob/82c37d186ef8a95616d68b995207d5c1803f5bcb/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/54-DESIGNTOCODE-CLEAN-EVIDENCE-REVIEW-2026-10-19.md), а whole-import refusal и миграция остальных весов — в позднем [CLEAN-CP01](../54-DESIGNTOCODE-CLEAN-RECOVERY-2026-10-19/02-NEW-CHECKPOINT-AND-CONTEXT-GAPS.md). **BOUNDED_NEW_REFINEMENT** DC-01b ограничено exact generic producer/alias, его сохранением в clean и collision при миграции semantic generic. Общий отказ всего checkpoint — **KNOWN_LATE_CORROBORATED**. Окончательная граница чтения — [05](05-SOURCES-NOVELTY-AND-REVIEW.md).

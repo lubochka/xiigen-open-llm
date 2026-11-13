@@ -1,0 +1,10 @@
+# S17 installation and operator start
+
+1. Open [README](README.md), [board](EXECUTION-BOARD.md), [governance](GOVERNANCE-AND-REVIEW.md). Read root/replanning `AGENTS.md` and current K-side instructions, then this *one chosen* `tasks/S17.xx.md`. Pin fresh P/K HEAD and exact caller source; verify role ownership against RP01–RP12 (and historical S00–S10).
+2. Use [source map](SOURCE-AND-OWNERSHIP.md) to descend from original/WorkLeft and applicable RAG MD/NDJSON into actual G/F/V/K primary content; log read depth and unresolved refs. No repeated full R01–R25 research pass is prerequisite.
+3. Load task-specific real skill files in `K/docs/skills` and log FOUND/READ/MISSING. Select exactly one task's deliverable and permissions. If too big, use its two complete child prompts serially and integrate once.
+4. Execute only its permitted source/code/science lane. **Quick start:** S17.00B freezes old/new laws; S17.02A changes an actual stale memory consumer under a known contract; S17.05A probes C0 vs P without waiting for a DPO call. Use 04A/04B only after real grants and sealed panel exist.
+5. Revisit changed causal property, not blanket tests; pre-register blind old/new law quality and whole PC; report measured negative outcomes without re-tuning tests. Require independent separate CODEX/Astra reviewer for a PASS claim.
+6. Commit/push only authorized paths for a completed owned delivery unit, verify remote SHA and report concise human summary with remaining unknowns. If a real critical permission/runtime binding is unavailable, hand off precise `INTEGRATION_OPEN`/ `NOT_AUTHORIZED`, continue independent task work rather than fictitious training or endless retries.
+
+**Suggested first dispatch:** copy [START-PROMPT](START-PROMPT.md) and set `TASK_ID=S17.00B`. After the panel is frozen, dispatch `S17.02A` to the current confirmed consumer owner; `S17.00A` is independently runnable. All task prompts are in `tasks/` and the manifest enumerates exactly 14; no placeholders accepted.

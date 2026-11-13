@@ -1,0 +1,260 @@
+{
+  "status": "ACCEPTED_AS_BOUNDED_RESEARCH_DOCUMENTATION",
+  "date": "2026-10-19",
+  "reviewed_candidates": [
+    {
+      "path": "research/deliverable/01-MECHANISM-CROSSWALK.md",
+      "sha256": "84fed1dfd415944d3ec503426b4f858b2e813b8b5e02b10acbd8540a2b704f97",
+      "bytes": 24181,
+      "lines": 97
+    },
+    {
+      "path": "research/deliverable/01B-KNOWN-UNIT-TRANSFORMATION-GAPS.md",
+      "sha256": "083ef32d4104e6e7910b1b7116eb01d148fba0b2b0575436c77daf2511ad70c7",
+      "bytes": 15066,
+      "lines": 48
+    },
+    {
+      "path": "research/deliverable/02A-NEW-SEGMENT-AGGREGATION-GAP.md",
+      "sha256": "40dacd8336707d291bc7982594b5238a7ee7c0342323667bc340f97e1c6cb053",
+      "bytes": 17620,
+      "lines": 83
+    },
+    {
+      "path": "research/deliverable/02B-NEW-CANDIDATE-ELIGIBILITY-GAP.md",
+      "sha256": "239f42de666ff630070b12df28689669617b061279171df5d0acf7bbe32c4a49",
+      "bytes": 18037,
+      "lines": 92
+    },
+    {
+      "path": "research/deliverable/03-NEW-PROMPT-PATTERN-GAPS.md",
+      "sha256": "b198a9d2c80e5f4a231025e33d717e7bc4c6540aced0dd0332839c54f89c3e9e",
+      "bytes": 21391,
+      "lines": 98
+    },
+    {
+      "path": "research/deliverable/04-AUTONOMOUS-LEARNING-CONDITIONAL-GAPS.md",
+      "sha256": "836cd4b3dfef9d4f7da7671790050d488f10722d499d204441c2d637bb69b25f",
+      "bytes": 33644,
+      "lines": 143
+    }
+  ],
+  "file_verdicts": [
+    {
+      "file": "01-MECHANISM-CROSSWALK.md",
+      "verdict": "SUPPORTED_WITH_BOUNDED_SECONDARY_COVERAGE",
+      "reason": "Каталог честно отделяет KNOWN от шести новых цепочек. Old/current Backward первично подтверждён. Все старые ссылки не являются новым полным аудитом их runtime."
+    },
+    {
+      "file": "01B-KNOWN-UNIT-TRANSFORMATION-GAPS.md",
+      "verdict": "SUPPORTED_AS_KNOWN_CONDITIONAL_RISKS",
+      "reason": "Cap/fusion, generic stored output, corrected keys/RuleTags, compacted-token fallback и morphology helper соответствуют исходникам; текущая применимость и masking явно оговорены."
+    },
+    {
+      "file": "02A-NEW-SEGMENT-AGGREGATION-GAP.md",
+      "verdict": "CORE_MECHANISM_CONFIRMED_CLARIFY_PROTOCOL",
+      "reason": "Producer ID и target-key equality несовместимы в указанном learned seam. Уточнить downstream source carrier и термин confidence conflict."
+    },
+    {
+      "file": "02B-NEW-CANDIDATE-ELIGIBILITY-GAP.md",
+      "verdict": "SUPPORTED",
+      "reason": "Source ordering и bound .295 < .44 подтверждены. B сохраняет full-corpus raw scores, исключая IDF/fusion confound. Неподключённый learner не назван обучением."
+    },
+    {
+      "file": "03-NEW-PROMPT-PATTERN-GAPS.md",
+      "verdict": "CORE_MECHANISMS_CONFIRMED_CLARIFY_NEGATIVE_STATE",
+      "reason": "Append→margin0 и substring gate→missing_gates подтверждены; правильные authority/fallback/semantic quality границы сохранены. Требуется явный negative-control state в native протоколе."
+    },
+    {
+      "file": "04-AUTONOMOUS-LEARNING-CONDITIONAL-GAPS.md",
+      "verdict": "SUPPORTED_AS_P2_CONDITIONAL",
+      "reason": "Single Domain→cap1 и replay commit before candidate reject подтверждены. Унаследованность и отсутствие non-test composition отделены от RP01. Lesson validity не отождествлена с adapter promotion."
+    }
+  ],
+  "findings": [
+    {
+      "id": "REV-H01",
+      "severity": "MEDIUM",
+      "file": "02A-NEW-SEGMENT-AGGREGATION-GAP.md",
+      "candidate_lines": "51–59",
+      "category": "experiment_consumer_completeness",
+      "finding": "B должен проверить, какой конкретный carrier доставляет оба source associations исполнителю. Outer EvidenceIds сам по себе этого не доказывает.",
+      "evidence": [
+        {
+          "path": "21.AgentInfrastructure/Logical/MultiSubPhaseRouterUnit.cs",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "lines": "157–175",
+          "fact": "Сегментные IDs лежат во внешнем LogicalUnitResult."
+        },
+        {
+          "path": "21.AgentInfrastructure/Logical/AdaptiveLogicalOrchestrator.cs",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "lines": "1275–1291,1330–1332",
+          "fact": "Caller сохраняет ownedDecisions и возвращает только их; outer carrier не является возвращаемым результатом RouteSubPhasesAsync."
+        }
+      ],
+      "requested_change": "В L1/L2 явно записать вход реального downstream executor: оба исходных текста, source IDs и связь с выбранным target. Если полный исходный request уже законно сохраняет обе задачи, зафиксировать этот путь. Если B сохраняет IDs лишь в отчёте/outer evidence, считать это промежуточным результатом, а не восстановленной доставкой двух задач.",
+      "claim_limit": "Не новая гипотеза потери всех источников: полный request может сохранять обе задачи. Основной ID-collision подтверждён."
+    },
+    {
+      "id": "REV-H02",
+      "severity": "MEDIUM",
+      "file": "03-NEW-PROMPT-PATTERN-GAPS.md",
+      "candidate_lines": "37–41",
+      "category": "negative_control_definition",
+      "finding": "Фраза «четыре запроса… намеренно конфликтующее решение» не определяет, откуда в памяти берётся конфликт. При одном исходном паттерне + его точном семантическом дубле смена запроса сама по себе не создаёт конфликтующий output.",
+      "evidence": [
+        {
+          "path": "43.SmartSkillsDomain/PromptToTaskMachine.cs",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "lines": "263–300",
+          "fact": "Continue добавляет переданный pattern в состояние."
+        },
+        {
+          "path": "43.SmartSkillsDomain/PromptToTaskTaskPatternUnit.cs",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "lines": "175–208,233–249",
+          "fact": "Конкурирующие outputs выбираются из patterns состояния, а не создаются запросом."
+        }
+      ],
+      "requested_change": "Указать отдельный frozen negative-control state: к тому же исходному P1 добавляется P3 с теми же LearnedSignals/Confidence, но действительно другим полным semantic payload. Для положительного повтора используется P2, для отрицательного P3. Сохранить ordered (caseId,stateHash,request) manifest; бюджет 16 Translate можно сохранить, если четыре case rows явно ссылаются на нужный state.",
+      "claim_limit": "Не опровержение PT-01: source/formula и существующий Python conflict control корректны. Уточнение нужно будущему исполнителю native протокола."
+    },
+    {
+      "id": "REV-H03",
+      "severity": "LOW",
+      "file": "02A-NEW-SEGMENT-AGGREGATION-GAP.md",
+      "candidate_lines": "36,49,59",
+      "category": "claim_precision",
+      "finding": "Различный confidence назван настоящим/реальным конфликтом. Это доказанный конфликт текущего carrier equality contract, но само различие уверенности для двух разных входов ещё не доказывает смыслового противоречия.",
+      "evidence": [
+        {
+          "path": "21.AgentInfrastructure/Logical/MultiSubPhaseRouterUnit.cs",
+          "commit": "44507823fc5aaeab4c3f0fe4e9da9ce924c6ec76",
+          "lines": "738–752",
+          "fact": "Confidence.Equals является отдельным обязательным условием equality."
+        }
+      ],
+      "requested_change": "Заменить формулировки на «конфликт по текущему контракту (различный confidence)» и сохранить его отрицательным контролем узкого B. Политику допустимости разных confidence не менять и не объявлять решённой этим опытом.",
+      "claim_limit": "Не требует нового алгоритма объединения и не меняет подтверждённую коллизию разных source IDs."
+    }
+  ],
+  "source_byte_checks": {
+    "count": 27,
+    "matches": 27,
+    "artifact": "final-review-source-byte-checks.json",
+    "limit": "Bytes matched to recorded Git blob identities; not every source file fully audited."
+  },
+  "novelty": {
+    "unique_markdown_paths": 671,
+    "planning": 399,
+    "protected_core": 272,
+    "refresh_files": 12,
+    "new_unique_paths": 10,
+    "updated_paths": 2,
+    "six_precise_mechanisms_exact_duplicate_found": false,
+    "artifact": "final-review-novelty-search.json",
+    "limit": "Bounded lexical and mechanism reconciliation of available pinned corpus; not universal novelty."
+  },
+  "execution": {
+    "native_runs": 0,
+    "training_runs": 0,
+    "external_model_calls": 0,
+    "github_writes": 0,
+    "candidate_edits": 0,
+    "independent_named_astra_ultracode_invocation_claimed": false,
+    "review_runtime": "Actual inherited research runtime, independent agent; no alias certification."
+  },
+  "pending_inputs": [],
+  "not_reviewed": [
+    "00-EXTERNAL-DOMAINS-RECOVERY-FIRST.md (reviewed separately by parent)"
+  ],
+  "initial_status": "INDEPENDENT_RESEARCH_REVIEW_WITH_REQUESTED_CLARIFICATIONS",
+  "final_addendum": "final-candidate-review-addendum.json",
+  "final_reviewed_candidates": [
+    {
+      "path": "research/deliverable/01-MECHANISM-CROSSWALK.md",
+      "sha256": "84fed1dfd415944d3ec503426b4f858b2e813b8b5e02b10acbd8540a2b704f97",
+      "bytes": 24181,
+      "lines": 97
+    },
+    {
+      "path": "research/deliverable/01B-KNOWN-UNIT-TRANSFORMATION-GAPS.md",
+      "sha256": "083ef32d4104e6e7910b1b7116eb01d148fba0b2b0575436c77daf2511ad70c7",
+      "bytes": 15066,
+      "lines": 48
+    },
+    {
+      "path": "research/deliverable/02A-NEW-SEGMENT-AGGREGATION-GAP.md",
+      "sha256": "25b1c3343c1821134970965e1158003cddc3ab40245d85b605e0f419d15a5359",
+      "bytes": 19433,
+      "lines": 89
+    },
+    {
+      "path": "research/deliverable/02B-NEW-CANDIDATE-ELIGIBILITY-GAP.md",
+      "sha256": "239f42de666ff630070b12df28689669617b061279171df5d0acf7bbe32c4a49",
+      "bytes": 18037,
+      "lines": 92
+    },
+    {
+      "path": "research/deliverable/03-NEW-PROMPT-PATTERN-GAPS.md",
+      "sha256": "e41f044675b059c2934aa7647587473b04281367871529e574cbef6142e3c674",
+      "bytes": 22185,
+      "lines": 100
+    },
+    {
+      "path": "research/deliverable/04-AUTONOMOUS-LEARNING-CONDITIONAL-GAPS.md",
+      "sha256": "836cd4b3dfef9d4f7da7671790050d488f10722d499d204441c2d637bb69b25f",
+      "bytes": 33644,
+      "lines": 143
+    },
+    {
+      "path": "research/deliverable/05-SMALL-EXPERIMENTS-AND-WORK-ORDER.md",
+      "sha256": "1d25a28194b2172e687afbb053a7fc016193159dbe4a61e1a72b5dd4aa7516f0",
+      "bytes": 14687,
+      "lines": 52
+    },
+    {
+      "path": "research/deliverable/06-SOURCES-NOVELTY-AND-REVIEW.md",
+      "sha256": "05a746765046c71c644d0fe6b8751806055105b54f7cbaffabc7ab2db5063c9c",
+      "bytes": 17288,
+      "lines": 70
+    },
+    {
+      "path": "research/deliverable/README.md",
+      "sha256": "d34fe0b429dc0ae32d4dfe694179fa79147e0c838faba3969d2462f9c058a2e3",
+      "bytes": 7065,
+      "lines": 35
+    },
+    {
+      "path": "research/deliverable/evidence/README.md",
+      "sha256": "333e27cbfd460828dd77a9a4802a0baf4735a034857af7ad1a4ee04f791c9af5",
+      "bytes": 5951,
+      "lines": 57
+    }
+  ],
+  "addressed_items": [
+    {
+      "id": "REV-H01",
+      "status": "ADDRESSED",
+      "file": "02A-NEW-SEGMENT-AGGREGATION-GAP.md",
+      "lines": "59",
+      "reason": "Явно требуется фактический executor input с обоими source texts/IDs и target association; outer evidence не засчитывается как delivery."
+    },
+    {
+      "id": "REV-H02",
+      "status": "ADDRESSED",
+      "file": "03-NEW-PROMPT-PATTERN-GAPS.md",
+      "lines": "39",
+      "reason": "Отдельный frozen negative-control state P1+P3 с теми же input signals/confidence и другим полным semantic payload; caseId/stateHash/request manifest сохраняет бюджет 16 Translate."
+    },
+    {
+      "id": "REV-H03",
+      "status": "ADDRESSED",
+      "file": "02A-NEW-SEGMENT-AGGREGATION-GAP.md",
+      "lines": "36,53",
+      "reason": "Различный confidence назван конфликтом действующего carrier-контракта; узкий B не утверждает решения общей смысловой агрегации."
+    }
+  ],
+  "metadata_and_index_review": "final-candidate-review-metadata.json"
+}

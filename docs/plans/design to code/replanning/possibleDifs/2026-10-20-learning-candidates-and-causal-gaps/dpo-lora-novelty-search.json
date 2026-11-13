@@ -1,0 +1,24 @@
+{
+  "core_ref": "9622b575a6aabb79939b12cc9f5d96313f1bf370",
+  "planning_ref": "de270758087502a350c4fcf460acdf1638bdd318",
+  "pattern": "\\bgradB\\b|right.operand|AᵀG|gradB.*SIMD|SIMD.*gradB|right.*adjoint",
+  "roots": [
+    "snapshots/planning/llm mvp/design to code session/replanning/possibleDifs",
+    "snapshots/core/docs/plans/replanning-possible-diffs"
+  ],
+  "markdown_counts": [
+    662,
+    296
+  ],
+  "exit_code": 0,
+  "matching_lines": 3,
+  "matches": [
+    "snapshots/core/docs/plans/replanning-possible-diffs/experimets/2026-10-19-small-learning-probes/16-additions-typed-state-and-restore.md:120:**Меняем только reduction gradA MatMul; учится та же neural policy; проверяем её собственные ответы.** [TensorOps:650–676](C:/Projects/llm_mvp_core/00.TensorCore/Core/TensorOps.cs:650) использует `SimdOps.MatVecRowUnpublished`; найденный исторический контраст — scalar gradA, не forward и не gradB. FP64 по тем же FP32 operands — независимый числовой ориентир, старый scalar не считается gold.",
+    "snapshots/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-19-designtocode-clean-causal-audit/05-SMALL-EXPERIMENTS-AND-PROMPTS.md:18:| **N-ADJOINT-01 — backward scalar/SIMD**, [глава03](03-NEW-NUMERICAL-DELTA.md) | Сначала captured реальные operands/upstream current против clean scalar и FP64 reference, без updates | Меняется только gradA reduction в MatMul; forward, gradB, moments и остальные kernels фиксированы | Один выбранный neural профиль: два урока, четыре новых ответа. Предметный A/B только при установленном влиянии на effective update. Считать правильность, критические ошибки, время; побитовая разность сама по себе не успех |",
+    "snapshots/planning/llm mvp/design to code session/replanning/possibleDifs/51-LOCAL-WIKI-SQL-KNN-TENSOR-RECOVERY-2026-10-19/00-LOCAL-WIKI-RECOVERY-FIRST.md:52:| N-SHAPE-01/02 | Найден вызывающий обучение код с удалённой Mean осью или mixed batch/head broadcast | Микротензоры и независимые производные, затем только relevant caller | В проверенном RP01 Mean keepDims=true, MatMul right operand2D либо leading shapes совпадают |"
+  ],
+  "interpretation": "3 prior-art mentions; N-ADJOINT gradA expressly excludes gradB. Loop-interchange actual native DPO factor not found. No universal novelty claimed.",
+  "search_scope": "Full text search of all 662 planning Markdown and all 296 protected Markdown at the pinned refs; protected completeness confirmed against remote Markdown inventory. This is not a claim of full manual semantic review of every document.",
+  "protected_inventory": "protected-corpus-inventory.json",
+  "prior_art_review_scope": "Manual contextual review of the three matches and the named closest prior-art mechanisms; no new runtime experiment."
+}

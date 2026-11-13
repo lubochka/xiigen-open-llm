@@ -1,0 +1,63 @@
+{
+  "planning_ref": "fb9aadf69e0669d36b820d61f76fe3ecc8697a7d",
+  "changed_markdown": 24,
+  "new_markdown": 22,
+  "queries": [
+    {
+      "label": "R1 exact API or expression",
+      "regex": "MemoryMarshal|AsBytes|Select\\s*\\(\\s*BitConverter\\.SingleToInt32Bits|SingleToInt32Bits",
+      "matches": []
+    },
+    {
+      "label": "R1 bit comparison language",
+      "regex": "побитов.{0,90}(LINQ|frozen|base)|frozen.{0,90}(LINQ|побитов)",
+      "matches": []
+    },
+    {
+      "label": "R2 local expVals",
+      "regex": "expVals|softmax.{0,80}(allocat|буфер|выделен)|ArrayPool",
+      "matches": []
+    },
+    {
+      "label": "R2 backwards buffer",
+      "regex": "BackwardLogProbs.{0,100}(buffer|буфер|allocat)|row.buffer",
+      "matches": []
+    },
+    {
+      "label": "N03 issuance marker",
+      "regex": "issuedPath|RefuseReplay|SIMULATION_DPO_ATTEMPT_ALREADY_ISSUED",
+      "matches": [
+        {
+          "path": "2026-10-20-current-learning-audit/01-SOURCE-AND-REVIEW-LEDGER.md",
+          "line": 66,
+          "excerpt": "В его neural caller design найдено полезное общее уточнение: существующий `issuedPath` зависит от domain/mode/TRAIN hash, поэтому новые RunId не создают законные независимые A/B на тех же данных. Это дополнительно сверено по `CodeDocumentationSimulationDpoExperiment.cs:85–87,173` и включено в наш DPO design. Смена пути или удаление marker не предлагаются. PAD-вмешательство и его однократное расписание не переносятся в cache-опыт."
+        },
+        {
+          "path": "2026-10-20-current-learning-audit/dpo/01-reference-score-reuse.md",
+          "line": 44,
+          "excerpt": "**Уточнение общего native A/B owner после параллельного пакета 61.** В [`CodeDocumentationSimulationDpoExperiment:85–87,173`](https://github.com/lubochka/llm_mvp_core/blob/bf9b543e149ef197da85a767821d98c9b67916d2/14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs#L85-L87) долговечный `issuedPath` зависит от domain/mode/InputSha256, а не от нового RunId. Два плеча на одном TRAIN нельзя реализовать повтором того же one-shot run, удалением markers или обходом lease. Малый na"
+        },
+        {
+          "path": "61-LEARNING-FIRST-AUDIT-2026-10-20/03-NEURAL-LEARNING-AND-MICRO-CALLER.md",
+          "line": 13,
+          "excerpt": "Выявлена конкретная дополнительная деталь его подключения: **два разных RunId не позволяют выполнить A и B на одном TRAIN hash через нынешний Run**. `issuedPath` строится из domain, Mode и InputSha256, без RunId; второй такой вызов откажет до загрузки модели. Для законного A/B нужен один заранее определённый paired-study owner с двумя изолированными arms и раздельными долговечными записями об их эффекте. Нельзя удалять marker, сбрасывать историю или выдавать второй RunId за разрешение повторить "
+        },
+        {
+          "path": "61-LEARNING-FIRST-AUDIT-2026-10-20/03-NEURAL-LEARNING-AND-MICRO-CALLER.md",
+          "line": 52,
+          "excerpt": "3. Даже добавление Mode=`micro-paired`, count2 и updates2 само по себе не решает A/B: обе стороны на одном TRAIN hash столкнутся на нынешнем `issuedPath`. [T01]"
+        },
+        {
+          "path": "61-LEARNING-FIRST-AUDIT-2026-10-20/03-NEURAL-LEARNING-AND-MICRO-CALLER.md",
+          "line": 64,
+          "excerpt": "| Тот же owner: `issuedPath`/issued journal | Связать study identity с factor/source/TRAIN; B0 manifest и weights hashes; hash независимого reference; tokenizer/config hashes; initial optimizer settings/state и RNG snapshot hashes; явным отображением arm → build hash и treatment flag; выбранным режимом измерения и optional PANEL/settings hashes. Это две **заранее объявленные** стороны одного порученного опыта. Хранить долговечные issued/completed для каждой стороны под одной study identity. Повт"
+        }
+      ]
+    },
+    {
+      "label": "N03 literal issued filenames",
+      "regex": "\\.issued\\.json",
+      "matches": []
+    }
+  ]
+}

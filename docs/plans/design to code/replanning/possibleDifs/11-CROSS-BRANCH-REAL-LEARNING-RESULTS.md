@@ -1,0 +1,56 @@
+# 11 — Соседние ветки: реальные прогоны обучения, контроль обобщения и ложные «успехи»
+
+**16.10.2026 · исследовательский аудит источников, не новый запуск обучения.** Исходный core: `codex/dpo-implementation` @ `83590a462b2f8aedc9d3ab4cb775193eb9c25ce5`; сравниваемая историческая ветка: `DesignToCode` @ `8f20ceb8a9bfbadab2ad309226c47dd76e714548`. Файлы результатов и программы сопоставлены напрямую. Наличие опубликованного результата ≠ независимая репликация. Текущие RP01 результаты здесь не переписаны.
+
+## 1. Исправление пробела в прежнем обзоре
+
+В библиотеке были рассмотрены E09/E14/E34/E43, но ранее легко было упустить **реальные запуски DPO на пользовательских парах** в `experiments-v2/INTERNAL-TRAIN-READY-V191/results/` и реальные сохранённые состояния/маршруты TranslationMachine. Это отдельный класс свидетельств: модель обучалась настоящим optimizer, публиковала checkpoint и демонстрировала изменяющуюся train-метрику; нельзя свести всё прошлое к экспериментам над kNN/bigram. Обратная крайность также неверна: train accuracy не равна правильности свободных ответов на ранее невидимых задачах.
+
+**Первичный рабочий код:** [старый InternalTrainReadyDpoRunner, строки 44–98](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/experiments-v2/INTERNAL-TRAIN-READY-V191/runner/InternalTrainReadyDpoRunner/Program.cs#L44-L98): `var policy = new LlmModel(cfg)`, отдельный `reference`, `new DpoTrainer(policy, reference, checkpointRoot)`, `trainer.StepMany(...)`, `policy.SaveCheckpoint(...)`. Это **исполнение optimizer и сохранение весов**, не dummy-строка `accuracy += 0.01`.
+
+## 2. Первичные исторические следы DPO
+
+| ID свидетельства | Что измерено в сохранённом run | Источник | Что НЕ доказано |
+|---|---|---|---|
+| BR-11-01 | 10.05, V191: 2322 pair, 146 mini-batches, `VocabSize=2048`, `ContextLen=96`, final train accuracy `0.500`, final reward margin `−0.000799`, checkpoint 7.15 MB | [run JSON V191](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/experiments-v2/INTERNAL-TRAIN-READY-V191/results/train-ready-v191-full-20260510-203855/internal-train-ready-dpo-summary.json) | Ни heldout generation, ни идентичность current RP01 |
+| BR-11-02 | 10.05, V194: 3884 pair, 243 batches, final train accuracy `0.5833`, final margin `+0.003396`, final loss `0.691537` | [run JSON V194](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/experiments-v2/INTERNAL-TRAIN-READY-V191/results/train-ready-v194-full-20260510-213243/internal-train-ready-dpo-summary.json) | Это не доказательство улучшения пользовательского ответа; поменялся источник пар |
+| BR-11-03 | 11.05, V210: 134 pair, 9 batches, final train accuracy `0.8333`, margin `+0.005703` | [run JSON V210](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/experiments-v2/INTERNAL-TRAIN-READY-V191/results/train-ready-v210-good-external-plus-internal-guide-full-20260511-014712/internal-train-ready-dpo-summary.json) | Не видно blind semantic evaluation |
+| BR-11-04 | 15.05, base-wiki cumulative150: последняя пачка `accuracy=0.833`, `margin=+0.015865` | [150-row result](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/experiments-v2/INTERNAL-TRAIN-READY-V191/results/base-wiki-session-01-batch-004-cumulative150-20260515-1025/internal-train-ready-dpo-summary.md) | Не установлено, что это тот же восстановленный checkpoint, что и 200-row run |
+| BR-11-05 | 15.05, base-wiki cumulative200: последние батчи с новыми примерами `accuracy=0.063,0.063,0.000`, финальный margin `−0.032161` | [200-row result](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/experiments-v2/INTERNAL-TRAIN-READY-V191/results/base-wiki-session-01-batch-005-cumulative200-20260515-1045/internal-train-ready-dpo-summary.md) | Падение minibatch accuracy на **другом содержимом** не доказывает забывание предыдущих семейств; нужен одинаковый retention panel |
+| BR-11-06 | 15.05, base-wiki repeat10: ровно 50 пар повторены 10 раз (`500` training rows), **финальная minibatch accuracy `1.000`** | [repeat10 result](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/experiments-v2/INTERNAL-TRAIN-READY-V191/results/base-wiki-session-01-batch-004-repeat10-500-20260515-1100/internal-train-ready-dpo-summary.md) | 100% на последней обучающей пачке **не** доказывает перенос навыка: повторены те же исходные 50 уроков |
+
+**Два различающих контрпримера.** (A) Правильно: тренировочная способность предпочесть `chosen` на повторённых 50 примерах выросла; неверно: «система научилась новым 500 задачам». (B) Правильно: новая пачка 200-row run имеет низкую train margin; неверно: «обучение сломало старую память» — все прежние вопросы надо оценить повторно на той же панели.
+
+## 3. Почему прежний DPO не эквивалентен RP01 даже при похожем имени
+
+Исторический `InternalTrainReadyDpoRunner` не только использует **другую конфигурацию** (`HiddenDim=64`, `NumLayers=1`, `VocabSize=2048`, `ContextLen=96` в run), но и **иной input encoder**: [ToBatch/Tokenize, строки 192–228](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/experiments-v2/INTERNAL-TRAIN-READY-V191/runner/InternalTrainReadyDpoRunner/Program.cs#L192-L228). Исторический код `Tokenize`: `RegexLikeWords(text)` → `1 + StableHash(token) % (vocabSize - 1)` → `Take(contextLen)`. Это **не BPE RP01**. Совпадения hash, потеря символов/порядка и отсечение длинной пары меняют доступный target.
+
+Дополнительный **P0 риск интерпретации старых экспериментов:** old `ToBatch` конкатенирует `Prompt + '\n\nChosen:\n' + Chosen` и `Prompt + '\n\nRejected:\n' + Rejected` до кодирования. Метки сторон находятся **внутри обучаемых последовательностей**. Модель может использовать префикс-маркер вместо семантического различия. Это подтверждённый факт сериализации и **гипотеза shortcut**, не доказанная причина конкретной train accuracy. Контроль: identical prefix + neutral boundary + response masks без side name, при одинаковом корпусе и heldout. См. тот же [ToBatch](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/experiments-v2/INTERNAL-TRAIN-READY-V191/runner/InternalTrainReadyDpoRunner/Program.cs#L192-L210).
+
+С другой стороны, RP01 [generation config](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/config/code-documentation/generation-v1.json) задаёт `vocabSize=629`, `hiddenDim=512`, `numLayers=4`, context 2048, LoRA rank8 только `q_proj/v_proj`; RP01 [real Run](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs#L115-L123) валидирует **exact response material**, без подстановки старых `Chosen:`/`Rejected:`. Сравнить напрямую проценты старого runner и RP01 некорректно.
+
+## 4. Реальный переводческий Unit и воспроизведение нестрогого совпадения
+
+Исторический [TranslationTrainedUnits](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/27.TranslationDomain/TranslationTrainedUnits.cs#L61-L140) действительно имеет `SemanticTokenizerUnit.TrainOnExample`/`_patternCorrections`, а [ExecutorUnit](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/27.TranslationDomain/TranslationTrainedUnits.cs#L220-L280) использует KNN, word/phrase maps и exact source memory. Это **реально обучаемые/обновляемые таблицы и индексы**, но не доказательство нейронного градиента этого Unit.
+
+В `codex/dpo-implementation` сохранён [translation-v1/runner-report.json](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/models/translation/translation-v1/runner-report.json): `rows_trained=1`, `runtime_product_accuracy=0.3333`, `passes_promotion_gate=false`, причина `REWARD_MARGIN_UNAVAILABLE`. Зато две реальные ветви маршрута: exact `add null check ValidateToken` и **не exact** `add a null check before ValidateToken` привели к `"Add a null check to ValidateToken.". Документ фиксирует **малый non-exact nearest-source transfer**, а не достижение порога генеративного качества; не следует удалять KNN только потому, что RP01 LoRA отвечает плохо.
+
+Отдельный отрицательный контроль [E13B heldout](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/experiments-v2/E13B-EXPRESSION-PREFIX-COMPLETION/results/heldout-2026-05-07-075333/e13b-heldout-validation.md): 20 train items, training matched/correct 100%, 10 невиденных выражений → **0% matched и 100% abstained**. Рубрика считает abstention безопасным/«Correct», но продуктивного нового completion здесь нет. Не подменять `safe refusal` обещанной способностью получать ответ.
+
+## 5. Обязательная матрица проверки при переносе старой модели в RP01
+
+| Переменная | Исторический train | RP01 | Что отдельно сравнить |
+|---|---|---|---|
+| Lesson pairs | от 50 повторяемых до 3884 различных записей (семантическая независимость неизвестна) | 500 строк, C# шаблоны25×20, ENRU ограниченные семейства | family-level dedup, контраст chosen/rejected, lawful target |
+| Model family | маленький случайно созданный Transformer, 64 hidden/1 layer | случайная base, 512 hidden/4 layers | learnability с/без supervised warmup, не raw percentages |
+| Input | 2048 hashed words, context96, label-prefix | byte-BPE 629, exact masks | идентичность `(prompt, response)` без role leakage, token coverage |
+| Получатель | весь полис/`StepMany` runner | project LoRA q/v; отдельно KNN/Unit/Flow registry | изменился ли **потребляемый** state того действия, которое ошибалось |
+| Output | train margin, checkpoints | preference margins + независимые 0/3 и 0/4 free scores | blind same-panel before/after плюс retained skills |
+| Memory | train script checkpoints | полный RP01 checkpoint и отдельные KNN/translation maps | восстановление именно выбранного consumer, cold process + variant |
+
+**Вывод:** обнаружены настоящие старые DPO-обучения и исторический узкий non-exact transfer. Их следует восстановить как воспроизводимые positive controls, но нельзя обещать, что «старый алгоритм был семантически лучше», пока у него нет зафиксированной слепой одинаковой панели. Требуется сравнить и *что делалось*, и *что ответило потом*. Никакие модели/состояния и old run JSON этим документом не изменялись.
+
+## 6. Два конкретных поручения для аудитора
+
+1. `OLD-DPO-PROBE`: выбрать V210 и repeat10, проверить источник 50/134 unique semantic families, у old runner убрать side label в парах **только в изолированном experiment**, поставить response-only mask, оценить blind 20 unseen source-family tasks и provenance; отдельно провести replay/forgetting на old/next batch. PASSED только при улучшении предметных ответов на идентичном heldout, не при `FinalAccuracy=1`.
+2. `OLD-KNN-PROBE`: зафиксировать translation-v1 frozen checkpoint/index и два приведённых запроса + 20 новых paraphrases и adversarial отрицаний. Сравнить exact, KNN-on, KNN-off, law-veto, new source-family. Отдельно проверить `promotion_gate` и отсутствие hidden exact fallback. PASS только при lawful heldout benefit без leakage.

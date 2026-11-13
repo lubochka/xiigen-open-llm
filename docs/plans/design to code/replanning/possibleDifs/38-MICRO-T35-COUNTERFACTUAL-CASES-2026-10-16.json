@@ -1,0 +1,131 @@
+{
+  "experimentId": "MICRO-N38-T35-CONTEXT-DEPENDENCY",
+  "schema": "PhaseContextPacket eight fields, request.Flags.UseContextCarryForward",
+  "status": "PROPOSED_NOT_EXECUTED",
+  "sourceCommit": "d1862939bfe24c3bbeb12a49af917c7ca569a10f",
+  "unit": "T34TransitionDomainSplitterUnit",
+  "domain": "architectural-phase3-to-phase4",
+  "cases": [
+    {
+      "id": "A",
+      "meaning": "control original decisions",
+      "flags": {
+        "useCompiledPredicateRepresentation": true,
+        "useContextCarryForward": true
+      },
+      "context": {
+        "PacketId": "handoff-038",
+        "UpstreamPhase": "phase3",
+        "DownstreamPhase": "phase4",
+        "DecisionsMade": [
+          "decision:dynamic_runtime_topology",
+          "decision:internal_first",
+          "decision:arbiter_authority",
+          "decision:accuracy_promotion_gate"
+        ],
+        "ConstraintsInherited": [
+          "constraint:base_service_inheritance"
+        ],
+        "KnowledgeEdges": [
+          "knowledge_edge:cross_phase_context_packet"
+        ],
+        "BoundaryMarkers": [
+          "boundary:autonomous_learning_scope"
+        ],
+        "RejectedItems": [
+          "rejection:static_runtime_topology"
+        ]
+      },
+      "expected": {
+        "sourceIdsAllowed": [
+          "decision:dynamic_runtime_topology",
+          "decision:internal_first"
+        ],
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "B",
+      "meaning": "counterfactual static runtime and absence of internal-first",
+      "flags": {
+        "useCompiledPredicateRepresentation": true,
+        "useContextCarryForward": true
+      },
+      "context": {
+        "PacketId": "handoff-038",
+        "UpstreamPhase": "phase3",
+        "DownstreamPhase": "phase4",
+        "DecisionsMade": [
+          "decision:static_runtime_topology",
+          "decision:arbiter_authority",
+          "decision:accuracy_promotion_gate"
+        ],
+        "ConstraintsInherited": [
+          "constraint:base_service_inheritance"
+        ],
+        "KnowledgeEdges": [
+          "knowledge_edge:cross_phase_context_packet"
+        ],
+        "BoundaryMarkers": [
+          "boundary:autonomous_learning_scope"
+        ],
+        "RejectedItems": [
+          "rejection:dynamic_runtime_topology"
+        ]
+      },
+      "expected": {
+        "sourceIdsForbidden": [
+          "decision:dynamic_runtime_topology",
+          "decision:internal_first"
+        ],
+        "shouldReject": false
+      }
+    },
+    {
+      "id": "C",
+      "meaning": "negative control: original packet but carry-forward disabled",
+      "flags": {
+        "useCompiledPredicateRepresentation": true,
+        "useContextCarryForward": false
+      },
+      "context": {
+        "PacketId": "handoff-038",
+        "UpstreamPhase": "phase3",
+        "DownstreamPhase": "phase4",
+        "DecisionsMade": [
+          "decision:dynamic_runtime_topology",
+          "decision:internal_first",
+          "decision:arbiter_authority",
+          "decision:accuracy_promotion_gate"
+        ],
+        "ConstraintsInherited": [
+          "constraint:base_service_inheritance"
+        ],
+        "KnowledgeEdges": [
+          "knowledge_edge:cross_phase_context_packet"
+        ],
+        "BoundaryMarkers": [
+          "boundary:autonomous_learning_scope"
+        ],
+        "RejectedItems": [
+          "rejection:static_runtime_topology"
+        ]
+      },
+      "expected": {
+        "shouldReject": true
+      }
+    }
+  ],
+  "observables": [
+    "output_source_ids",
+    "canonical_output_sha256",
+    "confidence",
+    "is_success",
+    "consumer_verdict"
+  ],
+  "notes": [
+    "These expected fields are semantic oracle constraints; no native .NET execution was performed.",
+    "Data are intentionally not RP01 Csharp DPO or translation cases.",
+    "An output unsupported in B is evidence of fixed-unit context-invariance, not automatically evidence of user-visible RP01 regression."
+  ]
+}

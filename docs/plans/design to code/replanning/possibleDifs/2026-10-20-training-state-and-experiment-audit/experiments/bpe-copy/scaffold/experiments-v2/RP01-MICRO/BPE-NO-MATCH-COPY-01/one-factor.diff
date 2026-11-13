@@ -1,0 +1,54 @@
+--- 01.Tokenizer/BpeTokenizer.cs
++++ experiment/01.Tokenizer/BpeTokenizer.cs
+@@ -20,6 +20,42 @@
+ /// </summary>
+ public class BpeTokenizer
+ {
++    // EXPERIMENT ONLY. A uses the untouched native body below the branch.
++    public static bool ExperimentElideUnchangedChunkCopies { get; set; }
++    public static long ExperimentNoMatchReuses { get; private set; }
++    public static long ExperimentChangedChunkCopies { get; private set; }
++
++    private static List<int> MergeChunkWithoutNoMatchCopy(List<int> ids, (int, int) pair, int newToken)
++    {
++        List<int>? output = null;
++        int i = 0;
++        while (i < ids.Count)
++        {
++            if (i < ids.Count - 1 && ids[i] == pair.Item1 && ids[i + 1] == pair.Item2)
++            {
++                if (output is null)
++                {
++                    output = new List<int>(ids.Count);
++                    for (int prefix = 0; prefix < i; prefix++) output.Add(ids[prefix]);
++                }
++                output.Add(newToken);
++                i += 2;
++            }
++            else
++            {
++                output?.Add(ids[i]);
++                i++;
++            }
++        }
++        if (output is null)
++        {
++            ExperimentNoMatchReuses++;
++            return ids;
++        }
++        ExperimentChangedChunkCopies++;
++        return output;
++    }
++
+     private Dictionary<int, byte[]> _vocab = [];
+     private Dictionary<(int, int), int> _merges = [];
+ 
+@@ -547,6 +583,8 @@
+ 
+     private static List<int> MergeChunk(List<int> ids, (int, int) pair, int newToken)
+     {
++        if (ExperimentElideUnchangedChunkCopies)
++            return MergeChunkWithoutNoMatchCopy(ids, pair, newToken);
+         var output = new List<int>(ids.Count);
+         int i = 0;
+         while (i < ids.Count)

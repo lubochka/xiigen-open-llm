@@ -1,0 +1,307 @@
+{
+  "schema": "xiigen.novelty_delta_review.v1",
+  "repository": "lubochka/xiigen-planning",
+  "scope": "Only delta 05ba7dfe to 4151916f: full text of three added files (two Markdown, one Python source), plus complete patches of three modified Markdown. Python source was read, not executed. No whole-tree or branch rebase claim.",
+  "compare": {
+    "base_sha": "05ba7dfeec56ac054b17c8d22806f2b649ad3247",
+    "head_sha": "4151916fac86becea8b7c2fd8cb6e73abb49cd79",
+    "status": "ahead",
+    "ahead_by": 7,
+    "total_commits": 7
+  },
+  "preserved_base_scope": {
+    "catalog_markdown": 630,
+    "first_planning_delta_added_markdown": 5,
+    "core_changed_markdown_reread": 7,
+    "source_pair": [
+      "219d7ba89dc3ef43e03e17f1461ad96154d3dd7a",
+      "4945b8e85c17b5f150eb5b840d16bbdc4b506242"
+    ]
+  },
+  "files": [
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/00-EXTERNAL-DOMAINS-POSITIVE-RESTORE-P0-2026-10-19.md",
+      "status": "modified",
+      "blob_sha": "3b2bff58a9622bf1ad6a07f77f424fcc14136941",
+      "additions": 6,
+      "deletions": 0,
+      "changes": 6,
+      "url": "https://github.com/lubochka/xiigen-planning/blob/4151916fac86becea8b7c2fd8cb6e73abb49cd79/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/00-EXTERNAL-DOMAINS-POSITIVE-RESTORE-P0-2026-10-19.md",
+      "read_scope": "COMPLETE_COMPARE_PATCH_ONLY",
+      "added_lines_checked": 6,
+      "patch": "@@ -2,6 +2,12 @@\n \n **Дата:** 2026-10-19. **Источник успешных исторических экспериментов:** `llm_mvp_core@external_domains`, commit [3036a01](https://github.com/lubochka/llm_mvp_core/tree/3036a01acec938f0b83fa4ffbda26202cc35d639). **Реализация для сопоставления:** [codex/dpo-implementation](https://github.com/lubochka/llm_mvp_core/tree/codex/dpo-implementation); [RP01](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/). **Разрешённая запись:** только `xiigen-planning/llm_plan3/.../possibleDifs/`. **Запрет:** не изменять `llm_mvp_core/docs/plans/replanning-possible-diffs/**`.\n \n+## Критическое уточнение из независимого cross-branch code review\n+\n+**[N51: подтверждено, что E09/E26/E43, StructuralKnn и HnswIndex в двух ветках кодово идентичны после снятия пяти строк лицензионного заголовка](51-GOLD-BRANCH-EXPERIMENT-CODE-PARITY-AND-E26-DETERMINISTIC-LOOKUP-2026-10-19.md).** Поэтому P0 — **подключить, проверить и перенести полезный механизм к действующему обучаемому получателю**, а не заново писать классы исторических алгоритмов. Качество на реальном consumer ещё не измерено.\n+\n+**Корректировка статуса E26:** 0.40→1.00 показаны на 15 заранее заданных случаях с `ContextualDictionary.BuildDefault()`, который содержит вручную предзагруженные POS-записи; в E26.Run отсутствует `Train`. Это **положительный опыт контекстного поиска**, **НЕ подтверждённый исторический опыт online-learning**. Прошлая фраза «историческое успешное обучение E26» без этого уточнения была бы завышенной. Новый learned translation store и холодное восстановление требуют отдельного опыта.\n+\n ## Решение P0: восстановить доказанную способность, не просто повторить старую архитектуру\n \n **Цель:** на том же домене и том же проверяемом конечном вызове получить не худшее качество, чем в независимом замороженном эталоне, сохранив юридический допуск данных, осмысленность результата, восстановление состояния и бюджет ресурсов. Существование исходного алгоритма или сохранённый `passed=true` не являются достаточным доказательством текущего качества.",
+      "patch_sha256": "ac2f6272e3de7a90e617c5e1c00214b0d40cf2c70159d316eab3cbe54b111e96",
+      "git_blob_verified": false
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/00-MASTER-SYNTHESIS-AND-CONFLICTS.md",
+      "status": "modified",
+      "blob_sha": "c4f75aa77700e0622bc33a13941c5522f133caf4",
+      "additions": 11,
+      "deletions": 0,
+      "changes": 11,
+      "url": "https://github.com/lubochka/xiigen-planning/blob/4151916fac86becea8b7c2fd8cb6e73abb49cd79/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/00-MASTER-SYNTHESIS-AND-CONFLICTS.md",
+      "read_scope": "COMPLETE_COMPARE_PATCH_ONLY",
+      "added_lines_checked": 11,
+      "patch": "@@ -1,4 +1,15 @@\n # XIIGEN RP01 — единый указатель, арбитраж расхождений и наиболее вероятная причинная цепь\n+\n+## Дополнение 19.10.2026 — ГЛАВА 0: восстановление `external_domains` прежде новой оптимизации\n+\n+**Приоритет:** [00-EXTERNAL-DOMAINS-SUCCESS-RESTORATION-P0-2026-10-19.md](00-EXTERNAL-DOMAINS-SUCCESS-RESTORATION-P0-2026-10-19.md). Она закрепляет успешную ветку `external_domains@3036a01`, реальные архивные receipts E25/E26/E09/E43 и обязательный путь `donor -> trained recipient -> checkpoint -> cold restore -> ordinary consumer -> unseen quality`. Положительные метрики разных алгоритмов/корпусов нельзя объединять или выдавать за эффект RP01 LoRA. Приоритетная очередь: **E25 POS-kNN**, **E26 контекст**, **E09 AST-kNN**, **E43 replay**, после каждого — реальный consumer, а не только экспериментальная функция.\n+\n+**Новое в текущем адресном сравнении:** [50-EXTERNAL-DOMAINS-E25-NOVEL-POS-SEAMS-2026-10-19.md](50-EXTERNAL-DOMAINS-E25-NOVEL-POS-SEAMS-2026-10-19.md) — `ClassifyPattern` схлопывает часть verb-first типов, donor 8 labels и Unit 7 labels несовместимы без mapping, нулевая bigram-distance для коротких POS и refit `Train()` стирает предшествующие batch при incremental caller. Общее отсутствие E25 в consumer **известно ранее**, и эти уязвимости не доказаны как причина 0/4 RP01 Student.\n+\n+**Малые различающие опыты:** [50-EXTERNAL-DOMAINS-CAUSAL-MICRO-EXPERIMENTS-2026-10-19.md](50-EXTERNAL-DOMAINS-CAUSAL-MICRO-EXPERIMENTS-2026-10-19.md) (EXD-R0–R5, EXD-N50-01A/B–03). Все **NOT_RUN**; source-equivalent примеры не переименовывать в native learning gain. Шесть сравнённых старых файлов в current **функционально совпадают** с донором (разница — пятистрочный заголовок); искать actual pipeline/consumer/state seam, а не переписывать сохранённые algorithms.\n+\n+---\n+\n Дата: 16.10.2026; база исследования: `llm_mvp_core@83590a462b2f8aedc9d3ab4cb775193eb9c25ce5`; planning до этой редакции `282b07bd8add4f4eb1eadb0b7ffa99c1b5f62872`. Статус: **авторский документарный аудит; новые модели/тесты не запускались**. \n \n ## Главная причинная гипотеза",
+      "patch_sha256": "61ef2f0d03c3fca7f8f3508165c7cac3d1304aeab33dec2055cab08078f8ad5e",
+      "git_blob_verified": false
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/50-EXTERNAL-DOMAINS-CAUSAL-MICRO-EXPERIMENTS-2026-10-19.md",
+      "status": "added",
+      "blob_sha": "d0512fec0a41ce3808ce1da1cb1b1625af5403d8",
+      "additions": 78,
+      "deletions": 0,
+      "changes": 78,
+      "url": "https://github.com/lubochka/xiigen-planning/blob/4151916fac86becea8b7c2fd8cb6e73abb49cd79/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/50-EXTERNAL-DOMAINS-CAUSAL-MICRO-EXPERIMENTS-2026-10-19.md",
+      "read_scope": "FULL_NEW_FILE",
+      "bytes": 18334,
+      "text_sha256": "4cfd0df92e37532ff01e984e1980271fd6cb82f5f98312367a1bc5b983c2c9a2",
+      "git_blob_verified": true
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/50-EXTERNAL-DOMAINS-CORPUS-PROBE.py",
+      "status": "added",
+      "blob_sha": "c520739764d13468559288dc01a4e5e8e5c5c51a",
+      "additions": 167,
+      "deletions": 0,
+      "changes": 167,
+      "url": "https://github.com/lubochka/xiigen-planning/blob/4151916fac86becea8b7c2fd8cb6e73abb49cd79/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/50-EXTERNAL-DOMAINS-CORPUS-PROBE.py",
+      "read_scope": "FULL_NEW_FILE",
+      "bytes": 6880,
+      "text_sha256": "a0e012aa53b9883c10c13dee39949ebe0aabb51539f44313bfbfbc0c804de81c",
+      "git_blob_verified": true
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/51-GOLD-BRANCH-EXPERIMENT-CODE-PARITY-AND-E26-DETERMINISTIC-LOOKUP-2026-10-19.md",
+      "status": "added",
+      "blob_sha": "eaf5fcf88a683c16ad2df76c94af215c53dd8a1c",
+      "additions": 49,
+      "deletions": 0,
+      "changes": 49,
+      "url": "https://github.com/lubochka/xiigen-planning/blob/4151916fac86becea8b7c2fd8cb6e73abb49cd79/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/51-GOLD-BRANCH-EXPERIMENT-CODE-PARITY-AND-E26-DETERMINISTIC-LOOKUP-2026-10-19.md",
+      "read_scope": "FULL_NEW_FILE",
+      "bytes": 11449,
+      "text_sha256": "b4268060b31687045db82186e315a231415f35ca7e831b2e9c3899ba6362a640",
+      "git_blob_verified": true
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/README.md",
+      "status": "modified",
+      "blob_sha": "4191a492b235c9a5068af940554d6b860929763a",
+      "additions": 13,
+      "deletions": 0,
+      "changes": 13,
+      "url": "https://github.com/lubochka/xiigen-planning/blob/4151916fac86becea8b7c2fd8cb6e73abb49cd79/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/README.md",
+      "read_scope": "COMPLETE_COMPARE_PATCH_ONLY",
+      "added_lines_checked": 13,
+      "patch": "@@ -1,3 +1,16 @@\n+<!-- N50-EXTERNAL-DOMAINS-GOLDEN-FIRST-2026-10-19 -->\n+# ПРИОРИТЕТ ВОССТАНОВЛЕНИЯ — `external_domains` и проверенный исторический алгоритм\n+\n+**[Глава 0: вернуть измеренные способности `external_domains`](00-EXTERNAL-DOMAINS-POSITIVE-RESTORE-P0-2026-10-19.md)** — сначала восстановить C# AST/kNN E09, contextual dictionary E26 и удержание знаний replay E43 **на конкретных прежних получателях**, затем проверить настоящее применение после сохранения/восстановления. Исторические положительные отчёты — `VERIFIED_HISTORICAL_RECEIPTS`, не доказательство прироста RP01. Ранний E22 имел `passed=false`, его поздний положительный сигнал был в другом сценарии и с изменёнными метками.\n+\n+**[Новый исходно измеренный дефект: 3 000 DPO-пар из пяти тем](50-NEW-EXTERNAL-DOMAINS-PAIR-IDENTITY-AND-INVERTED-PREFERENCES-2026-10-19.md)** — **55 уникальных Prompt**, **270 (9%) `Chosen == Rejected`**, **219 (7,3%) потенциально обратно размеченных по собственной шкале curriculum**, все `compiled_prompt_in_training=false`; сохранённый `overlap_ratio` получен случайным числом, а не сравнением токенов. Это аудит **15 архивных JSONL (runs 001–003)**, не входного файла RP01. Потенциальная семантическая инверсия не объявляется установленной без независимого judge; обучение и причинный gain **NOT_RUN**.\n+\n+**[Независимая cross-branch коррекция: E09/E26/E43 уже существуют в current без изменений алгоритма; E26 был заранее заполненным lookup, не обучением](51-GOLD-BRANCH-EXPERIMENT-CODE-PARITY-AND-E26-DETERMINISTIC-LOOKUP-2026-10-19.md)** — 5 файлов побайтно одинаковы за вычетом лицензионных заголовков. Это понижает гипотезу «переписали успешный E26» и поднимает проверку `learning state → consumer`, а также необходимость нового обучения переводу вне заранее прописанных значений.\n+\n+**[Малые предметные A/B, негативные контроли и критерии](50-EXTERNAL-DOMAINS-CAUSAL-EXPERIMENTS-2026-10-19.md)** · **[воспроизводимый read-only Python-аудит JSONL](50-EXTERNAL-DOMAINS-CORPUS-PROBE.py)**. Публикация разрешена только здесь. `llm_mvp_core/docs/plans/replanning-possible-diffs/**` оставлен **без изменений**; не обходить legal DPO data admission.\n+\n+<!-- /N50-EXTERNAL-DOMAINS-GOLDEN-FIRST-2026-10-19 -->\n+\n <!-- G-WIKI-GOLDEN-FIRST-2026-10-19 -->\n # ГЛАВА 0 — СНАЧАЛА ВОССТАНОВИТЬ `local_wiki_planning`\n ",
+      "patch_sha256": "51ea2b654917cef38c35aec7ad3eca856f42c410e730f1b11a1cb9c05aff8ae5",
+      "git_blob_verified": false
+    }
+  ],
+  "counts": {
+    "full_new_markdown": 2,
+    "full_new_python": 1,
+    "new_file_bytes": 36663,
+    "modified_markdown_complete_patches": 3,
+    "added_patch_lines": 30,
+    "queries": 19
+  },
+  "queries": [
+    {
+      "candidate": "tokenizer_padding",
+      "kind": "exact",
+      "query": "semantic_seed_",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "tokenizer_padding",
+      "kind": "exact",
+      "query": "stableMergeSeed",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "tokenizer_padding",
+      "kind": "exact",
+      "query": "BuildTokenizer",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "tokenizer_padding",
+      "kind": "semantic",
+      "query": "(?:artificial|synthetic|искусственн)[^\\n]{0,100}(?:merge|tokenizer|padding|словар|BPE)",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "tokenizer_padding",
+      "kind": "semantic",
+      "query": "(?:BPE|tokenizer)[^\\n]{0,100}(?:filler|padding|semantic.?seed)",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "tokenizer_padding",
+      "kind": "semantic",
+      "query": "(?:merge|словар)[^\\n]{0,120}(?:512|seed)",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_regression",
+      "kind": "exact",
+      "query": "SelectNextTrainingAction",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_regression",
+      "kind": "exact",
+      "query": "ActionableWeakSignalScore",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_regression",
+      "kind": "exact",
+      "query": "SelectRegistryWeakUnit",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_regression",
+      "kind": "exact",
+      "query": "recentRejected",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_regression",
+      "kind": "semantic",
+      "query": "(?:curriculum|weak.?unit|training.?action)[^\\n]{0,160}(?:registry|accepted|rejected|recency|recent)",
+      "matching_lines": 2,
+      "matching_files": 1,
+      "hits": [
+        {
+          "source_path": "llm mvp/design to code session/replanning/possibleDifs/50-EXTERNAL-DOMAINS-CORPUS-PROBE.py",
+          "ref": "4151916fac86becea8b7c2fd8cb6e73abb49cd79",
+          "blob_sha": "c520739764d13468559288dc01a4e5e8e5c5c51a",
+          "source_line": 76,
+          "text": "                if row.get(\"curriculum_tier\") == 3 and row.get(\"rejected_type\") == \"missing-edge-case\":",
+          "read_scope": "FULL_NEW_FILE"
+        },
+        {
+          "source_path": "llm mvp/design to code session/replanning/possibleDifs/50-EXTERNAL-DOMAINS-CORPUS-PROBE.py",
+          "ref": "4151916fac86becea8b7c2fd8cb6e73abb49cd79",
+          "blob_sha": "c520739764d13468559288dc01a4e5e8e5c5c51a",
+          "source_line": 79,
+          "text": "                if row.get(\"curriculum_tier\") == 2 and row.get(\"rejected_type\") == \"missing-edge-case\":",
+          "read_scope": "FULL_NEW_FILE"
+        }
+      ]
+    },
+    {
+      "candidate": "wiki_curriculum_regression",
+      "kind": "semantic",
+      "query": "(?:mastery|starvation|освоен|приоритет)[^\\n]{0,120}(?:stale|historic|registry|реестр|rejected)",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_regression",
+      "kind": "semantic",
+      "query": "(?:реестр|registry)[^\\n]{0,120}(?:выбор.*(?:урок|юнит)|curriculum|weak.?unit)",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_batch_name_recency",
+      "kind": "exact",
+      "query": "OrderByDescending(entry => entry.BatchId",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_batch_name_recency",
+      "kind": "exact",
+      "query": "OrderByDescending(e => e.BatchId",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_batch_name_recency",
+      "kind": "exact",
+      "query": "recentRejected",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_batch_name_recency",
+      "kind": "semantic",
+      "query": "(?:BatchId|batch.?id)[^\\n]{0,120}(?:OrderByDescending|ordinal|lexicograph|timestamp|recent)",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_batch_name_recency",
+      "kind": "semantic",
+      "query": "(?:lexicograph|лексикограф)[^\\n]{0,120}(?:batch|врем|давност|recent)",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    },
+    {
+      "candidate": "wiki_curriculum_batch_name_recency",
+      "kind": "semantic",
+      "query": "(?:curriculum|учебн.*приоритет)[^\\n]{0,100}(?:filename|artifact.?name|имени.*файл)",
+      "matching_lines": 0,
+      "matching_files": 0,
+      "hits": []
+    }
+  ],
+  "manual_adjudication": [
+    {
+      "published_id": "LW-FB-01",
+      "verdict": "NO_MECHANISM_DUPLICATE_IN_FINAL_DELTA",
+      "reason": "E25 batch-refit/replay and artifact-to-consumer checks concern stored examples and inference. No accepted/mastery or recent-window feedback in WikiTraceAggregatorUnit next-Unit priority. External corpus probe curriculum_tier/rejected_type counts are DPO metadata, not curriculum scheduling."
+    },
+    {
+      "published_id": "LW-BPE-02",
+      "verdict": "NO_MECHANISM_DUPLICATE_IN_FINAL_DELTA",
+      "reason": "E26 BuildDefault preloaded dictionary, E09/E43 code parity, and DPO corpus counting do not describe artificial semantic_seed numeric filler or its BPE merge-budget cost. No BuildTokenizer helper or 512 artificial seeds appear."
+    },
+    {
+      "published_id": "LW-FB-01",
+      "publication_role": "control_inside_hypothesis",
+      "verdict": "NO_CONTROL_DUPLICATE_IN_FINAL_DELTA",
+      "reason": "E25 ordinal label migration uses symbolic label schemas; it is unrelated to lexical BatchId sorting used as recency."
+    }
+  ],
+  "limits": [
+    "Two standalone hypotheses remain; novelty is bounded to observed pinned source texts and patches.",
+    "No fresh .NET run, model training, consumer execution or causal quality estimate performed.",
+    "No further moving branch discovery was attempted; later commits are outside this final delta.",
+    "Changed-file blob SHAs identify remote versions; only their complete patches were read in this last step."
+  ]
+}

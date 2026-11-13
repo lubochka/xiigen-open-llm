@@ -1,0 +1,24 @@
+--- A
++++ B
+@@ -67,8 +67,19 @@
+                 model.AuditPresentationCount++;
+                 var features = Featurize(row.Prompt);
+                 var expected = LabelIndex(row.ExpectedRouteKind);
+-                var predicted = model.PredictIndex(features);
+-                if (predicted == expected)
++                var scores = model.Score(features);
++                var predicted = 0;
++                var bestCompetingScore = double.NegativeInfinity;
++                for (var index = 0; index < scores.Length; index++)
++                {
++                    if (index != expected && scores[index] > bestCompetingScore)
++                    {
++                        predicted = index;
++                        bestCompetingScore = scores[index];
++                    }
++                }
++                const double trainingMargin = 0.10;
++                if (scores[expected] - bestCompetingScore >= trainingMargin)
+                     continue;
+ 
+                 model.AuditModelUpdateCount++;

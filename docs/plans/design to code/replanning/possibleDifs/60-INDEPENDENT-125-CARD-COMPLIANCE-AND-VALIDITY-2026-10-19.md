@@ -1,0 +1,37 @@
+# N60-A — Независимая проверка 125 защищённых карточек без изменения библиотеки
+**Дата:** 2026-10-19. **Режим:** READ_ONLY_SOURCE_AUDIT; 125/125 CARD_TEXT_READ; NATIVE_LEARNING_RUNS=0; 470_SUBCASES_SEMANTICALLY_APPROVED=NO; EXPERIMENTS_AUTHORIZED=NO.
+
+## Объект и точность утверждения
+Проверены все 125 именных файлов P01–P125 непосредственно в [protected cards](https://github.com/lubochka/llm_mvp_core/tree/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/cards). Обход в числовом порядке, полный UTF-8 текст каждой карточки получен из ветки codex/dpo-implementation 19 октября. Проверялись: (а) присутствие правила успеха в теле; (б) его повторение в инструкциях исполнителям; (в) явно прописанная граница участия в обучении; (г) наличие текста задания. Для P86 вместо общего раздела промпта используются отдельно озаглавленные доменные промпты; это НЕ отсутствие требования.
+
+**Результат формальной проверки:** 125/125 — правило любого измеренного полезного улучшения; 125/125 — правило в текстовых промптах; 125/125 — явное условие о реальном learner/state и запрете самостоятельных псевдоэкспериментов с нулевым обучением. Формальная проверка не подтверждает, что каждый отдельный подслучай поддержан существующим caller, правильно отделяет train от holdout, имеет независимый gold или уже исполнен. Не выдавать 125/125 за 470/470.
+
+**Правило пользователя, без исключений:** любое фактически измеренное улучшение полезного показателя считается успехом *этого показателя и предметной темы*; прирост accuracy не обязателен. Рядом обязательны все остальные измеренные изменения, включая ухудшения. Если предмет измерения не участвует в реальном процессе обучения — это НЕВАЛИДНЫЙ эксперимент по улучшению обучения; не тратить токены на запуск. Исправление измерителя, restore-only или frozen policy может быть диагностикой, но не новым учебным результатом.
+
+## Научная проверка: что нельзя автоматически признать
+1. **Тексты карточек не равны разрешению на выполнение.** [01-method-and-report](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/2026-10-19-small-learning-probes/01-method-and-report.md) требует полный самодостаточный паспорт, индивидуальное прямое решение Любы для exact version, frozen approved inputs и разрешённый scope. Все PENDING; никаких native экспериментов этой проверкой не запускалось.
+2. **Содержательные исключения корректно отделены.** Например [P25.1/P25.2](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/cards/P25-cold-restore.md) — standalone cold/export OUT_OF_LEARNING_SCOPE; [P95](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/cards/P95-learned-flow-edge.md) заблокирован без реального owner обучаемого edge; [P56.7](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/cards/P56-verifier-context.md) frozen Contains-versus-WholeToken — диагностика политики, сама по себе не learning-gain; [P57.8/P57.11](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/cards/P57-semantic-measurement.md) исправляют путь метрики, а не факт приобретения навыка.
+3. **P52.8** уже документирует равенство rejectedCandidate и chosen у некоторых negative-пар; **P56** документирует learned verifier context, substring и shared direction; *не переоткрывать их как независимые факты*. Их ещё не измеренное совместное влияние оформлено только как новая связанная гипотеза N60-B.
+4. **Исторически успешное обучение сохраняется положительным.** [18 Oct native memory ingress report](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/translation-memory-ingress-01/report.md): одинаковые 8 уроков и 24 задания, 11/24 → 19/24, новые композиции 0/8 → 8/8; wrong accepted 1 → 3. Это успех качества по указанной панели и цена false acceptance, а НЕ «failed потому что не 100%».
+5. **RP01 другой объект:** [RP01 recovery audit](https://github.com/lubochka/xiigen-planning/blob/llm_plan3/llm%20mvp/design%20to%20code%20session/replanning/Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md) фиксирует C#500 и EN→RU500 настоящие LoRA updates, но free answer 0/3 и 0/4; сравнение напрямую с 19/24 Executor memory без единого owner/экзамена недопустимо.
+
+## Предметные темы, а не выдуманные «домены» механизмов
+| Тема обучения | Профиль | Показатели собственного обученного ответа | Существующие карточки |
+|---|---|---|---|
+| Перевод | EN→RU; отдельно RU→EN, HE/ES по каждому направлению | negation, actor, question, correct/all, correct/accepted, abstain, sample cost | P25, P51–P67, P117, P125 |
+| Язык программирования | C# AST/тип/порядок, SQL отдельный синтаксис | новые law-equivalent задания, critical semantic error, индекс и latency | P16, P26–P28, P34, P43, P113 |
+| Документирование кода | C# → объяснение, не AST gate всех доменов | самостоятельный free answer, heldout-family meaning, time-to-usefulness | P01–P15, P81, P101–P105 |
+| Оркестрация | обучаемые связи Unit/Flow при реальном owner | порядок, допустимость, результат downstream, depth | P92–P97 |
+| Ответ по источникам | ProjectWiki/GraphRAG при наличии изменяемой памяти | provenance, правильные claims на новом запросе, retrieval cost | P69–P70, P118 |
+
+Словарь [human-communication-GLOSSARY](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/skills/human-communication-GLOSSARY.md): домен — предмет обучения; D04/D05 — профили перевода, LoRA/kNN — механизмы.
+
+## Открытые границы проверки (не маскировать)
+- Не проведён построчный семантический аудит всех ~470 подслучаев; не доказано, что у каждого есть actual learning recipient и достаточный A/B.
+- Часть старых ссылок из 81/83 на 84-check-source-coverage.md устарела; актуальный реестр — [experimets/01-full-source-registry](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/01-full-source-registry.md) и [06-findings-map](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/2026-10-19-small-learning-probes/06-findings-map.md). Этот дефект ссылки уже известен N58/N59, не новая находка.
+- Все предлагаемое новое содержание идёт как sidecar в planning/possibleDifs. Каталог core/docs/plans/replanning-possible-diffs/** НЕ ИЗМЕНЯТЬ.
+
+## Gate следующего независимого reviewer
+Для каждого спорного подслучая: 1) тема, профиль, настоящий получатель и вход Train; 2) source → mutable state → same ordinary consumer; 3) A0/A1/B0/B1, один фактор, train/exam disjoint и одинаковый полный бюджет; 4) реальный ответ после обучения, baseline и independent gold; 5) все полезные gain/loss по метрическим осям; 6) документы и prompt не дают разрешения на запуск. При отсутствии пункта 1/2/4 статус INVALID_AS_LEARNING_EXPERIMENT/BLOCKED, не переносить в очередь дорогих опытов.
+
+**Вывод:** правила пользователя формально присутствуют во всех 125 карточках; научная валидность 470 подслучаев НЕ подтверждена. Это значимое различие между текстовым compliance и научной проверкой.

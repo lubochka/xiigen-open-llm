@@ -1,0 +1,139 @@
+{
+  "experiment_id": "MICRO-N21-CORRECTIVE-ADMISSION-01",
+  "revision": "2026-10-16",
+  "status": "DEV_ONLY_SYNTHETIC_FIXTURE_NOT_INDEPENDENTLY_JUDGED",
+  "purpose": "Test whether a semantic law correction blocked by Jaccard novelty filter could affect previously unseen normal translation results when admitted to an actual trained Unit.",
+  "source_repo": "lubochka/llm_mvp_core",
+  "source_branch": "codex/dpo-implementation",
+  "source_snapshot": "83590a462b2f8aedc9d3ab4cb775193eb9c25ce5",
+  "warning": "These strings are synthetic probe inputs, not sanctioned external-Chinese-authored final DPO and not heldout exam gold approved by CODEX/Astra.",
+  "admission_probes": [
+    {
+      "id": "recipient_change",
+      "history": "пожалуйста отправьте отчёт Марии сегодня утром",
+      "candidate": "пожалуйста отправьте отчёт Ольге сегодня утром",
+      "expected_intersection": 5,
+      "expected_union": 7,
+      "expected_jaccard": 0.7142857142857143,
+      "expected_current_skip_at_0_70": true,
+      "law_delta": "recipient Maria -> Olga",
+      "needs_independent_review": true
+    },
+    {
+      "id": "same_tokens_different_case",
+      "history": "пожалуйста отправьте отчёт Марии сегодня утром",
+      "candidate": "Пожалуйста отправьте отчёт МАРИИ сегодня утром!",
+      "expected_jaccard": 1,
+      "expected_current_skip_at_0_70": true,
+      "law_delta": "none",
+      "needs_independent_review": true
+    },
+    {
+      "id": "english_negation_math_only",
+      "history": "send invoice to Alice today",
+      "candidate": "do not send invoice to Alice today",
+      "expected_intersection": 5,
+      "expected_union": 7,
+      "expected_jaccard": 0.7142857142857143,
+      "expected_current_skip_at_0_70": true,
+      "law_delta": "negation",
+      "note": "Math-only cross-domain probe; Batch029 actual caller is RU_EN, do not count as a served RU_EN example"
+    }
+  ],
+  "candidate_training_pairs": [
+    {
+      "id": "M21-HISTORY",
+      "direction": "RU_EN",
+      "source_text": "пожалуйста отправьте отчёт Марии сегодня утром",
+      "candidate_output": "Please send the report to Maria this morning.",
+      "negative_dev_example": "Please send the report to Olga this morning.",
+      "law": "recipient_exact",
+      "state": "SYNTHETIC_DO_NOT_ADMIT_AUTOMATICALLY"
+    },
+    {
+      "id": "M21-CORRECTION",
+      "direction": "RU_EN",
+      "source_text": "пожалуйста отправьте отчёт Ольге сегодня утром",
+      "candidate_output": "Please send the report to Olga this morning.",
+      "negative_dev_example": "Please send the report to Maria this morning.",
+      "law": "recipient_exact",
+      "state": "SYNTHETIC_DO_NOT_ADMIT_AUTOMATICALLY"
+    }
+  ],
+  "proposed_blind_evaluation_inputs": [
+    {
+      "id": "H01",
+      "source_text": "пожалуйста отправьте отчёт Ольге завтра утром",
+      "requires_after_output": "Olga",
+      "forbids_after_output": "Maria",
+      "seen_exact_text_in_training": false
+    },
+    {
+      "id": "H02",
+      "source_text": "пожалуйста отправьте отчёт Марии завтра утром",
+      "requires_after_output": "Maria",
+      "forbids_after_output": "Olga",
+      "seen_exact_text_in_training": false
+    },
+    {
+      "id": "H03",
+      "source_text": "пожалуйста отправьте отчёт Ольге сегодня вечером",
+      "requires_after_output": "Olga",
+      "forbids_after_output": "Maria",
+      "seen_exact_text_in_training": false
+    },
+    {
+      "id": "H04",
+      "source_text": "пожалуйста отправьте отчёт Марии сегодня вечером",
+      "requires_after_output": "Maria",
+      "forbids_after_output": "Olga",
+      "seen_exact_text_in_training": false
+    },
+    {
+      "id": "H05",
+      "source_text": "пожалуйста отправьте договор Ольге сегодня утром",
+      "requires_after_output": "Olga",
+      "forbids_after_output": "Maria",
+      "seen_exact_text_in_training": false
+    },
+    {
+      "id": "H06",
+      "source_text": "пожалуйста отправьте договор Марии сегодня утром",
+      "requires_after_output": "Maria",
+      "forbids_after_output": "Olga",
+      "seen_exact_text_in_training": false
+    },
+    {
+      "id": "H07",
+      "source_text": "пожалуйста отправьте отчёт Ольге завтра вечером",
+      "requires_after_output": "Olga",
+      "forbids_after_output": "Maria",
+      "seen_exact_text_in_training": false
+    },
+    {
+      "id": "H08",
+      "source_text": "пожалуйста отправьте отчёт Марии завтра вечером",
+      "requires_after_output": "Maria",
+      "forbids_after_output": "Olga",
+      "seen_exact_text_in_training": false
+    }
+  ],
+  "blinding": "Keep require/forbid labels outside learner, query metadata, re-ranking and serving code. Confirm each law/oracle before using results; source-disjoint is not family-disjoint.",
+  "primary_metric": "paired lawful_correct_served_answer on H01-H08, B(correct lawful admitted) vs C(same candidate input but shuffled incorrect target) and baseline A(filtered)",
+  "controls": {
+    "A": "current law-blind novelty filter",
+    "B": "only lawful correction admitted after independent approval",
+    "C": "same number and source of admitted samples with wrong labels",
+    "D": "independent frozen Unit no-new-training",
+    "index": "TranslationKnnStore fixed deterministic path; if using HNSW, freeze actual hit IDs and evaluate labels on same candidate set"
+  },
+  "requirements": [
+    "no exact source matches in H01-H08",
+    "actual trained Unit invoked on all arms",
+    "log candidate admitted or filtered before Train",
+    "save train-only and heldout SHA sets",
+    "record final output, unit path and selected candidate",
+    "no Windows GitHub Actions needed",
+    "do not alter frozen RP01 metrics"
+  ]
+}

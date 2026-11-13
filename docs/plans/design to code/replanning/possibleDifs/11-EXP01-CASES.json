@@ -1,0 +1,171 @@
+{
+  "schema": "xiigen-rp01-exp01-open-small-memory-ablation-v1",
+  "status": "PUBLIC_SYNTHETIC_DEMONSTRATION_INPUTS_NOT_DPO_TRAINING_NOT_BLIND",
+  "sourceBranch": "llm_mvp_core/codex/dpo-implementation",
+  "sourceCommit": "83590a462b2f8aedc9d3ab4cb775193eb9c25ce5",
+  "direction": "EN_RU",
+  "allowedTrainingUnit": "executor-en_ru",
+  "trainingDeclaration": "Only train[] can enter TrainStructuredBatchAsync, and only ExecutorEnRu may be mutated in treatment C.",
+  "scoringDeclaration": "cases[] are read by the scorer after all arm outputs have been captured, never by training or candidate selection.",
+  "dataFamilyDisclaimer": "All 4 training and 4 near-template cases share the English copular-property construction. Near-template gains are NOT evidence of independent novel-semantic-family generalization.",
+  "negativeGoldDisclaimer": "Null means no eligible output from the trained memory; NOT that the English sentence is objectively untranslatable.",
+  "train": [
+    {
+      "id": "t-box",
+      "source": "the box is not empty",
+      "target": "коробка не пустая",
+      "semanticGroup": "box",
+      "sourceLicense": "PUBLIC_SYNTHETIC_PROBE_ONLY"
+    },
+    {
+      "id": "t-door",
+      "source": "the door is open",
+      "target": "дверь открыта",
+      "semanticGroup": "door",
+      "sourceLicense": "PUBLIC_SYNTHETIC_PROBE_ONLY"
+    },
+    {
+      "id": "t-file",
+      "source": "the file is ready",
+      "target": "файл готов",
+      "semanticGroup": "file",
+      "sourceLicense": "PUBLIC_SYNTHETIC_PROBE_ONLY"
+    },
+    {
+      "id": "t-window",
+      "source": "the window is closed",
+      "target": "окно закрыто",
+      "semanticGroup": "window",
+      "sourceLicense": "PUBLIC_SYNTHETIC_PROBE_ONLY"
+    }
+  ],
+  "cases": [
+    {
+      "id": "exact-box",
+      "bucket": "exact_control",
+      "source": "the box is not empty",
+      "expected": "коробка не пустая",
+      "semanticGroup": "box",
+      "expectedOutcome": "ANSWER"
+    },
+    {
+      "id": "exact-door",
+      "bucket": "exact_control",
+      "source": "the door is open",
+      "expected": "дверь открыта",
+      "semanticGroup": "door",
+      "expectedOutcome": "ANSWER"
+    },
+    {
+      "id": "exact-file",
+      "bucket": "exact_control",
+      "source": "the file is ready",
+      "expected": "файл готов",
+      "semanticGroup": "file",
+      "expectedOutcome": "ANSWER"
+    },
+    {
+      "id": "exact-window",
+      "bucket": "exact_control",
+      "source": "the window is closed",
+      "expected": "окно закрыто",
+      "semanticGroup": "window",
+      "expectedOutcome": "ANSWER"
+    },
+    {
+      "id": "near-box",
+      "bucket": "near_template_holdout",
+      "source": "a box is not empty",
+      "expected": "коробка не пустая",
+      "semanticGroup": "box",
+      "expectedOutcome": "ANSWER"
+    },
+    {
+      "id": "near-door",
+      "bucket": "near_template_holdout",
+      "source": "a door is open",
+      "expected": "дверь открыта",
+      "semanticGroup": "door",
+      "expectedOutcome": "ANSWER"
+    },
+    {
+      "id": "near-file",
+      "bucket": "near_template_holdout",
+      "source": "a file is ready",
+      "expected": "файл готов",
+      "semanticGroup": "file",
+      "expectedOutcome": "ANSWER"
+    },
+    {
+      "id": "near-window",
+      "bucket": "near_template_holdout",
+      "source": "a window is closed",
+      "expected": "окно закрыто",
+      "semanticGroup": "window",
+      "expectedOutcome": "ANSWER"
+    },
+    {
+      "id": "negative-box",
+      "bucket": "opposite_polarity_control",
+      "source": "the box is empty",
+      "expected": null,
+      "semanticGroup": "box",
+      "expectedOutcome": "NO_ADMISSIBLE_ANSWER_FROM_TRAINED_MEMORY"
+    },
+    {
+      "id": "negative-door",
+      "bucket": "opposite_polarity_control",
+      "source": "the door is not open",
+      "expected": null,
+      "semanticGroup": "door",
+      "expectedOutcome": "NO_ADMISSIBLE_ANSWER_FROM_TRAINED_MEMORY"
+    },
+    {
+      "id": "negative-file",
+      "bucket": "opposite_polarity_control",
+      "source": "the file is not ready",
+      "expected": null,
+      "semanticGroup": "file",
+      "expectedOutcome": "NO_ADMISSIBLE_ANSWER_FROM_TRAINED_MEMORY"
+    },
+    {
+      "id": "negative-window",
+      "bucket": "opposite_polarity_control",
+      "source": "the window is not closed",
+      "expected": null,
+      "semanticGroup": "window",
+      "expectedOutcome": "NO_ADMISSIBLE_ANSWER_FROM_TRAINED_MEMORY"
+    },
+    {
+      "id": "exploratory-box",
+      "bucket": "exploratory_novel_composition",
+      "source": "the box is ready",
+      "expected": "коробка готова",
+      "semanticGroup": "box+file",
+      "expectedOutcome": "ANSWER_OR_ABSTAIN"
+    },
+    {
+      "id": "exploratory-file",
+      "bucket": "exploratory_novel_composition",
+      "source": "the file is not empty",
+      "expected": "файл не пустой",
+      "semanticGroup": "file+box",
+      "expectedOutcome": "ANSWER_OR_ABSTAIN"
+    }
+  ],
+  "requiredArms": [
+    "A_no_training",
+    "B_legacy_scaffold_only",
+    "C_structured_executor_training_only",
+    "D_cold_full_checkpoint_of_C"
+  ],
+  "expectedModelCalls": 0,
+  "expectedNeuralOptimizerSteps": 0,
+  "mustNotChange": [
+    "RP01 C#500",
+    "RP01 ENRU500",
+    "RP01 C0/C50/C100 checkpoint files",
+    "original frozen eval rubrics",
+    "TranslationMemorySourceLaw or ordinary inference rules"
+  ]
+}

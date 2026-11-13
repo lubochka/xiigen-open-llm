@@ -1,0 +1,10 @@
+# P06/P07: уточнение переноса и граница байтовой диагностики
+
+27 октября2026. READ_ONLY_RESEARCH + Markdown; новые обучение, inference, сборки и тесты не запускались. Основные планы находятся в canonical repo, эта запись связывает библиотеку с ними и не создаёт дублирующий FIX.
+
+- [Аудит82](C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/82-positive-transfer-delta-audit-2026-10-27.md): native exact DPO уже сохраняет границу сегментов и проверяет точные маски. P07 подтверждает полезность этого поведения, но не обнаруживает отсутствующий guard. P06 подтверждает count-based инвариантность; замена count на норму ещё не имеет измеренного выигрыша.
+- [План83](C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/83-learned-bpe-boundary-transfer-addendum.md): усиление существующего learned-BPE test, независимые bytes/response masks/causal targets, один shared snapshot и restore; владельцы22/28/62, E2E-потребители20/74. Новый runtime пока NOT_RUN.
+- Новое статическое ограничение прибора: `P0701/Program.cs::BuildSpans` измеряет byte length через `Decode([id])`. Отдельный токен может быть неполным UTF-8 символом, поэтому эта формула непригодна для общего RU/HE oracle. ASCII-числа исходного опыта сохраняются; исправление/защитные случаи описаны в83, успех RU/HE не заявлен.
+- Сохранённые raw OPT01/BWS01 показывают median peak +6,35446%/+15,91324% при малой экономии allocations. В планах58/60 и реестре явно указан HOLD общего переноса по правилу более5% не-CPU ухудшения. Это пересчёт старых измерений, не новый прогон.
+
+Источники, строки кода, математическое обоснование, данные будущего теста, лимиты и требования к исполнителю находятся в82/83. [Сверка старых положительных кандидатов](C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/fixes-based-on-experiments/reviews/2026-10-27-unplanned-positive-transfer-review.md) выполнена research worker `/root/knn_repair_followup`: каталоговая проверка не равна повторному аудиту всех исходных прогонов.

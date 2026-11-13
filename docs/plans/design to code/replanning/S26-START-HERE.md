@@ -1,0 +1,4 @@
+# New numbered S26 — lawful feedback reconciliation and selective repair
+The [complete self-contained **S26** pack](Kiro-Xiigen-S26-Lawful-Feedback-Reconciliation-and-Selective-Learning-Repair-Slice-Pack/README.md) contains 20 individual model-ready task prompts, evidence and scientific examination protocols, architecture, domain law passports, ownership, skill routes and independent Astra review handoff.
+
+This is S26 (implementation slice planning), **not R26 or RP26**. No S24/S25 completion is assumed. Publication of the pack is not product implementation, model training or an independent review. Start from [the S26 execution board](Kiro-Xiigen-S26-Lawful-Feedback-Reconciliation-and-Selective-Learning-Repair-Slice-Pack/EXECUTION-BOARD.md) and dispatch read-only S26.00A/S26.00B/S26.00C/S26.00D on fresh P/K heads.

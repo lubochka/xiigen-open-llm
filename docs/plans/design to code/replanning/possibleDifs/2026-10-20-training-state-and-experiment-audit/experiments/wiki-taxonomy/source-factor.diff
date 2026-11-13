@@ -1,0 +1,31 @@
+--- A
++++ B
+@@ -37,7 +37,9 @@
+         ProjectWikiRequestRouteKind.QueryPlanningTraining,
+         ProjectWikiRequestRouteKind.ContextRoutingTraining,
+         ProjectWikiRequestRouteKind.WikiQuestionAnswer,
+-        ProjectWikiRequestRouteKind.NotProjectWiki
++        ProjectWikiRequestRouteKind.NotProjectWiki,
++        ProjectWikiRequestRouteKind.SystemBoundaryMapperTraining,
++        ProjectWikiRequestRouteKind.CrossStackBusinessFlowGraphTraining
+     ];
+ 
+     private readonly Dictionary<string, double[]> _tokenWeights;
+@@ -221,6 +223,8 @@
+             ProjectWikiRequestRouteKind.QueryPlanningTraining => Decision(routeKind, "project-wiki-query-planning-flow", "The held-out-gated request routing baseline selected query planning training.", confidence, ["developer_prompt", "query_plan_taxonomy"], topTwoMargin),
+             ProjectWikiRequestRouteKind.ContextRoutingTraining => Decision(routeKind, "wiki-context-routing-unit", "The held-out-gated request routing baseline selected context routing training.", confidence, ["query_plan", "retriever_availability"], topTwoMargin),
+             ProjectWikiRequestRouteKind.WikiQuestionAnswer => Decision(routeKind, "project-local-wiki-orchestrator", "The held-out-gated request routing baseline selected project-local wiki answering.", confidence, ["project_id", "wiki_domain_root", "question"], topTwoMargin),
++            ProjectWikiRequestRouteKind.SystemBoundaryMapperTraining => Decision(routeKind, "system-boundary-mapper-unit", "The experimental learned taxonomy selected system-boundary training.", confidence, ["project_evidence", "route_or_call_markers", "data_markers", "boundary_taxonomy"], topTwoMargin),
++            ProjectWikiRequestRouteKind.CrossStackBusinessFlowGraphTraining => Decision(routeKind, "cross-stack-business-flow-graph-unit", "The experimental learned taxonomy selected cross-stack flow-graph training.", confidence, ["system_boundary_map", "angular_client_markers", "server_api_markers", "stored_procedure_markers", "ui_consumer_markers"], topTwoMargin),
+             _ => Decision(ProjectWikiRequestRouteKind.NotProjectWiki, "main-orchestrator", "The held-out-gated request routing baseline selected the main orchestrator.", confidence, [], topTwoMargin)
+         };
+     }
+@@ -299,7 +303,7 @@
+     private static int LabelIndex(ProjectWikiRequestRouteKind routeKind)
+     {
+         var index = Array.IndexOf(Labels, routeKind);
+-        return index < 0 ? Labels.Length - 1 : index;
++        return index < 0 ? Array.IndexOf(Labels, ProjectWikiRequestRouteKind.NotProjectWiki) : index;
+     }
+ 
+     private static int MaxIndex(double[] values)

@@ -1,0 +1,38 @@
+# N41 — независимые дополнительные расхождения с быстрыми проверками по доменам
+
+18.10.2026. **INDEX OF 4 NEW SOURCE-BOUNDED INVESTIGATIONS; NOT EXECUTED.** Конкретные четыре исследования дополняют уже существующие 40-... главы и 125 карточек protected core; не превращать число документов в число подтверждённых ошибок. Смысл раздела: вернуть измеряемую пользу, а не только «похожие» нейронные веса.
+
+## Самый важный раздел восстановления PrepareToGPL — новые P0
+
+| Очерёдность | Файл/владелец | Что уже достоверно | Что остаётся проверить | Домен / быстрый опыт |
+| --- | --- | --- | --- | --- |
+| **P0-REC-T1** | [41-FOUR-VS-SIX-TRANSLATION-CHECKPOINT-MIGRATION](41-FOUR-VS-SIX-TRANSLATION-CHECKPOINT-MIGRATION-2026-10-18.md) · TranslationMachine | Старый runtime имеет 4 направления; новый имеет 6 и требует полный список до import. Сам learned Executor исходник не изменился | Old good state действительно используется? Возвращает ли новый importer EXECUTOR_DIRECTIONS_INCOMPLETE? При совместимой миграции восстанавливается ли обычный ответ? | **Перевод**, EN→RU/RU→EN/HE→EN. A old save → B current load → C current-native load; cold exact/near/semantics |
+| **P0-REC-T2** | [41-REJECTED-SIDE-ANNOTATION-CONTROLS-POSITIVE-EXECUTOR-MEMORY](41-REJECTED-SIDE-ANNOTATION-CONTROLS-POSITIVE-EXECUTOR-MEMORY-2026-10-18.md) · Builder → Executor | Builder извлекает phrase mappings из rejected, передаёт в positive chosen Unit output, затем Unit сохраняет как обученную память | Может ли ложный/старый negative marker привести к неверной unseen composition после настоящего Flow, и отсекает ли source admission это ранее? | **Перевод** EN→RU. Три одинаковых chosen+source, различается только [PHRASE] negative marker (correct/wrong/absent) |
+| **P1-CONTEXT-T3** | [41-TRANSLATION-TOPICDOMAIN-INPUT-ERASURE](41-TRANSLATION-TOPICDOMAIN-INPUT-ERASURE-AND-MAP-COLLISION-2026-10-18.md) · topic→Executor | TopicDomain передаётся от Orchestrator, но параметр Execute не используется; TRAIN builder пишет "general", exact map keyed source-only | В одном направлении различные lawful meanings для одной формы; нужен ли scoped context key и кто поставляет trusted topic? | **Перевод**, юридическая/техническая лексика. 2 lessons, 2 topics, один source, смена порядка |
+| **P1-NEURAL-N1** | [41-LORA-BRANCH-PARITY](41-LORA-BRANCH-PARITY-AND-REAL-NEURAL-QUALITY-BOUNDARY-2026-10-18.md) · true neural LoRA | Old Apply возвращает внешние adapters (unchanged model forward), нынешний Apply использует модельный projection slot; old dropout всегда training:true, нынешний различает train/eval | Была ли фактическая legacy manual-wiring? Совпадают ли real logits/grad/forward under matched config? Улучшится ли free-answer после SFT warmup? | **Нейронная next-token**, затем EN→RU/C#; tiny forward и masked-gradient sanity отдельно от памяти |
+
+## Историческая контрольная глава — важна для выбора настоящей проверки качества
+
+[40-PREPARETOGPL-RECOVERY-PRIORITY-CHAPTER](40-PREPARETOGPL-RECOVERY-PRIORITY-CHAPTER-2026-10-18.md) уже зафиксирована другим исследованием: полезная **узкая orchestration guide state** в PrepareToGPL, несовместимые v1/v2 loader и source-admission ограничение; **запрещённые исходные данные не возвращать**. [40-PREPARETOGPL-RESTORE-P0-INDEX](40-PREPARETOGPL-RESTORE-P0-INDEX-2026-10-18.md) содержит прямые исторические E09/E26/E43/E22 результаты по другим owners. Наша N41-T1 — отдельная **четырёх→шестинаправленная TranslationMachine**, не их guide checkpoint.
+
+Измеренный переводческий benchmark от 18.10: [memory-ingress repair](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/translation-memory-ingress-01/report.md) **11/24→19/24** для 8 уроков, но **1→3 wrong-accepted**; [P125 native flow](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/P125-enru-memory-01/report.md) **0→19/24** на другой контрольной постановке. Эти результаты принадлежат Translation Executor learned memory, **neural steps 0**, а не историческому DPO Student. Перевод «do not delete» ошибочно дал «удали», так что качество = полнота правильных + штраф за неверно принятые, не один coverage%.
+
+RP01 frozen C#500/ENRU500 16 LoRA tensors moved but free **0/3 и 0/4** — [RP01 proof](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md). Возврат AST kNN, phrase memory, SFT/DPO warmup и trained orchestration guide — **четыре разные receiving systems**, ни один не подменяет другой.
+
+## Очередь четырёх небольших проверок (без Windows/GitHub CI)
+
+**Run 1: MIG-TRANSLATE-01**. Только настоящие SaveCheckpoint/ImportCheckpoint/GetOrchestrator на двух ветках с 2–8 разрешёнными уроками, frozen score. Возврат исходного quality level запрещается объявлять по одному success import: нужна пара ordinary outputs.
+
+**Run 2: DPO-PHRASE-AUTH-01**. Те же source/chosen/labels, меняется только audit annotation rejected. Реально обученная память, затем unseen recombinations. Если нет actual data entry path — RESULT=NOT_REACHABLE, не самодельный passing proxy.
+
+**Run 3: TOPIC-MEMORY-01**. Только при наличии достоверного topic и многозначных терминов, 2 урока/2 темы; проверить equal-string collision и lesson-order effect. Один general query честно ambiguous.
+
+**Run 4: LoRA LEVEL0 tiny forward**. Frozen tiny policy/base/reference, zero-B equivalence, then controlled nonzero adapter and selected logits/grad; training:false vs true dropout. Only after success, tiny SFT warm-vs-DPO study on real free output, not 500 pairs.
+
+Для каждого: domain=subject matter, profile=task/direction, recipient, pair and source provenance, exact branch commit+file SHA, before/after separated from historical receipts, positive/negative controls, train vs held-out split, fallback/abstain, source-level / native / quality verdicts, timing/RAM, neural total/trainable layers and Unit/Flow depth. PASS only if native normal consumer and independent evaluator agree for declared scope. False accepted + missed rights/roles separately. Product changes, experimental runs и rewriting protected core **не выполнялись**.
+
+## Перекрёстные ссылки без заявления о полном повторном аудите 360 файлов
+
+[00 existing synthesis](00-MASTER-SYNTHESIS-AND-CONFLICTS.md) · [38 historical branch map](38-MASTER-RP01-LEARNING-QUALITY-EVIDENCE-ROUTES-HISTORICAL-POSITIVES-AND-PRIORITY-2026-10-16.md) · [39 independent priorities](39-RP01-CROSSWALK-NOVELTY-PRIORITIES-AND-MICRO-EXPERIMENTS-2026-10-16.md) · [protected P25 restore](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/cards/P25-cold-restore.md), [P52 metadata](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/cards/P52-semantic-annotation.md), [P73 context](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/cards/P73-domain-conditioning.md), [P117 directions](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/experimets/cards/P117-translation-direction-memory.md).
+
+**Навыки, применённые к структуре проверки:** architectural-decision-testing (consumer/owner), code-examination (пары источников), experiment-design (честный один фактор), plan-review/plan-self-validation (negative controls, trusted boundaries), prompt-patch-authoring (точный task packet), human-communication glossary (домен ≠ механизм). Полного выполнения всей цепи governance/sub-agent для implementation здесь не заявляется.

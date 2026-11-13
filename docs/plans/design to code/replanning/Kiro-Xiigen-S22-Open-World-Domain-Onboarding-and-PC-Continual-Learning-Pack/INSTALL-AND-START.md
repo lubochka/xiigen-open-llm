@@ -1,0 +1,9 @@
+# S22 — install/start (for future Kiro/Codex executor)
+1. Start from GitHub P `lubochka/xiigen-planning` branch `llm_plan3` under `llm mvp/design to code session/replanning/Kiro-Xiigen-S22-Open-World-Domain-Onboarding-and-PC-Continual-Learning-Pack/`; read this README, architecture, SOURCE-AND-OWNERSHIP, exam, experiment, governance and execution board. Confirm current P/K heads and your **separate** effect rights; never assume the old K snapshot is latest.
+2. Choose **one** task ID. Immediate parallel independent starting choices: `S22.00A` source/code trace, `S22.00B` law panel, `S22.00C` state/PC. For task dispatch paste **full** `tasks/S22.<ID>.md` plus task-specific current source excerpts, live skill bodies, real model/config/grant (only if authorized).
+3. Mandatory source route: current AGENTS → original WorkLeft/primary → RAG MASTER/00 → chosen 01–04 MD+NDJSON → referenced G/F/V primary → full affected K method and ordinary consumer. Record each source READ_FULL/SCOPED/INDEX_ONLY/NOT_READ. Do not redo all R01–R25 and do not inspect only S04.
+4. Run initial P/C0 evidence **without new Student DPO** when available. Only .02A may propose smallest missing novel-domain code seam after proof/rights. Internal RP02/03/04 bugs go to their existing owners. CODEX/Chinese/Student costs are optional, not a silent default.
+5. Report each task's actual owner state, rights, source/law version, expected vs observed, falsifier, individual good/bad/edge outcomes, PC cost/uncertainty, exact SHA/diff and next owner in Russian.
+6. Status at publication: this folder is an executable future **plan**, not executed software or certified learning. Do not report ASTRA_PASS or `TRAINED` without real external receipts.
+
+Copy one-task prompt from [START-PROMPT.md](START-PROMPT.md), using the full individual task packet. Commit implementation only on explicitly authorized K branch and owner grant, not as part of this S22 doc publication.

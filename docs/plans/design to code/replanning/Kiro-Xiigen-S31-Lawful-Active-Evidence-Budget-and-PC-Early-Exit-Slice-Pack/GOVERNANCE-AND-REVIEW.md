@@ -1,0 +1,16 @@
+# S31 — Governance, skills, effect permissions and independent review
+
+## Permissions and honesty
+This publication is approved in P planning branch only. It does NOT authorize K core writes, runtime GPU training, user data ingestion, Chinese Teacher calls, CODEX choice/judge, paid external providers, native IDE/DTC deployment, Graph/Builder/Student weight update or final independent Astra review. Each separate actual effect requires scope/grant/data rights/source provenance/PC budget and one writer per mutable state. Parallel source/law/science plans are read-only. Do not overwrite results/Rxx carriers. If current branch changes mid-publication, integrate only S31 subtree on fresh HEAD and do not force-push.
+
+## Roles
+Source researcher performs substantive original/WorkLeft/RAG and actual G/F/V primary traversal; architecture reviewer validates four distinct roles, arbiter, domain laws and one minimal consumer seam; code executor edits only under K grant and after full affected-file/caller read; code examiner independently verifies actual producer→consumer and diff; RP09 seals independent scientific tasks; CODEX GPT-6 Astra UltraCode (separately actually invoked) provides final exact-candidate code/scientific review. The same author's self review or a filled-in Astra template is **NOT_PERFORMED**. Reviewed candidate SHA and associated metadata required; a merge/new HEAD cannot inherit PASS by assumption.
+
+## Evidence state ladder
+PLANNING_DRAFT → SOURCE_TRACED → REAL_CONSUMER_TRACED → LAWFUL_PROBE_USED → MUTABLE_STATE_CHANGED (optional, actual) → BLINDED_DOMAIN_EXAMINED → WHOLE_PC_MEASURED → ACCEPTED_FULL_STATE → COLD_ORDINARY_ADOPTED → SEPARATE_ASTRA_REVIEWED. Each evidence label requires exact method, owner, domain/law/source family, state/version, N/uncertainty, PC cost, truthful actual action; statuses must not auto-promote. Possible result REUSE_NO_CHANGE, NO_SAFE_PROBE, ENGINEERING_GAIN, LEARNED_GAIN, REGRESS, INCONCLUSIVE, INVALID_EVIDENCE, NOT_RUN, NOT_MEASURED.
+
+## Functional scientific acceptance ≠ test coverage
+Maintain narrow deterministic checks for type, rights, privacy, source version, law, no repeat optimizer update, side effects, crash state, cold selected state and integrity. Do NOT add Windows CI runs/coverage quotas to demonstrate nondeterministic learning. Real proof uses independent pre-frozen domain-law examination, causal P/C0/C1/T1, correct n→m outputs, used kNN neighbors, legitimate path/Graph novel combinations, all-PC time/memory including losing branches, and retained quality bulk-to-bulk. Do not remove or weaken already required genuine engineering safety checks: they answer a different question than learned quality.
+
+## Model-ready task packet gate
+Every full tasks/S31.XX.md has eight standalone sections: (1) CURRENT/NOT, (2) exact primary GitHub refs and WorkLeft+RAG navigation, (3) selected real skills/permissions, (4) procedural prompt, (5) measurable lawful function vs coverage, (6) GOOD/BAD/EDGE/falsifier, (7) child A SOURCE/ARCH and B adversarial code/science, optionally independent C, (8) final truthful receipt with N, versions, source depths and one human-readable next action. A child is RETURN_ONLY and independently checks original sources/skills; writing child prompt isn't invocation. No generic empty one-line packet or new global 25-step queue.

@@ -1,0 +1,78 @@
+{
+  "reviewer": "/root/neural_learning",
+  "date": "2026-10-20",
+  "source_pin": "a8222d1b15745fe6207f36cd294fd3fb61c01d3b",
+  "reviewed_draft": "agent_work/experiment_audit/OPTIMIZER-STEP-READ-COST-2026-10-20.md",
+  "reviewed_draft_sha256": "31ca57f779b4db828ead3e42e9bd6aead7f455599f1e79318a557247833d1331",
+  "verdict": "SOURCE_CONFIRMED; GUARD_PRESERVING_METADATA_REPAIR_FEASIBLE_IN_EXPERIMENTAL_COPY; EFFECT_NOT_MEASURED",
+  "source_verification": [
+    {
+      "path": "11.DPO/DpoTrainer.cs",
+      "git_blob_sha": "0a7fd4d088fd37824aa213ddf0c6189675fe7dc2",
+      "sha256": "09d03fc15b783384f730796773538dc60add748a35718058b5274c0c60200b48"
+    },
+    {
+      "path": "11.DPO/DpoTrainerStepSnapshot.cs",
+      "git_blob_sha": "8fd397889326466ca1aba711aaf78e86acfa5373",
+      "sha256": "05ea4dd4f7c959829bded84c7a2933f11bdeefe917b7cfb2ee6898663724ccf5"
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamW.cs",
+      "git_blob_sha": "05877706c68c8a76b63fb62842d91a2596070faf",
+      "sha256": "4ff288aef879a110dbdbc0da356d5839f1087e219d128a06cb987bf251abe3ea"
+    },
+    {
+      "path": "18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+      "git_blob_sha": "2f91fce55c711063aa41780a53ef62b08f337dc8",
+      "sha256": "264952e5c675aa2a6baceda47dffb9f3b84e7835f99bc76e72dc33f1c7a869b3"
+    },
+    {
+      "path": "14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs",
+      "git_blob_sha": "51af64cd2b3345ec53dc6901fa523476542df8e4",
+      "sha256": "28fd4a145198a73cbd38788912d6b1b8f3cc9d57505c09065801a6b9b0a2145f"
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamWPortableState.cs",
+      "git_blob_sha": "fef6af5366e412e2508a716118bd3f76759abc73",
+      "sha256": "375c89181713679ac34a46839144a71299797e931127ad67951080e5490b563c"
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamWStateSnapshot.cs",
+      "git_blob_sha": "009983981b3ff213ff68d28c955027649ba83684",
+      "sha256": "d621e588d73080fee8a784380884b270d683bd17523785ef41043c35fdc9ff5b"
+    }
+  ],
+  "confirmed_causal_path": [
+    "DpoTrainer.ExecuteWithPublication:1232-1245 under policy mutation gate evaluates ExportOptimizerState().Step only for a non-null RNG callback, before DpoTrainerStepSnapshot.Capture enters.",
+    "AdamW.ExportPortableState:188-227 plus AdamWPortableParameterState:22-41 copy m and v into immutable portable DTOs.",
+    "DpoTrainerStepSnapshot.Capture:46-69 then calls AdamW.CaptureState:113-125 which copies m and v again for rollback.",
+    "SimulationDpoExperiment:110-111 requires dropout0 but160-161 supplies non-null RNG capture/restore;175-190 runs repeated actual updates on one trainer.",
+    "Logical wrapper907-909 differs: callback conditional; a null callback does not exercise this factor."
+  ],
+  "repair_contract": [
+    "Replace only the pre-capture step-read expression; leave full publication exports, rollback captures/restores and outer simulation exports unchanged.",
+    "Validate every binding including inactive bindings for null/empty/duplicate keys and duplicate parameters before the missing-state skip; validate active moment lengths and shape including TotalElements.",
+    "Keep positive moment length<=1e9 and owned shape snapshots; no m/v array copying and no exposing live moment arrays.",
+    "After the binding loop preserve current format, nonnegative captured step, active entry count<=1e6, UTF8 key length<=1024 for active entries, and duplicate entry checks.",
+    "Then preserve full recipient RequireValid and allowed key/dimensions/moment-count checks, before the existing RNG callback.",
+    "Preserve refusal order and type/code in the serialized owned execution scope; do not claim identical OOM behavior.",
+    "Do not add finite/negative-moment scans or ToBytes-only1GiB frame checks; they are not performed by the original step-only export.",
+    "If validators are factored, baseline A must not gain metadata allocations, additional traversals, new checks, or reordered failures; raw CurrentStep alone is invalid.",
+    "A narrow ProjectLoRA-only replacement can leave the generic non-project route on the old export rather than broadening the experiment."
+  ],
+  "bounded_learning_protocol": [
+    "A2+B2 actual optimizer calls maximum, two distinct accepted pairs, one pair per update, same order and exact initial state. Generate0 and extra evaluation forwards0.",
+    "At cold start first pre-capture has no moments; second is the main populated-state observation. A valid warm continuation can expose the factor from its first new update.",
+    "Compare weights/base/reference, moment arrays, step and RNG; preserve labels that returned trainer metrics describe the pre-update training forward.",
+    "Measure whole learning workload and step-read wall/CPU/allocated bytes/RAM. Structural2*M floats=8*M payload bytes is not measured performance.",
+    "Optional fault injection is only for concrete remaining risk, after ApplyOptimizer before commit, replacing the second successful attempt inside the same budget; report committed/rolled-back separately.",
+    "Accuracy and response quality NOT_MEASURED. Any measured useful metric improvement is success for that metric/domain with all regressions shown."
+  ],
+  "scope_limits": [
+    "No proof this caused historical RP01 accuracy loss.",
+    "No training, compiler run, native patch, protected-folder edit, deliverable edit or publication performed by this reviewer.",
+    "Current native source reviewed at a822; later bcf880 documentation layout was not independently revalidated in this narrow review.",
+    "Broad novelty search was not repeated; novelty evidence belongs to the author agent."
+  ],
+  "document_wording_followup_sent": "Move document-only audit status outside future executable prompt, as parent requested; this does not authorize any execution in the current audit."
+}

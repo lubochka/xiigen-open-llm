@@ -1,0 +1,22 @@
+# Seven domain-specific laws, positive/negative/edge and independent examinations
+| Domain | Law/semantic features, owner source required | Hard negative (not automatically DPO) | Safe shadow example |
+| --- | --- | --- | --- |
+| C# documentation | async cancellation/exception, AST and exact symbol semantics | short plausible answer drops cancellation requirement | compare two no-side-effect docs on same source revision |
+| Angular documentation | actual Angular version, component/template/signal binding and lifecycle | invented @Input or wrong signal behavior | source-family frozen component snapshot; no live IDE modification |
+| SQL documentation | schema, dialect, NULL, JOIN cardinality, access scope | short SQL result multiplies rows or leaks tenant data | snapshot-only read-only, never run UPDATE/DDL on user DB |
+| EN↔RU | negation, quantity, legal meaning, named entities, ambiguity | fluent translation reverses 'must not' | two translations with blind meaning-preservation judgment |
+| Figma→HTML+CSS | asset rights, DOM/layout responsive breakpoints and interactions | beautiful first viewport hides broken narrow layout | isolated render/read-only; never overwrite production files |
+| Orchestration | typed side effects, cancellation, dependencies, single-use external consent | cheapest route violates precondition or double-sends | simulation-only or safe snapshot, full branch accounting |
+| DPO Builder | separate chooser/author/judge, law provenance, useful strict negative | both-bad/tie labelled chosen≻rejected | diagnostic path evidence is not itself Chinese-authored Student pair |
+
+## Per-domain passport (complete before a measured claim)
+domain_id/version; primary source edition; allowable task intent and unknown/mixed tagging; legal input and output type/shape; subject source family; hard law vs empirical regularity vs user preference; rights/tenant/side-effect class; semantic IR/tokenizer/projector/LoRA/index versions; relevant-neighbor eligibility, k_dynamic features and abstention; Unit many→many/Flow correction/Graph path; two actually feasible lawful alternatives; deterministic arbiter; exact answer metric and unacceptable errors; historical accepted state; independent scorer; TRAIN/OP_DEV/SEALED_CERT family partitions; resource/consent envelope; negative-transfer guardrail; cold ordinary consumer.
+
+## Concrete exam design
+C# same code revision: one correct summary mentions cancellation and exception propagation, another legal shorter summary omits essential cancellation; prefer complete when user requested full async behavior, not by length. SQL join: two read-only explanations on same schema snapshot, score actual NULL/cardinality semantics; an UPDATE cannot become a harmless shadow. EN→RU: negation, modality and numeric units held across translation; a fluent opposite-meaning sentence fails law. Angular: version-accurate component binding; invented decorator/property fails. Figma→HTML/CSS: compare multiple viewports and rights-safe assets; a visual screenshot does not prove interaction. Orchestration: compare two truly feasible routes under same external call budget; D-15 arbiter veto overrides latency. Builder: route evidence can diagnose a Student issue but is NOT a final DPO negative by itself.
+
+## Unknowns and edge cases
+Unknown subject, mixed SQL+Angular description, syntactically identical vector tokens in incompatible coordinate spaces, stale framework versions, ambiguous legal translation, rare SQL NULL, different legal C# outputs, dataset-family leakage, LoRA/encoder migration and source rights revocation demand abstention/rebuild/version handling. Raw latency gain cannot overcome a violated hard law. All seven domains must appear in evaluation plan; first actual training pilot can use one law-bound C# domain without waiting for seven finished models.
+
+## Measurement
+domain mapping multi-label precision/recall/macro-F1 and false-known OOD; law feature preservation through token/IR/vector/projector; actual used kNN-neighbor diversity and relevance; legal route utility/regret versus *actually observed* eligible set; false preference labels including tie/both-bad; real Student DPO admissibility and improvement separately; p50/p95/whole-PC cost and old-domain retention per bulk. Use independent blind judge and source-family disjoint exam, not a unit coverage metric. The 95% target is not declared measured.

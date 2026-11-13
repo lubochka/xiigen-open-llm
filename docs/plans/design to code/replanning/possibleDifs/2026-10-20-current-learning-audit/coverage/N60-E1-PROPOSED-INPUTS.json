@@ -1,0 +1,170 @@
+{
+  "experiment_id": "N60-E1-RETENTION-ADMISSION-v1",
+  "status": "PROPOSED_NATIVE_INPUTS_NOT_RUN",
+  "snapshot": "bf9b543e149ef197da85a767821d98c9b67916d2",
+  "domain": "EN_RU translation commands",
+  "warmup_only_executor": [
+    {
+      "id": "w01",
+      "source": "quietly open the window",
+      "chosen": "тихо открой окно",
+      "rejected": "громко открой окно [WRONG: manner]",
+      "materialize": "BuildGeneralBatch; select only executor-en_ru examples for common warmup"
+    },
+    {
+      "id": "w02",
+      "source": "quietly close the window",
+      "chosen": "тихо закрой окно",
+      "rejected": "громко закрой окно [WRONG: manner]",
+      "materialize": "BuildGeneralBatch; select only executor-en_ru examples for common warmup"
+    },
+    {
+      "id": "w03",
+      "source": "quietly open the gate",
+      "chosen": "тихо открой ворота",
+      "rejected": "громко открой ворота [WRONG: manner]",
+      "materialize": "BuildGeneralBatch; select only executor-en_ru examples for common warmup"
+    },
+    {
+      "id": "w04",
+      "source": "quietly close the gate",
+      "chosen": "тихо закрой ворота",
+      "rejected": "громко закрой ворота [WRONG: manner]",
+      "materialize": "BuildGeneralBatch; select only executor-en_ru examples for common warmup"
+    },
+    {
+      "id": "w05",
+      "source": "slowly open the window",
+      "chosen": "медленно открой окно",
+      "rejected": "быстро открой окно [WRONG: manner]",
+      "materialize": "BuildGeneralBatch; select only executor-en_ru examples for common warmup"
+    },
+    {
+      "id": "w06",
+      "source": "slowly close the window",
+      "chosen": "медленно закрой окно",
+      "rejected": "быстро закрой окно [WRONG: manner]",
+      "materialize": "BuildGeneralBatch; select only executor-en_ru examples for common warmup"
+    },
+    {
+      "id": "w07",
+      "source": "slowly open the gate",
+      "chosen": "медленно открой ворота",
+      "rejected": "быстро открой ворота [WRONG: manner]",
+      "materialize": "BuildGeneralBatch; select only executor-en_ru examples for common warmup"
+    },
+    {
+      "id": "w08",
+      "source": "slowly close the gate",
+      "chosen": "медленно закрой ворота",
+      "rejected": "быстро закрой ворота [WRONG: manner]",
+      "materialize": "BuildGeneralBatch; select only executor-en_ru examples for common warmup"
+    }
+  ],
+  "new_training_all_units": [
+    {
+      "id": "t01",
+      "source": "quietly close the door",
+      "chosen": "бесшумно закрой дверь",
+      "rejected": "[WRONG: gender]",
+      "purpose": "Existing producer makes rejectedCandidate equal chosen; this is deliberately the false-label failure mechanism under test."
+    },
+    {
+      "id": "t02",
+      "source": "slowly open the door",
+      "chosen": "медленно открой дверь",
+      "rejected": "быстро открой дверь [WRONG: manner]",
+      "purpose": "Distinct real negative; QualityVerifier must actually learn in both arms."
+    }
+  ],
+  "exam_no_training": [
+    {
+      "id": "r01",
+      "bucket": "retention-known-source",
+      "source": "quietly open the window",
+      "acceptable_targets": [
+        "тихо открой окно",
+        "бесшумно открой окно"
+      ]
+    },
+    {
+      "id": "r02",
+      "bucket": "retention-known-source",
+      "source": "quietly close the window",
+      "acceptable_targets": [
+        "тихо закрой окно",
+        "бесшумно закрой окно"
+      ]
+    },
+    {
+      "id": "r03",
+      "bucket": "retention-known-source",
+      "source": "quietly open the gate",
+      "acceptable_targets": [
+        "тихо открой ворота",
+        "бесшумно открой ворота"
+      ]
+    },
+    {
+      "id": "r04",
+      "bucket": "retention-known-source",
+      "source": "quietly close the gate",
+      "acceptable_targets": [
+        "тихо закрой ворота",
+        "бесшумно закрой ворота"
+      ]
+    },
+    {
+      "id": "r05",
+      "bucket": "retention-known-source",
+      "source": "slowly open the window",
+      "acceptable_targets": [
+        "медленно открой окно",
+        "медленно открой окно"
+      ]
+    },
+    {
+      "id": "r06",
+      "bucket": "retention-known-source",
+      "source": "slowly close the window",
+      "acceptable_targets": [
+        "медленно закрой окно",
+        "медленно закрой окно"
+      ]
+    },
+    {
+      "id": "u01",
+      "bucket": "unseen-transfer",
+      "source": "quietly open the box",
+      "acceptable_targets": [
+        "тихо открой коробку",
+        "бесшумно открой коробку"
+      ]
+    },
+    {
+      "id": "u02",
+      "bucket": "unseen-transfer",
+      "source": "slowly close the box",
+      "acceptable_targets": [
+        "медленно закрой коробку"
+      ]
+    }
+  ],
+  "schema_mapping": {
+    "builder": "TranslationStructuredBatchBuilder.BuildGeneralBatch",
+    "pair.id": "row.id with n60-e1- prefix",
+    "pair.source": "n60-e1-controlled-retention-v1",
+    "pair.direction": "EN_RU",
+    "pair.pair_family": "controlled-retention",
+    "pair.prompt": "Translate the English command into Russian. Preserve manner and action.",
+    "pair.a_side": "row.source",
+    "pair.chosen": "row.chosen",
+    "pair.rejected": "row.rejected",
+    "pair.validation_outcome": "train_ready only after pre-run material validation; this draft is not an admission receipt",
+    "pair.validation_errors": [],
+    "heldOut": false,
+    "signatureMode": "ExactPair"
+  },
+  "metric_rule": "Any measured improvement in a useful metric is a success for that metric and domain; accuracy improvement is not required; report all other metric changes and regressions alongside.",
+  "warning": "Retention rows intentionally repeat prior TRAIN sources; they are not evidence of unseen generalization. No native model output or training measurement is included."
+}

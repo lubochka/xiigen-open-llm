@@ -1,0 +1,380 @@
+{
+  "method": "case-insensitive literal or regex search across all locally present Markdown; source review is separate; no runtime or learning measurements",
+  "planning_commit": "de270758087502a350c4fcf460acdf1638bdd318",
+  "core_commit": "ce890a48efda7f00d0ee040f2383cc2d06428ea6",
+  "late_core_commit": "67abfabe6def8a002984be80b999824601ad273c",
+  "corpora": {
+    "planning": {
+      "markdown_files": 662
+    },
+    "protected": {
+      "markdown_files": 291
+    },
+    "protected_late": {
+      "markdown_files": 151
+    }
+  },
+  "queries": {
+    "exact_context_error": {
+      "planning": {
+        "matches": 0,
+        "items": []
+      },
+      "protected": {
+        "matches": 0,
+        "items": []
+      },
+      "protected_late": {
+        "matches": 0,
+        "items": []
+      }
+    },
+    "index_source": {
+      "planning": {
+        "matches": 7,
+        "items": [
+          {
+            "path": "53-EXTERNAL-DOMAINS-LEARNING-SEMANTICS-AUDIT-2026-10-19/04-AUTONOMOUS-LEARNING-CONDITIONAL-GAPS.md",
+            "line": 118,
+            "excerpt": "| DPO→CE конфликт и `ProjectIndexer` filename-only context | **Исключены из новизны:** peer draft уже зафиксирован в [package51, строка55][prior-dpo-context] |"
+          },
+          {
+            "path": "53-EXTERNAL-DOMAINS-LEARNING-SEMANTICS-AUDIT-2026-10-19/06-SOURCES-NOVELTY-AND-REVIEW.md",
+            "line": 45,
+            "excerpt": "Не включены как новые: current repaired DPO gradient, q/v против head, scalar teaching vector, BPE identity/EOF/stride, sum/mean cancellation, SFT first-step/Embedding/bias, Tensor Mean/broadcast из package51, E09 label/denominator, E25/E27 transfer, E43 boundaries, E48 early benefit, translation keys/morphology и ProjectIndexer filename-only/DPO→CE, уже упомянутый peer draft в package51. Они оста"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/06-SFT-RESPONSE-MASK-EXPERIMENT.md",
+            "line": 7,
+            "excerpt": "IncrementalTrainer кодирует `Prompt + \"\\n\" + Response` как одну последовательность ([исходник, 402–418](https://github.com/lubochka/llm_mvp_core/blob/8e020052fae7efa694b8d33f90768648d6b67af9/14.ContinuousLearning/Training/IncrementalTrainer.cs#L402-L418)). Trainer задаёт next-token targets для всей последовательности и выполняет CE/backward/optimizer ([102–147](https://github.com/lubochka/llm_mvp_"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+            "line": 25,
+            "excerpt": "| S01 | ProjectIndexer сканирует C#; SFT Prompt — имя файла, Response — полный исходник | [ProjectIndexer.cs, 42–78](https://github.com/lubochka/llm_mvp_core/blob/8e020052fae7efa694b8d33f90768648d6b67af9/14.ContinuousLearning/Indexer/ProjectIndexer.cs#L42-L78) |"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+            "line": 59,
+            "excerpt": "В штатной incremental цепи источник SFT — файл C#, а не выбранный вариант DPO-ответа. Например, для Tiny.cs ProjectIndexer делает вход «// file: Tiny.cs», выход — содержимое Tiny.cs. Отдельные feedback DPO пары могут учить объяснению nullable-ветки этого кода. Pipeline передаёт обе группы в один вызов. После DPO следует SFT для каждого файла, затем сохраняется финальная LoRA. S01–S11 показывают ка"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+            "line": 65,
+            "excerpt": "**Релевантный домен:** C# code/documentation, прежде всего CODE_Q через прочитанный ProjectIndexer. Для SQL, Angular и EN→RU такой же combined caller не доказан; перенос ND1 туда только после собственного trace. RP01 simulation не имеет этого последующего SFT (S12)."
+          },
+          {
+            "path": "61-LEARNING-UNBLOCK-AND-EXPERIMENT-AUDIT-2026-10-20/11-NEURAL-EXPERIMENT-REVIEW.md",
+            "line": 17,
+            "excerpt": "| [23 MASK][n60] | Настоящий supervised executor; маска prompt в loss **и backward**, denominator T−1 фиксирован; joint `Prompt+LF+Response` input; code→documentation профиль отличается от ProjectIndexer full-source Response. | Точный response span берется из совместной BPE tokenization. Отдельный Encode(prompt).Count не определяет границу crossing token. Нужно фиксировать policy для crossing byte"
+          }
+        ]
+      },
+      "protected": {
+        "matches": 1,
+        "items": [
+          {
+            "path": "experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md",
+            "line": 137,
+            "excerpt": "**Меняем только вклад prompt targets в SFT; учатся LoRA-параметры; проверяем документационный ответ того же Student и стоимость обучения.** Это уточнение известного MINI01, не P05/P86 DPO-mask. В этом малом исследовательском профиле SFT Prompt равен prefix+код, Response — Chosen выше. Это документирование кода через реальный supervised API, **не буквальный ProjectIndexer, где Response — полный фай"
+          }
+        ]
+      },
+      "protected_late": {
+        "matches": 1,
+        "items": [
+          {
+            "path": "experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md",
+            "line": 156,
+            "excerpt": "**Меняем только вклад prompt targets в SFT; учатся LoRA-параметры; проверяем документационный ответ того же Student и стоимость обучения.** Это уточнение известного MINI01, не P05/P86 DPO-mask. В этом малом исследовательском профиле SFT Prompt равен prefix+код, Response — Chosen выше. Это документирование кода через реальный supervised API, **не буквальный ProjectIndexer, где Response — полный фай"
+          }
+        ]
+      }
+    },
+    "active_index_result": {
+      "planning": {
+        "matches": 0,
+        "items": []
+      },
+      "protected": {
+        "matches": 0,
+        "items": []
+      },
+      "protected_late": {
+        "matches": 0,
+        "items": []
+      }
+    },
+    "corrected_cache": {
+      "planning": {
+        "matches": 0,
+        "items": []
+      },
+      "protected": {
+        "matches": 0,
+        "items": []
+      },
+      "protected_late": {
+        "matches": 0,
+        "items": []
+      }
+    },
+    "length_english": {
+      "planning": {
+        "matches": 0,
+        "items": []
+      },
+      "protected": {
+        "matches": 0,
+        "items": []
+      },
+      "protected_late": {
+        "matches": 0,
+        "items": []
+      }
+    },
+    "known_order": {
+      "planning": {
+        "matches": 22,
+        "items": [
+          {
+            "path": "60-04-CONCURRENT-AGENT-RECONCILIATION-AND-VERIFIED-READBACK-2026-10-19.md",
+            "line": 24,
+            "excerpt": "| [N60 full training-path package](60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/README.md) | **ND-DPO-SFT**: DPO потом C# SFT на общих адаптерах; **ND-DPO-PAD**: padded forward/backward на нерелевантных позициях, потенциальная цена; **N-KU-01**: E14 ADD_LOOP labels ошибаются на Roslyn ForEachVariableStatement/DoStatement. В пакете есть настоящие before/after training A/B protocols и истоки "
+          },
+          {
+            "path": "62-LEARNING-METRICS-AND-REFERENCE-COST-AUDIT-2026-10-20/NEURAL-LEARNING-AUDIT-2026-10-20.md",
+            "line": 119,
+            "excerpt": "| DPO затем indexed-file SFT | IncrementalTrainer комбинирует два этапа на одном recipient | Уже ND-DPO-SFT в planning60; не новый |"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/04-RP01-RESULTS-AND-MECHANISM-MAP.md",
+            "line": 55,
+            "excerpt": "| Порядок настоящих стадий | Mandatory full-file SFT после DPO на тех же адаптерах | [P02](https://github.com/lubochka/llm_mvp_core/blob/f50b710a5eaa6a8f0468b07d5b2510342a1de7ba/docs/plans/replanning-possible-diffs/experimets/cards/P02-warm-base.md), [P12](https://github.com/lubochka/llm_mvp_core/blob/f50b710a5eaa6a8f0468b07d5b2510342a1de7ba/docs/plans/replanning-possible-diffs/experimets/cards/P1"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/README.md",
+            "line": 11,
+            "excerpt": "| **ND-DPO-SFT: после DPO учатся те же адаптеры, но уже на исходных файлах** | Combined incremental path выполняет DPO, затем обязательный full-sequence SFT по C# source с другим optimizer, затем сохраняет adapter | Изменяет ли порядок стадий полезное обучение и retention? | C# combined path; прямой RP01 simulation другой. Нужен отдельный order-only research host: simple reorder существующего wrap"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/README.md",
+            "line": 35,
+            "excerpt": "| E-DPO-SFT-ORDER | Порядок DPO/SFT при одном frozen R0 и одном fixed exact-v2 research profile | 1 DPO update на4 парах +2 SFT updates | Response quality/NLL, preference, completion, retention, цена обучения |"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/07-SOURCE-REVIEW-AND-SCOPE.md",
+            "line": 36,
+            "excerpt": "Для ND-DPO-SFT ближайшие темы — P02 warm base и SFT objective. Для ND-DPO-PAD — P09 serving cache, P68 shards/padding и P110 numeric kernel. Для N-KU-01 — MethodKnn.CanonicalType, E14 List/Task feature alias и null-guard; это другие producer/target/factor. Два SFT уточнения честно остаются KNOWN/MISSING_PRECISE_SUBCASE. Отсутствие строки с новым названием само по себе не доказывает новизну; провер"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/07-SOURCE-REVIEW-AND-SCOPE.md",
+            "line": 44,
+            "excerpt": "| Production DPO wrapper после SFT переснимет reference либо потребует FullStatesMatch | E-DPO-SFT-ORDER явно требует отдельный пока отсутствующий native research host и общий R0 до обеих стадий; простой reorder production owner не предлагается |"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/05-LEARNING-EXPERIMENT-CONTRACT.md",
+            "line": 51,
+            "excerpt": "| E-DPO-SFT-ORDER | DPO→SFT против SFT→DPO при одном frozen R0 | 1 DPO update на 4 парах + 2 SFT updates на плечо | C#; exact-v2 research profile порядка; default incremental legacy иной; отдельный host пока отсутствует | [DPO/LoRA, раздел 3](01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md#3-nd-dpo-sft-после-предпочтений-алгоритм-учится-дописывать-исходные-файлы) |"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+            "line": 12,
+            "excerpt": "1. **ND-DPO-SFT — последовательность настоящего incremental обучения отличается от RP01 simulation.** IncrementalTrainer сначала выполняет DPO, затем обязательно обучает те же адаптеры на исходных C# файлах через full-sequence SFT с другим оптимизатором. Финальный адаптер представляет результат обоих этапов. Это может усиливать либо ослаблять достигнутую DPO-пользу. Направление эффекта не измерено"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+            "line": 55,
+            "excerpt": "## 3. ND-DPO-SFT: после предпочтений алгоритм учится дописывать исходные файлы"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+            "line": 69,
+            "excerpt": "### Маленькая карточка E-DPO-SFT-ORDER"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+            "line": 92,
+            "excerpt": "**Промпт исполнителю:** «Выполни только E-DPO-SFT-ORDER для C# documentation/source-completion на объявленном exact-v2 research profile в разрешённой изоляции из двух одинаковых B0. Нужен отдельно реализованный research harness: действующие DpoTrainer.StepVector и supervised executor, общий R0 и оба owners до первого update. Простая перестановка вызовов StableDpoTrainingExecutor не подходит: он re"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+            "line": 220,
+            "excerpt": "| [MINI01, строки 13–24](https://github.com/lubochka/xiigen-planning/blob/993ac5cf5803d9903a58b71eca7c85b94d3116f4/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/12-RP01-MINI01-COLD-START-CAUSAL-EXPERIMENT.md#L13-L24), protected P02 | SFT-only и SFT→DPO warm-up; больше общего compute у подготовленного плеча; reference для DPO берётся из SFT checkpoint | ND-DPO-SFT меняет порядок од"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+            "line": 229,
+            "excerpt": "**Закрытие:** два source-grounded NEW_BOUNDED кандидата — ND-DPO-SFT и ND-DPO-PAD. Один MISSING_PRECISE_SUBCASE — SFT optimizer continuity. SFT prompt CE, общий restore, dropout, LoRA recipients, sign и scale-cancellation остаются KNOWN. Новизна постановки не означает доказанную пользу, дефект продукта или установленную причину RP01."
+          },
+          {
+            "path": "2026-10-20-learning-signal-and-cost-audit/03-learning-first-work-order.md",
+            "line": 47,
+            "excerpt": "| ND-DPO-SFT | Не подавляет ли последняя стадия эффект первой? | Компоновать существующие DPO и SFT owners с R0 и двумя stage optimizers, созданными до обоих stages | На плечо 1 DPO batch из 2 пар +2 SFT update;6 optimizer updates суммарно | Не recapture reference после SFT; research exact A не равен whole production legacy caller |"
+          },
+          {
+            "path": "2026-10-20-current-learning-audit/coverage/01-PROTECTED-CATALOG-AUDIT.md",
+            "line": 63,
+            "excerpt": "| `60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY...` SFT mask, moments, DPO padding/order, E14 loop | 23: N-KU-01, E-SFT-RESPONSE-MASK, SC-SFT-STATE, ND-DPO-PAD, ND-DPO-SFT | Вмешательства уже описаны. Отсутствие полного имени источника не делает эти пять вопросов пропуском |"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/reviews/dpo-review-e14-and-protocol.md",
+            "line": 3,
+            "excerpt": "**Дата:** 2026-10-19. **Рецензент:** /root/dpo_lora_audit. **Scope:** дизайн E14 N-KU-01 и общий learning-experiment contract; source review, без запуска. Это не независимая проверка собственных ND-DPO-SFT/ND-DPO-PAD."
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/reviews/dpo-review-e14-and-protocol.md",
+            "line": 51,
+            "excerpt": "**C1 — граница ND-SFT в общей таблице.** В строке E-DPO-SFT-ORDER общего контракта выражение «incremental-путь» лучше заменить на «C# exact-v2 research profile; найденный mixed incremental caller использует legacy». Полный DPO-отчёт теперь явно разделяет эти пути и требует отсутствующий research harness. Это уточнение scope, а не независимый approval собственных ND-карточек данным рецензентом. Roo"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/reviews/knn-review-dpo.md",
+            "line": 1,
+            "excerpt": "# Независимая ревизия ND-DPO-SFT / ND-DPO-PAD и раннего E09"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/reviews/knn-review-dpo.md",
+            "line": 9,
+            "excerpt": "| ND-DPO-SFT, L63–86 | PASS как дизайн:1 DPO+2 SFT updates, одинаковая панель, правило пользователя повторено в карточке/промпте | **HOST_MISSING для существующего owner wrapper.** Перестановка его вызова переснимет reference после SFT или будет отклонена guard | Изолированный исследовательский harness над actual DpoTrainer.StepVector и ProductionSupervisedTrainingStepExecutor; общий R0 подготовле"
+          },
+          {
+            "path": "60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/reviews/knn-review-dpo.md",
+            "line": 14,
+            "excerpt": "## R1 — существенная поправка ND-DPO-SFT: reference нельзя сохранить одной перестановкой wrapper-вызовов"
+          },
+          {
+            "path": "2026-10-20-training-state-and-experiment-audit/coverage/04-nine-user-rules-and-readiness.md",
+            "line": 36,
+            "excerpt": "| **E-DPO-SFT-ORDER** | `HOST_AND_REFERENCE_PREPARATION` | Owner двух стадий с тем же R0 и отдельными optimizers; простой reorder existing caller способен recapture reference/reload parent |6updates total; source-faithful DpoTrainer и supervised executor; не удалять guards и не называть research A полным production baseline. |"
+          }
+        ]
+      },
+      "protected": {
+        "matches": 3,
+        "items": [
+          {
+            "path": "experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md",
+            "line": 175,
+            "excerpt": "## ND-DPO-SFT / E-DPO-SFT-ORDER — какая настоящая стадия идёт последней"
+          },
+          {
+            "path": "experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md",
+            "line": 263,
+            "excerpt": "| Package ND-DPO-SFT / E-DPO-SFT-ORDER | Порядок стадий, общие R0/параметры, разные stage optimizers | ORDER выше; P02 related, не покрытие exact-order. Legacy production и exact research различены |"
+          },
+          {
+            "path": "experimets/2026-10-19-small-learning-probes/06-findings-map.md",
+            "line": 18,
+            "excerpt": "| ND-DPO-SFT / E-DPO-SFT-ORDER | 2 SFT шага + 1 DPO шаг на двух парах на плечо | Общий frozen R0, два optimizer state, host без recapture; research exact не выдаётся за legacy production |"
+          }
+        ]
+      },
+      "protected_late": {
+        "matches": 2,
+        "items": [
+          {
+            "path": "experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md",
+            "line": 194,
+            "excerpt": "## ND-DPO-SFT / E-DPO-SFT-ORDER — какая настоящая стадия идёт последней"
+          },
+          {
+            "path": "experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md",
+            "line": 282,
+            "excerpt": "| Package ND-DPO-SFT / E-DPO-SFT-ORDER | Порядок стадий, общие R0/параметры, разные stage optimizers | ORDER выше; P02 related, не покрытие exact-order. Legacy production и exact research различены |"
+          }
+        ]
+      }
+    },
+    "late_context": {
+      "planning": {
+        "matches": 4,
+        "items": [
+          {
+            "path": "61-LEARNING-UNBLOCK-AND-EXPERIMENT-AUDIT-2026-10-20/05-T-TRAIN-CONTEXT-SMALL-EXPERIMENT.md",
+            "line": 1,
+            "excerpt": "# T-TRAIN-CONTEXT-01 — сохранить контекст в двух учебных записях"
+          },
+          {
+            "path": "61-LEARNING-UNBLOCK-AND-EXPERIMENT-AUDIT-2026-10-20/05-T-TRAIN-CONTEXT-SMALL-EXPERIMENT.md",
+            "line": 114,
+            "excerpt": "> Проверь T-TRAIN-CONTEXT-01 на core bf9b543e149ef197da85a767821d98c9b67916d2. Прочитай полный original 12.SemanticCompiler/Translation/ContextualDictionary.cs и эту карточку; source SHA256 9926db1ed06111c7f64fd80f69cf6b81e28af110df77a4c4a452cf46d8313525. Ученик — этот native ContextualDictionary, без языковой модели. Используй два typed TRAIN и четыре EXAM tuple, приведённые в карточке и fixtures"
+          },
+          {
+            "path": "61-LEARNING-UNBLOCK-AND-EXPERIMENT-AUDIT-2026-10-20/08-KNN-HISTORY-AND-EXPERIMENT-REVIEW.md",
+            "line": 84,
+            "excerpt": "Актуальный protected T явно создаёт новые supervised записи через AddEntry и отдельно меняет query POS. По правилу20.10 это допустимая проверка использования усвоенного состояния. [T-TRAIN-CONTEXT-01](05-T-TRAIN-CONTEXT-SMALL-EXPERIMENT.md) — другой, более прямой учебный фактор: стирать/сохранять POS в TRAIN entries при фиксированном query reader. Он не повторяет E26 и не объявляется новой product"
+          },
+          {
+            "path": "61-LEARNING-UNBLOCK-AND-EXPERIMENT-AUDIT-2026-10-20/reviews/CONCURRENT-KNN-RECONCILIATION.md",
+            "line": 23,
+            "excerpt": "| **T-TRAIN-CONTEXT-01** | В scoped routing/Mode1 материалах отсутствует такой опыт. Он меняет сохранение POS в `ContextualDictionary.AddEntry`; query POS одинаковы. Входящая coverage-карта только перечисляет существующий T. KN-ROUTER меняет canonicalization другого learned-state consumer. | Дополнительная локализация известной P43 темы. Не новый алгоритм и не доказанный production caller. Сохраня"
+          }
+        ]
+      },
+      "protected": {
+        "matches": 0,
+        "items": []
+      },
+      "protected_late": {
+        "matches": 11,
+        "items": [
+          {
+            "path": "experimets/cards/N62-training-context.md",
+            "line": 1,
+            "excerpt": "# T-TRAIN-CONTEXT-01. Что теряется, когда урок не сохраняет контекст слова"
+          },
+          {
+            "path": "experimets/cards/N62-training-context.md",
+            "line": 74,
+            "excerpt": "| Проект и host | `experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/Runner.csproj`, соседний `Program.cs` |"
+          },
+          {
+            "path": "experimets/cards/N62-training-context.md",
+            "line": 77,
+            "excerpt": "| Новый результат | `docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/T-TRAIN-CONTEXT-01/A/` и `B/` |"
+          },
+          {
+            "path": "experimets/cards/N62-training-context.md",
+            "line": 117,
+            "excerpt": "        \"C:/Projects/llm_mvp_core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/T-TRAIN-CONTEXT-01/\" + arm);"
+          },
+          {
+            "path": "experimets/cards/N62-training-context.md",
+            "line": 235,
+            "excerpt": "$tcHost = \"$tcRoot/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01\""
+          },
+          {
+            "path": "experimets/cards/N62-training-context.md",
+            "line": 268,
+            "excerpt": "$tcHost = \"$tcRoot/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01\""
+          },
+          {
+            "path": "experimets/cards/N62-training-context.md",
+            "line": 269,
+            "excerpt": "$tcResults = \"$tcRoot/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/T-TRAIN-CONTEXT-01\""
+          },
+          {
+            "path": "experimets/cards/N62-training-context.md",
+            "line": 296,
+            "excerpt": "powershell.exe -NoProfile -File \"C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/Prepare.ps1\""
+          },
+          {
+            "path": "experimets/cards/N62-training-context.md",
+            "line": 300,
+            "excerpt": "powershell.exe -NoProfile -File \"C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/T-TRAIN-CONTEXT-01/Run.ps1\""
+          },
+          {
+            "path": "experimets/cards/N62-training-context.md",
+            "line": 326,
+            "excerpt": "> В пределах порученной программы выполни только T-TRAIN-CONTEXT-01 по этой карточке. Сохрани приведённые Runner.csproj, Program.cs, Prepare.ps1, Run.ps1 по назначенным путям; используй единственную byte-identical копию ContextualDictionary. Не подключай продуктовый проект и не ищи другой host. A/B получают два одинаковых урока; отличается только сохранение Before/After в AddEntry. На одной EXAM-п"
+          },
+          {
+            "path": "experimets/2026-10-19-small-learning-probes/23-additions-n60-small-learning.md",
+            "line": 133,
+            "excerpt": "| [T-TRAIN-CONTEXT-01](../cards/N62-training-context.md), перевод EN→RU | Сохранение POS-контекста в двух записях native ContextualDictionary; reader одинаков | 4 AddEntry, 16 TranslateWithContext; 0 нейронных updates/Flow/Generate | Полный текст host, единственная source-копия, подготовка и команды в карточке; компиляция не выполнялась. Это эффект входа learner, не доказанная потеря POS в продукт"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+# N63C: финальная дельта статуса кандидата и незакрытой учебной цели
+
+**Cutoff:** `256f603e70032c11b1f4ffabbdd1fefdab642ea5`, `lubochka/llm_mvp_core`. Ограниченная проверка трёх назначенных документов. Новых runtime/build/test/Train/Forward/Encode/checkpoint loads — **0**. Защищённые документы, final package, код и raw не изменены. Проверка сырых данных законченного N63C-PROBE делегирована другому reviewer; здесь проверены авторские статусы, признанные ограничения и их хронология.
+
+## Что уже сделано и что из этого не следует
+
+| Объект | Уже подтверждено документами | Что остаётся открытым |
+|---|---|---|
+| Исходный N63C | Статус исправлен на `ATTEMPT_CONSUMED / PARTIAL_A / LEARNING_OBJECTIVE_OPEN / CORRECTED_DESIGN_REQUIRED`. В сохранённом A завершились **один DPO и один SFT**; после этого отказал RNG sidecar. | B не исполнялось; A/B-эффект исходного опыта не измерен. T1 correct=0/23 во всех состояниях; освоение/удержание правильного ответа не доказано. |
+| RNG и счётчики | Карточка и embedded executor prompt документно исправлены: канонический basename, отдельная SFT directory/lineage, счётчики отдельно от исхода сохранения, ограниченная диагностика. | Реализация исправленного runner и успешный runtime этого ремонта здесь не доказаны. Filename repair не создаёт learned-before и не закрывает ошибку 0→0. |
+| N63C-PROBE | В `required-changes.md` и `results/candidate.md` **уже зарегистрирован кандидат переноса**: исправленный источник сохраняет preference margin T1 лучше stale rejected text при одинаковом DPO-шаге. | Это измерение отдельного probe, не завершение исходного N63C. Старт 22/23 — частично правильные токены; полного ответа нет. Достижимость такой пары в нынешнем продуктовом конвейере не доказана; продуктовый код не изменён. |
+
+Источники: [исправленный документный статус](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/docs/plans/replanning-possible-diffs/2026-10-21-n63c-rng-learning-evidence.md#L5-L7), [исходный A и невыполненный B](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/docs/plans/replanning-possible-diffs/2026-10-21-n63c-rng-learning-evidence.md#L16-L22), [documentary RNG repair](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/docs/plans/replanning-possible-diffs/2026-10-21-n63c-rng-learning-evidence.md#L24-L30), [зарегистрированный кандидат](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/docs/plans/replanning-possible-diffs/required-changes.md#L142-L151), [ограничения кандидата](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/experiments-v2/RP01-MICRO/N63C/results/candidate.md#L3-L18).
+
+## Положительный сигнал и обязательные соседние показатели
+
+Авторы сообщают для отдельного probe: до коллизии **22 правильных токена из 23**; T1 margin **+1,125295 → −0,119724** после stale урока, тогда как corrected source сохраняет **+1,115156** при одинаковом DPO-шаге. Это полезный положительный результат по **сохранению предпочтения** относительно stale варианта и основание оставить кандидат видимым. Повышение точности не является обязательным условием успеха именно по этому показателю. При этом нельзя переименовывать такой успех в освоение или удержание полностью правильного ответа: exact response не получен; экзамены имеют 0 правильных токенов; у stale A контроль Q2 ухудшается **+0,057255 → −0,215157**. В этом bounded review значения прочитаны в отчёте кандидата, а не заново вычислены из raw. [Числа и ограничения](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/experiments-v2/RP01-MICRO/N63C/results/candidate.md#L11-L18).
+
+Для исходного A уже наблюдались soft-score движения при correct=0/23: NLL **7,307878 → 7,305786 → 7,3035707** и margin **0,2279687 → 0,23142481 → 0,23094606**. Это не нулевые измерения и не доказательство отсутствия обучения как вычислительного процесса; они не доказывают требуемое удержание освоенного ответа и не образуют A/B-сравнение. Missing B нельзя записывать нулём. [Исходные наблюдения и объяснение счётчиков](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/docs/plans/replanning-possible-diffs/2026-10-21-n63c-rng-learning-evidence.md#L18-L22).
+
+## Почему прежний UNKNOWN не отменяет новый кандидат
+
+Evidence, сохранённый в cutoff 256, сам обозначает source HEAD своего чтения как **`d962f95805ae0c9c4ef5b3f50f0f65b2a4109d19`**. Его раздел о probe явно является **одним frozen readback**: на этом снимке законченный `n63c-probe.json` не был предъявлен, поэтому исход тогда оставался UNKNOWN. Это историческая граница наблюдения, а не актуальная декларация отсутствия результата в 256. Нельзя игнорировать более поздний зарегистрированный кандидат; равно нельзя приписать старому evidence проверку новых raw. [Дата/source snapshot](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/docs/plans/replanning-possible-diffs/2026-10-21-n63c-rng-learning-evidence.md#L3), [границы frozen readback](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/docs/plans/replanning-possible-diffs/2026-10-21-n63c-rng-learning-evidence.md#L32-L38).
+
+Учебная цель исходной карточки остаётся отдельной: before должен показывать **полный T1 response, 23 targets, E=true**, если утверждается retention правильного ответа. `C>0/E=false` подтверждает частичный показатель; `M>0/C=0` — предпочтение без освоенного ответа. Общую SFT preparation нельзя приписывать последующему одному DPO. Для corrected design должны быть заданы совместимый checkpoint с full-response before panel, producer/source/runtime receipt, optimizer/RNG либо явный общий reset, окончательные costs/ceilings. Кандидат с 22/23 этот predicate не закрывает. [Точный criterion и недостающие входы](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/docs/plans/replanning-possible-diffs/2026-10-21-n63c-rng-learning-evidence.md#L40-L44).
+
+## Назначенный перенос и редакционная неточность
+
+Кандидат уже указывает точное место будущего продуктового изменения: `14.ContinuousLearning/Pipeline/ContinuousLearningPipeline.cs`, подготовка `domainExamples` **до provenance/material binding и IncrementalTrainer**. Условие: совпадают domain и prompt, `SFT.Response` побайтово равен `DPO.Rejected`; передать исправленный источник с сохранением обоих `SourceId`. Изменение одного кэша без замены реально передаваемого массива не считается. Это **предложение переноса**, решение отдельно; достижимость конфликтной пары в текущем pipeline ещё не доказана. [Контракт переноса и статус](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/experiments-v2/RP01-MICRO/N63C/results/candidate.md#L3-L18).
+
+В `required-changes.md` фраза «Назначенные 4 обновления дают 0 правильных токенов» может ошибочно читаться как четыре выполненных обновления. Сама строка уточняет A-only/B-not-run, а evidence подтверждает **2 завершённых обновления: 1 DPO + 1 SFT**. В итоговом addendum следует писать: **планировались 4 обновления; в сохранённом A завершены 2, B не исполнено**. Historical raw counters=0 не переписывались: это признанная ошибка отчётности при позднем save error. [Неоднозначная фраза](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/docs/plans/replanning-possible-diffs/required-changes.md#L149), [уточняющее доказательство](https://github.com/lubochka/llm_mvp_core/blob/256f603e70032c11b1f4ffabbdd1fefdab642ea5/docs/plans/replanning-possible-diffs/2026-10-21-n63c-rng-learning-evidence.md#L22). Защищённые документы этой проверкой не исправлялись.
+
+## Готовый довод для финального addendum 11
+
+> На cutoff 256 N63C уже зарегистрирован кандидатом: отдельный probe показывает сохранение T1 preference margin при замене stale rejected текста исправленным источником. Это положительный результат по названному показателю, с обязательным сохранением ограничений: 22/23 до коллизии, полного ответа нет, экзамены 0, контроль Q2 ухудшается у stale A, достижимость пары в prod не доказана. Исходный N63C остаётся PARTIAL_A: 1 DPO + 1 SFT исполнены, B не исполнено, цель удержания полностью освоенного ответа OPEN. RNG filename/counters/status исправлены документно; runtime ремонта и перенос в продукт не подтверждены. Старый frozen UNKNOWN о probe нельзя использовать для отрицания новых результатов, а положительный margin нельзя выдавать за освоение полного ответа.
+
+## Проверенные immutable blobs
+
+| Путь при cutoff 256 | Git blob SHA |
+|---|---|
+| `docs/plans/replanning-possible-diffs/2026-10-21-n63c-rng-learning-evidence.md` | `3c8d84d7827e36fe66e1dd6d59be5558135b5852` |
+| `docs/plans/replanning-possible-diffs/required-changes.md` — только N63C block 142–151 | `8d55bd508760d2c7d7e4d3763967e749bd2ce7ef` |
+| `experiments-v2/RP01-MICRO/N63C/results/candidate.md` | `8f496dabb99e47cedcb0809cab41b5e61691194c` |
+
+Source snapshots: `audit-cache/core-final-256/<repo-relative-path>`. Cutoff фиксирован; дальнейший HEAD не исследовался.

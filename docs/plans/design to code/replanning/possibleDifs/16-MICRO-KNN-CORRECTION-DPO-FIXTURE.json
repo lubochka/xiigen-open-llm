@@ -1,0 +1,198 @@
+{
+  "fixture_id": "MICRO-16-KNN-DPO-2026-10-16",
+  "source_status": "SELF_AUTHORED_SYNTHETIC_DIAGNOSTIC_NOT_MODEL_TRAINING",
+  "execution_status": "NOT_RUN",
+  "source_ref": "lubochka/llm_mvp_core@83590a462b2f8aedc9d3ab4cb775193eb9c25ce5",
+  "source_notes": [
+    "The supplied signatures are direct TranslationKnnStore keys; ordinary SemanticTokenizer signatures MUST be computed afresh.",
+    "All results are expectations from static code reasoning; no dotnet evaluation or independent semantic reviewer yet.",
+    "Synthetic DPO cases are not licensed open-Chinese teacher-authored examples and must not enter production DPO."
+  ],
+  "knn": {
+    "k": 5,
+    "prior_count": 5,
+    "insertion_order": "five prior same-signature same-source admissible entries, then one latest",
+    "panels": [
+      {
+        "id": "K1",
+        "class": "correction",
+        "signature": "IMP|REMOVE|NULL",
+        "source": "Remove the null check",
+        "prior_target": "Добавьте проверку null",
+        "latest_target": "Удалите проверку null",
+        "gold_target": "Удалите проверку null",
+        "unseen_source": "Please remove the null check"
+      },
+      {
+        "id": "K2",
+        "class": "correction",
+        "signature": "IMP|ENABLE|LOG",
+        "source": "Enable logging",
+        "prior_target": "Отключите логирование",
+        "latest_target": "Включите логирование",
+        "gold_target": "Включите логирование",
+        "unseen_source": "Please enable logging"
+      },
+      {
+        "id": "K3",
+        "class": "correction",
+        "signature": "IMP|REJECT|REQUEST",
+        "source": "Reject the request",
+        "prior_target": "Одобрите запрос",
+        "latest_target": "Отклоните запрос",
+        "gold_target": "Отклоните запрос",
+        "unseen_source": "Please reject the request"
+      },
+      {
+        "id": "K4",
+        "class": "correction",
+        "signature": "IMP|NEGATE|DELETE",
+        "source": "Do not delete the user",
+        "prior_target": "Удалите пользователя",
+        "latest_target": "Не удаляйте пользователя",
+        "gold_target": "Не удаляйте пользователя",
+        "unseen_source": "You must not delete the user"
+      },
+      {
+        "id": "K5",
+        "class": "negative_newest",
+        "signature": "IMP|KEEP|BACKUP",
+        "source": "Keep the backup",
+        "prior_target": "Сохраните резервную копию",
+        "latest_target": "Удалите резервную копию",
+        "gold_target": "Сохраните резервную копию",
+        "unseen_source": "Please keep the backup"
+      },
+      {
+        "id": "K6",
+        "class": "negative_newest",
+        "signature": "IMP|SEND|AFTER",
+        "source": "Send the report after review",
+        "prior_target": "Отправьте отчёт после проверки",
+        "latest_target": "Отправьте отчёт до проверки",
+        "gold_target": "Отправьте отчёт после проверки",
+        "unseen_source": "Send the report only after review"
+      }
+    ],
+    "expected_l0": "CURRENT_FIFO first five old, latest excluded; RECENCY_FIRST latest included. Negative controls intentionally expose recency risk.",
+    "observable_fields": [
+      "train_example_count",
+      "query_signature",
+      "actual_source_compatibility",
+      "candidate_source_target_sequence",
+      "selected_target",
+      "ordinary_adapter_id",
+      "correct",
+      "wrong",
+      "abstain"
+    ]
+  },
+  "unit_topic": {
+    "test_id": "T1",
+    "source": "bank",
+    "source_lang": "en",
+    "direction": "EN_RU",
+    "training": [
+      {
+        "topic": "finance",
+        "target": "банк"
+      },
+      {
+        "topic": "geography",
+        "target": "берег"
+      }
+    ],
+    "evaluate_both_topic_orders": true,
+    "expected_source_behavior": "Both topic queries return whichever exact-source translation was inserted last; not an observed result.",
+    "required_observable": [
+      "executor_output",
+      "adapter_output",
+      "adapter_id",
+      "checkpoint_parity"
+    ]
+  },
+  "translation_dpo_bridge": {
+    "tokenizer_settings": {
+      "vocab_size": 512,
+      "context_length": 64
+    },
+    "model_prefix_fields": {
+      "domain": "TranslationDomain",
+      "machine": "translation-machine",
+      "direction": "EN_RU",
+      "capability": "translate",
+      "unit": "executor-en_ru",
+      "source": "en",
+      "target": "ru"
+    },
+    "condition_collision": [
+      "Translate the river bank reference to Russian in the finance context.",
+      "Translate the river bank reference to Russian in the geography context."
+    ],
+    "diagnostic_strip_collision": {
+      "chosen": "берег",
+      "rejected": "берег [WRONG: wrong topic]",
+      "negative_control_rejected": "банк"
+    },
+    "hash_collision": {
+      "chosen_token": "test0",
+      "rejected_token": "test3",
+      "expected_hash_id_in_little_endian": 285
+    },
+    "expected_checks": [
+      "encoded_prefix_equal_for_condition_collision",
+      "raw_pair_unequal_but_encoded_pair_equal_after_strip",
+      "hash_collision_realization",
+      "prefix_target_fraction_legacy_vs_response_only"
+    ],
+    "do_not_score_as": "Successful semantic translation or RP01 direct exact-v2 DPO evidence",
+    "real_handoff_source_elision": {
+      "seed_instruction": "Translate from en to ru.",
+      "handoff_prompt_construction": "{seed_instruction}\\nInput: {source_input}",
+      "source_inputs": [
+        "bank",
+        "river",
+        "the river bank"
+      ],
+      "expected_prefix_budget": 30,
+      "expected_token_counts": [
+        32,
+        32,
+        34
+      ],
+      "expected_first_30_end": [
+        ".",
+        "input"
+      ],
+      "expected_elided_suffixes": [
+        [
+          ":",
+          "bank"
+        ],
+        [
+          ":",
+          "river"
+        ],
+        [
+          ":",
+          "the",
+          "river",
+          "bank"
+        ]
+      ],
+      "expected_all_model_visible_prefix_ids_equal": true,
+      "source_producer": "27.TranslationDomain/TranslationDpoTrainingHandoff.cs:242-279,429-430",
+      "downstream_encoder": "27.TranslationDomain/TranslationDpoTrainerBridge.cs:230-252,314-345",
+      "shadow_verified": true,
+      "native_csharp_verified": false,
+      "essential_control": "Same two native source inputs with only ContextLength increased enough to retain whole prompt; inspect BOS..SEP and response ID ranges",
+      "note": "Only applies if actual runner uses default 64 or another context that clips input; never retroactively attribute to RP01 exact-v2"
+    }
+  },
+  "result_schema_ref": "16-MICRO-KNN-CORRECTION-AND-DPO-NOOP-PROTOCOL.md",
+  "approvals": {
+    "independent_pair_review": "NOT_PERFORMED",
+    "user_quality_benchmark": "NOT_PROVIDED",
+    "runtime": "NOT_RUN"
+  }
+}

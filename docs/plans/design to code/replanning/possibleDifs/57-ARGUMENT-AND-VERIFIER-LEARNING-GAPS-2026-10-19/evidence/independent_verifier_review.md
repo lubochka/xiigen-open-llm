@@ -1,0 +1,38 @@
+# Независимая проверка RU-manner verifier finding
+
+**Вердикт: BOUNDED PASS.** Существенных ошибок в исследованной цепочке и малом протоколе не найдено. Это подтверждение узкого исходного механизма и проверяемости предложенного эксперимента; native обучение и продуктовый прирост не выполнены и не подтверждены.
+
+Проверено агентом `/root/knn_history` 19 октября 2026 по локальным снимкам core commit `eb05219c27663835ce927c7bf97cf1274c07cddb`. Core, planning и документы автора не изменялись. C# runtime не запускался; Python probe повторно не выполнялся. Отдельно пересчитаны Git blob SHA шести исходников, все совпали с заявленными; Python и его JSON прочитаны как проверяемые артефакты.
+
+## Цепь input → parser → learned state → lookup
+
+1. **Верный input и polarity.** [Builder:96–145](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationStructuredBatchBuilder.cs#L96-L145) создаёт verifier input с ошибочным candidate. Chosen output `Pass=false` и issue с требуемым manner word — правильное предпочтение при заданном контракте сохранения способа действия. Rejected verifier output `Pass=true` ошибочен. [258–289, 318–328](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationStructuredBatchBuilder.cs#L258-L328) сохраняют явный rejected перевод до `[WRONG:]`; отсутствие PHRASE extras оставляет требуемый term из chosen, где `quietly/quickly` распознаются английским `ly`-extractor.
+2. **Условия source selector соблюдаются для предложенных fixtures.** [Tokenizer:258–294](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationSemanticTokenizer.cs#L258-L294), [414–430](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationSemanticTokenizer.cs#L414-L430) и [534–585](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationSemanticTokenizer.cs#L534-L585): `тихо/быстро` не проходят ADV recognizer; выбранные глаголы проходят VERB; `он/она` распознаются PRON. [153–194](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationSemanticTokenizer.cs#L153-L194) дают непустые RuleTags, так что безусловный fallback при `RuleTags.Count==0` недоступен. В этой панели нет другого ADV, перехватывающего выбор.
+3. **Parser не спасает урок другим путём.** Остаток issue ` for translated quality marker` не содержит ни одного имени [SemanticConcept](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationUnitContracts.cs#L59-L78). Поэтому [TryParseIssue:1216–1247](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationTrainedUnits.cs#L1216-L1247) возвращает false, а required-term parser получает нужный quoted term. В [TrainOnExample:1095–1145](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationTrainedUnits.cs#L1095-L1145) `qualityMarkerIssue` отключает signature insertion, отсутствующий marker отключает marker insertion; concept rule также не создаётся.
+4. **Ошибка lookup связана с тем же helper.** [1265–1299](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationTrainedUnits.cs#L1265-L1299) не содержат нормального кириллического `о`; [Verify:1053–1069](https://github.com/lubochka/llm_mvp_core/blob/eb05219c27663835ce927c7bf97cf1274c07cddb/27.TranslationDomain/TranslationTrainedUnits.cs#L1053-L1069) использует этот selector до чтения marker rules. Следовательно, две точки воздействия одной функции правильно объединены в одну гипотезу.
+
+## Малый эксперимент и пределы proxy
+
+Основной протокол теперь согласован: два пустых состояния A/B, два одинаковых TRAIN урока в каждом, четыре EXAM judgments до и после — **16 Verify и 4 TrainOnExample**, два уникальных урока. Добавляется только обычное окончание `о` в verifier helper. Остальные tokenizer, candidate text, learning rows, rule semantics и scorer сохраняются. Для проверки усвоения достаточно native state delta плюс настоящий before/after verdict; coverage/RowsTrained не заменяют качество.
+
+Два перекрёстных чтения learned state требуют **ещё 8 Verify**, а cold restore выделен в самостоятельное продолжение. Основной A/B измеряет совместный эффект helper при обучении и inference; лишь перекрёстные сравнения отделяют запись от lookup. Документ это различает.
+
+Python вычисляет ограниченный source-equivalent вариант для обычных кириллических fixtures. Он не выполняет Roslyn/C#, настоящий builder, десериализацию DTO, checkpoint или полный tokenizer. Его `0.5, 0.5, 0.5, 1.0` — арифметика четырёх локальных judgments и прогноз native, **не измеренный прирост обучения**. JSON и текст явно сохраняют этот предел, внешний Chinese teacher и независимый ultracode exam отмечены NOT_RUN. Gold `Pass=false` при пропуске manner word является иллюстративным контрактом до независимого утверждения панели.
+
+До будущего native обучения требуется проверить реальные DTO `RU_EN`, `train_ready`, `HeldOut=false`, две произведённые verifier rows, выбранные marker/POS/RuleTags и независимый gold. Если реальные поля не дают указанный контраст, результат NO_CONTRAST. Для EXAM нужно использовать новые frames с теми же learned words; unseen-word generalization документ не заявляет.
+
+## Новизна и достижимость
+
+В focused full-text поиске по 492 planning и 242 core Markdown не найден точный helper или обычный Cyrillic-marker loss. P56.11 меняет язык source tokenizer при обучении; текущая гипотеза использует правильный RU source и меняет только manner predicate. P52.3 исправляет concept/context role parser, который здесь корректно не распознаёт quality-marker issue. P56.1–10 покрывают другие уже существующие rules/Contains/namespace/bypass. Поэтому narrow finding не следует отмечать как уже покрытое P56 по имени unit. Это bounded novelty по указанному корпусу и ближайшим источникам, не заявление об отсутствии любого возможного prior art.
+
+Обнаружены реальные builder → machine → unit пути, но воспроизведение деградации RP01 на этих fixtures не выполнено. В соседнем историческом файле `TranslationTrainedUnits.cs` повторно получен тот же blob `1742abfc9fb617dfc66e4d618e0c169da01a6ccc`; механизм унаследован. Из его наличия на соседней ветке нельзя вывести ни регрессию RP01, ни неуспешность всей ветки. Ordinary adapter может скрыть исправленный verdict прежним phrase-map exception; будущий product follow-up должен измерять actual output, wrong acceptance и coverage отдельно.
+
+Применимость ограничена RU→EN структурированным verifier learning при явных manner requirements и указанных selector условиях. `долго` уже ADV. `окно` перехватывает selector как ADV и не подходит для основного контраста. Общий суффикс `о` может выбирать существительные, поэтому широкое production исправление требует отдельной панели ложных маркеров. Эти ограничения уже отражены автором; дополнительных блокирующих правок не требуется.
+
+## Версии проверенных артефактов
+
+| Файл | SHA-256 на момент проверки |
+|---|---|
+| `audit/agent_dpo/NEW-RU-MANNER-VERIFIER-LEARNING-INGRESS-2026-10-19.md` | `d739b627bf8920dec16d221ce6a28bc807c92f7fe64087fee7594cf2e7653491` |
+| `audit/agent_dpo/marker_probe.py` | `62b0a2b9313e7b03b831e031063608ee7b18a4f39d403df91dacce95910444d3` |
+| `audit/agent_dpo/marker_probe_result.json` | `c90f5fe313c48a095f1057ab12a0869ee044be1e7d7a194ccf35a07a3b28107f` |

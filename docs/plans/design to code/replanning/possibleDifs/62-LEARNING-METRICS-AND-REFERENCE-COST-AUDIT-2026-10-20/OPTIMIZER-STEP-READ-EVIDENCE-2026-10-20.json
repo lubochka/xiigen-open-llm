@@ -1,0 +1,762 @@
+{
+  "schema_version": 1,
+  "id": "E-OPT-STEP",
+  "date": "2026-10-20",
+  "title": "Avoid portable AdamW moment materialization solely to read the pre-update RNG step",
+  "status": [
+    "SOURCE_CONFIRMED",
+    "EFFECT_NOT_MEASURED",
+    "EXPERIMENT_DESIGN_ONLY"
+  ],
+  "learning_role": "direct_actual_optimizer_update_cost",
+  "source_repository": "lubochka/llm_mvp_core",
+  "source_pin": "a8222d1b15745fe6207f36cd294fd3fb61c01d3b",
+  "source_manifest": {
+    "commit": "a8222d1b15745fe6207f36cd294fd3fb61c01d3b",
+    "sources": [
+      {
+        "path": "11.DPO/DpoTrainer.cs",
+        "sha": "0a7fd4d088fd37824aa213ddf0c6189675fe7dc2",
+        "source_url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/11.DPO/DpoTrainer.cs",
+        "local_source": "agent_work/experiment_audit/optimizer-snapshot-sources/DpoTrainer.cs",
+        "git_blob_verified": true,
+        "local_sha256": "09d03fc15b783384f730796773538dc60add748a35718058b5274c0c60200b48"
+      },
+      {
+        "path": "11.DPO/DpoTrainerStepSnapshot.cs",
+        "sha": "8fd397889326466ca1aba711aaf78e86acfa5373",
+        "source_url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/11.DPO/DpoTrainerStepSnapshot.cs",
+        "local_source": "agent_work/experiment_audit/optimizer-snapshot-sources/DpoTrainerStepSnapshot.cs",
+        "git_blob_verified": true,
+        "local_sha256": "05ea4dd4f7c959829bded84c7a2933f11bdeefe917b7cfb2ee6898663724ccf5"
+      },
+      {
+        "path": "04.TrainingLoop/Optimizers/AdamW.cs",
+        "sha": "05877706c68c8a76b63fb62842d91a2596070faf",
+        "source_url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamW.cs",
+        "local_source": "agent_work/experiment_audit/optimizer-snapshot-sources/AdamW.cs",
+        "git_blob_verified": true,
+        "local_sha256": "4ff288aef879a110dbdbc0da356d5839f1087e219d128a06cb987bf251abe3ea"
+      },
+      {
+        "path": "18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+        "sha": "2f91fce55c711063aa41780a53ef62b08f337dc8",
+        "source_url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+        "local_source": "agent_work/experiment_audit/optimizer-snapshot-sources/LlmIngredientLogicalUnits.cs",
+        "git_blob_verified": true,
+        "local_sha256": "264952e5c675aa2a6baceda47dffb9f3b84e7835f99bc76e72dc33f1c7a869b3"
+      },
+      {
+        "path": "14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs",
+        "sha": "51af64cd2b3345ec53dc6901fa523476542df8e4",
+        "source_url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs",
+        "local_source": "agent_work/experiment_audit/optimizer-snapshot-sources/CodeDocumentationSimulationDpoExperiment.cs",
+        "git_blob_verified": true,
+        "local_sha256": "28fd4a145198a73cbd38788912d6b1b8f3cc9d57505c09065801a6b9b0a2145f"
+      },
+      {
+        "path": "04.TrainingLoop/Optimizers/AdamWPortableState.cs",
+        "sha": "fef6af5366e412e2508a716118bd3f76759abc73",
+        "source_url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamWPortableState.cs",
+        "local_source": "agent_work/experiment_audit/optimizer-snapshot-sources/AdamWPortableState.cs",
+        "git_blob_verified": true,
+        "local_sha256": "375c89181713679ac34a46839144a71299797e931127ad67951080e5490b563c"
+      },
+      {
+        "path": "04.TrainingLoop/Optimizers/AdamWStateSnapshot.cs",
+        "sha": "009983981b3ff213ff68d28c955027649ba83684",
+        "source_url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamWStateSnapshot.cs",
+        "local_source": "agent_work/experiment_audit/optimizer-snapshot-sources/AdamWStateSnapshot.cs",
+        "git_blob_verified": true,
+        "local_sha256": "d621e588d73080fee8a784380884b270d683bd17523785ef41043c35fdc9ff5b"
+      }
+    ]
+  },
+  "source_claims": [
+    {
+      "path": "11.DPO/DpoTrainer.cs",
+      "lines": [
+        1228,
+        1245
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/11.DPO/DpoTrainer.cs#L1228-L1245",
+      "claim": "Non-null RNG capture computes ExportOptimizerState().Step before original rollback capture and update; changing only this ProjectLoRA step-read is the treatment."
+    },
+    {
+      "path": "11.DPO/DpoTrainer.cs",
+      "lines": [
+        507,
+        525
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/11.DPO/DpoTrainer.cs#L507-L525",
+      "claim": "ProjectLoRA export calls AdamW.ExportPortableState then recipient.RequireAllowedState. The non-project export fallback remains unchanged."
+    },
+    {
+      "path": "11.DPO/DpoTrainer.cs",
+      "lines": [
+        264,
+        272
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/11.DPO/DpoTrainer.cs#L264-L272",
+      "claim": "RequireAllowedState defaults to full RequireValid and then validates active key, shape and moment lengths; a raw step getter would remove guards."
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamW.cs",
+      "lines": [
+        188,
+        230
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamW.cs#L188-L230",
+      "claim": "Portable export validates bindings and active state, constructs portable entries, and reads current step after the binding loop."
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamWPortableState.cs",
+      "lines": [
+        22,
+        41
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamWPortableState.cs#L22-L41",
+      "claim": "Portable parameter DTO clones both moment arrays using ToArray; this is actual payload materialization."
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamWPortableState.cs",
+      "lines": [
+        55,
+        68
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamWPortableState.cs#L55-L68",
+      "claim": "Shape validation requires positive bounded moment length and compatible dimensions."
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamWPortableState.cs",
+      "lines": [
+        95,
+        121
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamWPortableState.cs#L95-L121",
+      "claim": "Portable constructor checks version, nonnegative step, active-entry count and active key UTF8 limits/uniqueness."
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamW.cs",
+      "lines": [
+        113,
+        125
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamW.cs#L113-L125",
+      "claim": "Rollback CaptureState separately clones both moment arrays; it remains necessary and unchanged."
+    },
+    {
+      "path": "11.DPO/DpoTrainerStepSnapshot.cs",
+      "lines": [
+        46,
+        69
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/11.DPO/DpoTrainerStepSnapshot.cs#L46-L69",
+      "claim": "Trainer rollback capture first snapshots parameters then optimizer; preserve order and RNG relation."
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamWStateSnapshot.cs",
+      "lines": [
+        15,
+        30
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamWStateSnapshot.cs#L15-L30",
+      "claim": "Rollback DTO is owner-bound and not interchangeable with portable DTO."
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamW.cs",
+      "lines": [
+        17,
+        37
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamW.cs#L17-L37",
+      "claim": "Current optimizer step is private; there is no existing public read-only step accessor."
+    },
+    {
+      "path": "04.TrainingLoop/Optimizers/AdamW.cs",
+      "lines": [
+        57,
+        109
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/04.TrainingLoop/Optimizers/AdamW.cs#L57-L109",
+      "claim": "Actual optimizer updates increment the counter and create/update moments; cold first step has no pre-existing moment payload."
+    },
+    {
+      "path": "14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs",
+      "lines": [
+        160,
+        161
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs#L160-L161",
+      "claim": "Existing simulation CreateForProjectLora unconditionally receives non-null RNG capture and restore callbacks."
+    },
+    {
+      "path": "14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs",
+      "lines": [
+        110,
+        111
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs#L110-L111",
+      "claim": "The same existing simulation requires saved dropout zero; no dropout change is needed to reach the candidate."
+    },
+    {
+      "path": "14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs",
+      "lines": [
+        175,
+        190
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs#L175-L190",
+      "claim": "Same trainer executes actual StepVector calls on successive minibatches. External budget/issued/completed ExportOptimizerState().Step calls remain unchanged."
+    },
+    {
+      "path": "18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+      "lines": [
+        907,
+        909
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/18.CapabilityTraining/LlmIngredientLogicalUnits.cs#L907-L909",
+      "claim": "Ordinary logical caller requires seed authority, nonzero dropout and targets for RNG state handling."
+    },
+    {
+      "path": "18.CapabilityTraining/LlmIngredientLogicalUnits.cs",
+      "lines": [
+        1964,
+        1986
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/18.CapabilityTraining/LlmIngredientLogicalUnits.cs#L1964-L1986",
+      "claim": "Logical caller only creates RNG callback when required. With null callback the extra step-read export is not evaluated."
+    },
+    {
+      "path": "11.DPO/DpoTrainer.cs",
+      "lines": [
+        1273,
+        1286
+      ],
+      "url": "https://github.com/lubochka/llm_mvp_core/blob/a8222d1b15745fe6207f36cd294fd3fb61c01d3b/11.DPO/DpoTrainer.cs#L1273-L1286",
+      "claim": "Necessary post-update publication portable export and capture remain unchanged."
+    }
+  ],
+  "call_path": [
+    "CodeDocumentationSimulationDpoExperiment -> CreateForProjectLora with non-null RNG callbacks and saved dropout0",
+    "same trainer -> StepVector -> ExecuteWithPublication",
+    "captureRandomState argument -> ExportOptimizerState().Step -> ExportPortableState -> portable moment ToArray copies",
+    "DpoTrainerStepSnapshot.Capture -> optimizer.CaptureState -> separate rollback moment ToArray copies",
+    "ordinary operation -> actual ApplyOptimizer -> publication"
+  ],
+  "reachability": {
+    "confirmed_existing_caller": "14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs",
+    "dropout_change_required": false,
+    "repeated_pair_required": false,
+    "reference_cache_hit_required": false,
+    "cold_first_step_moment_payload_saving": false,
+    "cold_second_step_or_nonempty_continuation": "Candidate is reachable once moments exist; direct source claim, not measured historical run attribution.",
+    "null_callback_boundary": "C# null-conditional call skips evaluation of ExportOptimizerState().Step when capture callback is null.",
+    "not_claimed": "This is not evidence of an accuracy regression or a guaranteed performance gain in the current raw one-step workflow."
+  },
+  "intervention": {
+    "primary_site": "11.DPO/DpoTrainer.cs:1242 inside ExecuteWithPublication",
+    "scope": "ProjectLoRA recipient only",
+    "baseline": "Original portable export and all its checks solely to obtain Step before RNG capture.",
+    "treatment": "Validated metadata-backed current-step read preserving checks, refusal types/codes and order without materializing portable m/v arrays.",
+    "raw_property_substitution_is_valid": false,
+    "non_project_fallback": "Unchanged original ExportOptimizerState().Step path.",
+    "baseline_refactor_constraint": "Do not add metadata snapshots, traversals or allocations to A, and do not move its refusals. Shared pure validation predicates may preserve the original path.",
+    "guard_order": [
+      "Original mutation gate, recipient check and publication reservation.",
+      "Empty/duplicate binding key and duplicate parameter checks before missing-state skip; validate active m/v lengths and shape/TotalElements.",
+      "Read the current step after the full binding loop; then original version, nonnegative-step and active-entry-count checks.",
+      "Original active-entry key length/uniqueness checks; UTF8 <=1024 applies only to active entries, not every binding.",
+      "Full recipient RequireValid followed by original active key, dimensions and moment-count checks.",
+      "Original RNG capture, parameter/optimizer rollback capture, subsequent recipient check, actual update and publication."
+    ],
+    "numeric_bounds": {
+      "moment_length_positive": true,
+      "moment_length_max": 1000000000,
+      "active_entries_max": 1000000,
+      "active_key_utf8_bytes_max": 1024,
+      "step_nonnegative": true
+    },
+    "not_added": [
+      "finite-moment scan",
+      "negative-moment guard",
+      "1GiB serialized frame-size gate (ToBytes-only in original)"
+    ],
+    "preserved": [
+      "small shape snapshots where needed for original validation semantics",
+      "rollback Capture/Restore and owner-bound DTO",
+      "callback ordering",
+      "reference and recipient guards",
+      "post-update portable publication exports",
+      "simulation external step-read exports at lines 180, 182 and 189",
+      "non-project export fallback"
+    ],
+    "equivalence_scope": "Normal serialized execution of an owned trainer; allocation removal does not promise identical OOM behavior.",
+    "excluded_factors": [
+      "reference-score reuse/cache",
+      "dropout changes",
+      "new rollback format",
+      "DTO sharing",
+      "bulk replacement of external exports",
+      "removal of guards"
+    ]
+  },
+  "experiment": {
+    "domain": "C# documentation",
+    "learner": "exact native ProjectLoRA Student, StepVector, AdamW",
+    "initial_state": "Same accepted saved B0/profile, policy/reference/tokenizer, q/v adapters, optimizer configuration/state and RNG in A and B.",
+    "data": "Two distinct already admitted C# DPO examples, one per step; same bytes/hashes/masks/weights and order in both arms. Actual IDs and admission bindings are preparation work, not invented here.",
+    "arms": {
+      "A": "Original ProjectLoRA RNG-step export",
+      "B": "Guard-equivalent ProjectLoRA metadata-backed step read"
+    },
+    "budget": {
+      "actual_optimizer_calls_total_max": 4,
+      "actual_optimizer_calls_per_arm_max": 2,
+      "default_committed_updates_per_arm": 2,
+      "generate_calls": 0,
+      "teacher_calls": 0,
+      "extra_evaluation_forwards": 0,
+      "extra_warmup_updates": 0,
+      "mandatory_repetitions": 0
+    },
+    "authority": "Use ordinary issued/content/mutation owners and a finite paired study identity. No bypass using new RunId/folder or deleted history. A runnable paired micro host remains preparation work.",
+    "metrics": [
+      "full-workload wall time",
+      "full-workload CPU time",
+      "actual allocated bytes",
+      "peak own-process RAM",
+      "step-read phase wall/CPU/allocation cost",
+      "setup/validation/snapshot/train/publication cost breakdown without double-counting nested phases",
+      "actual issued/applied/committed counts"
+    ],
+    "unchanged_cost_inclusion": "All remaining exports, state capture, guards, setup and publication are included in total cost; count reduction is intervention evidence only.",
+    "parity": [
+      "pre-update step and RNG",
+      "trainer metrics labelled pre_update_training_forward",
+      "post-update LoRA/base/reference",
+      "m/v and global step",
+      "post-update RNG",
+      "same initial and final state identities"
+    ],
+    "quality_metrics": "NOT_MEASURED; do not substitute zero or infer accuracy/response improvement.",
+    "success_rule": "Любое измеренное улучшение полезного показателя считается успехом по этому показателю и домену; рост точности не обязателен. Изменения остальных показателей, включая ухудшения, показываются рядом.",
+    "negative_result": "If no useful resource improves, the hypothesis is not confirmed by this small workload. Preserve observations and timer limitations.",
+    "validity": "If guards or state parity differ, observed deltas are not an equivalent cost optimization.",
+    "fault_control": {
+      "mandatory": false,
+      "trigger": "Only a concrete unresolved implementation risk after source review.",
+      "point": "Existing observer after actual ApplyOptimizer and before publication commit.",
+      "budget_rule": "Replace the second reserved optimizer attempt in each arm; never add a third attempt or an automatic retry.",
+      "counts_if_used": "One committed and one rolled-back actual update per arm.",
+      "reporting_if_used": "Two-successful-update cost is NOT_MEASURED; rollback parity is a validity control, not a separate learning success."
+    },
+    "payload_prediction": {
+      "formula": "2 * sizeof(float) * sum(active_moment_length) = 8M payload bytes per affected export",
+      "measured": false,
+      "limits": "Excludes array headers and metadata; not a prediction of peak RSS, total wall-time, GC frequency or CPU improvement."
+    },
+    "runtime_executed": false,
+    "product_code_changed": false,
+    "protected_documents_changed": false
+  },
+  "workflow": {
+    "documentation_pin": "bcf880f232d090e3cfcb459c108d3945ce6dbc15",
+    "execution_policy_path": "docs/plans/replanning-possible-diffs/experimets/00-execution-policy-2026-10-20.md",
+    "execution_policy_blob": "2f990c4caab2b3e6822777fcffb662bccf6e6d24",
+    "copy_path": "35.ExperimentsV2/Experiments/Rp01Micro/E-OPT-STEP/",
+    "host_project": "experiments-v2/RP01-MICRO/E-OPT-STEP/Runner.csproj",
+    "host_program": "experiments-v2/RP01-MICRO/E-OPT-STEP/Program.cs",
+    "compile_scope": "Selected exact copies and necessary identical dependencies; no ProjectReference to the whole 35.ExperimentsV2 project.",
+    "run_method": "Build the exact host then execute its DLL; no PowerShell reflection or generic dispatcher.",
+    "evidence_before_run": [
+      "source pin and paths",
+      "exact copy hashes",
+      "single A/B diff",
+      "actual command",
+      "data/state bindings",
+      "finite resource budget"
+    ],
+    "preserve_existing_artifacts": [
+      "experiments",
+      "bin",
+      "obj",
+      "results"
+    ],
+    "report_location": "Agreed possibleDifs addendum outside protected folder and user-facing evidence.",
+    "current_assignment": "Audit/design only. Future executor prompt is runnable under an assigned launch and does not contain an embedded document-only stop loop.",
+    "head_recheck_loop": false,
+    "fresh_per_sha_user_repermission_required": false
+  },
+  "novelty": {
+    "verdict": "New narrow candidate relative to the inspected corpus; not a claim of global novelty of step accessors or optimizer-state work.",
+    "corpus": [
+      {
+        "name": "planning555",
+        "files": 555,
+        "repository": "lubochka/xiigen-planning",
+        "pin": "1ad622fe1f6d1e8b0860265d8c208aeada3fefb0",
+        "root": "llm mvp/design to code session/replanning/possibleDifs"
+      },
+      {
+        "name": "protected170",
+        "files": 170,
+        "repository": "lubochka/llm_mvp_core",
+        "pin": "bf9b543e149ef197da85a767821d98c9b67916d2",
+        "note": "164 main documents plus 6 historical reports/reviews; later documentation policy reconciled separately."
+      },
+      {
+        "name": "concurrent61",
+        "files": 4,
+        "available_commit_prefix": "426385f",
+        "local_root": "agent_work/historical_knn/delta-426385f/",
+        "filenames": [
+          "README.md",
+          "01-EXPERIMENT-COVERAGE-AND-CORRECTIONS.md",
+          "02-HISTORY-AND-KNN-HYPOTHESES.md",
+          "03-NEURAL-LEARNING-AND-MICRO-CALLER.md"
+        ],
+        "note": "Only the observed commit prefix is recorded, not an invented full SHA."
+      },
+      {
+        "name": "current_audit",
+        "files": 3,
+        "pin": "fb9aadf69e0669d36b820d61f76fe3ecc8697a7d",
+        "sources": [
+          {
+            "repository": "lubochka/xiigen-planning",
+            "commit": "fb9aadf69e0669d36b820d61f76fe3ecc8697a7d",
+            "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-current-learning-audit/dpo/01-reference-score-reuse.md",
+            "sha": "8fe6393c39af3fa72c68526a904f4f1b8854d852",
+            "url": "https://github.com/lubochka/xiigen-planning/blob/fb9aadf69e0669d36b820d61f76fe3ecc8697a7d/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-current-learning-audit/dpo/01-reference-score-reuse.md"
+          },
+          {
+            "repository": "lubochka/xiigen-planning",
+            "commit": "fb9aadf69e0669d36b820d61f76fe3ecc8697a7d",
+            "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-current-learning-audit/dpo/04-current-head-reconciliation.md",
+            "sha": "f5ae80c233f5d41eb0abddfcecf57ff2949e9d46",
+            "url": "https://github.com/lubochka/xiigen-planning/blob/fb9aadf69e0669d36b820d61f76fe3ecc8697a7d/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-current-learning-audit/dpo/04-current-head-reconciliation.md"
+          },
+          {
+            "repository": "lubochka/xiigen-planning",
+            "commit": "fb9aadf69e0669d36b820d61f76fe3ecc8697a7d",
+            "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-current-learning-audit/README.md",
+            "sha": "c27f3c656b34547227acf0bd73015cfcc7ddcdfc",
+            "url": "https://github.com/lubochka/xiigen-planning/blob/fb9aadf69e0669d36b820d61f76fe3ecc8697a7d/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-current-learning-audit/README.md"
+          }
+        ]
+      },
+      {
+        "name": "current_package",
+        "files": 12,
+        "local_root": "deliverables/62-LEARNING-METRICS-AND-REFERENCE-COST-AUDIT-2026-10-20",
+        "note": "Snapshot searched before this candidate was added; not an independent published prior."
+      }
+    ],
+    "patterns": [
+      "ExportOptimizerState().Step",
+      "DpoTrainerStepSnapshot",
+      "ExportOptimizerState",
+      "AdamWPortableParameterState",
+      "CaptureState",
+      "near duplicate/repeated optimizer snapshot"
+    ],
+    "search_receipt": {
+      "planning555": {
+        "files": 555,
+        "matches": {
+          "exact_step_export": [],
+          "transaction_snapshot_name": [],
+          "export_method": [],
+          "portable_dto": [],
+          "optimizer_capture": [
+            {
+              "path": "sources/planning/llm mvp/design to code session/replanning/possibleDifs/33-NEW-NONFINITE-GRAD-CLIP-CASCADE-AND-SFT-STATE-2026-10-16.md",
+              "line": 11,
+              "text": "5. [AdamW.Step L74–107](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/04.TrainingLoop/Optimizers/AdamW.cs#L74-L107) суммирует градиенты в `m/v` и не проверяет finite, а [CaptureState/RestoreState L113–175](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/04.TrainingLoop/Optimizers/AdamW.cs#L113-L175) не выполняет automatic rollback; блок возврата state отдельный и должен быть явно вызван."
+            },
+            {
+              "path": "sources/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-19-language-restore/04a-lora-factor-experiment.md",
+              "line": 83,
+              "text": "Существующие публичные AdapterParameters позволяют наблюдать A/B; AdamW.CaptureState даёт состояние оптимизатора. Инструментация перед ZeroGrad должна только считывать градиенты и не создавать дополнительный optimizer step. [AdapterParameters, 33–37](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/10.LoRA/LoraLinear.cs#L33-L37), [CaptureState, 113–125](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/04.TrainingLoop/Optimizers/AdamW.cs#L113-L125)."
+            }
+          ],
+          "near_duplicate_snapshot": []
+        }
+      },
+      "protected170": {
+        "files": 170,
+        "matches": {
+          "exact_step_export": [],
+          "transaction_snapshot_name": [],
+          "export_method": [],
+          "portable_dto": [],
+          "optimizer_capture": [],
+          "near_duplicate_snapshot": []
+        }
+      },
+      "concurrent61": {
+        "files": 4,
+        "matches": {
+          "exact_step_export": [],
+          "transaction_snapshot_name": [],
+          "export_method": [],
+          "portable_dto": [],
+          "optimizer_capture": [],
+          "near_duplicate_snapshot": []
+        }
+      },
+      "current_audit": {
+        "files": 3,
+        "matches": {
+          "exact_step_export": [],
+          "transaction_snapshot_name": [],
+          "export_method": [],
+          "portable_dto": [],
+          "optimizer_capture": [],
+          "near_duplicate_snapshot": []
+        }
+      },
+      "current_package": {
+        "files": 12,
+        "matches": {
+          "exact_step_export": [],
+          "transaction_snapshot_name": [],
+          "export_method": [],
+          "portable_dto": [],
+          "optimizer_capture": [],
+          "near_duplicate_snapshot": []
+        }
+      }
+    },
+    "related_prior_interpretation": [
+      {
+        "path": "33-NEW-NONFINITE-GRAD-CLIP-CASCADE-AND-SFT-STATE-2026-10-16.md",
+        "line": 11,
+        "topic": "Nonfinite moments and explicit SFT rollback, not portable moment copying solely for Step."
+      },
+      {
+        "path": "2026-10-19-language-restore/04a-lora-factor-experiment.md",
+        "line": 83,
+        "topic": "Observing optimizer state during LoRA factor experiment, not Step-only materialization."
+      },
+      {
+        "path": "2026-10-20-current-learning-audit/dpo/01-reference-score-reuse.md",
+        "topic": "Reference-score reuse preserves optimizer/snapshot costs; it does not isolate this projection factor and is not combined with this experiment."
+      }
+    ],
+    "not_claimed": [
+      "global algorithmic novelty",
+      "measured speedup",
+      "cause of RP01 accuracy loss",
+      "all-caller applicability",
+      "cold one-step moment-copy savings"
+    ]
+  },
+  "independent_review": {
+    "reviewer": "/root/neural_learning",
+    "source_blobs_independently_verified": 7,
+    "git_sha_and_sha256_match": true,
+    "method_verdict": "Conditional-ready hypothesis design, not an implemented or measured repair.",
+    "accepted_corrections": [
+      "validated metadata interface rather than raw getter",
+      "preserve A allocation/iteration/refusal behavior",
+      "optional fault point after actual ApplyOptimizer within four-call budget",
+      "active-entry-only UTF8 and no added ToBytes or finite guard",
+      "preserve refusal types/order and ordinary owned-execution scope",
+      "move current audit-only status outside future executable prompt"
+    ],
+    "review_boundary": "Source and experiment method reviewed; latest bcf host-layout reconciliation supplied and checked by root, not independently re-audited by neural reviewer."
+  },
+  "artifact": {
+    "markdown": "OPTIMIZER-STEP-READ-COST-2026-10-20.md",
+    "markdown_sha256": "71656c67622ffa9d3cdc57c372dd9b8f99574fb3c5c5f8180f5150c46e5215a9"
+  },
+  "work_receipt": {
+    "native_runs": 0,
+    "generate_calls": 0,
+    "protected_writes": 0,
+    "deliverable_writes_by_this_finalization": 0,
+    "new_optional_audits": 0
+  },
+  "published_card_sha256": "2e7444e26f907a2546df85d4019230237ad0cdbee7ed1962675b064e1c1ec78d",
+  "final_root_edits": "Status explicitly NOT_RUN/PREPARABLE; opening publication scope sentence corrected. Mechanism and reviewed protocol unchanged.",
+  "final_planning_c38_delta": {
+    "commit": "c38a2a84516c698056b6912d2933b22cd69281d4",
+    "files": [
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/00-LEARNING-UPDATE-EFFECT-AUDIT-2026-10-20.md",
+        "sha": "a53afb48100dbfc4976381874bb76bbeab7b259d",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/01-learning-path-and-mechanism-map.md",
+        "sha": "229f0327148d9e5752bb87aa8beef556aeaf6ab2",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/02-historical-positive-evidence.md",
+        "sha": "c5069f5aab302bfc35300025fc5382ce75b4afef",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/03-experiment-coverage-review.md",
+        "sha": "9cae30100b131f3ca794cf1bbcab4c87296e02e9",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/04-small-neural-learning-contract.md",
+        "sha": "5d46f22843dcef9c7933c8237d56684fcf0948a4",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/05-new-R1-frozen-base-comparison.md",
+        "sha": "79bad3502069ced0670269c7a42fa91fdb72f581",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/06-new-R2-softmax-buffer.md",
+        "sha": "90e26f0bef16fea4308e10c68224b011f9b1a692",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/07-prioritized-work-order-and-reporting.md",
+        "sha": "77f37ccd090bd7943b7d6c5bc025119a86f3db82",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/08-sources-novelty-and-study-log.md",
+        "sha": "2d19e3349eacd18ea9e23311d371260312b9e5bf",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/09-independent-review.md",
+        "sha": "55cb70a2b10dcf475f68dd37ede0b01d386601a4",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/10-concurrent-planning-update.md",
+        "sha": "961a26beaad3f554468b0b36aa070617ed92abaf",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/README.md",
+        "sha": "f5db45eef32aa86b5b591544ca1b4f8883ea13b7",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/branch-heads.json",
+        "sha": "d5f7d63f229a60364d590a444ccac8e4669dc461",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/cards-125.tsv",
+        "sha": "687af73b8f1483f7159d79c5f9944e5b6f6a434d",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/concurrent-novelty-search.json",
+        "sha": "e9a97fb600e5f69ebbd012cbfa564ecf4842cd23",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/concurrent-planning-delta.json",
+        "sha": "a65425e390cb12f8c69c20768bbee3d31a48c76f",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/concurrent-planning-manifest.json",
+        "sha": "8a113e9b06e3ad8f1402edfcfeb333ec6e448724",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/copy-scope-residuals.tsv",
+        "sha": "ffa829384e24314e5086e3275a5bb91f1ab8b1c2",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/core-document-delta.json",
+        "sha": "12feeed33df4b19cec3876a4fc501f44c14d03b5",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/core-final-document-delta.json",
+        "sha": "9cd44a3857e4f39e357eb5ba735015151f6c6613",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/novelty-search.json",
+        "sha": "0ea8dcabc61695ac974cbedc0bf7ad20f23d04e9",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/package-review-inputs.json",
+        "sha": "cfa55c442cf7f3be549661bf5c78b4d72b961337",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/planning-source-manifest.json",
+        "sha": "5bde7895e4e1df15ea84f031f5def2e556514d3e",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/protected-audit-delivery-manifest.json",
+        "sha": "a0deaafa1815a4b86e2d03214ba1ee2abe858109",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/protected-audit-summary.json",
+        "sha": "fc11d1abbfde701919e6c1de1c7057fa82ba7f3f",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/protected-source-manifest.json",
+        "sha": "d342b8bb43a6f4071f4aa95d39d929b05173d5be",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/residual-policy-clauses.tsv",
+        "sha": "0730787926c98013fe520e23925f2ca4aba8465d",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/residual-policy-delta-review.json",
+        "sha": "7a53bd7e89f1f81ce5b11ff9173ff4ab32817b77",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/small-probes-24.json",
+        "sha": "c3f2bc02184db85cba2b4395461eb239fce45610",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/source-coverage-555.json",
+        "sha": "ba3ef311af22a83e73087835a1398de4a5b7327a",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/source-manifest.json",
+        "sha": "c09a216483bc9e4195a5b8b8b80a649ebf078e56",
+        "status": "added"
+      },
+      {
+        "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/evidence/subcases-470.tsv",
+        "sha": "68910ef845ecda9345a5ea357a5bdfc6ee710447",
+        "status": "added"
+      }
+    ],
+    "overlap_with_our_write_set": [],
+    "read_cards": [
+      {
+        "path": "05-new-R1-frozen-base-comparison.md",
+        "sha": "79bad3502069ced0670269c7a42fa91fdb72f581",
+        "mechanism_distinct_from_optimizer_step_export": true
+      },
+      {
+        "path": "06-new-R2-softmax-buffer.md",
+        "sha": "90e26f0bef16fea4308e10c68224b011f9b1a692",
+        "mechanism_distinct_from_optimizer_step_export": true
+      }
+    ],
+    "scope": "Both R1/R2 cards fully read; other file inventory inspected only. No new runtime; entire addition preserved."
+  }
+}

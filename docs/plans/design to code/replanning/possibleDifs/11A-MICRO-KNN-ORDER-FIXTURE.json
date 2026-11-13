@@ -1,0 +1,263 @@
+{
+  "schema": "xiigen.micro-knn-order.v1",
+  "type": "DEV_SYNTHETIC_DIAGNOSTIC_NOT_DPO",
+  "hypothesis": "Hashed unordered BPE-count vectors erase relative action order and restrict learned KNN transfer; order-aware relation features may improve heldout predictions",
+  "scope": "KnnLogicalUnit<string,string> only; NOT direct evidence RP01 DPO or end-user translation",
+  "rules": {
+    "SAFE": "BACKUP before DELETE for the same asset",
+    "UNSAFE": "DELETE before BACKUP for the same asset"
+  },
+  "fixed": {
+    "k": 1,
+    "vectorDimensions": 192,
+    "legacyVectorDimensions": 64,
+    "positionDimensions": 128,
+    "confidenceFloor": 0.7,
+    "unitRole": "micro-order-classifier",
+    "domainTag": "micro-order",
+    "predicateIds": [],
+    "evidenceIds": [],
+    "useConfidenceFloor": false,
+    "baseInput": "raw input; 64D production-equivalent vector plus 128 zero slots",
+    "enhancedInput": "same 64D vector plus 128 generic (BPE token ID, 4 position-bin) features; no learned-label logic in encoder",
+    "tokenizerPolicy": "one frozen BpeTokenizer trained only on raw TRAIN16; shared by A and B",
+    "primaryIndex": "BruteForceIndex exact cosine, k=1, identical sorted TRAIN IDs",
+    "positiveOutcome": "B>=12/16, improvement>=4/16 vs A; no added false SAFE, flipped training labels change outputs",
+    "warning": "Real KnnLogicalUnit with HNSW is a separate A-only shadow check; don't use differently retrained BPE in primary A/B"
+  },
+  "train": [
+    {
+      "id": "train-01-A",
+      "group": "train-1",
+      "input": "plan backup asset101 before delete asset101",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-01-B",
+      "group": "train-1",
+      "input": "plan delete asset101 before backup asset101",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-02-A",
+      "group": "train-2",
+      "input": "plan backup asset102 before delete asset102",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-02-B",
+      "group": "train-2",
+      "input": "plan delete asset102 before backup asset102",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-03-A",
+      "group": "train-3",
+      "input": "plan backup asset103 before delete asset103",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-03-B",
+      "group": "train-3",
+      "input": "plan delete asset103 before backup asset103",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-04-A",
+      "group": "train-4",
+      "input": "plan backup asset104 before delete asset104",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-04-B",
+      "group": "train-4",
+      "input": "plan delete asset104 before backup asset104",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-05-A",
+      "group": "train-5",
+      "input": "plan backup asset105 before delete asset105",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-05-B",
+      "group": "train-5",
+      "input": "plan delete asset105 before backup asset105",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-06-A",
+      "group": "train-6",
+      "input": "plan backup asset106 before delete asset106",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-06-B",
+      "group": "train-6",
+      "input": "plan delete asset106 before backup asset106",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-07-A",
+      "group": "train-7",
+      "input": "plan backup asset107 before delete asset107",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-07-B",
+      "group": "train-7",
+      "input": "plan delete asset107 before backup asset107",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-08-A",
+      "group": "train-8",
+      "input": "plan backup asset108 before delete asset108",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "train-08-B",
+      "group": "train-8",
+      "input": "plan delete asset108 before backup asset108",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    }
+  ],
+  "heldout": [
+    {
+      "id": "heldout-01-A",
+      "group": "heldout-1",
+      "input": "plan backup asset201 before delete asset201",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-01-B",
+      "group": "heldout-1",
+      "input": "plan delete asset201 before backup asset201",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-02-A",
+      "group": "heldout-2",
+      "input": "plan backup asset202 before delete asset202",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-02-B",
+      "group": "heldout-2",
+      "input": "plan delete asset202 before backup asset202",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-03-A",
+      "group": "heldout-3",
+      "input": "plan backup asset203 before delete asset203",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-03-B",
+      "group": "heldout-3",
+      "input": "plan delete asset203 before backup asset203",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-04-A",
+      "group": "heldout-4",
+      "input": "plan backup asset204 before delete asset204",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-04-B",
+      "group": "heldout-4",
+      "input": "plan delete asset204 before backup asset204",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-05-A",
+      "group": "heldout-5",
+      "input": "plan backup asset205 before delete asset205",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-05-B",
+      "group": "heldout-5",
+      "input": "plan delete asset205 before backup asset205",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-06-A",
+      "group": "heldout-6",
+      "input": "plan backup asset206 before delete asset206",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-06-B",
+      "group": "heldout-6",
+      "input": "plan delete asset206 before backup asset206",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-07-A",
+      "group": "heldout-7",
+      "input": "plan backup asset207 before delete asset207",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-07-B",
+      "group": "heldout-7",
+      "input": "plan delete asset207 before backup asset207",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-08-A",
+      "group": "heldout-8",
+      "input": "plan backup asset208 before delete asset208",
+      "label": "SAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    },
+    {
+      "id": "heldout-08-B",
+      "group": "heldout-8",
+      "input": "plan delete asset208 before backup asset208",
+      "label": "UNSAFE",
+      "law_id": "BACKUP_BEFORE_DELETE"
+    }
+  ],
+  "prohibited": [
+    "Use heldout examples to train BPE or KNN",
+    "Tune feature extraction or weights using heldout labels",
+    "Change k/index/vectorDimensions/domain or train example count between arms",
+    "Treat dev synthetic labels as Chinese-authored DPO",
+    "Claim this test evaluates Student/LoRA"
+  ]
+}

@@ -1,0 +1,93 @@
+# N38 MASTER — RP01 Learning-First: карта подтверждённых различий, новых гипотез и коротких доменных тестов
+
+**Дата:** 2026-10-16. **Репозитории:** xiigen-planning branch llm_plan3 (публикуем только possibleDifs), llm_mvp_core branch codex/dpo-implementation (ЧИТАЕМ, НЕ МЕНЯЕМ). Прочитанный current core SHA при новом исходном разборе: d1862939bfe24c3bbeb12a49af917c7ca569a10f. Исходники исторических веток проверены точечно: DesignToCode и language_translate, но НЕ все файлы всех веток. Исходный зафиксированный план/отчёт RP01 и RAG index использованы как документы; у старых READY/FAIL статус исторический, не current production proof.
+**Доказательность:** source-confirmed facts, historical recorded receipts, bounded JS source-logic proxy N38; **native Roslyn/.NET NOT_RUN, trained quality improvement NOT_MEASURED, independent CODEX/Astra 6 UltraCode review NOT_RUN**. Полный аудит всех 330+ материалов и всех commits не заявляется. Выводы N38 не заменяют предыдущую библиотеку.
+
+## 0. Главное решение для владельца
+
+**Нельзя исправлять 0/3→0/3 у C# и 0/4→0/4 у EN→RU одними изменениями KNN, если RP01 ordinary Student generation KNN не вызывает.** Историческое обучение имеет несколько разных состояний и способов ответа. Неправильный выбор recipient при porting делает «алгоритм работает в эксперименте» и «Student не обучается» совместимыми утверждениями.
+
+По сохранённому [RP01 recovery](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md): C#500 (25 шаблонов×20), 50 updates, свободные ответы **0/3→0/3**; ENRU500 (20 категорий×25), ещё 50 updates, **0/4→0/4**; q/v LoRA изменилась, base weights остались frozen; Student B0 random, vocabulary629, hidden512, 4 layers, rank8. Это подтверждает **прошедший optimizer**, а не transfer полезной компетенции. Статус конкретного causal root = **OPEN**.
+
+Реально опубликованные узкие положительные исторические сигналы:
+- [E14 C# structural/action KNN small](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/35.ExperimentsV2/results/E14-CONTEXT-ACTION-KNN/results/run-2026-04-30-001.json): 0.75→1.00, всего 4 val; следующий Tier не гарантирует gain.
+- [E13 method KNN Tier2](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/35.ExperimentsV2/results/e01-e53-tier4-20260507-190227/E13-METHOD-KNN/results/run-2026-05-07-001.json): 2/7→5/7, архивный PASS. Однако [N17](17-HISTORICAL-E13-TRAIN-VALIDATION-BOUNDARY.md) показывает mismatched train split. В N38 установлены дополнительные непроверенные охватом этой выборки code input categories.
+- [E26 contextual dictionary](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/35.ExperimentsV2/results/E26-CONTEXTUAL-DICTIONARY/results/run-2026-05-01-001.json): 0.40→1.00 на 15 fixed cases; [E26 POS transfer](23-NEW-E26-POS-CONTEXT-TO-LEARNED-UNIT-2026-10-16.md) показывает, почему это НЕ равно general learned Translation Unit.
+- [E43 replay](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/35.ExperimentsV2/results/E43-REPLAY-BUFFER/results/run-2026-05-01-001.json): 0.3226→0.3978 retention в старом memory/bigram опыте. Не доказательство улучшения DPO Student.
+- [E09 AST KNN](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/35.ExperimentsV2/results/E09-STRUCTURAL-KNN/results/run-2026-05-01-001.json): .2413→.3507 на **разных denominator**, поэтому реальный same-panel gain OPEN. Подробности [12 lineage](12-MATRIX-KNN-TRANSFER-PROVENANCE-AND-EVALUATION.md).
+
+**Реальный перенос, а не сходство названий:** core protected [10 historical function transfer](https://github.com/lubochka/llm_mvp_core/blob/codex/dpo-implementation/docs/plans/replanning-possible-diffs/10-historical-function-transfer-and-learning.md) уже доказал, что E40V2 learned trust labels+KNN в production заменили фиксированной суммой коэффициентов. Это важный реальный пример утраты *обучаемости* при сохранении функции; старый E40 был отрицательным, поздний E40V2 — положительным. Защищённый core каталог НЕ РЕДАКТИРОВАЛСЯ. Точное ребро **неудачная матрица X → удачная KNN-функция Y**, о котором говорит владелец, пока не идентифицировано на 100% в исследованных источниках — не выдавать предположение за commit proof.
+
+## 1. Полная классовая карта — 24 самостоятельных seam, без удвоения чужих находок
+
+Обозначения: **C** — факт в прочитанном source/history; **H** — возможная причина деградации конкретного consumer; **N** — новый N38 scope; **R** — только read-only historical receipt. Все severity условны и зависят от реального исполняемого маршрута.
+
+| № | Возможное расхождение | Source-of-proof и уже имеющийся исследователь | Где проявится; быстрый отличающий опыт |
+| --- | --- | --- | --- |
+| 01 P0 | Неверный learner: random B0 preference DPO vs обученный historical Unit | [RP01](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md), [N37 crosswalk](37-RP01-EVIDENCE-CROSSWALK-NEW-HYPOTHESES-AND-CAUSAL-PRIORITIES-2026-10-16.md) **C/H** | C#, ENRU neural: B0+DPO / B0+tiny SFT / warm base+DPO на одинаковых gold |
+| 02 P0 | DPO pair generated deterministic simulation, не реальная модель/assessor | [DPO dataset](03-DPO-PAIR-AND-GRADIENT.md), [RAG Chinese teacher](../../09.09.26WorkLeft-02-teaching-chinese-model.md) **C** | Все 6 доменов: реальные пары только после CODEX selection/open Chinese generation/CODEX judge; blinded pair validity |
+| 03 P0 | Chosen/rejected model-visible difference отсутствует или непредметная | [DPO material](02-DPO-DATA-OBJECTIVE-GRADIENT.md) и [exact mask](https://github.com/lubochka/llm_mvp_core/blob/d1862939bfe24c3bbeb12a49af917c7ca569a10f/11.DPO/Models/DpoExactPairMaterial.cs#L64-L88) **C/H** | 8–32 пар: raw contrast vs token contrast/response mask; compile/translation-law judge |
+| 04 P0 | Reference/Policy, loss, backward, β, unequal answer lengths | [DPO trainer](https://github.com/lubochka/llm_mvp_core/blob/d1862939bfe24c3bbeb12a49af917c7ca569a10f/11.DPO/DpoTrainer.cs#L650-L699), [DPO diagnostics](03-DPO-PAIR-AND-GRADIENT.md) **C/H** | Tiny finite-difference gradient; same-X chosen/rejected sign; heldout |
+| 05 P0 | LoRA q/v only rank8/alpha16, insufficient для cold-start компетенции | [LoRA](03-LORA-TOKENIZATION-VECTOR-SPACE.md), [LoraConfig](https://github.com/lubochka/llm_mvp_core/blob/d1862939bfe24c3bbeb12a49af917c7ca569a10f/10.LoRA/LoraConfig.cs#L8-L17) **C/H** | 8×2 train + untouched eval, freeze same base, controlled rank/target-module ablation |
+| 06 P1 | Вектор урока сводится к числу active slots, содержание исчезает | [DpoTrainer.VectorSignal](https://github.com/lubochka/llm_mvp_core/blob/d1862939bfe24c3bbeb12a49af917c7ca569a10f/11.DPO/DpoTrainer.cs#L1159-L1166), [03](03-LORA-TOKENIZATION-VECTOR-SPACE.md) **C** | 2 sign-opposite vectors equal support count → identical scaledWeight; independently check domain law |
+| 07 P1 | AdamW почти отменяет общий positive scalar vectorWeight | [N26 AdamW](26-NEW-ADAMW-SCALE-CANCELLATION-2026-10-16.md) **C math/H impact** | Один parameter AdamW: g vs 2g, потом two contrasting pairs |
+| 08 P1 | Tokenizer BPE byte merges/vocab/EOS/restore differ from inference | [tokenizer/BPE](03-LORA-TOKENIZATION-VECTOR-SPACE.md), [BPE drift](21-INDEPENDENT-BPE-RETRAIN-VOCAB-DRIFT-2026-10-16.md) **C/H** | Same bytes vs token IDs/prompt-response boundaries; fresh vs cold restart |
+| 09 P1 | Translation bridge hashed token IDs/diagnostic stripping/legacy full-sequence mask | [translation bridge](16-TRANSLATION-DPO-BRIDGE-TOKEN-ERASURE-2026-10-16.md) **C** | one-pair before/after stripping, token collision audit, never equate legacy with RP01 exact-v2 |
+| 10 P1 | Generation stop token/sampler decoupled from training labels | [EOS and unit transfer](10-INFERENCE-STOP-TOKENS-AND-UNIT-TRANSFER.md), [N37 sampler](37-NEW-FLOAT32-SAMPLER-MASK-ESCAPE-2026-10-16.md) **C/H** | frozen logits, greedy vs stochastic, no-change optimizer control; RP01 greedy only |
+| 11 P1 | KNN AST features/order/role not preserved by generic hashed BPE | [11A order](11A-MICRO-KNN-ORDER-CAUSAL-PILOT.md), [12 lineage](12-MATRIX-KNN-TRANSFER-PROVENANCE-AND-EVALUATION.md) **C/H** | C# AST-role vs generic; ENRU word order vs semantic KNN independently |
+| 12 P1 | HNSW miss/graph/distribution and recall differ exact oracle | [N28 reachability](28-NEW-HNSW-REVERSE-PRUNE-AND-LOST-LESSON-REACHABILITY-2026-10-16.md), [N33 RNG](33-NEW-HNSW-RNG-CONTINUATION-AND-COUPLING-2026-10-16.md) **C/H** | same vectors/IDs exact vs ANN, cold restore, source-family heldout |
+| 13 P1 | Index array alias, NaN, mismatched vector dimension, incorrect size | [N30](30-NEW-VECTOR-ALIAS-AND-NONFINITE-KNN-INGRESS-2026-10-16.md), [N23 shape](23-INDEPENDENT-AUDIT-SHAPE-DECODER-AND-LEARNING-2026-10-16.md) **C/H** | change caller buffer without Add; different dimensions fail-closed; actual producer reachability |
+| 14 P1 | Conflicting KNN lessons / source guards / cascade / numeric confidence bias | [N37 KNN cascade](37-NEW-KNN-SIGNATURE-GUARD-MONOTONICITY-CONTAINMENT-AND-CASCADE-2026-10-16.md), [N20 ranker](20-LESSON-ADDITION-RERANKER-NONLOCAL-QUALITY-GAPS-2026-10-16.md) **C/H** | ENRU negation, SQL transaction, C# authorization, one-factor gate A/B |
+| 15 P1 | Learned KNN local output/state mutable, replay/forgetting/cold load missing | [N37 output alias](37-NEW-KNN-UNIT-MUTABLE-OUTPUT-ALIAS-2026-10-16.md), [N27 replay](27-NEW-REPLAY-APERTURE-DPO-KNN-DIVERGENCE-2026-10-16.md), [checkpoint](06-CHECKPOINT-RESTORE-ADOPTION.md) **C/H** | add one lesson, train A→B, cold restore, no-op control, oldest-law retention |
+| 16 P1 | Translation E26 left/right POS lost in learned Executor | [N23 E26](23-NEW-E26-POS-CONTEXT-TO-LEARNED-UNIT-2026-10-16.md) **C/H** | ENRU lexical ambiguity with same word different left/right POS; opposite-law heldout |
+| 17 P1 | Translation E27 reorder/direction, phrase/exact/word map bypass trained KNN | [translation domain](16-INDEPENDENT-TRANSLATION-UNIT-AND-KNN-LEARNING-GAPS-2026-10-16.md) **C/H** | paired full semantic order/negation/gender, route trace each tier |
+| 18 P1 | Verifier negative/positive rules may accumulate/conflict per direction | [N23 verifier](23-VERIFIER-ACCUMULATED-RULE-CONFLICT-AND-DIRECTION-SCOPE-2026-10-16.md) **C/H** | heldout A→A+B train, wrong-accepted and false-rejected |
+| 19 P1 | E09 local kind IDs, cross-file transitions, distance omissions | [N26 Git E09](26-NEW-E09-GIT-PRODUCTION-TARGET-AND-TIE-DRIFT-2026-10-16.md), [N32](32-NEW-E09-CROSS-FILE-TRANSITIONS-AND-IGNORED-SOURCE-2026-10-16.md), [N35 sibling](35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md) **C/H** | true SyntaxKind decoded gold, same panel, no cross-file pair |
+| 20 P1 | E13 train boundary differs, archived PASS does not prove same-panel lift | [N17](17-HISTORICAL-E13-TRAIN-VALIDATION-BOUNDARY.md) **C/H** | same train-pair split on file-disjoint heldout |
+| 21 P1 **NEW N38-01** | E13 expression-bodied C# body erased: KindBag=[] | [N38-01](38-NEW-E13-EXPRESSION-BODY-COLLAPSE-2026-10-16.md), [source MethodKnn](https://github.com/lubochka/llm_mvp_core/blob/d1862939bfe24c3bbeb12a49af917c7ca569a10f/12.SemanticCompiler/Prediction/MethodKnn.cs#L47-L75) **C source/H product** | C# 4-method Roslyn micro; same learned KNN on body-only vs expression-aware |
+| 22 P2 **NEW N38-02-L** | Roslyn lambdas split into SimpleLambda/ParenthesizedLambda, literal Lambda branch unreachable for those | [N38-02](38-NEW-E13-LAMBDA-FAMILY-AND-COMPOSITE-LABEL-2026-10-16.md) **C source/H product** | Lambda + arity-preserving canonicalization vs baseline; paired source-disjoint |
+| 23 P2 **NEW N38-02-C** | E13 single target precedence collapses Guard+Async/Async+Try | [N38-02](38-NEW-E13-LAMBDA-FAMILY-AND-COMPOSITE-LABEL-2026-10-16.md), [CanonicalType](https://github.com/lubochka/llm_mvp_core/blob/d1862939bfe24c3bbeb12a49af917c7ca569a10f/12.SemanticCompiler/Prediction/MethodKnn.cs#L171-L184) **C source/H product** | unchanged nearest + multi-hot learning labels; consumer needing composite roles |
+| 24 P0 governance | Human case selection/teacher pair/judge roles reversed or simulated | [RAG contract](../../09.09.26WorkLeft-02-teaching-chinese-model.md), [RAG MASTER](../../09.09.26WorkLeft-RAG-MASTER-INDEX.md) **C plan/H live** | proof of actual invoked models, exact input/output bytes, approvals, one-application journal |
+
+## 2. Где применять, а где не применять: доменная матрица
+
+| Домен | Главное сохраняемое обучение | Опасно переносить | Первый минимальный domain exam |
+| --- | --- | --- | --- |
+| C# documentation/code repair | AST E09/E13, learned action routing E14, semantic guards, explanation | Roslyn features заменены unordered BPE, выражения => замаскированы; KNN не вызывается в Student | 4 Roslyn L0 + 12/12 E13 learned + 8 compile/law cases |
+| EN→RU и RU→EN | Контекстные POS, word/prefix/phrase mappings, KNN and corrections | E26 left/right POS сведены к lemma/concept, direction и morphology, модельный вид пары не совпадает | 8–12 ambiguity+negation+order heldout, trained Unit vs without Unit |
+| HE/other languages | Отдельный parser, morphological agreement и направленный lexical evidence | Нельзя копировать Roslyn или ENRU POS enum как универсальные | 4–8 сложных morphology pairs с native Gold, abstention |
+| Angular / design→code | Component/template AST, DOM bindings, event order, graph relation & visual correctness | Статические эвристики под видом trained KNN и неподтверждённый E13 transfer | 6 component families (inputs/output/lifecycle); compile+render/DOM law |
+| SQL | Relation graph, JOIN keys, NULL, transaction/authorization, typed retrieval | Generic cosine игнорирует scope/negation, SQL не C# AST | 8–12 pair: same words, changed joins/predicates; SQL engine semantic truth |
+| Orchestration | Multi-step learning Unit→Flow→Orchestrator→Graph, replay and route | Direct Student bypass, counters/coverage mistaken for quality | 6 workflows with dependency/conditional branches; actual route on/off |
+| Multi-domain DPO | Selected lawful learner-specific lessons, teacher pair quality | Teacher substituted by template; CODEX judge confused with generator | 8 new blinded lawful pairs per active domain only after proper authority |
+
+**Нельзя публиковать улучшение всех доменов из одного C# KNN positive.** Даже успешно подтверждённая N38 expression-bodied поправка означает улучшение только тогда, когда обучаемый E13 действительно участвует в ordinary C# consumer.
+
+## 3. Самая дешёвая последовательность работ, без бесконечных Windows прогонов
+
+1. **TRACE P0:** 1 запрос в каждой проблемной области: фиксировать actual recipient (Student pure vs memory Unit), тип состояния, training/inference graph, tokenizer checksum, parent snapshot, output. Если KNN отсутствует в RP01 path, его bugs не объясняют Student failure.
+2. **TINY NEURAL P0:** frozen base/optimizer/seed, 8–32 пар, сравнить DPO-only, chosen-only SFT, warm+tiny DPO, no-update. Проверить chosen/rejected discriminability, logprobs и реальную correctness. Не менять сразу rank+lr+tokenizer.
+3. **E13 N38 C# P1:** выполнить [MICRO38](38-MICRO-E13-DOMAIN-CAUSAL-PROTOCOL-2026-10-16.md) L0, затем только одну A/B гипотезу; результат source-logic proxy уже [записан](38-E13-SOURCE-LOGIC-PROXY-RESULT-2026-10-16.json), native Roslyn ещё НЕ запускался.
+4. **TRANSLATION P1:** learned E26 left/right POS vs current word-map на 8–12 unseen cases с настоящим переводным/морфологическим law judge; потом KNN fallback отдельно.
+5. **RESTORE P1:** для выигрывающего learner повторить до/после + cold restore, сохранение старых законов и истинный ordinary consumer, иначе gain не принят.
+
+**Сквозные пороги принятия:** механизм и route доказаны; frozen family-disjoint test set; ответы содержательно верны (accuracy/law-correctness, false accept и retained old-law); no-update и shuffled-label controls; стоимость и память; independent CODEX/Astra quality judgment отдельно от технического compile-pass. Предыдущий 95% — owner-set долгосрочная цель, не искусственный критерий остановки первой малой диагностики.
+
+## 4. Архитектурный и governance контракт для будущего DPO
+
+**Human decision maker = CODEX / GPT-6 Astra 6 UltraCode**: CODEX выбирает case и утверждает его разрешённость по доменным законам, не человек вручную и не external teacher. **External open Chinese teacher** генерирует ОБЕ финальные стороны chosen и rejected. **CODEX / Astra 6 UltraCode** отдельно проводит quality assessment финальной пары (TIE / BOTH_BAD / law violation / provenance) и отдельно оценивает Student на слепом post-learning экзамене. Student optimizer работает только с утверждёнными bytes и валидным parent; один новый pair_id — не более одного обновления. Не объявлять, что эти model calls выполнялись в текущем source review.
+
+**Техническая цепь без подмены:** source evidence → chosen actual learner/recipient → source-disjoint case selection by CODEX → open Chinese chosen/rejected → CODEX pair evaluation → approved exact material and tokenization → correct optimizer/Unit mutation → durable state snapshot → ordinary output and independent CODEX grading → keep parent, promote or rollback. Старые RAG документы служат маршрутами к свидетельствам, а не сертификатами live training.
+
+## 5. Запрещённые overclaims, контрпроверка плана и следующее решение
+
+- Не доказывать positive KNN качеством DPO loss; не доказывать free Student improvement числом изменившихся LoRA weights.
+- Не переносить E09/Tier2 и E13/7 validation на всю предметную область; не смешивать same-panel и mismatched historical splits.
+- Не описывать уже зарегистрированные N23/N26/N30/N32/N35/N37 причины как новые N38.
+- Не считать N38 исправлением RP01: каждый новый seam унаследован как минимум в DesignToCode и language_translate; actual RP01 ProductHost call не установлен.
+- Не использовать tests без user-law gold и без сравнительного эксперимента; тем более не ограничиваться зелёным Windows CI.
+- Не вносить правки в llm_mvp_core/docs/plans/replanning-possible-diffs/**.
+
+**Опубликованное N38 дополнение:** [EXPR](38-NEW-E13-EXPRESSION-BODY-COLLAPSE-2026-10-16.md) | [LAMBDA+COMPOSITE](38-NEW-E13-LAMBDA-FAMILY-AND-COMPOSITE-LABEL-2026-10-16.md) | [MICRO38](38-MICRO-E13-DOMAIN-CAUSAL-PROTOCOL-2026-10-16.md) | [source-only JS](38-E13-SOURCE-LOGIC-PROXY.mjs) | [результат](38-E13-SOURCE-LOGIC-PROXY-RESULT-2026-10-16.json).
+
+**Read-only core skill stack применён как чек-лист:** human-readable architecture audit; intent-to-plan; phase planning; plan review; generated code review; prompt-patch authoring; conversation-intent/self-reflection; experiment-design; claim-as-hypothesis. Рецензия стороннего CODEX/Astra 6 UltraCode не выполнялась; статус DRAFT.

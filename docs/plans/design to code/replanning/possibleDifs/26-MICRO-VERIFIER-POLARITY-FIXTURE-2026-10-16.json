@@ -1,0 +1,146 @@
+{
+  "version": "micro-verifier-polarity-v1",
+  "status": "FROZEN_SIMULATION_DIAGNOSTIC_NOT_NATIVE_RUN",
+  "experiment_id": "MICRO-N26-VERIFIER-POLARITY-01",
+  "source_sha": "b0afc08dc0df110b10ed5ed38b518906665c16f8",
+  "domain": "EN_RU imperative-to-result",
+  "disclaimer": "Human-authored contrastive semantic labels; not model outputs or DPO authoring; holdout response candidates not used to train verifier; source contexts recur by design for a mechanism-level test; independent generalization requires new families.",
+  "groups": [
+    {
+      "id": "G01",
+      "source": "Start the process",
+      "source_language": "en",
+      "target_language": "ru",
+      "required_term": "процесс",
+      "law_id": "START_PROCESS",
+      "candidates": [
+        {
+          "id": "G01-P1",
+          "answer": "Процесс запущен",
+          "lawful_by_source": true
+        },
+        {
+          "id": "G01-P2",
+          "answer": "Процесс успешно стартовал",
+          "lawful_by_source": true
+        },
+        {
+          "id": "G01-N1",
+          "answer": "Процесс не запущен",
+          "lawful_by_source": false
+        },
+        {
+          "id": "G01-N2",
+          "answer": "Процесс остановлен",
+          "lawful_by_source": false
+        }
+      ]
+    },
+    {
+      "id": "G02",
+      "source": "Enable the alarm",
+      "source_language": "en",
+      "target_language": "ru",
+      "required_term": "сигнализация",
+      "law_id": "ENABLE_ALARM",
+      "candidates": [
+        {
+          "id": "G02-P1",
+          "answer": "Сигнализация включена",
+          "lawful_by_source": true
+        },
+        {
+          "id": "G02-P2",
+          "answer": "Сигнализация активирована",
+          "lawful_by_source": true
+        },
+        {
+          "id": "G02-N1",
+          "answer": "Сигнализация не включена",
+          "lawful_by_source": false
+        },
+        {
+          "id": "G02-N2",
+          "answer": "Сигнализация отключена",
+          "lawful_by_source": false
+        }
+      ]
+    },
+    {
+      "id": "G03",
+      "source": "Approve the request",
+      "source_language": "en",
+      "target_language": "ru",
+      "required_term": "запрос",
+      "law_id": "APPROVE_REQUEST",
+      "candidates": [
+        {
+          "id": "G03-P1",
+          "answer": "Запрос одобрен",
+          "lawful_by_source": true
+        },
+        {
+          "id": "G03-P2",
+          "answer": "Запрос получил одобрение",
+          "lawful_by_source": true
+        },
+        {
+          "id": "G03-N1",
+          "answer": "Запрос не одобрен",
+          "lawful_by_source": false
+        },
+        {
+          "id": "G03-N2",
+          "answer": "Запрос отклонён",
+          "lawful_by_source": false
+        }
+      ]
+    },
+    {
+      "id": "G04",
+      "source": "Send the invoice",
+      "source_language": "en",
+      "target_language": "ru",
+      "required_term": "счёт",
+      "law_id": "SEND_INVOICE",
+      "candidates": [
+        {
+          "id": "G04-P1",
+          "answer": "Счёт отправлен",
+          "lawful_by_source": true
+        },
+        {
+          "id": "G04-P2",
+          "answer": "Счёт уже отправлен адресату",
+          "lawful_by_source": true
+        },
+        {
+          "id": "G04-N1",
+          "answer": "Счёт не отправлен",
+          "lawful_by_source": false
+        },
+        {
+          "id": "G04-N2",
+          "answer": "Счёт ещё не был отправлен",
+          "lawful_by_source": false
+        }
+      ]
+    }
+  ],
+  "metrics": [
+    "wrong_accepted",
+    "correct_accepted",
+    "abstained",
+    "learned_rule_count",
+    "consumer_path",
+    "time_ms"
+  ],
+  "train_unit_contract": "For each group, one QualityVerifierUnit.TrainOnExample(heldOut:false) teaches expected required_term for the same source's SemanticSignature, WITHOUT passing any of the four candidate answers into training. All 16 candidates are response-holdout only.",
+  "preflight": [
+    "4 required terms present in learned verifier state",
+    "candidate lacking required term triggers Pass=false on that source",
+    "four source signatures and direction recorded",
+    "native source and tokenizer sha verified"
+  ],
+  "seed": "No Student/Teacher/DPO invocation."
+}

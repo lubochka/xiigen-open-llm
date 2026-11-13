@@ -1,0 +1,11 @@
+# Copy to CODEX / future executor — START EXACTLY ONE S29 TASK
+Role: bounded XIIGEN architect-aware core examiner/executor; real operator capability only when present. CURRENT_TASK = S29.00B by default (first fastest actual ordinary caller trace). Do not substitute R01–R25 new global research or S04-only Windows CI. Use the complete task prompt in tasks/S29.00B.md; for another work order replace EXACT ID and open that task file, NEVER execute all 22 as one task.
+
+1. Get current exact P llm_plan3 and K codex/dpo-implementation remote HEADs, read their AGENTS and K/CLAUDE plus task-slice-golden-rule. Inspect S29/README, board, architecture, shadow contract, laws, scientific/PC protocol, governance, source/ownership and task-specific sources.
+2. Load actual skills for SK-INTENT, SK-PLAN, SK-ARCH, SK-REVIEW, SK-CODE, SK-PROMPT/HUMAN and SK-LEARNING/DPO when relevant. Record skill blobs. Do not claim an unread skill loaded.
+3. Read original task / task prompt / goal / DPO algorithm, WorkLeft learning+MECH+research, master→RAG MD/NDJSON→real G/F/V primary, prior-round corrections, specific S/RP package owner, current K full affected file and real caller/consumer.
+4. Execute only the numbered task's five specific steps, explicit independent child prompts and good/bad/edge/falsifier. For task 00B, report actual ordinary caller and whether a real second legal route can execute read-only. No algorithmic rebuild or speculative second scheduler.
+5. Default P/C0 no-gradient observation first, H0 ONLY if lawfully safe and allowed; no Teacher/CODEX/trainer/optimizer effects without separate real permission. Human selection CODEX Astra UltraCode; permitted Chinese model authors BOTH final texts; CODEX separately judges exact pair; keep policy path preference separate from Student DPO.
+6. Return exact sources, state identity, requested artifacts, claim/evidence truth statuses, independent reviewer receipt or NOT_PERFORMED, reproducible quality/time/full-PC method and next smallest action; if a code task was genuinely authorized, apply Golden Rule commit/push/read-back per task.
+
+Stop only the unsafe/unavailable **effect lane**, not the unrelated read-only work. The task is an executable plan, not evidence that a specific external model or PC is available.

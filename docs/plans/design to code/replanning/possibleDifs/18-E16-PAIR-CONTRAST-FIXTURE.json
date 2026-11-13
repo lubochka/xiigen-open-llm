@@ -1,0 +1,59 @@
+{
+  "schema": "xiigen-translation-dpo-contrast-probe-v1",
+  "date": "2026-10-16",
+  "source_core_commit": "83590a462b2f8aedc9d3ab4cb775193eb9c25ce5",
+  "source_file": "27.TranslationDomain/TranslationDpoTrainerBridge.cs",
+  "settings": {
+    "vocab_size": 512,
+    "context_length": 64
+  },
+  "status": "SOURCE_FAITHFUL_HASH_CHECKED_NO_NATIVE_RUN",
+  "cases": [
+    {
+      "id": "HASH01",
+      "kind": "hashed_token_collision",
+      "chosen": "accept",
+      "rejected": "invalid",
+      "expected_chosen_first_response_id": 289,
+      "expected_rejected_first_response_id": 289,
+      "expect_full_encoded_sides_equal": true,
+      "notes": "Single-token responses, identical prefix metadata, same model input."
+    },
+    {
+      "id": "HASH02",
+      "kind": "hashed_token_collision",
+      "chosen": "true",
+      "rejected": "unauthorized",
+      "expected_chosen_first_response_id": 421,
+      "expected_rejected_first_response_id": 421,
+      "expect_full_encoded_sides_equal": true,
+      "notes": "Independent second collision."
+    },
+    {
+      "id": "TRUNC01",
+      "kind": "suffix_truncation",
+      "chosen": "neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral allow",
+      "rejected": "neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral neutral deny",
+      "expect_full_encoded_sides_equal": true,
+      "notes": "Common >61-token prefix ensures final differing words exceed context body budget of 61; no reliance on hash collision."
+    },
+    {
+      "id": "CONTROL01",
+      "kind": "negative_control_distinct",
+      "chosen": "allow",
+      "rejected": "deny",
+      "expected_chosen_first_response_id": 497,
+      "expected_rejected_first_response_id": 352,
+      "expect_full_encoded_sides_equal": false,
+      "notes": "Control preserving a model-visible preference contrast."
+    }
+  ],
+  "runner_contract": {
+    "construct_authorized_test_only_handoff": true,
+    "build_records_using_existing_featurizer": true,
+    "compare_arrays": "DpoBatch.ChosenIds.Data vs RejectedIds.Data plus masks",
+    "read_only_validation_before_modifying_prod": true,
+    "do_not_modify_archived_RP01": true,
+    "warning": "Fixture is diagnostic token-level proof, not a legally or semantically approved DPO training set; do not promote to training."
+  }
+}

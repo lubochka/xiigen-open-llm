@@ -1,0 +1,235 @@
+{
+  "schema": "xiigen-e22-n37-proxy-v1",
+  "provenance": "AUTHOR_SYNTHETIC_FOR_CODE_LOGIC_ONLY_NOT_TRAINING_OR_REAL_SEMANTIC_GOLD",
+  "core_ref": "793d7b755b23aac90445da3ac6661b1bff7e6672",
+  "class": "AgentAlgorithms.PredicateDatasetRouter",
+  "k": 3,
+  "dataset_names": [
+    "Generic",
+    "CSharp",
+    "TypeScript",
+    "BugFix",
+    "Orchestration",
+    "Tests"
+  ],
+  "rows": [
+    {
+      "id": "bugfix_1",
+      "source_family": "csharp-null-method-A",
+      "predicates": [
+        101,
+        105
+      ],
+      "labels": [
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "id": "bugfix_2",
+      "source_family": "csharp-null-method-B",
+      "predicates": [
+        101,
+        106
+      ],
+      "labels": [
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "id": "bugfix_3",
+      "source_family": "csharp-null-method-C",
+      "predicates": [
+        101,
+        107
+      ],
+      "labels": [
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "id": "test_1",
+      "source_family": "csharp-xunit-assert-A",
+      "predicates": [
+        401,
+        402
+      ],
+      "labels": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "id": "test_2",
+      "source_family": "csharp-xunit-assert-B",
+      "predicates": [
+        401,
+        403
+      ],
+      "labels": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "id": "test_3",
+      "source_family": "csharp-xunit-assert-C",
+      "predicates": [
+        401,
+        404
+      ],
+      "labels": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        true
+      ]
+    }
+  ],
+  "queries": {
+    "exact_bugfix": [
+      101,
+      105
+    ],
+    "similar_bugfix": [
+      101,
+      199
+    ],
+    "exact_test": [
+      401,
+      402
+    ],
+    "empty": []
+  },
+  "cases": [
+    {
+      "id": "zero_memory_all_true",
+      "train_ids": [],
+      "query": "exact_bugfix",
+      "assert_original": [
+        "Generic",
+        "CSharp",
+        "TypeScript",
+        "BugFix",
+        "Orchestration",
+        "Tests"
+      ]
+    },
+    {
+      "id": "one_lesson_all_false",
+      "train_ids": [
+        "bugfix_1"
+      ],
+      "query": "exact_bugfix",
+      "assert_original": [],
+      "assert_effective": [
+        "BugFix"
+      ]
+    },
+    {
+      "id": "two_lesson_positive",
+      "train_ids": [
+        "bugfix_1",
+        "bugfix_2"
+      ],
+      "query": "exact_bugfix",
+      "assert_original": [
+        "BugFix"
+      ],
+      "assert_effective": [
+        "BugFix"
+      ]
+    },
+    {
+      "id": "three_lesson_positive",
+      "train_ids": [
+        "bugfix_1",
+        "bugfix_2",
+        "bugfix_3"
+      ],
+      "query": "exact_bugfix",
+      "assert_original": [
+        "BugFix"
+      ],
+      "assert_effective": [
+        "BugFix"
+      ]
+    },
+    {
+      "id": "replacement_incremental",
+      "train_ids": [
+        "test_1"
+      ],
+      "query": "exact_bugfix",
+      "assert_original": [],
+      "note": "Train([]delta) would clear prior bugfix memory; compare cumulative (3 bugfix + test)"
+    },
+    {
+      "id": "replacement_cumulative",
+      "train_ids": [
+        "bugfix_1",
+        "bugfix_2",
+        "bugfix_3",
+        "test_1"
+      ],
+      "query": "exact_bugfix",
+      "assert_original": [
+        "BugFix"
+      ]
+    },
+    {
+      "id": "empty_query_bugfirst",
+      "train_ids": [
+        "bugfix_1",
+        "bugfix_2",
+        "bugfix_3",
+        "test_1",
+        "test_2",
+        "test_3"
+      ],
+      "query": "empty",
+      "assert_original": [
+        "BugFix"
+      ]
+    },
+    {
+      "id": "empty_query_testfirst",
+      "train_ids": [
+        "test_1",
+        "test_2",
+        "test_3",
+        "bugfix_1",
+        "bugfix_2",
+        "bugfix_3"
+      ],
+      "query": "empty",
+      "assert_original": [
+        "Tests"
+      ]
+    }
+  ]
+}

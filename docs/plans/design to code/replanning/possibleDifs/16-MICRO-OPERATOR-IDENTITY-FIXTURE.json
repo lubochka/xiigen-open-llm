@@ -1,0 +1,133 @@
+{
+  "schema": "xiigen.possibleDifs.micro16.operator-identity.v1",
+  "status": "SYNTHETIC_MECHANISM_FIXTURE_ONLY_NOT_EXECUTED",
+  "code_source_sha": "83590a462b2f8aedc9d3ab4cb775193eb9c25ce5",
+  "constraint": "Not canonical DPO pairs; not Chinese-model-authored DPO data; no training-data/dpo publication; independent Student learning not claimed.",
+  "tested_mechanism": "TranslationDomain.ExecutorUnit exact-source learned-memory address collision",
+  "one_factor": "Preserve operator identity in versioned exact-source key at write/read; hold all other mechanisms fixed",
+  "direction": "EN_RU",
+  "source_language": "en",
+  "topic_domain": "code-expressions",
+  "training_units": [
+    {
+      "id": "T-NEQ",
+      "law_id": "NOT_EQUAL",
+      "input": {
+        "sourceText": "Check x != y",
+        "sourceLang": "en",
+        "topicDomain": "code-expressions"
+      },
+      "chosen_unit_output": {
+        "text": "Проверить, что значения не равны.",
+        "confidence": 0.93,
+        "wordMappings": [],
+        "phraseMappings": []
+      },
+      "heldOut": false
+    },
+    {
+      "id": "T-EQ",
+      "law_id": "EQUAL",
+      "input": {
+        "sourceText": "Check x == y",
+        "sourceLang": "en",
+        "topicDomain": "code-expressions"
+      },
+      "chosen_unit_output": {
+        "text": "Проверить, что значения равны.",
+        "confidence": 0.93,
+        "wordMappings": [],
+        "phraseMappings": []
+      },
+      "heldOut": false
+    }
+  ],
+  "training_orders": [
+    [
+      "T-NEQ",
+      "T-EQ"
+    ],
+    [
+      "T-EQ",
+      "T-NEQ"
+    ]
+  ],
+  "arms": [
+    {
+      "name": "A-current",
+      "key_scheme": "legacy NormalizeMapKey",
+      "expected_source_key_for_both_training_rows": "check x y"
+    },
+    {
+      "name": "B-treatment",
+      "key_scheme": "versioned syntax-aware exact memory key; preserve != vs ==",
+      "example_expected_keys": {
+        "T-NEQ": "check x OP_NEQ y",
+        "T-EQ": "check x OP_EQ y"
+      }
+    }
+  ],
+  "evaluation_cases": [
+    {
+      "id": "Q-NEQ",
+      "input": "Check x != y",
+      "law_id": "NOT_EQUAL",
+      "expected_text": "Проверить, что значения не равны.",
+      "panel": "known-law"
+    },
+    {
+      "id": "Q-EQ",
+      "input": "Check x == y",
+      "law_id": "EQUAL",
+      "expected_text": "Проверить, что значения равны.",
+      "panel": "known-law"
+    },
+    {
+      "id": "Q-NEQ-SPACES",
+      "input": "CHECK  x  !=  y",
+      "law_id": "NOT_EQUAL",
+      "expected_text": "Проверить, что значения не равны.",
+      "panel": "known-law-normalization"
+    },
+    {
+      "id": "Q-EQ-SPACES",
+      "input": "CHECK  x  ==  y",
+      "law_id": "EQUAL",
+      "expected_text": "Проверить, что значения равны.",
+      "panel": "known-law-normalization"
+    },
+    {
+      "id": "NEG-CONTROL-UNSEEN",
+      "input": "Check a != b",
+      "law_id": "NOT_EQUAL",
+      "expected_text": null,
+      "panel": "negative-control",
+      "assertion": "No claim of new-family generalization; record actual route, do not score as required correct"
+    }
+  ],
+  "measures": [
+    "matched_semantic_correctness",
+    "wrong_accepted",
+    "exact_source_key_count",
+    "training_order_sensitivity",
+    "ordinary_adapter_id",
+    "raw_output",
+    "post_reload_parity",
+    "cpu_ms",
+    "elapsed_ms",
+    "peak_memory_bytes"
+  ],
+  "forbidden": [
+    "Retrospective gold update",
+    "Claim about Student DPO gain",
+    "Training on frozen C#500/ENRU500",
+    "Production adoption",
+    "Changing KNN/LoRA/verifier between A and B"
+  ],
+  "result": {
+    "status": "NOT_RUN",
+    "native_runtime_receipt": null,
+    "independent_code_review": null,
+    "independent_semantic_grade": null
+  }
+}

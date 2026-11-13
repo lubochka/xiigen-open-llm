@@ -1,0 +1,30 @@
+# 13 — Соседняя ветка language_translate: потерянные морфологические признаки, но НЕ доказанный перенос качества
+**16.10.2026 · independent bounded source audit · status: BRANCH-CODE-CONFIRMED; RP01_CAUSAL_IMPACT_NOT_MEASURED.**
+**Ветки:** current `llm_mvp_core@codex/dpo-implementation` (сверенный source base `83590a462b2f8aedc9d3ab4cb775193eb9c25ce5`), historical `language_translate@f6032aff81f1f83de7c09cf9b9efe6b058dd12b9` (12.05.2026). Ветка историческая, значительно отстает и расходится с current; автоматически переносить ее код запрещено.
+**Отношение к существующим исследованиям:** [03-LoRA/tokenization](03-LORA-TOKENIZATION-VECTOR-SPACE.md), [05-semantic-vector](05-SEMANTIC-VECTOR-KNN.md), [11-cross-branch](11-CROSS-BRANCH-REAL-LEARNING-RESULTS.md), [12-matrix-kNN](12-MATRIX-KNN-TRANSFER-PROVENANCE-AND-EVALUATION.md). Здесь впервые отдельно фиксируется именно **другая ветка `language_translate` и недостающая семантическая координата**. Это дополнительный кандидат, не замена уже найденных причин.
+
+## DIF-13.01 — Исторический морфологический конвейер действительно существовал
+**Непосредственные исходники:**
+- [RussianStemmer.cs](https://github.com/lubochka/llm_mvp_core/blob/language_translate/01.Tokenizer/RussianStemmer.cs#L1-L111): русский stemmer на основе RV/R1/R2, окончания и словоформы.
+- [HebrewRootExtractor.cs](https://github.com/lubochka/llm_mvp_core/blob/language_translate/01.Tokenizer/HebrewRootExtractor.cs#L1-L83): эвристическое выделение корня с удалением niqqud/приставок/суффиксов, не полный словарь.
+- [MorphFamilyIndex.cs](https://github.com/lubochka/llm_mvp_core/blob/language_translate/01.Tokenizer/MorphFamilyIndex.cs#L1-L105): EN/RU/HE root grouping и `GetFamilySize`, `GetFamily`, `GetNormalizedFamilySize`.
+- [MorphDimensionAppender.cs](https://github.com/lubochka/llm_mvp_core/blob/language_translate/06.VectorSearch/MorphDimensionAppender.cs#L1-L60): добавление нормализованного размера морфологической семьи к эмбеддингу.
+В current ветке каталог [01.Tokenizer](https://github.com/lubochka/llm_mvp_core/tree/codex/dpo-implementation/01.Tokenizer) содержит BPE/RegexSplitter, а [06.VectorSearch](https://github.com/lubochka/llm_mvp_core/tree/codex/dpo-implementation/06.VectorSearch) не содержит указанного MorphDimensionAppender. При просмотре прямого diff веток обнаружены именно эти исторические дополнительные файлы. **Это подтверждение исходного функционального расхождения, но НЕ подтверждение того, что RP01 должен был вызывать эти классы, и НЕ измеренная регрессия.**
+
+**Гипотеза H-13A:** при переносе многодоменного (EN/RU/HE) retrieval потеряли morphological equivalence features; current generic [KnnLogicalUnit.Vectorize](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/21.AgentInfrastructure/Logical/KnnLogicalUnit.cs#L265-L301) хеширует частоты BPE/predicates, не содержит морфологической группировки. Для EN→RU ошибок обобщения по падежам и спряжению это правдоподобно, для непосредственно `TextGenerator` RP01 — пока не связано с runtime route.
+
+## DIF-13.02 — Даже historical MorphDimensionAppender хранит РАЗМЕР семьи, не идентичность корня
+В [GetNormalizedFamilySize](https://github.com/lubochka/llm_mvp_core/blob/language_translate/01.Tokenizer/MorphFamilyIndex.cs#L77-L91) значение `familyCount/maxFamilyCount`; в [Append](https://github.com/lubochka/llm_mvp_core/blob/language_translate/06.VectorSearch/MorphDimensionAppender.cs#L15-L34) сохраняется ОДНО вещественное число. Два разных корня с равным числом форм получают **одинаковую добавленную координату**; совпадение размера не означает совпадения root/meaning. 
+**Статус:** CODE_CONFIRMED математическая потеря идентичности; фактическое повреждение retrieval — HYPOTHESIS. 
+**Проба:** две морфологические семьи одинакового размера, одна семья с несколькими формами, одно омонимичное слово; удерживать базовый embedding и cosine неизменными, сравнить (a) без признака, (b) family-size, (c) идентичность/сходство корня как отдельный корректный признак. Не объявлять вариант (b) semantic root embedding.
+
+## DIF-13.03 — Ошибочная эвристика может ухудшить языковой перенос
+RussianStemmer и HebrewRootExtractor — handcrafted, а не trainable learned features. Ивритские приставки и неоднозначный shoresh могут приводить к false-sharing, особенно у омонимов/нерегулярных слов. Рекомендуемый результат проверки **не предрешен**: морфологическое обобщение может помочь RU и ухудшить HE. Проверить лексиконную gold-панель отдельно от query semantic accuracy; не полагаться на частоту семьи как метку истинности.
+
+## Две независимые причинные проверки
+**MORPH-01 / 12–24 новых unseen запросов:** одинаковый смысл в различных падежах/формах, отрицания и числительные, RU→RU/EN→RU/HE; frozen lawful retrieval pool, одинаковые exact source/expected output, варианты (A) current hashed BPE KNN, (B) морфо-подготовка только для KNN, (C) морфо+domain-aware rerank. В каждом случае: hit@k, top1, semantic correctness, false positive, time+memory. **STOP** если эффект есть лишь на train/exact strings.
+**MORPH-02 / branch-level provenance:** установить в каком продукте вызывались `MorphDimensionAppender.AppendBatch` и исходные stemmers, чем был входной словарь, кто создавал индекс и кто вызывал consumer, а также реальные оригинальные run receipts. Если отсутствует call-chain, классифицировать как historical branch prototype, а не потерю уже работающего production механизма.
+
+## Решение/область действия
+Ничего не cherry-pick и не менять `core` без получения paired evidence. Существующие замороженные RP01 пары/экзамены не пересоздавать. CODEX/Astra 6 UltraCode должен в независимом цикле отобрать и оценить **новые** учебные случаи; для DPO chosen+rejected создаёт разрешенная открытая китайская модель. Это исследование морфологии не подтверждает authoring DPO.
+**Ревью:** собственное source-based чтение; independent CODEX/Astra scientific review = NOT_PERFORMED.

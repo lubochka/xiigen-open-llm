@@ -1,0 +1,274 @@
+{
+  "core_sha": "dd150aa5216e42b8a8bba14955337398ec5f8397",
+  "planning_sha": "0ea8f0b0094e234ffe7734adfa95e2a9e53203f5",
+  "file_counts": {
+    "audit/planning/llm mvp/design to code session/replanning/possibleDifs": 886,
+    "audit/core/docs/plans/replanning-possible-diffs": 362
+  },
+  "queries": {
+    "native_sft_backward": {
+      "pattern": "BackwardLoss|exponentialSum",
+      "hits": [
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-candidates-and-causal-gaps/positive-embedding-sft8-candidate.md",
+          "line": 15,
+          "text": "Причинная цепочка: prompt/response IDs → `LlmModel.Forward` → gather embedding → next-token CE → `BackwardLoss` → `TensorOps.AccumulateGrad` таблицы → clipping → `AdamW.Step` → изменённые веса → следующие SFT уроки и собственные ответы генератора. Это не отдельный тест матрицы без ученика. Диагностический backward после восьми updates не вызывает optimizer и не является девятым уроком. [Trainer, строки 102–147][trainer]; [первичный отчёт, строки 26–28][report]"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-training-state-and-experiment-audit/evidence/independent-native-review.md",
+          "line": 19,
+          "text": "- `Program` создаёт native `LlmModel`, применяет `LoraApplicator.ApplySeeded` к q/v, вызывает четыре настоящих `Trainer.TrainSupervisedNextTokenStep` на фиксированных двух строках, а native метод вызывает `BackwardLoss` и `AdamW.Step` только для `RequiresGrad` parameters. Это учебный опыт; не forward-only benchmark и не симуляция Adam в Python."
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/cards/E-SFT-RESPONSE-MASK.md",
+          "line": 89,
+          "text": "В copied TrainingLoop/Trainer.cs добавить TrainSupervisedNextTokenStepMasked(model,optimizer,tokenIds,weight,targetMask), сохранив все original guards/counters/clip/finite/clear из67–147. targetMask length=T−1, значения строго0/1, хотя бы один1. CE — ровно цикл [TensorOps.CrossEntropy1600–1624](C:/Projects/llm_mvp_core/00.TensorCore/Core/TensorOps.cs:1600), прежний порядок float max/logSumExp/target: totalLoss -= logP*mask[position], затем / (T−1) и *weight; не вводить clamp/epsilon или иной reduction. В копии BackwardLoss: прежний coefficient weight/(T−1) умножить на mask[position] в строке421–422; zero rows не удаляются из graph/input. A остаётся исходный метод с одинаковым observer; B вызывает overload. В copied ProductionSupervisedTrainingStepExecutor добавить узкий ExecuteMasked, который передаёт session.Model/Optimizer/Trainer и exact mask; существующий Execute сохраняется. Не использовать reflection и не подменять full-model SFT LoRA toy."
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-18/P11-embedding-bias-01/source-caller-map.md",
+          "line": 12,
+          "text": "| `04.TrainingLoop/Trainer.cs:67–145` | Public TrainSupervisedNextTokenStep выбирает RequiresGrad-параметры, делает model.Forward, BackwardLoss, clip, optimizer.Step. Если embedding оставлен trainable, выбранный разрыв мешает его градиенту; этот полный шаг в пакете не запускался. |"
+        }
+      ]
+    },
+    "precise_repeat_exp": {
+      "pattern": "(?i)(?:повторн\\w*|дважды|трижды|redundant|duplicate|recomput\\w*|cache\\w*|reus\\w*).{0,80}(?:MathF\\.Exp|экспонент\\w*)|(?:MathF\\.Exp|экспонент\\w*).{0,80}(?:повторн\\w*|дважды|трижды|redundant|duplicate|recomput\\w*|cache\\w*|reus\\w*)",
+      "hits": []
+    },
+    "old03_softmax": {
+      "pattern": "(?i)\\b03\\b.{0,90}softmax|softmax.{0,90}\\b03\\b",
+      "hits": [
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/PREPARETOGPL-DPO-LORA-TOKENS-2026-10-18.md",
+          "line": 121,
+          "text": "Exact material допускает prompt из одного token и response из одного token: [ограничения длины L120–124](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/11.DPO/Models/DpoExactPairMaterial.cs#L120-L124). Framing не добавляет separator/BOS: [версия L19–22](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/11.DPO/Models/DpoExactPairMaterial.cs#L19-L22), [раздельное кодирование L64–78](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/11.DPO/Models/DpoExactPairMaterial.cs#L64-L78), [сборка последовательности L171–176](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/11.DPO/Models/DpoExactPairMaterial.cs#L171-L176). Тогда единственный обучаемый target предсказывается из позиции0. В causal attention эта позиция видит только один key; attention weights равны [1,0,…] независимо от Q/K. Производная softmax по score нулевая. Формула именно так реализована: [attention L271–291](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/03.TransformerModel/Layers/CausalSelfAttention.cs#L271-L291), [Softmax backward L852–877](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/00.TensorCore/Core/TensorOps.cs#L852-L877), [DPO next-token shift L1044–1049](https://github.com/lubochka/llm_mvp_core/blob/a392b6be8f8dec1e2375e2eb4fe21c2f6e8950c6/11.DPO/DpoTrainer.cs#L1044-L1049)."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/01-new-findings-and-small-experiments.md",
+          "line": 169,
+          "text": "Весь Markdown-срез possibleDifs — 555 документов из 869 файлов — скачан на planning pin и проверен адресным текстовым поиском; отдельно 156 Markdown защищённых экспериментов вне results на исходном снимке. Затем скачаны все 152 изменённых Markdown поздней f5dd-редакции и повторён адресный поиск новых allocation-механизмов; совпадений не обнаружено. Для LF-02/LF-03 искались expVals, new float[v], BackwardLogProbs, scratch/buffer/softmax, initialGradient, TensorStorage, двойное копирование/clone и связанные resource-формулировки. Общие статьи autograd, numerical instability и N60 padding уже существуют; эти две конкретные причины выделений в них не обнаружены. Это ограниченное заявление о проверенном корпусе, не гарантия абсолютной новизны во всех ветках/неопубликованной работе."
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/47-current-attention-backprop-and-position-contract.md",
+          "line": 34,
+          "text": "| QKᵀ и PV | [Attention:263–291](C:/Projects/llm_mvp_core/03.TransformerModel/Layers/CausalSelfAttention.cs:263) вычисляет `P=softmax(mask(QKᵀ/√D))`, `O=PV`. В [MatMul:593–700](C:/Projects/llm_mvp_core/00.TensorCore/Core/TensorOps.cs:593) attention-операнды имеют одинаковые `B*heads` ведущие матрицы, поэтому `batch % bBatchSize` выбирает соответствующую матрицу без коллизии. Производные соответствуют `dV=PᵀdO`, `dP=dOVᵀ`, `dQ=dSK/√D`, `dK=dSᵀQ/√D`. Это managed TensorOps/SimdOps path, а не доказательство о другом native attention backend. |"
+        }
+      ]
+    },
+    "expVals": {
+      "pattern": "\\bexpVals\\b",
+      "hits": [
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/00-MASTER-SYNTHESIS-AND-CONFLICTS.md",
+          "line": 6,
+          "text": "Добавлена гипотеза LF-03 о двойной initialGradient copy. LF-02 per-target expVals независимо совпала с OCT20-R2 другого исполнителя и сохранена как однопарный вариант этой семьи, без отдельной новизны. Проверена недостижимость marker writer на быстро/тихо в N60-E1; даны малые общие A/B примеры, достигающие нужной ветви без одновременного N57 patch. Улучшения пока не измерены. Полная четырёхстрочная N-KU карточка из core62bcc признаётся допустимой для своего узкого label/vote вопроса; шестистрочный вариант не является условием её запуска."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/06-new-R2-softmax-buffer.md",
+          "line": 1,
+          "text": "# OCT20-R2. Один локальный expVals на backward вместо массива на response-token"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/06-new-R2-softmax-buffer.md",
+          "line": 15,
+          "text": "[BackwardLogProbs:1072–1121](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/11.DPO/DpoTrainer.cs#L1072-L1121) для каждой активной shifted response-position выделяет `new float[v]`, заполняет все v элементов экспонентами, считает сумму и применяет gradient. Ссылка на `expVals` не выходит из итерации; следующая строка снова полностью заполняет все элементы. [StepVector](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/11.DPO/DpoTrainer.cs#L895-L909) вызывает настоящий backward отдельно для chosen и rejected."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/06-new-R2-softmax-buffer.md",
+          "line": 26,
+          "text": "var expVals = new float[v];"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/06-new-R2-softmax-buffer.md",
+          "line": 29,
+          "text": "    // Existing mask check, max, full expVals overwrite, expSum and gradient."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/01-learning-path-and-mechanism-map.md",
+          "line": 37,
+          "text": "| **Стоимость настоящего шага** | Новый R1: per-float LINQ bit comparison в повторяющемся guard. Новый R2: allocation expVals внутри token-loop backward. Общий N03: учёт двух плеч в finite host, также описанный параллельным пакетом61 | [R1](05-new-R1-frozen-base-comparison.md), [R2](06-new-R2-softmax-buffer.md), [N03](04-small-neural-learning-contract.md). Влияние на стоимость пока гипотеза; никаких standalone array/softmax benchmarks вместо StepVector |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/10-concurrent-planning-update.md",
+          "line": 23,
+          "text": "По всем 24 дополнительным Markdown повторены те же точные запросы новизны и прочитаны конкретные близкие факторы. Для R1 (`SingleToInt32Bits`/byte spans/full comparison) и R2 (`expVals`/локальный backward buffer) совпадений по четырём шаблонам — **0**. Для issuedPath найдено **5** совпадений; смысловая сверка подтверждает общий N03. [Поиск по дельте](evidence/concurrent-novelty-search.json)."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/08-sources-novelty-and-study-log.md",
+          "line": 36,
+          "text": "| R2 | `expVals`, softmax+allocation/buffer, `BackwardLogProbs`+buffer, `ArrayPool` | Точных совпадений 0. Новое — срок жизни scratch на реальном backward, не общее «экономить RAM» |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/03-experiment-coverage-review.md",
+          "line": 107,
+          "text": "2. `BackwardLogProbs`: expVals полностью переписывается перед чтением. Один local buffer на вызов выделяется после cnt<=0 return и перед token-loop; арифметический порядок, masks/scales сохраняются, static/pooling/общий chosen-rejected buffer не вводятся. Измеряются allocations/GC/CPU полного actual update и численное действие тех же шагов. [Источник](https://github.com/lubochka/llm_mvp_core/blob/de4ef0f14172dada4daf142a4c66ba19e96bb6d4/11.DPO/DpoTrainer.cs#L1071-L1119)."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/63-LEARNING-RESULTS-AND-EXPERIMENT-READBACK-2026-10-20/02-CURRENT-NEURAL-LEARNING.md",
+          "line": 15,
+          "text": "Прочитаны текущие карточки `N62-neural-update-costs` (R1/R2/E-OPT-STEP/LF-03), `N61-dpo-reference-reuse`, `NEURAL-FROZEN-TRANSPOSE-01`, `RMS-COORD-ALLOC-01`, соседние N-HEAD/GRADB объяснения. Не предлагаются повторно: перенос сравнения frozen base на spans, expVals scratch, копия initialGradient, metadata optimizer step вместо экспорта моментов, кэш reference logprobs, кеш транспонированных frozen matrices, устранение координатных массивов RMS, selected LM-head rows, обрезка PAD."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-evidence-827a1acd/CANDIDATES.md",
+          "line": 23,
+          "text": "Предлагаемый адрес: `11.DPO/DpoTrainer.cs::BackwardLogProbs`; один локальный expVals на вызов вместо массива на каждую активную позицию. Chosen/rejected сохраняют разные массивы. На двух DPO updates allocations −312 328 байт (−0,008296%); peak +30 474 240 байт и GC0/1/2 +1 — ухудшения. Recorded state/metrics равны; историческая точная B-binary custody неполна. Расчёт 322 048 payload bytes не совпадает с общей измеренной дельтой, разница 9 720 не объяснена. Кандидат успешен по allocations с этой границей доказательств; повтор не назначен."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/62-LEARNING-METRICS-AND-REFERENCE-COST-AUDIT-2026-10-20/05-CONCURRENT-PUBLICATION-AND-EXPERIMENT-COPIES.md",
+          "line": 65,
+          "text": "Две новые карточки прочитаны полностью: [OCT20-R1 — побитовое сравнение frozen base](https://github.com/lubochka/xiigen-planning/blob/c38a2a84516c698056b6912d2933b22cd69281d4/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/05-new-R1-frozen-base-comparison.md) и [OCT20-R2 — локальный expVals на backward](https://github.com/lubochka/xiigen-planning/blob/c38a2a84516c698056b6912d2933b22cd69281d4/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/06-new-R2-softmax-buffer.md). R1 меняет реализацию того же полного bitwise comparison, сохраняя все вызовы guard; R2 меняет срок жизни scratch buffer при том же порядке softmax/gradient. Это другие факторы, чем E-OPT-STEP: наш опыт убирает только portable m/v materialization ради validated номера шага, сохраняя сравнение base и backward buffer прежними. Находки R1/R2 атрибутируются их авторам, не включаются в число новых находок пакета62 и не добавляются одновременно в B."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-evidence-and-next-experiments/07-core669-status-and-results.md",
+          "line": 19,
+          "text": "| GRAD / FROZEN | Два новых точных source фактора | Оба Tensor-файла byte-identical на883/669. R2 меняет expVals в другом методе, новизну этих факторов не поглощает |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-training-delta-669477/02-measured-candidates.md",
+          "line": 70,
+          "text": "Первичные [A][r2-a]/[B][r2-b] содержат `COMPLETED`, issued2/completed2, end16: 12: 13 Z и 16: 13: 01 Z. Поэтому это пятый завершённый опыт, а не очередной future wrapper. Фактор — локально переиспользовать `expVals` внутри `DpoTrainer.BackwardLogProbs`, сохранив арифметику и учебную цепочку. [Отчёт][r2-report]."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-training-state-and-experiment-audit/06-CONCURRENT-UPDATES.md",
+          "line": 17,
+          "text": "| [LF-02][lf-new] — expVals softmax buffer | Сам автор указал точное совпадение с OCT20-R2. Это одна гипотеза, не два открытия |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-training-state-and-experiment-audit/06-CONCURRENT-UPDATES.md",
+          "line": 51,
+          "text": "| [OCT20-R2](https://github.com/lubochka/xiigen-planning/blob/64aa3c75e378ddf32af517ab139f17dea1f0ed15/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/06-new-R2-softmax-buffer.md) | Срок жизни `expVals` в `BackwardLogProbs` | Другой buffer/операция, не BPE chunks и не Linear transpose |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/61-LEARNING-UNBLOCK-AND-EXPERIMENT-AUDIT-2026-10-20/12-CONCURRENT-UPDATES-AND-NOVELTY.md",
+          "line": 64,
+          "text": "| [R2: softmax buffer](https://github.com/lubochka/xiigen-planning/blob/c38a2a84516c698056b6912d2933b22cd69281d4/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/06-new-R2-softmax-buffer.md) | Один локальный `expVals` на backward вместо нового массива внутри token-loop | Отличается от проекции selected hidden rows и PAD. Сохраняются арифметика, порядок reductions, маски и backward |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/07-late-revision-audit.md",
+          "line": 38,
+          "text": "| LF-02: expVals allocation внутри каждого target backward | Точный механизм не найден ни в исходных 156, ни в 152 поздних документах; generic PAD/numerical темы не тот же фактор | Карточка и prompt подготовлены в 01; protected не менялся |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/07-late-revision-audit.md",
+          "line": 68,
+          "text": "На planning fb9aadf6 точный E1 быстро/тихо путь, expVals и двойная initialGradient copy в этих двух пакетах не обнаружены. Этот результат поиска относится только к указанному срезу; следующая дельта ниже отменяет отдельную новизну LF-02."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/07-late-revision-audit.md",
+          "line": 76,
+          "text": "| [OCT20-R2: local expVals](https://github.com/lubochka/xiigen-planning/blob/64aa3c75e378ddf32af517ab139f17dea1f0ed15/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-update-effect-audit/06-new-R2-softmax-buffer.md) | Точное совпадение LF-02: тот же allocation move после cnt<=0, тот же full overwrite и порядок арифметики. Однопарный LF-02 — вариант этой семьи, не отдельное открытие и не обязательный повтор R2 |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/07-late-revision-audit.md",
+          "line": 90,
+          "text": "- [N61 reference reuse](https://github.com/lubochka/llm_mvp_core/blob/7c57183670ccaf554a47c0a4f44cabadde8c303d/docs/plans/replanning-possible-diffs/experimets/cards/N61-dpo-reference-reuse.md) и [N61 Mode1 retention/identity](https://github.com/lubochka/llm_mvp_core/blob/7c57183670ccaf554a47c0a4f44cabadde8c303d/docs/plans/replanning-possible-diffs/experimets/cards/N61-mode1-retention-and-identity.md) теперь явно присутствуют в protected. Эти находки других авторов больше нельзя описывать как существующие только в planning. Они не закрывают expVals-loop allocation или Tensor initialGradient copy."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/README.md",
+          "line": 11,
+          "text": "| LF-02 | BackwardLogProbs создаёт expVals на каждой target-позиции. Один локальный полностью перезаписываемый buffer может уменьшить allocations настоящего update | Точное совпадение с параллельной OCT20-R2. Здесь более короткий вариант: один C# source pair и один update/arm. Это одна семья; обязательный повтор не назначается |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/01-new-findings-and-small-experiments.md",
+          "line": 75,
+          "text": "Пусть N — число фактически скорируемых target-позиций, V — vocab. При N>0 массивы expVals дают 4NV байт payload выделений в A и 4V в B, то есть ожидаемую разницу 4V(N−1), без заголовков массивов. Это **анализ структуры выделений**, не measured RAM или время. Текущая пиковая живая память не обязана расти как NV: старые массивы может освобождать GC. При N=1 выгоды этого изменения не ожидается."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/01-new-findings-and-small-experiments.md",
+          "line": 79,
+          "text": "- **A/B:** исходный код и только локальное переиспользование expVals."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/01-new-findings-and-small-experiments.md",
+          "line": 90,
+          "text": "**Промпт исполнителю:** «Подготовь, а при разрешённом исполнении проведи только LF-02 на настоящем DpoTrainer: один local expVals buffer per BackwardLogProbs, одна фиксированная C# пара и один update на плечо из одинакового полного B0. Сохрани existing admission, exact masks, R0, keyed LoRA recipient и replay history. Нужен отдельный experimental host с настоящим copied learner, без вызова calibrate/main. Сравни allocated bytes и время на одинаковых границах реального update, также numerical state до/после. Generate не обязателен для этого training-resource опыта. Любой измеренный полезный выигрыш — успех по показателю и домену без обязательного роста accuracy, все регрессии рядом. Работай на точной экспериментальной копии; основной код и продуктовые тесты не меняй; передай результаты и кандидат переноса без продуктового цикла. Не выдавай теоретическое число байт за замер и не расширяй опыт автоматически»."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/01-new-findings-and-small-experiments.md",
+          "line": 169,
+          "text": "Весь Markdown-срез possibleDifs — 555 документов из 869 файлов — скачан на planning pin и проверен адресным текстовым поиском; отдельно 156 Markdown защищённых экспериментов вне results на исходном снимке. Затем скачаны все 152 изменённых Markdown поздней f5dd-редакции и повторён адресный поиск новых allocation-механизмов; совпадений не обнаружено. Для LF-02/LF-03 искались expVals, new float[v], BackwardLogProbs, scratch/buffer/softmax, initialGradient, TensorStorage, двойное копирование/clone и связанные resource-формулировки. Общие статьи autograd, numerical instability и N60 padding уже существуют; эти две конкретные причины выделений в них не обнаружены. Это ограниченное заявление о проверенном корпусе, не гарантия абсолютной новизны во всех ветках/неопубликованной работе."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-evidence-and-next-experiments/learning/learning-evidence.md",
+          "line": 26,
+          "text": "Также не объявляются новыми: AdamW scale cancellation/возраст параметра/переполнение второго момента; LoRA A-scale/gauge; DPO padding; scratch `expVals`; initial-gradient copy LF-03; frozen Linear transpose; перестановка циклов `gradB`; потеря response masks или недостижимый исторический autograd. Эти темы уже присутствуют в existing possibleDifs и/или protected-карточках. Текущий source сохраняет live LoRA, `(oneHot-softmax)` и вызов `logits.Backward`; старый исторический обрыв не является желательным алгоритмом."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-evidence-and-next-experiments/experiments/EXECUTION-CONFLICT-OVERLAY.md",
+          "line": 16,
+          "text": "Исходная карточка: [N62-neural-update-costs.md, раздел R2](https://github.com/lubochka/llm_mvp_core/blob/883496bca18113bf37e0afe683c75b05a0075048/docs/plans/replanning-possible-diffs/experimets/cards/N62-neural-update-costs.md#L285-L297). Это один фактор: выделять один локальный `expVals` на вызов `DpoTrainer.BackwardLogProbs` после `cnt`-guard вместо нового массива на каждой активной target-позиции. Полная перезапись массива, арифметический порядок, masks, scale, знак и `logits.Backward` сохраняются; chosen/rejected не делят один mutable buffer. Исходный файл для будущего переноса — `11.DPO/DpoTrainer.cs`; production сейчас не меняется."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-evidence-and-next-experiments/experiments/CURRENT669-N62-R2-READBACK.md",
+          "line": 39,
+          "text": "В [required-changes.md][candidate] уже есть **N62-R2**: один локальный `expVals` на вызов `DpoTrainer.BackwardLogProbs` после cnt-guard, отдельный для chosen/rejected, с полной перезаписью элементов. Там записаны −312 328 allocations, peak/GC ухудшения, отсутствие TRAIN quality и неполная binary custody. Это кандидат решения пользователя; повторный опыт, второй кандидат с новым ID и production-перенос этим дополнением не назначаются. Protected-кандидат не редактировался."
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/reviews/independent-source-review.md",
+          "line": 7,
+          "text": "## 1. LF-02: per-target expVals — правка соответствует коду"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/reviews/final-core-delta-review.md",
+          "line": 152,
+          "text": "| DpoTrainer.BackwardLogProbs: `expVals = new float[v]` внутри target-loop; один scratch per invocation | N61 cache переиспользует **готовые reference scores** в StepVectorCore при повторных updates; policy forward/backward намеренно сохраняет. Это другой расчёт и другое изменение | Точного expVals-содержания/исправления нет; reference-cache не закрывает эту причину |"
+        },
+        {
+          "path": "audit/planning/llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/reviews/final-core-delta-review.md",
+          "line": 156,
+          "text": "Поиск по обеим новым card не нашёл `expVals`, `BackwardLogProbs`, `initialGradient`, `TensorStorage`, `ToArray`, `N60-E1`, `NO_DISTINCT_NEGATIVE`. Слово «быстро» в Mode1 встречается лишь в исходной общей просьбе. Проверка смысла фактора подтверждает, что это не пропущенные синонимы нашей причины. Это **ограниченный novelty join двух новых карточек**, не глобальное доказательство отсутствия любых прежних идей."
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/required-changes.md",
+          "line": 100,
+          "text": "**Правка:** DpoTrainer.BackwardLogProbs — один локальный expVals на вызов, отдельный chosen/rejected, после cnt guard; прежняя полная перезапись элементов."
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/N62-R2-01/report.md",
+          "line": 9,
+          "text": "Один фактор. Исходный метод — `DpoTrainer.BackwardLogProbs` в `11.DPO/DpoTrainer.cs` (строки 1072–1121 при ref `62bcc8f`). В исходном коде `var expVals = new float[v]` стоит внутри цикла по позициям, то есть новый массив создаётся на каждой активной целевой позиции."
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/N62-R2-01/report.md",
+          "line": 73,
+          "text": "**Привязка источника:** в study.json armTrainerASha256 и armTrainerBSha256 одинаковы: 09d03fc1…; они вычислены до отдельной правки B. В source-manifest B записан placeholder APPLIED_AFTER_FACTOR_EDIT. Статический readback фактических A/B текстов нашёл единственную нужную перестановку expVals (B SHA01824714…); props/build/run chain разделяет Variant и outputs. Это подтверждает текущую текстовую схему, но не восстанавливает hash точного исторического B binary. Raw/manifests не переписаны, binary не загружались, повтор не назначен. История обрыва внешнего скрипта и последующего Run-Arms в разделе выше остаётся report-level: имеющихся журналов недостаточно для полного доказательства границы попыток. [Подробное evidence](../../../../2026-10-20-learning-results-new-gaps-evidence.md)."
+        },
+        {
+          "path": "audit/core/docs/plans/replanning-possible-diffs/experimets/results/2026-10-20/N62-R2-01/report.md",
+          "line": 75,
+          "text": "Кандидат: DpoTrainer.BackwardLogProbs — один expVals на вызов, отдельный chosen/rejected. Производительность и универсальная эквивалентность не доказаны; binary custody неполна. Product не менялся; перенос решает пользователь."
+        }
+      ]
+    }
+  },
+  "planning_delta_check": {
+    "commit": "2d1741261e9e17c0e4dec94a480b5711f5ad47d3",
+    "markdown_files": 28,
+    "queries": {
+      "native_sft_backward": {
+        "pattern": "BackwardLoss|exponentialSum",
+        "hits": []
+      },
+      "precise_repeat_exp": {
+        "pattern": "(?i)(?:повторн\\w*|дважды|трижды|redundant|duplicate|recomput\\w*|cache\\w*|reus\\w*).{0,80}(?:MathF\\.Exp|экспонент\\w*)|(?:MathF\\.Exp|экспонент\\w*).{0,80}(?:повторн\\w*|дважды|трижды|redundant|duplicate|recomput\\w*|cache\\w*|reus\\w*)",
+        "hits": []
+      },
+      "old03_softmax": {
+        "pattern": "(?i)\\b03\\b.{0,90}softmax|softmax.{0,90}\\b03\\b",
+        "hits": [
+          {
+            "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-evidence-dd150aa/neural/05-NEURAL-DEDUP-AND-COVERAGE.md",
+            "line": 20,
+            "text": "| Tensor copies/gradient allocations/MatMul locality | Double backward copy уже LF-03; AccumulateGrad copy, GRADB locality, RMS/Softmax/RoPE costs присутствуют в предыдущих audits. [LF audit](https://github.com/lubochka/xiigen-planning/blob/0ea8f0b0094e234ffe7734adfa95e2a9e53203f5/llm%20mvp/design%20to%20code%20session/replanning/possibleDifs/2026-10-20-learning-signal-and-cost-audit/01-new-findings-and-small-experiments.md). | Не выдавать повтор resource-factor за новый. Положительные старые resource metrics сохраняются. |"
+          }
+        ]
+      },
+      "expVals": {
+        "pattern": "\\bexpVals\\b",
+        "hits": []
+      }
+    },
+    "conclusion": "No precise SFT repeated-Exp reuse candidate found; other package A1/A2 preserved."
+  },
+  "corpus_total_after_deltas": 1281
+}

@@ -1,0 +1,261 @@
+{
+  "schema": "N37-TYPED-UNIT-DOMAIN-FIXTURE-v1",
+  "status": "DESIGN_ONLY_NOT_NATIVE_EXECUTED",
+  "boundary": "Illustrative legal source-disjoint domain-law cases. Actual harness must pin corpus identity, check real source families and report selected neighbors.",
+  "unit_contract": {
+    "input": "string",
+    "output": "Dictionary<string,string> mutable",
+    "k": 1,
+    "vectorDimensions": 64,
+    "confidenceFloor": 0
+  },
+  "train": [
+    {
+      "domain": "CSharp",
+      "id": "csharp-train-null",
+      "family": "reference-nullability",
+      "source": "A nullable string is dereferenced by s.Length without a guard.",
+      "output": {
+        "law": "Check s for null before using Length",
+        "severity": "critical"
+      },
+      "predicates": [
+        "CSharp.NULLABLE_DEREFERENCE"
+      ]
+    },
+    {
+      "domain": "CSharp",
+      "id": "csharp-train-dict",
+      "family": "dictionary-missing-key",
+      "source": "Indexing dictionary with a key that may not exist.",
+      "output": {
+        "law": "Use TryGetValue or guard ContainsKey before lookup",
+        "severity": "major"
+      },
+      "predicates": [
+        "CSharp.DICT_LOOKUP"
+      ]
+    },
+    {
+      "domain": "CSharp",
+      "id": "csharp-train-cancel",
+      "family": "cooperative-cancellation",
+      "source": "Long-running cancellation-aware C# task ignores CancellationToken.",
+      "output": {
+        "law": "Propagate and observe CancellationToken in the operation",
+        "severity": "major"
+      },
+      "predicates": [
+        "CSharp.CANCELLATION"
+      ]
+    },
+    {
+      "domain": "CSharp",
+      "id": "csharp-train-resource",
+      "family": "disposable-resource",
+      "source": "A FileStream is opened and never disposed.",
+      "output": {
+        "law": "Dispose FileStream with using or await using",
+        "severity": "major"
+      },
+      "predicates": [
+        "CSharp.DISPOSAL"
+      ]
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-train-null",
+      "family": "sql-three-valued-logic",
+      "source": "A query filters col = NULL in WHERE.",
+      "output": {
+        "law": "Use IS NULL rather than = NULL",
+        "severity": "critical"
+      },
+      "predicates": [
+        "SQL.NULL_PREDICATE"
+      ]
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-train-left",
+      "family": "outer-join-filters",
+      "source": "LEFT JOIN orders o then WHERE o.status = 'paid' removes unmatched customers.",
+      "output": {
+        "law": "Place right-side filter in JOIN ON when unmatched left rows must survive",
+        "severity": "critical"
+      },
+      "predicates": [
+        "SQL.LEFT_JOIN_FILTER"
+      ]
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-train-group",
+      "family": "aggregate-post-filter",
+      "source": "Aggregate COUNT(*) is filtered in WHERE.",
+      "output": {
+        "law": "Use HAVING for filters on aggregate results",
+        "severity": "major"
+      },
+      "predicates": [
+        "SQL.AGGREGATE_FILTER"
+      ]
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-train-param",
+      "family": "sql-injection",
+      "source": "Application builds SQL query by concatenating untrusted user input.",
+      "output": {
+        "law": "Use bound SQL parameters rather than string concatenation",
+        "severity": "critical"
+      },
+      "predicates": [
+        "SQL.PARAMETERS"
+      ]
+    }
+  ],
+  "heldout": [
+    {
+      "domain": "CSharp",
+      "id": "csharp-test-01",
+      "sourceFamily": "nullable-output-property",
+      "text": "A method returns string? name; someone accesses name.Length. State the governing C# law.",
+      "expectedLawKey": "csharp-train-null"
+    },
+    {
+      "domain": "CSharp",
+      "id": "csharp-test-02",
+      "sourceFamily": "nullable-chain-callback",
+      "text": "Result from nullable service lookup is used as .Length in a callback. What is needed?",
+      "expectedLawKey": "csharp-train-null"
+    },
+    {
+      "domain": "CSharp",
+      "id": "csharp-test-03",
+      "sourceFamily": "dictionary-parser-index",
+      "text": "Parsing dictionary may omit requested field but code directly indexes it. Suggest defensive handling.",
+      "expectedLawKey": "csharp-train-dict"
+    },
+    {
+      "domain": "CSharp",
+      "id": "csharp-test-04",
+      "sourceFamily": "cache-key-read",
+      "text": "A cache read by unknown key may throw; what safe C# API pattern should be applied?",
+      "expectedLawKey": "csharp-train-dict"
+    },
+    {
+      "domain": "CSharp",
+      "id": "csharp-test-05",
+      "sourceFamily": "async-retry-cancellation",
+      "text": "Background retry loop takes a cancellation token but never checks it.",
+      "expectedLawKey": "csharp-train-cancel"
+    },
+    {
+      "domain": "CSharp",
+      "id": "csharp-test-06",
+      "sourceFamily": "http-wrapper-cancellation",
+      "text": "An async HTTP wrapper accepts CancellationToken but fails to forward it.",
+      "expectedLawKey": "csharp-train-cancel"
+    },
+    {
+      "domain": "CSharp",
+      "id": "csharp-test-07",
+      "sourceFamily": "stream-file-read",
+      "text": "A file stream is left open after a document import.",
+      "expectedLawKey": "csharp-train-resource"
+    },
+    {
+      "domain": "CSharp",
+      "id": "csharp-test-08",
+      "sourceFamily": "resource-early-return",
+      "text": "A stream resource leaks when a method returns early.",
+      "expectedLawKey": "csharp-train-resource"
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-test-01",
+      "sourceFamily": "nullable-account-id",
+      "text": "Find records with missing account_id in a SQL table.",
+      "expectedLawKey": "sql-train-null"
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-test-02",
+      "sourceFamily": "null-timestamp-filter",
+      "text": "A query uses `deleted_at = NULL` to find undeleted rows.",
+      "expectedLawKey": "sql-train-null"
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-test-03",
+      "sourceFamily": "left-join-payment-status",
+      "text": "Report all customers, even those with no paid payments; how should right-side status be filtered?",
+      "expectedLawKey": "sql-train-left"
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-test-04",
+      "sourceFamily": "left-join-language-filter",
+      "text": "LEFT JOIN translations, preserve items with no translation while filtering right-side language.",
+      "expectedLawKey": "sql-train-left"
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-test-05",
+      "sourceFamily": "count-violations",
+      "text": "Show departments with COUNT(*) above five.",
+      "expectedLawKey": "sql-train-group"
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-test-06",
+      "sourceFamily": "average-threshold",
+      "text": "Find categories whose AVG(price) exceeds a threshold.",
+      "expectedLawKey": "sql-train-group"
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-test-07",
+      "sourceFamily": "client-id-input",
+      "text": "C# app uses a user-supplied id inside SQL string concatenation.",
+      "expectedLawKey": "sql-train-param"
+    },
+    {
+      "domain": "SQL",
+      "id": "sql-test-08",
+      "sourceFamily": "dynamic-search-input",
+      "text": "SQL search fragment includes unescaped input supplied by a web form.",
+      "expectedLawKey": "sql-train-param"
+    }
+  ],
+  "mutations": [
+    {
+      "kind": "caller-aliased-output",
+      "exampleId": "csharp-train-null",
+      "property": "law",
+      "newValue": "Do not check null before accessing Length",
+      "expectedUnitStateChangeWithoutTrain": false
+    },
+    {
+      "kind": "consumer-aliased-output",
+      "exampleId": "sql-train-null",
+      "property": "law",
+      "newValue": "Use = NULL as equality predicate",
+      "expectedUnitStateChangeWithoutTrain": false
+    },
+    {
+      "kind": "caller-aliased-predicate-metadata",
+      "exampleId": "sql-train-left",
+      "index": 0,
+      "newValue": "SQL.INNER_JOIN_ONLY",
+      "expectedUnitStateChangeWithoutTrain": false
+    }
+  ],
+  "negativeControls": [
+    "string output",
+    "immutable DTO",
+    "no mutation",
+    "new actual lesson via explicit Train"
+  ]
+}

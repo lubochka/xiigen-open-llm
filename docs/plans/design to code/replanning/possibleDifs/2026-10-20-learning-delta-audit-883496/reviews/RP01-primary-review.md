@@ -1,0 +1,40 @@
+# RP01: независимое чтение сохранённых первичных результатов
+
+Дата: 20 октября 2026. Проверяющий: `/root/neural_audit`. Исторический ref по происхождению полученных файлов: `83590a462b2f8aedc9d3ab4cb775193eb9c25ce5`. Прочитаны [C# scientific-result](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/.kiro/xiigen-slices/work/results/RP01-simulation-main500-execution-20261015/scientific-result.json), [EN→RU scientific-result](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/.kiro/xiigen-slices/work/results/RP01-enru-continuation-20261016/runtime-20261016-01/analysis-20261016-01/scientific-result.json) и [native experiment source](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/14.ContinuousLearning/Training/CodeDocumentationSimulationDpoExperiment.cs). Новых запусков, model calls, загрузок checkpoint в модель или изменений protected нет.
+
+**Вывод: числа root подтверждаются этими первичными сохранёнными сводками.** В обоих предметных профилях есть небольшой положительный сдвиг preference margin при настоящих обновлениях16 LoRA-тензоров. Его следует сохранить как ограниченный положительный результат по вероятностной оси. При этом новые собственные правильные ответы не появились; состояние simulation не было принято в продукт. Называть эти записи только POINTER после чтения JSON уже недостаточно: доступны сами сохранённые итоги, хотя все лежащие под ними raw и байтовые доказательства заново не реконструированы.
+
+## Точные поля JSON
+
+Все JSON paths ниже относятся к корню указанного файла. «↑/↓» — записанные counts направлений сдвига, не дополнительно запущенный scorer.
+
+| Проверка | C# | EN→RU | JSON paths |
+|---|---|---|---|
+| Учебный объём | 500 unique pairs;500 presentations;50 updates | 500 pairs;500 completed unique IDs;50 новых updates;global step100 | C#: `$.train.uniquePairs`, `.pairPresentations`, `.completedUpdates`; ENRU: `$.training.pairs`, `.uniqueCompletedIds`, `.newUpdates`, `.globalStep` |
+| Средний preference margin до→после | 0.03733304977416992 →0.03856058120727539 | 0.012293052673339844 →0.012403059005737304 | C#: `$.preference.C0MeanNormalizedMargin`, `.TMeanNormalizedMargin`; ENRU: `$.preference.meanC0`, `.meanTreatment` |
+| Записанный средний парный сдвиг | +0.0012275314331054651 | +0.00011000633239746093 | C#: `$.preference.deltaMeanNormalizedMargin`; ENRU: `$.preference.pairedMeanDelta` |
+| Направления по отдельным случаям | 14↑,11↓,0ties из25 | 11↑,9↓,0ties из20 | C#: `$.preference.perCaseMarginIncreases`, `.perCaseMarginDecreases`, `.perCaseMarginTies`, `.cases`; ENRU: `$.preference.increased`, `.decreased`, `.tied`, `.cases` |
+| Chosen выше rejected | 16/25 до и после;0 новых,0 потерянных | 12/20 до и после;0 новых,0 потерянных | C#: `$.preference.C0ChosenPreferredCount`, `.TChosenPreferredCount`, `.newChosenPreferredCases`, `.lostChosenPreferredCases`; ENRU: `$.preference.chosenPreferredC0`, `.chosenPreferredTreatment`, `.newPositive`, `.lostPositive` |
+| Собственные правильные ответы | 0/3→0/3; missing/invalid3→3;все3 пары bytes идентичны | 0/4→0/4; invalid4→4 | C#: `$.freeAnswers.C0Correct`, `.TCorrect`, `.casesPerArm`, `.C0MissingOrInvalid`, `.TMissingOrInvalid`, `.casesWithIdenticalC0AndTBytes`; ENRU: `$.semantic.C0.fullyCorrect`, `$.semantic.T.fullyCorrect`, `$.semantic.C0.invalid`, `$.semantic.T.invalid` |
+| Изменение параметров | 16/16 allowed adapters изменились;0/39 base | 16 LoRA tensors changed finite;39 base unchanged | C#: `$.train.allowedAdapterTensorCount`, `.changedAllowedAdapterTensors`, `.baseTensorCount`, `.changedBaseTensors`; ENRU: `$.training.loraTensorsChangedFinite`, `.baseTensorsUnchanged` |
+| Проверка сохранённого состояния в исходном опыте | `savedWeightsOptimizerAndRngReopened=true` | `fullStateReopenedAndEqualLive=true`; отдельный frozen C50 reference unchanged | C#: `$.train.savedWeightsOptimizerAndRngReopened`; ENRU: `$.training.fullStateReopenedAndEqualLive`, `.separateFrozenC50ReferenceUnchanged` |
+
+C# сумма14+11+0=25, ENRU11+9+0=20. C# разность опубликованных means совпадает с записанной delta. Для ENRU разность округлённых JSON means и записанная pairedMeanDelta расходятся примерно на1.38×10⁻¹⁸; это не основание исправлять сохранённый парный результат или объявлять измеримое противоречие. На уровне показанных значимых цифр вывод одинаков.
+
+## Native связь с обучением и восстановлением
+
+В `CodeDocumentationSimulationDpoExperiment.cs:175–189` один finite epoch выбирает minibatch, вызывает `trainer.StepVector(selected, step, timing)` и только после возвращения увеличивает completed/presentations/unique IDs. Строки224–229 ограничивают ENRU batch10 и50 новых updates; строки165–171 восстанавливают continuation с исходного step50. Таким образом global100 в ENRU не означает100 новых updates этой фазы.
+
+Строки193–207 открывают actual full checkpoint, проверяют topology, загружают его в fresh model, читают optimizer и RNG, восстанавливают RNG и сверяют fresh/live weights, optimizer bytes/step, frozen reference и base. Строки208–220 фиксируют private candidate без adoption. Это source-level подтверждение настоящего writer→saved state→readback пути; оно не заменяет повторное чтение каждого исторического checkpoint/sidecar, которое сейчас не выполнялось. Сам source требует ненулевого изменения хотя бы одного адаптера; число16 берётся из результатов, а не выводится из этого guard.
+
+## Необходимые границы вывода
+
+- **C# preference — близкий перенос между экземплярами шаблонов.** `$.preference.scope` прямо говорит о новых instances тех же parameterized templates; независимое число semantic families не установлено. `$.preference.statisticalSignificanceEstablished=false`. Положительная средняя delta не скрывает11 ухудшившихся случаев.
+- **ENRU положительный margin не равен качественному переводу.** `$.preference.qualityMeaning` отделяет его от semantic improvement. Число выбранных правильных сторон не выросло, собственные ответы остаются invalid4/4. Положительная delta и9 ухудшений показываются одновременно.
+- **C# retention после ENRU — 0/3→0/3, а не сохранённый полезный навык.** `$.retention.correctBefore`, `.correctAfterReusingFrozenGrade`, `.denominator`; `invalidBefore=invalidAfter=3`, `allDecodedUtf8Equal=true`. Старые frozen grades повторно использованы из-за идентичных bytes; новых baseline generations не было: `$.callAccounting.newCsharpBaselineGenerationCalls=0`. Это не доказательство удержания первоначально освоенного умения.
+- **Неразборчивые ответы не дают доказанного отсутствия смысловых ошибок.** C# `$.freeAnswers.interpretation` и ENRU `$.criticalContradictions` прямо запрещают считать отсутствие назначенных critical errors правильностью.
+- **Simulation и непринятие в продукт сохраняются.** В обоих `$.provenance="simulation"`; C# `$.candidateDisposition="RESEARCH_ONLY_NOT_ADOPTED"`, `$.productionAdoptionPerformed=false`; ENRU `$.adoption="RESEARCH_ONLY_NOT_ADOPTED"`. В обоих `$.wholeRP01Complete=false`. Это не завершение всего RP01 и не production approval.
+- **Не установлена единственная причина неудачного предметного результата.** ENRU `$.limitations` указывает random/untrained исходный B0 как ограничение, а не доказанную исключительную причину. Совокупность этих двух сводок не устанавливает, виноваты ли rank, targets, tokenizer, материал или update objective.
+- **Это independent readback двух scientific-result JSON, а не повторный независимый grading.** В данной проверке не перечитаны25/20 per-case scorer files,6/8 answer payloads, blind-grade bindings и все checkpoint bytes. Их hashes/проверки указаны в исходных сводках; сохранённые flags подтверждаются как записи источника, не как новые собственные runtime проверки. Сравнение времени C# и ENRU не является speedup одного workload.
+
+**Статус проверки:** PRIMARY_SUMMARY_READ_AND_SOURCE_CHAIN_REVIEWED. Сохранённый положительный preference signal подтверждён на уровне первичных итоговых JSON; новый measured gain не создавался. Root может повысить прежний POINTER до этого точного уровня доказательств, сохранив все перечисленные ограничения.

@@ -1,0 +1,80 @@
+{
+  "type": "JS-source-mechanism-proxy-NOT-NATIVE-NOT-ML-TRAINING",
+  "issue": "expected 'ready' for concept LAUNCH_OP in context ADD_OP",
+  "oldRule": {
+    "src": "ADD_OP",
+    "ctx": "LAUNCH_OP",
+    "required": "ready"
+  },
+  "explicitParserRule": {
+    "src": "LAUNCH_OP",
+    "ctx": "ADD_OP",
+    "required": "ready"
+  },
+  "rows": [
+    {
+      "name": "ADD only / missing",
+      "tokens": [
+        "ADD_OP"
+      ],
+      "answer": "valid output",
+      "gold": "PASS",
+      "current": "FAIL",
+      "parserOnly": "PASS",
+      "parserAndContext": "PASS"
+    },
+    {
+      "name": "LAUNCH only / missing",
+      "tokens": [
+        "LAUNCH_OP"
+      ],
+      "answer": "valid output",
+      "gold": "PASS",
+      "current": "PASS",
+      "parserOnly": "FAIL",
+      "parserAndContext": "PASS"
+    },
+    {
+      "name": "BOTH / missing",
+      "tokens": [
+        "ADD_OP",
+        "LAUNCH_OP"
+      ],
+      "answer": "valid output",
+      "gold": "FAIL",
+      "current": "FAIL",
+      "parserOnly": "FAIL",
+      "parserAndContext": "FAIL"
+    },
+    {
+      "name": "BOTH / good",
+      "tokens": [
+        "ADD_OP",
+        "LAUNCH_OP"
+      ],
+      "answer": "ready",
+      "gold": "PASS",
+      "current": "PASS",
+      "parserOnly": "PASS",
+      "parserAndContext": "PASS"
+    },
+    {
+      "name": "ADD only / good",
+      "tokens": [
+        "ADD_OP"
+      ],
+      "answer": "ready",
+      "gold": "PASS",
+      "current": "PASS",
+      "parserOnly": "PASS",
+      "parserAndContext": "PASS"
+    }
+  ],
+  "score": {
+    "current": 4,
+    "parserOnly": 4,
+    "parserAndContext": 5,
+    "n": 5
+  },
+  "verdict": "Parser-only changes error distribution, not total on these 5; parser+context passes synthetic gold. Need actual native train/cold ordinary consumer for quality."
+}

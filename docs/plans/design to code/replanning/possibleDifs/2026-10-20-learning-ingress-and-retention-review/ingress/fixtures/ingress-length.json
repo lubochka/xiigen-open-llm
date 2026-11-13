@@ -1,0 +1,44 @@
+{
+  "Domain": "CODE_Q",
+  "AdapterSeed": 20261020,
+  "Model": {
+    "VocabSize": 256,
+    "ContextLen": 64,
+    "HiddenDim": 16,
+    "NumLayers": 1,
+    "NumHeads": 2,
+    "NumKvHeads": 1,
+    "FfnHiddenDim": 32,
+    "RopeTheta": 10000,
+    "RmsNormEps": 0.00001
+  },
+  "Lora": {
+    "Rank": 2,
+    "Alpha": 4,
+    "Dropout": 0,
+    "TargetModules": ["q_proj", "v_proj"]
+  },
+  "Training": {
+    "BatchSize": 1,
+    "SeqLen": 64,
+    "MaxLr": 0.0003,
+    "MinLr": 0.0003,
+    "WarmupSteps": 0,
+    "TotalSteps": 2,
+    "GradAccumSteps": 1,
+    "GradClipNorm": 1,
+    "WeightDecay": 0,
+    "CheckpointEvery": 100,
+    "LogEvery": 1
+  },
+  "Train": [
+    {"Id": "train-one", "Split": "TRAIN", "FileName": "One.cs", "Source": "static int One()=>1;"},
+    {"Id": "train-two", "Split": "TRAIN", "FileName": "Two.cs", "Source": "static int Two()=>2;"},
+    {"Id": "train-long", "Split": "TRAIN_DEFERRED", "FileName": "Long.cs", "Source": "static class LongExample { static int One()=>1; static int Two()=>2; static int Three()=>3; static int Four()=>4; static int Five()=>5; static int Six()=>6; static int Seven()=>7; static int Eight()=>8; }"}
+  ],
+  "Evaluation": [
+    {"Id": "heldout-three", "Split": "HELDOUT", "FileName": "Three.cs", "Source": "static int Three()=>3;"},
+    {"Id": "heldout-four", "Split": "HELDOUT", "FileName": "Four.cs", "Source": "static int Four()=>4;"},
+    {"Id": "control-branch", "Split": "OTHER_CONSTRUCTION_CONTROL", "FileName": "Pos.cs", "Source": "static bool Pos(int n)=>n>0;"}
+  ]
+}

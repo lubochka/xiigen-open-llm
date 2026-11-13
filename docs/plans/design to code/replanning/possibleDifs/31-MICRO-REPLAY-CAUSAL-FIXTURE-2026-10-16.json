@@ -1,0 +1,168 @@
+{
+  "schemaVersion": "xiigen.learning.replay-N31.micro-fixture.v1",
+  "createdUtcDate": "2026-10-16",
+  "status": "SYNTHETIC_SCORER_CASES_ONLY_NOT_APPROVED_DPO_OR_PRODUCT_GOLD",
+  "sourceCommit": "79082340f01b744cdf08185616f2bd818dbd06b8",
+  "intendedNativeProtocol": "31-MICRO-REPLAY-RANKING-NATIVE-CAUSAL-PROTOCOL-2026-10-16.md",
+  "admissionRule": "Run source-level scorer with synthetic manifests only; actual trainer path must use real verified attested manifests with independent evidence. Never upload these cases as approved chosen/rejected.",
+  "panels": [
+    {
+      "id": "R1-CODE-1",
+      "arm": "R1",
+      "domain": "CSharp",
+      "topK": 3,
+      "query": "check cancellation token before await",
+      "positiveLaw": "cancel-before-await",
+      "wrongLaw": "ignore-cancellation",
+      "sourceFamily": "async-cancellation",
+      "reason": "Caller order matters; at <=k current replay uses recency instead of relevance"
+    },
+    {
+      "id": "R1-CODE-2",
+      "arm": "R1",
+      "domain": "CSharp",
+      "topK": 3,
+      "query": "dispose stream after awaiting upload",
+      "positiveLaw": "await-before-dispose",
+      "wrongLaw": "dispose-before-await",
+      "sourceFamily": "async-disposal",
+      "reason": "Different temporal sequencing law"
+    },
+    {
+      "id": "R1-SQL-1",
+      "arm": "R1",
+      "domain": "SQL",
+      "topK": 3,
+      "query": "preserve unmatched left join rows",
+      "positiveLaw": "left-join-on-filter",
+      "wrongLaw": "left-join-where-filter",
+      "sourceFamily": "outer-join-semantics",
+      "reason": "Query plan semantics not raw SQL compilation alone"
+    },
+    {
+      "id": "R1-LANG-1",
+      "arm": "R1",
+      "domain": "EN_RU",
+      "topK": 3,
+      "query": "The engineer did not approve the design",
+      "positiveLaw": "negation-preserved",
+      "wrongLaw": "affirmative-approval",
+      "sourceFamily": "negation",
+      "reason": "Preserve proposition polarity; require judge beyond lexical matches"
+    },
+    {
+      "id": "R2-CODE-1",
+      "arm": "R2",
+      "domain": "CSharp",
+      "topK": 1,
+      "query": "manager calls reviewer",
+      "nearMissText": "reviewer calls manager",
+      "positiveTrainingText": "manager calls reviewer",
+      "sourceFamily": "caller-callee",
+      "reason": "Same token bag but receiver/callee roles reversed"
+    },
+    {
+      "id": "R2-CODE-2",
+      "arm": "R2",
+      "domain": "CSharp",
+      "topK": 1,
+      "query": "resource owns lock",
+      "nearMissText": "lock owns resource",
+      "positiveTrainingText": "resource owns lock",
+      "sourceFamily": "ownership",
+      "reason": "Same bag, different directed dependency"
+    },
+    {
+      "id": "R2-SQL-1",
+      "arm": "R2",
+      "domain": "SQL",
+      "topK": 1,
+      "query": "user owns account",
+      "nearMissText": "account owns user",
+      "positiveTrainingText": "user owns account",
+      "sourceFamily": "foreign-key-direction",
+      "reason": "Same tokens, reversed FK relation"
+    },
+    {
+      "id": "R2-SQL-2",
+      "arm": "R2",
+      "domain": "SQL",
+      "topK": 1,
+      "query": "not (admin and suspended)",
+      "nearMissText": "(not admin) and suspended",
+      "positiveTrainingText": "not (admin and suspended)",
+      "sourceFamily": "boolean-scope",
+      "reason": "Equal bag, distinct Boolean predicate; parentheses and scope important"
+    },
+    {
+      "id": "R2-LANG-1",
+      "arm": "R2",
+      "domain": "EN_RU",
+      "topK": 1,
+      "query": "lawyer warned engineer",
+      "nearMissText": "engineer warned lawyer",
+      "positiveTrainingText": "lawyer warned engineer",
+      "sourceFamily": "agent-patient",
+      "reason": "Equal bag, reversed subject/object; needs syntactic analysis"
+    },
+    {
+      "id": "R2-LANG-2",
+      "arm": "R2",
+      "domain": "EN_RU",
+      "topK": 1,
+      "query": "teacher praised student",
+      "nearMissText": "student praised teacher",
+      "positiveTrainingText": "teacher praised student",
+      "sourceFamily": "actor-recipient",
+      "reason": "Same bag, reversed semantic roles"
+    },
+    {
+      "id": "R2-CONTROL-1",
+      "arm": "R2",
+      "domain": "GeneralFAQ",
+      "topK": 1,
+      "query": "shipping support hours",
+      "nearMissText": "support shipping hours",
+      "positiveTrainingText": "shipping support hours",
+      "sourceFamily": "order-not-necessarily-semantic",
+      "reason": "Negative control: stylistic reordering need not warrant AST"
+    },
+    {
+      "id": "R2-CONTROL-2",
+      "arm": "R2",
+      "domain": "CSharp",
+      "topK": 1,
+      "query": "hello world output",
+      "nearMissText": "hello world output",
+      "positiveTrainingText": "hello world output",
+      "sourceFamily": "identity",
+      "reason": "Same exact input must remain tied as structural sanity control"
+    }
+  ],
+  "evaluation": {
+    "frozenBeforeNative": [
+      "sourceCommit",
+      "domain",
+      "sourceFamily",
+      "query",
+      "positiveLaw",
+      "wrongLaw",
+      "chosenManifestIds",
+      "replayFlag",
+      "topK",
+      "scorerSha",
+      "tokenizerSha",
+      "adjudicatorRubric"
+    ],
+    "metrics": [
+      "correctLawAt1",
+      "wrongLawAt1",
+      "abstained",
+      "downstreamOrdinaryCorrect",
+      "consumerCalled",
+      "runtimeMs"
+    ],
+    "minimumNovelFamilies": 8,
+    "criticalCaveat": "These case labels express hypotheses, not adjudicated corpus truth; any native report must keep new independent judgement and no DPO teacher receipt invented"
+  }
+}

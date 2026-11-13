@@ -1,0 +1,273 @@
+{
+  "experiment_id": "E51A-SOURCE-DISJOINT-LEARNING-01",
+  "status": "UNREVIEWED_DEV_DIAGNOSTIC_NOT_RUN",
+  "source": "Pinned synthetic development fixture, not existing E51A archive or DPO",
+  "version": "1",
+  "semantics": "8 new training code sources, 8 paired-code heldout sources; same law family within pair, exact C# source distinct",
+  "expected_labels_approval": "CODEX/Astra 6 UltraCode exact source-law verification required before a quality verdict",
+  "extra_holdout_warning": "These examples test same-family new-code transfer, not heldout-law transfer",
+  "train": [
+    {
+      "id": "N01",
+      "domain": "CODE_QUESTION",
+      "family": "G_NULL",
+      "prompt": "Explain a null guard followed by a return.",
+      "codeContext": "namespace Pilot { class A { string Read(string? x) { if (x == null) return \"\"; return x.Trim(); } } }",
+      "requiredPredicates": [
+        "NULL_GUARD",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "ITERATE"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "train"
+    },
+    {
+      "id": "N02",
+      "domain": "BUG_FIX",
+      "family": "G_THROW",
+      "prompt": "Fix a null-check failure before using the collection.",
+      "codeContext": "namespace Pilot { class B { int Size(int[]? xs) { if (xs == null) throw new ArgumentNullException(); return xs.Length; } } }",
+      "requiredPredicates": [
+        "NULL_GUARD",
+        "THROW",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "ITERATE"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "train"
+    },
+    {
+      "id": "N03",
+      "domain": "CODE_CHANGE",
+      "family": "G_LOOP",
+      "prompt": "Add processing of every incoming element.",
+      "codeContext": "namespace Pilot { class C { int Sum(int[] xs) { int total = 0; foreach (var x in xs) total += x; return total; } } }",
+      "requiredPredicates": [
+        "ITERATE",
+        "ASSIGN",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "THROW"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "train"
+    },
+    {
+      "id": "N04",
+      "domain": "ORCHESTRATION",
+      "family": "G_AWAIT",
+      "prompt": "Plan the asynchronous fetch then save flow.",
+      "codeContext": "namespace Pilot { class D { async Task Save() { var data = await Fetch(); await Write(data); } } }",
+      "requiredPredicates": [
+        "AWAIT",
+        "CALL"
+      ],
+      "forbiddenPredicates": [
+        "THROW"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "train"
+    },
+    {
+      "id": "N05",
+      "domain": "ARCHITECTURE",
+      "family": "G_INTERFACE",
+      "prompt": "Describe a small interface contract.",
+      "codeContext": "namespace Pilot { interface IReader { string Read(string key); } }",
+      "requiredPredicates": [
+        "DECLARE"
+      ],
+      "forbiddenPredicates": [
+        "THROW",
+        "ITERATE"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "train"
+    },
+    {
+      "id": "N06",
+      "domain": "CODE_QUESTION",
+      "family": "G_TRY",
+      "prompt": "Explain what happens when parsing fails.",
+      "codeContext": "namespace Pilot { class F { int Parse(string x) { try { return int.Parse(x); } catch { return -1; } } } }",
+      "requiredPredicates": [
+        "HANDLE_ERROR",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "ITERATE"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "train"
+    },
+    {
+      "id": "N07",
+      "domain": "BUG_FIX",
+      "family": "G_BRANCH",
+      "prompt": "Fix invalid numbers before aggregation.",
+      "codeContext": "namespace Pilot { class G { int Calc(int n) { if (n < 0) return 0; return n + 1; } } }",
+      "requiredPredicates": [
+        "BRANCH",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "AWAIT"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "train"
+    },
+    {
+      "id": "N08",
+      "domain": "CODE_CHANGE",
+      "family": "G_DICT",
+      "prompt": "Add a dictionary existence check.",
+      "codeContext": "namespace Pilot { class H { bool Exists(Dictionary<string,int> map, string k) { return map.ContainsKey(k); } } }",
+      "requiredPredicates": [
+        "CALL",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "AWAIT"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "train"
+    }
+  ],
+  "heldout": [
+    {
+      "id": "H01",
+      "domain": "CODE_QUESTION",
+      "family": "G_NULL",
+      "prompt": "What is returned when input is null in this other reader?",
+      "codeContext": "namespace Blind { class One { int Get(string? source) { if (source == null) return -1; return source.Length; } } }",
+      "requiredPredicates": [
+        "NULL_GUARD",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "ITERATE"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "heldout"
+    },
+    {
+      "id": "H02",
+      "domain": "BUG_FIX",
+      "family": "G_THROW",
+      "prompt": "Explain the corrected failure handling in another module.",
+      "codeContext": "namespace Blind { class Two { string Head(List<string>? ys) { if (ys == null) throw new InvalidOperationException(); return ys[0]; } } }",
+      "requiredPredicates": [
+        "NULL_GUARD",
+        "THROW",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "ITERATE"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "heldout"
+    },
+    {
+      "id": "H03",
+      "domain": "CODE_CHANGE",
+      "family": "G_LOOP",
+      "prompt": "Describe the accumulated output for another input type.",
+      "codeContext": "namespace Blind { class Three { int Count(IEnumerable<int> data) { int n = 0; foreach (int item in data) { n += item; } return n; } } }",
+      "requiredPredicates": [
+        "ITERATE",
+        "ASSIGN",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "THROW"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "heldout"
+    },
+    {
+      "id": "H04",
+      "domain": "ORCHESTRATION",
+      "family": "G_AWAIT",
+      "prompt": "Describe the sequence for retrieving and persisting asynchronously.",
+      "codeContext": "namespace Blind { class Four { async Task Go() { var row = await Load(); await Commit(row); } } }",
+      "requiredPredicates": [
+        "AWAIT",
+        "CALL"
+      ],
+      "forbiddenPredicates": [
+        "THROW"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "heldout"
+    },
+    {
+      "id": "H05",
+      "domain": "ARCHITECTURE",
+      "family": "G_INTERFACE",
+      "prompt": "Which contract is defined by this different interface?",
+      "codeContext": "namespace Blind { interface IWriter { void Write(string key, string content); } }",
+      "requiredPredicates": [
+        "DECLARE"
+      ],
+      "forbiddenPredicates": [
+        "THROW",
+        "ITERATE"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "heldout"
+    },
+    {
+      "id": "H06",
+      "domain": "CODE_QUESTION",
+      "family": "G_TRY",
+      "prompt": "How does this utility react to invalid conversion?",
+      "codeContext": "namespace Blind { class Six { long TryRead(string raw) { try { return long.Parse(raw); } catch (FormatException) { return 0L; } } } }",
+      "requiredPredicates": [
+        "HANDLE_ERROR",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "ITERATE"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "heldout"
+    },
+    {
+      "id": "H07",
+      "domain": "BUG_FIX",
+      "family": "G_BRANCH",
+      "prompt": "What safeguards negative values in this separate routine?",
+      "codeContext": "namespace Blind { class Seven { int Price(int amount) { if (amount < 0) return 0; return amount * 2; } } }",
+      "requiredPredicates": [
+        "BRANCH",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "AWAIT"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "heldout"
+    },
+    {
+      "id": "H08",
+      "domain": "CODE_CHANGE",
+      "family": "G_DICT",
+      "prompt": "What method is used to test whether the key exists?",
+      "codeContext": "namespace Blind { class Eight { bool Has(Dictionary<string,string> entries, string key) { return entries.ContainsKey(key); } } }",
+      "requiredPredicates": [
+        "CALL",
+        "RETURN"
+      ],
+      "forbiddenPredicates": [
+        "AWAIT"
+      ],
+      "sourceHash": "HASH_AT_RUN",
+      "kind": "heldout"
+    }
+  ]
+}

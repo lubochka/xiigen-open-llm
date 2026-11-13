@@ -1,0 +1,103 @@
+# N37 MASTER — Исчерпывающая карта проверяемых различий: RP01, успешные ветки, экспериментальная матрица, KNN и Units
+
+**Дата:** 16.10.2026. **Состояние:** доказательная сверка исходников и сохранённых исторических отчётов + четыре новые source-confirmed разницы; *не* полный повтор 292 чужих аудитов. **Native/domain learning experiment: NOT_RUN. Independent CODEX/Astra review: NOT_RUN.**  
+Core source tip при сверке: `codex/dpo-implementation@793d7b755b23aac90445da3ac6661b1bff7e6672`. Planning base `llm_plan3` и настоящие добавления N37. Ни один файл в `llm_mvp_core/docs/plans/replanning-possible-diffs/**` не редактировался.
+
+## 1. Человеческий вывод и границы причинности
+
+**RP01 neural Student не равен историческому обучаемому KNN/Translation Unit.** Сегодня уже зафиксированы:
+- RP01 C#500: 25 семантических шаблонов ×20, 50 optimizer updates, LoRA изменилась, но собственные свободные ответы **0/3→0/3**.
+- RP01 EN→RU500: 20 категорий ×25, ещё 50 updates, свободные ответы **0/4→0/4**.
+- B0: случайная Transformer base, vocab 629, hidden 512, 4 layers, q/v LoRA rank8. Изменение logits и DPO margin не эквивалентно обретению языка.
+- Исторические ExperimentV2 E09/E14/E26 и Unit имеют другие обучаемые состояния, контрольные выборки и обычных получателей, и их положительные сигналы нельзя перенести в генератор RP01 простым численным сравнением.
+
+Подробный исходник результатов: [RP01 recovery](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md), [RP01 causal diagnostic](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-CAUSAL-LEARNING-DIAGNOSTIC-PACK.md), [previous historical crosswalk](35-MASTER-RP01-HISTORICAL-LEARNING-CROSSWALK-NOVELTY-AND-EXPERIMENT-ORDER-2026-10-16.md). **Уже существующие выводы не дублируются в статус «новое».**
+
+## 2. Карта источников в родительском RAG, планировании и sibling branches
+
+| Source layer | Подтверждённое использование и ограничение |
+|---|---|
+| [RAG MASTER](../../09.09.26WorkLeft-RAG-MASTER-INDEX.md), [RAG usage](../../09.09.26WorkLeft-RAG-00-usage-guide.md) | RAG = индекс для поиска оригинальных evidence, а не подтверждение качества. Читать новую дельту над архивным телом. Не выдавать старый READY за текущий факт. |
+| [RAG DPO legal build](../../09.09.26WorkLeft-RAG-01-dpo-legal-build.md) | Юридически допустимый teacher, отдельный источник provenance, контроль пары `chosen/rejected`, model manifest, допустимость обучения, запрет считать судью источником train-output. |
+| [Историческая исходная задача «Алгоритм создания ДПО»](../../Алгоритм%20создания%20ДПО.md) | Отдельные уровни: `ILearningUnit` — many→many; `ILearningFlow` — коррекция отношения; `ILearningOrchestrator` — async transformation; `ILearningDynamicGraph` — отношения higher-order patterns. Не заменять их одним deterministic rule router. |
+| [RP01 pack](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/README.md) | Актуальный владелец текущего собственно neural run и академического экзамена, не переписывать freeze его метрик/журналов. |
+| [Historical branches](11-BRANCH-ARCHAEOLOGY-AND-LEARNING-PROOFS.md), [N35 history](35-MASTER-RP01-HISTORICAL-LEARNING-CROSSWALK-NOVELTY-AND-EXPERIMENT-ORDER-2026-10-16.md) | `DesignToCode@8f20ceb...`, `language_translate@f6032...`, старые `experiments-v2/INTERNAL-TRAIN-READY...` — учебные источники/доноры, но с другими encoders, masks и exams. Перепроверять exact blob, run и caller. |
+| [Protected core independent reports](https://github.com/lubochka/llm_mvp_core/tree/codex/dpo-implementation/docs/plans/replanning-possible-diffs) | READ ONLY! Сверять с ними novelty и existing material; никаких изменений, перезаписей или «своего» нового статуса там. |
+
+## 3. Новые доказанные различия N37 — вынесены в независимые документы
+
+| Новая карта | Источник/исторический receipt | Доказано / не доказано | Микропроба |
+|---|---|---|---|
+| [N37-A E28 ProjectAdaptor](37-NEW-E28-PROJECT-ADAPTOR-TEST-LEAKAGE-AND-CROSSFILE-2026-10-16.md) | [E28 code:23–29](https://github.com/lubochka/llm_mvp_core/blob/793d7b755b23aac90445da3ac6661b1bff7e6672/35.ExperimentsV2/Experiments/E28ProjectAdaptor.cs#L23-L29); [E28 Tier2 FAIL -5.74%](https://github.com/lubochka/llm_mvp_core/blob/793d7b755b23aac90445da3ac6661b1bff7e6672/35.ExperimentsV2/results/E28-PROJECT-ADAPTOR/results/run-2026-05-01-001.json) | baseline учится на TEST; межфайловые ложные пары; *не доказана* польза новой project-specialization | train-only global vs true project-conditioned KNN на одинаковых source-disjoint families |
+| [N37-B E17 Level3](37-NEW-E17-INCOMMENSURATE-PERPLEXITY-AND-STRUCTURAL-PREDICATES-2026-10-16.md) | [E17 code:84–103](https://github.com/lubochka/llm_mvp_core/blob/793d7b755b23aac90445da3ac6661b1bff7e6672/35.ExperimentsV2/Experiments/E17LogicalPredicates.cs#L84-L103); [PASS +97.06%](https://github.com/lubochka/llm_mvp_core/blob/793d7b755b23aac90445da3ac6661b1bff7e6672/35.ExperimentsV2/results/E17-LOGICAL-PREDICATES/results/run-2026-05-01-001.json) | сравнивались разные tokens, train/test и vocab; *не доказан* code-law gain | Level2 vs Level3 на одних compile-checked/source-disjoint AST tasks |
+| [N37-C E31 DomainRouting](37-NEW-E31-DOMAIN-ROUTING-CLAIM-VS-UNCONDITIONED-LEARNER-2026-10-16.md) | [E31:112–130](https://github.com/lubochka/llm_mvp_core/blob/793d7b755b23aac90445da3ac6661b1bff7e6672/35.ExperimentsV2/Experiments/E31ContinuousLoopV2.cs#L112-L130); [E31 Tier3 FAIL](https://github.com/lubochka/llm_mvp_core/blob/793d7b755b23aac90445da3ac6661b1bff7e6672/35.ExperimentsV2/results/E31V2-CONTINUOUS-LOOP/results/run-2026-05-01-002.json) | `TrainStep` не получает domain, only sort-by-filename; *не доказано* отсутствие полезности scoped learning | одинаковый конфликтный x, разные domain→y: unconditional vs truly conditional |
+| [N37-D E42 Retention](37-NEW-E42-KNOWLEDGE-RETENTION-METRIC-WITHOUT-RETRIEVABLE-LAWS-2026-10-16.md) | [E42:94–107](https://github.com/lubochka/llm_mvp_core/blob/793d7b755b23aac90445da3ac6661b1bff7e6672/35.ExperimentsV2/Experiments/E42DiskManagerV2.cs#L94-L107); [E42 run 100% retention, 5/5→3/5 domains](https://github.com/lubochka/llm_mvp_core/blob/793d7b755b23aac90445da3ac6661b1bff7e6672/35.ExperimentsV2/results/E42V2-DISK-MANAGER/results/run-2026-05-01-001.json) | метрика хранит покрытие 12 markers, не истинные law bindings; *не доказан* вред конкретного eviction в текущем Unit | identical memory+capacity, FIFO vs value eviction, law-correct retrieval после restore |
+
+**Нельзя** объединять все четыре источника под корень `RP01 DPO loss`: они относятся к историческому экспериментальному интерпретатору и решениям о переносе алгоритмов; связь с текущим ProductHost устанавливается только actual caller trace.
+
+## 4. Полная инженерная матрица возможных потерь: известные источники + новые границы
+
+| Приоритет | Уровень learning pipeline | Механизм возможного ухудшения | Документные владельцы доказательств | Первый различающий эксперимент | Домены |
+|---|---|---|---|---|---|
+| P0 | **Готовность B0** | DPO preference не создаёт словарь и язык из random base; веса меняются, свободные ответы нет | [RP01 recovery](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md), [mini](11-MICRO-EXPERIMENT-COLD-START-VS-DPO.md) | 8–32 chosen-only SFT vs DPO-only; chosen logprob AND free response | C#, ENRU |
+| P0 | **Teacher/DPO semantic negatives** | accepted pairs 500≠500 independent laws; «wrong» стилистический либо конфликтный, shortcut от формата; отсутствует external-author provenance | [DPO quality](02-DPO-DATA-OBJECTIVE-GRADIENT.md), [same-prompt](32-NEW-RP01-SAME-PROMPT-CONTRAST-ADMISSION-2026-10-16.md), [old input-marker](11-BRANCH-ARCHAEOLOGY-AND-LEARNING-PROOFS.md) | 12 пары с семантической причиной rejection, sealed source families, Astra judge | C#, ENRU, SQL |
+| P0 | **DPO objective** | mask, shift, normalization, reference, response length, zero-weight effect, sign/gradient | [gradient](03-DPO-PAIR-AND-GRADIENT.md), [16-DPO](16-NEW-CAUSAL-GAPS-KNN-TIER-DPO-ZERO-WEIGHT-KV-2026-10-16.md) | finite-difference 1 LoRA coordinate; shared prefix/unequal lengths | Neural всех доменов |
+| P0 | **LoRA** | q/v-only rank/alpha/capacity, training flag, adapter not bound to consumer, optimizer-step too small; SFT scheduler first LR=0 — separate path | [LoRA audit](03-LORA-TOKENIZATION-VECTOR-SPACE.md), [autograd](33-NEW-AUTOGRAD-EMBEDDING-BIAS-AND-SUPERVISED-WARMUP-GAPS-2026-10-16.md) | gradient norm and target_modules ablation, same warm base, cold load parity | Neural |
+| P0 | **Токенизация/segmentation** | independently retrained BPE IDs, response-only offset, vocab/tokenizer SHA mismatch, EOS fake, semantic/order/morphology lost, truncated/clip IDs | [BPE drift](21-INDEPENDENT-BPE-RETRAIN-VOCAB-DRIFT-2026-10-16.md), [EOS](26-INDEPENDENT-STOP-TARGET-AND-SAMPLER-2026-10-16.md), [pretrain stream](34-NEW-PRETRAIN-SOURCE-AND-BATCHING-GAPS-2026-10-16.md) | exact encode/decode and input-output segment ids, frozen tokenizer restore | Neural/translation |
+| P0 | **Transfer DPO→Unit** | chosen/rejected converted to wrong subunit signals, lost source/direction/scope, non-atomic updates, no consumer effect | [structured](21-INDEPENDENT-STRUCTURED-LEARNING-GAPS-2026-10-16.md), [bridge](16-TRANSLATION-DPO-BRIDGE-TOKEN-ERASURE-2026-10-16.md), [identity](23-NEW-UNIT-CASE-IDENTITY-AND-NONATOMIC-TRAINING-2026-10-16.md) | single lesson→3 Units: trace all state owners + many→many independent effects | Translation, DTC |
+| P0 | **Кто отвечает после урока** | ProductHost/Flow может обходить Student KNN, выбрать deterministic dictionary, old Unit или fallback | [bypass](18-PRODUCTHOST-GENERATION-RETRIEVAL-BYPASS.md), [graph](05-UNITS-FLOW-GRAPH-DETERMINISM.md) | disable one recipient path; log law source to final answer | Все |
+| P1 | **KNN retrieval** | first neighbour only; k не голосует, wrong scope/language direction, stale correction, alias double insertion, incompatible encoders | [KNN](04-KNN-HYBRID-RETRIEVAL.md), [direction](30-NOVEL-DIRECTION-GATED-KNN-AND-SHARED-CROSS-LANGUAGE-CANDIDATES-2026-10-16.md), [alias](34-NEW-ONE-LESSON-DOUBLE-INSERT-UNDER-ALIAS-SIGNATURE-2026-10-16.md) | same frozen memory: k=1 vs law conditioned top-k + corrected winner | SQL, C#, ENRU |
+| P1 | **AST/sentence order** | syntax roles, sibling edges, subject/obj swap, operator, negation scope, E07 token-char misalign; E09 transfer label/tie | [AST](30-NEW-E05-E07-STRUCTURAL-EXPERIMENT-VALIDITY-2026-10-16.md), [sibling](35-NEW-E09-SIBLING-FEATURE-INVISIBLE-IN-STRUCTURAL-KNN-2026-10-16.md), [E26 alignment](29-NEW-FIRST-TOKEN-PSEUDOALIGNMENT-ORDER-CONTAMINATION-2026-10-16.md) | role-aware KNN vs bag-of-tokens, blind same meaning laws | Domain conditional |
+| P1 | **Project scope & heldout leakage** | E28 generic donor contains heldout, cross-file transitions | **[NEW N37-A](37-NEW-E28-PROJECT-ADAPTOR-TEST-LEAKAGE-AND-CROSSFILE-2026-10-16.md)** | project-conditioned vs train-only global on true equal panel | DTC/C#/SQL |
+| P1 | **Comparable structural evaluation** | E17 lower perplexity in collapsed predicate vocab without same targets | **[NEW N37-B](37-NEW-E17-INCOMMENSURATE-PERPLEXITY-AND-STRUCTURAL-PREDICATES-2026-10-16.md)** | same code-law tasks across representations | AST |
+| P1 | **Domen-aware learning itself** | E31 only sorted same unconditioned learner; domain lost at TrainStep | **[NEW N37-C](37-NEW-E31-DOMAIN-ROUTING-CLAIM-VS-UNCONDITIONED-LEARNER-2026-10-16.md)** | conditional vs same-model order-only counterexample | Cross-domain |
+| P1 | **Memory retention vs law retention** | E42 synthetic marker coverage blind to removed/incorrect laws; saturation and domain collapse | **[NEW N37-D](37-NEW-E42-KNOWLEDGE-RETENTION-METRIC-WITHOUT-RETRIEVABLE-LAWS-2026-10-16.md)** | FIFO vs value at same capacity, actual correct cold retrieval | KNN/Unit |
+| P1 | **ANN/vector index** | encoder SHA version drift, dimension mismatch/truncated cosine, HNSW recall vs brute, nonfinite vectors | [index](16-LIVE-ENCODER-INDEX-VERSION-DRIFT.md), [cosine](23-INDEPENDENT-AUDIT-SHAPE-DECODER-AND-LEARNING-2026-10-16.md), [pool gradient](35-NEW-EMBEDDING-POOL-NORMALIZE-TRAINABILITY-CUT-2026-10-16.md) | exact vs ANN same version/index/query, cold check dimension | KNN/embedding |
+| P1 | **Checkpoint/restart** | wrong model/adapter, optimizer moments/RNG, tokenizer SHA, KNN memory, lesson ledger; live ≠ cold | [restore](06-CHECKPOINT-RESTORE-ADOPTION.md), [HNSW RNG](33-NEW-HNSW-RNG-CONTINUATION-AND-COUPLING-2026-10-16.md) | in-memory vs fresh process exact logits, memory and consumer | Все |
+| P1 | **Safety vs skill** | deterministic guard suppresses wrong output without model learning; false confidence, late verifier overwrites novelty | [determinism](05-UNITS-FLOW-GRAPH-DETERMINISM.md), [E46](36-NEW-E46-SYNTHETIC-FAIL-MISREAD-AND-POST-VERIFIER-NOVELTY-SIGNAL-ERASURE-2026-10-16.md) | 2×2 learner on/off × rule on/off; quality, answered, abstain | SQL/security, ENRU |
+| P1 | **Experimental evidence validity** | family leaks, rare singleton excludes val, E09 denominator mismatch, E44/E45 unequal targets, stop based only on train loss | [E09](26-NEW-E09-GIT-PRODUCTION-TARGET-AND-TIE-DRIFT-2026-10-16.md), [rare](35-NEW-RARE-CLASS-VALIDATION-BLINDNESS-IN-STRATIFIED-SPLIT-2026-10-16.md), [stop](35-NEW-GENERATED-CAPABILITY-DPO-LOSS-PLATEAU-STOP-2026-10-16.md) | source-disjoint, all arms same panel, independent grading | All |
+| P2 | **Graph/Flow composition** | structural candidate graph isn't actual learned edge, family scope/action corruption, rank fusion non-local, ordinary consumer bypass | [graph](06-UNITS-FLOWS-GRAPH.md), [fusion](20-NEW-GAP-NONLOCAL-FUSION-AND-BM25-SCALING-2026-10-16.md) | trace end-to-end law owner, remove deterministic graph one edge | DTC/orchestration |
+| P2 | **Compute/PC** | slow Student forward/backward, excessive duplicated windows, stale optimizer, invalid “cost-per-gain” on gain0 | [pretrain stream](34-NEW-PRETRAIN-SOURCE-AND-BATCHING-GAPS-2026-10-16.md), [RP01 exam](../Kiro-Xiigen-RP01-Learning-First-Slice-Pack/LEARNING-EXAMINATION.md) | bounded 8–32 samples wall time/RAM, no CI campaign | Neural |
+
+## 5. Исторические *положительные* результаты и двусмысленные «FAIL», которые нельзя забывать
+
+| Mechanism/source | Зафиксированный факт | Что можно / нельзя заключить |
+|---|---|---|
+| [E09 structural KNN Tier2 2026-05-01](https://github.com/lubochka/llm_mvp_core/blob/793d7b755b23aac90445da3ac6661b1bff7e6672/35.ExperimentsV2/results/E09-STRUCTURAL-KNN/results/run-2026-05-01-001.json) | 0.2413→0.3507, +45.33%, KNN correct prediction archive | Обнадёживающий source of mechanism; **не causality proof** из-за сравнения denominator/panel (см. E09 existing). Связан с историческим переносом `27ae0326` в production, но matrix donor SHA не установлен. |
+| [E14 ContextAction](12-MATRIX-TO-KNN-EXPERIMENT-MISREADS.md) | Tier2 0.75→1.00 при n4; Tier3 0.8824→0.8676 при n68 | Разные размеры и законы, нельзя объявлять единый глобальный победитель/проигравший. |
+| [E26 contextual dictionary](29-NEW-FIRST-TOKEN-PSEUDOALIGNMENT-ORDER-CONTAMINATION-2026-10-16.md) | reported RU/EN 0.40→1.00 на n15, но first-token pseudoalignment | Контекст + порядок потенциально ценны, однако позитивный вывод только локальный и не для всех направлений. |
+| [Исторический V194/V210/repeat10](11-BRANCH-ARCHAEOLOGY-AND-LEARNING-PROOFS.md) | реальный optimizer и saved pair margins, repeat50×10 дал 100% на последнем train minibatch | Это **было реальное обучение** (не только «экспериментальная идея»), но не доказанное unseen semantic learning; old hashed-word tokens ≠ RP01 BPE exact. |
+| [TrainedTranslationAdapter proof](11-BRANCH-ARCHAEOLOGY-AND-LEARNING-PROOFS.md) | `add null check ValidateToken` и nonexact `add a null check before ValidateToken` достигли одинакового правильного expected result через learned memory/nearest source | Узкое фактическое nonexact transfer на Unit, нельзя приравнять к autoregressive Student или глобальной multilingual generalization. |
+| **NEW E28 / E17 / E31 / E42** | исходные receipts из раздела 3 | E28 FAIL с leakage, E17 PASS с incomparable metrics, E31 FAIL без домена, E42 100% score с утратой domain coverage — необходима перепроверка причинных claims прежде чем применять рекомендации из матрицы. |
+
+**OPEN provenance:** конкретный historical «FAILED as matrix→SUCCESS after move into KNN» donor commit **не идентифицирован достаточно, чтобы заявить причинный факт**. Различать значения «matrix»: ILearningUnit data matrix, E07 ngram matrix, E12 computational matrix. Требуется пара source SHA before/after, identical evaluator, recipient lineage, original run IDs и независимый rerun, а не устный вывод. Источники: [matrix map](12-MATRIX-KNN-TRANSFER-PROVENANCE-AND-EVALUATION.md), [misreads](12-MATRIX-TO-KNN-EXPERIMENT-MISREADS.md).
+
+## 6. Доменно обусловленная архитектура — не «один KNN для всего»
+
+| Домен | Обязательные семантические признаки | Хорошие гипотезы | Недопустимое обобщение |
+|---|---|---|---|
+| C#, DTC | typed AST, scope, nullability, operator, sibling/dependency, method/project boundary | E09 structural KNN, N37-A/B/C, sibling-weight; own compiler oracle | string bag/Jaccard вместо AST law; E17 perplexity вместо runnable correctness |
+| SQL | dialect, schema, NULL/UNKNOWN, ON vs WHERE, aggregation/cardinality, owner scope | law-aware KNN + hard dialect/NULL verifier, N37-D memory | глобальные запреты на `= NULL` в цитате/negative examples |
+| EN→RU/RU→EN/HE | direction, polarity, modality, subject/object/recipient, word order, agreement, ambiguity | role-aware KNN/phrase memory, E26 conditional, new law corrections | AST sibling penalties без синтаксического codec; false same word-bag when negation swaps |
+| Figma→HTML/CSS | DOM tree, flex/grid geometry, constraints, color hierarchy, responsive breakpoints, visual check | structure-conditioned retrieval, visual compare, Unit+Graph measured | SQL/C# predicate index без layout, text-only judge for visual equivalence |
+| Orchestrator / DSL | typed phase/subphase, dependency/order, safety law, source event/time | scoped transition memory, Flow+DynamicGraph owner, N37-C/D | deterministic route score как «model learned». |
+
+## 7. Исполняемый порядок без повторных 500-парных кампаний
+
+1. **P0 RP01:** actual saved Student B0→C50→C500 route + tokenizer/LoRA/reference/AdamW+inference identity trace (read-only); parallel 8–32 token-level SFT learnability and DPO numeric finite-difference. Сначала проверка может ли Student отвечать В ПРИНЦИПЕ.
+2. **P0 independent meaning:** 12–20 novel source-family cases on the **ordinary consumer** before/after; 2×2 learner/guard with same memory. Не заменять это train loss/compile PASS.
+3. **P1 N37-A и N37-C:** сначала 1–2 micro-scoped experiments на исторических ошибках, потому что они способны полностью изменить негативную интерпретацию прошлых алгоритмов без недели обучения. Для N37-D — реальный KNN/Unit и cold retrieval.
+4. **P1 E09/E26 resurrection:** clone frozen historical corpus/provenance; same-label/same-denominator replay and restore to *actual* consumer, prefix vs AST/direction features. E17 применить только при одинаковом source-gold.
+5. **P2 после source evidence:** добавить domain gated features, scoped memory, graph/Flow; не вводить «global AST weight». Остановка при invalid/split leak, release только после независимого семантического подтверждения.
+
+Подробнее: [N37 short experiments / governance](37-MICRO-CAUSAL-EXPERIMENTS-DOMAIN-RECIPIENT-AND-JUDGE-2026-10-16.md). **Owner of real human selection AND independent grading = CODEX using Astra 6 UltraCode**; внешняя открытая китайская модель делает **обе DPO стороны**. В нынешнем source-only N37 no teacher/grader ran; никакие Astra симуляции не маркируются `CHINESE_MODEL_AUTHORED`.
+
+## 8. Сила доказательств и ограничение заявления
+
+- **C-SOURCE:** exact source code explains a mechanism.
+- **H-RECEIPT:** historical JSON says result, with original eval limitations.
+- **X-PROXY:** finite logical counterexample, source-equivalent arithmetic, *not* native .NET and not real product quality.
+- **HYP:** possible cause awaiting a discriminating real experiment.
+- **Q-PRODUCT:** independent blind same-panel post-save ordinary-consumer semantic measurement (**none new in N37**).
+
+Данный N37 утверждает четыре новых *адресных* seam после сверки индексов 00/29/30/31/35. Он не утверждает полный просмотр всех 292 отчётов и всех исторических веток побайтово; достижение полного «всё» невозможно без полного corpus citation graph/owner ledger. Новые claims не маскируют ранее существующие HYP как факты.

@@ -1,0 +1,41 @@
+--- 00.TensorCore/Layers/Linear.cs
++++ experiment/00.TensorCore/Layers/Linear.cs
+@@ -12,6 +12,27 @@
+ // Аналог torch.nn.Linear.
+ public class Linear : Module
+ {
++    // EXPERIMENT ONLY. Lifetime: one immutable base after initial load; no restore.
++    public static bool ExperimentReuseFrozenTranspose { get; set; }
++    public static long ExperimentCacheHits { get; private set; }
++    public static long ExperimentCacheMisses { get; private set; }
++    public static long ExperimentCachedFloats { get; private set; }
++    private Tensor? _experimentFrozenTranspose;
++
++    private Tensor GetExperimentFrozenTranspose(CancellationToken cancellationToken)
++    {
++        if (_experimentFrozenTranspose is not null)
++        {
++            ExperimentCacheHits++;
++            return _experimentFrozenTranspose;
++        }
++        var value = TensorOps.Transpose(Weight.Value, 0, 1, cancellationToken);
++        _experimentFrozenTranspose = value;
++        ExperimentCacheMisses++;
++        ExperimentCachedFloats += value.Data.LongLength;
++        return value;
++    }
++
+     // Матрица весов [outFeatures, inFeatures]; транспонируется при умножении
+     public Parameter Weight { get; }
+ 
+@@ -46,7 +67,9 @@
+     {
+         cancellationToken.ThrowIfCancellationRequested();
+         // input @ weight^T: вес транспонируется с [out, in] → [in, out]
+-        var weightT = TensorOps.Transpose(Weight.Value, 0, 1, cancellationToken);
++        var weightT = ExperimentReuseFrozenTranspose && !Weight.Value.RequiresGrad
++            ? GetExperimentFrozenTranspose(cancellationToken)
++            : TensorOps.Transpose(Weight.Value, 0, 1, cancellationToken);
+         var output  = TensorOps.MatMul(input, weightT, cancellationToken);
+ 
+         if (Bias != null)

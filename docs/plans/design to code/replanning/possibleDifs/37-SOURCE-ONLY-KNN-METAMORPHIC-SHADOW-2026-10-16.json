@@ -1,0 +1,89 @@
+{
+  "id": "N37-SOURCE-SHADOW-2026-10-16",
+  "date": "2026-10-16",
+  "scope": "TranslationKnnStore source-only counterexamples, no native .NET or Student/Unit quality run",
+  "source_repository": "lubochka/llm_mvp_core",
+  "source_commit": "793d7b755b23aac90445da3ac6661b1bff7e6672",
+  "source_files": [
+    "27.TranslationDomain/TranslationUnitContracts.cs:L241-L323",
+    "27.TranslationDomain/TranslationMemorySourceLaw.cs:L11-L47",
+    "27.TranslationDomain/TranslationTrainedUnits.cs:L333-L363,L924-L940"
+  ],
+  "execution": {
+    "language": "JavaScript ECMAScript, in-session formula-only shadow",
+    "native_dotnet_executed": false,
+    "full_consumer_executed": false,
+    "dpo_training_executed": false,
+    "codex_astra_independent_judge_executed": false,
+    "result_kind": "formula-proxy; N37-C expected call-graph branch only",
+    "cases": [
+      {
+        "id": "N37-A-POS",
+        "querySourceText": "blue widget",
+        "storedSourceText": "green vehicle",
+        "fullSignature": "TYPE|NOUN|VERB",
+        "isLowInformationSignature": true,
+        "threshold": 0.35,
+        "queryOverlapScore": 0,
+        "expectedAdmission": false
+      },
+      {
+        "id": "N37-A-TAG",
+        "querySourceText": "blue widget",
+        "storedSourceText": "green vehicle",
+        "fullSignature": "TYPE|NOUN|VERB|RULE_SYNTAX",
+        "isLowInformationSignature": false,
+        "threshold": 0,
+        "queryOverlapScore": 0,
+        "expectedAdmission": true,
+        "assumptions": [
+          "query and stored signature identical",
+          "source-law compare returns Unknown",
+          "prefix/structure buckets absent"
+        ]
+      },
+      {
+        "id": "N37-B-CONTAINMENT",
+        "querySourceText": "delete records",
+        "storedSourceText": "delete records after backup is verified by administrator",
+        "queryTokens": [
+          "delete",
+          "records"
+        ],
+        "storedTokens": [
+          "delete",
+          "records",
+          "after",
+          "backup",
+          "verified",
+          "administrator"
+        ],
+        "queryCoverage": 1,
+        "symmetricJaccard": 0.3333333333333333,
+        "thresholdToContrast": 0.35,
+        "expectedCurrentAdmission": true,
+        "lawfulMeaning": "UNJUDGED; example illustrates conditional meaning difference"
+      },
+      {
+        "id": "N37-C-TIER",
+        "querySourceText": "return status",
+        "fullSignature": "FULL",
+        "prefixSignature": "PREFIX",
+        "storedFullTarget": "Return status",
+        "storedPrefixTarget": "Вернуть статус",
+        "direction": "EN_RU",
+        "expectedCurrentCascadeSelectedTarget": "Return status",
+        "expectedDownstreamTargetAdmissible": false,
+        "expectedPrefixExamined": false,
+        "hypotheticalPostFilterFallbackTarget": "Вернуть статус",
+        "status": "SOURCE_CALLGRAPH_PREDICTION_NOT_NATIVE"
+      }
+    ]
+  },
+  "limitations": [
+    "example signatures are injection-level test inputs, not yet verified ordinary tokenizer output",
+    "SourceLaw Unknown is analyzed for the artificial source strings, native execution not performed",
+    "no learned semantic quality or application to RP01 Neural DPO can be inferred"
+  ],
+  "associated_document": "37-NEW-KNN-SIGNATURE-GUARD-MONOTONICITY-CONTAINMENT-AND-CASCADE-2026-10-16.md"
+}

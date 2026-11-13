@@ -1,0 +1,47 @@
+# История обучения и различия, которые нельзя смешивать
+
+## 1. Что именно было первым RP01
+
+В [разборе RP01 от 16.10](https://github.com/lubochka/xiigen-planning/blob/4b950599a04388941f56b41e634233ebb7dc17c2/llm%20mvp/design%20to%20code%20session/replanning/Kiro-Xiigen-RP01-Learning-First-Slice-Pack/RP01-2026-10-16-LEARNING-RECOVERY-AND-CODE-AUDIT.md) сохранены разные результаты: C#500 —50 обновлений, предпочтение 16/25 без изменения и свободные ответы 0/3→0/3; EN→RU500 — ещё 50 обновлений, предпочтение 12/20 без изменения и свободные ответы 0/4→0/4. Там же указаны изменения 16 LoRA tensors и неизменность 39 base tensors. Это историческое свидетельство плана со ссылками на исходные runs, не независимо повторённый здесь эксперимент и не основание переписать старые экзамены.
+
+Тот же документ фиксирует случайно инициализированный B0 без pretraining, q/v-LoRA rank8/alpha16, Student vocab629 и отдельный kNN encoder vocab320. Такая исходная способность, локализация обучаемых параметров и независимые координаты представлений — реальные различия с опытом, где обучается таблица соседей или classifier. Они объясняют, **что проверять раздельно**; ни одна строка документа сама по себе не устанавливает единственную причину нулевой свободной генерации.
+
+[Архитектурная карта](https://github.com/lubochka/xiigen-planning/blob/4b950599a04388941f56b41e634233ebb7dc17c2/llm%20mvp/design%20to%20code%20session/replanning/Kiro-Xiigen-RP01-Learning-First-Slice-Pack/SOURCE-AND-ARCHITECTURE.md) различает обучение Student, семантические представления, domain-aware kNN и Units/Flow. Нельзя подставить найденный правильный ответ из памяти в экзамен Student и назвать это исправлением LoRA. Также нельзя отбросить успешно обученную память только потому, что её writer не является градиентным optimizer.
+
+## 2. Подтверждённая линия соседних веток: E25
+
+Прочитаны `35.ExperimentsV2/Experiments/E25PatternClassifier.cs` на четырёх immutable refs:
+
+| Ветка | Commit | Результат сравнения исходника |
+|---|---|---|
+| `codex/dpo-implementation` | `0b76ab950d82534f5904005dda096545505ae307` | Текущий эталон чтения |
+| `language_translate` | `f6032aff81f1f83de7c09cf9b9efe6b058dd12b9` | Тело от `namespace ExperimentsV2` совпадает с текущим после удаления только конечных пробелов/переводов строки |
+| `PrepareToGPL` | `31346d8928be4469b01aaf313780e8f950ff91e2` | То же тело алгоритма; различие заголовка лицензии не считается изменением обучения |
+| `DesignToCode` | `8f20ceb8a9bfbadab2ad309226c47dd76e714548` | То же тело алгоритма |
+
+Исходники: [текущий E25](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/35.ExperimentsV2/Experiments/E25PatternClassifier.cs); [language_translate](https://github.com/lubochka/llm_mvp_core/blob/f6032aff81f1f83de7c09cf9b9efe6b058dd12b9/35.ExperimentsV2/Experiments/E25PatternClassifier.cs); [PrepareToGPL](https://github.com/lubochka/llm_mvp_core/blob/31346d8928be4469b01aaf313780e8f950ff91e2/35.ExperimentsV2/Experiments/E25PatternClassifier.cs); [DesignToCode](https://github.com/lubochka/llm_mvp_core/blob/8f20ceb8a9bfbadab2ad309226c47dd76e714548/35.ExperimentsV2/Experiments/E25PatternClassifier.cs). Это адресная проверка трёх соседних веток, не заявление о полном сравнении всех 15 веток.
+
+`GenerateExamples(seed:42, perPattern:20)` создаёт 160 синтетических POS-последовательностей; split80/20 даёт 128 TRAIN и 32 VAL; `SentencePatternClassifier(k:3).Train(train)` действительно обучает классификатор, после чего `Predict` сравнивается с правилами по позиции первого глагола. Сохранённый [raw от 01.05](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/35.ExperimentsV2/results/E25-PATTERN-CLASSIFIER/results/run-2026-05-01-001.json) даёт top1 accuracy0.3438→0.875, то есть +53.12 процентного пункта на опубликованной округлённой шкале. Для 28 hard cases сохранено 0.8571. Тот же raw найден в [language_translate](https://github.com/lubochka/llm_mvp_core/blob/f6032aff81f1f83de7c09cf9b9efe6b058dd12b9/35.ExperimentsV2/results/E25-PATTERN-CLASSIFIER/results/run-2026-05-01-001.json).
+
+**Что подтверждено:** обучаемый kNN с признаками порядка POS был полезен на этом синтетическом домене. **Что не измерено этим run:** восстановление этого classifier, собственная свободная генерация Student, реальные переводы, независимость семейства TRAIN/VAL, качество AST для C#, время самого `Train`. Таймеры запускаются после `Train`, поэтому 0.4/15.4ms — сравнение этапов предсказания, не цены обучения. Разные представления «матрица», «вектор» и «kNN-признаки» нельзя объявлять эквивалентными по одному ID эксперимента.
+
+## 3. Исторические результаты, требующие правильной трактовки
+
+| Опыт и первоисточник | Сохранённый результат | Правильный статус по текущему поручению | Граница переноса |
+|---|---|---|---|
+| [E22](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/35.ExperimentsV2/results/E22-DATASET-ROUTER/results/run-2026-05-01-002.json) | macro-F1 .4892→.4944, `passed=false`, `TUNE_OR_ABANDON`;325examples,260train,65val | Полезное улучшение по macro-F1 в этом run: +.0052. Исторический флаг не отменяет результат | Многометочный роутер C#/документации; три класса показали 0.00 F1. Нет права обещать общий рост качества или скорости |
+| [E25](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/35.ExperimentsV2/results/E25-PATTERN-CLASSIFIER/results/run-2026-05-01-001.json) | .3438→.875; `passed=true` | Успешный исторический обученный classifier по своей метрике | POS/order, синтетические предложения; не универсальный semantic encoder |
+| [E26](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/35.ExperimentsV2/results/E26-CONTEXTUAL-DICTIONARY/results/run-2026-05-01-001.json) | .4→1.0 на 15contextcases | Успех исторического алгоритмического сравнения, **не предъявленное здесь новое обучение словаря** | Исходник вызывает `BuildDefault()`. Для learning-опыта нужен actual writer обученных записей — назначен T-TRAIN-CONTEXT-01 |
+| [E43](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/35.ExperimentsV2/results/E43-REPLAY-BUFFER/results/run-2026-05-01-001.json) | retention accuracy .3226→.3978, replay177 | Полезный исторический результат обучения счётчиков биграмм | `BuildBigram(newPairs)` против `BuildBigram(newPairs+replay)`; не продолжение тех же LoRA weights. Проблема переходов через границы файлов уже покрыта P116 |
+
+Механизм E22: [E22 source](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/35.ExperimentsV2/Experiments/E22DatasetRouter.cs) сначала вызывает `router.Train`, затем считает top3-frequency baseline и kNN predictions. Комментарий о predict-all не соответствует действующему top3 baseline; читать исполняемый код. Оба времени начинаются после training. Macro-F1 малых классов, labels из `AutoLabel`, порядок разбиения и набор файлов ограничивают интерпретацию. Сравнивать две цифры из разных runs без одинакового корпуса нельзя.
+
+Механизм E26: [E26 source](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/35.ExperimentsV2/Experiments/E26ContextualDictionary.cs) создаёт фиксированный словарь, затем сравнивает чтение без/с контекстом. Сам по себе этот файл не даёт causal path от полученного урока к состоянию. [T-TRAIN-CONTEXT-01](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/docs/plans/replanning-possible-diffs/experimets/cards/N62-training-context.md) назначает проверку записи контекста в настоящий learner. Это сохраняет полезную историческую подсказку, но исключает расход новой учебной программы на несвязанный benchmark.
+
+Механизм E43: [E43 source](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/35.ExperimentsV2/Experiments/E43ReplayBuffer.cs) вычисляет отдельную память частот, old-domain validation и смесь с 30% replay. Время включает иной объём подготовки данных; denominator, replay capacity и file-boundary проверяются отдельно. Для настоящего incremental LoRA применимы [N63-AR-CAP](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/docs/plans/replanning-possible-diffs/experimets/cards/N63-replay-capacity.md) и [P15](https://github.com/lubochka/llm_mvp_core/blob/0b76ab950d82534f5904005dda096545505ae307/docs/plans/replanning-possible-diffs/experimets/cards/P15-retention-replay.md); исторический E43 их не заменяет.
+
+## 4. Как учитывать «неудачную матрицу, успешную функцию kNN»
+
+Ключ доказательства — не слово «матрица» в заголовке. Для каждой находки требуются четыре независимые связи: исходная операция и признаки; обучаемый получатель; реальные TRAIN/EXAM; фактический consumer результата. Успех переноса функции подтверждается совпавшим смыслом этой функции и сохранённым сравнением, а не одинаковым названием E-ID. В этом пакете подтверждена история E25, а прочие утверждения о переносах остаются конкретными существующими гипотезами с доменными ограничениями в [03](03-knn-units-and-domains.md).
+
+Исторические руководства пользователя содержат также V309 router1404rows и capability18/20 accepted. Они используются как указатели происхождения. Без соответствующих raw/checkpoint/commit здесь не назначены новые численные доказательства и не расширена очередь повторными большими прогонами.

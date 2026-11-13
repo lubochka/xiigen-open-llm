@@ -1,0 +1,397 @@
+{
+  "hypothesis": "ROPE-TRAIN-TABLE-01",
+  "phase": "documentation_only",
+  "native_runs": 0,
+  "planning_commit": "4b950599a04388941f56b41e634233ebb7dc17c2",
+  "core_commit": "0b76ab950d82534f5904005dda096545505ae307",
+  "scope": "All734 Markdown entries in pinned possibleDifs manifest plus locally materialized protected core Markdown. Search and targeted hit reading; not sequential reading of all documents, not proof across every git branch.",
+  "manifest_entries": 1298,
+  "planning_markdown_entries": 734,
+  "planning_markdown_missing": [],
+  "protected_markdown_local": 330,
+  "query": "\\bRoPE\\b|RotaryEmbedding|GetFrequencies|inv_freq|тригоном",
+  "additional_searches": [
+    "frequency/position cache in Russian and English",
+    "table+frequency/position/cos/sin",
+    "precompute/reuse+RoPE/cos/sin",
+    "sinusoid and trig terms"
+  ],
+  "planning_hit_files": 17,
+  "protected_hit_files": 12,
+  "planning_matches": [
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/16-NEW-CAUSAL-GAPS-KNN-TIER-DPO-ZERO-WEIGHT-KV-2026-10-16.md",
+      "git_blob_sha": "87aaf4359751586db317b230958753f143e2992b",
+      "hits": [
+        {
+          "line": 50,
+          "text": "- [Attention: full mask vs cache mask + RoPE positionOffset](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/03.TransformerModel/Layers/CausalSelfAttention.cs#L129-L249); [TensorOps causal mask with past](https://github.com/lubochka/llm_mvp_core/blob/83590a462b2f8aedc9d3ab4cb775193eb9c25ce5/00.TensorCore/Core/TensorOps.cs#L1367-L1453)."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/33-NOVEL-AUTOGRAD-REACHABILITY-EMBEDDING-AND-BIAS-2026-10-16.md",
+      "git_blob_sha": "725e2afe96e7039853e1c443cf181c1107baac40",
+      "hits": [
+        {
+          "line": 26,
+          "text": "[TensorOps.Slice L932–946](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/00.TensorCore/Core/TensorOps.cs#L932-L946), [Concat L948–980](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/00.TensorCore/Core/TensorOps.cs#L948-L980), [Unsqueeze L1064–1075](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/00.TensorCore/Core/TensorOps.cs#L1064-L1075) и [Gather L1477–1491](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/00.TensorCore/Core/TensorOps.cs#L1477-L1491) возвращают копии без backward dependency; однако **не установлено**, что RP01 LoRA train forward вызывает эти операции. Не помечать как текущую причину до `caller→operator→trainable leaf` трассировки. У [MatMul L642–703](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/00.TensorCore/Core/TensorOps.cs#L642-L703), [Softmax L852–883](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/00.TensorCore/Core/TensorOps.cs#L852-L883), [RoPE backward](https://github.com/lubochka/llm_mvp_core/blob/32ac6e741ce4cfb2dd8ac024716e470f8d0f18f7/00.TensorCore/Core/TensorOps.cs#L1332-L1360) зависимости явно прописаны — неверно заявлять «autograd полностью сломан»."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/35-RP01-CROSS-BRANCH-EVIDENCE-AND-CAUSAL-QUALITY-TRIAGE-2026-10-16.md",
+      "git_blob_sha": "1cfd39c714a34ab8f0c4c705ee4b17615409e642",
+      "hits": [
+        {
+          "line": 43,
+          "text": "| A17 **P0/P1 C/H** | Decoder/RoPE KV parity, stop/EOS, greedy vs stochastic, answer budget and metric distortion | [N10 EOS](10-INFERENCE-STOP-TOKENS-AND-UNIT-TRANSFER.md), [N26 sampler](26-INDEPENDENT-STOP-TARGET-AND-SAMPLER-2026-10-16.md), [N16 KV](16-NEW-CAUSAL-GAPS-KNN-TIER-DPO-ZERO-WEIGHT-KV-2026-10-16.md) | pinned greedy free text full vs cached, valid prefix vs full 256, byte/token/eos trace; don't blame topK/topP in greedy RP01 |"
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-19-design-to-code-clean-learning-audit/03-MECHANISM-COVERAGE-AND-DPO-LORA.md",
+      "git_blob_sha": "6cd106f3eb699e7b8d9e7f4e4a0cddab1af5c2a5",
+      "hits": [
+        {
+          "line": 103,
+          "text": "LoRA forward в clean и current вычисляет `base(x) + (alpha/r) * ((dropout(x) Aᵀ) Bᵀ)`; изменение файла преимущественно добавляет сохранение/восстановление RNG и domain. Q/K/V/GQA/RoPE-forward также сохраняет механизм; в прочитанном актуальном shape-пути не обнаружена пропавшая операция."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-19-designtocode-clean-causal-audit/03-NEW-NUMERICAL-DELTA.md",
+      "git_blob_sha": "ba36c900328c0a70712077e5058d0eee5dc8312f",
+      "hits": [
+        {
+          "line": 33,
+          "text": "- **Численный body attention совпадает.** Дельта файла — дополнительные методы RNG в интерфейсе adapter. Reshape→RoPE→GQA→mask→softmax→PV сохранён. [Clean attention][attention-old], [current attention][attention-new]."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-19-external-domains-lexical-state-audit/01-LEARNING-INTERNALS-AND-EXISTING-GAPS.md",
+      "git_blob_sha": "9a8a023e9d8421d9d59f486ee9fef7020ae4d02e",
+      "hits": [
+        {
+          "line": 133,
+          "text": "| Exact q/v gradient chain, GQA/RoPE | Уже core41/core47/P10; сохраняем исправления и предлагаемый численный контроль |"
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-causal-delta-audit/RMS-COORD-ALLOC-01-CARD.md",
+      "git_blob_sha": "e6c2803d6b9a52d96f7ec4536ca0f62429baaf12",
+      "hits": [
+        {
+          "line": 65,
+          "text": "| Config | Vocab256; Context64; Hidden64; 1 block; 4 Q heads; 2 KV heads; FFN176; RoPE theta10000; RMS eps1e−5 |"
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/2026-10-20-learning-causal-delta-audit/core_learning.md",
+      "git_blob_sha": "ff88ea0042663082d54d86ece105b6258c925924",
+      "hits": [
+        {
+          "line": 13,
+          "text": "Исторические pins [`DesignToCode@8f20ceb8…`][design] и [`language_translate@f6032aff…`][translate] проверены адресно по `TensorOps`, `CausalSelfAttention`, `RotaryEmbedding`, `LoraLinear`. Их восемь полученных файлов также сверены по Git blob SHA. Split-half RoPE convention сохранился; прежние attention helpers создавали новые Tensor без нужного backward, а current использует дифференцируемые операции. Это контрдоказательство к безусловному откату старых слоёв, а не новое объяснение деградации или полная реконструкция исторического checkpoint."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/50-LOCAL-WIKI-FEEDBACK-AND-BPE-BUDGET-2026-10-19/00-LOCAL-WIKI-RECOVERY-FIRST.md",
+      "git_blob_sha": "9a839fbf6e15bb03e45afcbdbe20076a87e990cc",
+      "hits": [
+        {
+          "line": 39,
+          "text": "В текущем ядре подтверждены полезные исправления: LoRA действительно установлена в attention forward; DPO использует сохранённый граф и правильный знак производной log-probability; RMSNorm, SiLU, RoPE и GQA сохраняют нужные пути gradient. В старых прочитанных местах таких связей не было. Полный source-перечень — [03, сохранённые исправления](03-MECHANISM-COVERAGE-AND-KEPT-FIXES.md), независимая сверка — [review](evidence/independent-review.md)."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/50-LOCAL-WIKI-FEEDBACK-AND-BPE-BUDGET-2026-10-19/03-MECHANISM-COVERAGE-AND-KEPT-FIXES.md",
+      "git_blob_sha": "ac4ed8eb5ee26311436ab81cce80b38d0e0b926f",
+      "hits": [
+        {
+          "line": 25,
+          "text": "Donor `RmsNorm.MultiplyBroadcast/MultiplyGamma` создаёт новые `Tensor` без связи backward с входом. Current использует `TensorOps.MultiplyBroadcast` с производными по обоим аргументам. В current также реализованы backward-функции SiLU, repeat-interleave для GQA, RoPE и causal mask. [Donor RMSNorm](https://github.com/lubochka/llm_mvp_core/blob/219d7ba89dc3ef43e03e17f1461ad96154d3dd7a/03.TransformerModel/Layers/RmsNorm.cs#L39-L65); [current RMSNorm](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/03.TransformerModel/Layers/RmsNorm.cs#L27-L40); [broadcast backward](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/00.TensorCore/Core/TensorOps.cs#L187-L213); [SiLU](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/00.TensorCore/Core/TensorOps.cs#L1129-L1162); [GQA/RoPE/mask](https://github.com/lubochka/llm_mvp_core/blob/4945b8e85c17b5f150eb5b840d16bbdc4b506242/00.TensorCore/Core/TensorOps.cs#L1212-L1453)."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/50-LOCAL-WIKI-FEEDBACK-AND-BPE-BUDGET-2026-10-19/05-SOURCES-NOVELTY-AND-REVIEW.md",
+      "git_blob_sha": "ea72af3fdaa134e265682e6660d2022361973615",
+      "hits": [
+        {
+          "line": 69,
+          "text": "При сверке сняты, в частности: E09 `kindMap` по отдельному файлу, E09 разные знаменатели и переходы между файлами, E13 различный cutoff methods/pairs, `maxLexical`-нормировка от набора кандидатов, FP32 потеря точности суммы logP, нечётный RoPE headDim, динамика LoRA A при B=0, AdamW second-moment overflow, reset policy/reference и потери при проекции DPO в Unit. Они уже представлены в двух каталогах."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/54-DESIGNTOCODE-CLEAN-RECOVERY-2026-10-19/03-MECHANISM-COVERAGE-AND-NEURAL-PARITY.md",
+      "git_blob_sha": "45d5a371963e6b061c6eb7300413169f1b164032",
+      "hits": [
+        {
+          "line": 16,
+          "text": "| Основные блоки Transformer | Совпадают Git blobs `ModelConfig` (`818877df…`), `RmsNorm` (`246bbc47…`), `RotaryEmbedding` (`48597599…`), `TransformerBlock` (`28eeaba3…`). Attention forward сохранился; diff `CausalSelfAttention` добавляет интерфейс capture/restore RNG адаптера. [Clean attention][attn-old], [current attention][attn-new], [RMSNorm][rms-new], [RoPE][rope-new]. | Не возвращать старые detached attention/RMS/RoPE из другой исторической точки. Для совпадения runtime всё равно нужны одинаковые конфигурация и реальные веса. |"
+        },
+        {
+          "line": 85,
+          "text": "[rope-new]: https://github.com/lubochka/llm_mvp_core/blob/358af351e22a92a3f7938d1f9221d5aeb7ddb053/03.TransformerModel/Layers/RotaryEmbedding.cs#L51-L83"
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/54-DESIGNTOCODE-CLEAN-RECOVERY-2026-10-19/README.md",
+      "git_blob_sha": "7df48cdb9fb60c9c03d1457cad08ecf79b3347df",
+      "hits": [
+        {
+          "line": 36,
+          "text": "Точный CLEAN уже имел подключённый LoRA и правильный DPO backward. BpeTokenizer, ModelConfig, RmsNorm, RotaryEmbedding, TransformerBlock и supervised Trainer имеют одинаковые Git blobs в двух снимках. Формула LoRA, инициализация A/B и её участие в attention сохранились. Поэтому возврат к старым файлам этих механизмов сам по себе не восстанавливает утраченный источник знаний, checkpoint или вызов нужного Unit. [Сравнение исходников и ссылки](03-MECHANISM-COVERAGE-AND-NEURAL-PARITY.md#2-что-точно-сохранилось-а-что-изменилось)."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/01-DPO-LORA-NEW-TRAINING-DIFFERENCES.md",
+      "git_blob_sha": "282d2c5293721b3050ffc93455097d2d0f02e27e",
+      "hits": [
+        {
+          "line": 44,
+          "text": "| S20 | RoPE positions 0..T−1 имеют те же значения при уменьшении только правой границы | [RotaryEmbedding.cs, 26–68](https://github.com/lubochka/llm_mvp_core/blob/8e020052fae7efa694b8d33f90768648d6b67af9/03.TransformerModel/Layers/RotaryEmbedding.cs#L26-L68) |"
+        },
+        {
+          "line": 108,
+          "text": "5. **RoPE не меняет значения сохранённых positions.** GetFrequencies получает offset 0 и positionData[index]=index; уменьшение правой границы не перенумеровывает valid tokens (S20)."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/60-TRAINING-PATH-AND-EXPERIMENT-VALIDITY-2026-10-19/reviews/knn-review-dpo.md",
+      "git_blob_sha": "af71d01aebe0b0e0e70c1940dfc6eb53f232d415",
+      "hits": [
+        {
+          "line": 50,
+          "text": "Crop до **полной** собственной длины стороны L сохраняет target L−1, который читается из logit L−2. По текущим loops первое/последнее response target не теряются. Exact sumTargets не делится на padded T. [Target loops L1036–1068][target-loop] Causal attention masked −Infinity и RoPE offset0 поддерживают аргумент об отсутствии влияния правого padding на valid-prefix при dropout0. Это корректное предположение для native verification, не измеренный speedup."
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/61-LEARNING-FIRST-AUDIT-2026-10-20/03-NEURAL-LEARNING-AND-MICRO-CALLER.md",
+      "git_blob_sha": "613ddce2d296b1dc08199c48ad264cb14afcbd1d",
+      "hits": [
+        {
+          "line": 77,
+          "text": "Student — **`TransformerModel.LlmModel`, `rp01-csharp-small/v1`, предметная тема C#-документация**. Current config задаёт vocab629, context2048, hidden512, 4 слоя, 8 query heads/2 KV heads, FFN1408, RoPE theta10000, RMS epsilon1e-5; LoRA rank8, alpha16, dropout0, q_proj/v_proj. Это прочитанные параметры, не измеренная способность модели. [T19]"
+        }
+      ]
+    },
+    {
+      "path": "llm mvp/design to code session/replanning/possibleDifs/61-LEARNING-UNBLOCK-AND-EXPERIMENT-AUDIT-2026-10-20/02-NEURAL-CURRENT-STATE-AND-NOVEL-HEAD.md",
+      "git_blob_sha": "f68103bd25fb992e225e4d05b1e508da70477f4b",
+      "hits": [
+        {
+          "line": 52,
+          "text": "Пары, полная длина Transformer, attention, RoPE, tokenizer, params, reference, LoRA targets/rank/alpha/dropout, optimizer, prompt и response masks остаются теми же. В этот опыт **не включается** PAD-обрезка: иначе невозможно выделить вклад выходной проекции."
+        }
+      ]
+    }
+  ],
+  "protected_matches": [
+    {
+      "path": "docs/plans/replanning-possible-diffs/41-current-dpo-gradient-chain-source-review.md",
+      "hits": [
+        {
+          "line": 133,
+          "text": "В пределах четырёх заданных участков незамкнутый внешний native kernel не найден: владелец рассмотренных MatMul/Transpose установлен до managed реализации. Численные результаты их композиции не получены. Остальная attention-цепочка не превращена в тотальный аудит: например, вызовы `RotaryEmbedding.Apply` и `RepeatInterleave` находятся в [CausalSelfAttention, строки 149–158](C:/Projects/llm_mvp_core/03.TransformerModel/Layers/CausalSelfAttention.cs:149). Их полная backward-математика в этом пакете не проверялась; это предел вывода, а не найденный дефект."
+        },
+        {
+          "line": 135,
+          "text": "Если потребуется следующий **source-only** пакет именно по gradient-chain, точный первичный вход — вызов `RotaryEmbedding.Apply` на q/k в указанном `CausalSelfAttention` и его реализация `03.TransformerModel/Layers/RotaryEmbedding.cs`. Это предложение следующей границы; файл не расширял текущий аудит. Исторический learned donor остаётся отдельным открытым вопросом отчёта 39 и здесь новыми архивами не дополнялся."
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/47-current-attention-backprop-and-position-contract.md",
+      "hits": [
+        {
+          "line": 31,
+          "text": "| RoPE | [RotaryEmbedding:32–72](C:/Projects/llm_mvp_core/03.TransformerModel/Layers/RotaryEmbedding.cs:32) формирует угол `(offset+t) / theta^(2i/D)`. [TensorOps:1276–1364](C:/Projects/llm_mvp_core/00.TensorCore/Core/TensorOps.cs:1276) вращает split-half пару `i, D/2+i`: `y1=c*x1−s*x2`, `y2=s*x1+c*x2`; backward даёт `dx1=c*g1+s*g2`, `dx2=−s*g1+c*g2`. Это транспонированная матрица того же вращения. |"
+        },
+        {
+          "line": 32,
+          "text": "| Константы RoPE | [OuterProduct:1184–1207](C:/Projects/llm_mvp_core/00.TensorCore/Core/TensorOps.cs:1184), [Cos/Sin:1088–1116](C:/Projects/llm_mvp_core/00.TensorCore/Core/TensorOps.cs:1088) возвращают detached tensors. В данном caller их аргументы — созданные позиции и фиксированные частоты, не q/v или trainable theta. Отсутствие их производных не обрывает x-gradient: ApplyRotaryEmbedding сам связывает результат с x. |"
+        },
+        {
+          "line": 38,
+          "text": "**Контрограничение RoPE:** для нечётного `D` этот kernel обрабатывает только `2*floor(D/2)` координат; последняя координата результата и её градиент остаются нулевыми. Это не универсальное сохраняющее норму вращение нечётномерного вектора. Такое прежнее поведение прямо закреплено в [LoraTests:573–636](C:/Projects/llm_mvp_core/Tests/LoraTests.cs:573). У RP01 `D=64`, поэтому это не найденная причина его качества. Нельзя переносить вывод о корректности на нечётные размеры без отдельного контракта."
+        },
+        {
+          "line": 40,
+          "text": "Здесь не найдено ни утраты одной из KV-групп, ни усреднения вместо суммы, ни перепутанного знака RoPE backward, ни backward через запрещённые будущие позиции. Изменение 16 LoRA tensors само этого не доказывало; приведённые формулы — отдельное контрдоказательство простому предположению о разорванном или очевидно неверном attention-gradient. Оно всё ещё не заменяет численную проверку композиции на actual материале."
+        },
+        {
+          "line": 46,
+          "text": "В [cached attention:173–248](C:/Projects/llm_mvp_core/03.TransformerModel/Layers/CausalSelfAttention.cs:173) проверяются длина конкретного слоя и предел контекста. Новый chunk получает RoPE positions `past ... past+chunkLength−1`. В cache добавляются уже повёрнутые K и обычные V с исходными **двумя** KV-heads; старые K повторно не вращаются. GQA-repeat выполняется после чтения накопленных K/V. [MaskWithPast:1384–1421](C:/Projects/llm_mvp_core/00.TensorCore/Core/TensorOps.cs:1384) требует `keyLength=past+queryLength` и допускает `j≤past+row`. При одном новом query доступны все накопленные keys; при chunk длины больше 1 будущие позиции внутри chunk остаются закрытыми."
+        },
+        {
+          "line": 56,
+          "text": "Прочитан diff **`8a8cad4a23026b7f007f99f5a979ce4bfe21d547`** для CausalSelfAttention и RotaryEmbedding. Помимо обсуждённого ранее RmsNorm, тогда заменили detached manual attention reshape, private causal-mask copy и ручной Rotary.Apply на connected TensorOps; добавили вызовы зарегистрированных projection adapters. Их текущие потребители показаны выше. Поэтому исторический разрыв графа нельзя автоматически назвать до сих пор «неперенесённым» механизмом: эти конкретные связи в нынешнем source есть."
+        },
+        {
+          "line": 58,
+          "text": "Прочитан diff **`dede8d4b3be5005f0ed86ed7c39cb03baf1268a7`**: RoPE получил `positionOffset`, а позиции изменились с `index` на `checked(positionOffset+index)`. Его реальное применение — нынешний cached attention; обычный training по-прежнему начинает полную последовательность с позиции 0."
+        },
+        {
+          "line": 66,
+          "text": "| [LoraTests:461–570](C:/Projects/llm_mvp_core/Tests/LoraTests.cs:461) | RepeatInterleave sum-gradient и RoPE transpose-rotation gradient сопоставлены с ручным отображением и finite difference. Малые формы `[1,2,2,2]`, `[1,2,3,4]`; это наличие проверок в source, не результат их запуска сейчас. |"
+        },
+        {
+          "line": 68,
+          "text": "| [RotaryEmbeddingPositionOffsetTests:100–143](C:/Projects/llm_mvp_core/Tests/RotaryEmbeddingPositionOffsetTests.cs:100) | Ручные углы для offset 1, seq 2, D=4 и соответствующий x-gradient; не полный current RP01. |"
+        },
+        {
+          "line": 79,
+          "text": "Отдельная короткая derivative-проверка продолжает именно открытый вопрос 41: на **обычном uncached** attention с теми же `Q/KV=8/2`, `D=64`, короткой последовательностью и фиксированным upstream сопоставить analytic gradient и central finite difference выбранных координат q/v A/B при ненулевом B. Она должна включать reshape → RoPE → repeat → mask → softmax → PV, а не только отдельный оператор. Для B=0 нулевой A-gradient ожидаем и не является свидетельством поломки. Это локальная численная проверка, ещё не доказательство правильности всего weighted exact-v2 loss или улучшения свободного текста. Никакой runner для этих предложений не создан."
+        },
+        {
+          "line": 83,
+          "text": "Прочитаны нужные текущие участки attention, RotaryEmbedding, TensorOps, TransformerBlock/LlmModel, cache/интерфейса, TextGenerator, двух generation consumers, DPO caller/material, config и перечисленных test-source. Полностью прочитанные локальные attention/Rotary/cache файлы не означают полного чтения tensor core, inference или всего репозитория. История ограничена непосредственными изменениями этих функций; другие ветки не сравнивались. Не проверялись actual runtime dispatch/binary, numerical результаты существующих fixtures, длительная устойчивость, общий optimizer/FFN/embedding audit и статистическая достаточность RP01 обучения."
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/00-README.md",
+      "hits": [
+        {
+          "line": 35,
+          "text": "[47 — attention/RoPE/cache](47-current-attention-backprop-and-position-contract.md) получен и полностью прочитан. Очевидная локальная ошибка derivative в проверенном RP01 пути не найдена; фактическая full/cache numerical parity остаётся открытой. Единственный исследователь последовательно продолжает новый HNSW admission/alias в51. Никакие опыты или продуктовые изменения не запускались."
+        },
+        {
+          "line": 39,
+          "text": "[41 — текущий DPO gradient до q/v-LoRA](41-current-dpo-gradient-chain-source-review.md) и45 получены от `/root/rp01_code_trace_astra` и прочитаны родителем. В четырёх проверенных gradient-участках source-ошибка не обнаружена; составная численная проверка не выполнялась. В45 сужены три гипотезы помощников:12 TRAIN недостаточно для production HNSW pruning; найденный GraphRAG consumer не читает semantic текст; текущий sealed CLI меняет ID при изменении DPO. Единственный ребёнок продолжает attention/RoPE/GQA; родитель — исторический пересмотр E24/A50. Исследование продолжается без запуска опытов."
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/42-helper-f4d79705-new-intake.md",
+      "hits": [
+        {
+          "line": 57,
+          "text": "[41](41-current-dpo-gradient-chain-source-review.md) и [45](45-memory-reachability-and-context-consumption.md) получены и прочитаны родителем. Единственный `/root/rp01_code_trace_astra` последовательно продолжает открытый участок41: attention/RoPE/GQA и положение токенов, только чтение. Родитель исследует историческое пересмотренное решение E24/A50. Второй ребёнок не запускается. Все записи остаются обычными Markdown в заказанном каталоге."
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/12-student-update-to-generation-path.md",
+      "hits": [
+        {
+          "line": 65,
+          "text": "## С-05. Load, RoPE и cache append согласованы по исходникам; численного результата parity пока нет"
+        },
+        {
+          "line": 71,
+          "text": "**Позиции и маска.** Full attention использует RoPE от offset 0; cache — `positionOffset` из уже накопленной длины (`CausalSelfAttention.cs:148,219–225`). [RotaryEmbedding.cs](../../../03.TransformerModel/Layers/RotaryEmbedding.cs):22–83 реализует обе формы одной формулой с `positionOffset+index`. Full и cached scores масштабируются на `1/sqrt(headDim)` (:270–277,302–308). [TensorOps.cs](../../../00.TensorCore/Core/TensorOps.cs):1367–1374 направляет ordinary causal mask в `ApplyCausalMaskWithPast(...,0)`; :1396–1400 проверяет `keyLength=past+queryLength`, :1413–1419 маскирует колонки правее `pastKeyLength+row`. Простого сброса абсолютной позиции или иной causal triangle в прочитанном коде не найдено."
+        },
+        {
+          "line": 73,
+          "text": "**K/V.** Cache attention присоединяет keys после RoPE и values без RoPE, затем повторяет KV heads для GQA (`CausalSelfAttention.cs:219–243`). [KvCache.cs](../../../09.Inference/KvCache.cs):89–142,242–270 хранит исходное число KV heads; append копирует старую и новую последовательности отдельно для каждого batch/head block, возвращая detached snapshots. Detach здесь принадлежит inference cache; DPO backward идёт через full forward и не зависит от этого cache. Каждый `GenerateCore` создаёт fresh cache, поэтому старые K/V от другой модели не должны переноситься между этими двумя вызовами (`TextGenerator.cs:199–200`). Это не аудит всех возможных внешних cache callers."
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/04-hypotheses-and-source-coverage.md",
+      "hits": [
+        {
+          "line": 13,
+          "text": "Последний рассмотренный drop: planning `f4d79705de`,34 файла в [42](42-helper-f4d79705-new-intake.md), все имеют итог рассмотрения. Новые первичные разборы43–45 не подменяют будущую экспериментальную проверку. В41 проверены четыре участка gradient-chain; attention/RoPE/GQA остаётся следующим ограниченным поиском. Историческая реабилитация E24/A50 изучается отдельно; точный matrix→kNN donor пока не установлен. Core snapshot для41/45 — `79082340f01b744cdf08185616f2bd818dbd06b8`."
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/2026-10-20-additional-conflicts-evidence.md",
+      "hits": [
+        {
+          "line": 104,
+          "text": "| `C:/Projects/llm_mvp_core/experiments-v2/RP01-MICRO/LFT01/experiments-v2/RP01-MICRO/NEURAL-FROZEN-TRANSPOSE-01/src/03.TransformerModel/Layers/RotaryEmbedding.cs` | полные bytes/manifest identity; не полный semantic review | 3082 | `6ae6fc128808a72273be175407118cbd1b278d182d105070284235b373e364ef` |"
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/07-study-log-2026-10-16.md",
+      "hits": [
+        {
+          "line": 250,
+          "text": "Тот же единственный исследователь получил47: открытый участок41, current attention/RoPE/GQA и cache/position contract. Родитель продолжает исторический E24/A50: в библиотеке найдено прямое указание, что E24 пересмотрен при смене per-dataset на per-domain routing. Девять сохранённых E24 receipts дают одинаковые41.21%→56.26% noise и−36.51%; это прежний отрицательный протокол, не проверка нового routing. Положительный A50 ещё ищется; документное слово «rehabilitated» не заменяет его receipt."
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/experimets/06-source-content-walk.md",
+      "hits": [
+        {
+          "line": 1095,
+          "text": "**S255 — [33-NOVEL-AUTOGRAD-REACHABILITY-EMBEDDING-AND-BIAS-2026-10-16.md L1–45](<C:/Users/lubao/Documents/xiigen/llm mvp/design to code session/replanning/possibleDifs/33-NOVEL-AUTOGRAD-REACHABILITY-EMBEDDING-AND-BIAS-2026-10-16.md:1>)**. L7–22 подтверждает те же Embedding/bias с sibling blobs; L26 дополнительно Slice/Concat/Unsqueeze/Gather copy без backward, actual train caller не установлен; MatMul/Softmax/RoPE имеют edges. Нельзя объявлять весь autograd сломанным; operator probes условны для предметного consumer. Связи: [P11.1](cards/P11-autograd-reachability.md#s-1), [P11.2](cards/P11-autograd-reachability.md#s-2), [P11.5](cards/P11-autograd-reachability.md#s-5), [P11.6](cards/P11-autograd-reachability.md#s-6), [P11.7](cards/P11-autograd-reachability.md#s-7), [P11.8](cards/P11-autograd-reachability.md#s-8)."
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/experimets/cards/N-HEAD-01.md",
+      "hits": [
+        {
+          "line": 168,
+          "text": "| `03.TransformerModel/Layers/RotaryEmbedding.cs` | `48597599b46f884e74bf911c66189f77eb649e37` |"
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/experimets/cards/RMS-COORD-ALLOC-01.md",
+      "hits": [
+        {
+          "line": 86,
+          "text": "| Config | Vocab256; Context64; Hidden64; 1 block; 4 Q heads; 2 KV heads; FFN176; RoPE theta10000; RMS eps1e−5 |"
+        },
+        {
+          "line": 196,
+          "text": "| `03.TransformerModel/Layers/RotaryEmbedding.cs` | `48597599b46f884e74bf911c66189f77eb649e37` |"
+        }
+      ]
+    },
+    {
+      "path": "docs/plans/replanning-possible-diffs/experimets/cards/P11-autograd-reachability.md",
+      "hits": [
+        {
+          "line": 170,
+          "text": "A — source copy/detach Slice x=[1,2,3], выбрать позиции 1..2; B — только differentiable Slice с обратным переносом координат. L=sum(output), независимая аналитика: grad x=[0,1,1]; finite-difference epsilon/dtype по общему заранее заданному протоколу. Frozen input leaf — отрицательный контроль; repeated/empty shape по declared contract отдельно. Native component проверяет graph reachability. Для предметного neural learner CONDITIONAL: сначала точная caller→operator→trainable leaf связь; если её нет, компонентный результат не получает фиктивный domain quality. MatMul/Softmax/RoPE не объявляются сломанными."
+        },
+        {
+          "line": 175,
+          "text": "A — source copy/detach Concat x=[1,2], y=[3]; B — только differentiable Concat с обратным переносом координат. L=sum(output), независимая аналитика: grad x=[1,1], grad y=[1]; finite-difference epsilon/dtype по общему заранее заданному протоколу. Frozen input leaf — отрицательный контроль; repeated/empty shape по declared contract отдельно. Native component проверяет graph reachability. Для предметного neural learner CONDITIONAL: сначала точная caller→operator→trainable leaf связь; если её нет, компонентный результат не получает фиктивный domain quality. MatMul/Softmax/RoPE не объявляются сломанными."
+        },
+        {
+          "line": 180,
+          "text": "A — source copy/detach Unsqueeze x=[1,2] из[2] в[1,2]; B — только differentiable Unsqueeze с обратным переносом координат. L=sum(output), независимая аналитика: grad x=[1,1]; finite-difference epsilon/dtype по общему заранее заданному протоколу. Frozen input leaf — отрицательный контроль; repeated/empty shape по declared contract отдельно. Native component проверяет graph reachability. Для предметного neural learner CONDITIONAL: сначала точная caller→operator→trainable leaf связь; если её нет, компонентный результат не получает фиктивный domain quality. MatMul/Softmax/RoPE не объявляются сломанными."
+        },
+        {
+          "line": 185,
+          "text": "A — source copy/detach Gather x=[1,2,3] по IDs[1,1,2]; B — только differentiable Gather с обратным переносом координат. L=sum(output), независимая аналитика: grad x=[0,2,1], unused0; IDs не обучаются; finite-difference epsilon/dtype по общему заранее заданному протоколу. Frozen input leaf — отрицательный контроль; repeated/empty shape по declared contract отдельно. Native component проверяет graph reachability. Для предметного neural learner CONDITIONAL: сначала точная caller→operator→trainable leaf связь; если её нет, компонентный результат не получает фиктивный domain quality. MatMul/Softmax/RoPE не объявляются сломанными."
+        }
+      ]
+    }
+  ],
+  "conclusion": "No exact prior experiment or hypothesis found for repeated fixed RoPE cos/sin table creation in actual training and one-entry lazy reuse. Existing protected47 already establishes constant positions/frequencies and connected input-gradient; this source fact is not claimed novel.",
+  "related_prior": [
+    "protected47 attention/backprop/position contract",
+    "planning16 KV full-cache parity",
+    "planning33 autograd reachability",
+    "planning50/54 kept numerical mechanisms and identical source blobs",
+    "planning60 PAD crop preserving RoPE positions",
+    "N61 reference-score reuse",
+    "NEURAL-FROZEN-TRANSPOSE-01",
+    "RMS-COORD-ALLOC-01",
+    "N62 neural-update cost subcases",
+    "N-HEAD-01"
+  ],
+  "caveat": "Substring scans can miss paraphrases; no measured benefit and no demonstrated RP01 accuracy cause. Metadata records pinned original blob identity; local newline normalization is not claimed byte-identical."
+}
