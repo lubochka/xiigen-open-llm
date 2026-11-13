@@ -1,0 +1,14 @@
+﻿# Code Documentation Learning Run Report - batch-325
+
+Status: ACCEPTED_RUNNER_VERIFIED_REPAIRED
+Rows: 50 train / 50 held-out
+Routing accuracy: 1
+Source accuracy: 1
+Version accuracy: 1
+Transit accuracy: 1
+CPU ms: 328.125
+Peak RAM MB: 35.8203125
+Elapsed ms: 299.5273
+
+This batch was regenerated so negative examples are real gate failures, including case-sensitive distinct-callee transit gaps.
+

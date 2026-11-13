@@ -1,0 +1,5 @@
+﻿# Next Batch Decision - batch-019
+
+Decision: CONTINUE_EXTERNAL_SOURCE_PROOF
+Status: ACCEPTED_RUNNER_VERIFIED_EXTERNAL_SOURCE_PROOF
+Next batch: batch-020

@@ -1,0 +1,13 @@
+﻿# Code Documentation Learning Run Report - batch-563
+
+Status: ACCEPTED_RUNNER_VERIFIED
+Rows: 50 train / 50 held-out
+Routing accuracy: 1
+Source accuracy: 1
+Version accuracy: 1
+Transit accuracy: 1
+CPU ms: 359.375
+Peak RAM MB: 36.1328125
+Elapsed ms: 339.5461
+
+The batch continues verified source/version/transit orchestration for bottom-up legacy .NET documentation routing.
