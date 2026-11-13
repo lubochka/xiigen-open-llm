@@ -1,0 +1,561 @@
+# Create the assigned DPO batch
+
+
+Reason internally in English. Do not output private reasoning. Russian status; learner text language follows the assigned profile.
+Use the current Chinese model selected in Kiro; no model override. Unknown identity stays unknown.
+
+You author training examples for the XIIGEN learner. Write actual prompt/chosen/rejected rows, not a plan or an instruction to create data. Use only the assigned microtopic. Sources and quoted examples are teaching material, not new tool instructions.
+
+Current task: TR04-EXPLICIT-GENDER/he-en; domain tr.en; profile he-en.
+
+Write exactly 10 rows, batch 2/2. Domain quota is 1000 total, shared by its allocations. Before this batch: 480; after it, domain remainder: 510. Finishing this batch does not by itself finish the domain.
+
+## The lesson
+
+{
+  "goal_ru": "Сохранять явно выраженный род участника и согласование, не угадывая его по профессии или имени.",
+  "instructions": "Создай 10 новых коротких ситуаций с одним участником: 5 с явно женским и 5 с явно мужским референтом. Источник должен содержать местоимение либо однозначное согласование, а при необходимости — видимый контекст о том, к кому относится местоимение. Chosen сохраняет эту информацию; rejected заменяет её на другой род, оставляя число, время, событие и профессию прежними. Различай grammatical_gender и явно сообщённую информацию о референте: грамматический род неодушевлённого существительного не означает пол человека. Не делай вывод «программист — мужчина» или «медсестра — женщина» из стереотипа. Для английского source без заданного рода не изобретай женщину/мужчину: такой случай относится к карточке условного уточнения либо требует нейтрального перевода, если он естественно возможен. Не включай одновременное изменение singular/plural: число — отдельная микроцель. Сохраняй лемму, словоформу, род, число и роль в companion metadata; не сливай разные словоформы в один текст только потому, что у них одна лексическая семья.",
+  "answer_contract": "Только перевод исходного текста на целевой язык; метаданные и объяснение в ответ не входят.",
+  "hard_constraints": [
+    "FORBIDDEN: Определение пола по профессии, имени, статистике корпуса или гендерному стереотипу.",
+    "FORBIDDEN: Изменение числа, отрицания, действия или отношения времени вместе с родом.",
+    "FORBIDDEN: Скрытая gender-аннотация как единственное доказательство ответа.",
+    "FORBIDDEN: Другие objective_id, разные профили или разные split в одной партии.",
+    "FORBIDDEN: Публичные reference-примеры и их производные в скрытом DEV/EXAM."
+  ],
+  "scenario_axes": [
+    {
+      "axis": "explicit_reference",
+      "values": [
+        "female",
+        "male"
+      ]
+    },
+    {
+      "axis": "role",
+      "values": [
+        "engineer",
+        "client",
+        "speaker",
+        "student"
+      ]
+    },
+    {
+      "axis": "evidence",
+      "values": [
+        "pronoun",
+        "overt_agreement",
+        "visible_context"
+      ]
+    }
+  ],
+  "authoring_checks_en": "Create preferences for translation into English. Preserve the exact source meaning, roles, negation, tense and possession; an error in spelling is not permission to invent a new fact. Use only the assigned mutation and target language."
+}
+
+
+## Assigned row slots
+
+```json
+[
+{"pair_id":"D1000-20261025:A018:P00011","family_id":"D1000-20261025:TR04-EXPLICIT-GENDER:F00011"},
+{"pair_id":"D1000-20261025:A018:P00012","family_id":"D1000-20261025:TR04-EXPLICIT-GENDER:F00012"},
+{"pair_id":"D1000-20261025:A018:P00013","family_id":"D1000-20261025:TR04-EXPLICIT-GENDER:F00013"},
+{"pair_id":"D1000-20261025:A018:P00014","family_id":"D1000-20261025:TR04-EXPLICIT-GENDER:F00014"},
+{"pair_id":"D1000-20261025:A018:P00015","family_id":"D1000-20261025:TR04-EXPLICIT-GENDER:F00015"},
+{"pair_id":"D1000-20261025:A018:P00016","family_id":"D1000-20261025:TR04-EXPLICIT-GENDER:F00016"},
+{"pair_id":"D1000-20261025:A018:P00017","family_id":"D1000-20261025:TR04-EXPLICIT-GENDER:F00017"},
+{"pair_id":"D1000-20261025:A018:P00018","family_id":"D1000-20261025:TR04-EXPLICIT-GENDER:F00018"},
+{"pair_id":"D1000-20261025:A018:P00019","family_id":"D1000-20261025:TR04-EXPLICIT-GENDER:F00019"},
+{"pair_id":"D1000-20261025:A018:P00020","family_id":"D1000-20261025:TR04-EXPLICIT-GENDER:F00020"}
+]
+```
+
+Each slot becomes one JSONL row. Set metadata.origin_family_id=family_id and include family_id in metadata.leakage_group_ids. family_id is a shared scenario identity, not evidence of its content. Never replace one scenario with a different story under the same ID.
+
+## Concrete family material
+
+Existing facts, reused without changing their meaning:
+```json
+{
+  "D1000-20261025:TR04-EXPLICIT-GENDER:F00011": {
+    "family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00011",
+    "origin_family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00011",
+    "scenario_group": "TR04-EXPLICIT-GENDER",
+    "scenario": "Женщина-студентка читает задание: женский референт задан местоимением «она».",
+    "semantic_facts": [
+      "Участник: одна женщина, студентка",
+      "Действие: чтение задания",
+      "Доказательство рода: местоимение «она» в начале сообщения",
+      "Время: прошедшее",
+      "Число: единственное, не меняется"
+    ],
+    "source_text_by_language": {
+      "ru": "Она прочитала задание как студентка.",
+      "en": "She read the assignment as the student.",
+      "he": "היא קראה את המשימה כסטודנטית."
+    },
+    "facts": {
+      "participant": "одна женщина, студентка",
+      "action": "чтение задания",
+      "owner": "женщина-студентка",
+      "time": "прошедшее",
+      "number": "одна участница, одно задание"
+    }
+  },
+  "D1000-20261025:TR04-EXPLICIT-GENDER:F00012": {
+    "family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00012",
+    "origin_family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00012",
+    "scenario_group": "TR04-EXPLICIT-GENDER",
+    "scenario": "Женщина-инженер приходит в лабораторию и включает стенд: женский референт задан видимым контекстом и местоимением «она».",
+    "semantic_facts": [
+      "Участник: одна женщина, инженер",
+      "Действие: приход в лабораторию и включение стенда",
+      "Доказательство рода: согласование «пришла» в первом предложении и местоимение «она» во втором",
+      "Время: прошедшее",
+      "Число: единственное, не меняется"
+    ],
+    "source_text_by_language": {
+      "ru": "Инженер пришла в лабораторию. Она включила стенд.",
+      "en": "The engineer came to the laboratory. She turned on the stand.",
+      "he": "המהנדסת באה למעבדה. היא הדליקה את המתקן."
+    },
+    "facts": {
+      "participant": "одна женщина, инженер",
+      "action": "приход и включение стенда",
+      "owner": "женщина-инженер",
+      "time": "прошедшее",
+      "number": "одна участница, один стенд"
+    }
+  },
+  "D1000-20261025:TR04-EXPLICIT-GENDER:F00013": {
+    "family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00013",
+    "origin_family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00013",
+    "scenario_group": "TR04-EXPLICIT-GENDER",
+    "scenario": "Женщина-клиент звонит и уточняет адрес: женский референт задан согласованием «позвонила» и местоимением «она».",
+    "semantic_facts": [
+      "Участник: одна женщина, клиент",
+      "Действие: звонок и уточнение адреса",
+      "Доказательство рода: согласование «позвонила» и местоимение «она» во второй части",
+      "Время: прошедшее",
+      "Число: единственное, не меняется"
+    ],
+    "source_text_by_language": {
+      "ru": "Клиент позвонила, и она уточнила адрес.",
+      "en": "The client called, and she clarified the address.",
+      "he": "הלקוחה התקשרה, והיא הבהירה את הכתובת."
+    },
+    "facts": {
+      "participant": "одна женщина, клиент",
+      "action": "звонок и уточнение адреса",
+      "owner": "женщина-клиент",
+      "time": "прошедшее",
+      "number": "одна участница, один адрес"
+    }
+  },
+  "D1000-20261025:TR04-EXPLICIT-GENDER:F00014": {
+    "family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00014",
+    "origin_family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00014",
+    "scenario_group": "TR04-EXPLICIT-GENDER",
+    "scenario": "Женщина-спикер заканчивает и отвечает на вопросы: женский референт задан согласованием «закончила» и местоимением «она».",
+    "semantic_facts": [
+      "Участник: одна женщина, спикер",
+      "Действие: завершение выступления и ответы на вопросы",
+      "Доказательство рода: согласование «закончила» и местоимение «она» во второй части",
+      "Время: прошедшее",
+      "Число: единственное, не меняется"
+    ],
+    "source_text_by_language": {
+      "ru": "Спикер закончила, и она ответила на вопросы.",
+      "en": "The speaker finished, and she answered the questions.",
+      "he": "הדוברת סיימה, והיא ענתה על השאלות."
+    },
+    "facts": {
+      "participant": "одна женщина, спикер",
+      "action": "завершение и ответы",
+      "owner": "женщина-спикер",
+      "time": "прошедшее",
+      "number": "одна участница, несколько вопросов"
+    }
+  },
+  "D1000-20261025:TR04-EXPLICIT-GENDER:F00015": {
+    "family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00015",
+    "origin_family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00015",
+    "scenario_group": "TR04-EXPLICIT-GENDER",
+    "scenario": "Студентка опаздывает на пару и тихо садится: женский референт задан видимым контекстом первого предложения.",
+    "semantic_facts": [
+      "Участник: одна женщина, студентка",
+      "Действие: опоздание на пару и тихая посадка",
+      "Доказательство рода: видимый контекст «студентка» и местоимение «она» во втором предложении",
+      "Время: прошедшее",
+      "Число: единственное, не меняется"
+    ],
+    "source_text_by_language": {
+      "ru": "Студентка опоздала на пару. Она тихо села за парту.",
+      "en": "The student was late for class. She quietly sat down at the desk.",
+      "he": "הסטודנטית איחרה לשיעור. היא ישבה בשקט ליד השולחן."
+    },
+    "facts": {
+      "participant": "одна женщина, студентка",
+      "action": "опоздание и тихая посадка",
+      "owner": "женщина-студентка",
+      "time": "прошедшее",
+      "number": "одна участница"
+    }
+  },
+  "D1000-20261025:TR04-EXPLICIT-GENDER:F00016": {
+    "family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00016",
+    "origin_family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00016",
+    "scenario_group": "TR04-EXPLICIT-GENDER",
+    "scenario": "Мужчина-инженер проверяет чертёж: мужской референт задан местоимением «он».",
+    "semantic_facts": [
+      "Участник: один мужчина, инженер",
+      "Действие: проверка чертежа",
+      "Доказательство рода: местоимение «он» в начале сообщения",
+      "Время: прошедшее",
+      "Число: единственное, не меняется"
+    ],
+    "source_text_by_language": {
+      "ru": "Он проверил чертёж как инженер.",
+      "en": "He checked the drawing as the engineer.",
+      "he": "הוא בדק את השרטוט כמהנדס."
+    },
+    "facts": {
+      "participant": "один мужчина, инженер",
+      "action": "проверка чертежа",
+      "owner": "мужчина-инженер",
+      "time": "прошедшее",
+      "number": "один участник, один чертёж"
+    }
+  },
+  "D1000-20261025:TR04-EXPLICIT-GENDER:F00017": {
+    "family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00017",
+    "origin_family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00017",
+    "scenario_group": "TR04-EXPLICIT-GENDER",
+    "scenario": "Спикер-мужчина запоминает зал и говорит без бумаги: мужской референт задан видимым контекстом и местоимением «он».",
+    "semantic_facts": [
+      "Участник: один мужчина, спикер",
+      "Действие: запоминание зала и речь без бумаги",
+      "Доказательство рода: согласование «запомнил» в первом предложении и местоимение «он» во втором",
+      "Время: прошедшее",
+      "Число: единственное, не меняется"
+    ],
+    "source_text_by_language": {
+      "ru": "Спикер запомнил зал. Он говорил без бумаги.",
+      "en": "The speaker remembered the hall. He spoke without notes.",
+      "he": "הדובר זכר את האולם. הוא דיבר בלי נייר."
+    },
+    "facts": {
+      "participant": "один мужчина, спикер",
+      "action": "запоминание зала и речь",
+      "owner": "мужчина-спикер",
+      "time": "прошедшее",
+      "number": "один участник, один зал"
+    }
+  },
+  "D1000-20261025:TR04-EXPLICIT-GENDER:F00018": {
+    "family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00018",
+    "origin_family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00018",
+    "scenario_group": "TR04-EXPLICIT-GENDER",
+    "scenario": "Клиент-мужчина приходит и показывает паспорт: мужской референт задан согласованием «пришёл» и местоимением «он».",
+    "semantic_facts": [
+      "Участник: один мужчина, клиент",
+      "Действие: приход и предъявление паспорта",
+      "Доказательство рода: согласование «пришёл» и местоимение «он» во второй части",
+      "Время: прошедшее",
+      "Число: единственное, не меняется"
+    ],
+    "source_text_by_language": {
+      "ru": "Клиент пришёл, и он показал паспорт.",
+      "en": "The client arrived, and he showed the passport.",
+      "he": "הלקוח הגיע, והוא הראה את הדרכון."
+    },
+    "facts": {
+      "participant": "один мужчина, клиент",
+      "action": "приход и предъявление паспорта",
+      "owner": "мужчина-клиент",
+      "time": "прошедшее",
+      "number": "один участник, один паспорт"
+    }
+  },
+  "D1000-20261025:TR04-EXPLICIT-GENDER:F00019": {
+    "family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00019",
+    "origin_family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00019",
+    "scenario_group": "TR04-EXPLICIT-GENDER",
+    "scenario": "Студент-мужчина пересдаёт экзамен: мужской референт задан местоимением «он».",
+    "semantic_facts": [
+      "Участник: один мужчина, студент",
+      "Действие: пересдача экзамена",
+      "Доказательство рода: местоимение «он» в начале сообщения",
+      "Время: прошедшее",
+      "Число: единственное, не меняется"
+    ],
+    "source_text_by_language": {
+      "ru": "Он пересдал экзамен как студент.",
+      "en": "He retook the exam as the student.",
+      "he": "הוא עשה את הבחינה מחדש כסטודנט."
+    },
+    "facts": {
+      "participant": "один мужчина, студент",
+      "action": "пересдача экзамена",
+      "owner": "мужчина-студент",
+      "time": "прошедшее",
+      "number": "один участник, один экзамен"
+    }
+  },
+  "D1000-20261025:TR04-EXPLICIT-GENDER:F00020": {
+    "family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00020",
+    "origin_family_id": "D1000-20261025:TR04-EXPLICIT-GENDER:F00020",
+    "scenario_group": "TR04-EXPLICIT-GENDER",
+    "scenario": "Инженер-мужчина осматривает кран и записывает износ: мужской референт задан видимым контекстом и местоимением «он».",
+    "semantic_facts": [
+      "Участник: один мужчина, инженер",
+      "Действие: осмотр крана и запись износа",
+      "Доказательство рода: согласование «осмотрел» в первом предложении и местоимение «он» во втором",
+      "Время: прошедшее",
+      "Число: единственное, не меняется"
+    ],
+    "source_text_by_language": {
+      "ru": "Инженер осмотрел кран. Он записал износ.",
+      "en": "The engineer inspected the crane. He recorded the wear.",
+      "he": "המהנדס בדק את המנוף. הוא רשם את הבלאי."
+    },
+    "facts": {
+      "participant": "один мужчина, инженер",
+      "action": "осмотр крана и запись износа",
+      "owner": "мужчина-инженер",
+      "time": "прошедшее",
+      "number": "один участник, один кран"
+    }
+  }
+}
+```
+
+For missing families, read C:\Projects\llm_mvp_core\learning-sets\campaigns\D1000-20261025\A018\B0002\material.required.json and author real records in C:\Projects\llm_mvp_core\learning-sets\campaigns\D1000-20261025\A018\B0002\family-material.jsonl. A record needs family_id, origin_family_id, scenario_group, a concrete scenario, and a nonempty semantic_facts list. It is not a template, label or numeric ID. Existing material may be omitted from this new file; it is already in the ledger.
+
+For every new translation family, author the same scenario in source_text_by_language with en, ru and he, plus participant/action/owner/time/number facts. Other directions reuse these exact canonical texts and facts. metadata.canonical_source uses source_text_by_language[source].
+
+The learner prompt receives only the assigned source-language input and its authorized visible context/typo/layout variation. Do not leak target answers, other language versions, sense translations, rationale or canonical restoration. Set metadata.language_pair to assigned source/target codes and metadata.source_raw to the actual input text. Keep lexical families of the same lexeme linked, but do not merge independent words just because strings resemble each other.
+
+## Row format
+
+Use schema_version=xiigen.dpo.v1. Required fields: schema_version, pair_id, domain_id, topic_id, profile_id, family_id, split, prompt, chosen, rejected, error_tag, rationale, source_refs, provenance, metadata.
+Set domain_id=tr.en, topic_id=TR04, profile_id=he-en, split=train. metadata.learning_objective_id=TR04-EXPLICIT-GENDER; metadata.scenario_group=TR04-EXPLICIT-GENDER; metadata.review_status=not_requested; metadata.measured_training_result=false. source_refs must use assigned source IDs: ["RAG-023", "RAG-024"]. provenance needs kind and generator_model (actual observed identity or unknown).
+
+chosen and rejected must be full answers to the same visible prompt; preserve all unrelated facts. Give one plausible substantive defect in rejected. Keep rationale, operation checks and preference labels outside learner-visible text. Two equally correct alternatives do not form a valid preference.
+
+## Worked examples — learn the contrast, do not copy these rows
+
+```json
+[
+  {
+    "example_id": "TR04-EXPLICIT-GENDER.he-en.REF01",
+    "profile_id": "he-en",
+    "family_id": "v3-ref.translation.gender-engineer",
+    "prompt": "Переведи с языка «иврит» на язык «английский». Выдай только перевод. Контекст: в сообщении описывается состояние самого говорящего; местоимение в придаточной части относится к этому же человеку.\nИсходный текст: המהנדסת אמרה שהיא מוכנה.",
+    "chosen": "The engineer said that she was ready.",
+    "rejected": "The engineer said that he was ready.",
+    "error_tag": "tr04_explicit_gender",
+    "rationale": "Женский референт задан местоимением и/или согласованием в самом тексте. Rejected меняет его, а не просто выбирает другой стиль.",
+    "simple_check": "Женский референт задан местоимением и/или согласованием в самом тексте. Rejected меняет его, а не просто выбирает другой стиль.",
+    "counterexample": "Исходник «The engineer is ready» не сообщает пол. Нельзя автоматически переносить на него женский chosen этого примера.",
+    "status": "PUBLIC_REFERENCE_NOT_GENERATED",
+    "metadata": {
+      "response_language": "en",
+      "language_pair": {
+        "source": "he",
+        "target": "en"
+      },
+      "source_raw": "המהנדסת אמרה שהיא מוכנה.",
+      "response_contract": "translation_only"
+    }
+  },
+  {
+    "example_id": "TR04-EXPLICIT-GENDER.he-en.REF02",
+    "profile_id": "he-en",
+    "family_id": "v3-ref.translation.gender-client",
+    "prompt": "Переведи с языка «иврит» на язык «английский». Выдай только перевод. Контекст: в сообщении описывается состояние самого говорящего; местоимение в придаточной части относится к этому же человеку.\nИсходный текст: הלקוח אמר שהוא עייף.",
+    "chosen": "The client said that he was tired.",
+    "rejected": "The client said that she was tired.",
+    "error_tag": "tr04_explicit_gender",
+    "rationale": "Мужской референт указан в исходнике; rejected меняет его при сохранении состояния усталости.",
+    "simple_check": "Мужской референт указан в исходнике; rejected меняет его при сохранении состояния усталости.",
+    "counterexample": "Грамматически мужское название профессии без дополнительных свидетельств не всегда задаёт пол референта. Здесь доказательство — полный текст, включая местоимение.",
+    "status": "PUBLIC_REFERENCE_NOT_GENERATED",
+    "metadata": {
+      "response_language": "en",
+      "language_pair": {
+        "source": "he",
+        "target": "en"
+      },
+      "source_raw": "הלקוח אמר שהוא עייף.",
+      "response_contract": "translation_only"
+    }
+  },
+  {
+    "example_id": "TQ26.TR04-EXPLICIT-GENDER.he-en.female-ready",
+    "domain_id": "tr.en",
+    "profile_id": "he-en",
+    "objective_id": "TR04-EXPLICIT-GENDER",
+    "prompt": "Переведи с языка «иврит» на язык «английский». Выдай только перевод исходного текста; указания автору и контекст не переводить.\nИсходный текст: היא מוכנה.",
+    "chosen": "She is ready.",
+    "rejected": "He is ready.",
+    "error_tag": "female-ready",
+    "rationale": "The subject is explicitly feminine. In Hebrew היא and מוכנה agree; in Russian она and готова agree. Rejected changes the referent's gender.",
+    "simple_check": "The subject is explicitly feminine. In Hebrew היא and מוכנה agree; in Russian она and готова agree. Rejected changes the referent's gender.",
+    "wrong_authoring_trap": {
+      "bad_authoring": "Inferring a person's gender from a job stereotype when the source leaves it unspecified.",
+      "correction": "Keep the assigned objective, apply the stated local check, and preserve every other visible fact. The authoring trap is not a learner answer."
+    },
+    "source_refs": [
+      "RAG-023",
+      "RAG-024"
+    ],
+    "metadata": {
+      "canonical_source": "היא מוכנה.",
+      "source_raw": "היא מוכנה.",
+      "reference_only": true,
+      "training_allowed": false,
+      "split": "reference",
+      "origin_family_id": "reference.translation-quality.20261026.female-ready",
+      "leakage_group_ids": [
+        "reference.translation-quality.20261026.female-ready"
+      ],
+      "source_language": "he",
+      "response_language": "en",
+      "generator_model": "reference_authoring_not_a_Chinese_model_run",
+      "review_status": "NOT_REQUESTED",
+      "training_status": "NOT_RUN",
+      "semantic_status": "illustrative_authoring_not_independent_attestation",
+      "learner_visible_fields": [
+        "prompt"
+      ],
+      "response_contract": "translation_only"
+    },
+    "supplement_path": "campaign/translation-quality-lessons-2026-10-26.json"
+  },
+  {
+    "example_id": "TQ26.TR04-EXPLICIT-GENDER.he-en.her-umbrella-owner",
+    "domain_id": "tr.en",
+    "profile_id": "he-en",
+    "objective_id": "TR04-EXPLICIT-GENDER",
+    "prompt": "Переведи с языка «иврит» на язык «английский». Выдай только перевод исходного текста; указания автору и контекст не переводить.\nУсловие и контекст: Требуется сохранить владельца предмета; место и сам предмет не меняются.\nИсходный текст: המטרייה שלה כאן.",
+    "chosen": "Her umbrella is here.",
+    "rejected": "His umbrella is here.",
+    "error_tag": "her-umbrella-owner",
+    "rationale": "Ask whose umbrella it is. שלה / её / her identifies a female owner, independent of the grammatical gender of umbrella. Rejected changes only ownership.",
+    "simple_check": "Ask whose umbrella it is. שלה / её / her identifies a female owner, independent of the grammatical gender of umbrella. Rejected changes only ownership.",
+    "wrong_authoring_trap": {
+      "bad_authoring": "Choosing the possessor's gender from the grammatical gender of the possessed noun.",
+      "correction": "Keep the assigned objective, apply the stated local check, and preserve every other visible fact. The authoring trap is not a learner answer."
+    },
+    "source_refs": [
+      "RAG-023",
+      "RAG-024"
+    ],
+    "metadata": {
+      "canonical_source": "המטרייה שלה כאן.",
+      "source_raw": "המטרייה שלה כאן.",
+      "reference_only": true,
+      "training_allowed": false,
+      "split": "reference",
+      "origin_family_id": "reference.translation-quality.20261026.her-umbrella-owner",
+      "leakage_group_ids": [
+        "reference.translation-quality.20261026.her-umbrella-owner"
+      ],
+      "source_language": "he",
+      "response_language": "en",
+      "generator_model": "reference_authoring_not_a_Chinese_model_run",
+      "review_status": "NOT_REQUESTED",
+      "training_status": "NOT_RUN",
+      "semantic_status": "illustrative_authoring_not_independent_attestation",
+      "learner_visible_fields": [
+        "prompt"
+      ],
+      "response_contract": "translation_only"
+    },
+    "supplement_path": "campaign/translation-quality-lessons-2026-10-26.json"
+  }
+]
+```
+
+## Assigned source excerpts
+
+These are bounded, partial source excerpts; they are not a claim to include the entire original or all its requirements. Use the exact linked local file if a detail needed by this lesson is absent.
+
+RAG-023 — rag/sources/RAG-023.md
+Различает сырое переводимое предложение, выбранный перевод и тип ошибки; описывает морфологию RU/HE и четыре старых направления.
+Applicability: Актуально шесть направлений EN/RU/HE и раздельные темы. Не наследовать overlap>0.60, [WRONG]-аннотации и тезис «высокое сходство значит нет сигнала»: минимальная смысловая пара может быть полезной.
+Primary excerpt (partial; full excerpt at the assigned path):
+## Why This Document Exists
+
+The orchestration DPO guidance covers ARCH, PLAN, SKILL, and CODE sub-phases.
+Translation is a separate capability domain with different:
+
+- A-side source (raw sentence, not compiled orchestration prompt)
+- Chosen authority (verified parallel corpus, not XIIGen internal contract)
+- Rejected error taxonomy (linguistic errors, not routing/governance errors)
+- Reward margin mechanics (token-level linguistic divergence, not predicate match)
+
+Read this document instead of DPO-PAIR-AUTHORING-GUIDANCE-v2.md when writing
+translation pairs. Do not mix translation pairs into orchestration batches.
+
+---
+
+## Reward Margin Mechanics for Translation
+
+DPO computes for every pair:
+
+
+RAG-024 — rag/sources/RAG-024.md
+Рассматривает Unicode-скрипты, Hebrew final forms/nikud и смешанные технические слова внутри предложения.
+Applicability: Измерять покрытие на закреплённом локальном наборе, сохранять raw текст и привязку к семье. Не выполнять внешние загрузки из старого руководства; не объявлять его пороги и нормализацию доказанно оптимальными.
+Primary excerpt (partial; full excerpt at the assigned path):
+## Hebrew-Specific Tokenizer Notes
+
+### Nikud (Vowel Points)
+
+Hebrew vowel diacritics (U+05B0–U+05BD, U+05C1–U+05C2, U+05C7) combine with
+base characters. The tokenizer must treat base + nikud as a single combining
+character sequence, not split them.
+
+Recommendation: normalise Hebrew text to NFD (Unicode Canonical Decomposition)
+before tokenisation. This ensures base letters and combining marks are consistently
+separated at the unicode level, then the BPE merge rules can recombine them.
+
+### Final Letter Forms
+
+Hebrew has five final letters (ף ך ם ן ץ) that replace their regular forms
+at word end. These are separate Unicode code points (not combining characters).
+The tokenizer must treat them as distinct from their non-final counterparts:
+- פ (pe) ≠ ף (final pe)
+- כ (kaf) ≠ ך (final kaf)
+- מ (mem) ≠ ם (final mem)
+- נ (nun) ≠ ן (final nun)
+- צ (tsadi) ≠ ץ (final tsadi)
+
+Verify that the vocabulary contains both forms for each pair.
+
+### Gershayim and Geresh
+
+- Geresh (׳ U+05F3): marks abbreviations and foreign-origin letters
+- Gershayim (״ U+05F4): marks acronyms and compound abbreviations
+
+These must be in the vocabulary as single tokens, not split as punctuation.
+
+## Create, finish, continue
+
+Write the exact JSONL rows to C:\Projects\llm_mvp_core\learning-sets\campaigns\D1000-20261025\A018\B0002\draft.jsonl. Then execute:
+
+```
+& 'C:\Python314\python.exe' 'C:\Users\lubao\Documents\xiigen\llm mvp\learning-sets\preparation\tools\campaign.py' 'finish' '--request' 'C:\Projects\llm_mvp_core\learning-sets\campaigns\D1000-20261025\A018\B0002\request.json' '--input' 'C:\Projects\llm_mvp_core\learning-sets\campaigns\D1000-20261025\A018\B0002\draft.jsonl' '--family-material' 'C:\Projects\llm_mvp_core\learning-sets\campaigns\D1000-20261025\A018\B0002\family-material.jsonl' '--model' 'unknown'
+```
+
+After successful DRAFT_CREATED execute the supplied next command in the same task:
+
+```
+& 'C:\Python314\python.exe' 'C:\Users\lubao\Documents\xiigen\llm mvp\learning-sets\preparation\tools\campaign.py' 'next' '--work-root' 'C:\Projects\llm_mvp_core\learning-sets'
+```
+
+CREATE_ONLY: no checksum ceremony, independent reviewer, acceptance/export/import, training or product CI. Finish checks structure and assigned counts; it does not establish semantic correctness. Do not ask to continue while the authorized queue remains. Report created rows and path in Russian; do not claim a measured learning result.
+
+Direct NEXT/new ID immediately replaces the previous assignment; do not continue its report or rerun it. Direct STOP stops actions. Preserve all prior attempts. For a genuinely running tool, read its actual available documentation, keep one handle, use its documented wait/resume until terminal; a yield or silent stdout is not failure. Do not duplicate the run, poll rapidly, invent a waiting API, or finish the turn instead of available waiting. If the assigned source or required tool is genuinely missing, report that exact blocker rather than invent content.
